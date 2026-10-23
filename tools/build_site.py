@@ -1150,7 +1150,7 @@ def demos_hub(shell: Shell, lunches: list[dict]) -> None:
         cards.append(
             f'<a class="dcard reveal" href="{L["slug"]}.html" data-n="{L["n"]}" data-part="{L["part"]}" style="--c:{PARTS[L["part"]]["color"]}">'
             f'<div class="dthumb"><iframe data-src="{L["slug"]}.html#step={mid}" title="Preview of the demo for Lunch {L["n"]}" tabindex="-1" aria-hidden="true" loading="lazy"></iframe>'
-            f'<span class="play" aria-hidden="true">▶</span></div><div class="dbody"><small>Episode {L["n"]} · {E(L["title"])} · {L["level"]}</small>'
+            f'<span class="play" aria-hidden="true">▶</span></div><div class="dbody"><small>Episode {L["n"]} · {E(PARTS[L["part"]]["short"])} · {L["level"]}</small>'
             f'<h3>{E(DEMO_TITLES.get(L["slug"], L["title"]))}</h3><p class="muted small" style="margin:.3em 0 0">{steps} steps · <span>{E(L["ep"])}</span></p></div></a>')
     part_btns = "".join(f'<button type="button" data-demo-filter="{p["id"]}" aria-pressed="false">{p["icon"]} {E(p["short"])}</button>' for p in SERIES["parts"])
     main = f"""<section class="lab-hero hub-hero">

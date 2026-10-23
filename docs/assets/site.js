@@ -339,8 +339,8 @@
     if (C.finale) stops.push({ n: '32', slug: C.finale.slug, ep: C.finale.ep, title: 'Advanced capstone challenge', hook: C.finale.hook, station: C.finale.station, part: 5, finale: true });
     var pos = [], W, H;
     if (!vertical) {
-      W = 1160; H = 640;
-      var rows = [[0, 7], [7, 14], [14, 21], [21, stops.length]], ys = [90, 245, 400, 555];
+      W = 1160; H = 665;
+      var rows = [[0, 7], [7, 14], [14, 21], [21, stops.length]], ys = [110, 265, 420, 575];
       rows.forEach(function (rw, ri) {
         var cnt = rw[1] - rw[0], x0 = 90, x1 = W - 90, step = (x1 - x0) / Math.max(1, cnt - 1);
         for (var i = 0; i < cnt; i++) { var x = ri % 2 === 0 ? x0 + i * step : x1 - i * step; pos.push({ x: x, y: ys[ri], row: ri, i: i }); }
@@ -367,7 +367,7 @@
       if (s.part !== lastPart && !vertical) {
         lastPart = s.part;
         var lx = q.row % 2 === 0 ? q.x - 40 : q.x + 40, anchor = q.row % 2 === 0 ? 'start' : 'end';
-        html += '<text class="district" x="' + lx + '" y="' + (q.y - 52) + '" fill="' + p.color + '" text-anchor="' + anchor + '">' + p.icon + ' ' + esc(p.name) + '</text>';
+        html += '<text class="district" x="' + lx + '" y="' + (q.y - 84) + '" fill="' + p.color + '" text-anchor="' + anchor + '">' + p.icon + ' ' + esc(p.name) + '</text>';
       }
       var done = s.finale ? !!(S.labs['32'] || {}).done : !!S.done[s.n], isCur = !done && (s === cur || (!cur && s.finale));
       var url = s.finale ? labUrl(s.slug) : lunchUrl(s);
