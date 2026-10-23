@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 31 · Seven Subscriptions and a Merger — Lunch 31: Resource Hierarchy and Governance (Advanced): Governance at Scale · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 31 · Resource Hierarchy and Governance (Advanced): Governance at Scale. Guardrails that protect one subscription won&#x27;t survive a merger. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 31 · Seven Subscriptions and a Merger — Lunch 31: Resource Hierarchy and Governance (Advanced): Governance at Scale">
+<meta property="og:description" content="Lunch 31 · Resource Hierarchy and Governance (Advanced): Governance at Scale. Guardrails that protect one subscription won&#x27;t survive a merger. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/lunches/31-governance-at-scale.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lunch" data-lunch="31" style="--c:#7b4ff0">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 31</span> Season 2 · 🌊 Part 5 · Deep dives</div>
+      <h1>Seven Subscriptions and a Merger</h1>
+      <div class="lunch-title">Lunch 31 · Resource Hierarchy and Governance (Advanced): Governance at Scale</div>
+      <div class="chips">
+        <span class="chip advanced">🎬 Last episode</span><span class="chip advanced">Advanced</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 Beyond AZ-900</span>
+        <span class="chip cost">🔬 Lab · about 60 minutes · 💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Who Made server-baru-final2?">↩ 04</a><a class="chip" href="18-governance-compliance-basic.html" title="A Storage Account in West Europe">↩ 18</a><a class="chip" href="20-infrastructure-as-code-bicep.html" title="Rebuild It All in an Hour?">↩ 20</a><a class="chip" href="22-identity-access-advanced.html" title="The Auditor&#x27;s Four Findings">↩ 22</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 30 · Why Was Checkout Slow on Friday?, logs, metrics and traces meet in one workspace, and a KQL query finds the real cause.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-4"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, relaxed"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director's question · 100% ready</b>After this episode you can say: “Minutes for a regional outage, seconds of data at risk — and the same rules everywhere we run.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today's menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-a-hierarchy-designed-for-policy-not-for-the-org-chart">A hierarchy designed for policy, not for the org chart</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-subscriptions-as-units-of-scale--and-vending-them">Subscriptions as units of scale — and vending them</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-policy-driven-governance-at-management-group-scope">Policy-driven governance at management-group scope</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-governance-as-code--and-life-after-blueprints">Governance as code — and life after Blueprints</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-seeing-everything-resource-graph-at-scale-and-azure-arc">Seeing everything: Resource Graph at scale and Azure Arc</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-how-it-fits-together-for-nusantara-retail">How it fits together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/31-governance-at-scale.html">🔬 Open Lab 31</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today's menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span>Design a management group hierarchy based on the Azure landing zone architecture, and explain why it follows workload types instead of the org chart.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span>Explain why subscriptions are the unit of scale, what subscription vending automates, and at which scope RBAC, budgets and policies belong.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span>Run policy-driven governance at management-group scope: where definitions live, safe rollout, remediation identities and exemptions (Waiver vs Mitigated).</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span>Manage governance as code and plan the move from Azure Blueprints to deployment stacks and template specs.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="I can do this now">✓</button><span>Use Azure Resource Graph and Azure Arc to see and govern every subscription — and the servers that will never move to Azure.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 31</span>
+        <div class="story-body"><p>A year after the storefront moved to Azure, Nusantara Retail has seven subscriptions: storefront production and test,
+the loyalty app, finance's data warehouse, a shared network hub, and two that nobody quite remembers creating — one of
+them is the Visual Studio subscription Dewi uses for experiments. Next month the company completes the purchase of a
+twelve-store chain in Sulawesi, which brings two more subscriptions with resources in West Europe. And each of the
+forty stores still runs a small point-of-sale server in its back office that will never move to the cloud.</p>
+<p>The guardrails you built in Lunch 18 protect exactly one subscription. Everything else was configured by hand, a little
+differently each time. Rizky's old blueprint, which stamped tags and roles onto new subscriptions, stops accepting new
+assignments at the end of this month.</p>
+<p>Ibu Sari puts it plainly: <em>&quot;Next year we will have twenty subscriptions. How do we make every one of them follow the same
+rules from the minute it exists — without you configuring each one by hand?&quot;</em></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-a-hierarchy-designed-for-policy-not-for-the-org-chart" data-spy><span class="scene-no">Scene 1 of 6</span><h3>A hierarchy designed for policy, not for the org chart</h3><div class="prose"><p>In Lunch 04 you met the resource hierarchy: a Microsoft Entra tenant, the <strong>tenant root group</strong> at the top, management
+groups, subscriptions, resource groups and resources. Anything you assign at a scope — a role or a policy — flows down
+to everything beneath it, and costs roll up. At small scale you barely notice the top of that tree. At company scale it
+becomes your most important design decision, because inheritance is how one rule reaches twenty subscriptions.</p>
+<p>A few platform facts shape the design. A management group tree can be six levels deep, not counting the tenant root or
+the subscription level. Below the root, every management group and subscription has exactly one parent. The tenant root group's ID is
+the tenant ID, and you can neither move nor delete it. A management group's ID is permanent once created; only its
+display name can change. By default, any user in the tenant can create management groups, and every <strong>new subscription
+lands directly under the tenant root group</strong> — outside all of your carefully designed rules.</p>
+<p>The <strong>Azure landing zone</strong> architecture from the Cloud Adoption Framework gives you a proven starting shape. At the time
+of writing (October 2026) it recommends these management groups:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Management group</th>
+<th>What lives there</th>
+<th>Typical guardrails</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Intermediate root</strong> (your prefix, for example <code>nusa</code>)</td>
+<td>Everything the company governs; sits just below the tenant root group</td>
+<td>The company-wide baseline: allowed regions, required tags, security benchmark</td>
+</tr>
+<tr>
+<td><strong>Platform</strong> → Security, Management, Connectivity, Identity</td>
+<td>One dedicated subscription each for SIEM tooling, central logging, the hub network and identity services</td>
+<td>Rules for shared infrastructure, managed by the platform team</td>
+</tr>
+<tr>
+<td><strong>Landing zones</strong> → Corp, Online, Local</td>
+<td>Workload subscriptions: Corp for apps that need the corporate network, Online for internet-facing apps, Local for workloads on Azure Local clusters</td>
+<td>Workload-agnostic security rules at the parent, archetype-specific rules below</td>
+</tr>
+<tr>
+<td><strong>Sandboxes</strong></td>
+<td>Subscriptions for learning and experiments, isolated from the corporate network</td>
+<td>A lighter policy set and strict budgets</td>
+</tr>
+<tr>
+<td><strong>Decommissioned</strong></td>
+<td>Cancelled landing zones waiting to be deleted</td>
+<td>Deny almost everything new</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  root[&quot;Tenant root group&quot;] --&gt; nusa[&quot;nusa&lt;br/&gt;(intermediate root)&quot;]
+  nusa --&gt; plat[&quot;Platform&quot;]
+  nusa --&gt; lz[&quot;Landing zones&quot;]
+  nusa --&gt; sbx[&quot;Sandboxes&quot;]
+  nusa --&gt; dec[&quot;Decommissioned&quot;]
+  plat --&gt; sec[&quot;Security&quot;]
+  plat --&gt; mgmt[&quot;Management&quot;]
+  plat --&gt; conn[&quot;Connectivity&quot;]
+  plat --&gt; idn[&quot;Identity&quot;]
+  lz --&gt; corp[&quot;Corp&quot;]
+  lz --&gt; online[&quot;Online&quot;]
+  lz --&gt; local[&quot;Local&quot;]
+  mgmt -.-&gt; s1([&quot;sub-management&lt;br/&gt;log-nusa workspace&quot;])
+  conn -.-&gt; s2([&quot;sub-connectivity&lt;br/&gt;hub network&quot;])
+  corp -.-&gt; s3([&quot;sub-orders-prod&quot;])
+  online -.-&gt; s4([&quot;sub-storefront-prod&lt;br/&gt;sub-storefront-test&quot;])
+  sbx -.-&gt; s5([&quot;sub-dewi-experiments&quot;])
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Notice what is missing. There is no &quot;Finance&quot; or &quot;Marketing&quot; management group, because a department change should not
+force you to rewire policies. There are no &quot;Production&quot; and &quot;Development&quot; groups either: environments are separate
+subscriptions inside the same management group, so test is governed exactly like production. Regions do not get their
+own groups unless a data residency or sovereignty rule genuinely differs between them. The guidance is to keep the tree
+<strong>flat — three or four levels</strong> — and to group subscriptions by the rules they need, which the landing zone architecture
+calls workload <strong>archetypes</strong>.</p>
+<p>Two settings complete the picture. In the hierarchy settings, choose a <strong>default management group</strong> for new
+subscriptions (Sandboxes is a good candidate), so a Visual Studio subscription like Dewi's starts under the sandbox
+rules instead of escaping them. And turn on the setting that requires authorization to create management groups, so only
+the platform team can reshape the tree.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Never hang your baseline directly on the tenant root group. An <strong>intermediate root</strong> gives you a scope you can
+rename, test against (a second, small &quot;canary&quot; hierarchy is common) and even replace, while the tenant root stays
+almost empty. It also keeps an acquired company's subscriptions out of your rules until you deliberately move them in.</p>
+</aside>
+</div></article><article class="scene-card" id="2-subscriptions-as-units-of-scale--and-vending-them" data-spy><span class="scene-no">Scene 2 of 6</span><h3>Subscriptions as units of scale — and vending them</h3><div class="prose"><p>If management groups are the folders, <strong>subscriptions</strong> are the units you hand out. Each one is a boundary for billing,
+for service quotas and limits, for access, and for blast radius: a mistake or a runaway script in the loyalty
+subscription cannot exhaust the storefront's quota or wander into its resource groups. That is why mature
+organisations create many smaller subscriptions — usually one per workload and environment — instead of one giant one.</p>
+<p>Creating subscriptions by hand does not scale, and every manual step is a chance to forget something. <strong>Subscription
+vending</strong> turns a request into a fully governed subscription through automation. A workload team fills in a form or opens
+a pull request; a pipeline built with Bicep or Terraform (both have ready-made vending modules) does the rest.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  req[&quot;Request&lt;br/&gt;(form or pull request)&quot;] --&gt; pipe[&quot;Vending pipeline&lt;br/&gt;Bicep or Terraform&quot;]
+  pipe --&gt; sub[&quot;New subscription&quot;]
+  pipe --&gt; mg[&quot;Placed in the Online&lt;br/&gt;management group&quot;]
+  pipe --&gt; net[&quot;Spoke network peered to the hub&lt;br/&gt;IP range from the address plan&quot;]
+  pipe --&gt; rbac[&quot;Entra groups and roles&lt;br/&gt;owners through PIM&quot;]
+  pipe --&gt; bud[&quot;Budget and tags&quot;]
+  mg --&gt; pol[&quot;Inherited initiatives&lt;br/&gt;apply from minute one&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Creating subscriptions programmatically requires billing permissions on an Enterprise Agreement, a Microsoft Customer
+Agreement or a Microsoft Partner Agreement account, so the lab skips this step — extra subscriptions on a personal
+account are also easy to forget. The important idea is the order: the subscription is placed in the right management
+group before anyone deploys a workload, so inherited policies are already waiting.</p>
+<p>The same &quot;decide the scope once&quot; thinking applies to everything else you assign:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Control</th>
+<th>Best scope</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Company-wide policy baseline</td>
+<td>Intermediate root</td>
+<td>Reaches every subscription, including future ones</td>
+</tr>
+<tr>
+<td>Archetype rules (for example &quot;no public IPs&quot; for Corp)</td>
+<td>Corp or Online management group</td>
+<td>Only the workloads that need the rule get it</td>
+</tr>
+<tr>
+<td>Platform team access</td>
+<td>Platform or intermediate root, activated through Privileged Identity Management</td>
+<td>Broad rights, but only when needed and with an audit trail</td>
+</tr>
+<tr>
+<td>Workload team access</td>
+<td>Their subscription or resource group, granted to Entra groups</td>
+<td>Least privilege; no inherited surprises</td>
+</tr>
+<tr>
+<td>Budgets</td>
+<td>Subscription for the owning team; management group for an overall view</td>
+<td>Alerts reach the people who can act</td>
+</tr>
+</tbody>
+</table></div>
+<p>For <strong>RBAC at scale</strong>, assign roles to Entra groups, never to individuals, and prefer built-in roles. When you need a
+<strong>custom role</strong>, note that its assignable scopes can include at most one management group, and roles with data actions
+cannot be assigned at management-group scope. Make privileged roles <em>eligible</em> rather than permanent with <strong>Privileged
+Identity Management</strong> (PIM), which needs Microsoft Entra ID P2 or Entra ID Governance licences — Lunch 22 covers it in
+depth. For <strong>budgets at higher scopes</strong>, remember from Lunch 19 that budgets alert but never stop resources, and that
+management-group cost views are not available for every billing agreement type (check the Cost Management scope
+documentation for yours).</p>
+</div></article><article class="scene-card" id="3-policy-driven-governance-at-management-group-scope" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Policy-driven governance at management-group scope</h3><div class="prose"><p>In Lunch 18 you assigned three single policies to one resource group. At scale you bundle them into an <strong>initiative</strong>
+and assign it once, high in the tree, with <strong>parameters</strong> that let the same initiative serve different archetypes — Corp
+might allow only <code>indonesiacentral</code>, while Sandboxes also allow <code>southeastasia</code>. Remember from Lunch 18 that
+assignments stack: a resource must satisfy every assignment above it, so a lower scope can tighten a rule but never
+loosen one. Keep the top-level baseline short, and put stricter rules lower down.</p>
+<p>Three rules decide whether this works in practice.</p>
+<p><strong>Where a definition is saved decides where it can be assigned.</strong> A custom definition saved in a subscription can only
+be assigned inside that subscription. One saved in a management group can be assigned to that group and anything below
+it. So save shared custom definitions and initiatives at the intermediate root, even if you first assign them lower
+down. At the time of writing, a single scope holds up to 500 custom policy definitions and 200 initiatives, and an
+initiative can reference up to 1,000 policies.</p>
+<p><strong>Roll out like software.</strong> A new assignment with a Deny effect at the intermediate root can block deployments across
+the whole company within minutes. Start every assignment with enforcement mode <strong>DoNotEnforce</strong>: compliance is still
+evaluated and reported, but nothing is denied or changed. Review the results, fix or exempt what you find, then enforce
+in rings — a test subscription first, then one archetype, then everything. Resource selectors and overrides on an
+assignment let you stage enforcement, for example region by region, without creating copies.</p>
+<p><strong>Remediation needs an identity with the right roles in the right places.</strong> Modify and DeployIfNotExists (DINE)
+assignments act on your behalf through a <strong>managed identity</strong>, either system-assigned (one per assignment) or
+user-assigned (created once, granted roles once, reused by many assignments). The roles come from the
+<code>roleDefinitionIds</code> in the definition. The portal grants them for you; the CLI and infrastructure-as-code deployments
+must grant them explicitly. Once an assignment is enforced, new and updated resources are fixed automatically — Modify
+during the request, DINE shortly after the resource is created (about ten minutes later by default). Existing resources,
+and anything evaluated while the assignment was in DoNotEnforce, need a <strong>remediation task</strong>, which fixes one Modify or
+DINE policy at a time, so for an initiative you name the policy's reference ID.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>The classic at-scale remediation failure: a DINE policy assigned at the Landing zones group must send diagnostic logs
+to <code>log-nusa</code> in the <em>Management</em> subscription. Its identity has roles inside Landing zones, but none on the
+workspace, so every remediation deployment fails with an authorization error. Grant the identity the roles it needs on
+every scope it writes to — including scopes outside the assignment.</p>
+</aside>
+<p>No baseline fits every case, so you need a documented way to say &quot;not here&quot;. A <strong>policy exemption</strong> marks a scope (from a
+management group down to a single resource) as exempt from an assignment, or from chosen policies inside an initiative.
+It shows up in compliance as <strong>Exempt</strong>, can carry an expiry date and metadata such as a ticket number, and comes in two
+categories:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Exemption: <strong>Waiver</strong></th>
+<th>Exemption: <strong>Mitigated</strong></th>
+<th>Exclusion (<code>notScopes</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Meaning</td>
+<td>The risk is known and accepted for now</td>
+<td>The policy's intent is met another way</td>
+<td>The scope is simply not evaluated</td>
+</tr>
+<tr>
+<td>Nusantara example</td>
+<td>The loyalty beta may use West Europe for 30 days while a partner integration is tested</td>
+<td>A VM that policy expects in Azure Backup is already protected by the Sulawesi chain's backup product</td>
+<td>A lab resource group nobody reports on</td>
+</tr>
+<tr>
+<td>Visible in compliance</td>
+<td>Yes, as Exempt</td>
+<td>Yes, as Exempt</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Built-in expiry</td>
+<td>Optional <code>expiresOn</code></td>
+<td>Optional <code>expiresOn</code></td>
+<td>None</td>
+</tr>
+</tbody>
+</table></div>
+<p>An expired exemption is not deleted; it simply stops applying, and the resource reappears as non-compliant. Creating an
+exemption needs permission to write exemptions and the <code>exempt</code> action on the assignment (the built-in Resource Policy
+Contributor role has both), so decide deliberately who may grant exceptions.</p>
+<p>Finally, <strong>regulatory compliance</strong> in Microsoft Defender for Cloud builds on the same machinery. The Microsoft cloud
+security benchmark is enabled by default, and you can add standards such as ISO/IEC 27001:2022, PCI DSS v4.0.1 or NIST
+SP 800-53. On Azure these standards are policy initiatives behind the scenes, so the same inheritance rules apply. The
+dashboard maps technical controls to recommendations; it supports an audit, but it does not certify you. Some standards
+or features may require a paid Defender plan — check the documentation before promising a report to the auditors.</p>
+</div></article><article class="scene-card" id="4-governance-as-code--and-life-after-blueprints" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Governance as code — and life after Blueprints</h3><div class="prose"><p>Clicking policies into the portal works for ten assignments, not for two hundred. <strong>Policy as code</strong> treats
+definitions, initiatives, assignments and exemptions as files in Git: every change is a pull request, reviewed by a
+second person, deployed by a pipeline whose identity is the only one allowed to write policy resources. Microsoft's
+guidance suggests a folder per initiative with files such as <code>policyset.json</code>, <code>policyset.definitions.json</code> and
+<code>policyset.parameters.json</code>, plus <code>assign.&lt;name&gt;.json</code> files and an <code>exemptions.&lt;name&gt;/</code> folder. Existing definitions and
+assignments can be exported with the CLI, PowerShell or Resource Graph, so you can start from what already exists.
+Larger teams often adopt the open-source Enterprise Policy as Code (EPAC) project, or the policy library that ships with
+the Azure landing zone accelerators.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  pr[&quot;Pull request&lt;br/&gt;policy files&quot;] --&gt; ci[&quot;Checks&lt;br/&gt;lint, what-if, review&quot;]
+  ci --&gt; test[&quot;Deploy to a canary&lt;br/&gt;scope: DoNotEnforce&quot;]
+  test --&gt; rev[&quot;Read compliance&lt;br/&gt;with Resource Graph&quot;]
+  rev --&gt; r1[&quot;Enforce ring 1&lt;br/&gt;test subscriptions&quot;]
+  r1 --&gt; r2[&quot;Enforce ring 2&lt;br/&gt;Corp, Online&quot;]
+  r2 --&gt; r3[&quot;Enforce everywhere&lt;br/&gt;intermediate root&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>The <strong>Azure landing zone accelerators</strong> package all of this: the hierarchy, the platform subscriptions and a curated
+policy set, deployed through an infrastructure-as-code accelerator (Bicep or Terraform, built on Azure Verified Modules
+and wired to GitHub or Azure DevOps) or a portal experience for a first try. Most companies start from an accelerator
+and adjust, rather than designing from a blank page.</p>
+<p>That brings us to Rizky's blueprint. Azure Blueprints (preview) is being retired in phases: no new blueprint
+definitions from July 31, 2026, no new assignments from October 31, 2026, no changes to existing assignments from
+December 31, 2026, and full retirement on January 31, 2027. The replacement is a pair of tools you met in Lunch 20:
+<strong>deployment stacks</strong>, which deploy and track a set of resources at resource group, subscription or management group
+scope and can protect them with deny settings; and <strong>template specs</strong> (or Git) to store and version the templates.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Blueprint concept</th>
+<th>Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Blueprint definition and its versions</td>
+<td>Bicep or ARM templates in Git, optionally published as template specs with versions</td>
+</tr>
+<tr>
+<td>Policy assignment artifact</td>
+<td>Policy assignment resources in the template — or your policy-as-code repository</td>
+</tr>
+<tr>
+<td>Role assignment artifact</td>
+<td>Role assignment resources in the template, assigned to groups</td>
+</tr>
+<tr>
+<td>Resource group and template artifacts</td>
+<td>Resource groups and modules in the template, deployed at subscription scope</td>
+</tr>
+<tr>
+<td>Blueprint assignment</td>
+<td>A deployment stack, for example <code>az stack mg create</code> targeting a subscription</td>
+</tr>
+<tr>
+<td>Blueprint resource locks</td>
+<td>The stack's deny settings (<code>denyDelete</code> or <code>denyWriteAndDelete</code>), with a few excluded principals</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>On January 31, 2027 the Blueprints service stops. Deployed resources stay, but definitions and assignments you did not
+export are removed, and <strong>blueprint locks stop protecting your resources</strong>. Export, convert to Bicep, and redeploy as
+deployment stacks with deny settings before that date.</p>
+</aside>
+</div></article><article class="scene-card" id="5-seeing-everything-resource-graph-at-scale-and-azure-arc" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Seeing everything: Resource Graph at scale and Azure Arc</h3><div class="prose"><p>Governance you cannot see is wishful thinking. <strong>Azure Resource Graph</strong> answers questions across every subscription you
+can read in one query, using a subset of KQL (Lunch 30). Besides the <code>resources</code> table, <code>resourcecontainers</code> holds
+management groups, subscriptions and resource groups, and <code>policyresources</code> holds compliance states, assignments and
+exemptions — so &quot;which resources are non-compliant, by initiative, across the company?&quot; is a single query instead of a
+loop over subscriptions. You can scope a query to a management group, and the CLI returns the first 100 rows unless you
+ask for more.</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>policyresources
+| where type == &#x27;microsoft.policyinsights/policystates&#x27;
+| where tostring(properties.complianceState) == &#x27;NonCompliant&#x27;
+| summarize resources = count() by assignment = tostring(properties.policyAssignmentName)
+</code></pre></div>
+<p>The forty store servers will never move to Azure, but they can still be governed by it. <strong>Azure Arc</strong> projects machines
+and clusters that run elsewhere into Azure Resource Manager, so they get a resource ID, live in a resource group, carry
+tags and inherit RBAC and policy like any other resource.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Azure Arc for</th>
+<th>How it connects</th>
+<th>Governance you gain</th>
+<th>Cost note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Servers (Windows and Linux, on premises or other clouds)</td>
+<td>The Connected Machine agent; a heartbeat every five minutes, shown as Disconnected after 15–30 minutes of silence</td>
+<td>Inventory, tags, RBAC, Resource Graph; machine configuration audits settings inside the OS; Update Manager, Defender for Servers, Azure Monitor Agent</td>
+<td>The inventory and organisation features are free; add-on services are billed (see each pricing page)</td>
+</tr>
+<tr>
+<td>Kubernetes clusters (any CNCF-conformant cluster)</td>
+<td>Cluster agents deployed with the CLI</td>
+<td>Azure Policy for Kubernetes (built on Gatekeeper), GitOps configuration with Flux, Defender for Containers</td>
+<td>Inventory and organisation are free; several extensions are billed (check the Azure Arc pricing page)</td>
+</tr>
+</tbody>
+</table></div>
+<p>A machine that stays disconnected for 45 days can become <strong>Expired</strong> and must be reconnected by an administrator, so
+monitor agent status as part of operations. Arc is not for Azure VMs — they are already in Azure Resource Manager.</p>
+</div></article><article class="scene-card" id="6-how-it-fits-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>How it fits together for Nusantara Retail</h3><div class="prose"><p>Here is the plan you take to Ibu Sari. Create the intermediate root <code>nusa</code> with Platform, Landing zones (Corp, Online),
+Sandboxes and Decommissioned. Move the seven subscriptions in, set Sandboxes as the default management group, and require
+authorization for hierarchy changes. Put the policy definitions and the initiative in a Git repository with a pipeline,
+and assign them like this:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Assignment</th>
+<th>Effects</th>
+<th>Identity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nusa</code> (intermediate root)</td>
+<td>Nusantara baseline: allowed locations (<code>indonesiacentral</code>, <code>southeastasia</code>), required <code>costCenter</code> tag, tag inherited from the resource group</td>
+<td>Deny, Modify</td>
+<td>System-assigned, with the role the definition names (Contributor) at <code>nusa</code></td>
+</tr>
+<tr>
+<td><code>nusa</code></td>
+<td>Microsoft cloud security benchmark (Defender for Cloud)</td>
+<td>Audit, AuditIfNotExists</td>
+<td>None needed</td>
+</tr>
+<tr>
+<td>Landing zones</td>
+<td>Diagnostic settings to <code>log-nusa</code></td>
+<td>DeployIfNotExists</td>
+<td>User-assigned: Monitoring Contributor at Landing zones, Log Analytics Contributor on the workspace</td>
+</tr>
+<tr>
+<td>Corp</td>
+<td>Customer data stays in Jakarta (allowed locations: <code>indonesiacentral</code> only); no public IP addresses on network interfaces</td>
+<td>Deny</td>
+<td>None needed</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sandboxes inherit only the baseline, plus a small budget on every sandbox subscription.
+Everything starts in DoNotEnforce mode. After a week of reading compliance in Resource Graph, you remediate the missing
+tags, then enforce ring by ring. The loyalty beta gets a Waiver with a 30-day expiry and Ibu Sari's name in the
+metadata. Before January 31, 2027, Rizky's blueprint becomes a Bicep file deployed as a deployment stack with
+<code>denyDelete</code>. The forty store servers join through Azure Arc into a dedicated subscription under Corp, so the same
+baseline, tags and Update Manager reach them. The Sulawesi subscriptions wait outside the intermediate root until their
+West Europe resources have a migration plan — then they move in.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>The Sulawesi subscriptions arrive with storage accounts in West Europe. If you moved them under
+<code>nusa</code> today, with the baseline enforced, what would happen to those existing accounts — and to the next deployment
+their team tries in West Europe?</p>
+</aside>
+<p>Today's lab builds a small version of this design in your own tenant, and the advanced capstone challenge then asks you
+to put a policy initiative around a complete solution.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · One hierarchy, one initiative, every subscription</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../demos/31-governance-at-scale.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../demos/31-governance-at-scale.html" title="Interactive demo: One hierarchy, one initiative, every subscription" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/31-governance-at-scale/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>How the hierarchy grows from a single intermediate root, and where each subscription lands.</li>
+<li>How one initiative, saved at the intermediate root and assigned at Landing zones, reaches every subscription below it.</li>
+<li>Why the first DeployIfNotExists remediation fails, and the single role assignment that fixes it.</li>
+<li>How a Waiver exemption shows up as &quot;Exempt&quot; instead of disappearing from the report.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi creates a new subscription with her Visual Studio benefit. It appears under the tenant root group and none of the
+baseline policies apply to it. Which setting would have prevented this?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>A <strong>default management group</strong> in the hierarchy settings (for example Sandboxes). New subscriptions land under the
+tenant root group unless a default is configured, so without it they start outside every inherited rule.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>You saved a custom initiative in the storefront production subscription. Assigning it at the Landing zones management
+group fails. Why, and what is the fix?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>A definition can only be assigned at or below the scope where it is saved. Save the initiative at the intermediate
+root (or at Landing zones) and assign that copy — the definition's location decides where it can be used.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>A DeployIfNotExists assignment at Landing zones should send diagnostic logs to <code>log-nusa</code> in the Management
+subscription. Its remediation tasks fail with authorization errors. What is missing?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>A role for the assignment's managed identity on the workspace (for example Log Analytics Contributor). The identity
+only has roles inside the assignment scope, but the deployment writes outside it — every target scope needs a grant.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Ibu Sari accepts that the loyalty beta may keep a storage account in West Europe for 30 days while a partner tests an
+integration. How do you record this so it stays visible and does not become permanent?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Create a policy exemption with category <strong>Waiver</strong>, scoped to the beta's resource group (or the single resource), with
+<code>expiresOn</code> set 30 days ahead and metadata naming the approver and ticket. A Waiver means an accepted risk; it remains
+visible as Exempt, and after expiry the resource shows as non-compliant again.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>It is February 2027. Rizky's blueprint was never migrated. What happened to the resources it deployed and to the
+blueprint locks protecting them?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The resources still exist, but the blueprint assignment and its locks are gone, so nothing prevents someone from
+deleting them. Redeploy the same templates as a deployment stack with deny settings (and keep the templates in Git or
+template specs) — the replacement Microsoft recommends.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Design the management group hierarchy for inheritance of policy and access: an intermediate root with Platform, Landing zones (Corp, Online, Local), Sandboxes and Decommissioned, three or four levels deep, grouped by workload type.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Subscriptions are the unit of scale; subscription vending places each new one in the right management group with networking, group-based RBAC, budgets and tags before any workload arrives.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>Save definitions high, assign initiatives at management-group scope with parameters, start in DoNotEnforce, and give Modify and DeployIfNotExists identities roles on every scope they write to.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Exemptions (Waiver or Mitigated) with expiry dates and metadata keep exceptions visible and auditable; exclusions silently remove scopes from the report.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Governance is code: Git, pipelines, deployment stacks and template specs replace Blueprints before January 31, 2027, while Resource Graph and Azure Arc extend visibility and control to every subscription and to servers outside Azure.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>31</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Governance for the whole company</h3>
+          <div class="prose"><p>In your own tenant you build a miniature landing-zone hierarchy (an intermediate root with platform, landing zones and
+corp groups), write a custom initiative from JSON files (allowed locations, required tag, inherited tag), assign it with
+a managed identity, remediate existing resources, grant a time-boxed Waiver to a sandbox resource group, query compliance
+across scopes with Resource Graph, and export everything as policy-as-code files. Moving your lab subscription into the
+hierarchy is optional and fully reversible.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 60 minutes</span><span class="chip cost">💲 free or close to free</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/31-governance-at-scale.html">Start Lab 31 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-management-groups" target="_blank" rel="noopener"><b>Cloud Adoption Framework: Management groups</b><span>The landing zone hierarchy and the design recommendations behind it</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/governance/policy/concepts/policy-as-code" target="_blank" rel="noopener"><b>Design Azure Policy as Code workflows</b><span>File layout, testing with DoNotEnforce and remediation in a pipeline</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-resource-manager/bicep/migrate-blueprint" target="_blank" rel="noopener"><b>Migrate blueprints to deployment stacks</b><span>How each blueprint artifact becomes Bicep under a deployment stack</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-arc/servers/overview" target="_blank" rel="noopener"><b>What is Azure Arc-enabled servers?</b><span>The Connected Machine agent and what you can govern outside Azure</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🏛️</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Governance at Scale</h2>
+        <p class="muted">Govern many subscriptions as code.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“Minutes for a regional outage, seconds of data at risk — and the same rules everywhere we run.”</b></p>
+        <div class="teaser"><b>Season finale</b><h4>The Season Finale</h4><p>No guided steps. Design it, build it, prove it.</p><p style="margin-top:10px"><a href="../labs/32-advanced-capstone-challenge.html">Take the capstone challenge →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="30-monitoring-advanced.html"><small>← Previous episode</small>30 · Why Was Checkout Slow on Friday?</a><a class="next" href="../labs/32-advanced-capstone-challenge.html"><small>Season finale →</small>Advanced capstone challenge</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/31-governance-at-scale/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

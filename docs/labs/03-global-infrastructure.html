@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 03 · Explore regions and zones · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 03: Explore regions and zones. about 35 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 03 · Explore regions and zones">
+<meta property="og:description" content="Hands-on Azure lab 03: Explore regions and zones. about 35 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/03-global-infrastructure.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="03" style="--c:#1665d8">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#1665d8">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 03</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>03</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Explore regions and zones</h1>
+        <p class="lab-story">🏪 <b>Episode 03 · Where Does the Shop Live?</b> — Jakarta or Singapore? And what happens when that building has a bad day? <a href="../lunches/03-global-infrastructure.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 35 minutes</span>
+          <span class="chip cost">💲 free or close to free</span>
+          <span class="chip">Difficulty ★☆☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 7 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--regions-geographies-and-pairs">Task 1 · Regions, geographies and pairs</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--look-inside-your-region-zones-zone-mapping-and-whats-offered">Task 2 · Look inside your region: zones, zone mapping and what&#x27;s offered</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--zonal-zone-redundant-and-no-zone-public-ips">Task 3 · Zonal, zone-redundant and &quot;no zone&quot; public IPs</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--lrs-versus-zrs-storage">Task 4 · LRS versus ZRS storage</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5-optional--a-rough-latency-check-from-your-browser">Task 5 (optional) · A rough latency check from your browser</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/03-global-infrastructure/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/03-global-infrastructure/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/03-global-infrastructure/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>3 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/03-global-infrastructure" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its own steps.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Before Nusantara Retail commits to a region, Ibu Sari wants evidence, not opinions. In this lab you collect it. You use
+the Azure CLI to list regions, their geographies and pairs, read your subscription's logical-to-physical zone mapping
+and check which VM sizes and services are offered where. Then you build small, cheap resources that make the
+difference between zonal and zone-redundant visible: three Standard public IPs (zonal, zone-redundant and &quot;no zone
+given&quot;) and two storage accounts (LRS and ZRS). You finish with a short latency check from your own browser.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch03-&amp;lt;suffix&amp;gt; · your LOCATION (default Southeast Asia)&quot;]
+    subgraph ips[&quot;Standard public IPs&quot;]
+      p1[&quot;pip-nusa-zonal&lt;br/&gt;zone 1 only&quot;]
+      p2[&quot;pip-nusa-zr&lt;br/&gt;zones 1, 2, 3&quot;]
+      p3[&quot;pip-nusa-nozone&lt;br/&gt;no zone given&quot;]
+    end
+    subgraph st[&quot;Storage accounts&quot;]
+      s1[&quot;stnusalrs&amp;lt;suffix&amp;gt;&lt;br/&gt;Standard_LRS: one datacenter&quot;]
+      s2[&quot;stnusazrs&amp;lt;suffix&amp;gt;&lt;br/&gt;Standard_ZRS: three zones&quot;]
+    end
+  end
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install.</li>
+<li>Get the lab files and load the shared settings:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/03-global-infrastructure
+source ../common/config.sh
+RG=$(rg_name 03)
+ST_LRS=&quot;stnusalrs${SUFFIX}&quot;
+ST_ZRS=&quot;stnusazrs${SUFFIX}&quot;
+</code></pre></div>
+<ul>
+<li>This lab has no <code>setup.sh</code>: you create everything yourself.</li>
+<li><code>LOCATION</code> must be a region <strong>with availability zones</strong>. The default, <code>southeastasia</code>, has three. Learners in
+Indonesia can run <code>export LOCATION=indonesiacentral</code> and then <code>source ../common/config.sh</code> again; it also has three zones.</li>
+<li>If Cloud Shell times out and restarts, <code>cd</code> back into the lab folder and run the four lines after <code>cd</code> again.</li>
+</ul>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist. Standard public IPv4 addresses are billed by the hour even when nothing
+uses them. Finish with the <strong>Clean up</strong> section, even if you stop halfway.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–5 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--regions-geographies-and-pairs" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Regions, geographies and pairs</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--regions-geographies-and-pairs" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Every region belongs to a geography (a data residency boundary), and some regions have a paired region. The CLI shows
+exactly what your subscription can see, so start there.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code># How many physical regions can your subscription see?
+az account list-locations --query &quot;length([?metadata.regionType==&#x27;Physical&#x27;])&quot;
+
+# The regions closest to Nusantara Retail: geography, city and paired region
+az account list-locations \
+  --query &quot;[?contains([&#x27;indonesiacentral&#x27;,&#x27;southeastasia&#x27;,&#x27;eastasia&#x27;,&#x27;malaysiawest&#x27;], name)].{region:name, geography:metadata.geography, city:metadata.physicalLocation, pair:metadata.pairedRegion[0].name}&quot; \
+  --output table
+
+# Which physical regions have no paired region at all?
+az account list-locations \
+  --query &quot;[?metadata.regionType==&#x27;Physical&#x27; &amp;&amp; !metadata.pairedRegion].displayName&quot; \
+  --output tsv | sort
+</code></pre></div>
+<p>The first command counts only <strong>physical</strong> regions. The list also contains <em>logical</em> entries such as &quot;Asia Pacific&quot;,
+which group regions for some services and are not places you deploy to.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open the region dropdown on any <em>Create</em> page (for example <em>Create a resource group</em>): regions
+are grouped by geography, such as &quot;(Asia Pacific) Southeast Asia&quot;. The pairs and zone counts are easier to read in
+Microsoft's <a href="https://learn.microsoft.com/azure/reliability/regions-list" target="_blank" rel="noopener">list of Azure regions</a>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the table shows <code>eastasia</code> as the pair of <code>southeastasia</code> (and the other way round), while
+<code>indonesiacentral</code> and <code>malaysiawest</code> show an empty pair column. Indonesia Central appears in the &quot;no pair&quot; list. The
+geography column shows the Singapore and Hong Kong regions in one geography and Jakarta in another (the exact
+wording comes from the platform and can differ slightly from the documentation).</p>
+</div>
+</div></section><section class="lab-section" id="task-2--look-inside-your-region-zones-zone-mapping-and-whats-offered" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Look inside your region: zones, zone mapping and what's offered</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--look-inside-your-region-zones-zone-mapping-and-whats-offered" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Zones are numbered 1, 2 and 3 in every subscription, but the numbers are <strong>logical</strong>. Each subscription has its own
+mapping to the physical zones, and you can read yours.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code># Your subscription&#x27;s logical-to-physical zone mapping for LOCATION
+az account list-locations \
+  --query &quot;[?name==&#x27;${LOCATION}&#x27;].availabilityZoneMappings | [0]&quot; \
+  --output table
+
+# How many regions offer zones to your subscription?
+az account list-locations --query &quot;length([?availabilityZoneMappings])&quot;
+</code></pre></div>
+<p>Next, check which VM sizes your subscription can deploy into zones. The SKU list is big, so this command can take a
+minute or two; read the next paragraph while you wait.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm list-skus --location &quot;$LOCATION&quot; --resource-type virtualMachines \
+  --size Standard_B --zone --output table
+</code></pre></div>
+<p><code>--zone</code> keeps only sizes that support availability zones, and the <strong>Zones</strong> column shows which zones each size is
+offered in. By default the list hides sizes that are restricted for your subscription; add <code>--all</code> to see them too,
+with the reason in the <strong>Restrictions</strong> column.</p>
+<p>Finally, ask Azure Resource Manager whether a service is offered in a region. Every resource provider publishes the
+locations of each resource type:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>for rt in Microsoft.Network/natGateways Microsoft.App/managedEnvironments; do
+  ns=&quot;${rt%%/*}&quot;; type=&quot;${rt#*/}&quot;
+  echo &quot;== ${rt}&quot;
+  az provider show --namespace &quot;$ns&quot; \
+    --query &quot;resourceTypes[?resourceType==&#x27;${type}&#x27;].locations | [0]&quot; --output tsv \
+    | grep -i -E &quot;indonesia|southeast asia|east asia&quot; || echo &quot;   (not listed in these regions)&quot;
+done
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> The public <a href="https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/" target="_blank" rel="noopener">products available by region</a>
+page answers the same question for every product. The CLI is better for exact resource types, sizes and your own
+subscription's restrictions.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the mapping table shows three rows (logical zones 1, 2 and 3, each with a physical zone name such
+as <code>southeastasia-az2</code>); your logical 1 is not necessarily physical 1. The SKU table lists several B-series sizes
+with <code>1,2,3</code> in the Zones column. The loop prints the region names where each resource type is offered.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--zonal-zone-redundant-and-no-zone-public-ips" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Zonal, zone-redundant and &quot;no zone&quot; public IPs</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--zonal-zone-redundant-and-no-zone-public-ips" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Public IPs are a perfect test object: they are created in seconds, cost very little, and their zone setting is
+visible. Create the resource group and three Standard public IPv4 addresses.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ensure_rg &quot;$RG&quot; 03
+
+# Zonal: pinned to logical zone 1
+az network public-ip create --resource-group &quot;$RG&quot; --name pip-nusa-zonal \
+  --location &quot;$LOCATION&quot; --sku Standard --version IPv4 --allocation-method Static \
+  --zone 1 --output none
+
+# Zone-redundant: spread across zones 1, 2 and 3
+az network public-ip create --resource-group &quot;$RG&quot; --name pip-nusa-zr \
+  --location &quot;$LOCATION&quot; --sku Standard --version IPv4 --allocation-method Static \
+  --zone 1 2 3 --output none
+
+# No zone given: what does Azure do?
+az network public-ip create --resource-group &quot;$RG&quot; --name pip-nusa-nozone \
+  --location &quot;$LOCATION&quot; --sku Standard --version IPv4 --allocation-method Static \
+  --output none
+</code></pre></div>
+<p>Now compare them:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network public-ip list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{name:name, sku:sku.name, allocation:publicIPAllocationMethod, zones:join(&#x27;, &#x27;, zones || \`[]\`)}&quot; \
+  --output table
+</code></pre></div>
+<p>How to read the result:</p>
+<ul>
+<li><strong>pip-nusa-zonal</strong> shows <code>1</code>. It is <strong>zonal</strong>: it lives in zone 1 and shares that zone's fate.</li>
+<li><strong>pip-nusa-zr</strong> shows <code>1, 2, 3</code>. It is <strong>zone-redundant</strong>: it survives the loss of any single zone.</li>
+<li><strong>pip-nusa-nozone</strong> most likely shows an empty zones column. Don't read that as &quot;nonzonal&quot;. In a region with
+availability zones, Microsoft treats a Standard public IP without a zone setting as zone-redundant; an IP that shows
+no zones behaves the same as one that shows <code>1, 2, 3</code>. Only in a region <strong>without</strong> zones is a public IP truly
+nonzonal. Depending on the API version, the field might also come back filled in. Either way, set <code>--zone</code>
+explicitly in your scripts so that your intent is clear to the next reader.</li>
+</ul>
+<p>One more rule: the zone setting of a public IP is fixed at creation. To change it, you create a new IP, which also
+means a new address, so decide before you hand the address to a partner or a DNS record.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Home › Public IP addresses › Create</em>: look at the <strong>Availability zone</strong> setting and the options
+it offers in your region, then leave the page without creating anything.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> three Standard, Static IPs exist in <code>rg-lunch03-&lt;suffix&gt;</code>, with zones <code>1</code>, <code>1, 2, 3</code> and (most
+likely) nothing.</p>
+</div>
+</div></section><section class="lab-section" id="task-4--lrs-versus-zrs-storage" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">LRS versus ZRS storage</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--lrs-versus-zrs-storage" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Storage accounts make the same choice visible as <strong>redundancy</strong>. Locally redundant storage (LRS) keeps three copies in
+one datacenter; zone-redundant storage (ZRS) keeps copies in three zones and confirms a write only after every copy has
+it. Create one of each, both with TLS 1.2 as the minimum and anonymous blob access turned off.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage account create --name &quot;$ST_LRS&quot; --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; \
+  --sku Standard_LRS --kind StorageV2 --min-tls-version TLS1_2 --allow-blob-public-access false \
+  --output none
+
+az storage account create --name &quot;$ST_ZRS&quot; --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; \
+  --sku Standard_ZRS --kind StorageV2 --min-tls-version TLS1_2 --allow-blob-public-access false \
+  --output none
+</code></pre></div>
+<p>Compare them:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage account list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{name:name, sku:sku.name, primary:primaryLocation, secondary:secondaryLocation, status:statusOfPrimary}&quot; \
+  --output table
+</code></pre></div>
+<p>Both accounts live in your <code>LOCATION</code> and the <strong>secondary</strong> column is empty for both: LRS and ZRS never leave the
+region. ZRS protects you from losing a datacenter or a whole zone; it doesn't protect you from losing the region, and,
+like every redundancy option, it copies deletions and overwrites too. A secondary location only appears with the
+geo-redundant options (GRS, GZRS), which replicate to the <strong>paired</strong> region. The stretch goals let you see that.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Home › Storage accounts › Create</em>: the <strong>Redundancy</strong> dropdown on the Basics tab offers the
+same choices. Compare what it offers in Southeast Asia and in Indonesia Central.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> two StorageV2 accounts, <code>stnusalrs&lt;suffix&gt;</code> with <code>Standard_LRS</code> and <code>stnusazrs&lt;suffix&gt;</code> with
+<code>Standard_ZRS</code>, both with your <code>LOCATION</code> as primary and no secondary.</p>
+</div>
+</div></section><section class="lab-section" id="task-5-optional--a-rough-latency-check-from-your-browser" data-kind="task"><h2><span class="title">Task 5 (optional) · A rough latency check from your browser</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5-optional--a-rough-latency-check-from-your-browser" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Cloud Shell runs inside an Azure datacenter, so it can't tell you what your shoppers feel. Your own browser can.</p>
+<ol>
+<li>Open the community-built <a href="https://www.azurespeed.com/Azure/Latency" target="_blank" rel="noopener">Azure Latency Test</a> page (a free third-party
+tool, not a Microsoft service).</li>
+<li>Select Indonesia Central, Southeast Asia, East Asia and Malaysia West, and let it run for a minute.</li>
+<li>Note the median round trip for each region and compare.</li>
+</ol>
+<p>Treat the numbers as a rough signal: the test runs over HTTPS from your browser, so DNS lookups and TLS handshakes are
+included, and the result depends on your own internet provider. For region-to-region numbers measured inside
+Microsoft's network, use Microsoft's <a href="https://learn.microsoft.com/azure/networking/azure-network-latency" target="_blank" rel="noopener">inter-region latency statistics</a>.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> you have four latency figures. From most places in Indonesia you would expect Jakarta to be the
+fastest, but your network has the final word. That's exactly why you measure.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Zone-redundant storage needs a region with availability zones. Try to create a ZRS account in a region that has none.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code># Find a physical region without availability zones (falls back to westus, which has none)
+NOZONE_REGION=$(az account list-locations \
+  --query &quot;[?metadata.regionType==&#x27;Physical&#x27; &amp;&amp; metadata.regionCategory==&#x27;Recommended&#x27; &amp;&amp; !availabilityZoneMappings].name | [0]&quot; \
+  --output tsv)
+NOZONE_REGION=${NOZONE_REGION:-westus}
+echo &quot;Region without zones: ${NOZONE_REGION}&quot;
+
+az storage account create --name &quot;stnusabrk${SUFFIX}&quot; --resource-group &quot;$RG&quot; \
+  --location &quot;$NOZONE_REGION&quot; --sku Standard_ZRS --kind StorageV2 --output none
+</code></pre></div>
+<p><strong>Symptom:</strong> the command fails with an error saying that the <code>Standard_ZRS</code> SKU isn't supported or available in that
+location. (If the error says instead that the location isn't available for your subscription, pick another region from
+the list and try again.)</p>
+<details class="plain"><summary>Hint and fix</summary>
+<p>ZRS spreads copies across availability zones, so it only exists where zones exist. Before you choose a redundancy
+option, check the region:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az account list-locations --query &quot;[?name==&#x27;${NOZONE_REGION}&#x27;].availabilityZoneMappings | [0]&quot; --output table
+</code></pre></div>
+<p>An empty result means no zones. Fix it by choosing a zone-enabled region (<code>--location &quot;$LOCATION&quot;</code>) or, if you really
+need that region, by using <code>Standard_LRS</code> and accepting that a datacenter failure takes the data offline. Then make sure
+nothing extra was created:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>if az storage account show --name &quot;stnusabrk${SUFFIX}&quot; --resource-group &quot;$RG&quot; --output none 2&gt;/dev/null; then
+  az storage account delete --name &quot;stnusabrk${SUFFIX}&quot; --resource-group &quot;$RG&quot; --yes
+else
+  echo &quot;Nothing to remove: the failed request created nothing.&quot;
+fi
+</code></pre></div>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes everything the lab created: the resource group <code>rg-lunch03-&lt;suffix&gt;</code> with its public IPs and storage
+accounts. Nothing in this lab lives outside the resource group. Deletion continues in the background for a few minutes.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>az vm list-skus</code> prints nothing for a long time</td>
+<td>It downloads the whole SKU catalogue for the region before printing</td>
+<td>Wait up to two minutes; keep <code>--size</code> to narrow the output</td>
+</tr>
+<tr>
+<td>Zone mapping table is empty</td>
+<td><code>LOCATION</code> points to a region without availability zones (or a typo)</td>
+<td>Run <code>echo $LOCATION</code>; use <code>southeastasia</code> or <code>indonesiacentral</code></td>
+</tr>
+<tr>
+<td><code>(StorageAccountAlreadyTaken) The storage account named ... is already taken.</code></td>
+<td>Storage account names are global and someone else has yours</td>
+<td>Run <code>bash cleanup.sh</code>, then <code>rm ~/.azlunches-suffix</code>, <code>source ../common/config.sh</code> again (new suffix) and repeat Tasks 3–4</td>
+</tr>
+<tr>
+<td>Public IP creation fails with an error about zones</td>
+<td>The region has no zones, or not all three zones are live there</td>
+<td>Use a zone-enabled region for <code>LOCATION</code></td>
+</tr>
+<tr>
+<td><code>(MissingSubscriptionRegistration) The subscription is not registered to use namespace 'Microsoft.Network'</code></td>
+<td>A brand-new subscription hasn't used that resource provider yet</td>
+<td><code>az provider register --namespace Microsoft.Network</code>, wait a minute, retry</td>
+</tr>
+<tr>
+<td><code>pip-nusa-nozone</code> shows an empty zones column</td>
+<td>Expected: in a zone-enabled region it is zone-redundant anyway</td>
+<td>Re-read the explanation in Task 3</td>
+</tr>
+<tr>
+<td><code>verify.sh</code> says the resource group is missing after you changed <code>LOCATION</code></td>
+<td>The suffix or region in this shell differs from when you created things</td>
+<td><code>source ../common/config.sh</code> with the same <code>LOCATION</code> you used before</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li>Create a geo-redundant account (<code>--sku Standard_GRS</code>) in Southeast Asia, run the comparison query from Task 4 and look
+at the <strong>secondary</strong> column: it names the paired region. Delete the account afterwards.</li>
+<li>Try the same <code>Standard_GRS</code> command with <code>--location indonesiacentral</code>. What happens, and why? (Hint: GRS replicates
+to the paired region.)</li>
+<li>Price 100 GB of LRS, ZRS and GRS storage in the <a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">pricing calculator</a>
+for Southeast Asia and Indonesia Central, and note the differences between regions and redundancy options.</li>
+<li>If you have access to a second subscription, compare its logical-to-physical zone mapping with yours.</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build the following, any way you like (portal, CLI, Bicep), in a region <strong>with availability zones</strong>:</p>
+<ol>
+<li>A resource group <code>rg-lunch03-&lt;suffix&gt;</code> in your <code>LOCATION</code>, tagged <code>course=azure-fundamentals-lunches</code> and
+<code>lunch=03</code> (<code>ensure_rg</code> does this for you).</li>
+<li>A Standard, static public IPv4 address <code>pip-nusa-zonal</code> pinned to zone 1 only.</li>
+<li>A Standard, static public IPv4 address <code>pip-nusa-zr</code>, explicitly zone-redundant across zones 1, 2 and 3.</li>
+<li>Two StorageV2 accounts, <code>stnusalrs&lt;suffix&gt;</code> with <code>Standard_LRS</code> and <code>stnusazrs&lt;suffix&gt;</code> with <code>Standard_ZRS</code>, both
+with TLS 1.2 as the minimum version and anonymous blob access disabled.</li>
+<li>Not checked by the script: write down your region's geography, its paired region (if any) and your subscription's
+logical-to-physical zone mapping.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="02-cloud-concepts.html"><small>← Previous lab</small>02 · Make the business case</a><a class="next" href="04-resource-hierarchy-basic.html"><small>Next lab →</small>04 · Organise Nusantara Retail</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/03-global-infrastructure/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

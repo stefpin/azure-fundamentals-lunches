@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 13 · It Works on My Machine — Lunch 13: Containers (Basic): Container Registry, Container Instances and Container Apps · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 13 · Containers (Basic): Container Registry, Container Instances and Container Apps. The most expensive sentence in the office. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 13 · It Works on My Machine — Lunch 13: Containers (Basic): Container Registry, Container Instances and Container Apps">
+<meta property="og:description" content="Lunch 13 · Containers (Basic): Container Registry, Container Instances and Container Apps. The most expensive sentence in the office. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/lunches/13-containers-basic.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lunch" data-lunch="13" style="--c:#11935a">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 13</span> Season 1 · 🧩 Part 3 · Platform services &amp; data</div>
+      <h1>It Works on My Machine</h1>
+      <div class="lunch-title">Lunch 13 · Containers (Basic): Container Registry, Container Instances and Container Apps</div>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure architecture and services</span>
+        <span class="chip cost">🔬 Lab · about 45 minutes · 💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="02-cloud-concepts.html" title="Rent, Don&#x27;t Buy?">↩ 02</a><a class="chip" href="10-app-service.html" title="Dewi&#x27;s Friday Nights">↩ 10</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 12 · The 140-Column Table, the product catalogue lives in Cosmos DB, partitioned to scale for the 12.12 rush.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, calmer"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director's question · 48% ready</b>After this episode you can say: “Failures go unnoticed, and the same container runs identically everywhere.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today's menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-containers-in-one-picture">Containers in one picture</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-images-tags-and-azure-container-registry">Images, tags and Azure Container Registry</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-azure-container-instances-one-container-right-now">Azure Container Instances: one container, right now</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-azure-container-apps-serverless-apps-that-scale-to-zero">Azure Container Apps: serverless apps that scale to zero</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-choosing-where-your-container-runs">Choosing where your container runs</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-how-it-fits-together-for-nusantara-retail">How it fits together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/13-containers-basic.html">🔬 Open Lab 13</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today's menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span>Explain how a container differs from a virtual machine and why an image makes a deployment repeatable.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span>Describe images, tags, digests and registries, and choose an Azure Container Registry tier and sign-in method.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span>Explain how Azure Container Apps uses environments, revisions, ingress and scale rules, including scale to zero.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span>Choose between Azure Container Instances, Azure Container Apps, Azure Kubernetes Service and App Service for a given container workload.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 13</span>
+        <div class="story-body"><p>Dewi has rewritten the storefront's product pages, and on her laptop they fly. On the test server they crash: the
+server has an older Python runtime and is missing an image library. &quot;It works on my machine&quot; has become the most
+expensive sentence in the office. Pak Budi spends his evenings matching library versions by hand, and Rizky, the
+contractor, wants to &quot;just put everything in Kubernetes&quot;.</p>
+<p>Ibu Sari has a different worry. During the Harbolnas 12.12 sale, traffic jumps tenfold for a few hours; at three in the
+morning on a normal Tuesday almost nobody shops. She does not want to pay for sale-sized servers all year. There is also
+a nightly job that imports supplier prices for ten minutes and then sits idle for the rest of the day.</p>
+<p>Today you answer two questions. How do we package the storefront once so that it runs the same everywhere? And which
+Azure service should run that package, so that we pay for shoppers rather than for idle servers?</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-containers-in-one-picture" data-spy><span class="scene-no">Scene 1 of 6</span><h3>Containers in one picture</h3><div class="prose"><p>A <strong>container</strong> is a running process that carries its own application code, runtime and libraries, kept apart from
+every other process on the same machine. Unlike a virtual machine, a container does not bring its own operating system
+kernel. All containers on a host share the host's kernel, and the kernel itself fences them off: each container sees
+only its own files and processes and may use only the CPU and memory it was given.</p>
+<p>That one design choice explains almost every difference you will meet. A VM boots a whole operating system, so it takes
+minutes to start and its disk image is measured in gigabytes. A container starts a process, so it is ready in seconds,
+and its package is often tens or hundreds of megabytes. Many more containers than VMs fit on the same hardware, which is
+why cloud providers can rent you containers by the second.</p>
+<p>The package you ship is a <strong>container image</strong>: a read-only, layered file system plus a little metadata, such as the
+command to run and the default environment variables. You describe how to build it in a text file called a
+<strong>Dockerfile</strong>. Each instruction adds a <strong>layer</strong>, and layers are cached and shared, so a code change usually rebuilds
+and uploads only the thin top layer, not the runtime underneath.</p>
+<div class="code" data-lang="dockerfile"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>Dockerfile</span><button class="copy-btn" type="button">Copy</button></div><pre><code>FROM python:3.12-slim                  # base layer: OS libraries and the Python runtime
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt    # dependency layer, rebuilt only when requirements change
+COPY . .                               # your code: the layer that changes most often
+EXPOSE 8080                            # documents the port; it does not open anything by itself
+CMD [&quot;gunicorn&quot;, &quot;--bind&quot;, &quot;0.0.0.0:8080&quot;, &quot;app:app&quot;]
+</code></pre></div>
+<p>A handy way to remember the difference: the image is a sealed meal kit with every ingredient measured; a <strong>container</strong>
+is that kit cooked and served. Cook the same kit in a hundred kitchens and you get the same dish, which is exactly what
+Dewi needs. Her laptop, the test environment and production all run the same image, so &quot;works on my machine&quot; turns into
+&quot;works in the image&quot;.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  subgraph VMS[&quot;Virtual machines&quot;]
+    direction TB
+    A1[&quot;App A + libraries&quot;] --&gt; G1[&quot;Guest OS kernel&quot;]
+    A2[&quot;App B + libraries&quot;] --&gt; G2[&quot;Guest OS kernel&quot;]
+    G1 --&gt; HV[&quot;Hypervisor on the host&quot;]
+    G2 --&gt; HV
+  end
+  subgraph CTS[&quot;Containers&quot;]
+    direction TB
+    C1[&quot;Container A: app + libraries&quot;] --&gt; K[&quot;Shared host OS kernel&quot;]
+    C2[&quot;Container B: app + libraries&quot;] --&gt; K
+    C3[&quot;Container C: app + libraries&quot;] --&gt; K
+  end
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Virtual machine (Lunch 06)</th>
+<th>Container</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What is virtualized</td>
+<td>The hardware; every VM runs its own OS kernel</td>
+<td>The operating system; containers share the host kernel</td>
+</tr>
+<tr>
+<td>Typical start time</td>
+<td>Minutes</td>
+<td>Seconds</td>
+</tr>
+<tr>
+<td>Typical package size</td>
+<td>Gigabytes</td>
+<td>Megabytes to a few hundred megabytes</td>
+</tr>
+<tr>
+<td>How you update</td>
+<td>Patch the running guest OS and app in place</td>
+<td>Build a new image and replace the container</td>
+</tr>
+<tr>
+<td>Where state lives</td>
+<td>Often on the VM's disks</td>
+<td>Outside the container: a database, storage or a mounted volume</td>
+</tr>
+<tr>
+<td>Good for</td>
+<td>Lift-and-shift, full OS control, legacy software</td>
+<td>APIs, web front ends, microservices, short jobs</td>
+</tr>
+</tbody>
+</table></div>
+<p>Two habits follow. First, treat containers as disposable: never &quot;fix&quot; a running container by hand, because the next
+replacement will not have your fix. Change the image instead. Second, keep data outside the container, in Azure SQL,
+Azure Cosmos DB or Azure Storage (Lunches 07, 11 and 12), so that losing a container never loses an order.</p>
+</div></article><article class="scene-card" id="2-images-tags-and-azure-container-registry" data-spy><span class="scene-no">Scene 2 of 6</span><h3>Images, tags and Azure Container Registry</h3><div class="prose"><p>A <strong>registry</strong> stores and serves images. Inside it, a <strong>repository</strong> holds the versions of one image (for example
+<code>storefront</code>), and each version carries one or more <strong>tags</strong> such as <code>v1</code> or <code>2026.10.23</code>. Every image also has a
+<strong>digest</strong>, a SHA-256 hash of its content. A tag is a movable label; a digest never changes. A full image reference
+reads like an address: <code>acrnusa12345.azurecr.io/storefront:v1</code> means login server, repository and tag.</p>
+<p>Public registries hold images that anyone can pull: Docker Hub, GitHub Container Registry and Microsoft Artifact
+Registry (<code>mcr.microsoft.com</code>), where Microsoft publishes its own images, including the sample web app you will use in
+the lab. Your own images belong in a private registry. <strong>Azure Container Registry (ACR)</strong> is Azure's managed private
+registry: it lives in your subscription and your region, close to the services that pull from it, and it stores
+container images, Helm charts and other OCI artifacts behind Microsoft Entra ID sign-in.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Included storage</th>
+<th>What stands out</th>
+<th>Use it when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Basic</td>
+<td>10 GiB</td>
+<td>Same APIs and Entra ID sign-in as the other tiers; lowest throughput</td>
+<td>Learning, labs, small teams</td>
+</tr>
+<tr>
+<td>Standard</td>
+<td>100 GiB</td>
+<td>More storage and throughput, anonymous pull, artifact cache rules</td>
+<td>Most production workloads</td>
+</tr>
+<tr>
+<td>Premium</td>
+<td>500 GiB</td>
+<td>Geo-replication, private endpoints, customer-managed keys, network rules, connected registries</td>
+<td>Several regions, private networks, regulated data</td>
+</tr>
+</tbody>
+</table></div>
+<p>All three tiers are zone redundant by default in regions with availability zones, and you can change tier later
+without downtime (moving down from Premium means removing Premium-only features first). Storage beyond the included
+amount is charged per GiB, so delete old tags you no longer need.</p>
+<p>There are three ways to get an image into ACR:</p>
+<ul>
+<li><strong>Push</strong> an image you built locally with Docker: <code>az acr login</code>, then <code>docker push</code>.</li>
+<li><strong>Import</strong> an image from another registry with <code>az acr import</code>. The copy happens inside Azure, so you need no Docker
+at all. This is what the lab does.</li>
+<li><strong>Build in the cloud</strong> with <strong>ACR Tasks</strong>: <code>az acr build</code> uploads your source folder and builds the image in Azure.
+Tasks can also rebuild automatically when you commit to Git or when a base image gets a security patch.</li>
+</ul>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>At the time of writing (October 2026), ACR Tasks runs are paused for subscriptions that use Azure free credits; a
+build fails with <code>TasksOperationsNotAllowed</code>. That is why the lab imports a public image and keeps the cloud build
+as an optional extra. Check the ACR Tasks documentation for the current status.</p>
+</aside>
+<p>Who may pull? People sign in with Entra ID (<code>az acr login</code>). Azure services should use a <strong>managed identity</strong> that holds
+the <strong>AcrPull</strong> role on the registry, so no password exists anywhere. ACR also has an <strong>admin user</strong>, a single shared
+username and password; it is off by default and should stay off outside quick experiments. A newer
+role-assignment mode, &quot;RBAC Registry + ABAC Repository Permissions&quot;, lets you scope access to individual repositories.
+Microsoft says it will become the default; in that mode the legacy AcrPull role is ignored and you assign Container
+Registry Repository Reader instead.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  DEV[&quot;Dewi: Dockerfile + code&quot;] --&gt;|&quot;docker build or az acr build&quot;| IMG[&quot;Image storefront:v1&quot;]
+  IMG --&gt;|&quot;push or az acr import&quot;| ACR[(&quot;Azure Container Registry&quot;)]
+  ACR --&gt;|&quot;pull with a managed identity&quot;| ACI[&quot;Container Instances&quot;]
+  ACR --&gt;|&quot;pull with a managed identity&quot;| ACA[&quot;Container Apps&quot;]
+  ACR --&gt;|&quot;pull with the kubelet identity&quot;| AKS[&quot;AKS - Lunch 29&quot;]
+  ACR --&gt;|&quot;pull with a managed identity&quot;| APP[&quot;App Service&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>A word about the <code>latest</code> tag: it is only a default name, not a promise that the image is the newest. Deploy explicit
+tags such as <code>v1</code> or a date, so you always know what is running and can roll back to the previous tag in seconds.</p>
+</div></article><article class="scene-card" id="3-azure-container-instances-one-container-right-now" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Azure Container Instances: one container, right now</h3><div class="prose"><p><strong>Azure Container Instances (ACI)</strong> is the shortest path from an image to a running container. You name the image, the
+CPU cores and memory, the ports and, optionally, a <strong>DNS name label</strong>. Seconds later the container answers at
+<code>label.region.azurecontainer.io</code>. You never see a VM or a cluster, and you pay per second for the CPU and memory
+allocated while it runs.</p>
+<p>The unit you deploy is a <strong>container group</strong>: one or more containers on the same host that share a network, storage
+volumes and a lifecycle, much like a pod in Kubernetes. Multi-container groups are available for Linux containers; a
+typical pair is an app plus a small log-shipping helper. Each group is isolated at the hypervisor level, so a neighbour
+on the same hardware cannot see into it.</p>
+<p>A <strong>restart policy</strong> tells ACI what to do when the process ends. <code>Always</code>, the default, suits web servers. <code>OnFailure</code>
+retries only after errors. <code>Never</code> suits run-to-completion work, such as Nusantara Retail's nightly price import: the
+job runs for ten minutes, exits, and the meter stops.</p>
+<p>Day-to-day operations stay small too. <code>az container logs</code> shows what the process printed, <code>az container attach</code> streams
+that output live, and <code>az container exec</code> opens a shell inside a running container when you need to look around. You
+pass settings as environment variables, mark sensitive ones as secure so they are hidden from the resource's
+properties, and mount an Azure Files share when the container needs files that outlive it. Two limits catch people
+out: ACI runs x64 (AMD64) images only, so an image built only for ARM on a laptop will not start, and a very large
+image slows every start because it must be pulled first.</p>
+<p>ACI is deliberately simple, and that simplicity is also its limit. It does not autoscale, it does not load-balance
+across copies, and it has no revisions or managed certificates; to run five copies you create five container groups.
+A group's public IP address can change after a restart, so always use the DNS name. To pull from a private ACR, ACI
+needs a user-assigned managed identity with AcrPull; it cannot use a system-assigned identity for image pulls.</p>
+<p>Newer options build on the same engine: <strong>Spot containers</strong> run interruptible work at a discount, <strong>confidential
+containers</strong> protect data while it is in memory, <strong>NGroups</strong> keep a set of related container groups running with
+rolling upgrades across zones, and <strong>virtual nodes</strong> let an AKS cluster burst pods into ACI. For Nusantara Retail, ACI
+fits the price import, a quick test of a vendor's image, or a short-lived build agent.</p>
+</div></article><article class="scene-card" id="4-azure-container-apps-serverless-apps-that-scale-to-zero" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Azure Container Apps: serverless apps that scale to zero</h3><div class="prose"><p><strong>Azure Container Apps</strong> runs web apps, APIs, background workers and jobs from container images on a serverless
+platform. Under the hood it uses Kubernetes and open-source projects (KEDA for event-driven scaling, Envoy for ingress
+and Dapr for microservice building blocks), but it never asks you to manage, upgrade or even see the Kubernetes API.</p>
+<p>Four building blocks matter:</p>
+<ul>
+<li>An <strong>environment</strong> is a secure boundary around a group of apps. Apps in one environment share a virtual network and
+a Log Analytics workspace and can call each other by name. The default type is a <strong>workload profiles environment</strong>,
+which offers the serverless <strong>Consumption</strong> profile plus optional <strong>Dedicated</strong> profiles with reserved hardware.</li>
+<li>A <strong>container app</strong> is your application. Its configuration (ingress, secrets, registry sign-in, revision mode)
+applies to the whole app.</li>
+<li>A <strong>revision</strong> is an immutable snapshot of the app's template: image, environment variables, CPU and memory, and scale
+rules. Changing anything in the template creates a new revision; changing ingress, secrets or the traffic split does
+not.</li>
+<li>A <strong>replica</strong> is one running copy of a revision. Replicas come and go as load changes.</li>
+</ul>
+<p><strong>Ingress</strong> publishes the app. External ingress gives it a public HTTPS address on <code>azurecontainerapps.io</code>, with the
+certificate handled for you; internal ingress keeps it reachable only inside the environment or your virtual network.
+You also declare the <strong>target port</strong>: the port your process listens on inside the container.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>The most common first-deployment mistake is a wrong target port. If the image listens on 80 and you set 8080, the
+platform cannot reach your app: the revision never becomes healthy and every request fails. <code>EXPOSE</code> in a Dockerfile
+is documentation only, so check the image's documentation and set the target port to match.</p>
+</aside>
+<p>Each revision scales between a minimum and a maximum number of replicas, by default 0 and 10 (at the time of writing
+you can configure up to 1,000). <strong>Scale rules</strong> decide when to add replicas: an <strong>HTTP rule</strong> watches concurrent
+requests per replica (10 by default), a TCP rule watches connections, and a custom rule can use any KEDA scaler, such as
+Service Bus queue length. The arithmetic is simple: 45 concurrent requests with a target of 10 gives
+ceil(45 ÷ 10) = 5 replicas, capped at your maximum.</p>
+<p>With a minimum of zero, a quiet app scales to zero after a cool-down (300 seconds by default) and costs nothing for
+compute while it sleeps. The trade-off is a <strong>cold start</strong>: the first request after a quiet spell waits a few seconds
+while a replica starts. Production apps that must answer instantly set a minimum of one or two; replicas that sit idle
+at that minimum are billed at a reduced idle rate.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph ENV[&quot;Container Apps environment&quot;]
+    ING[&quot;Ingress (Envoy)&quot;] --&gt;|&quot;80% of requests&quot;| R1[&quot;Revision v1&quot;]
+    ING --&gt;|&quot;20% of requests&quot;| R2[&quot;Revision v2&quot;]
+    R1 --&gt; P1((&quot;replica&quot;))
+    R1 --&gt; P2((&quot;replica&quot;))
+    R2 --&gt; P3((&quot;replica&quot;))
+  end
+  USERS[&quot;Shoppers&quot;] --&gt;|HTTPS| ING
+  KEDA[&quot;KEDA scale rules&quot;] -.-&gt;|&quot;add or remove replicas&quot;| R1
+  KEDA -.-&gt; R2
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>The <strong>revision mode</strong> controls releases. In <strong>single</strong> mode (the default) a new revision takes over once it is ready,
+which gives zero-downtime updates. In <strong>multiple</strong> mode several revisions stay active and you split traffic by
+percentage, for example 80% on the proven v1 and 20% on the new v2 (a canary release), then move to 100% when you are
+confident. A labels mode, in preview at the time of writing, adds named labels such as <code>staging</code>.</p>
+<p>Two more features are worth knowing by name. <strong>Dapr</strong> is an optional sidecar that gives your code standard APIs for
+service-to-service calls, publish and subscribe messaging and state, so the code is not tied to one message broker.
+<strong>Jobs</strong> run containers to completion on demand, on a schedule or when events arrive, which makes them a second option
+for the nightly price import.</p>
+<p>On the Consumption plan you pay per second for the vCPU and memory your replicas use, plus a small charge per million
+requests. Each subscription gets a monthly free grant (at the time of writing, 180,000 vCPU-seconds, 360,000 GiB-seconds
+and 2 million requests), which is why the lab costs next to nothing.</p>
+</div></article><article class="scene-card" id="5-choosing-where-your-container-runs" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Choosing where your container runs</h3><div class="prose"><p>The same image can run on four different Azure services. The difference is how much platform you get, and how much
+platform you have to look after.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Container Instances</th>
+<th>Container Apps</th>
+<th>Azure Kubernetes Service</th>
+<th>App Service (Web App for Containers)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mental model</td>
+<td>One container group, on demand</td>
+<td>Serverless apps and jobs</td>
+<td>Your own managed Kubernetes cluster</td>
+<td>Managed web hosting that runs your image</td>
+</tr>
+<tr>
+<td>You look after</td>
+<td>Each container group</td>
+<td>Apps, revisions and scale rules</td>
+<td>Nodes, upgrades, add-ons and Kubernetes objects (less with AKS Automatic)</td>
+<td>The App Service plan and app settings</td>
+</tr>
+<tr>
+<td>Scaling</td>
+<td>None built in; create more groups</td>
+<td>Automatic by HTTP, TCP or events, down to zero</td>
+<td>Pod and node autoscalers you configure</td>
+<td>Manual or autoscale of the plan; no scale to zero</td>
+</tr>
+<tr>
+<td>You pay for</td>
+<td>Per second of vCPU and memory</td>
+<td>Per second of use plus requests (free grant), or Dedicated profiles</td>
+<td>The node VMs, plus a fee on the Standard and Premium tiers</td>
+<td>Plan instances, whether busy or idle</td>
+</tr>
+<tr>
+<td>Kubernetes API</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Best for</td>
+<td>Jobs, quick tests, build agents, burst capacity</td>
+<td>Microservices, APIs, event-driven workers, apps that idle</td>
+<td>Platform teams, Helm charts and operators, fine-grained control</td>
+<td>Classic web apps that want deployment slots and built-in sign-in</td>
+</tr>
+</tbody>
+</table></div>
+<p>Read the table from left to right as &quot;more control, more responsibility&quot;. Start with the simplest service that meets
+the requirement. For most of Nusantara Retail's new container workloads, that is Container Apps.</p>
+<p>Move to <strong>AKS</strong> (Lunch 29) when you need the Kubernetes API itself: a vendor ships its software as a Helm chart with
+custom operators, you need agents on every node (DaemonSets), you want precise control over node hardware or a service
+mesh, or a platform team will run many applications for many teams on one shared cluster. Choose <strong>App Service</strong> (Lunch
+10) when the app is a classic website and you value deployment slots, built-in authentication and custom domains more
+than container-level control; the container is then simply your packaging format. Event-driven functions can also run
+in containers, which Lunch 14 covers.</p>
+</div></article><article class="scene-card" id="6-how-it-fits-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>How it fits together for Nusantara Retail</h3><div class="prose"><p>Here is the plan you take back to Ibu Sari:</p>
+<ul>
+<li><strong>One registry.</strong> An ACR named <code>acrnusa…</code> holds every image. The labs use Basic; production starts on Standard and
+moves to Premium only if the team needs private endpoints or a second region. Images get explicit version tags,
+services pull with managed identities, and the admin user stays off.</li>
+<li><strong>The storefront on Container Apps.</strong> External ingress on the right target port, an HTTP scale rule and a maximum
+sized for the 12.12 sale. The test environment keeps a minimum of zero to save money; production keeps a minimum of
+one or two, accepting a small idle charge so that the first shopper of the morning never waits.</li>
+<li><strong>Safer releases.</strong> Multiple revision mode lets Dewi send 20% of shoppers to a new version, watch the error rate, and
+then move to 100%, or back to 0% in seconds.</li>
+<li><strong>The nightly price import.</strong> A scheduled Container Apps job, or ACI with the <code>Never</code> restart policy. Either way it
+bills for ten minutes, not twenty-four hours.</li>
+<li><strong>Data stays outside.</strong> Orders stay in Azure SQL and the catalogue in Cosmos DB; secrets move to Key Vault in
+Lunch 15. Containers can be replaced at any moment without losing anything.</li>
+</ul>
+<p>Data residency still applies. Production would run in Indonesia Central (Jakarta), while the labs use Southeast Asia for
+the broadest service availability. Before you commit, check that each service and feature you need is offered in your
+chosen region.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>The storefront app has a minimum of zero replicas. At 07:00 a push notification brings
+2,000 shoppers in one minute. What happens to the first few requests, which single setting would you change for
+production, and what does that change cost?</p>
+</aside>
+<p>➡️ <strong>Going deeper:</strong> <a href="29-containers-advanced-aks.html">Lunch 29 · Containers (Advanced): Azure Kubernetes Service</a>
+takes the same images onto a full Kubernetes cluster.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Build once, run anywhere, scale to zero</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../demos/13-containers-basic.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../demos/13-containers-basic.html" title="Interactive demo: Build once, run anywhere, scale to zero" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/13-containers-basic/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>The same image travels from Dewi's laptop to the registry and on to two different services without changing.</li>
+<li>The replica counter goes 0 → 1 → 5 → 0 as shoppers arrive and leave, and the first request pays the cold start.</li>
+<li>The 80/20 split needs two active revisions, while a wrong target port breaks every revision at once.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>A vendor's price-import container runs for about ten minutes every night and then exits. Which service is the
+simplest fit, and which setting makes it stop billing when the work is done?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Azure Container Instances with the restart policy <code>Never</code> (a scheduled Container Apps job also works). ACI bills per
+second while the container group runs, so a ten-minute job costs ten minutes.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>You deploy a container app with target port 80, but the image's web server listens on port 8080. What do you see,
+and how do you fix it?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The revision never becomes healthy and requests fail, because ingress forwards to a port where nothing listens. Set
+the ingress target port to 8080; the target port must match the port the process listens on.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Ibu Sari asks what the storefront container app costs at 03:00 when nobody is shopping. Its minimum is zero replicas.
+What do you tell her?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>With no requests the revision scales to zero replicas, and on the Consumption plan zero replicas incur no compute
+charges. The trade-off is a cold start of a few seconds for the first shopper after the quiet spell.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Nusantara Retail wants its registry reachable only through a private endpoint and replicated to a second region.
+Which ACR tier does it need?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Premium. Private endpoints and geo-replication are Premium-only features; Basic and Standard offer neither.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Dewi switches the storefront to multiple revision mode and deploys v2. A minute later every shopper sees v2, not 20%
+of them. Why, and what should she do next time?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The traffic rule still sent 100% to the latest revision, and v2 became the latest. Pin 100% of traffic to v1 before
+deploying v2, test v2 on its own revision URL, then set the 80/20 split.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>A container image packages the app and its dependencies in immutable layers; build once, run the same image everywhere, and deploy explicit tags rather than <code>latest</code>.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Azure Container Registry is your private registry: Basic for learning, Standard for most production, Premium for geo-replication and private endpoints. Services pull with managed identities, and the admin user stays off.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>Azure Container Instances runs a container group in seconds with per-second billing, but with no autoscaling or load balancing; it is ideal for jobs and quick tests.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Azure Container Apps adds environments, immutable revisions, HTTPS ingress, scale rules down to zero and traffic splitting, with no Kubernetes to manage. Get the target port right.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Pick the least platform that meets the need: Container Instances, then Container Apps, then AKS for the full Kubernetes API; App Service when it is simply a website.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>13</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Package the storefront</h3>
+          <div class="prose"><p>You will create a private registry and import a sample web image into it, run that image in seconds on Container
+Instances, and then deploy it to Container Apps, pulling from your registry with a managed identity rather than a
+password. You will push enough traffic to watch replicas scale from zero to five and back, release a second revision to
+20% of requests, and fix a broken target port. It is everything Nusantara Retail needs to stop saying &quot;works on my
+machine&quot;.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 45 minutes</span><span class="chip cost">💲 free or close to free</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/13-containers-basic.html">Start Lab 13 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/container-apps/compare-options" target="_blank" rel="noopener"><b>Microsoft Learn: Comparing Container Apps with other Azure container options</b><span>Microsoft's own guidance on when to pick each service.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/container-apps/scale-app" target="_blank" rel="noopener"><b>Microsoft Learn: Set scaling rules in Azure Container Apps</b><span>Every rule type, the defaults and how scaling decisions are made.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/container-registry/container-registry-skus" target="_blank" rel="noopener"><b>Microsoft Learn: Azure Container Registry SKU features and limits</b><span>The current tier table, limits and how to change tier.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/container-instances/container-instances-overview" target="_blank" rel="noopener"><b>Microsoft Learn: What is Azure Container Instances?</b><span>Container groups, Spot and confidential containers, NGroups and virtual nodes.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">📦</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Ship It</h2>
+        <p class="muted">Package and run containers on Azure.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“Failures go unnoticed, and the same container runs identically everywhere.”</b></p>
+        <div class="teaser"><b>Next episode · 14</b><h4>When the Courier API Slows Down</h4><p>One slow partner shouldn&#x27;t slow down every checkout.</p><p style="margin-top:10px"><a href="14-serverless.html">Watch Episode 14 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="12-cosmos-db.html"><small>← Previous episode</small>12 · The 140-Column Table</a><a class="next" href="14-serverless.html"><small>Next episode →</small>14 · When the Courier API Slows Down</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/13-containers-basic/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

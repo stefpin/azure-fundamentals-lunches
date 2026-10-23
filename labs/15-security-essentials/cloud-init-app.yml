@@ -1,0 +1,26 @@
+#cloud-config
+# -----------------------------------------------------------------------------
+# Lab 15 · the "before" state of Nusantara Retail's storefront app server.
+# The orders database password sits in plain text in /etc/nusa/appsettings.json,
+# readable by every user on the machine. That is the problem the lab fixes.
+#
+# The password is a throwaway value generated at first boot: it is not stored in
+# this repository, and there is no real database behind it in this lab.
+# Works without outbound internet access (private subnets are fine).
+# -----------------------------------------------------------------------------
+runcmd:
+  - |
+    mkdir -p /etc/nusa
+    PW=$(openssl rand -base64 18)
+    cat > /etc/nusa/appsettings.json <<EOF
+    {
+      "Storefront": {
+        "Name": "Nusantara Retail storefront",
+        "Environment": "lab"
+      },
+      "ConnectionStrings": {
+        "Orders": "Server=tcp:sql-nusa-orders.database.windows.net,1433;Database=orders;User ID=storefront;Password=${PW};Encrypt=True;"
+      }
+    }
+    EOF
+    chmod 644 /etc/nusa/appsettings.json

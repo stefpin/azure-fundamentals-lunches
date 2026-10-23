@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 31 · Governance for the whole company · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 31: Governance for the whole company. about 60 minutes, including 15–25 minutes of waiting for Azure Policy, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 31 · Governance for the whole company">
+<meta property="og:description" content="Hands-on Azure lab 31: Governance for the whole company. about 60 minutes, including 15–25 minutes of waiting for Azure Policy, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/31-governance-at-scale.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="31" style="--c:#7b4ff0">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 31</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>31</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Governance for the whole company</h1>
+        <p class="lab-story">🏪 <b>Episode 31 · Seven Subscriptions and a Merger</b> — Guardrails that protect one subscription won&#x27;t survive a merger. <a href="../lunches/31-governance-at-scale.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 60 minutes, including 15–25 minutes of waiting for Azure Policy</span>
+          <span class="chip cost">💲 free or close to free</span>
+          <span class="chip">Difficulty ★★★</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 11 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--look-at-the-starting-point-and-find-the-built-ins">Task 1 · Look at the starting point and find the built-ins</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--build-the-management-group-hierarchy">Task 2 · Build the management group hierarchy</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--optional-path-b-move-your-lab-subscription-into-corp">Task 3 · (Optional, Path B) Move your lab subscription into Corp</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--create-the-initiative-from-policy-as-code-files">Task 4 · Create the initiative from policy-as-code files</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--assign-the-initiative--safely">Task 5 · Assign the initiative — safely</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--remediate-the-corp-resource-group">Task 6 · Remediate the corp resource group</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--grant-the-sandbox-a-time-boxed-waiver">Task 7 · Grant the sandbox a time-boxed Waiver</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-8--read-compliance-at-scale-with-resource-graph">Task 8 · Read compliance at scale with Resource Graph</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-9--export-the-governance-as-code">Task 9 · Export the governance as code</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/.gitignore" target="_blank" rel="noopener"><span>.gitignore</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/lab-vars.sh" target="_blank" rel="noopener"><span>lab-vars.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/policy/nusa-baseline/policyset.definitions.json" target="_blank" rel="noopener"><span>policy/nusa-baseline/policyset.definitions.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/policy/nusa-baseline/policyset.parameters.json" target="_blank" rel="noopener"><span>policy/nusa-baseline/policyset.parameters.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/policy/scope-test/policy.rules.json" target="_blank" rel="noopener"><span>policy/scope-test/policy.rules.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>15 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>7 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/31-governance-at-scale" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Ibu Sari wants the same rules in every subscription Nusantara Retail will ever own. You will build a miniature Azure
+landing zone hierarchy of <strong>management groups</strong>, write a custom <strong>initiative</strong> as code (allowed locations, a required
+<code>costCenter</code> tag and the same tag inherited from the resource group), assign it the safe way — <strong>DoNotEnforce</strong> first,
+with a <strong>managed identity</strong> — fix existing resources with a <strong>remediation task</strong>, give Dewi's sandbox experiment a
+time-boxed <strong>Waiver</strong>, read compliance across scopes with <strong>Azure Resource Graph</strong>, and export everything as
+policy-as-code files. Moving your subscription into the hierarchy is optional (Path B) and fully reversible.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  root[&quot;Tenant root group&quot;] --&gt; nusa[&quot;mg-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;intermediate root&lt;br/&gt;(Path B: initiative saved here)&quot;]
+  nusa --&gt; plat[&quot;mg-nusa-platform-&amp;lt;suffix&amp;gt;&quot;]
+  nusa --&gt; lz[&quot;mg-nusa-landingzones-&amp;lt;suffix&amp;gt;&lt;br/&gt;(Path B: assigned here)&quot;]
+  lz --&gt; corp[&quot;mg-nusa-corp-&amp;lt;suffix&amp;gt;&quot;]
+  corp -. &quot;Path B only: Task 3&quot; .-&gt; sub([&quot;your subscription&lt;br/&gt;(Path A: initiative saved and assigned here)&quot;])
+  sub --&gt; rgc[&quot;rg-lunch31-corp-&amp;lt;suffix&amp;gt;&lt;br/&gt;costCenter=CC-2001&lt;br/&gt;remediation fixes 2 legacy resources&quot;]
+  sub --&gt; rgs[&quot;rg-lunch31-sandbox-&amp;lt;suffix&amp;gt;&lt;br/&gt;experiment outside the allowed region&lt;br/&gt;Waiver exemption, 30 days&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li><strong>Your own tenant.</strong> Management groups are tenant-wide objects. Do this lab only in a Microsoft Entra tenant you
+control — for example the one created with your free account — in a subscription where you are <strong>Owner</strong>. Never run
+it in your employer's tenant, and never move a company subscription. If your organisation gave you a sandbox tenant
+for learning, check with its administrators first.</li>
+<li>In a new tenant, any user can create management groups. If your tenant's hierarchy settings require authorization,
+Task 2 fails with <code>AuthorizationFailed</code> — use another tenant.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install.</li>
+<li>Get the lab files and load the shared settings plus this lab's names:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/31-governance-at-scale
+source ../common/config.sh
+source lab-vars.sh        # resource groups, management group names, policy names, Path A/B
+echo &quot;Path $LAB31_PATH | corp RG: $CORP_RG | sandbox RG: $SANDBOX_RG | intermediate root: $MG_ROOT&quot;
+</code></pre></div>
+<ul>
+<li>Create the starting point — two resource groups with untagged &quot;legacy&quot; resources (about 2–3 minutes). The script
+shows your tenant and subscription and asks you to confirm that they are yours:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>The lab costs almost nothing (an empty storage account and two network security groups), but it creates objects
+<strong>outside</strong> resource groups: management groups, an initiative, a policy assignment, an exemption and a role
+assignment. Always finish with the <strong>Clean up</strong> section — <code>cleanup.sh</code> removes all of them, in the right order, and
+moves your subscription back if you moved it.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Cloud Shell forgets your variables when it times out. Go back to the lab folder and run
+<code>source ../common/config.sh &amp;&amp; source lab-vars.sh</code> again. Do the same after Task 3: the variables then switch to Path B.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–9 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Both modes work on one of two paths. Choose before Task 3:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Path A (default)</th>
+<th>Path B (optional)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Your subscription</td>
+<td>stays where it is</td>
+<td>moves into <code>mg-nusa-corp-&lt;suffix&gt;</code> in Task 3</td>
+</tr>
+<tr>
+<td>Initiative saved at</td>
+<td>your subscription</td>
+<td>the intermediate root <code>mg-nusa-&lt;suffix&gt;</code></td>
+</tr>
+<tr>
+<td>Initiative assigned at</td>
+<td>your subscription</td>
+<td><code>mg-nusa-landingzones-&lt;suffix&gt;</code> — your subscription inherits it</td>
+</tr>
+<tr>
+<td>What you learn</td>
+<td>everything except real inheritance through management groups</td>
+<td>the full landing-zone pattern: save high, assign at landing zones, inherit downwards</td>
+</tr>
+<tr>
+<td>You need</td>
+<td>Owner on the subscription</td>
+<td>Owner on the subscription, in a tenant you own</td>
+</tr>
+<tr>
+<td>Undo</td>
+<td>nothing to undo</td>
+<td><code>cleanup.sh</code> moves the subscription back to its original parent</td>
+</tr>
+</tbody>
+</table></div>
+<p>Why the difference? A definition can only be assigned at or below the scope where it is saved. While your subscription
+sits outside <code>mg-nusa-&lt;suffix&gt;</code>, an initiative saved in that management group cannot reach it, so Path A saves the
+initiative in the subscription itself.</p>
+</div></section><section class="lab-section" id="task-1--look-at-the-starting-point-and-find-the-built-ins" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Look at the starting point and find the built-ins</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--look-at-the-starting-point-and-find-the-built-ins" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Start by seeing what you are about to govern, and find the three built-in definitions the initiative will reuse.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>for rg in &quot;$CORP_RG&quot; &quot;$SANDBOX_RG&quot;; do
+  echo &quot;== $rg  (resource group costCenter: $(az group show --name &quot;$rg&quot; --query tags.costCenter --output tsv))&quot;
+  az resource list --resource-group &quot;$rg&quot; \
+    --query &quot;[].{name:name, type:type, location:location, costCenter:tags.costCenter}&quot; --output table
+done
+
+lookup_builtin_ids     # from lab-vars.sh: looks the definitions up by display name, never by GUID
+printf &#x27;%s\n&#x27; &quot;$ALLOWED_LOCATIONS_ID&quot; &quot;$REQUIRE_TAG_ID&quot; &quot;$INHERIT_TAG_ID&quot;
+</code></pre></div>
+<p>The corp group carries <code>costCenter=CC-2001</code>, but its storage account and network security group do not. The sandbox
+group has no tag at all, and its network security group sits in <code>$SECONDARY_LOCATION</code> — outside the region the
+baseline will allow.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> three legacy resources with an empty <code>costCenter</code> column, and three IDs that start with
+<code>/providers/Microsoft.Authorization/policyDefinitions/</code>. If an ID is empty, run <code>lookup_builtin_ids</code> again.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--build-the-management-group-hierarchy" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Build the management group hierarchy</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--build-the-management-group-hierarchy" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>You will create the smallest piece of the Azure landing zone hierarchy that still shows the pattern: an intermediate
+root under the tenant root group, a Platform group, a Landing zones group and Corp below it.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az account management-group create --name &quot;$MG_ROOT&quot; --display-name &quot;Nusantara Retail (lab $SUFFIX)&quot;
+az account management-group create --name &quot;$MG_PLATFORM&quot; --display-name &quot;Platform&quot; --parent &quot;$MG_ROOT&quot;
+az account management-group create --name &quot;$MG_LZ&quot; --display-name &quot;Landing zones&quot; --parent &quot;$MG_ROOT&quot;
+az account management-group create --name &quot;$MG_CORP&quot; --display-name &quot;Corp&quot; --parent &quot;$MG_LZ&quot;
+</code></pre></div>
+<p>A few things worth knowing while the commands run:</p>
+<ul>
+<li>The <code>--name</code> is the management group's <strong>ID</strong>. It can never change; the display name can. That is why the lab adds
+your suffix to every ID.</li>
+<li>The very first management group in a tenant can take up to 15 minutes to appear. If a child fails with &quot;not found&quot;,
+wait a minute and run that line again.</li>
+<li>You become <strong>Owner</strong> of every management group you create, which is what lets you save and assign policies there.</li>
+<li>A real landing zone has more groups (Security, Management, Connectivity and Identity under Platform; Online and Local
+next to Corp; Sandboxes; Decommissioned). Lunch 31 explains each one.</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>for mg in &quot;$MG_ROOT&quot; &quot;$MG_PLATFORM&quot; &quot;$MG_LZ&quot; &quot;$MG_CORP&quot;; do
+  echo &quot;$mg  -&gt;  parent: $(mg_parent &quot;$mg&quot;)&quot;
+done
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Portal path: <em>Home › Management groups › + Create</em>. Then select <strong>Tenant root group</strong> and
+expand the tree to see your four groups — the portal shows the hierarchy better than any command.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the intermediate root's parent is your tenant ID (the tenant root group); platform and landing
+zones point to <code>mg-nusa-&lt;suffix&gt;</code>; corp points to <code>mg-nusa-landingzones-&lt;suffix&gt;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--optional-path-b-move-your-lab-subscription-into-corp" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">(Optional, Path B) Move your lab subscription into Corp</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--optional-path-b-move-your-lab-subscription-into-corp" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Skip this task for Path A. For Path B, read this first.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>Moving a subscription changes which policies and role assignments apply to <strong>everything in it</strong>, and Azure can take up
+to 30 minutes to reflect the new hierarchy everywhere. Do it only with your own lab subscription in your own tenant.
+In a personal tenant the subscription normally sits directly under the tenant root group, so moving it out and back
+needs no extra permissions.</p>
+</aside>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code># 1. Where does the subscription live now? (The tenant root group&#x27;s ID is your tenant ID.)
+ORIGINAL_PARENT=$(az graph query --graph-query &quot;resourcecontainers
+  | where type =~ &#x27;microsoft.resources/subscriptions&#x27; and subscriptionId == &#x27;$SUB_ID&#x27;
+  | project parent = tostring(properties.managementGroupAncestorsChain[0].name)&quot; \
+  --query &quot;data[0].parent&quot; --output tsv)
+echo &quot;Current parent: ${ORIGINAL_PARENT:-$TENANT_ID}&quot;
+
+# 2. Move it into Corp
+az account management-group subscription add --name &quot;$MG_CORP&quot; --subscription &quot;$SUB_ID&quot;
+
+# 3. Remember the original parent for cleanup.sh, then reload the lab variables (they switch to Path B)
+echo &quot;${ORIGINAL_PARENT:-$TENANT_ID}&quot; &gt; &quot;$LAB31_STATE_FILE&quot;
+source lab-vars.sh &amp;&amp; echo &quot;Path $LAB31_PATH: assign at $ASSIGN_SCOPE&quot;
+</code></pre></div>
+<p>If <code>az graph</code> asks to install the <code>resource-graph</code> extension, answer yes (<code>setup.sh</code> normally installed it already).</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>az account management-group subscription show --name &quot;$MG_CORP&quot; --subscription &quot;$SUB_ID&quot; --query displayName --output tsv</code>
+prints your subscription's name, and <code>echo $LAB31_PATH</code> prints <code>B</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-4--create-the-initiative-from-policy-as-code-files" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Create the initiative from policy-as-code files</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--create-the-initiative-from-policy-as-code-files" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Open the two files in <code>policy/nusa-baseline/</code>. They follow the layout from Microsoft's policy-as-code guidance:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>cat policy/nusa-baseline/policyset.definitions.json   # the three member policies
+cat policy/nusa-baseline/policyset.parameters.json    # the initiative&#x27;s own parameters
+</code></pre></div>
+<p>Each member has a short <strong>reference ID</strong> (<code>allowedLocations</code>, <code>requireCostCenterTag</code>, <code>inheritCostCenterTag</code>) and passes
+an initiative parameter through to the policy — <code>[parameters('allowedLocations')]</code> becomes the built-in's
+<code>listOfAllowedLocations</code>. The definition IDs are placeholders, because the course never hard-codes GUIDs: render them
+with the IDs you looked up in Task 1, then create the initiative.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>mkdir -p generated
+sed -e &quot;s#__ALLOWED_LOCATIONS_ID__#${ALLOWED_LOCATIONS_ID}#&quot; \
+    -e &quot;s#__REQUIRE_TAG_ID__#${REQUIRE_TAG_ID}#&quot; \
+    -e &quot;s#__INHERIT_TAG_ID__#${INHERIT_TAG_ID}#&quot; \
+    policy/nusa-baseline/policyset.definitions.json &gt; generated/policyset.definitions.json
+
+az policy set-definition create --name &quot;$INITIATIVE&quot; $INITIATIVE_SCOPE_FLAG \
+  --display-name &quot;Nusantara baseline&quot; \
+  --description &quot;Allowed locations, a required costCenter tag, and the costCenter tag inherited from the resource group.&quot; \
+  --definitions ./generated/policyset.definitions.json \
+  --params ./policy/nusa-baseline/policyset.parameters.json
+</code></pre></div>
+<p><code>$INITIATIVE_SCOPE_FLAG</code> is empty on Path A (the initiative is saved in your subscription) and
+<code>--management-group mg-nusa-&lt;suffix&gt;</code> on Path B (saved at the intermediate root, so every group below can use it).</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong>
+<code>az policy set-definition show --name &quot;$INITIATIVE&quot; $INITIATIVE_SCOPE_FLAG --query &quot;policyDefinitions[].policyDefinitionReferenceId&quot;</code>
+lists the three reference IDs. If the command says it cannot find the initiative, run <code>source lab-vars.sh</code> — the
+path variables may be out of date.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--assign-the-initiative--safely" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Assign the initiative — safely</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--assign-the-initiative--safely" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Assign the initiative once, at the top of what you govern: your subscription (Path A) or the landing zones group
+(Path B). Two choices make this assignment safe and useful.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy assignment create --name &quot;$ASSIGNMENT&quot; --display-name &quot;Nusantara baseline (Lab 31)&quot; \
+  --scope &quot;$ASSIGN_SCOPE&quot; --policy-set-definition &quot;$INITIATIVE_ID&quot; \
+  --params &quot;{ &#x27;allowedLocations&#x27;: { &#x27;value&#x27;: [ &#x27;$LOCATION&#x27; ] }, &#x27;tagName&#x27;: { &#x27;value&#x27;: &#x27;costCenter&#x27; } }&quot; \
+  --enforcement-mode DoNotEnforce \
+  --mi-system-assigned --location &quot;$LOCATION&quot; \
+  --identity-scope &quot;$CORP_RG_ID&quot; --role Contributor
+</code></pre></div>
+<ul>
+<li><strong><code>--enforcement-mode DoNotEnforce</code></strong> — Azure evaluates and reports compliance, but denies and modifies nothing while
+resources are created or updated. Remediation tasks still work. This is the first ring of a safe rollout.</li>
+<li><strong><code>--mi-system-assigned --location</code></strong> — the Modify policy inside the initiative needs a managed identity to change
+resources. <code>--identity-scope</code> and <code>--role</code> grant it <strong>Contributor</strong> (the role the built-in definition asks for) on the
+corp group only. In production you would grant it everywhere remediation must write, usually the assignment scope.</li>
+</ul>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>On Path A this assignment covers your <strong>whole subscription</strong>. In DoNotEnforce mode it only reports, which is why you
+may see resources from other labs listed as non-compliant. Do not switch it to <code>Default</code> enforcement: the required-tag
+policy would then refuse every untagged resource in the subscription, including other labs. The stretch goals show
+a safe way to try enforcement.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the assignment reports <code>DoNotEnforce</code> and a system-assigned identity, and the identity holds a role
+on the corp group:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy assignment show --name &quot;$ASSIGNMENT&quot; --scope &quot;$ASSIGN_SCOPE&quot; \
+  --query &quot;{mode:enforcementMode, identity:identity.type, locations:parameters.allowedLocations.value}&quot;
+PID=$(az policy assignment show --name &quot;$ASSIGNMENT&quot; --scope &quot;$ASSIGN_SCOPE&quot; --query identity.principalId --output tsv)
+az role assignment list --scope &quot;$CORP_RG_ID&quot; --query &quot;[?principalId==&#x27;$PID&#x27;].roleDefinitionName&quot; --output tsv
+</code></pre></div>
+<p>If the last command prints nothing, wait a minute (new identities take a moment to replicate) and grant it yourself:
+<code>az role assignment create --assignee-object-id &quot;$PID&quot; --assignee-principal-type ServicePrincipal --role Contributor --scope &quot;$CORP_RG_ID&quot;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--remediate-the-corp-resource-group" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Remediate the corp resource group</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--remediate-the-corp-resource-group" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The assignment does not touch existing resources by itself. A <strong>remediation task</strong> does — for one Modify or
+DeployIfNotExists policy at a time, so for an initiative you name the member's reference ID.
+<code>ReEvaluateCompliance</code> makes the task check the resources now instead of waiting for the next compliance scan.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy remediation create --name &quot;$REMEDIATION&quot; --resource-group &quot;$CORP_RG&quot; \
+  --policy-assignment &quot;$ASSIGNMENT_ID&quot; --definition-reference-id inheritCostCenterTag \
+  --resource-discovery-mode ReEvaluateCompliance
+
+# Run this every minute or so until the state is Succeeded (usually 5–15 minutes)
+az policy remediation show --name &quot;$REMEDIATION&quot; --resource-group &quot;$CORP_RG&quot; \
+  --query &quot;{state:provisioningState, deployments:deploymentStatus}&quot;
+
+az resource list --resource-group &quot;$CORP_RG&quot; --query &quot;[].{name:name, costCenter:tags.costCenter}&quot; --output table
+</code></pre></div>
+<p>While you wait, think about the sandbox: why will this task never touch it? (Its resource group has no <code>costCenter</code> tag
+to inherit, and the identity has no role there.)</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the remediation state is <code>Succeeded</code>, and both <code>stcorp&lt;suffix&gt;</code> and <code>nsg-corp-legacy</code> now show
+<code>CC-2001</code>. If the state is <code>Succeeded</code> but the tags are missing, the resources were not yet evaluated — create a second
+task with another <code>--name</code>, for example <code>&quot;${REMEDIATION}-2&quot;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-7--grant-the-sandbox-a-time-boxed-waiver" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">Grant the sandbox a time-boxed Waiver</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--grant-the-sandbox-a-time-boxed-waiver" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Dewi's experiment breaks two rules: it sits in <code>$SECONDARY_LOCATION</code> and has no <code>costCenter</code> tag. Ibu Sari accepts that
+risk for 30 days while a partner integration is tested. That is a <strong>Waiver</strong>: an accepted risk, visible in compliance as
+<em>Exempt</em>, with an end date and a paper trail.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>EXPIRES=$(date -u -d &#x27;+30 days&#x27; &#x27;+%Y-%m-%dT%H:%M:%SZ&#x27;)
+az policy exemption create --name &quot;$EXEMPTION&quot; --resource-group &quot;$SANDBOX_RG&quot; \
+  --policy-assignment &quot;$ASSIGNMENT_ID&quot; --exemption-category Waiver --expires-on &quot;$EXPIRES&quot; \
+  --display-name &quot;Sandbox experiment in $SECONDARY_LOCATION (NUSA-1042)&quot; \
+  --description &quot;Dewi tests a partner integration for 30 days. Risk accepted by Ibu Sari.&quot; \
+  --metadata &quot;{requestedBy:Dewi,approvedBy:&#x27;Ibu Sari&#x27;,ticketRef:NUSA-1042}&quot;
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Use <strong>Mitigated</strong> instead of Waiver when the policy's intent is met another way. To exempt a scope from only some
+members of an initiative, add <code>--policy-definition-reference-ids</code> with their reference IDs. And when an exemption
+expires, Azure does not delete it — the resources simply show as non-compliant again.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong>
+<code>az policy exemption list --resource-group &quot;$SANDBOX_RG&quot; --query &quot;[].{name:name, category:exemptionCategory, expires:expiresOn}&quot; --output table</code>
+shows one Waiver that expires in 30 days.</p>
+</div>
+</div></section><section class="lab-section" id="task-8--read-compliance-at-scale-with-resource-graph" data-kind="task"><h2><span class="task-tag">Task 8</span><span class="title">Read compliance at scale with Resource Graph</span><button class="btn btn-sm done-toggle" type="button" data-task="task-8--read-compliance-at-scale-with-resource-graph" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Ask Azure to evaluate both lab groups now, instead of waiting for the next scheduled cycle:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy state trigger-scan --resource-group &quot;$CORP_RG&quot; --no-wait
+az policy state trigger-scan --resource-group &quot;$SANDBOX_RG&quot; --no-wait
+
+# Repeat until both numbers are above zero (often 5–10 minutes)
+for rg in &quot;$CORP_RG&quot; &quot;$SANDBOX_RG&quot;; do
+  echo &quot;$rg: $(az policy state list --resource-group &quot;$rg&quot; --filter &quot;policyAssignmentName eq &#x27;$ASSIGNMENT&#x27;&quot; --query &quot;length(@)&quot; --output tsv) records&quot;
+done
+</code></pre></div>
+<p>Now query compliance the way a platform team does — across every subscription you can read, in one request. Resource
+Graph can lag a few minutes behind the commands above.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code># 1. The initiative&#x27;s results by member policy and state
+az graph query --graph-query &quot;policyresources
+  | where type == &#x27;microsoft.policyinsights/policystates&#x27;
+  | where tostring(properties.policyAssignmentName) == &#x27;$ASSIGNMENT&#x27;
+  | summarize resources = count() by policy = tostring(properties.policyDefinitionReferenceId), state = tostring(properties.complianceState)
+  | order by policy asc&quot; --query data --output table
+
+# 2. Which lab resources are still non-compliant, and why?
+az graph query --graph-query &quot;policyresources
+  | where type == &#x27;microsoft.policyinsights/policystates&#x27;
+  | where tostring(properties.policyAssignmentName) == &#x27;$ASSIGNMENT&#x27;
+  | where tostring(properties.complianceState) == &#x27;NonCompliant&#x27;
+  | where tolower(tostring(properties.resourceId)) contains &#x27;/resourcegroups/rg-lunch31-&#x27;
+  | project resource = extract(&#x27;[^/]+$&#x27;, 0, tostring(properties.resourceId)), policy = tostring(properties.policyDefinitionReferenceId)&quot; \
+  --query data --output table
+
+# 3. Every exemption you can see, with its category and end date
+az graph query --graph-query &quot;policyresources
+  | where type == &#x27;microsoft.authorization/policyexemptions&#x27;
+  | project name, resourceGroup, category = tostring(properties.exemptionCategory), expiresOn = tostring(properties.expiresOn)&quot; \
+  --query data --output table
+
+# 4. Where each of your subscriptions sits in the hierarchy
+az graph query --graph-query &quot;resourcecontainers
+  | where type == &#x27;microsoft.resources/subscriptions&#x27;
+  | project subscription = name, parent = tostring(properties.managementGroupAncestorsChain[0].displayName)&quot; \
+  --query data --output table
+</code></pre></div>
+<p>On Path B, add <code>--management-groups &quot;$MG_ROOT&quot;</code> to any query to limit it to the lab hierarchy, and try
+<code>az policy state summarize --management-group &quot;$MG_LZ&quot;</code> for a roll-up at management-group scope.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the corp resources are <code>Compliant</code> for all three members, query 2 lists nothing from the corp
+group, query 3 shows <code>sandbox-waiver</code> as a Waiver, and query 4 shows your subscription under <strong>Corp</strong> (Path B) or the
+tenant root group (Path A). Sandbox resources show as <code>Exempt</code> once they have been evaluated again.</p>
+</div>
+</div></section><section class="lab-section" id="task-9--export-the-governance-as-code" data-kind="task"><h2><span class="task-tag">Task 9</span><span class="title">Export the governance as code</span><button class="btn btn-sm done-toggle" type="button" data-task="task-9--export-the-governance-as-code" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Everything you clicked or typed should live in Git, reviewed and deployed by a pipeline. Export the desired state —
+only the properties you would maintain by hand, not the read-only ones Azure adds — in the policy-as-code layout:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>OUT=&quot;exported/$INITIATIVE&quot;
+mkdir -p &quot;$OUT/exemptions.$ASSIGNMENT&quot;
+az policy set-definition show --name &quot;$INITIATIVE&quot; $INITIATIVE_SCOPE_FLAG \
+  --query &quot;{name:name, displayName:displayName, description:description, parameters:parameters, policyDefinitions:policyDefinitions}&quot; \
+  --output json &gt; &quot;$OUT/policyset.json&quot;
+az policy assignment show --name &quot;$ASSIGNMENT&quot; --scope &quot;$ASSIGN_SCOPE&quot; \
+  --query &quot;{name:name, displayName:displayName, scope:scope, policyDefinitionId:policyDefinitionId, enforcementMode:enforcementMode, parameters:parameters, nonComplianceMessages:nonComplianceMessages, identityType:identity.type, location:location}&quot; \
+  --output json &gt; &quot;$OUT/assign.$ASSIGNMENT.json&quot;
+az policy exemption show --name &quot;$EXEMPTION&quot; --resource-group &quot;$SANDBOX_RG&quot; \
+  --query &quot;{name:name, displayName:displayName, exemptionCategory:exemptionCategory, expiresOn:expiresOn, policyAssignmentId:policyAssignmentId, metadata:metadata}&quot; \
+  --output json &gt; &quot;$OUT/exemptions.$ASSIGNMENT/$EXEMPTION.json&quot;
+find exported -type f | sort
+</code></pre></div>
+<p>In a real team these files go into a repository next to <code>policy/nusa-baseline/</code>, and a pipeline with its own identity
+deploys them. Here <code>generated/</code> and <code>exported/</code> are listed in the lab's <code>.gitignore</code> on purpose: they contain your
+subscription ID, which does not belong in a public repository.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> three files — <code>policyset.json</code>, <code>assign.nusa-baseline.json</code> and
+<code>exemptions.nusa-baseline/sandbox-waiver.json</code> — and the assignment file shows <code>&quot;enforcementMode&quot;: &quot;DoNotEnforce&quot;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Rizky saves a new audit policy in the <strong>Corp</strong> management group and wants to assign it to the whole <strong>Landing zones</strong>
+group. Try it:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy definition create --name &quot;$SCOPE_TEST&quot; --management-group &quot;$MG_CORP&quot; \
+  --display-name &quot;Lab 31 scope test: audit storage without costCenter&quot; \
+  --mode Indexed --rules ./policy/scope-test/policy.rules.json
+
+az policy assignment create --name &quot;$SCOPE_TEST&quot; --scope &quot;$MG_PREFIX/$MG_LZ&quot; \
+  --policy &quot;$MG_PREFIX/$MG_CORP/providers/Microsoft.Authorization/policyDefinitions/$SCOPE_TEST&quot;
+</code></pre></div>
+<p>The definition is created, but the assignment fails with an error saying the policy definition is <strong>out of scope</strong>
+(definitions can only be used at or below the scope where they are saved). The exact wording can vary between versions.</p>
+<details class="plain"><summary>Hint and fix</summary>
+<p>The definition lives <em>below</em> the scope you are assigning to. Save it at the Landing zones group (or higher), assign
+that copy, and delete the copy that was saved too low. The policy only audits, so it changes nothing.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy definition create --name &quot;$SCOPE_TEST&quot; --management-group &quot;$MG_LZ&quot; \
+  --display-name &quot;Lab 31 scope test: audit storage without costCenter&quot; \
+  --mode Indexed --rules ./policy/scope-test/policy.rules.json
+az policy assignment create --name &quot;$SCOPE_TEST&quot; --scope &quot;$MG_PREFIX/$MG_LZ&quot; \
+  --policy &quot;$MG_PREFIX/$MG_LZ/providers/Microsoft.Authorization/policyDefinitions/$SCOPE_TEST&quot;
+az policy definition delete --name &quot;$SCOPE_TEST&quot; --management-group &quot;$MG_CORP&quot;
+</code></pre></div>
+<p>This is the same rule that decides Path A vs Path B, and why landing zone designs save shared definitions at the
+intermediate root. <code>cleanup.sh</code> removes the assignment and the definition.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. <code>verify.sh</code> works for
+both paths and changes nothing.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>The order matters, and the script follows it: exemptions, then the identity's role assignment and the policy
+assignments, then the initiative and definitions, then your subscription moves back to its original parent (Path B),
+then the management groups — children first — and finally the resource groups <code>rg-lunch31-corp-&lt;suffix&gt;</code> and
+<code>rg-lunch31-sandbox-&lt;suffix&gt;</code> and the <code>generated/</code> and <code>exported/</code> folders. If Azure still sees a child under a
+management group (its view of the hierarchy can lag after a move), the script retries; if it gives up, wait a few
+minutes and run it again.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AuthorizationFailed</code> … <code>Microsoft.Management/managementGroups/write</code> in Task 2</td>
+<td>your tenant requires authorization to create management groups, or it is a work tenant</td>
+<td>use a tenant you own; do not ask for rights in a company tenant just for this lab</td>
+</tr>
+<tr>
+<td>A child management group fails with &quot;not found&quot; right after its parent was created</td>
+<td>the first management group in a tenant can take up to 15 minutes; the hierarchy is eventually consistent</td>
+<td>wait a minute and run the same command again</td>
+</tr>
+<tr>
+<td><code>AuthorizationFailed</code> when moving the subscription in Task 3</td>
+<td>you need Owner on the subscription and write access on both the current and the new parent (the tenant root group is the exception)</td>
+<td>stay on Path A, or use your own tenant</td>
+</tr>
+<tr>
+<td><code>InvalidCreatePolicyAssignmentRequest</code> … out of scope</td>
+<td>the definition is saved below the assignment scope (the Break it and fix it task, or a Path A initiative assigned to a management group)</td>
+<td>save the definition at or above the scope you assign to</td>
+</tr>
+<tr>
+<td><code>PolicyDefinitionNotFound</code> while creating the initiative</td>
+<td>the placeholders were not replaced (Task 1 variables were empty when you ran <code>sed</code>)</td>
+<td>run <code>lookup_builtin_ids</code>, re-run the <code>sed</code> command, create the initiative again</td>
+</tr>
+<tr>
+<td>The CLI cannot parse <code>--definitions</code> or <code>--params</code></td>
+<td>file-path handling differs between CLI versions</td>
+<td>pass the contents instead: <code>--definitions &quot;$(cat generated/policyset.definitions.json)&quot;</code></td>
+</tr>
+<tr>
+<td><code>PrincipalNotFound</code> when the role is granted in Task 5</td>
+<td>the brand-new managed identity has not replicated in Microsoft Entra ID yet</td>
+<td>wait a minute, then run the <code>az role assignment create</code> command from the Task 5 checkpoint</td>
+</tr>
+<tr>
+<td>Remediation <code>Failed</code>, or <code>Succeeded</code> with zero deployments</td>
+<td>the identity has no role on the corp group, or the resources were not evaluated yet (on Path B, the new hierarchy can take a while to apply)</td>
+<td>fix the role, wait a few minutes, create a new remediation task with another <code>--name</code></td>
+</tr>
+<tr>
+<td><code>az policy exemption create</code> refuses the scope right after a Path B move</td>
+<td>Azure's cached view of the hierarchy still places the resource group outside the assignment</td>
+<td>wait a few minutes; or add <code>--assignment-scope-validation DoNotValidate</code></td>
+</tr>
+<tr>
+<td><code>az graph query</code> returns no policy states</td>
+<td>Resource Graph lags behind, or no evaluation has finished</td>
+<td>run the Task 8 scans, wait a few minutes, query again</td>
+</tr>
+<tr>
+<td><code>'graph' is misspelled or not recognized</code></td>
+<td>the Resource Graph extension is missing</td>
+<td><code>az extension add --name resource-graph</code></td>
+</tr>
+<tr>
+<td><code>cleanup.sh</code> cannot delete a management group</td>
+<td>a child or the subscription is still attached in Azure's cached view</td>
+<td>wait a few minutes, then run <code>bash cleanup.sh</code> again</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li><strong>Ring 1 enforcement.</strong> Assign the same initiative a second time at the corp resource group with
+<code>--enforcement-mode Default</code> (name it <code>nusa-ring1</code>, scope <code>&quot;$CORP_RG_ID&quot;</code>, same parameters, plus
+<code>--mi-system-assigned --location &quot;$LOCATION&quot;</code>). After about five minutes, try to create a storage account in
+<code>$SECONDARY_LOCATION</code> in that group and read the <code>RequestDisallowedByPolicy</code> error. The rest of your subscription stays
+in report-only mode. <code>cleanup.sh</code> removes this assignment too.</li>
+<li><strong>A Mitigated exemption.</strong> Exempt only <code>nsg-corp-legacy</code> from <code>requireCostCenterTag</code> with
+<code>--exemption-category Mitigated --scope &lt;its resource ID&gt; --policy-definition-reference-ids requireCostCenterTag</code>,
+and compare how it appears in query 3.</li>
+<li><strong>Look at the hierarchy settings.</strong> <code>az account management-group hierarchy-settings list --name &quot;$TENANT_ID&quot;</code> shows
+whether your tenant has a default management group for new subscriptions and requires authorization to create groups.
+Changing them affects the whole tenant, so only read them here.</li>
+<li><strong>Deploy it as a stack.</strong> Rewrite the assignment in Bicep and deploy it with <code>az stack mg create</code> at the landing
+zones group (Lunch 20 covers deployment stacks). Delete the stack afterwards with <code>--action-on-unmanage deleteAll</code>.</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build the following, any way you like (portal, CLI, Bicep), after running <code>bash setup.sh</code>:</p>
+<ol>
+<li>Management groups <code>mg-nusa-&lt;suffix&gt;</code> (under the tenant root group), <code>mg-nusa-platform-&lt;suffix&gt;</code> and
+<code>mg-nusa-landingzones-&lt;suffix&gt;</code> (both under <code>mg-nusa-&lt;suffix&gt;</code>), and <code>mg-nusa-corp-&lt;suffix&gt;</code> (under landing zones).</li>
+<li>A custom initiative containing the built-ins <em>Allowed locations</em>, <em>Require a tag on resources</em> and <em>Inherit a tag
+from the resource group if missing</em>, with initiative parameters for the allowed locations and the tag name — saved in
+your subscription (Path A) or in <code>mg-nusa-&lt;suffix&gt;</code> (Path B, with your subscription moved into corp).</li>
+<li>An assignment of that initiative to your subscription (Path A) or to <code>mg-nusa-landingzones-&lt;suffix&gt;</code> (Path B):
+allowed locations = only <code>$LOCATION</code>, tag name <code>costCenter</code>, enforcement mode DoNotEnforce, and a managed identity
+that holds Contributor on <code>rg-lunch31-corp-&lt;suffix&gt;</code>.</li>
+<li>A successful remediation task in <code>rg-lunch31-corp-&lt;suffix&gt;</code>, after which both legacy resources carry
+<code>costCenter=CC-2001</code>.</li>
+<li>A <strong>Waiver</strong> exemption on <code>rg-lunch31-sandbox-&lt;suffix&gt;</code> for that assignment, expiring within 30 days.</li>
+<li>Compliance records for the assignment in the corp group.</li>
+<li>The assignment exported as <code>exported/&lt;initiative&gt;/assign.&lt;assignment&gt;.json</code> in the lab folder.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> (<code>MOVE_SUBSCRIPTION=yes bash solution.sh</code> runs Path B) or
+switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="30-monitoring-advanced.html"><small>← Previous lab</small>30 · Why was checkout slow on Friday?</a><a class="next" href="32-advanced-capstone-challenge.html"><small>Next lab →</small>32 · Nusantara Retail goes to production</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

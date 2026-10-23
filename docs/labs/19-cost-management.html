@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 19 · Find the waste you made yourself · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 19: Find the waste you made yourself. about 40 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 19 · Find the waste you made yourself">
+<meta property="og:description" content="Hands-on Azure lab 19: Find the waste you made yourself. about 40 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/19-cost-management.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="19" style="--c:#d98a00">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#d98a00">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 19</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>19</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Find the waste you made yourself</h1>
+        <p class="lab-story">🏪 <b>Episode 19 · The Invoice Nobody Can Read</b> — The first real Azure bill arrives, and it is bigger than the spreadsheet. <a href="../lunches/19-cost-management.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 40 minutes</span>
+          <span class="chip cost">💲 free or close to free</span>
+          <span class="chip">Difficulty ★☆☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 9 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--meet-the-waste">Task 1 · Meet the waste</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--hunt-orphans-with-azure-resource-graph">Task 2 · Hunt orphans with Azure Resource Graph</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--ask-azure-advisor">Task 3 · Ask Azure Advisor</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--put-a-budget-on-the-resource-group">Task 4 · Put a budget on the resource group</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--look-at-costs-by-tag--and-why-they-arent-there-yet">Task 5 · Look at costs by tag — and why they aren&#x27;t there yet</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--pay-as-you-go-or-a-one-year-reservation">Task 6 · Pay-as-you-go or a one-year reservation?</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--remove-the-waste-and-prove-its-gone">Task 7 · Remove the waste and prove it&#x27;s gone</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/19-cost-management/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/19-cost-management/compare-prices.sh" target="_blank" rel="noopener"><span>compare-prices.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/19-cost-management/orphan-hunt.kql" target="_blank" rel="noopener"><span>orphan-hunt.kql</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/19-cost-management/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/19-cost-management/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/19-cost-management/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>3 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/19-cost-management" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Nusantara Retail's invoice is full of small, steady charges that nobody can explain. In this lab you recreate the problem
+on purpose: <code>setup.sh</code> leaves three cheap pieces of waste in a resource group, all tagged <code>costCenter=retail-lab</code> — a
+managed disk attached to nothing, a Standard public IP associated with nothing, and an App Service plan with no apps.
+You hunt them down with Azure Resource Graph, see what Azure Advisor makes of them, put a budget with 50, 80 and 100
+percent alerts on the resource group, compare pay-as-you-go with a one-year reservation for a small VM, and finally
+delete the waste and prove it is gone.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  setup[&quot;setup.sh&quot;] --&gt; rg
+  subgraph rg[&quot;rg-lunch19-&amp;lt;suffix&amp;gt; · costCenter=retail-lab&quot;]
+    disk[&quot;disk-nusa-orphan&lt;br/&gt;unattached disk&quot;]
+    pip[&quot;pip-nusa-orphan&lt;br/&gt;unassociated public IP&quot;]
+    plan[&quot;asp-nusa-idle&lt;br/&gt;plan with 0 apps&quot;]
+  end
+  arg[&quot;Resource Graph&lt;br/&gt;orphan hunt&quot;] -.-&gt; disk
+  arg -.-&gt; pip
+  arg -.-&gt; plan
+  rg --- budget[&quot;Budget on the resource group&lt;br/&gt;alerts at 50 / 80 / 100%&quot;]
+  budget --&gt; mail[&quot;Email to you&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>).
+Budgets and cost analysis need a subscription type that <strong>Cost Management</strong> supports — the free account and
+pay-as-you-go are fine, but <strong>Azure for Students isn't supported</strong>. On an unsupported or brand-new subscription (Cost
+Management can need up to 48 hours) you can still do every task except 4 and 5.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install.</li>
+<li>Get the lab files and load the shared settings:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/19-cost-management
+source ../common/config.sh
+RG=$(rg_name 19)
+</code></pre></div>
+<ul>
+<li>Create the starting point — takes about 2 minutes:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist — only cents here, but the point of this lab is that small charges add up.
+Finish with the <strong>Clean up</strong> section, even if you stop halfway.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–7 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--meet-the-waste" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Meet the waste</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--meet-the-waste" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Before you hunt, look at what <code>setup.sh</code> created and notice that nothing about it looks wrong.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az resource list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{name:name, type:type, costCenter:tags.costCenter, state:provisioningState}&quot; \
+  --output table
+</code></pre></div>
+<p>Every resource reports <code>Succeeded</code>. Azure has no idea these are waste: a disk without a VM, an IP without a server and
+a plan without apps are all perfectly valid configurations — and all of them bill.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open <em>Resource groups › rg-lunch19-&lt;suffix&gt;</em>. Select the disk and look at <strong>Disk state</strong>
+(Unattached), then the public IP (<strong>Associated to</strong> is empty), then the plan (<strong>Apps</strong>: 0).</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> you see <code>disk-nusa-orphan</code>, <code>pip-nusa-orphan</code> and <code>asp-nusa-idle</code>, each with
+<code>costCenter = retail-lab</code>. If the plan is missing, <code>setup.sh</code> printed a note explaining why — carry on without it.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--hunt-orphans-with-azure-resource-graph" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Hunt orphans with Azure Resource Graph</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--hunt-orphans-with-azure-resource-graph" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Clicking through resources doesn't scale to forty stores. <strong>Azure Resource Graph</strong> answers questions about every resource
+you can read, in every subscription, in seconds — and unlike cost data, it is up to date within moments. The first time
+you run <code>az graph</code>, the CLI may ask to install the <code>resource-graph</code> extension: answer <strong>Y</strong>.</p>
+<p>Unattached managed disks:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az graph query -q &quot;
+Resources
+| where type =~ &#x27;microsoft.compute/disks&#x27;
+| where tostring(properties.diskState) =~ &#x27;Unattached&#x27;
+| where resourceGroup =~ &#x27;${RG}&#x27;
+| project name, sku = tostring(sku.name), sizeGB = toint(properties.diskSizeGB), costCenter = tostring(tags[&#x27;costCenter&#x27;])
+&quot; --query &quot;data&quot; --output table
+</code></pre></div>
+<p>Public IP addresses associated with nothing (no IP configuration and no NAT gateway):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az graph query -q &quot;
+Resources
+| where type =~ &#x27;microsoft.network/publicipaddresses&#x27;
+| where isnull(properties.ipConfiguration) and isnull(properties.natGateway)
+| where resourceGroup =~ &#x27;${RG}&#x27;
+| project name, sku = tostring(sku.name), ip = tostring(properties.ipAddress), costCenter = tostring(tags[&#x27;costCenter&#x27;])
+&quot; --query &quot;data&quot; --output table
+</code></pre></div>
+<p>App Service plans with no apps:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az graph query -q &quot;
+Resources
+| where type =~ &#x27;microsoft.web/serverfarms&#x27;
+| where toint(properties.numberOfSites) == 0
+| where resourceGroup =~ &#x27;${RG}&#x27;
+| project name, sku = tostring(sku.name), costCenter = tostring(tags[&#x27;costCenter&#x27;])
+&quot; --query &quot;data&quot; --output table
+</code></pre></div>
+<p>Now remove the resource-group filter and look at your <strong>whole subscription</strong>. The file <code>orphan-hunt.kql</code> combines all
+three checks in one query:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az graph query -q &quot;$(grep -v &#x27;^//&#x27; orphan-hunt.kql)&quot; --query &quot;data&quot; --output table
+</code></pre></div>
+<p>Anything outside <code>rg-lunch19-&lt;suffix&gt;</code> is real waste from earlier experiments — check the tags and the owner before you
+delete it.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Search for <strong>Resource Graph Explorer</strong>, paste the contents of <code>orphan-hunt.kql</code> and select
+<strong>Run query</strong>. You can pin the result to a dashboard, which makes a handy weekly orphan report.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> each of the three queries returns exactly one row from your lab resource group (the plan query
+returns nothing if <code>setup.sh</code> couldn't create the plan). If a query returns nothing right after <code>setup.sh</code>, wait a
+minute and run it again — Resource Graph needs a moment to index new resources.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--ask-azure-advisor" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Ask Azure Advisor</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--ask-azure-advisor" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Advisor's cost recommendations include right-sizing VMs, deleting empty App Service plans and reviewing disks that
+aren't attached to a VM. Ask it what it thinks of your subscription:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az advisor recommendation list --category Cost \
+  --query &quot;[].{impact:impact, problem:shortDescription.problem, resource:impactedValue}&quot; \
+  --output table
+</code></pre></div>
+<p>Most likely, <strong>your lab resources are not in the list</strong>. Advisor evaluates resources periodically and many rules look at
+days or weeks of history, so waste created a few minutes ago won't appear yet — sometimes not for a day or more. That is
+exactly why you hunted with Resource Graph first. Recommendations you <em>do</em> see come from older resources in your
+subscription.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Search for <strong>Advisor</strong> and open the <strong>Cost</strong> tab. If you keep the lab resource group until
+tomorrow (see Task 5), check this tab again before you clean up.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the command runs without an error. An empty table is a correct result for a brand-new resource
+group — write down in one sentence why.</p>
+</div>
+</div></section><section class="lab-section" id="task-4--put-a-budget-on-the-resource-group" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Put a budget on the resource group</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--put-a-budget-on-the-resource-group" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A <strong>budget</strong> won't stop anything, but it will tell you when spending heads somewhere unexpected. Create a monthly cost
+budget on the lab resource group with actual-cost alerts at 50, 80 and 100 percent. Set the variables first:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>BUDGET_EMAIL=&quot;you@example.com&quot;     # change this: where the alerts should go
+BUDGET_AMOUNT=10                   # in your billing currency, e.g. 10 for USD; pick an equivalent amount for another currency
+START_DATE=&quot;$(date -u +%Y-%m-01)&quot;                              # budgets must start on the first of a month
+END_DATE=&quot;$(date -u -d &quot;${START_DATE} +1 year&quot; +%Y-%m-%d)&quot;
+TIME_PERIOD=&quot;$(printf &#x27;{&quot;start-date&quot;:&quot;%s&quot;,&quot;end-date&quot;:&quot;%s&quot;}&#x27; &quot;$START_DATE&quot; &quot;$END_DATE&quot;)&quot;
+NOTIFICATIONS=$(cat &lt;&lt;EOF
+{
+  &quot;actual_GreaterThan_50_Percent&quot;:  {&quot;enabled&quot;: true, &quot;operator&quot;: &quot;GreaterThan&quot;, &quot;threshold&quot;: 50,  &quot;contact-emails&quot;: [&quot;${BUDGET_EMAIL}&quot;]},
+  &quot;actual_GreaterThan_80_Percent&quot;:  {&quot;enabled&quot;: true, &quot;operator&quot;: &quot;GreaterThan&quot;, &quot;threshold&quot;: 80,  &quot;contact-emails&quot;: [&quot;${BUDGET_EMAIL}&quot;]},
+  &quot;actual_GreaterThan_100_Percent&quot;: {&quot;enabled&quot;: true, &quot;operator&quot;: &quot;GreaterThan&quot;, &quot;threshold&quot;: 100, &quot;contact-emails&quot;: [&quot;${BUDGET_EMAIL}&quot;]}
+}
+EOF
+)
+</code></pre></div>
+<p>Then create the budget. The <code>az consumption</code> commands are in preview, which is why they print a short warning:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az consumption budget create-with-rg \
+  --resource-group &quot;$RG&quot; \
+  --budget-name budget-lunch19 \
+  --amount &quot;$BUDGET_AMOUNT&quot; \
+  --category Cost \
+  --time-grain Monthly \
+  --time-period &quot;$TIME_PERIOD&quot; \
+  --notifications &quot;$NOTIFICATIONS&quot; \
+  --output none
+</code></pre></div>
+<p>Cost and usage data typically reaches Cost Management 8 to 24 hours after the usage, and budgets are evaluated about once
+a day, so the first alert — if this lab ever costs enough to send one — arrives a day later at the earliest. Alert emails
+come from <code>azure-noreply@microsoft.com</code>; add it to your safe senders.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open <em>Resource groups › rg-lunch19-&lt;suffix&gt; › Cost Management › Budgets › Add</em>. Choose a
+<strong>Monthly</strong> reset period, an amount and an expiration date, then on <strong>Set alerts</strong> add three <strong>Actual</strong> conditions at
+50, 80 and 100 % with your email address. The portal also lets you attach an <strong>action group</strong> for automation.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the budget exists with three thresholds:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az consumption budget show-with-rg --resource-group &quot;$RG&quot; --budget-name budget-lunch19 \
+  --query &quot;{amount:amount, timeGrain:timeGrain, thresholds:notifications.*.threshold}&quot; --output jsonc
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-5--look-at-costs-by-tag--and-why-they-arent-there-yet" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Look at costs by tag — and why they aren't there yet</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--look-at-costs-by-tag--and-why-they-arent-there-yet" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Tags are how Ibu Sari finds out <em>who</em> each cost belongs to. Cost analysis is a portal experience, so open it there:</p>
+<ol>
+<li>Open <em>Resource groups › rg-lunch19-&lt;suffix&gt; › Cost Management › Cost analysis</em>.</li>
+<li>Switch to a customizable view such as <strong>Daily costs</strong> (or <strong>Accumulated costs</strong>) and set <strong>Group by</strong> to
+<strong>Tag › costCenter</strong>.</li>
+<li>Set the date range to <strong>This month</strong>.</li>
+</ol>
+<p>You will probably see nothing for the lab resources yet. That isn't a mistake: cost data typically arrives 8 to 24
+hours after the usage, and up to 72 hours for some pay-as-you-go subscriptions. Open the same view at <strong>subscription</strong>
+scope to see how your earlier costs split by tag — anything without the tag shows up as untagged, which is the to-do list
+for a tagging policy (Lunch 18).</p>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Note</span>Want to see the lab's own costs land? After Task 7 the resource group is empty and costs nothing, and so does the
+budget. Keep both until tomorrow, open this view again — the few cents the waste cost will appear under
+<code>costCenter = retail-lab</code>, even though the resources are already gone — and then run <code>cleanup.sh</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> you can explain why a resource created ten minutes ago doesn't appear in cost analysis yet, and you
+know where to find the costs grouped by <code>costCenter</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--pay-as-you-go-or-a-one-year-reservation" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Pay-as-you-go or a one-year reservation?</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--pay-as-you-go-or-a-one-year-reservation" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Before you commit to anything, you should know what a commitment saves. Compare the course's small VM size, <code>$VM_SIZE</code>
+(by default <code>Standard_B2ats_v2</code>), in your lab region.</p>
+<p><strong>In the pricing calculator:</strong></p>
+<ol>
+<li>Open the <a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">Azure pricing calculator</a> and add <strong>Virtual Machines</strong>.</li>
+<li>Choose the region <strong>Southeast Asia</strong> (or the region in <code>$LOCATION</code>), operating system <strong>Linux</strong>, tier <strong>Standard</strong>, the
+size <strong>B2ats v2</strong> and <strong>730</strong> hours (a full month).</li>
+<li>Under <strong>Savings options</strong>, select <strong>Pay as you go</strong> and write down the monthly cost.</li>
+<li>Select <strong>1 year reserved</strong> and write down the monthly cost again.</li>
+<li>Work out the saving in percent. Then work out how many hours per month the VM would need to run at pay-as-you-go
+rates before the reservation becomes the cheaper choice.</li>
+</ol>
+<p><strong>Or from Cloud Shell</strong>, with the same public price list the calculator uses (the Azure Retail Prices API):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash compare-prices.sh
+</code></pre></div>
+<p>The script prints the hourly and monthly price for pay-as-you-go, one- and three-year reservations and savings plans,
+and the break-even point. Try another size or region: <code>VM_SIZE=Standard_D2s_v5 bash compare-prices.sh</code> or
+<code>LOCATION=indonesiacentral bash compare-prices.sh</code>.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> you have two monthly prices and a saving in percent, and you can finish this sentence for Ibu Sari:
+&quot;A one-year reservation for this size only pays off if the server runs more than about … of the time.&quot;</p>
+</div>
+</div></section><section class="lab-section" id="task-7--remove-the-waste-and-prove-its-gone" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">Remove the waste and prove it's gone</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--remove-the-waste-and-prove-its-gone" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>You found the waste; now delete it. In real life you would check with the owner first and snapshot any disk you aren't
+sure about.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az appservice plan delete --resource-group &quot;$RG&quot; --name asp-nusa-idle --yes
+az network public-ip delete --resource-group &quot;$RG&quot; --name pip-nusa-orphan
+az disk delete --resource-group &quot;$RG&quot; --name disk-nusa-orphan --yes
+</code></pre></div>
+<p>Wait a minute, then run the whole-subscription hunt again:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az graph query -q &quot;$(grep -v &#x27;^//&#x27; orphan-hunt.kql)&quot; --query &quot;data&quot; --output table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Select the three resources in the resource group, choose <strong>Delete</strong> and confirm. Then run the
+query in Resource Graph Explorer again.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> no row mentions <code>rg-lunch19-&lt;suffix&gt;</code> any more, and
+<code>az resource list --resource-group &quot;$RG&quot; --output table</code> shows an empty list. The budget is still there — it lives on
+the resource group, not inside it.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>An orphan query that finds nothing is only good news if the query is right. A colleague shares this &quot;faster&quot; version —
+run it while the waste still exists (if you've already done Task 7, run <code>bash setup.sh</code> again; it takes two minutes):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az graph query -q &quot;
+Resources
+| where type == &#x27;Microsoft.Compute/disks&#x27;
+| where tostring(properties.diskState) == &#x27;unattached&#x27;
+| where resourceGroup =~ &#x27;${RG}&#x27;
+| project name
+&quot; --query &quot;data&quot; --output table
+</code></pre></div>
+<p><strong>Symptom:</strong> the result is empty, even though <code>disk-nusa-orphan</code> is clearly there. The colleague concludes there is no
+waste.</p>
+<details class="plain"><summary>Hint and fix</summary>
+<p>In KQL, <code>==</code> is <strong>case-sensitive</strong> and <code>=~</code> is case-insensitive. Resource Graph stores resource types in lowercase
+(<code>microsoft.compute/disks</code>), while the disk state is <code>Unattached</code> with a capital U — so both filters miss. Use <code>=~</code> for
+both comparisons, as in Task 2, and the disk appears again. The lesson: test every &quot;no waste found&quot; query against a
+resource you <em>know</em> is waste. Delete the waste again (Task 7) when you're done.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. It confirms there are no unattached disks, unassociated public IPs or empty App Service
+plans left in the lab resource group, and that the resource group has a budget with alerts at 50, 80 and 100 percent. If
+one fails, the message tells you which task to revisit.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes every budget on <code>rg-lunch19-&lt;suffix&gt;</code> and then the resource group itself, including any waste that is
+still in it. Deletion continues in the background for a few minutes. If you want to watch the lab's costs arrive in cost
+analysis (Task 5), run it tomorrow instead — an empty resource group and a budget cost nothing.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>The command requires the extension resource-graph. Do you want to install it now?</code></td>
+<td>First use of <code>az graph</code></td>
+<td>Answer <strong>Y</strong>, or run <code>az extension add --name resource-graph</code></td>
+</tr>
+<tr>
+<td><code>setup.sh</code> notes that Basic B1 isn't available and uses the Free tier (F1) instead</td>
+<td>Your subscription has no Basic App Service quota in this region</td>
+<td>Nothing to fix — the hunt works the same, and an F1 plan costs nothing</td>
+</tr>
+<tr>
+<td>A Resource Graph query returns nothing right after <code>setup.sh</code>, or still shows a resource you deleted</td>
+<td>Resource Graph takes a short while to index changes</td>
+<td>Wait a minute and run it again</td>
+</tr>
+<tr>
+<td>Advisor shows no cost recommendations for the lab resources</td>
+<td>Advisor runs periodically and its rules need days of history</td>
+<td>Expected for new resources — see Task 3</td>
+</tr>
+<tr>
+<td><code>az consumption budget create-with-rg</code> is not recognized</td>
+<td>An old Azure CLI version</td>
+<td>Run <code>az upgrade</code>, or use the portal path in Task 4</td>
+</tr>
+<tr>
+<td>Budget creation fails, or Budgets/Cost analysis say your subscription type isn't supported</td>
+<td>Azure for Students and a few other offers aren't supported by Cost Management; new subscriptions can need up to 48 hours</td>
+<td>Use the portal on a supported subscription later, or read along</td>
+</tr>
+<tr>
+<td>Budget creation fails with an error about the time period</td>
+<td>The start date must be the first day of a month and earlier than the end date</td>
+<td>Re-run the <code>START_DATE</code>/<code>END_DATE</code> lines from Task 4 and try again</td>
+</tr>
+<tr>
+<td>Cost analysis shows nothing for the lab</td>
+<td>Cost data arrives 8–24 hours later (up to 72 hours for some pay-as-you-go subscriptions)</td>
+<td>Expected — see Task 5</td>
+</tr>
+<tr>
+<td>No budget alert email ever arrives</td>
+<td>The lab spends far less than the budget, so no threshold is crossed; or the mail went to junk</td>
+<td>Check the junk folder for <code>azure-noreply@microsoft.com</code>; try a tiny budget amount only if you want to test alerts</td>
+</tr>
+<tr>
+<td><code>(ResourceGroupNotFound) Resource group 'rg-lunch19-…' could not be found.</code></td>
+<td><code>setup.sh</code> wasn't run, or <code>cleanup.sh</code> already ran</td>
+<td>Run <code>bash setup.sh</code></td>
+</tr>
+<tr>
+<td><code>compare-prices.sh</code> finds no reservation prices</td>
+<td>Not every size has reservation prices in every region</td>
+<td>Try <code>VM_SIZE=Standard_D2s_v5 bash compare-prices.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li>Run <code>orphan-hunt.kql</code> across all your subscriptions in Resource Graph Explorer and clean up real leftovers from earlier
+labs. Extend it with network interfaces that aren't attached to a VM or a private endpoint
+(<code>isnull(properties.virtualMachine) and isnull(properties.privateEndpoint)</code>).</li>
+<li>In the portal, add a <strong>Forecasted</strong> alert at 100 % to the budget, and attach an <strong>action group</strong> that sends you a push
+notification through the Azure mobile app.</li>
+<li>Create a cost <strong>anomaly alert</strong> for your subscription in Cost Management, so Azure emails you when daily spending
+suddenly changes.</li>
+<li>Compare regions: <code>LOCATION=indonesiacentral bash compare-prices.sh</code>, and discuss when data residency matters more than
+price.</li>
+<li>Schedule a monthly <strong>export</strong> of cost data to a storage account (<em>Cost Management › Exports</em>) and open the file in a
+spreadsheet.</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build the following, any way you like (portal, CLI, Bicep):</p>
+<ol>
+<li>Run <code>bash setup.sh</code>, then find every orphaned or idle resource in <code>rg-lunch19-&lt;suffix&gt;</code> without opening the resources
+one by one.</li>
+<li>Leave no unattached managed disks, no public IP addresses associated with nothing, and no App Service plans without
+apps in that resource group.</li>
+<li>Put a monthly cost budget on the resource group with actual-cost alerts at 50, 80 and 100 percent, sent to your
+email address.</li>
+<li>(Not checked by <code>verify.sh</code>.) Find the pay-as-you-go and one-year reservation prices of <code>$VM_SIZE</code> in <code>$LOCATION</code>,
+and work out the saving and the break-even point.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="18-governance-compliance-basic.html"><small>← Previous lab</small>18 · Keep data in the right place</a><a class="next" href="20-infrastructure-as-code-bicep.html"><small>Next lab →</small>20 · Nineteen lunches of clicks in one file</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/19-cost-management/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

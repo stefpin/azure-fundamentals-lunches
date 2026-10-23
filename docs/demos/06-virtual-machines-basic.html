@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Lunch 06 · Virtual Machines (Basic) — Interactive demo</title>
+<style>
+/* =====================================================================
+   LUNCH DEMO PLAYER · v1.0 · shared styles
+   Copy this block unchanged into every demo. Put demo-specific CSS in the
+   "DEMO-SPECIFIC STYLES" block at the end of this <style> element.
+   ===================================================================== */
+:root{
+  --bg:#f4f6fa; --surface:#ffffff; --ink:#1b1b1b; --muted:#56607a; --line:#cfd8e6;
+  --accent:#0078d4; --accent-ink:#ffffff; --accent-soft:#deecf9;
+  --ok:#107c10; --ok-soft:#dff6dd; --bad:#c50f1f; --bad-soft:#fde7e9;
+  --warn:#8a5d00; --warn-soft:#fff4ce; --hl:#e8a200;
+  --node:#ffffff; --node-stroke:#7d8ca8; --zone:#eef4fc; --region:#f8fafd;
+  --flow:#0078d4; --packet:#0078d4;
+  --c-compute:#e6f1fb; --c-network:#e3f6f4; --c-data:#efe9fb; --c-security:#fff3dc;
+  --c-identity:#e9f7e7; --c-ops:#eef0f4; --c-ext:#ffffff;
+  --radius:12px; --shadow:0 1px 2px rgb(0 0 0 / 6%), 0 6px 18px rgb(0 0 0 / 6%);
+  --font:"Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono:ui-monospace, "Cascadia Code", Consolas, "Liberation Mono", monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1520; --surface:#18202d; --ink:#e8edf5; --muted:#a3adbf; --line:#33415a;
+    --accent:#4ea8ff; --accent-ink:#0b1220; --accent-soft:#1d3350;
+    --ok:#6ccb5f; --ok-soft:#1f3a1f; --bad:#ff6b75; --bad-soft:#3d1d22;
+    --warn:#f5c451; --warn-soft:#3b3218; --hl:#ffc83d;
+    --node:#1f2a3a; --node-stroke:#6b7d9c; --zone:#172234; --region:#121a27;
+    --flow:#4ea8ff; --packet:#4ea8ff;
+    --c-compute:#16314d; --c-network:#123a37; --c-data:#2a2346; --c-security:#3a2f14;
+    --c-identity:#1b3a1d; --c-ops:#232b38; --c-ext:#1f2a3a;
+    --shadow:0 1px 2px rgb(0 0 0 / 40%), 0 6px 18px rgb(0 0 0 / 30%);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.5}
+.wrap{max-inline-size:1200px;margin-inline:auto;padding:16px}
+header.top .kicker{color:var(--muted);font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;margin:0}
+header.top h1{margin:.15rem 0 .35rem;font-size:clamp(1.25rem,2.4vw,1.85rem);line-height:1.2}
+header.top .lede{margin:0 0 14px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.stage,.narration{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.stage{padding:8px}
+.stage svg{display:block;inline-size:100%;block-size:auto}
+.narration{padding:16px}
+@media (min-width:901px){.narration{position:sticky;inset-block-start:12px}}
+.step-count{color:var(--muted);font-size:.85rem;margin:0}
+.narration h2{margin:.2rem 0 .4rem;font-size:1.15rem;line-height:1.3}
+.narration p{margin:.45rem 0}
+.tip{background:var(--accent-soft);border-inline-start:4px solid var(--accent);padding:8px 12px;border-radius:8px;font-size:.92rem}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-block:12px;align-items:center}
+button,select{font:inherit;font-size:.92rem;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:focus-visible,select:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.speed{color:var(--muted);font-size:.85rem;display:inline-flex;gap:6px;align-items:center}
+.progress{block-size:6px;background:var(--accent-soft);border-radius:99px;overflow:hidden}
+.progress>div{block-size:100%;inline-size:0;background:var(--accent);transition:inline-size .4s ease}
+.steps-list{margin:12px 0 0;padding-inline-start:22px;font-size:.86rem;color:var(--muted)}
+.steps-list li{margin-block:2px}
+.steps-list li.current{color:var(--ink);font-weight:600}
+.steps-list button{background:none;border:0;padding:2px 0;color:inherit;text-align:start;font-weight:inherit;cursor:pointer}
+.steps-list button:hover{color:var(--accent)}
+.hint{color:var(--muted);font-size:.78rem}
+.noscript{background:var(--warn-soft);padding:12px;border-radius:8px}
+footer{color:var(--muted);font-size:.82rem;margin-block-start:18px}
+footer a{color:var(--accent)}
+/* ---------- SVG vocabulary ---------- */
+svg text{fill:var(--ink);font-family:var(--font);font-size:15px}
+svg text.small{font-size:12.5px;fill:var(--muted)}
+svg text.title{font-size:17px;font-weight:600}
+svg text.big{font-size:22px;font-weight:600}
+svg text.mono{font-family:var(--mono);font-size:13px}
+svg .node > rect, svg .node > circle, svg .node > ellipse{fill:var(--node);stroke:var(--node-stroke);stroke-width:1.5}
+svg .node.compute > rect{fill:var(--c-compute)}
+svg .node.network > rect{fill:var(--c-network)}
+svg .node.data > rect{fill:var(--c-data)}
+svg .node.security > rect{fill:var(--c-security)}
+svg .node.identity > rect{fill:var(--c-identity)}
+svg .node.ops > rect{fill:var(--c-ops)}
+svg .node.ext > rect{fill:var(--c-ext)}
+svg .zone > rect{fill:var(--zone);stroke:var(--node-stroke);stroke-width:1.2;stroke-dasharray:6 5}
+svg .region > rect{fill:var(--region);stroke:var(--node-stroke);stroke-width:1.2}
+svg .wire{fill:none;stroke:var(--node-stroke);stroke-width:2}
+svg .arrowhead{fill:var(--node-stroke)}
+svg .badge > rect{fill:var(--accent);stroke:none}
+svg .badge > text{fill:var(--accent-ink);font-size:12px;font-weight:600}
+svg .callout > rect{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.2}
+/* ---------- step states (driven by the engine) ---------- */
+[data-el]{transition:opacity .45s ease}
+[data-el]:not(.is-visible){opacity:0}
+.is-dim{opacity:.22 !important}
+.is-hl > rect, .is-hl > circle, .is-hl > ellipse, .is-hl > polygon,
+rect.is-hl, circle.is-hl, ellipse.is-hl, polygon.is-hl, path.is-hl{stroke:var(--hl) !important;stroke-width:4 !important}
+.is-ok > rect, .is-ok > circle, .is-ok > ellipse, rect.is-ok, circle.is-ok{stroke:var(--ok) !important;fill:var(--ok-soft) !important;stroke-width:3 !important}
+.is-bad > rect, .is-bad > circle, .is-bad > ellipse, rect.is-bad, circle.is-bad{stroke:var(--bad) !important;fill:var(--bad-soft) !important;stroke-width:3 !important}
+path.is-ok{stroke:var(--ok) !important;stroke-width:3 !important}
+path.is-bad{stroke:var(--bad) !important;stroke-width:3 !important}
+path.is-flow{stroke:var(--flow) !important;stroke-width:3 !important;stroke-dasharray:10 8;animation:lunch-flow .9s linear infinite}
+path.is-flow.is-bad{stroke:var(--bad) !important}
+path.is-flow.is-ok{stroke:var(--ok) !important}
+@keyframes lunch-flow{to{stroke-dashoffset:-18}}
+.packet{fill:var(--packet);stroke:var(--surface);stroke-width:2}
+.packet.bad{fill:var(--bad)}
+.packet.ok{fill:var(--ok)}
+.packet.warn{fill:var(--hl)}
+@media (prefers-reduced-motion: reduce){
+  [data-el], .progress>div{transition:none}
+  path.is-flow{animation:none}
+}
+/* =====================================================================
+   DEMO-SPECIFIC STYLES (optional — keep small, use the variables above)
+   ===================================================================== */
+svg .node > rect.subnet{fill:var(--surface);stroke-dasharray:5 4}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">Lunch 06 · Virtual Machines (Basic) · Interactive demo</p>
+    <h1>What really gets created when you create a VM</h1>
+    <p class="lede">Follow one <code>az vm create</code> as it becomes six Azure resources, watch SSH get in while HTTP is blocked, and see which meter stops when the VM is switched off. Press ▶ Play, or step through with Next and Back.</p>
+  </header>
+
+  <main class="layout">
+    <section class="stage" aria-label="Animated diagram">
+      <svg id="stage" viewBox="0 0 960 560" role="img" aria-labelledby="svgTitle svgDesc">
+        <title id="svgTitle">What Azure creates for one virtual machine, and how traffic and billing behave</title>
+        <desc id="svgDesc">Cloud Shell sends az vm create to Azure Resource Manager. In a resource group, a virtual network with a subnet, a Standard public IP, a network security group, a network interface, the VM vm-web-1, an OS disk and later a data disk appear. SSH from Cloud Shell passes the NSG, HTTP from a shopper is blocked until port 80 is opened, the VM downloads updates through its public IP, and compute and disk meters show what is billed when the VM is stopped or deallocated.</desc>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+          </marker>
+        </defs>
+
+        <!-- Static scenery -->
+        <g class="region"><rect x="224" y="20" width="716" height="520" rx="18"/><text x="244" y="48" class="title">Azure region · Southeast Asia</text></g>
+        <g class="zone"><rect x="240" y="126" width="688" height="402" rx="14"/><text x="256" y="148" class="small">Resource group rg-lunch06-…</text></g>
+
+        <!-- Virtual network first, so the wires inside it stay visible -->
+        <g id="n-vnet" class="node network" data-el>
+          <rect x="600" y="166" width="320" height="218" rx="12"/>
+          <text x="760" y="188" text-anchor="middle">vnet-nusa-web · 10.20.0.0/16</text>
+          <rect class="subnet" x="612" y="200" width="296" height="172" rx="10"/>
+          <text x="760" y="220" text-anchor="middle" class="small">snet-web · 10.20.1.0/24</text>
+        </g>
+
+        <!-- Wires -->
+        <path id="w-arm" class="wire" d="M196,96 C300,96 316,86 398,86" marker-end="url(#arrow)" data-el/>
+        <path id="w-ssh" class="wire" d="M196,126 C236,126 236,288 262,288 L722,288" marker-end="url(#arrow)" data-el/>
+        <path id="w-http" class="wire" d="M196,461 C236,461 236,304 262,304 L722,304" marker-end="url(#arrow)" data-el/>
+        <path id="w-out" class="wire" d="M722,320 L262,320 C232,320 226,277 198,277" marker-end="url(#arrow)" data-el/>
+
+        <!-- Outside Azure -->
+        <g id="n-shell" class="node ext" data-el data-start>
+          <rect x="20" y="60" width="176" height="82" rx="12"/>
+          <text x="108" y="94" text-anchor="middle">Cloud Shell</text>
+          <text x="108" y="118" text-anchor="middle" class="small">Dewi · az vm create</text>
+        </g>
+        <g id="n-mirror" class="node ext" data-el>
+          <rect x="20" y="236" width="176" height="82" rx="12"/>
+          <text x="108" y="270" text-anchor="middle">Ubuntu mirror</text>
+          <text x="108" y="294" text-anchor="middle" class="small">package downloads</text>
+        </g>
+        <g id="c-explicit" class="callout" data-el>
+          <rect x="20" y="330" width="176" height="64" rx="10"/>
+          <text x="108" y="356" text-anchor="middle">Explicit outbound</text>
+          <text x="108" y="378" text-anchor="middle" class="small">via the VM's public IP</text>
+        </g>
+        <g id="n-shopper" class="node ext" data-el>
+          <rect x="20" y="420" width="176" height="82" rx="12"/>
+          <text x="108" y="455" text-anchor="middle">Shopper</text>
+          <text x="108" y="479" text-anchor="middle" class="small">web browser</text>
+        </g>
+
+        <!-- Azure Resource Manager -->
+        <g id="n-arm" class="node ops" data-el>
+          <rect x="400" y="58" width="320" height="56" rx="12"/>
+          <text x="560" y="82" text-anchor="middle">Azure Resource Manager</text>
+          <text x="560" y="102" text-anchor="middle" class="small">checks access, then calls providers</text>
+        </g>
+
+        <!-- Resources in the resource group -->
+        <g id="n-pip" class="node network" data-el>
+          <rect x="262" y="262" width="150" height="86" rx="12"/>
+          <text x="337" y="290" text-anchor="middle">Public IP</text>
+          <text x="337" y="312" text-anchor="middle" class="small">pip-web-1</text>
+          <text x="337" y="332" text-anchor="middle" class="small">Standard · static</text>
+        </g>
+        <g id="n-nsg" class="node security" data-el>
+          <rect x="432" y="250" width="156" height="104" rx="12"/>
+          <text x="510" y="276" text-anchor="middle">NSG nsg-web</text>
+          <text id="t-rule22" x="510" y="302" text-anchor="middle" class="small">SSH 22 · allow</text>
+          <text id="t-rule80" x="510" y="326" text-anchor="middle" class="small">HTTP 80 · no rule</text>
+        </g>
+        <g id="b-open" class="badge" data-el>
+          <rect x="432" y="220" width="156" height="24" rx="12"/>
+          <text x="510" y="236" text-anchor="middle">allow HTTP · 900</text>
+        </g>
+        <g id="n-nic" class="node network" data-el>
+          <rect x="622" y="262" width="84" height="74" rx="12"/>
+          <text x="664" y="292" text-anchor="middle">NIC</text>
+          <text x="664" y="314" text-anchor="middle" class="small">10.20.1.4</text>
+        </g>
+        <g id="n-vm" class="node compute" data-el>
+          <rect x="722" y="234" width="174" height="126" rx="12"/>
+          <text x="809" y="262" text-anchor="middle" class="title">vm-web-1</text>
+          <text x="809" y="284" text-anchor="middle" class="small">Standard_B2ats_v2</text>
+          <text x="809" y="304" text-anchor="middle" class="small">Ubuntu 24.04 LTS</text>
+          <text id="t-vm-state" x="809" y="338" text-anchor="middle" class="small">running</text>
+        </g>
+        <g id="n-meter-compute" class="node ops" data-el>
+          <rect x="262" y="404" width="172" height="86" rx="12"/>
+          <text x="348" y="432" text-anchor="middle">Compute meter</text>
+          <text id="t-compute" x="348" y="456" text-anchor="middle" class="small">running · billed</text>
+          <text x="348" y="476" text-anchor="middle" class="small">while allocated</text>
+        </g>
+        <g id="n-meter-disk" class="node ops" data-el>
+          <rect x="452" y="404" width="150" height="86" rx="12"/>
+          <text x="527" y="432" text-anchor="middle">Disk meter</text>
+          <text id="t-disk" x="527" y="456" text-anchor="middle" class="small">billed</text>
+          <text x="527" y="476" text-anchor="middle" class="small">per GiB provisioned</text>
+        </g>
+        <g id="n-osdisk" class="node data" data-el>
+          <rect x="622" y="404" width="134" height="86" rx="12"/>
+          <text x="689" y="432" text-anchor="middle">OS disk</text>
+          <text x="689" y="456" text-anchor="middle" class="small">osdisk-web-1</text>
+          <text x="689" y="476" text-anchor="middle" class="small">Standard SSD</text>
+        </g>
+        <g id="n-datadisk" class="node data" data-el>
+          <rect x="774" y="404" width="140" height="86" rx="12"/>
+          <text x="844" y="432" text-anchor="middle">Data disk</text>
+          <text x="844" y="456" text-anchor="middle" class="small">8 GiB · LUN 0</text>
+          <text x="844" y="476" text-anchor="middle" class="small">/datadrive</text>
+        </g>
+
+        <!-- Packets are drawn here by the engine; keep this group last -->
+        <g id="packets"></g>
+      </svg>
+    </section>
+
+    <aside class="narration" aria-label="Narration and controls">
+      <p class="step-count" id="stepCount">Step 1</p>
+      <h2 id="stepTitle">Loading…</h2>
+      <p id="stepText" aria-live="polite"></p>
+      <p id="stepTip" class="tip" hidden></p>
+      <div class="controls" role="group" aria-label="Playback controls">
+        <button id="prev" type="button" aria-label="Previous step">◀ Back</button>
+        <button id="play" type="button" class="primary" aria-pressed="false">▶ Play</button>
+        <button id="next" type="button" aria-label="Next step">Next ▶</button>
+        <button id="restart" type="button" aria-label="Restart from the first step">↺ Restart</button>
+        <label class="speed">Speed
+          <select id="speed">
+            <option value="1.5">Relaxed</option>
+            <option value="1" selected>Normal</option>
+            <option value="0.7">Brisk</option>
+          </select>
+        </label>
+      </div>
+      <div class="progress" aria-hidden="true"><div id="bar"></div></div>
+      <ol id="stepsList" class="steps-list" aria-label="All steps"></ol>
+      <p class="hint">Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.</p>
+      <noscript><p class="noscript">This interactive demo needs JavaScript. The reading for this lunch covers the same story.</p></noscript>
+    </aside>
+  </main>
+
+  <footer>
+    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/06-virtual-machines-basic.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+  </footer>
+</div>
+
+<!-- =====================================================================
+     DEMO CONTENT — the only script you edit. Must be valid JSON.
+     Keys per step:
+       title, text, tip            narration (plain text; tip is optional)
+       show, hide      [ids]       cumulative visibility of [data-el] elements
+       highlight, ok, bad, flow, dim  [ids]   apply to this step only
+       packets   [pathId | {"path":id,"dur":1.6,"delay":0,"stopAt":1,"cls":"bad|ok|warn"}]
+       set       {"id":"new text"} cumulative text changes
+       view      "x y w h"         cumulative camera (SVG viewBox)
+       duration  number (ms)       optional autoplay override
+     ===================================================================== -->
+<script type="application/json" id="demo-steps">
+[
+  {
+    "title": "The storefront leaves the pantry",
+    "text": "Nusantara Retail's online store still runs on one physical server next to the pantry. Dewi opens Azure Cloud Shell and types a single command, az vm create. Watch what that one command really builds, how traffic reaches the new VM, and which meters keep running when the VM is switched off.",
+    "highlight": [
+      "n-shell"
+    ]
+  },
+  {
+    "title": "One request reaches Resource Manager",
+    "text": "The command becomes one request to Azure Resource Manager, the front door for every create, update and delete. Resource Manager checks who Dewi is, what she may do and which policies apply. Then it hands the work to resource providers: Microsoft.Network for the networking pieces and Microsoft.Compute for the VM and its disk.",
+    "show": [
+      "n-arm",
+      "w-arm"
+    ],
+    "flow": [
+      "w-arm"
+    ],
+    "packets": [
+      "w-arm"
+    ],
+    "highlight": [
+      "n-arm"
+    ]
+  },
+  {
+    "title": "First, a private network",
+    "text": "Microsoft.Network creates the virtual network vnet-nusa-web, 10.20.0.0/16, with the subnet snet-web, 10.20.1.0/24. Dewi chose the range on purpose, so it can never collide with head office's 10.0.0.0/16. Subnets in new virtual networks are private by default: nothing inside them gets an automatic route to the internet.",
+    "show": [
+      "n-vnet"
+    ],
+    "highlight": [
+      "n-vnet"
+    ]
+  },
+  {
+    "title": "A front door and a guard",
+    "text": "Next come a Standard public IP address — static, and closed to inbound traffic until a rule allows it — and the network security group nsg-web. Because this is a Linux VM, the CLI adds one inbound rule: allow SSH on port 22 from anywhere. Default rules deny everything else from the internet.",
+    "show": [
+      "n-pip",
+      "n-nsg"
+    ],
+    "highlight": [
+      "n-pip",
+      "n-nsg"
+    ]
+  },
+  {
+    "title": "NIC, VM and OS disk",
+    "text": "A network interface joins the subnet with the private address 10.20.1.4. Microsoft.Compute then places vm-web-1 on a physical host: size Standard_B2ats_v2, image Ubuntu 24.04 LTS, Trusted Launch switched on. Its OS disk is a separate managed disk created from the image. One command, six separate resources — each with its own resource ID.",
+    "show": [
+      "n-nic",
+      "n-vm",
+      "n-osdisk"
+    ],
+    "highlight": [
+      "n-nic",
+      "n-vm",
+      "n-osdisk"
+    ]
+  },
+  {
+    "title": "The meters start ticking",
+    "text": "While the VM runs, two meters tick. The compute meter charges for the vCPUs and memory the VM holds on its host. The disk meter charges for the provisioned size of every managed disk, whether it is full or empty. The public IP adds a small charge of its own.",
+    "show": [
+      "n-meter-compute",
+      "n-meter-disk"
+    ],
+    "highlight": [
+      "n-meter-compute",
+      "n-meter-disk"
+    ]
+  },
+  {
+    "title": "SSH gets through",
+    "text": "Dewi connects from Cloud Shell with SSH. The packet reaches the public IP, the NSG finds its allow rule for port 22, and the NIC hands it to the VM. Her private key never leaves Cloud Shell; the VM holds only the public half, so there is no password for bots to guess.",
+    "show": [
+      "w-ssh"
+    ],
+    "flow": [
+      "w-ssh"
+    ],
+    "packets": [
+      {
+        "path": "w-ssh",
+        "dur": 2.4,
+        "cls": "ok"
+      }
+    ],
+    "ok": [
+      "n-nsg"
+    ]
+  },
+  {
+    "title": "Explicit outbound for updates",
+    "text": "Inside the VM, Dewi installs nginx with apt. The download leaves through the VM's own Standard public IP to the Ubuntu package mirror. A public IP on the VM is an explicit outbound method, so it works even in a private subnet. Without it she would need a NAT gateway or load balancer outbound rules.",
+    "hide": [
+      "w-ssh"
+    ],
+    "show": [
+      "n-mirror",
+      "w-out",
+      "c-explicit"
+    ],
+    "flow": [
+      "w-out"
+    ],
+    "packets": [
+      {
+        "path": "w-out",
+        "dur": 2.4
+      }
+    ],
+    "highlight": [
+      "n-mirror"
+    ]
+  },
+  {
+    "title": "HTTP is blocked",
+    "text": "nginx is running, so a shopper opens the site. The request reaches the public IP, but the NSG has no rule for port 80. The default DenyAllInBound rule drops it, and the browser spins until it times out. nginx never even sees the request — the problem lies in front of the VM.",
+    "hide": [
+      "w-out",
+      "c-explicit"
+    ],
+    "show": [
+      "n-shopper",
+      "w-http"
+    ],
+    "packets": [
+      {
+        "path": "w-http",
+        "dur": 2.0,
+        "stopAt": 0.555,
+        "cls": "bad"
+      }
+    ],
+    "bad": [
+      "n-nsg"
+    ],
+    "set": {
+      "t-rule80": "HTTP 80 · denied ✗"
+    },
+    "view": "0 140 720 420"
+  },
+  {
+    "title": "Open port 80",
+    "text": "Dewi runs az vm open-port with port 80. A new allow rule with priority 900 joins the NSG. Rules are checked from the lowest number up, so HTTP now matches the new rule long before the default deny. The shopper's request flows all the way to nginx, and the page appears.",
+    "show": [
+      "b-open"
+    ],
+    "set": {
+      "t-rule80": "HTTP 80 · allow (900)"
+    },
+    "flow": [
+      "w-http"
+    ],
+    "packets": [
+      {
+        "path": "w-http",
+        "dur": 2.4,
+        "cls": "ok"
+      }
+    ],
+    "ok": [
+      "n-nsg",
+      "n-vm"
+    ],
+    "view": "0 0 960 560"
+  },
+  {
+    "title": "A data disk for product images",
+    "text": "Product images get their own 8 GiB Standard SSD, attached at LUN 0. Azure attaches the disk, but Linux sees only an empty device, so Dewi uses Run Command to partition, format and mount it at /datadrive with an fstab entry. B2ats_v2 has no temporary disk, and nothing important should ever live on one.",
+    "show": [
+      "n-datadisk"
+    ],
+    "highlight": [
+      "n-datadisk"
+    ]
+  },
+  {
+    "title": "Stopped is not deallocated",
+    "text": "At 18:00 Dewi runs az vm stop. Ubuntu shuts down, but the VM keeps its place on the host — the state reads Stopped (allocated) — so the compute meter keeps running. A shutdown from inside the operating system does exactly the same. This is the surprise that finance finds on the bill.",
+    "hide": [
+      "w-http",
+      "b-open"
+    ],
+    "set": {
+      "t-vm-state": "stopped (allocated)",
+      "t-compute": "still billed"
+    },
+    "bad": [
+      "n-meter-compute"
+    ],
+    "highlight": [
+      "n-vm"
+    ]
+  },
+  {
+    "title": "Deallocate stops the compute meter",
+    "text": "Now she runs az vm deallocate. Azure releases the host capacity, the state becomes Deallocated and the compute meter stops. The disk meter keeps running because the disks still exist, and the static public IP keeps its address and its small charge. The portal's Stop button and auto-shutdown deallocate too.",
+    "set": {
+      "t-vm-state": "deallocated",
+      "t-compute": "stopped · not billed",
+      "t-disk": "still billed"
+    },
+    "ok": [
+      "n-meter-compute"
+    ],
+    "bad": [
+      "n-meter-disk"
+    ],
+    "dim": [
+      "n-vm"
+    ]
+  },
+  {
+    "title": "Recap: rent it properly",
+    "text": "One command built six resources and a second added the data disk. The NSG decided what got in, the public IP gave explicit outbound access, and only deallocation stopped the compute bill. Next, build it yourself in Lab 06 — then break the port-80 rule on purpose and fix it.",
+    "tip": "Lab 06 · Your first web server VM (about 45 minutes in Cloud Shell): create the VM, publish the Nusantara Retail page, open port 80, mount a data disk, resize, schedule auto-shutdown and compare stopped with deallocated.",
+    "show": [
+      "w-ssh",
+      "w-http"
+    ],
+    "set": {
+      "t-vm-state": "running",
+      "t-compute": "running · billed",
+      "t-disk": "billed"
+    },
+    "flow": [
+      "w-ssh",
+      "w-http"
+    ],
+    "packets": [
+      {
+        "path": "w-http",
+        "cls": "ok"
+      },
+      {
+        "path": "w-ssh",
+        "delay": 0.8,
+        "cls": "ok"
+      }
+    ],
+    "ok": [
+      "n-vm",
+      "n-nsg"
+    ]
+  }
+]
+</script>
+
+<script>
+/* =====================================================================
+   LUNCH DEMO PLAYER · v1.0 · engine
+   Copy this script unchanged into every demo. It reads the JSON above.
+   ===================================================================== */
+(function () {
+  'use strict';
+  var STEPS;
+  try {
+    STEPS = JSON.parse(document.getElementById('demo-steps').textContent);
+  } catch (err) {
+    STEPS = [{ title: 'Demo data error', text: 'The steps for this demo could not be loaded: ' + err.message }];
+  }
+  if (!Array.isArray(STEPS) || STEPS.length === 0) {
+    STEPS = [{ title: 'No steps yet', text: 'This demo has no steps.' }];
+  }
+
+  var byId = function (id) { return document.getElementById(id); };
+  var svg = byId('stage');
+  var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var reduceMotion = !!(mq && mq.matches);
+  var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
+  var TRANSIENT_CLASSES = ['is-hl', 'is-ok', 'is-bad', 'is-flow', 'is-dim'];
+  var els = Array.prototype.slice.call(document.querySelectorAll('[data-el]'));
+  var initialVisible = {};
+  els.forEach(function (el) { if (el.hasAttribute('data-start')) { initialVisible[el.id] = true; } });
+  var originalText = {};
+  STEPS.forEach(function (s) {
+    Object.keys(s.set || {}).forEach(function (id) {
+      var el = byId(id);
+      if (el && !(id in originalText)) { originalText[id] = el.textContent; }
+    });
+  });
+  var baseView = svg.getAttribute('viewBox') || '0 0 960 560';
+  var currentView = parseView(baseView);
+  var lastViewKey = baseView;
+  var current = 0, playing = false, timer = null, speed = 1, packetAnims = [], viewAnim = 0;
+
+  function parseView(v) { return String(v).trim().split(/[\s,]+/).map(Number); }
+
+  function stateAt(i) {
+    var visible = Object.assign({}, initialVisible);
+    var text = Object.assign({}, originalText);
+    var view = baseView;
+    for (var k = 0; k <= i; k++) {
+      var s = STEPS[k] || {};
+      (s.show || []).forEach(function (id) { visible[id] = true; });
+      (s.hide || []).forEach(function (id) { delete visible[id]; });
+      if (s.set) { Object.keys(s.set).forEach(function (id) { text[id] = s.set[id]; }); }
+      if (s.view) { view = s.view; }
+    }
+    return { visible: visible, text: text, view: view };
+  }
+
+  function setView(target) {
+    var to = parseView(target);
+    if (to.length !== 4 || to.some(function (n) { return isNaN(n); })) { return; }
+    if (viewAnim) { cancelAnimationFrame(viewAnim); viewAnim = 0; }
+    if (reduceMotion) { currentView = to; svg.setAttribute('viewBox', to.join(' ')); return; }
+    var from = currentView.slice(), t0 = null, D = 800;
+    function ease(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+    function frame(t) {
+      if (t0 === null) { t0 = t; }
+      var k = Math.min(1, (t - t0) / D), e = ease(k);
+      currentView = from.map(function (a, idx) { return a + (to[idx] - a) * e; });
+      svg.setAttribute('viewBox', currentView.join(' '));
+      viewAnim = k < 1 ? requestAnimationFrame(frame) : 0;
+    }
+    viewAnim = requestAnimationFrame(frame);
+  }
+
+  function clearPackets() {
+    packetAnims.forEach(function (a) { a.stop(); });
+    packetAnims = [];
+  }
+
+  function runPacket(spec) {
+    var o = typeof spec === 'string' ? { path: spec } : (spec || {});
+    var path = byId(o.path);
+    if (!path || typeof path.getTotalLength !== 'function') { return; }
+    var len = path.getTotalLength();
+    var layer = byId('packets') || svg;
+    var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('r', String(o.r || 7));
+    dot.setAttribute('class', 'packet' + (o.cls ? ' ' + o.cls : ''));
+    layer.appendChild(dot);
+    var stopAt = o.stopAt == null ? 1 : Math.max(0, Math.min(1, Number(o.stopAt)));
+    var dur = (o.dur || 1.6) * 1000 * speed, delay = (o.delay || 0) * 1000 * speed, hold = 600;
+    var stopped = false, raf = 0, start = null;
+    function place(f) {
+      var p = path.getPointAtLength(len * f);
+      dot.setAttribute('cx', String(p.x));
+      dot.setAttribute('cy', String(p.y));
+    }
+    packetAnims.push({
+      stop: function () {
+        stopped = true;
+        if (raf) { cancelAnimationFrame(raf); }
+        if (dot.parentNode) { dot.parentNode.removeChild(dot); }
+      }
+    });
+    if (reduceMotion) { place(stopAt); return; }
+    function frame(t) {
+      if (stopped) { return; }
+      if (start === null) { start = t; }
+      var elapsed = t - start - delay;
+      if (elapsed < 0) { dot.setAttribute('opacity', '0'); raf = requestAnimationFrame(frame); return; }
+      var phase = elapsed % (dur + hold);
+      dot.setAttribute('opacity', phase > dur ? '0.35' : '1');
+      place(Math.min(phase / dur, 1) * stopAt);
+      raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  function render(i) {
+    current = Math.max(0, Math.min(STEPS.length - 1, i));
+    var s = STEPS[current] || {};
+    var st = stateAt(current);
+    Array.prototype.forEach.call(document.querySelectorAll('.is-hl, .is-ok, .is-bad, .is-flow, .is-dim'), function (el) {
+      TRANSIENT_CLASSES.forEach(function (c) { el.classList.remove(c); });
+    });
+    els.forEach(function (el) { el.classList.toggle('is-visible', !!st.visible[el.id]); });
+    Object.keys(TRANSIENT).forEach(function (key) {
+      (s[key] || []).forEach(function (id) {
+        var el = byId(id);
+        if (!el) { return; }
+        el.classList.add(TRANSIENT[key]);
+        if (key !== 'dim' && el.hasAttribute('data-el')) { el.classList.add('is-visible'); }
+      });
+    });
+    Object.keys(st.text).forEach(function (id) {
+      var el = byId(id);
+      if (el) { el.textContent = st.text[id]; }
+    });
+    if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
+    clearPackets();
+    (s.packets || []).forEach(runPacket);
+    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepTitle').textContent = s.title || '';
+    byId('stepText').textContent = s.text || '';
+    var tip = byId('stepTip');
+    if (s.tip) { tip.textContent = s.tip; tip.hidden = false; } else { tip.textContent = ''; tip.hidden = true; }
+    byId('bar').style.inlineSize = ((current + 1) / STEPS.length * 100) + '%';
+    byId('prev').disabled = current === 0;
+    byId('next').disabled = current === STEPS.length - 1;
+    Array.prototype.forEach.call(document.querySelectorAll('#stepsList li'), function (li, k) {
+      li.classList.toggle('current', k === current);
+      var b = li.querySelector('button');
+      if (b) {
+        if (k === current) { b.setAttribute('aria-current', 'step'); } else { b.removeAttribute('aria-current'); }
+      }
+    });
+    try { history.replaceState(null, '', '#step=' + (current + 1)); } catch (err) { /* file:// or sandboxed frame */ }
+  }
+
+  function stepDuration(s) {
+    if (s && s.duration) { return Number(s.duration); }
+    var words = (((s && s.title) || '') + ' ' + ((s && s.text) || '') + ' ' + ((s && s.tip) || '')).trim().split(/\s+/).length;
+    return Math.max(5000, words * 340);
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!playing) { return; }
+    timer = setTimeout(function () {
+      if (current < STEPS.length - 1) { render(current + 1); schedule(); } else { setPlaying(false); }
+    }, stepDuration(STEPS[current]) * speed);
+  }
+
+  function setPlaying(p) {
+    playing = p;
+    var b = byId('play');
+    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.setAttribute('aria-pressed', p ? 'true' : 'false');
+    if (p && current === STEPS.length - 1) { render(0); }
+    schedule();
+  }
+
+  function go(i) { render(i); if (playing) { schedule(); } }
+
+  var list = byId('stepsList');
+  STEPS.forEach(function (s, k) {
+    var li = document.createElement('li');
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = s.title || ('Step ' + (k + 1));
+    b.addEventListener('click', function () { go(k); });
+    li.appendChild(b);
+    list.appendChild(li);
+  });
+
+  byId('prev').addEventListener('click', function () { go(current - 1); });
+  byId('next').addEventListener('click', function () { go(current + 1); });
+  byId('restart').addEventListener('click', function () { go(0); });
+  byId('play').addEventListener('click', function () { setPlaying(!playing); });
+  byId('speed').addEventListener('change', function (e) {
+    speed = Number(e.target.value) || 1;
+    if (playing) { schedule(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    var tag = ((e.target && e.target.tagName) || '').toLowerCase();
+    if (tag === 'select' || tag === 'input' || tag === 'textarea') { return; }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+  });
+  if (mq && mq.addEventListener) {
+    mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
+  }
+
+  var m = /step=(\d+)/.exec(window.location.hash || '');
+  render(m ? Number(m[1]) - 1 : 0);
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+})();
+</script>
+</body>
+</html>

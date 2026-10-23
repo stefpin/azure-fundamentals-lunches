@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 14 · When the Courier API Slows Down — Lunch 14: Serverless: Azure Functions, Logic Apps and Event Grid · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 14 · Serverless: Azure Functions, Logic Apps and Event Grid. One slow partner shouldn&#x27;t slow down every checkout. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 14 · When the Courier API Slows Down — Lunch 14: Serverless: Azure Functions, Logic Apps and Event Grid">
+<meta property="og:description" content="Lunch 14 · Serverless: Azure Functions, Logic Apps and Event Grid. One slow partner shouldn&#x27;t slow down every checkout. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/lunches/14-serverless.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lunch" data-lunch="14" style="--c:#11935a">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 14</span> Season 1 · 🧩 Part 3 · Platform services &amp; data</div>
+      <h1>When the Courier API Slows Down</h1>
+      <div class="lunch-title">Lunch 14 · Serverless: Azure Functions, Logic Apps and Event Grid</div>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure architecture and services</span>
+        <span class="chip cost">🔬 Lab · about 50 minutes · 💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="02-cloud-concepts.html" title="Rent, Don&#x27;t Buy?">↩ 02</a><a class="chip" href="07-storage-basic.html" title="The USB Drive Goes Home on Fridays">↩ 07</a><a class="chip" href="10-app-service.html" title="Dewi&#x27;s Friday Nights">↩ 10</a><a class="chip" href="13-containers-basic.html" title="It Works on My Machine">↩ 13</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 13 · It Works on My Machine, the storefront ships as a container that scales from zero with Container Apps.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, calmer"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director's question · 50% ready</b>After this episode you can say: “Failures go unnoticed — even when a partner&#x27;s API is slow.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today's menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-what-serverless-really-means">What serverless really means</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-azure-functions-triggers-bindings-and-your-code">Azure Functions: triggers, bindings and your code</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-hosting-plans-where-your-functions-run">Hosting plans: where your functions run</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-logic-apps-workflows-from-building-blocks">Logic Apps: workflows from building blocks</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-events-and-messages-event-grid-service-bus-event-hubs-and-storage-queues">Events and messages: Event Grid, Service Bus, Event Hubs and Storage queues</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-putting-it-together-for-nusantara-retail">Putting it together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/14-serverless.html">🔬 Open Lab 14</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today's menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> what serverless means, what you gain and which trade-offs (cold starts, time limits, stateless code) you accept.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Describe</strong> how Azure Functions uses triggers and bindings, and <strong>choose</strong> a hosting plan: Flex Consumption, Premium, Dedicated or Container Apps.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> between Event Grid, Service Bus, Event Hubs and Storage queues for an event or a message.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Decide</strong> when a job belongs in a Logic Apps workflow and when in a function.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 14</span>
+        <div class="story-body"><p>The storefront now runs on App Service, and Harbolnas is coming. Dewi has been reading last year's incident notes. When
+a shopper clicks <em>Pay</em>, the storefront does everything inside that one request: it saves the order, emails the
+warehouse, adds loyalty points and books a courier. On 12.12 last year the courier's API slowed down, so every checkout
+slowed down with it, and some shoppers gave up.</p>
+<p>Marketing has a smaller headache. Every night they upload hundreds of new product photos, and a small VM resizes them
+into thumbnails. It works for about twenty minutes a day and idles for the rest, on a bill that runs for all
+twenty-four hours. Meanwhile the finance team would like a stock report in their inbox every morning, and nobody has
+time to write another script for it.</p>
+<p>Today's question: <strong>how do we react to things that happen — a new order, a new photo, seven o'clock in the morning —
+without servers that wait around and without making customers wait?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-what-serverless-really-means" data-spy><span class="scene-no">Scene 1 of 6</span><h3>What serverless really means</h3><div class="prose"><p><strong>Serverless</strong> doesn't mean there are no servers. It means the servers are never your problem: you don't choose them,
+size them, patch them or keep them running. You hand the platform a piece of code or a workflow and say when it should
+run; the platform finds the compute, runs it and takes it away again. Three traits define it:</p>
+<ul>
+<li><strong>Event-driven.</strong> Code runs because something happened: an HTTP request, a timer, a new file, a message in a queue.</li>
+<li><strong>Automatic scale, down to zero.</strong> One event gets one instance; a thousand events get more; no events get none.</li>
+<li><strong>Pay per execution.</strong> In consumption-style plans you pay for the executions and the compute time they use, not for
+idle hours.</li>
+</ul>
+<p>On the shared-responsibility slider from Lunch 02, serverless sits even further right than App Service: with a web
+app you still choose a plan and an instance count; with a serverless function you mostly don't.</p>
+<p>The trade-offs are real, and it pays to know them before 12.12. A function that has scaled to zero needs a moment to
+start when the next event arrives; that delay is a <strong>cold start</strong>. Executions have time limits, and an HTTP-triggered
+function must answer within 230 seconds, however long the plan's timeout is. Instances come and go, so code must be
+<strong>stateless</strong>: anything worth keeping goes to storage, a queue or a database. And pay-per-execution is cheap for bursty
+work but can cost more than a fixed plan for traffic that never stops.</p>
+<p>So serverless is not the answer to everything. The storefront itself, busy all day with steady traffic and long user
+sessions, is happier on App Service (Lunch 10). A video-transcoding job that keeps a CPU busy for an hour fits a
+container or a VM better. Serverless shines for the small, spiky, event-shaped jobs that every shop has dozens of:
+validating an order, resizing a photo, sending a receipt, tidying up old files at night.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph sources[&quot;Something happens&quot;]
+    http[&quot;HTTP request&lt;br/&gt;checkout sends an order&quot;]
+    blob[&quot;New blob&lt;br/&gt;product photo uploaded&quot;]
+    timer[&quot;Timer&lt;br/&gt;every morning 07:00&quot;]
+  end
+  subgraph fn[&quot;Function app on Flex Consumption&quot;]
+    f1[&quot;new_order&quot;]
+    f2[&quot;make_thumbnail&quot;]
+    f3[&quot;stock_report&quot;]
+  end
+  http --&gt; f1
+  blob --&gt;|&quot;via Event Grid&quot;| f2
+  timer --&gt; f3
+  f1 --&gt;|&quot;output binding&quot;| q[(&quot;Queue: orders&quot;)]
+  f2 --&gt;|&quot;output binding&quot;| t[(&quot;Container: thumbnails&quot;)]
+  f3 --&gt; mail[&quot;Email to finance&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></article><article class="scene-card" id="2-azure-functions-triggers-bindings-and-your-code" data-spy><span class="scene-no">Scene 2 of 6</span><h3>Azure Functions: triggers, bindings and your code</h3><div class="prose"><p><strong>Azure Functions</strong> runs small pieces of code, called <em>functions</em>, in response to events. Each function has exactly one
+<strong>trigger</strong>, the event that starts it, and any number of <strong>bindings</strong>, declarative connections to data. An <em>input
+binding</em> hands your code data when it starts, such as a document from Cosmos DB. An <em>output binding</em> takes a value from
+your code and writes it somewhere, such as a queue message or a blob. Bindings remove the boilerplate: no client
+libraries to create, no connection handling, no retry loops for the simple cases.</p>
+<p>Common triggers include <strong>HTTP</strong>, <strong>timer</strong> (on a CRON schedule), <strong>Blob storage</strong>, <strong>Queue storage</strong>, <strong>Service Bus</strong>,
+<strong>Event Hubs</strong>, <strong>Event Grid</strong> and the <strong>Cosmos DB</strong> change feed. Here is the heart of the function you deploy in
+today's lab, in the Python v2 programming model, where decorators declare the trigger and bindings:</p>
+<div class="code" data-lang="python"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>python</span><button class="copy-btn" type="button">Copy</button></div><pre><code>@app.route(route=&quot;orders&quot;, methods=[&quot;POST&quot;])                                         # trigger: HTTP POST /api/orders
+@app.queue_output(arg_name=&quot;msg&quot;, queue_name=&quot;orders&quot;, connection=&quot;OrdersStorage&quot;)  # output binding
+def new_order(req: func.HttpRequest, msg: func.Out[str]) -&gt; func.HttpResponse:
+    order = req.get_json()
+    msg.set(json.dumps(order))            # the Functions host writes the queue message
+    return func.HttpResponse(&quot;queued&quot;, status_code=200)
+</code></pre></div>
+<p>The <code>connection</code> value is not a connection string. It's the <em>name</em> of a connection that the platform looks up in the
+app's settings, and the best connections hold no secret at all: a setting such as <code>OrdersStorage__queueServiceUri</code>
+tells the host to use the app's <strong>managed identity</strong>, and a role assignment decides what that identity may do.</p>
+<p>Triggers differ in how events arrive. Some are <strong>pushed</strong>: an HTTP request or an Event Grid event is delivered to your
+function the moment it happens. Others are <strong>pulled</strong>: a Queue storage trigger polls the queue, checking less often
+while it stays empty. On Flex Consumption, the Blob storage trigger uses Event Grid as its source, so new files arrive
+as pushed events instead of being discovered by scanning a container.</p>
+<p>HTTP functions also have an <strong>authorization level</strong>. <em>Anonymous</em> lets anyone call; <em>function</em> requires a <strong>function
+key</strong>, a shared secret sent in the <code>x-functions-key</code> header or the <code>code</code> query parameter; <em>admin</em> requires the master
+key. Keys are fine for one service calling another, as in today's lab. A public API deserves more: sign-in with
+Microsoft Entra ID through the built-in authentication you met in Lunch 10, or Azure API Management in front.</p>
+<p>Functions are grouped into a <strong>function app</strong>, the unit you deploy, configure and scale. All functions in a function
+app share its settings, its hosting plan and its runtime version. Every function app also needs a <strong>storage account</strong>
+for its own bookkeeping: keys, trigger checkpoints and, in the newest plan, the deployment package itself.</p>
+<p>You can write functions in <strong>C#</strong>, <strong>JavaScript and TypeScript</strong>, <strong>Python</strong>, <strong>Java</strong> and <strong>PowerShell</strong>, and <em>custom
+handlers</em> let other languages join in. For C#, use the <em>isolated worker model</em>: support for the older in-process model
+ends on November 10, 2026. Developers run the same Functions host on their laptops with Azure Functions Core Tools
+(<code>func start</code>) or VS Code; local settings live in a <code>local.settings.json</code> file that is never deployed and never
+belongs in Git.</p>
+<p>When a job has several steps that must survive restarts, such as <em>reserve stock, charge the card, book the courier,
+wait for the warehouse to confirm</em>, look at <strong>Durable Functions</strong>. An <em>orchestrator function</em> describes the steps in
+ordinary code, and the platform saves its progress after each step. Patterns such as chaining, fan-out and fan-in, and
+waiting for a human approval become a few lines instead of a home-made state machine.</p>
+</div></article><article class="scene-card" id="3-hosting-plans-where-your-functions-run" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Hosting plans: where your functions run</h3><div class="prose"><p>The code is the same everywhere; the <strong>hosting plan</strong> decides how it scales, what it costs and how it connects:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Plan</th>
+<th>Scale and limits</th>
+<th>Cold starts</th>
+<th>Networking</th>
+<th>You pay for</th>
+<th>Choose it when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Flex Consumption</strong></td>
+<td>Event-driven, per function group, up to 1,000 instances; Linux only</td>
+<td>Reduced; optional always-ready instances remove them</td>
+<td>Virtual network integration, private endpoints</td>
+<td>Execution time × instance memory, plus executions (with a monthly free grant), plus any always-ready instances</td>
+<td>Default for new serverless apps</td>
+</tr>
+<tr>
+<td><strong>Premium</strong></td>
+<td>Event-driven with prewarmed workers; at least one instance always on</td>
+<td>None for warm instances</td>
+<td>Virtual network integration, private endpoints</td>
+<td>Cores and memory of the running instances</td>
+<td>Steady traffic, no cold starts at all, custom Linux containers</td>
+</tr>
+<tr>
+<td><strong>Dedicated</strong> (App Service plan)</td>
+<td>Manual or autoscale, like a web app</td>
+<td>None with Always On</td>
+<td>As App Service</td>
+<td>The plan's instances, like Lunch 10</td>
+<td>You already pay for a plan with spare capacity, or need a fixed bill</td>
+</tr>
+<tr>
+<td><strong>Container Apps</strong></td>
+<td>Event-driven replicas, can scale to zero</td>
+<td>When scaled to zero</td>
+<td>The Container Apps environment</td>
+<td>Container Apps pricing</td>
+<td>Functions next to other containers, custom images, GPUs</td>
+</tr>
+<tr>
+<td><strong>Consumption</strong> (legacy)</td>
+<td>Event-driven; Windows today, Linux version retiring</td>
+<td>Yes</td>
+<td>No virtual network integration</td>
+<td>Executions and compute time</td>
+<td>Existing Windows apps only</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Flex Consumption</strong> is Microsoft's recommended plan for new serverless apps. It runs on Linux and lets you choose the
+instance memory (512 MB, 2,048 MB or 4,096 MB) and a <strong>maximum instance count</strong> that caps how far it scales, which
+protects both your budget and whatever the function writes to. It scales to zero when idle. For latency-sensitive HTTP
+functions you can keep one or more <strong>always-ready instances</strong> warm, at a baseline cost. Two limits to know: one
+function app per Flex Consumption plan, and no deployment slots.</p>
+<p>How does pay-per-execution add up? Billing counts the memory of each instance multiplied by the time it spends running
+your code, in <strong>GB-seconds</strong>, plus the number of executions; each execution counts for at least one second. Suppose the
+thumbnail function runs 300 times a night, one after another, for two seconds each on 2,048 MB instances: that's
+300 × 2 s × 2 GB = 1,200 GB-seconds and 300 executions, and nothing at all for the other 23 hours. Put your own numbers into the pricing
+calculator; the monthly free grant often covers small workloads completely.</p>
+<p>Cold starts deserve a plan rather than a panic. Keep the deployment package small, import heavy libraries only where
+they're needed, and measure the first-request latency after a quiet period. If it matters, for checkout for example,
+add an always-ready instance on Flex Consumption or move that function to Premium. For a nightly photo job, a second of
+start-up time doesn't matter at all.</p>
+<p>The older <strong>Consumption</strong> plan is now called legacy. Hosting on Linux in the Consumption plan retires on September 30,
+2028 and receives no new language versions, so new Python apps should start on Flex Consumption. Premium suits apps
+that are busy most of the day and can't tolerate any cold start. Dedicated makes sense when you already pay for an
+App Service plan with spare capacity.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>Serverless isn't costless. A function that writes to the same queue that triggers it, or a public HTTP function
+hammered by bots, can scale out and run up a bill in hours. Set a maximum instance count, require keys or sign-in on
+HTTP functions, and keep the budget alerts from Lab 01 switched on.</p>
+</aside>
+</div></article><article class="scene-card" id="4-logic-apps-workflows-from-building-blocks" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Logic Apps: workflows from building blocks</h3><div class="prose"><p>Not every automation needs code. <strong>Azure Logic Apps</strong> builds <strong>workflows</strong> from building blocks in a visual designer,
+in the portal or in VS Code. Every workflow starts with exactly one <strong>trigger</strong> (a schedule, an HTTP request, a new
+email, a new file) followed by <strong>actions</strong>: call an API, apply a condition, loop over items, send an email, post to
+Teams, write a row to a database. Behind the designer, each workflow is a JSON definition, so you can keep it in Git.</p>
+<p>Its superpower is <strong>connectors</strong>, more than 1,400 of them at the time of writing. <em>Built-in</em> connectors run inside the
+Logic Apps runtime: schedules, HTTP calls, conditions, loops and inline code. <em>Managed</em> connectors are Microsoft-run
+proxies for services such as Office 365 Outlook, Teams, SharePoint, Salesforce, SAP and SFTP servers; you sign in once,
+and the workflow uses that saved connection. Every run is recorded in the <strong>run history</strong>, with the inputs, outputs and
+duration of each step, so you can see exactly where a run failed and resubmit it. Errors are part of the design, too:
+each action has a <strong>retry policy</strong> for temporary failures, and a <em>run after</em> setting lets a step run only when an
+earlier step failed or timed out, for example to email the on-call engineer instead of failing silently.</p>
+<p>Logic Apps comes in two resource types:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Consumption</th>
+<th>Standard</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Runs in</strong></td>
+<td>Multitenant Azure Logic Apps, shared with other customers</td>
+<td>Single-tenant runtime on a Workflow Service Plan, an App Service Environment v3, or your own infrastructure</td>
+</tr>
+<tr>
+<td><strong>Workflows per resource</strong></td>
+<td>One</td>
+<td>Many, stateful and stateless</td>
+</tr>
+<tr>
+<td><strong>Billing</strong></td>
+<td>Per trigger and action execution</td>
+<td>The hosting plan, plus storage transactions for stateful workflows</td>
+</tr>
+<tr>
+<td><strong>Networking</strong></td>
+<td>Shared, multitenant network</td>
+<td>Virtual network integration and private endpoints</td>
+</tr>
+<tr>
+<td><strong>Good for</strong></td>
+<td>Getting started, low or spiky volume</td>
+<td>Higher volume, private networks, local development</td>
+</tr>
+</tbody>
+</table></div>
+<p>How do you choose between Logic Apps and Functions? Both are serverless, and they work well together:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Azure Functions</th>
+<th>Azure Logic Apps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Style</strong></td>
+<td>Code first: C#, Python, JavaScript and more</td>
+<td>Designer first, low code; JSON under the hood</td>
+</tr>
+<tr>
+<td><strong>Strongest at</strong></td>
+<td>Custom logic, data processing, high-volume event handling</td>
+<td>Orchestrating steps across many systems with connectors</td>
+</tr>
+<tr>
+<td><strong>Connecting to things</strong></td>
+<td>Triggers and bindings for Azure services, SDKs for the rest</td>
+<td>1,400+ connectors, including Office 365, SAP, Salesforce and SFTP</td>
+</tr>
+<tr>
+<td><strong>Long-running state</strong></td>
+<td>Durable Functions</td>
+<td>Built in: stateful workflows with run history</td>
+</tr>
+<tr>
+<td><strong>Nusantara example</strong></td>
+<td>Validate an order, resize a photo</td>
+<td>Morning stock report by email, an approval for large orders</td>
+</tr>
+</tbody>
+</table></div>
+<p>A workflow can call a function for the code-heavy step, and a function can start a workflow. For business users who
+want to automate their own tasks in Microsoft 365, <strong>Power Automate</strong> uses the same connector ecosystem without any
+Azure subscription work; Logic Apps is the Azure-hosted, IT-managed sibling.</p>
+</div></article><article class="scene-card" id="5-events-and-messages-event-grid-service-bus-event-hubs-and-storage-queues" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Events and messages: Event Grid, Service Bus, Event Hubs and Storage queues</h3><div class="prose"><p>Serverless designs pass information around, and Azure has four services for it. Choosing well starts with one
+distinction. An <strong>event</strong> is a lightweight notification that something happened: <em>a photo was uploaded</em>, <em>a VM was
+deleted</em>. The publisher doesn't care who reacts, or whether anyone does. A <strong>message</strong> carries data that someone is
+expected to process: <em>here is order JKT-1001; please ship it</em>. The sender relies on the receiver doing its job.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Model</th>
+<th>Best for</th>
+<th>Key features</th>
+<th>Nusantara example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Event Grid</strong></td>
+<td>Pushes events to subscribers</td>
+<td>Reacting to changes in Azure resources and your own apps</td>
+<td>Filters by event type and subject, built-in events from Azure services, retries and dead-lettering, HTTP and MQTT</td>
+<td>&quot;A product photo was uploaded&quot; → thumbnail function</td>
+</tr>
+<tr>
+<td><strong>Storage queues</strong></td>
+<td>Simple queue that consumers poll</td>
+<td>A cheap, simple backlog of work between components</td>
+<td>Messages up to 64 KB, very large capacity, part of a storage account</td>
+<td>&quot;Order JKT-1001 placed&quot; → order processor</td>
+</tr>
+<tr>
+<td><strong>Service Bus</strong></td>
+<td>Enterprise message broker: queues and topics</td>
+<td>Business transactions that must not be lost, duplicated or reordered</td>
+<td>First-in-first-out with sessions, duplicate detection, transactions, dead-letter queue, topics with subscriptions</td>
+<td>Payment and stock reservation for each order</td>
+</tr>
+<tr>
+<td><strong>Event Hubs</strong></td>
+<td>Partitioned stream that consumers read at their own pace</td>
+<td>Millions of events per second: telemetry and analytics</td>
+<td>Partitions, consumer groups, a Kafka-compatible endpoint, Capture to storage</td>
+<td>Clickstream from the storefront, telemetry from 40 stores' tills</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  start{&quot;What are you sending?&quot;} --&gt;|&quot;A notice that something happened&quot;| eg[&quot;Event Grid&quot;]
+  start --&gt;|&quot;A continuous stream of telemetry&quot;| eh[&quot;Event Hubs&quot;]
+  start --&gt;|&quot;Work that someone must process&quot;| q{&quot;Need ordering, transactions,&lt;br/&gt;duplicate detection or topics?&quot;}
+  q --&gt;|Yes| sb[&quot;Service Bus&quot;]
+  q --&gt;|&quot;No, simple and cheap is fine&quot;| sq[&quot;Storage queue&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Event Grid has a vocabulary of its own. A <strong>topic</strong> is where events are published: a <em>system topic</em> carries events
+from an Azure service, such as a storage account's <em>blob created</em> events, and a <em>custom topic</em> carries your own apps'
+events. An <strong>event subscription</strong> routes matching events to a <strong>handler</strong>: a function, a webhook, a queue, Event Hubs
+and others. Filters on the event type or subject keep handlers quiet, for example only for files ending in <code>.jpg</code> in
+the <code>product-images</code> container. If a handler fails, Event Grid retries with growing pauses, and it can <strong>dead-letter</strong>
+undeliverable events to a storage container so that nothing disappears silently.</p>
+<p>The services are often combined rather than chosen once for everything. Nusantara Retail could use Event Grid to say
+<em>a photo arrived</em>, a Storage queue for new orders today, Service Bus for payments later, and Event Hubs for the
+clickstream that marketing wants to analyse.</p>
+</div></article><article class="scene-card" id="6-putting-it-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>Putting it together for Nusantara Retail</h3><div class="prose"><p>Here is how today's ideas answer the three problems from the story.</p>
+<p><strong>Checkout that doesn't wait.</strong> The storefront sends each order to an HTTP-triggered function, <code>new_order</code>, which
+validates it, drops it into the <code>orders</code> queue and answers at once. A second function, triggered by that queue, does
+the slow work: email the warehouse, add loyalty points, book the courier. If the courier's API is slow on 12.12, the
+queue simply grows for a while and shoppers don't notice. If one order keeps failing, the queue trigger retries it
+(five attempts by default) and then moves it to a <em>poison</em> queue, where someone can inspect it instead of losing it.</p>
+<p><strong>Thumbnails without an idle VM.</strong> Product photos land in Blob storage. Event Grid publishes a <em>blob created</em> event,
+and a thumbnail function on Flex Consumption runs once per photo. When marketing uploads three hundred photos at once,
+the platform adds instances for a few minutes; afterwards it scales back to zero, and the bill stops with it. The
+resize VM can be deleted.</p>
+<p><strong>A report without a developer.</strong> A Consumption Logic App with a 07:00 recurrence trigger calls a small stock-report
+function over HTTP, checks a condition (<em>any product below ten units?</em>) and uses the Office 365 Outlook and Teams
+connectors to tell the store managers. Finance can read the run history themselves.</p>
+<p>Two habits make this design trustworthy. Connections use <strong>managed identities</strong> instead of keys wherever possible
+(Lunch 15 goes deeper). And every consumer is written to be safe when the same message arrives twice, because queues
+and events deliver <strong>at least once</strong>. In practice that means an occasional duplicate, never a silent loss.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>The storefront now shows <em>&quot;Thank you for your order&quot;</em> before the warehouse has even seen it.
+What does the queue guarantee, and what must the order processor do if the same order arrives twice?</p>
+</aside>
+<p>Next lunch, Security Essentials, takes the secrets out of the remaining configuration files with Key Vault and managed
+identities, and looks at the platform from an attacker's point of view.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · From photo upload to thumbnail, and a workflow that runs itself</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../demos/14-serverless.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../demos/14-serverless.html" title="Interactive demo: From photo upload to thumbnail, and a workflow that runs itself" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/14-serverless/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>An uploaded photo becomes a small event; the function, not the event, does the work and writes the thumbnail.</li>
+<li>The instance counter climbs during the burst and falls back to zero afterwards, and so does the bill.</li>
+<li>A failing event isn't lost: it is retried, then dead-lettered for someone to inspect.</li>
+<li>The Logic App lights up one step at a time, exactly as its run history records it.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>The thumbnail function runs about 2,000 times on 12.12 and hardly at all on other days. It must reach a storage
+account that only allows traffic from a virtual network. Which hosting plan fits best?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Flex Consumption. It scales to zero between bursts, bills per execution and supports virtual network integration,
+which the legacy Consumption plan doesn't.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>A finance function, triggered over HTTP, builds a large sales report that takes about six minutes. Callers keep
+timing out, even though the plan allows long executions. Why, and what's a better design?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>An HTTP-triggered function must respond within 230 seconds, whatever the plan's timeout. Accept the request, put the
+work on a queue (or start a Durable Functions orchestration), return at once, and let the caller fetch the report
+when it's ready.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Payment messages must be processed in order for each customer, never twice, and the charge and the stock update must
+succeed or fail together. Storage queue, Service Bus, Event Hubs or Event Grid?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Service Bus: sessions give first-in-first-out ordering per customer, duplicate detection drops repeats, and
+transactions group the operations. Storage queues have none of these, and Event Grid and Event Hubs solve different
+problems.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Every morning the stores team wants the stock levels checked and, if anything is low, an email to the store manager
+and a post in Teams. No developer is free. What would you use?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>A Consumption Logic App: a Recurrence trigger, an HTTP action or a database connector to read stock, a condition,
+and the Office 365 Outlook and Teams connectors. It's built in the designer and billed per action.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>A queue-triggered function crashes on one malformed order message, again and again. What happens to that message?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The queue trigger retries it; after five failed attempts (the default <code>maxDequeueCount</code>), the host moves it to a
+poison queue named after the original queue with <code>-poison</code> at the end, so it stops blocking the others and can be
+inspected.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Serverless means event-driven code, automatic scaling down to zero and pay-per-execution billing, in exchange for cold starts, time limits and stateless design.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>A function has one trigger and any number of bindings; connection names point at app settings, and the best connections use a managed identity instead of a secret.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>Flex Consumption is the default plan for new serverless apps (Linux, up to 1,000 instances, virtual network support, optional always-ready instances). Premium, Dedicated and Container Apps cover warm, steady or container needs, and Consumption is legacy.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Logic Apps orchestrates workflows with 1,400+ connectors (Consumption bills per action; Standard is single-tenant with many workflows per resource). Functions handle custom code, and the two combine well.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Events tell (Event Grid), messages ask (Storage queues, Service Bus) and streams flow (Event Hubs). Choose by ordering, delivery and volume needs, and design consumers for at-least-once delivery.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>14</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>React to new orders automatically</h3>
+          <div class="prose"><p>You'll create a function app on the Flex Consumption plan, give it a managed identity and a passwordless connection to
+a Storage queue, and deploy the provided Python function that validates orders and queues them through an output
+binding. You'll test it with <code>curl</code>, peek at the queue, and add a Consumption Logic App that sends a heartbeat order
+every 15 minutes. Then a deleted setting breaks the pipeline, and you use the logs to find out why.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 50 minutes</span><span class="chip cost">💲 free or close to free</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/14-serverless.html">Start Lab 14 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/azure-functions/functions-scale" target="_blank" rel="noopener"><b>Microsoft Learn: Azure Functions hosting options</b><span>The full comparison of plans, limits, scaling and cold-start behaviour.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-functions/flex-consumption-plan" target="_blank" rel="noopener"><b>Microsoft Learn: Azure Functions Flex Consumption plan hosting</b><span>Instance sizes, always-ready instances, billing and current limitations.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/service-bus-messaging/compare-messaging-services" target="_blank" rel="noopener"><b>Microsoft Learn: Choose between Azure Event Grid, Event Hubs, and Service Bus</b><span>Events versus messages, side by side.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/logic-apps/logic-apps-overview" target="_blank" rel="noopener"><b>Microsoft Learn: What is Azure Logic Apps?</b><span>Workflows, connectors, and Consumption versus Standard.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">⚡</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Event Driven</h2>
+        <p class="muted">Decouple work with events and functions.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“Failures go unnoticed — even when a partner&#x27;s API is slow.”</b></p>
+        <div class="teaser"><b>Next episode · 15</b><h4>The Password in the Zip File</h4><p>A database password went out in a chat message — and it has been in Git for two years.</p><p style="margin-top:10px"><a href="15-security-essentials.html">Watch Episode 15 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="13-containers-basic.html"><small>← Previous episode</small>13 · It Works on My Machine</a><a class="next" href="15-security-essentials.html"><small>Next episode →</small>15 · The Password in the Zip File</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/14-serverless/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

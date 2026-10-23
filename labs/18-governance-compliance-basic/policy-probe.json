@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "description": "Lab 18 probe. You only VALIDATE this template (az deployment group validate), you never deploy it. Azure Policy evaluates Deny rules during validation, so a RequestDisallowedByPolicy error proves an assignment is enforced."
+  },
+  "parameters": {
+    "location": {
+      "type": "string",
+      "metadata": { "description": "Region of the test network security group." }
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": { "costCenter": "CC-PROBE" },
+      "metadata": { "description": "Tags of the test network security group. Pass {} to test the tag rule." }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2023-09-01",
+      "name": "nsg-policy-probe",
+      "location": "[parameters('location')]",
+      "tags": "[parameters('tags')]",
+      "properties": {}
+    }
+  ]
+}

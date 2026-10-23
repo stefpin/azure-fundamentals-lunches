@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 07 · The USB Drive Goes Home on Fridays — Lunch 07: Storage (Basic) · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 07 · Storage (Basic). Forty thousand photos and ten years of invoices live on one disk next to the pantry. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 07 · The USB Drive Goes Home on Fridays — Lunch 07: Storage (Basic)">
+<meta property="og:description" content="Lunch 07 · Storage (Basic). Forty thousand photos and ten years of invoices live on one disk next to the pantry. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/lunches/07-storage-basic.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lunch" data-lunch="07" style="--c:#e2482f">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 07</span> Season 1 · 🏗️ Part 2 · Core infrastructure</div>
+      <h1>The USB Drive Goes Home on Fridays</h1>
+      <div class="lunch-title">Lunch 07 · Storage (Basic)</div>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure architecture and services</span>
+        <span class="chip cost">🔬 Lab · about 45 minutes · 💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="03-global-infrastructure.html" title="Where Does the Shop Live?">↩ 03</a><a class="chip" href="05-identity-access-basic.html" title="Just Give Him My Password">↩ 05</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 06 · Escape from the Pantry, the storefront runs on its first Azure VM — and stops paying for compute when it is deallocated.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-1"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, worried"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director's question · 23% ready</b>After this episode you can say: “Minutes to rebuild the server — and our files are stored at least three times.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today's menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-storage-accounts-one-name-four-services">Storage accounts: one name, four services</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-redundancy-how-many-copies-and-where">Redundancy: how many copies, and where</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-blob-access-tiers-paying-for-storage-or-paying-for-access">Blob access tiers: paying for storage or paying for access</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-who-gets-in-authorization-options">Who gets in: authorization options</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-moving-data-in-and-out">Moving data in and out</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-how-it-fits-together-for-nusantara-retail">How it fits together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/07-storage-basic.html">🔬 Open Lab 07</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today's menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> what a storage account is, which four data services it offers and which account type fits a workload.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Compare</strong> LRS, ZRS, GRS and GZRS (and their read-access variants) by the failures each one survives.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> a blob access tier — hot, cool, cold or archive — and explain minimum storage durations and rehydration.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Decide</strong> how people and apps get in: Microsoft Entra ID with data roles, shared keys, shared access signatures or (rarely) anonymous access.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Pick</strong> the right tool to move data: Storage browser, Azure Storage Explorer, AzCopy, Azure File Sync or Azure Data Box.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 07</span>
+        <div class="story-body"><p>Dewi opens the storefront server's disk report and winces. Forty thousand product photos, seven years of invoice PDFs
+and a folder of price lists for the stores all live on the same physical disk in the room next to the pantry. Pak Budi's
+backup is a USB drive that goes home with him on Friday afternoons — when he remembers.</p>
+<p>The finance team adds a twist: tax rules mean invoices must be kept for ten years, but almost nobody opens an invoice
+after the first month. Meanwhile, the product photos are downloaded thousands of times a day, and every store manager
+wants this week's price list on a shared drive.</p>
+<p>Ibu Sari asks the question everyone is avoiding: <em>&quot;If that room floods, do we lose the photos and the invoices too?&quot;</em></p>
+<p>Today's question: <strong>where should Nusantara Retail keep its files so that a broken disk, a flooded building or even a
+regional disaster doesn't lose them — without paying premium prices for invoices nobody reads?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-storage-accounts-one-name-four-services" data-spy><span class="scene-no">Scene 1 of 6</span><h3>Storage accounts: one name, four services</h3><div class="prose"><p>A <strong>storage account</strong> is the Azure resource that holds your data objects. It gives you a globally unique namespace: the
+account name becomes part of every URL, such as <code>https://stnusaprod01.blob.core.windows.net</code>. That is why the name has
+strict rules — 3 to 24 characters, lowercase letters and numbers only, and no other storage account anywhere in Azure
+may already use it. Like every resource, the account lives in one region and one resource group, and Azure Resource
+Manager manages it (Lunch 04).</p>
+<p>One account exposes four data services, each with its own endpoint:</p>
+<ul>
+<li><strong>Blob Storage</strong> stores objects — images, PDFs, videos, backups, logs — inside <strong>containers</strong>. A container is a flat
+bucket; a name such as <code>2026/10/INV-0042.pdf</code> only <em>looks</em> like a folder path. Blobs come in three types:
+<strong>block blobs</strong> for ordinary files (almost everything you upload), <strong>append blobs</strong> that can only grow at the end
+(ideal for logs), and <strong>page blobs</strong> that allow random reads and writes (the format behind virtual hard disks).</li>
+<li><strong>Azure Files</strong> offers managed file shares that computers mount over <strong>SMB</strong> (Windows, Linux and macOS) or <strong>NFS</strong>
+(Linux, on SSD-based premium shares). It replaces the classic &quot;S: drive&quot; on an office file server.</li>
+<li><strong>Queue Storage</strong> holds simple messages, each up to 64 KiB, so one part of an application can hand work to another —
+for example &quot;new order 1042 is ready to pack&quot; (more in Lunch 14).</li>
+<li><strong>Table Storage</strong> is a schemaless key-attribute store for small, structured records such as store opening hours.</li>
+</ul>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  acct[&quot;Storage account: stnusaprod01&lt;br/&gt;Standard general-purpose v2&quot;]
+  acct --&gt; blob[&quot;Blob Storage&lt;br/&gt;…blob.core.windows.net&quot;]
+  acct --&gt; files[&quot;Azure Files&lt;br/&gt;…file.core.windows.net&quot;]
+  acct --&gt; queue[&quot;Queue Storage&lt;br/&gt;…queue.core.windows.net&quot;]
+  acct --&gt; table[&quot;Table Storage&lt;br/&gt;…table.core.windows.net&quot;]
+  blob --&gt; c1[&quot;Container: products&quot;] --&gt; b1[&quot;Blob: batik-shirt.jpg&quot;]
+  blob --&gt; c2[&quot;Container: invoices&quot;] --&gt; b2[&quot;Blob: 2026/10/INV-0042.pdf&quot;]
+  files --&gt; s1[&quot;File share: store-docs&quot;] --&gt; f1[&quot;price-list.xlsx&quot;]
+  queue --&gt; q1[&quot;Queue: new-orders&quot;]
+  table --&gt; t1[&quot;Table: storehours&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>When you create an account you choose its <strong>type</strong> and <strong>performance tier</strong>. Standard accounts run on hard disks and
+are priced for capacity; premium accounts run on SSDs and are priced for speed. You can't change the type later — you
+would create a new account and copy the data across.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Account type</th>
+<th>Services</th>
+<th>Redundancy options</th>
+<th>Use it for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Standard general-purpose v2</td>
+<td>Blob, Files, Queue, Table</td>
+<td>LRS, ZRS, GRS, RA-GRS, GZRS, RA-GZRS</td>
+<td>Almost everything — the default choice</td>
+</tr>
+<tr>
+<td>Premium block blobs</td>
+<td>Block and append blobs</td>
+<td>LRS, ZRS</td>
+<td>Many small objects, high transaction rates, low latency</td>
+</tr>
+<tr>
+<td>Premium file shares</td>
+<td>Azure Files (SMB and NFS)</td>
+<td>LRS, ZRS</td>
+<td>Fast enterprise file shares, NFS shares</td>
+</tr>
+<tr>
+<td>Premium page blobs</td>
+<td>Page blobs only</td>
+<td>LRS, ZRS</td>
+<td>Specialised disk-style workloads</td>
+</tr>
+</tbody>
+</table></div>
+<p>Older account kinds — general-purpose v1 and legacy Blob Storage accounts — are being retired; upgrade them to
+general-purpose v2 rather than creating new ones. Managed disks for virtual machines (Lunch 06) also use Azure Storage
+under the hood, but you manage them as disk resources, not through a storage account.</p>
+</div></article><article class="scene-card" id="2-redundancy-how-many-copies-and-where" data-spy><span class="scene-no">Scene 2 of 6</span><h3>Redundancy: how many copies, and where</h3><div class="prose"><p>Azure Storage always keeps at least three copies of your data. Your choice is <em>where</em> those copies live, and that
+decides which failure you can shrug off. Redundancy is a setting of the whole account, so data with different needs
+often goes into different accounts.</p>
+<ul>
+<li><strong>Locally redundant storage (LRS)</strong> keeps three copies inside one datacenter. It protects against a failed drive,
+server or rack, and Microsoft designs it for at least 99.999999999% (eleven nines) durability per year. A fire or
+flood in that building, though, could make every copy unavailable — or lose them. It is the cheapest option.</li>
+<li><strong>Zone-redundant storage (ZRS)</strong> writes each change synchronously to three (or more) availability zones in the
+region (Lunch 03). A write succeeds only when all available zones have it. If a whole zone goes dark, reads and writes
+carry on from the others. Durability: at least twelve nines.</li>
+<li><strong>Geo-redundant storage (GRS)</strong> keeps LRS in the primary region and copies the data <em>asynchronously</em> to the paired
+secondary region, where it is stored with LRS again. <strong>Geo-zone-redundant storage (GZRS)</strong> does the same, but with
+ZRS in the primary region. Both are designed for at least sixteen nines.</li>
+</ul>
+<p>The secondary copy is not readable during normal operation. If the primary region becomes unavailable, you (or, in
+extreme cases, Microsoft) <strong>fail over</strong>: DNS is updated so the secondary becomes the new primary. Because replication is
+asynchronous, the newest writes may not have arrived yet; the account's <strong>Last Sync Time</strong> tells you up to which moment
+the secondary is complete. The read-access variants, <strong>RA-GRS</strong> and <strong>RA-GZRS</strong>, let applications read from a
+<code>-secondary</code> endpoint at any time — useful when the shop must keep showing products during a regional outage.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Where the copies live</th>
+<th>Disk or server fails</th>
+<th>Datacenter fails</th>
+<th>Zone fails</th>
+<th>Region fails</th>
+<th>Durability per year</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LRS</td>
+<td>3 in one datacenter</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>≥ 11 nines</td>
+</tr>
+<tr>
+<td>ZRS</td>
+<td>3 across zones</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>≥ 12 nines</td>
+</tr>
+<tr>
+<td>GRS / RA-GRS</td>
+<td>LRS + LRS in paired region</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>⚠️</td>
+<td>⚠️</td>
+<td>≥ 16 nines</td>
+</tr>
+<tr>
+<td>GZRS / RA-GZRS</td>
+<td>ZRS + LRS in paired region</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>≥ 16 nines</td>
+</tr>
+</tbody>
+</table></div>
+<p>✅ data stays available · ❌ data unavailable, possibly lost · ⚠️ data is safe in the secondary region, but writes resume
+only after a failover; with RA-GRS or RA-GZRS, apps can read the secondary copy immediately.</p>
+<p>There is a catch for Nusantara Retail. Geo-redundancy depends on a <strong>paired region</strong>, and Indonesia Central (Jakarta)
+has no pair. At the time of writing that leaves LRS and ZRS there; if you need an off-region copy, you replicate the data
+yourself — for example with object replication or a backup to Southeast Asia (Lunches 17 and 24). Always check which
+options your region offers.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  start([A new set of data]) --&gt; q1{Can you re-create it&lt;br/&gt;cheaply if it is lost?}
+  q1 -- Yes --&gt; lrs[&quot;LRS&lt;br/&gt;3 copies, 1 datacenter&quot;]
+  q1 -- No --&gt; q2{Must it survive a&lt;br/&gt;region-wide disaster?}
+  q2 -- No --&gt; zrs[&quot;ZRS&lt;br/&gt;3 copies across zones&quot;]
+  q2 -- Yes --&gt; q3{Does the region&lt;br/&gt;have a pair?}
+  q3 -- No --&gt; own[&quot;ZRS plus your own copy&lt;br/&gt;in a second region&quot;]
+  q3 -- Yes --&gt; q4{Must apps read data&lt;br/&gt;before a failover?}
+  q4 -- No --&gt; gzrs[&quot;GZRS (or GRS)&quot;]
+  q4 -- Yes --&gt; ragzrs[&quot;RA-GZRS (or RA-GRS)&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span><strong>Redundancy is not backup.</strong> Every copy reflects the same current state: if someone deletes or overwrites an invoice,
+all three (or six) copies change within moments. Protection against mistakes and ransomware comes from soft delete,
+versioning, immutability and backups — the heart of Lunch 24 and Lunch 17.</p>
+</aside>
+</div></article><article class="scene-card" id="3-blob-access-tiers-paying-for-storage-or-paying-for-access" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Blob access tiers: paying for storage or paying for access</h3><div class="prose"><p>Product photos are read thousands of times a day; a 2019 invoice may never be opened again. Charging both the same
+would waste money, so block blobs have <strong>access tiers</strong>. Think of a seesaw: as the price of <em>keeping</em> a gigabyte goes
+down, the price of <em>reading</em> it goes up.</p>
+<ul>
+<li><strong>Hot</strong> — the highest storage price and the lowest access price. New blobs land here unless you choose otherwise.</li>
+<li><strong>Cool</strong> — cheaper storage, pricier reads, for data you keep at least <strong>30 days</strong>.</li>
+<li><strong>Cold</strong> — cheaper again, for data you keep at least <strong>90 days</strong> and rarely read, but still want instantly.</li>
+<li><strong>Archive</strong> — the cheapest storage, but the blob is <strong>offline</strong>: you can list it and read its metadata, not its
+content. Keep it at least <strong>180 days</strong>.</li>
+</ul>
+<p>Those minimums are enforced through an <strong>early deletion</strong> charge. Delete, overwrite or move an archived blob after 45
+days, and you pay for the remaining 135 days anyway, prorated. Hot, cool and cold are online tiers with
+millisecond access; cool, cold and archive also charge per gigabyte you read.</p>
+<p>To read an archived blob you <strong>rehydrate</strong> it to an online tier, either by changing its tier or by copying it to a new
+blob (copying avoids the early deletion charge, because the archived original stays put). Standard priority can take up
+to 15 hours; high priority may finish in under an hour for objects smaller than 10 GB, at a higher price and without a
+guarantee. One more restriction: the archive tier works only in LRS, GRS and RA-GRS accounts — not in ZRS, GZRS or
+RA-GZRS.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Online?</th>
+<th>Minimum stay</th>
+<th>Storage price</th>
+<th>Access price</th>
+<th>Nusantara example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hot</td>
+<td>Yes, milliseconds</td>
+<td>—</td>
+<td>Highest</td>
+<td>Lowest</td>
+<td>Current product photos</td>
+</tr>
+<tr>
+<td>Cool</td>
+<td>Yes, milliseconds</td>
+<td>30 days</td>
+<td>Lower</td>
+<td>Higher</td>
+<td>Last season's photos</td>
+</tr>
+<tr>
+<td>Cold</td>
+<td>Yes, milliseconds</td>
+<td>90 days</td>
+<td>Lower still</td>
+<td>Higher still</td>
+<td>Last year's invoices</td>
+</tr>
+<tr>
+<td>Archive</td>
+<td>No — rehydrate first (hours)</td>
+<td>180 days</td>
+<td>Lowest</td>
+<td>Highest</td>
+<td>Invoices older than a year</td>
+</tr>
+</tbody>
+</table></div>
+<p>You set a tier per blob, when you upload or later, and each account has a default tier (hot, cool or cold — never
+archive). Tiers apply only to block blobs. Moving blobs by hand doesn't scale, so Azure offers two kinds of automation:
+<strong>lifecycle management</strong> rules (&quot;move to cool after 30 days, delete after ten years&quot;), covered in Lunch 24, and
+<strong>smart tier</strong>, which watches access patterns and shuffles blobs between hot, cool and cold for you. At the time of
+writing, smart tier is generally available in public regions for zone-redundant accounts, and it never uses archive.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Price a tier with <em>your</em> access pattern, not just the per-gigabyte rate. A 10 GB photo library that is read all day
+is cheaper in hot; 2 TB of invoices read twice a year belongs in cold or archive. The
+<a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">pricing calculator</a> shows both sides of the seesaw.</p>
+</aside>
+</div></article><article class="scene-card" id="4-who-gets-in-authorization-options" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Who gets in: authorization options</h3><div class="prose"><p>Every request to your data must be authorized, and Azure Storage gives you several ways to do it. Remember the
+<strong>control plane</strong> versus <strong>data plane</strong> split from Lunch 04. An Owner can create the account and change its settings,
+but reading blobs with a Microsoft Entra identity needs a <strong>data role</strong>, such as Storage Blob Data Reader, Storage Blob
+Data Contributor or Storage Blob Data Owner. New role assignments can take a few minutes to become effective.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>How it proves access</th>
+<th>Good for</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Microsoft Entra ID + Azure RBAC</td>
+<td>A token for a user, group or managed identity, checked against data roles</td>
+<td>People and apps — the recommended default</td>
+<td>Assign data roles, not just Owner</td>
+</tr>
+<tr>
+<td>Shared Key (account keys)</td>
+<td>One of two account-wide keys signs the request</td>
+<td>Old tools that need it</td>
+<td>A key unlocks everything in the account</td>
+</tr>
+<tr>
+<td>User delegation SAS</td>
+<td>A URL token signed with a key obtained through Entra ID</td>
+<td>Time-limited links for one blob or container</td>
+<td>Valid for at most 7 days</td>
+</tr>
+<tr>
+<td>Service or account SAS</td>
+<td>A URL token signed with an account key</td>
+<td>Legacy apps</td>
+<td>Hard to revoke without rotating keys</td>
+</tr>
+<tr>
+<td>Anonymous read access</td>
+<td>No credentials at all</td>
+<td>Truly public content</td>
+<td>Off by default — keep it off</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Shared Key</strong> deserves respect: each account has two keys, and anyone holding one can read, change or delete
+everything. Anyone with the &quot;list keys&quot; permission — included in Owner and Contributor — can fetch them. Rotate keys,
+store them in Key Vault if you must use them (Lunch 15), and in Lunch 24 you will see how to switch Shared Key off.</p>
+<p>A <strong>shared access signature (SAS)</strong> is a token appended to a URL that grants specific permissions (read, write, list…)
+on a specific resource until an expiry time. There are three kinds. A <strong>user delegation SAS</strong> is signed with a key that
+you request using your Entra credentials, so no account key is involved and the link can't grant more than you
+are allowed to do. A <strong>service SAS</strong> (one service) and an <strong>account SAS</strong> (one or more services) are signed with an
+account key. Whoever holds a SAS can use it, so keep lifetimes short, grant the fewest permissions possible and always
+use HTTPS.</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant D as Dewi (signed in with Entra ID)
+  participant S as Azure Storage
+  participant R as Rizky (contractor)
+  D-&gt;&gt;S: Request a user delegation key (needs a blob data role)
+  S--&gt;&gt;D: Key, valid for up to 7 days
+  D-&gt;&gt;D: Sign a SAS: one invoice, read only, expires in 1 hour
+  D-&gt;&gt;R: Send the URL with the SAS token
+  R-&gt;&gt;S: GET the invoice with the SAS
+  S--&gt;&gt;R: 200 OK — or 403 once the SAS has expired
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p><strong>Anonymous read access</strong> lets anyone read a container's blobs without credentials. New accounts disallow it, and the
+account-level setting overrides any container setting. Keep it that way unless the content is genuinely public.</p>
+<p>Two settings protect data in transit: <strong>secure transfer required</strong> (HTTPS only, on by default) and the <strong>minimum TLS
+version</strong>, which you should set to TLS 1.2. The portal does this by default, but the Azure CLI leaves the property
+unset unless you pass it, so the lab sets it explicitly. Data at rest is always encrypted with Microsoft-managed keys.
+By default the account's public endpoint accepts connections from any network — authorization still applies — and
+firewalls and private endpoints come in Lunch 24.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Treat account keys and SAS URLs like passwords. Never paste them into chat, email or source code. If one leaks,
+rotate the keys — or, for user delegation SAS, revoke the delegation keys — and assume the data was read.</p>
+</aside>
+</div></article><article class="scene-card" id="5-moving-data-in-and-out" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Moving data in and out</h3><div class="prose"><p>Choosing a tool is mostly a question of <em>how much</em> data, <em>how often</em> and <em>how good your network is</em>.</p>
+<ul>
+<li><strong>Storage browser</strong> in the Azure portal is perfect for a quick upload, changing a blob's tier or generating a SAS.</li>
+<li><strong>Azure Storage Explorer</strong> is a free desktop app for Windows, macOS and Linux that browses blobs, files, queues and
+tables across many accounts. It uses AzCopy under the hood for transfers.</li>
+<li><strong>AzCopy</strong> is a command-line tool built for bulk and scripted copies. It transfers files in parallel, can resume a
+failed job and copies server-to-server between accounts. It is preinstalled in Azure Cloud Shell and authenticates
+with Entra ID (<code>azcopy login</code>, or by borrowing the Azure CLI's sign-in) or with a SAS. <code>azcopy sync</code> mirrors a folder.</li>
+<li>The <strong>Azure CLI</strong> (<code>az storage blob upload</code>, <code>upload-batch</code>) is fine for a handful of files inside scripts.</li>
+<li><strong>Azure File Sync</strong> keeps on-premises Windows file servers synchronized with an Azure file share. With <strong>cloud
+tiering</strong>, only frequently used files stay on the local disk; the rest are fetched from Azure on demand, so every
+branch sees the same files.</li>
+<li><strong>Azure Data Box</strong> ships you a rugged, encrypted device when the network is the bottleneck. Microsoft recommends it
+for transfers larger than about 40 TB with limited connectivity. At the time of writing, the next-generation devices
+hold 120 TB or 525 TB, and <strong>Data Box Disk</strong> sends up to five 8 TB SSDs per order (import only). Data Box Heavy has
+been retired.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Best for</th>
+<th>Interface</th>
+<th>Example at Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Storage browser</td>
+<td>One-off uploads, tiers, SAS</td>
+<td>Azure portal</td>
+<td>Dewi fixes one wrong photo</td>
+</tr>
+<tr>
+<td>Storage Explorer</td>
+<td>Browsing many accounts</td>
+<td>Desktop app</td>
+<td>Finance checks archived invoices</td>
+</tr>
+<tr>
+<td>AzCopy</td>
+<td>Bulk or scheduled copies</td>
+<td>Command line</td>
+<td>Nightly upload of new photos</td>
+</tr>
+<tr>
+<td>Azure File Sync</td>
+<td>Hybrid file servers</td>
+<td>Agent on Windows Server</td>
+<td>Head-office share synced to Azure</td>
+</tr>
+<tr>
+<td>Data Box family</td>
+<td>Tens or hundreds of TB offline</td>
+<td>Shipped device</td>
+<td>Scanned paper archive from Surabaya</td>
+</tr>
+</tbody>
+</table></div>
+<p>Some quick arithmetic shows why Data Box exists. Ten terabytes over a 100 Mbps link running flat out takes about nine
+days; fifty terabytes over 50 Mbps takes about three months. For moving whole servers, apps and databases, Azure
+Migrate is the starting point, but that is a story for another lunch.</p>
+</div></article><article class="scene-card" id="6-how-it-fits-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>How it fits together for Nusantara Retail</h3><div class="prose"><p>Back to Ibu Sari's flooded server room. Here is the design you sketch for her, assuming production data stays in
+Indonesia Central for data-residency reasons:</p>
+<ul>
+<li><strong>Product photos</strong> go into a general-purpose v2 account with <strong>ZRS</strong> and the hot tier. If one zone fails, the website
+keeps loading images. Smart tier could later cool down photos of discontinued products automatically.</li>
+<li><strong>Invoices</strong> are the interesting case. Finance wants them cheap and safe from a datacenter fire. ZRS survives the
+fire but can't use archive; LRS can use archive but lives in one building. You propose ZRS with the cold tier, plus a
+replicated copy in Southeast Asia once Lunch 24 adds the protection features — and you write the trade-off down.</li>
+<li><strong>Store price lists</strong> move to an <strong>Azure Files</strong> share. Pak Budi installs Azure File Sync on the head-office server, so
+staff keep their familiar drive letter while the master copy lives in Azure.</li>
+<li><strong>Access</strong> uses Entra ID everywhere. The storefront app gets a managed identity with Storage Blob Data Reader
+(Lunch 15). When Rizky, the contractor, needs one invoice, Dewi sends a read-only <strong>user delegation SAS</strong> that expires
+in an hour. Anonymous access stays off, and the minimum TLS version is 1.2.</li>
+<li><strong>Migration</strong> of the existing 3 TB of photos runs with AzCopy over the office line in a few days. The 60 TB of
+scanned paper invoices from the old Surabaya warehouse ships on a Data Box instead.</li>
+</ul>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>Finance asks for the cheapest possible storage for ten years of invoices, kept in Indonesia,
+safe even if one datacenter burns down. Archive needs LRS or GRS, and Indonesia Central has no pair for GRS. Which
+combination of redundancy, tier and extra copies would you recommend — and which risk would you accept?</p>
+</aside>
+<p>You have now answered the first half of Ibu Sari's question: the files survive a dead disk or a lost datacenter,
+and you pay for each file according to how it is used. What you haven't stopped yet is someone <em>deleting</em> or
+<em>encrypting</em> those files. The next lunch, Lunch 08, builds the network that your services will live in.</p>
+<p>➡️ <strong>Ready for more?</strong> <a href="24-storage-advanced.html">Lunch 24 · Storage (Advanced)</a> adds soft delete, versioning,
+immutability, lifecycle rules, private endpoints and failover.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Where do the copies live, and which shelf do the files sit on?</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../demos/07-storage-basic.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../demos/07-storage-basic.html" title="Interactive demo: Where do the copies live, and which shelf do the files sit on?" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/07-storage-basic/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>Which failures each redundancy option survives: a disk, a datacenter, a zone, a whole region.</li>
+<li>Why geo-redundant data is available only <em>after</em> a failover — unless you chose a read-access variant.</li>
+<li>How the seesaw tips from hot to archive: storage gets cheaper while every read gets more expensive and slower.</li>
+<li>How long rehydration from the archive tier can take, and the two ways to do it.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Product photos for the storefront must stay available if one availability zone in Indonesia Central fails. Budget
+matters, and the region has no paired region. Which redundancy option do you choose?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>ZRS.</strong> It keeps three synchronous copies in three zones, so reads and writes continue when a zone fails; the
+geo-redundant options aren't available without a paired region anyway.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>An auditor needs a 2019 invoice that sits in the archive tier — today. What do you do, and what should you tell the
+auditor about timing?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Rehydrate it with <strong>high priority</strong>, ideally by <strong>copying</strong> it to a new blob in the hot tier. High priority may finish
+in under an hour for blobs under 10 GB, but it isn't guaranteed, because archived blobs are offline until rehydrated;
+copying also avoids the early deletion charge.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Rizky, the contractor, needs to download one invoice this afternoon. Dewi considers sending him the account key.
+What should she do instead?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Generate a <strong>user delegation SAS</strong> with read permission on that single blob and a short expiry. It is signed with
+Entra credentials instead of the account key, limited in scope and time, and revocable; the account key would unlock
+the whole account.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Dewi is Owner of the subscription, yet <code>az storage blob list --auth-mode login</code> fails with a permissions error. Why?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Owner is a <strong>control-plane</strong> role. Reading blob data with an Entra identity needs a <strong>data role</strong> such as Storage
+Blob Data Reader or Contributor — and a new role assignment can take a few minutes to take effect.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>A warehouse in Surabaya has 50 TB of scanned documents on a NAS and a 50 Mbps internet line. What is the most
+practical way to get the data into Azure?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Order an <strong>Azure Data Box</strong>, copy the data locally and ship it back; then use AzCopy or a similar tool for files that
+change afterwards. Over 50 Mbps the upload would take roughly three months, and Data Box is designed for tens of
+terabytes with limited bandwidth.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>A storage account is a globally unique namespace for Blob, Files, Queue and Table data; choose Standard general-purpose v2 unless you need SSD performance.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Redundancy decides which failure you survive: LRS (hardware), ZRS (a zone), GRS and GZRS (a region, after failover — or for reads at once with RA-). Redundancy is not a backup.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>Access tiers trade storage price against access price; cool, cold and archive have 30-, 90- and 180-day minimums, and archive needs hours of rehydration.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Prefer Microsoft Entra ID with data roles; when you must share a link, use a short-lived user delegation SAS, and keep anonymous access off.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Pick the data-movement tool by size and bandwidth: portal or Storage Explorer for small jobs, AzCopy for scripts and bulk, Azure File Sync for hybrid file servers, Data Box for tens of terabytes.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>07</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Store product images and invoices</h3>
+          <div class="prose"><p>On your own time you will build a secure general-purpose v2 account (TLS 1.2, no anonymous access), give yourself a
+data role, upload invoices with the Azure CLI and product images with AzCopy, move one blob to cool and one to archive,
+share an image through a one-hour user delegation SAS that you test with <code>curl</code>, and create an Azure Files share for the
+stores' price lists. You will also break a SAS on purpose and read the 403 error that comes back.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 45 minutes</span><span class="chip cost">💲 free or close to free</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/07-storage-basic.html">Start Lab 07 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/storage/common/storage-account-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Storage account overview</b><span>Account types, naming rules and endpoints in one place.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/storage/common/storage-redundancy" target="_blank" rel="noopener"><b>Microsoft Learn: Azure Storage redundancy</b><span>The official durability figures and the outage-scenario table.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/storage/blobs/access-tiers-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Access tiers for blob data</b><span>Minimum durations, early deletion and billing details.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/storage/common/storage-sas-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Grant limited access with shared access signatures</b><span>SAS types and best practices.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🗄️</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Data Keeper</h2>
+        <p class="muted">Store data with the right redundancy and tier.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“Minutes to rebuild the server — and our files are stored at least three times.”</b></p>
+        <div class="teaser"><b>Next episode · 08</b><h4>Don&#x27;t Overlap My Network</h4><p>Pak Budi&#x27;s 10.0.0.0/16 must never clash — and Rizky wants SSH open to the whole internet.</p><p style="margin-top:10px"><a href="08-networking-basic.html">Watch Episode 08 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="06-virtual-machines-basic.html"><small>← Previous episode</small>06 · Escape from the Pantry</a><a class="next" href="08-networking-basic.html"><small>Next episode →</small>08 · Don&#x27;t Overlap My Network</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/07-storage-basic/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

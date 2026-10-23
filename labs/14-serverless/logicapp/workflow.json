@@ -1,0 +1,57 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "orderEndpoint": {
+        "type": "string",
+        "defaultValue": "__ORDER_URL__",
+        "metadata": {
+          "description": "URL of the new_order function. Task 6 fills it in."
+        }
+      },
+      "functionKey": {
+        "type": "securestring",
+        "defaultValue": "__FUNCTION_KEY__",
+        "metadata": {
+          "description": "Function key for new_order. Task 6 fills it in; keep the filled-in file out of Git."
+        }
+      }
+    },
+    "triggers": {
+      "Every_15_minutes": {
+        "type": "Recurrence",
+        "recurrence": {
+          "frequency": "Minute",
+          "interval": 15
+        }
+      }
+    },
+    "actions": {
+      "Send_heartbeat_order": {
+        "type": "Http",
+        "runAfter": {},
+        "inputs": {
+          "method": "POST",
+          "uri": "@parameters('orderEndpoint')",
+          "headers": {
+            "Content-Type": "application/json",
+            "x-functions-key": "@parameters('functionKey')"
+          },
+          "body": {
+            "orderId": "HB-@{utcNow('yyyyMMddHHmmss')}",
+            "store": "Logic App heartbeat",
+            "items": [
+              {
+                "sku": "HEARTBEAT",
+                "qty": 1
+              }
+            ]
+          }
+        }
+      }
+    },
+    "outputs": {}
+  },
+  "parameters": {}
+}

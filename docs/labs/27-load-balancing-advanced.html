@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 27 · Protect and route the storefront · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 27: Protect and route the storefront. about 75 minutes (including 5–15 minutes waiting for the gateway), cost 💲💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 27 · Protect and route the storefront">
+<meta property="og:description" content="Hands-on Azure lab 27: Protect and route the storefront. about 75 minutes (including 5–15 minutes waiting for the gateway), cost 💲💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/27-load-balancing-advanced.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="27" style="--c:#7b4ff0">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 27</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>27</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Protect and route the storefront</h1>
+        <p class="lab-story">🏪 <b>Episode 27 · &#x27; OR 1=1--</b> — Attack strings fill the logs, and shoppers in Makassar wait on Jakarta. <a href="../lunches/27-load-balancing-advanced.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 75 minutes (including 5–15 minutes waiting for the gateway)</span>
+          <span class="chip cost">💲💲💲 noticeable charges while running</span>
+          <span class="chip">Difficulty ★★★</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 11 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--meet-the-two-apps">Task 1 · Meet the two apps</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--create-a-waf-policy-detection-first">Task 2 · Create a WAF policy (Detection first)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--create-the-application-gateway-515-minutes">Task 3 · Create the Application Gateway (5–15 minutes)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--teach-the-gateway-to-talk-to-app-service">Task 4 · Teach the gateway to talk to App Service</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--route-images-to-the-images-app">Task 5 · Route /images/ to the images app</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--switch-the-waf-to-prevention-and-block-an-attack">Task 6 · Switch the WAF to Prevention and block an attack</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--a-traffic-manager-profile-with-priority-routing">Task 7 · A Traffic Manager profile with priority routing</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-8--fail-over-through-dns">Task 8 · Fail over through DNS</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-9-optional--put-front-door-standard-in-front-of-the-storefront">Task 9 (optional) · Put Front Door Standard in front of the storefront</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/app/images/images/batik.svg" target="_blank" rel="noopener"><span>app/images/images/batik.svg</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/app/images/images/index.html" target="_blank" rel="noopener"><span>app/images/images/index.html</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/app/images/index.html" target="_blank" rel="noopener"><span>app/images/index.html</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/app/storefront/index.html" target="_blank" rel="noopener"><span>app/storefront/index.html</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>6 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/27-load-balancing-advanced" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Nusantara Retail's storefront and its new images service run as two small App Service apps. You put an
+<strong>Application Gateway (WAF_v2)</strong> in front of them that sends <code>/images/*</code> to the images app and everything else to the
+storefront, and a <strong>WAF policy</strong> that blocks a SQL-injection attempt with HTTP 403. Then you add a <strong>Traffic Manager</strong>
+profile that answers DNS with the storefront first and a standby second, stop the storefront and watch the DNS answer
+change. Optionally, you put <strong>Front Door Standard</strong> in front of the storefront to see the global edge.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shop([&quot;Shopper / attacker&lt;br/&gt;(curl from Cloud Shell)&quot;]) --&gt;|HTTP :80| pip
+  subgraph rg[&quot;rg-lunch27-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph vnet[&quot;vnet-nusa-edge · snet-agw 10.27.0.0/24&quot;]
+      pip[&quot;pip-agw-nusa&quot;] --&gt; agw[&quot;agw-nusa · WAF_v2&lt;br/&gt;WAF policy waf-nusa (Prevention)&quot;]
+    end
+    agw --&gt;|&quot;/images/* · HTTPS 443&lt;br/&gt;host name from backend&quot;| img[&quot;app-nusa-img-&amp;lt;suffix&amp;gt;&lt;br/&gt;(images app)&quot;]
+    agw --&gt;|&quot;everything else&quot;| store[&quot;app-nusa-store-&amp;lt;suffix&amp;gt;&lt;br/&gt;(storefront app)&quot;]
+    tm[&quot;tm-nusa · Traffic Manager&lt;br/&gt;Priority routing&quot;] -.-&gt;|&quot;priority 1&quot;| store
+    tm -.-&gt;|&quot;priority 2&quot;| img
+  end
+  dns([&quot;dig nusa-shop-&amp;lt;suffix&amp;gt;.trafficmanager.net&quot;]) -.-&gt;|DNS only| tm
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. <code>dig</code> and Python are preinstalled.</li>
+<li>Get the lab files and load the shared settings:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/27-load-balancing-advanced
+source ../common/config.sh
+source lab.env          # resource names for this lab, plus helpers: load_hosts, gw_ip, tm_watch
+RG=$(rg_name 27)
+</code></pre></div>
+<ul>
+<li>Create the starting point — takes about 3–5 minutes. It creates the resource group, the virtual network with the
+empty subnet <code>snet-agw</code> (10.27.0.0/24, dedicated to the gateway), a <strong>Free (F1)</strong> App Service plan and two apps with
+HTTPS only, and deploys the pages in <a href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/27-load-balancing-advanced/app" target="_blank" rel="noopener"><code>app/</code></a>:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash setup.sh
+load_hosts              # sets STORE_HOST and IMG_HOST — rerun it whenever you reconnect
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>This is a 💲💲💲 lab. An Application Gateway WAF_v2 is billed for every hour it exists, from creation until you
+delete it, even with no traffic, and the optional Front Door has a base fee while its profile exists. Do the lab in
+one sitting and run <strong>Clean up</strong> straight afterwards. The App Service apps use the Free tier. If Cloud Shell
+disconnects, reconnect, rerun the <code>cd</code>, both <code>source</code> lines and <code>load_hosts</code>; resources keep building in Azure.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–8 (Task 9 is optional)</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>run <code>bash setup.sh</code>, read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--meet-the-two-apps" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Meet the two apps</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--meet-the-two-apps" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Each app labels its own pages, so you can always tell who answered.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>curl -s &quot;https://${STORE_HOST}/&quot;        | grep -o &quot;Served by the [A-Z]* app&quot;
+curl -s &quot;https://${IMG_HOST}/images/&quot;   | grep -o &quot;Served by the [A-Z]* app&quot;
+curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;https://${STORE_HOST}/images/&quot;
+</code></pre></div>
+<p>The last command returns <code>404</code>: the storefront app has no <code>/images/</code> folder. Only the images app does — the gateway
+will have to send those requests there.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <em>Served by the STOREFRONT app</em>, <em>Served by the IMAGES app</em>, and <code>HTTP 404</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--create-a-waf-policy-detection-first" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Create a WAF policy (Detection first)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--create-a-waf-policy-detection-first" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A <strong>WAF policy</strong> is a separate resource that holds the firewall's settings and rule sets; you attach it to the gateway
+in the next task. Microsoft recommends the <strong>Default Rule Set (DRS) 2.2</strong> for new policies (the CLI's default is still
+2.1, so you name the version explicitly). Start in <strong>Detection</strong> mode: matches are logged but nothing is blocked.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network application-gateway waf-policy create -g &quot;$RG&quot; -n &quot;$WAF_POLICY&quot; -l &quot;$LOCATION&quot; \
+  --type Microsoft_DefaultRuleSet --version 2.2 --output none
+
+az network application-gateway waf-policy policy-setting update -g &quot;$RG&quot; --policy-name &quot;$WAF_POLICY&quot; \
+  --mode Detection --state Enabled --request-body-check true --output none
+
+az network application-gateway waf-policy show -g &quot;$RG&quot; -n &quot;$WAF_POLICY&quot; \
+  --query &quot;{mode:policySettings.mode, state:policySettings.state, ruleSet:managedRules.managedRuleSets[0].ruleSetType, version:managedRules.managedRuleSets[0].ruleSetVersion}&quot; -o table
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>Detection</code>, <code>Enabled</code>, <code>Microsoft_DefaultRuleSet</code>, <code>2.2</code>. (If 2.2 is refused in your region, create
+the policy with <code>--version 2.1</code> — see Troubleshooting.)</p>
+</div>
+</div></section><section class="lab-section" id="task-3--create-the-application-gateway-515-minutes" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Create the Application Gateway (5–15 minutes)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--create-the-application-gateway-515-minutes" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The gateway needs a Standard static public IP and its own subnet. You create it with:</p>
+<ul>
+<li><code>--sku WAF_v2</code> and the policy from Task 2;</li>
+<li>autoscale between 1 and 2 instances, to keep the lab small (the minimum can also be 0 — pure autoscaling);</li>
+<li>a listener on port 80, and the storefront app as the only member of the default backend pool;</li>
+<li>backend settings that talk <strong>HTTPS on port 443</strong> to the app;</li>
+<li><code>--priority 100</code> for the routing rule (v2 rules need a priority).</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network public-ip create -g &quot;$RG&quot; -n &quot;$PIP_AGW&quot; -l &quot;$LOCATION&quot; \
+  --sku Standard --allocation-method Static --output none
+
+az network application-gateway create -g &quot;$RG&quot; -n &quot;$AGW&quot; -l &quot;$LOCATION&quot; \
+  --sku WAF_v2 --min-capacity 1 --max-capacity 2 \
+  --vnet-name &quot;$VNET&quot; --subnet &quot;$SUBNET_AGW&quot; \
+  --public-ip-address &quot;$PIP_AGW&quot; --waf-policy &quot;$WAF_POLICY&quot; \
+  --frontend-port 80 --http-settings-protocol Https --http-settings-port 443 \
+  --servers &quot;$STORE_HOST&quot; --priority 100 --output none
+</code></pre></div>
+<p>While it builds, reread sections 2 and 3 of the lunch. The command creates default components you will reuse:
+<code>appGatewayFrontendIP</code>, <code>appGatewayHttpListener</code>, <code>appGatewayBackendPool</code> (the storefront),
+<code>appGatewayBackendHttpSettings</code> and the rule <code>rule1</code>. In regions with availability zones the gateway is spread across
+zones automatically.</p>
+<p>Now try it:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>GW_IP=$(gw_ip); echo &quot;$GW_IP&quot;
+curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;http://${GW_IP}/&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>az network application-gateway show -g &quot;$RG&quot; -n &quot;$AGW&quot; --query &quot;{sku:sku.name, state:operationalState}&quot; -o table</code>
+shows <code>WAF_v2</code> and <code>Running</code> — <strong>and the request fails</strong>, typically with <code>HTTP 502</code> (Bad Gateway). That is expected;
+Task 4 explains why.</p>
+</div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open <code>agw-nusa</code> and look at <em>Backend health</em>: the storefront is <strong>Unhealthy</strong>, and the details
+mention the host name or the certificate's common name. The portal also lets you browse every component you just
+created: <em>Listeners</em>, <em>Rules</em>, <em>Backend pools</em>, <em>Backend settings</em>, <em>Health probes</em>, and the linked <em>Web application
+firewall</em> policy.</p>
+</aside>
+</div></section><section class="lab-section" id="task-4--teach-the-gateway-to-talk-to-app-service" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Teach the gateway to talk to App Service</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--teach-the-gateway-to-talk-to-app-service" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>App Service hosts many customers' apps on shared front ends and finds the right app by the <strong>host name</strong> in each
+request. The gateway forwards the host name the client used (an IP address here), and its default health probe uses
+<code>127.0.0.1</code>. App Service recognises neither, and the HTTPS certificate (<code>*.azurewebsites.net</code>) doesn't match them
+either — so the backend is marked unhealthy and shoppers get 502.</p>
+<p>The fix: make the backend settings <strong>pick the host name from the backend target</strong> (each app's own
+<code>*.azurewebsites.net</code> name), and add a custom probe that takes its host name from those settings.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network application-gateway probe create -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n &quot;$PROBE_AGW&quot; \
+  --protocol Https --path / --host-name-from-http-settings true \
+  --interval 30 --timeout 30 --threshold 3 --output none
+
+az network application-gateway http-settings update -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; \
+  -n appGatewayBackendHttpSettings --host-name-from-backend-pool true --probe &quot;$PROBE_AGW&quot; --output none
+
+az network application-gateway show-backend-health -g &quot;$RG&quot; -n &quot;$AGW&quot; \
+  --query &quot;backendAddressPools[].backendHttpSettingsCollection[].servers[].{address:address, health:health}&quot; -o table
+
+curl -s &quot;http://${GW_IP}/&quot; | grep -o &quot;Served by the [A-Z]* app&quot;
+</code></pre></div>
+<p>Each <code>application-gateway ... create/update</code> command updates the whole gateway, so expect a minute or two per command.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the storefront host shows <code>Healthy</code>, and the gateway now returns <em>Served by the STOREFRONT app</em>.
+In production you would rather put the same <strong>custom domain</strong> on the gateway and the app, so the host name never has
+to change (the lunch explains why).</p>
+</div>
+</div></section><section class="lab-section" id="task-5--route-images-to-the-images-app" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Route <code>/images/*</code> to the images app</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--route-images-to-the-images-app" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Add a second backend pool for the images app, a <strong>URL path map</strong> that sends <code>/images/*</code> there (everything else goes
+to the default pool), and switch <code>rule1</code> from <em>Basic</em> to <em>PathBasedRouting</em>. Quote <code>&quot;/images/*&quot;</code> so the shell does
+not expand the asterisk.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network application-gateway address-pool create -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n &quot;$POOL_IMG&quot; \
+  --servers &quot;$IMG_HOST&quot; --output none
+
+az network application-gateway url-path-map create -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n &quot;$PATH_MAP&quot; \
+  --rule-name images --paths &quot;/images/*&quot; \
+  --address-pool &quot;$POOL_IMG&quot; --http-settings appGatewayBackendHttpSettings \
+  --default-address-pool appGatewayBackendPool --default-http-settings appGatewayBackendHttpSettings \
+  --output none
+
+az network application-gateway rule update -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n rule1 \
+  --rule-type PathBasedRouting --url-path-map &quot;$PATH_MAP&quot; --output none
+</code></pre></div>
+<p>One backend settings object serves both pools: because it picks the host name from each pool's target, every app
+receives its own name. Test both paths and the image itself:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>curl -s &quot;http://${GW_IP}/&quot;        | grep -o &quot;Served by the [A-Z]* app&quot;
+curl -s &quot;http://${GW_IP}/images/&quot; | grep -o &quot;Served by the [A-Z]* app&quot;
+curl -s -o /dev/null -w &quot;HTTP %{http_code} %{content_type}\n&quot; &quot;http://${GW_IP}/images/batik.svg&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>/</code> is served by the STOREFRONT app, <code>/images/</code> by the IMAGES app, and the SVG returns
+<code>HTTP 200 image/svg+xml</code>. Open <code>http://&lt;gateway IP&gt;/</code> in a browser and click the images link. The gateway forwards the
+<strong>full path</strong>, which is why the images app keeps its pages in an <code>images</code> folder.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--switch-the-waf-to-prevention-and-block-an-attack" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Switch the WAF to Prevention and block an attack</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--switch-the-waf-to-prevention-and-block-an-attack" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Send a classic SQL-injection probe (<code>?id=1' OR 1=1--</code>, URL-encoded) while the policy is still in Detection mode:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;http://${GW_IP}/?id=1%27%20OR%201%3D1--&quot;
+</code></pre></div>
+<p>You get <code>HTTP 200</code>: in Detection mode the WAF only logs the match. Now switch to Prevention:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network application-gateway waf-policy policy-setting update -g &quot;$RG&quot; --policy-name &quot;$WAF_POLICY&quot; \
+  --mode Prevention --state Enabled --request-body-check true --output none
+</code></pre></div>
+<p>Wait a minute or two for the change to reach the gateway, then send the same request — and a normal one:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>curl -s -o /dev/null -w &quot;attack: HTTP %{http_code}\n&quot; &quot;http://${GW_IP}/?id=1%27%20OR%201%3D1--&quot;
+curl -s -o /dev/null -w &quot;normal: HTTP %{http_code}\n&quot; &quot;http://${GW_IP}/?id=42&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>attack: HTTP 403</code> and <code>normal: HTTP 200</code>. The SQL-injection rule is <em>critical</em> (anomaly score 5),
+which reaches the blocking threshold of 5 on its own; the storefront never sees the request.</p>
+</div>
+</div></section><section class="lab-section" id="task-7--a-traffic-manager-profile-with-priority-routing" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">A Traffic Manager profile with priority routing</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--a-traffic-manager-profile-with-priority-routing" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Traffic Manager answers DNS queries; it never touches the HTTP traffic. Create a <strong>Priority</strong> profile with a 30-second
+TTL and fast HTTPS health checks (every 10 seconds, degraded after 3 failures in a row), then add both apps as
+<strong>external endpoints</strong>. (Free-tier apps can't be <em>Azure</em> endpoints; that needs the Standard tier or higher.)</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network traffic-manager profile create -g &quot;$RG&quot; -n &quot;$TM_PROFILE&quot; \
+  --routing-method Priority --unique-dns-name &quot;$TM_DNS&quot; --ttl 30 \
+  --protocol HTTPS --port 443 --path &quot;/&quot; --interval 10 --timeout 9 --max-failures 2 --output none
+
+az network traffic-manager endpoint create -g &quot;$RG&quot; --profile-name &quot;$TM_PROFILE&quot; -n ep-store \
+  --type externalEndpoints --target &quot;$STORE_HOST&quot; --priority 1 --endpoint-status Enabled --output none
+
+az network traffic-manager endpoint create -g &quot;$RG&quot; --profile-name &quot;$TM_PROFILE&quot; -n ep-images \
+  --type externalEndpoints --target &quot;$IMG_HOST&quot; --priority 2 --endpoint-status Enabled --output none
+</code></pre></div>
+<p>Here the images app plays the standby copy of the storefront; in production it would be the same storefront in a
+second region. Give the probes a minute, then look at endpoint health and at the DNS answer:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>tm_watch 3
+dig +noall +answer &quot;${TM_DNS}.trafficmanager.net&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> both endpoints are <code>Online</code>, and the first DNS record is a CNAME to <code>app-nusa-store-…</code>, with a TTL
+of 30 seconds or less. Traffic Manager handed out a name; the client connects to the app directly.</p>
+</div>
+<p>Try <code>curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;https://${TM_DNS}.trafficmanager.net/&quot;</code>: the TLS check fails, and
+over plain HTTP App Service answers with a <em>not found</em> page. The app doesn't know the <code>trafficmanager.net</code> name. In production
+both apps would carry the same <strong>custom domain</strong> (Basic tier or higher), and that domain would point at Traffic
+Manager.</p>
+</div></section><section class="lab-section" id="task-8--fail-over-through-dns" data-kind="task"><h2><span class="task-tag">Task 8</span><span class="title">Fail over through DNS</span><button class="btn btn-sm done-toggle" type="button" data-task="task-8--fail-over-through-dns" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Stop the storefront app — the equivalent of losing the primary site — and watch Traffic Manager react:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az webapp stop -g &quot;$RG&quot; -n &quot;$APP_STORE&quot;
+tm_watch 9          # about 90 seconds
+</code></pre></div>
+<p>Within about a minute the stopped app fails three health checks in a row (<code>ep-store:Degraded</code>), and the DNS answer
+switches to <code>app-nusa-img-…</code>. Any resolver that cached the old answer keeps it for up to the 30-second TTL; some
+clients cache longer. Failover time is roughly detection plus TTL plus client caching. Now recover:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az webapp start -g &quot;$RG&quot; -n &quot;$APP_STORE&quot;
+tm_watch 9
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> you saw <code>ep-store</code> go <code>Degraded</code> and the answer move to the images app, then both return to
+<code>Online</code> with the storefront first again.</p>
+</div>
+</div></section><section class="lab-section" id="task-9-optional--put-front-door-standard-in-front-of-the-storefront" data-kind="task"><h2><span class="title">Task 9 (optional) · Put Front Door Standard in front of the storefront</span><button class="btn btn-sm done-toggle" type="button" data-task="task-9-optional--put-front-door-standard-in-front-of-the-storefront" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Front Door takes about 15 minutes, mostly waiting for its configuration to reach the edge. Skip it if you are short of
+time or budget.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az provider register -n Microsoft.Cdn --wait
+
+az afd profile create -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --sku Standard_AzureFrontDoor --output none
+az afd endpoint create -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --endpoint-name &quot;$AFD_ENDPOINT&quot; \
+  --enabled-state Enabled --output none
+az afd origin-group create -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --origin-group-name og-storefront \
+  --probe-request-type GET --probe-protocol Https --probe-interval-in-seconds 60 --probe-path / \
+  --sample-size 4 --successful-samples-required 3 --additional-latency-in-milliseconds 50 --output none
+az afd origin create -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --origin-group-name og-storefront \
+  --origin-name storefront --host-name &quot;$STORE_HOST&quot; --origin-host-header &quot;$STORE_HOST&quot; \
+  --priority 1 --weight 1000 --enabled-state Enabled --http-port 80 --https-port 443 --output none
+az afd route create -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --endpoint-name &quot;$AFD_ENDPOINT&quot; \
+  --route-name route-default --origin-group og-storefront --supported-protocols Http Https \
+  --forwarding-protocol HttpsOnly --https-redirect Enabled --link-to-default-domain Enabled --output none
+
+AFD_HOST=$(az afd endpoint show -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --endpoint-name &quot;$AFD_ENDPOINT&quot; --query hostName -o tsv)
+echo &quot;https://${AFD_HOST}/&quot;
+</code></pre></div>
+<p>Note <code>--origin-host-header</code>: like Application Gateway, Front Door must send the app's own host name. Retry
+<code>curl -s &quot;https://${AFD_HOST}/&quot; | grep -o &quot;Served by the [A-Z]* app&quot;</code> every minute or two. Until the configuration has
+propagated you get an error page from Front Door, not from your app.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the Front Door host name (<code>…azurefd.net</code>) returns <em>Served by the STOREFRONT app</em>, over HTTPS with
+Microsoft's certificate, from the edge location nearest to your Cloud Shell.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Dewi &quot;tidies up&quot; the path rule and drops one letter:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network application-gateway url-path-map rule update -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; \
+  --path-map-name &quot;$PATH_MAP&quot; -n images --paths &quot;/image/*&quot; --output none
+curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;http://${GW_IP}/images/&quot;
+</code></pre></div>
+<p><strong>Symptom:</strong> <code>/images/</code> now returns <code>HTTP 404</code>, although both apps are healthy and the backend health page is all
+green.</p>
+<details class="plain"><summary>Hint</summary>
+<p>Ask the gateway how it routes: <code>az network application-gateway url-path-map show -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n &quot;$PATH_MAP&quot; --query &quot;pathRules[].{name:name, paths:join(',', paths)}&quot; -o table</code>.
+A request that matches no path rule goes to the <strong>default</strong> pool, the storefront app, which has no <code>/images/</code> folder,
+so the 404 comes from the storefront app.</p>
+</details>
+<details class="plain"><summary>Fix</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network application-gateway url-path-map rule update -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; \
+  --path-map-name &quot;$PATH_MAP&quot; -n images --paths &quot;/images/*&quot; --output none
+curl -s &quot;http://${GW_IP}/images/&quot; | grep -o &quot;Served by the [A-Z]* app&quot;
+</code></pre></div>
+<p>Lesson: &quot;healthy backends, wrong page&quot; usually means a routing rule, not a server, is to blame.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. Run it after the apps are
+started again (Task 8) and at least two minutes after switching the WAF to Prevention.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes the resource group <code>rg-lunch27-&lt;suffix&gt;</code> — gateway, WAF policy, public IP, Traffic Manager profile,
+optional Front Door, plan and apps — and the local <code>out</code> folder. Nothing lives outside the group. The gateway can
+take 5–10 minutes to disappear; deletion continues in the background.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setup.sh</code>: <code>az appservice plan create</code> refuses the Free tier (for example a quota or &quot;not available&quot; message)</td>
+<td>Free plans are limited per subscription or region</td>
+<td><code>APP_SKU=B1 bash setup.sh</code> (a small hourly charge), or use another region</td>
+</tr>
+<tr>
+<td><code>setup.sh</code> notes that an app <em>did not show</em> its page yet</td>
+<td>first start of a Free-tier app can be slow</td>
+<td>wait a minute, then <code>curl -s &quot;https://${STORE_HOST}/&quot;</code>; rerun <code>bash setup.sh</code> to redeploy</td>
+</tr>
+<tr>
+<td><code>waf-policy create</code> rejects <code>--version 2.2</code></td>
+<td>the rule set version isn't offered to you yet</td>
+<td>create it with <code>--version 2.1</code> (still supported)</td>
+</tr>
+<tr>
+<td><code>application-gateway create</code> fails with an error about the request routing rule priority</td>
+<td>v2 rules need a priority</td>
+<td>include <code>--priority 100</code></td>
+</tr>
+<tr>
+<td><code>application-gateway create</code> fails because the subnet is in use or too small</td>
+<td>the subnet must be dedicated to Application Gateway</td>
+<td>use the empty <code>snet-agw</code> (/24) that <code>setup.sh</code> created</td>
+</tr>
+<tr>
+<td><code>HTTP 502</code> from the gateway</td>
+<td>the backend is unhealthy — almost always the host name for App Service</td>
+<td>Task 4; check <code>show-backend-health</code></td>
+</tr>
+<tr>
+<td><code>HTTP 404</code> for <code>/images/</code> through the gateway</td>
+<td>path rule missing or misspelt, or <code>rule1</code> still <em>Basic</em></td>
+<td><code>az network application-gateway rule show -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n rule1 --query ruleType</code>; Task 5</td>
+</tr>
+<tr>
+<td><code>rule update</code> to PathBasedRouting fails</td>
+<td>the CLI refused the change on your version</td>
+<td>portal: <em>agw-nusa › Rules › rule1 › Backend targets</em> › <em>Add multiple targets to create a path-based rule</em> (<code>/images/*</code> → <code>pool-images</code>)</td>
+</tr>
+<tr>
+<td>The attack still returns <code>200</code> after switching to Prevention</td>
+<td>the policy change hasn't reached the gateway yet</td>
+<td>wait two minutes and retry; confirm with <code>waf-policy show ... --query policySettings.mode</code></td>
+</tr>
+<tr>
+<td>Normal pages return <code>403</code></td>
+<td>a WAF false positive on your own traffic</td>
+<td>switch to Detection, find the rule ID in the WAF logs, add an exclusion, then return to Prevention</td>
+</tr>
+<tr>
+<td>Traffic Manager endpoints stay <code>Degraded</code></td>
+<td>probe can't get <code>200</code> (app stopped, or HTTP probing an HTTPS-only app)</td>
+<td>start the apps; the profile must probe <code>HTTPS</code> on 443</td>
+</tr>
+<tr>
+<td><code>dig</code> still shows the old app after the failover</td>
+<td>DNS caching</td>
+<td>wait for the TTL (30 s) and retry</td>
+</tr>
+<tr>
+<td>Front Door returns an error page</td>
+<td>configuration still propagating to the edge</td>
+<td>wait several minutes and retry</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li><strong>Front Door failover without DNS:</strong> add the images app as a second origin (<code>--priority 2</code>) to <code>og-storefront</code>,
+stop the storefront and watch Front Door switch, with no TTL to wait for.</li>
+<li><strong>Read the WAF logs:</strong> send the gateway's diagnostic logs to a Log Analytics workspace and find your blocked request
+in the firewall log (Lunch 30 teaches the query language).</li>
+<li><strong>A custom WAF rule:</strong> block requests whose <code>User-Agent</code> contains <code>sqlmap</code>, or rate-limit a path, with
+<code>az network application-gateway waf-policy custom-rule create</code>.</li>
+<li><strong>Lock the apps down:</strong> add App Service access restrictions so the apps accept traffic only from the gateway (its
+public IP, or its subnet through a service endpoint).</li>
+<li><strong>Compare with the portal:</strong> rebuild the path rule in <em>Rules › Add a routing rule</em> and notice how the portal groups
+listener, backend targets and backend settings.</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Run <code>bash setup.sh</code>, then build the following, any way you like (portal, CLI, Bicep), using the names from <code>lab.env</code>:</p>
+<ol>
+<li>A WAF policy <code>waf-nusa</code>, <strong>enabled</strong> in <strong>Prevention</strong> mode, with a Microsoft Default Rule Set.</li>
+<li>An Application Gateway <code>agw-nusa</code>, SKU <strong>WAF_v2</strong>, at most 2 instances, using <code>waf-nusa</code>, listening on HTTP port 80 on
+the public IP <code>pip-agw-nusa</code>, in subnet <code>snet-agw</code>.</li>
+<li>Backend settings over <strong>HTTPS 443</strong> that pick the host name from the backend target, with a custom probe that picks
+its host name from those settings.</li>
+<li>Path-based routing: <code>/images/*</code> → the images app; everything else → the storefront app.</li>
+<li>A SQL-injection probe through the gateway (<code>/?id=1' OR 1=1--</code>) is answered with <strong>403</strong>, while <code>/</code> and <code>/images/</code> work.</li>
+<li>A Traffic Manager profile <code>tm-nusa</code> (DNS name <code>nusa-shop-&lt;suffix&gt;</code>) with <strong>Priority</strong> routing, HTTPS health checks
+and two <strong>external endpoints</strong>: the storefront app (priority 1) and the images app (priority 2).</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="26-hybrid-connectivity.html"><small>← Previous lab</small>26 · Connect head office</a><a class="next" href="28-relational-databases-advanced.html"><small>Next lab →</small>28 · Orders that survive a regional outage</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

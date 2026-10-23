@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 19 · The Invoice Nobody Can Read — Lunch 19: Cost Management (Basic) · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 19 · Cost Management (Basic). The first real Azure bill arrives, and it is bigger than the spreadsheet. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 19 · The Invoice Nobody Can Read — Lunch 19: Cost Management (Basic)">
+<meta property="og:description" content="Lunch 19 · Cost Management (Basic). The first real Azure bill arrives, and it is bigger than the spreadsheet. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/lunches/19-cost-management.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lunch" data-lunch="19" style="--c:#d98a00">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 19</span> Season 1 · 🛡️ Part 4 · Secure, operate &amp; govern</div>
+      <h1>The Invoice Nobody Can Read</h1>
+      <div class="lunch-title">Lunch 19 · Cost Management (Basic)</div>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure management and governance</span>
+        <span class="chip cost">🔬 Lab · about 40 minutes · 💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Who Made server-baru-final2?">↩ 04</a><a class="chip" href="18-governance-compliance-basic.html" title="A Storage Account in West Europe">↩ 18</a><a class="chip" href="06-virtual-machines-basic.html" title="Escape from the Pantry">↩ 06</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 18 · A Storage Account in West Europe, Azure Policy now blocks the wrong regions and adds the tags people forget.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, happy"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director's question · 66% ready</b>After this episode you can say: “We stay online — and we can explain every rupiah it costs.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today's menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-where-the-money-goes">Where the money goes</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-estimate-before-you-build">Estimate before you build</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-pay-less-for-the-same-thing">Pay less for the same thing</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-see-and-control-spending">See and control spending</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-find-and-stop-waste">Find and stop waste</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-how-it-fits-together-for-nusantara-retail">How it fits together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/19-cost-management.html">🔬 Open Lab 19</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today's menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> what drives an Azure bill, and why cost data arrives hours after the usage instead of in real time.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Estimate</strong> a design with the pricing calculator and <strong>choose</strong> between pay-as-you-go, reservations, savings plans, Spot, Azure Hybrid Benefit and dev/test pricing.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Use</strong> Cost Management (cost analysis, budgets, alerts, exports) and Azure Advisor to see and control spending.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Find</strong> common waste with Azure Resource Graph and use tags so that every cost has an owner.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 19</span>
+        <div class="story-body"><p>The first full Azure invoice lands on the finance team's desk on a Monday morning. It isn't huge, but it is bigger than
+the spreadsheet Ibu Sari approved, and the line items read like a foreign language: managed disks, IP addresses,
+bandwidth, App Service. Pak Budi insists the storefront only needs two web servers. Dewi vaguely remembers a test plan
+from the serverless experiments. Rizky admits he deleted a VM &quot;but maybe not all of it&quot;. Nobody can say which costs
+belong to the storefront, which to the stores, and which to experiments that should have ended weeks ago.</p>
+<p>Ibu Sari forwards the invoice to you with three questions. What are we paying for? Who is it for? And how do we make sure
+next month holds no surprises?</p>
+<p>Today's question: <strong>how do you understand, predict and control what Azure costs Nusantara Retail?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-where-the-money-goes" data-spy><span class="scene-no">Scene 1 of 6</span><h3>Where the money goes</h3><div class="prose"><p>Almost every Azure price is a rate: so much per hour, per gigabyte per month, per million operations or per gigabyte
+transferred. Behind the scenes, every resource reports its consumption on one or more <strong>meters</strong>. A virtual machine
+reports compute hours on the meter for its size and region. Its managed disk reports provisioned capacity on a disk
+meter. A Standard public IP address reports every hour it exists. Traffic that leaves Azure is metered in gigabytes. The
+billing system multiplies each quantity by the price in your agreement and adds everything up. Your bill is nothing more
+mysterious than that sum.</p>
+<p>That simple model hides two traps. The first is that many meters charge for what you <strong>provision</strong>, not what you use. A
+128 GiB managed disk costs the same whether it holds the orders database or nothing at all, and an App Service plan
+bills for its instances even when no app runs on it. The second trap is time: some meters run for as long as a resource
+exists, so anything you forget keeps costing money quietly, every hour, until somebody deletes it.</p>
+<p>These are the <strong>cost drivers</strong> you can actually influence:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Driver</th>
+<th>What changes the price</th>
+<th>Nusantara Retail example</th>
+<th>Lever you can pull</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Resource type, tier and size</td>
+<td>The service, its SKU or VM size (B-series vs D-series, Standard HDD vs Premium SSD)</td>
+<td>Storefront VMs sized for the 12.12 sale all year round</td>
+<td>Right-size; choose the cheapest tier that meets the requirement</td>
+</tr>
+<tr>
+<td>Running time</td>
+<td>Hourly meters run while a resource exists or is allocated</td>
+<td>Dev VMs running nights and weekends</td>
+<td>Deallocate, auto-shutdown, schedules, scale in</td>
+</tr>
+<tr>
+<td>Provisioned capacity</td>
+<td>Disks, plans and reserved throughput bill for size, not use</td>
+<td>A 256 GiB data disk that holds 3 GiB</td>
+<td>Smaller disks; delete what nobody uses</td>
+</tr>
+<tr>
+<td>Region</td>
+<td>The same SKU can cost a different amount in another region</td>
+<td>Indonesia Central compared with Southeast Asia</td>
+<td>Compare in the calculator, after data residency is settled</td>
+</tr>
+<tr>
+<td>Data transfer</td>
+<td>Data into Azure is free; data out to the internet and between regions is charged</td>
+<td>Shoppers downloading product photos</td>
+<td>Compress, cache, keep chatty services in one region</td>
+</tr>
+<tr>
+<td>Licences</td>
+<td>Windows Server, SQL Server and some Linux distributions add a software charge</td>
+<td>The Windows reporting server at head office</td>
+<td>Azure Hybrid Benefit, dev/test pricing, Linux where it fits</td>
+</tr>
+<tr>
+<td>Extras</td>
+<td>Support plans, Marketplace software, premium features</td>
+<td>A third-party firewall image from the Marketplace</td>
+<td>Read the price before you select <strong>Create</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>There is one more thing to understand before you open any cost report: <strong>cost data is not real-time</strong>. Usage is
+collected, priced and loaded into Cost Management in batches. For Enterprise Agreement and Microsoft Customer Agreement
+subscriptions the data typically appears within 8 to 24 hours; for some pay-as-you-go subscriptions it can take up to
+72 hours. Estimated charges for the open month refresh several times a day and only become final after the invoice is
+issued. A brand-new subscription can need up to 48 hours before every Cost Management feature works.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  R[&quot;Resources&lt;br/&gt;VMs, disks, IPs, plans&quot;] --&gt;|&quot;usage on meters&lt;br/&gt;hours · GB-months · GB out&quot;| B[&quot;Billing system&lt;br/&gt;quantity × price&quot;]
+  B --&gt;|&quot;typically 8–24 h later&lt;br/&gt;(up to 72 h for some&lt;br/&gt;pay-as-you-go subscriptions)&quot;| C[&quot;Cost Management&lt;br/&gt;cost analysis · budgets · alerts&quot;]
+  C --&gt;|&quot;evaluated about&lt;br/&gt;once a day&quot;| A[&quot;Budget alerts&lt;br/&gt;email · action group&quot;]
+  B --&gt;|&quot;after the billing&lt;br/&gt;period closes&quot;| I[&quot;Invoice&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>So when Dewi starts a large VM at 09:00 and cost analysis shows nothing at 11:00, that is not a bug. When you need to
+know what exists <em>right now</em>, ask the inventory — Azure Resource Graph or the activity log — not the bill.</p>
+</div></article><article class="scene-card" id="2-estimate-before-you-build" data-spy><span class="scene-no">Scene 2 of 6</span><h3>Estimate before you build</h3><div class="prose"><p>The cheapest cost surprise is the one you find before you deploy. The <strong>Azure pricing calculator</strong>
+(azure.microsoft.com/pricing/calculator) works like a shopping cart: you add products to an <strong>estimate</strong>, then choose the
+region, tier, size, operating system and expected usage for each one. A virtual machine defaults to 730 hours, which is a
+full month; change it to 200 hours and the estimate updates instantly. Where a product offers commitment discounts, the
+calculator lets you switch between pay-as-you-go, reservations and savings plans and shows any <strong>upfront</strong> cost
+separately from the <strong>monthly</strong> cost. You can save several estimates, export one to Excel, share a link with the finance
+team and change the display currency. If you log in to the calculator itself, it can show the prices from your own
+agreement instead of retail prices.</p>
+<p>Every price in the calculator comes from the <strong>Azure Retail Prices API</strong>, a public API that needs no sign-in. That makes
+it handy for scripts and spreadsheets — in the lab you'll use it to compare pay-as-you-go with a one-year reservation from
+Cloud Shell. Microsoft prices every Azure service in US dollars; other currencies are provided for reference and can move
+from month to month.</p>
+<p>A good estimate for Nusantara Retail has three habits:</p>
+<ul>
+<li><strong>Baseline and peak separately.</strong> Two web servers most of the year, six during the 12.12 sale for two weeks. Averaging
+them hides both numbers.</li>
+<li><strong>The quiet lines.</strong> Disks, public IPs, data out, backup storage, log ingestion and the support plan often add up to as
+much as the &quot;main&quot; service.</li>
+<li><strong>One estimate per option.</strong> A VM design and a PaaS design side by side make the trade-off visible to Ibu Sari.</li>
+</ul>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Older training material sends you to the <strong>Total Cost of Ownership (TCO) Calculator</strong>. Microsoft deprecated it at the
+end of August 2025. To compare a datacenter — or the server room next to the pantry — with Azure, use the <strong>business
+case</strong> feature in Azure Migrate (in preview at the time of writing), which works from discovered or imported server data.</p>
+</aside>
+</div></article><article class="scene-card" id="3-pay-less-for-the-same-thing" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Pay less for the same thing</h3><div class="prose"><p>Once you know <em>what</em> you need, you can change <em>how</em> you pay for it. <strong>Pay-as-you-go</strong> is the default: you pay the list
+rate for exactly what you use and commit to nothing. It is ideal for anything new, spiky or short-lived — and the most
+expensive way to run a server that never stops. Azure offers five ways to pay less:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>How it works</th>
+<th>Use it when</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Reservation</strong></td>
+<td>Commit for one or three years to a resource type in a region (for VMs, with flexibility within a size family); pay up front or monthly</td>
+<td>Usage is steady and won't change size, region or service</td>
+<td>Unused hours are lost; refunds are capped (USD 50,000 per rolling 12 months); reservations bought from February 2027 for services covered by savings plans can't be exchanged</td>
+</tr>
+<tr>
+<td><strong>Savings plan for compute</strong></td>
+<td>Commit to a fixed amount per hour for one or three years; applies automatically across eligible compute (VMs, App Service, Functions Premium, Container Apps, Container Instances, Dedicated Host) in any region</td>
+<td>Total compute spend is steady, but sizes, regions or services may change</td>
+<td>Can't be cancelled; unused commitment in an hour is lost</td>
+</tr>
+<tr>
+<td><strong>Spot VMs</strong></td>
+<td>Run on spare capacity at a deep discount; Azure can evict the VM with 30 seconds' notice</td>
+<td>Batch jobs, test runs, rendering — work that can restart</td>
+<td>No SLA; B-series sizes aren't supported; capacity can disappear</td>
+</tr>
+<tr>
+<td><strong>Azure Hybrid Benefit</strong></td>
+<td>Bring Windows Server or SQL Server licences with Software Assurance (or eligible subscriptions), or RHEL/SLES subscriptions, and pay only for the infrastructure</td>
+<td>You already own the licences</td>
+<td>Licence compliance stays your responsibility</td>
+</tr>
+<tr>
+<td><strong>Dev/test pricing</strong></td>
+<td>Active Visual Studio subscribers get discounted rates in dev/test subscriptions — for example, Windows VMs billed at Linux rates</td>
+<td>Non-production environments</td>
+<td>No SLA; never run production there</td>
+</tr>
+</tbody>
+</table></div>
+<p>A <strong>reservation</strong> suits Nusantara Retail's two storefront VMs once their size has been stable for a few months. A
+<strong>savings plan</strong> is the better fit if Dewi plans to move part of the storefront to Container Apps next year, because the
+commitment follows the spend rather than a specific VM. A newer <strong>savings plan for databases</strong> works the same way for
+services such as Azure SQL and Cosmos DB. When several discounts could apply, Azure uses the most specific first:
+reservations, then savings plans, then pay-as-you-go for whatever is left.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  S[&quot;A workload to run&quot;] --&gt; Q1{&quot;Runs steadily for&lt;br/&gt;one to three years?&quot;}
+  Q1 --&gt;|&quot;yes&quot;| Q2{&quot;Same VM family and&lt;br/&gt;region for the whole term?&quot;}
+  Q2 --&gt;|&quot;yes&quot;| RI[&quot;Reservation&quot;]
+  Q2 --&gt;|&quot;no — size, region or&lt;br/&gt;service may change&quot;| SP[&quot;Savings plan for compute&quot;]
+  Q1 --&gt;|&quot;no&quot;| Q3{&quot;Can it stop at&lt;br/&gt;30 seconds&#x27; notice?&quot;}
+  Q3 --&gt;|&quot;yes&quot;| SPOT[&quot;Spot VMs&quot;]
+  Q3 --&gt;|&quot;no&quot;| PAYG[&quot;Pay-as-you-go&lt;br/&gt;+ auto-shutdown&quot;]
+  L[&quot;Own Windows Server, SQL Server,&lt;br/&gt;RHEL or SLES licences?&quot;] -.-&gt;|&quot;add on top&quot;| AHB[&quot;Azure Hybrid Benefit&quot;]
+  D[&quot;Non-production work by&lt;br/&gt;Visual Studio subscribers?&quot;] -.-&gt;|&quot;separate subscription&quot;| DT[&quot;Dev/test pricing&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Azure Hybrid Benefit stacks with reservations: the reservation discounts the compute, and the benefit removes the
+licence charge. Spot and dev/test pricing are about <em>where</em> a workload runs; reservations and savings plans are about
+<em>how long</em> you promise to pay.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>A reservation or savings plan is a billing promise, not a server. If you delete the VM it was meant for, you keep paying
+the commitment until the term ends. Buy commitments <strong>last</strong>: after you have removed waste and right-sized, and only for
+usage you have watched for a few months.</p>
+</aside>
+</div></article><article class="scene-card" id="4-see-and-control-spending" data-spy><span class="scene-no">Scene 4 of 6</span><h3>See and control spending</h3><div class="prose"><p><strong>Microsoft Cost Management</strong> is the free, built-in toolset for understanding and governing spend. It works at
+different <strong>scopes</strong> — a billing account, a management group, a subscription or a resource group — so the storefront
+team can see its own resource group while finance sees everything. Most subscription types are supported, including the
+free account and pay-as-you-go, but a few offers aren't; at the time of writing, Azure for Students is one of them.</p>
+<p>The tools you'll use most:</p>
+<ul>
+<li><strong>Cost analysis</strong> shows actual and forecast costs. Smart views break the total down by resource, service, resource
+group or subscription; custom views let you group and filter by almost anything, including <strong>tags</strong>, then save, share
+or download the result. Grouping Nusantara Retail's costs by service is exactly the &quot;decomposed bill&quot; the finance team
+asked for.</li>
+<li><strong>Budgets</strong> set an amount for a month, quarter or year at a scope and raise <strong>alerts</strong> when actual or forecast spend
+crosses a percentage of it. A budget can have up to five thresholds and five email recipients. At subscription and
+resource-group scope, a budget can also call an <strong>action group</strong>, which can run automation — for example, a runbook that
+stops development VMs.</li>
+<li><strong>Anomaly alerts</strong> use your last 60 days of history to flag a day that looks unusual. They work at subscription scope
+and run about a day and a half after the day they check.</li>
+<li><strong>Exports</strong> deliver cost data to a storage account on a schedule, ready for Power BI or your own reports.</li>
+</ul>
+<p><strong>Azure Advisor</strong>, which you met in Lunch 16, adds a <strong>Cost</strong> tab with recommendations: right-size or shut down
+underutilized VMs, delete empty App Service plans, review disks that aren't attached to anything, and buy reservations or
+savings plans based on your recent usage. Most of these rules look at days or weeks of history, so Advisor won't flag
+something you created an hour ago.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Budgets are <strong>alarms, not brakes</strong>. When a threshold is crossed, Azure sends an email (normally within an hour of the
+daily evaluation) and nothing stops. Combined with the 8-to-72-hour data delay, a mistake can run for a day or more
+before anyone hears about it. Credit-based subscriptions such as the free account have a spending limit; pay-as-you-go
+subscriptions don't, so budgets plus a cleanup habit are your safety net.</p>
+</aside>
+<p>To answer &quot;who is it for?&quot;, you need <strong>tags</strong>. Cost data carries each resource's tags, so a <code>costCenter</code> tag lets cost
+analysis split the bill per team — that is <strong>showback</strong>. When finance actually charges each department for its share,
+it becomes <strong>chargeback</strong>. Three facts about tags catch people out. Tags are not inherited from the resource group by
+default. A tag only appears in cost data from the moment it is applied, so last month's costs won't show this week's
+tags. And it can take up to a day for a new tag to show up. Enforce tags at creation time with Azure Policy (Lunch 18).
+If your account is an Enterprise Agreement or Microsoft Customer Agreement, Cost Management can also <strong>inherit</strong>
+subscription and resource-group tags into the usage records — the resources themselves stay unchanged.</p>
+</div></article><article class="scene-card" id="5-find-and-stop-waste" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Find and stop waste</h3><div class="prose"><p>Most Azure waste isn't dramatic. It is small, steady and invisible in a list of resources that all show a green
+<strong>Succeeded</strong> status. These are the usual suspects:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Waste</th>
+<th>Why it still costs money</th>
+<th>How to find it</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unattached managed disk</td>
+<td>Disks bill for provisioned size; deleting a VM doesn't delete its disks unless you ask</td>
+<td>Resource Graph (<code>diskState</code> is <code>Unattached</code>), Advisor</td>
+<td>Snapshot if unsure, then delete</td>
+</tr>
+<tr>
+<td>Unassociated public IP</td>
+<td>Standard public IPs bill every hour, attached or not</td>
+<td>Resource Graph (no IP configuration and no NAT gateway)</td>
+<td>Delete, or re-use it</td>
+</tr>
+<tr>
+<td>Empty App Service plan</td>
+<td>The plan's instances bill even with zero apps (except Free and Shared tiers)</td>
+<td>Resource Graph (number of sites is 0), Advisor</td>
+<td>Delete the plan or move apps into it</td>
+</tr>
+<tr>
+<td>Stopped but not deallocated VM</td>
+<td>Shutting down inside the OS keeps the compute allocated and billed</td>
+<td>VM power state &quot;Stopped&quot; instead of &quot;Stopped (deallocated)&quot;</td>
+<td>Stop from Azure, or deallocate</td>
+</tr>
+<tr>
+<td>Oversized or idle VM</td>
+<td>You pay for capacity the workload never uses</td>
+<td>Advisor right-size recommendations, CPU metrics</td>
+<td>Resize, or schedule shutdown</td>
+</tr>
+<tr>
+<td>Forgotten test environments</td>
+<td>Everything inside keeps billing</td>
+<td>Cost analysis by resource group, tags such as <code>environment=test</code></td>
+<td>Delete the resource group; rebuild from code when needed</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Azure Resource Graph</strong> — the query service from Lunch 04 — is the fastest way to hunt orphans across every
+subscription you can read. It uses a subset of the Kusto Query Language (KQL), and unlike cost data it reflects changes
+within moments. This query lists every unattached disk you can see:</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>Resources
+| where type =~ &#x27;microsoft.compute/disks&#x27;
+| where tostring(properties.diskState) =~ &#x27;Unattached&#x27;
+| project name, resourceGroup, sku = tostring(sku.name), sizeGB = toint(properties.diskSizeGB)
+</code></pre></div>
+<p>Similar one-line filters find public IPs with no <code>ipConfiguration</code> and no <code>natGateway</code>, and App Service plans whose
+<code>numberOfSites</code> is zero. Before you delete anything, check with the owner (tags help), look at the activity log for recent
+use, and take a snapshot of any disk you aren't sure about. Some disks only <em>look</em> abandoned — Site Recovery replicas,
+for example.</p>
+<p>Cleaning up once is satisfying; staying clean is a habit. That habit has a name: <strong>FinOps</strong>, a practice in which
+engineering, finance and the business share responsibility for cloud spend. The FinOps Foundation describes it as a
+loop of three phases that you repeat, not a project that ends.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  I[&quot;Inform&lt;br/&gt;see and allocate costs&lt;br/&gt;(cost analysis, tags)&quot;] --&gt; O[&quot;Optimize&lt;br/&gt;remove waste, right-size,&lt;br/&gt;commit for steady load&quot;]
+  O --&gt; P[&quot;Operate&lt;br/&gt;budgets, policy,&lt;br/&gt;monthly review&quot;]
+  P --&gt; I
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></article><article class="scene-card" id="6-how-it-fits-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>How it fits together for Nusantara Retail</h3><div class="prose"><p>Here is the plan you take back to Ibu Sari. First, <strong>inform</strong>: every resource gets <code>costCenter</code> (storefront, stores or
+it-shared), <code>environment</code> and <code>owner</code> tags, enforced by the Azure Policy assignments from Lunch 18. Cost analysis,
+grouped by <code>costCenter</code> and saved as a shared view, becomes the first page of the monthly finance meeting, and the
+answer to &quot;who is it for?&quot;.</p>
+<p>Next, <strong>optimize</strong>. The orphan hunt runs every Friday: unattached disks, unassociated IPs and empty plans go into a short
+report, owners have a week to claim them, and the rest is deleted. Advisor's cost tab is reviewed monthly. Development
+VMs get auto-shutdown at 19:00 Jakarta time. Once the storefront's size has been stable for a quarter, the two web servers
+move to a reservation — or to a savings plan if the Container Apps migration goes ahead. The nightly job that recalculates
+prices for forty stores is a good Spot candidate, on a size that supports Spot. If Dewi's team has Visual Studio
+subscriptions, development moves to a dev/test subscription.</p>
+<p>Finally, <strong>operate</strong>. Each resource group gets a monthly budget with alerts at 50, 80 and 100 percent to Ibu Sari and the
+group's owner. The development budget's 100 percent alert also calls an action group that stops dev VMs. A subscription
+anomaly alert catches the unexpected spike nobody budgeted for.</p>
+<p>Look at what makes all of this easier: being able to delete things without fear. If an environment can be rebuilt from
+a file in minutes, nobody keeps an idle copy &quot;just in case&quot;. That is the subject of the next lunch, infrastructure as code
+with Bicep. In Lunch 21 you'll meet cost again as one of the five pillars of the Azure Well-Architected Framework, and
+Lunch 31 applies budgets at management-group scope for the whole company.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>The storefront runs on two VMs around the clock today, but Dewi wants to move it to Container Apps
+within six months. Would you buy a three-year reservation for the VMs now, a savings plan for compute, or nothing yet?
+What would you want to see in cost analysis before you decide?</p>
+</aside>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Where did the money go? Decompose the bill, hunt the orphans, set the alarms</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../demos/19-cost-management.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../demos/19-cost-management.html" title="Interactive demo: Where did the money go? Decompose the bill, hunt the orphans, set the alarms" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/19-cost-management/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>How one total splits into compute, storage and network once you group the bill by meter category.</li>
+<li>The badge that reminds you cost data is hours behind, and why that makes Resource Graph the right orphan-hunting tool.</li>
+<li>The three orphans whose meters keep feeding the bill, and what happens to the total when they are gone.</li>
+<li>The budget gauge at 50, 80 and 100 percent: emails go out, but no resource stops.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Rizky deleted a test VM last week, yet the invoice still shows managed-disk charges for it. What happened, and how do
+you find every resource like it across the subscription?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Deleting the VM left its disk behind in the <strong>Unattached</strong> state, and managed disks bill for their provisioned size.
+Query Azure Resource Graph for disks whose <code>diskState</code> is <code>Unattached</code> (Advisor also flags them after a while) —
+<em>why:</em> Resource Graph sees every subscription in seconds, while the bill only tells you about it a day later.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Ibu Sari wants an email when the storefront resource group reaches 80 percent of its monthly amount, and the
+development VMs stopped automatically at 100 percent. What do you configure?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>A monthly <strong>budget</strong> on each resource group with an actual-cost alert at 80 percent sent to her email, and on the
+development budget a 100 percent alert that calls an <strong>action group</strong> running automation that deallocates the VMs —
+<em>why:</em> a budget on its own only notifies; it never stops a resource.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Two storefront VMs of the same size will run 24/7 in Indonesia Central for at least three years. A nightly price
+recalculation job can be restarted if it is interrupted. Which purchase options fit each?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>A <strong>reservation</strong> (or a savings plan, if sizes or services may change) for the steady web servers, and <strong>Spot VMs</strong> for
+the restartable nightly job, on a VM size that supports Spot — <em>why:</em> commitments reward predictable usage, while Spot
+trades guaranteed capacity for a deep discount.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Dewi created a large VM at 09:00. At 11:00 the cost analysis for her resource group still shows nothing. Should she
+report a bug?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>No. Cost data arrives in batches, typically 8 to 24 hours later and up to 72 hours for some pay-as-you-go
+subscriptions — <em>why:</em> the billing pipeline collects and prices usage before Cost Management shows it, so use Resource
+Graph or the activity log for real-time inventory.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Finance tagged every storefront resource with <code>costCenter=storefront</code> yesterday. Why does last month's cost analysis
+still show most storefront costs as &quot;untagged&quot;?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Tags only appear in cost data from the moment they are applied; they aren't added to historical usage — <em>why:</em> each
+usage record carries the tags the resource had when it was recorded, so enforce tags at creation time with Azure Policy.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Every Azure charge is a meter: quantity times price. Many meters bill for what you <strong>provision</strong> or for how long a resource <strong>exists</strong>, so forgotten resources cost money every hour.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Cost data is <strong>hours behind</strong> (typically 8–24 hours, up to 72 for some pay-as-you-go subscriptions); use Resource Graph for real-time inventory and budgets for early warning.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>Estimate before you build with the <strong>pricing calculator</strong>; the old TCO calculator is gone, so use the Azure Migrate business case for datacenter comparisons.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Remove waste and right-size <strong>first</strong>, then commit: reservations for stable usage, savings plans for flexible compute, Spot for interruptible work, Hybrid Benefit and dev/test pricing for licences and non-production.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p><strong>Budgets are alarms, not brakes.</strong> Combine tags, cost analysis, budgets with 50/80/100 percent alerts, Advisor and a regular orphan hunt — the FinOps loop of inform, optimize and operate.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>19</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Find the waste you made yourself</h3>
+          <div class="prose"><p><code>setup.sh</code> creates three cheap pieces of deliberate waste, all tagged <code>costCenter=retail-lab</code>: an unattached Standard HDD
+disk, a Standard public IP that isn't associated with anything, and an App Service plan with no apps. You hunt them down
+with Azure Resource Graph, check what Advisor says (and learn why it is still quiet), create a resource-group budget with
+50, 80 and 100 percent alerts, compare pay-as-you-go with a one-year reservation for a small VM, and finally delete the
+waste and prove it is gone.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 40 minutes</span><span class="chip cost">💲 free or close to free</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/19-cost-management.html">Start Lab 19 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/cost-management-billing/costs/pricing-calculator" target="_blank" rel="noopener"><b>Microsoft Learn: Estimate costs with the Azure pricing calculator</b><span>Every calculator feature, including agreement prices and how estimates are calculated.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/cost-management-billing/costs/tutorial-acm-create-budgets" target="_blank" rel="noopener"><b>Microsoft Learn: Tutorial — Create and manage budgets</b><span>Budget scopes, actual and forecast alerts, and action groups.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/cost-management-billing/savings-plan/savings-plan-overview" target="_blank" rel="noopener"><b>Microsoft Learn: What are savings plans?</b><span>How the hourly commitment is applied and how it compares with reservations.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/advisor/advisor-reference-cost-recommendations" target="_blank" rel="noopener"><b>Microsoft Learn: Cost recommendations in Azure Advisor</b><span>The full list of cost checks Advisor runs, service by service.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">💰</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Rupiah Ranger</h2>
+        <p class="muted">Find, explain and control cloud costs.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“We stay online — and we can explain every rupiah it costs.”</b></p>
+        <div class="teaser"><b>Next episode · 20</b><h4>Rebuild It All in an Hour?</h4><p>The whole design lives in people&#x27;s memories, and memories don&#x27;t redeploy.</p><p style="margin-top:10px"><a href="20-infrastructure-as-code-bicep.html">Watch Episode 20 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="18-governance-compliance-basic.html"><small>← Previous episode</small>18 · A Storage Account in West Europe</a><a class="next" href="20-infrastructure-as-code-bicep.html"><small>Next episode →</small>20 · Rebuild It All in an Hour?</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/19-cost-management/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

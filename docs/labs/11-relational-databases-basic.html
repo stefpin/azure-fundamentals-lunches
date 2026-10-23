@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 11 · Nusantara Retail&#x27;s orders database · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 11: Nusantara Retail&#x27;s orders database. about 45 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 11 · Nusantara Retail&#x27;s orders database">
+<meta property="og:description" content="Hands-on Azure lab 11: Nusantara Retail&#x27;s orders database. about 45 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/11-relational-databases-basic.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="11" style="--c:#11935a">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#11935a">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 11</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>11</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Nusantara Retail&#x27;s orders database</h1>
+        <p class="lab-story">🏪 <b>Episode 11 · The Three-Week-Old Backup</b> — The orders still live on SQL Express, guarded by a shared password and a USB drive. <a href="../lunches/11-relational-databases-basic.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 45 minutes</span>
+          <span class="chip cost">💲 free or close to free</span>
+          <span class="chip">Difficulty ★☆☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 7 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--create-a-logical-server-with-microsoft-entra-only-authentication">Task 1 · Create a logical server with Microsoft Entra-only authentication</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--create-the-database-on-the-free-offer-or-serverless">Task 2 · Create the database on the free offer (or serverless)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--open-the-firewall-for-your-client-ip-address">Task 3 · Open the firewall for your client IP address</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--connect-with-sqlcmd-as-yourself-and-create-the-orders-table">Task 4 · Connect with sqlcmd as yourself and create the Orders table</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--query-the-database-from-the-portal-query-editor">Task 5 · Query the database from the portal Query editor</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/11-relational-databases-basic/azsql.sh" target="_blank" rel="noopener"><span>azsql.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/11-relational-databases-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/11-relational-databases-basic/orders.sql" target="_blank" rel="noopener"><span>orders.sql</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/11-relational-databases-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/11-relational-databases-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/11-relational-databases-basic" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Nusantara Retail's orders move out of the SQL Server Express database next to the pantry and into Azure SQL Database.
+You create a logical server that accepts <strong>only Microsoft Entra sign-ins</strong> — no shared <code>sa</code> password exists — with
+yourself as the admin. You add a database, <code>sqldb-orders</code>, on the <strong>free offer</strong> (or on serverless compute with
+auto-pause if the free offer is not available to you). You open the server firewall for exactly one IP address, then
+create and query an <code>Orders</code> table from Cloud Shell with <strong>sqlcmd</strong> and from the portal <strong>Query editor</strong>. Finally, you
+break the firewall rule on purpose to see the error your users would get, and fix it.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  entra[&quot;Microsoft Entra ID&quot;] -. &quot;access token&quot; .-&gt; shell
+  shell[&quot;You in Cloud Shell&lt;br/&gt;sqlcmd + token&quot;] --&gt;|&quot;TCP 1433&lt;br/&gt;rule: your Cloud Shell IP&quot;| srv
+  browser[&quot;You in the browser&lt;br/&gt;portal Query editor&quot;] -.-&gt;|&quot;rule: your browser&#x27;s IP&quot;| srv
+  subgraph rg[&quot;rg-lunch11-&amp;lt;suffix&amp;gt;&quot;]
+    srv[&quot;Logical server sql-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;Microsoft Entra-only authentication&quot;] --&gt; db[(&quot;sqldb-orders&lt;br/&gt;free offer or serverless&quot;)]
+  end
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>). Sign in with
+a <strong>user account</strong>: the lab makes that account the database administrator.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install: Cloud Shell
+already has the Azure CLI and sqlcmd.</li>
+<li>Get the lab files and load the shared settings and a few names you will reuse:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/11-relational-databases-basic
+source ../common/config.sh
+RG=$(rg_name 11)
+SQL_SERVER=&quot;sql-nusa-${SUFFIX}&quot;
+SQL_FQDN=&quot;${SQL_SERVER}.database.windows.net&quot;
+DB=sqldb-orders
+source azsql.sh            # defines the &#x27;azsql&#x27; helper used in Task 4
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Cloud Shell ends a session after about 20 minutes without activity, and variables disappear with it. If that
+happens, <code>cd</code> back into the lab folder and run the block above again (skip the <code>git clone</code>).</p>
+</aside>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist. Finish with the <strong>Clean up</strong> section, even if you stop halfway.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–5 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--create-a-logical-server-with-microsoft-entra-only-authentication" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Create a logical server with Microsoft Entra-only authentication</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--create-a-logical-server-with-microsoft-entra-only-authentication" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The logical server gives your database its DNS name and holds the firewall rules and the Microsoft Entra admin. With
+<strong>Entra-only authentication</strong>, SQL logins and passwords are switched off for the whole server, so there is no <code>sa</code>
+password to leak. You will be the admin, identified by your user principal name (UPN) and object ID.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ensure_rg &quot;$RG&quot; 11
+MY_UPN=$(my_upn)
+MY_OID=$(my_object_id)
+echo &quot;The admin will be: $MY_UPN ($MY_OID)&quot;
+
+az sql server create \
+  --name &quot;$SQL_SERVER&quot; \
+  --resource-group &quot;$RG&quot; \
+  --location &quot;$LOCATION&quot; \
+  --enable-ad-only-auth \
+  --external-admin-principal-type User \
+  --external-admin-name &quot;$MY_UPN&quot; \
+  --external-admin-sid &quot;$MY_OID&quot; \
+  --output none
+</code></pre></div>
+<p>Creating the server takes one to three minutes. Notice what you did <strong>not</strong> type: an admin login and password. Azure
+still creates an internal SQL admin with a random password, but Entra-only authentication means nobody can use it.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Home › SQL servers › + Create</em> — pick the resource group, enter the server name and region,
+choose <strong>Authentication method: Use Microsoft Entra-only authentication</strong>, select <strong>Set admin</strong> and choose your own
+account. Then come back and continue with Task 2.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> both commands show your settings — <code>azureAdOnlyAuthentication</code> is <code>True</code>, and the admin is you.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az sql server ad-only-auth get --resource-group &quot;$RG&quot; --name &quot;$SQL_SERVER&quot; --output table
+az sql server ad-admin list --resource-group &quot;$RG&quot; --server &quot;$SQL_SERVER&quot; \
+  --query &quot;[].{admin:login, type:administratorType, objectId:sid}&quot; --output table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-2--create-the-database-on-the-free-offer-or-serverless" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Create the database on the free offer (or serverless)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--create-the-database-on-the-free-offer-or-serverless" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The <strong>free offer</strong> gives each subscription up to ten General Purpose serverless databases with a monthly allowance of
+compute, data and backup storage. You ask for it with <code>--use-free-limit</code>, and <code>--free-limit-exhaustion-behavior AutoPause</code> tells Azure to pause the database — never to bill you — if the allowance runs out.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az sql db create \
+  --resource-group &quot;$RG&quot; \
+  --server &quot;$SQL_SERVER&quot; \
+  --name &quot;$DB&quot; \
+  --edition GeneralPurpose --family Gen5 --capacity 2 \
+  --compute-model Serverless \
+  --use-free-limit \
+  --free-limit-exhaustion-behavior AutoPause \
+  --output none
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span><strong>If the free offer fails</strong> — for example because your subscription already uses its free databases, they live in
+another region, or your subscription type is not eligible — create a regular <strong>serverless</strong> database with
+auto-pause instead. It costs a little while it runs and only storage while it is paused:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az sql db create \
+  --resource-group &quot;$RG&quot; \
+  --server &quot;$SQL_SERVER&quot; \
+  --name &quot;$DB&quot; \
+  --edition GeneralPurpose --family Gen5 --capacity 1 \
+  --compute-model Serverless --min-capacity 0.5 --auto-pause-delay 60 \
+  --backup-storage-redundancy Local \
+  --output none
+</code></pre></div>
+<p><code>--capacity 1</code> is the maximum number of vCores, <code>--min-capacity 0.5</code> the minimum while it runs, and
+<code>--auto-pause-delay 60</code> the idle minutes before it pauses. Locally redundant backups are the cheapest option and are
+fine for a lab.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Home › SQL databases › + Create</em>. On the free offer, a &quot;Free offer applied&quot; banner appears at
+the top of the page and the cost summary shows zero. Choose the server from Task 1 and keep the defaults.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the database exists on serverless compute (<code>GP_S_Gen5_…</code>) with an auto-pause delay. <code>freeOffer</code>
+shows <code>True</code> if the free offer applied.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az sql db show --resource-group &quot;$RG&quot; --server &quot;$SQL_SERVER&quot; --name &quot;$DB&quot; \
+  --query &quot;{sku:currentServiceObjectiveName, status:status, autoPauseMinutes:autoPauseDelay, freeOffer:useFreeLimit, whenFreeUsedUp:freeLimitExhaustionBehavior}&quot; \
+  --output table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-3--open-the-firewall-for-your-client-ip-address" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Open the firewall for your client IP address</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--open-the-firewall-for-your-client-ip-address" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A new server rejects every IP address. Add a <strong>server-level firewall rule</strong> for the public IP address that Cloud
+Shell uses right now. The <code>my_public_ip</code> helper asks a public &quot;what is my IP&quot; service.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>MY_IP=$(my_public_ip)
+echo &quot;Cloud Shell&#x27;s public IP right now: $MY_IP&quot;
+
+az sql server firewall-rule create \
+  --resource-group &quot;$RG&quot; \
+  --server &quot;$SQL_SERVER&quot; \
+  --name AllowMyClientIP \
+  --start-ip-address &quot;$MY_IP&quot; \
+  --end-ip-address &quot;$MY_IP&quot; \
+  --output none
+</code></pre></div>
+<p>Two things to know. First, Cloud Shell can get a <strong>different public IP address</strong> in a new session; when that happens,
+run these commands again — creating a rule with an existing name updates it. Second, firewall changes can take <strong>up
+to five minutes</strong> to apply.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>Do <strong>not</strong> turn on <em>Allow Azure services and resources to access this server</em> to make Cloud Shell work. It would,
+because Cloud Shell runs in Azure — but so would every other Azure customer's resources.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>SQL server › Security › Networking › Firewall rules › + Add your client IPv4 address</em>. Look
+closely: that button adds <strong>your browser's</strong> IP address, not Cloud Shell's. You will need exactly that in Task 5.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> one rule, <code>AllowMyClientIP</code>, whose start and end address equal <code>$MY_IP</code>.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az sql server firewall-rule list --resource-group &quot;$RG&quot; --server &quot;$SQL_SERVER&quot; --output table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-4--connect-with-sqlcmd-as-yourself-and-create-the-orders-table" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Connect with sqlcmd as yourself and create the Orders table</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--connect-with-sqlcmd-as-yourself-and-create-the-orders-table" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Cloud Shell includes the ODBC-based <strong>sqlcmd</strong>. For Microsoft Entra authentication it does not take a password: you
+give it an <strong>access token</strong> from Microsoft Entra ID in a small file. The <code>azsql</code> helper you loaded at the start does
+exactly that on every call — it asks the Azure CLI for a fresh token for Azure SQL, runs sqlcmd with <code>-G</code> (use Entra)
+and <code>-P &lt;token file&gt;</code>, then deletes the file.</p>
+<details class="plain"><summary>Curious? This is what <code>azsql</code> runs for you</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>( umask 077                                                        # keep the token file private
+  az account get-access-token --resource https://database.windows.net --query accessToken --output tsv \
+    | tr -d &#x27;\r\n&#x27; | iconv -f ascii -t UTF-16LE &gt; ~/.azsql-token )  # sqlcmd wants UTF-16LE, no BOM
+sqlcmd -S &quot;$SQL_FQDN&quot; -d &quot;$DB&quot; -G -P ~/.azsql-token -Q &quot;SELECT SUSER_SNAME();&quot;
+rm ~/.azsql-token                                                  # the token is valid for about an hour
+</code></pre></div>
+</details>
+<p>First, check who you are inside the database:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>azsql &quot;$SQL_FQDN&quot; &quot;$DB&quot; -W -Q &quot;SELECT SUSER_SNAME() AS signed_in_as, DB_NAME() AS database_name;&quot;
+</code></pre></div>
+<p>You should see your own UPN — no password was involved. If you get error <strong>40613</strong> (&quot;is not currently available&quot;), a
+paused database is waking up: wait 30–60 seconds and run the command again.</p>
+<p>Now create the table and the sample orders. Have a look at <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/11-relational-databases-basic/orders.sql" target="_blank" rel="noopener"><code>orders.sql</code></a> first: it creates <code>dbo.Orders</code>
+and inserts seven orders from different stores. The script is safe to run twice.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>azsql &quot;$SQL_FQDN&quot; &quot;$DB&quot; -i orders.sql
+</code></pre></div>
+<p>Query the data:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>azsql &quot;$SQL_FQDN&quot; &quot;$DB&quot; -W -Q &quot;SELECT OrderId, StoreCode, CustomerName, TotalIdr, Status FROM dbo.Orders ORDER BY OrderId;&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the last command lists seven orders, from <code>JKT-01</code> to <code>MKS-01</code>. <code>orders.sql</code> ended with
+<code>order_count</code> = 7.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--query-the-database-from-the-portal-query-editor" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Query the database from the portal Query editor</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--query-the-database-from-the-portal-query-editor" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The <strong>Query editor</strong> runs in your browser, so it connects from your browser's public IP address — a different client,
+with a different address, from Cloud Shell. It is the quickest way to check data without installing anything.</p>
+<ol>
+<li>
+<p>In the portal, open <em>SQL databases › sqldb-orders › Query editor</em>.</p>
+</li>
+<li>
+<p>Choose <strong>Microsoft Entra authentication</strong> and continue as yourself.</p>
+</li>
+<li>
+<p>If you see a firewall error that names an IP address, select the <strong>Allowlist IP …</strong> link in the error (or add the
+address under the server's <em>Networking</em> page), wait a moment, and connect again.</p>
+</li>
+<li>
+<p>Paste this query into the editor and select <strong>Run</strong>:</p>
+<div class="code" data-lang="sql"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>SQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>SELECT StoreCode, COUNT(*) AS orders, SUM(TotalIdr) AS revenue_idr
+FROM dbo.Orders
+GROUP BY StoreCode
+ORDER BY revenue_idr DESC;
+</code></pre></div>
+</li>
+<li>
+<p>Add one order from the browser, then run the query from step 4 again:</p>
+<div class="code" data-lang="sql"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>SQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>INSERT INTO dbo.Orders (StoreCode, CustomerName, TotalIdr) VALUES (&#x27;JKT-01&#x27;, N&#x27;Dewi Anggraini&#x27;, 99000);
+</code></pre></div>
+</li>
+</ol>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the results grid shows revenue per store, and <code>JKT-01</code> now has two orders. In Cloud Shell,
+<code>az sql server firewall-rule list --resource-group &quot;$RG&quot; --server &quot;$SQL_SERVER&quot; --output table</code> shows a second rule
+for your browser's address.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Your firewall rule is the only thing that lets Cloud Shell in. Remove it and see what your users would see.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az sql server firewall-rule delete --resource-group &quot;$RG&quot; --server &quot;$SQL_SERVER&quot; --name AllowMyClientIP
+azsql &quot;$SQL_FQDN&quot; &quot;$DB&quot; -Q &quot;SELECT COUNT(*) AS orders FROM dbo.Orders;&quot;
+</code></pre></div>
+<p><strong>Symptom:</strong> error <strong>40615</strong> — <em>Cannot open server 'sql-nusa-…' requested by the login. Client with IP address '…' is
+not allowed to access the server.</em> If the query still works, wait a minute or two and try again: firewall changes can
+take up to five minutes to apply. Notice that authentication never happened — the firewall stopped the connection first.
+Meanwhile, the portal Query editor keeps working. Why?</p>
+<details class="plain"><summary>Hint: how to fix it</summary>
+<p>Recreate the rule for your current address — the error message even tells you which address was refused:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>MY_IP=$(my_public_ip)
+az sql server firewall-rule create --resource-group &quot;$RG&quot; --server &quot;$SQL_SERVER&quot; --name AllowMyClientIP \
+  --start-ip-address &quot;$MY_IP&quot; --end-ip-address &quot;$MY_IP&quot; --output none
+</code></pre></div>
+<p>Wait a minute, then run the <code>azsql</code> query again. The Query editor kept working because your browser's IP address has
+its own rule: each client address is allowed (or refused) separately.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. The row count is checked
+only where sqlcmd is installed — run <code>verify.sh</code> in Cloud Shell.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes the resource group <code>rg-lunch11-&lt;suffix&gt;</code>, and with it the server, the database and the firewall rules.
+The lab created nothing outside the resource group. Deletion continues in the background for a few minutes.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Location '…' is not accepting creation of new Windows Azure SQL Database servers for the subscription '…' at this time.</code></td>
+<td>Your subscription cannot create SQL servers in that region right now</td>
+<td>Run <code>bash cleanup.sh</code> and wait until <code>az group list --tag lunch=11 --output table</code> is empty (the resource group was already created in the old region), then <code>export LOCATION=&lt;another region&gt;</code>, <code>source ../common/config.sh</code>, and start again from Task 1</td>
+</tr>
+<tr>
+<td><code>az sql server create</code> says the server name already exists</td>
+<td>Server names are global DNS names; yours is already taken (perhaps by an old lab run)</td>
+<td>Delete the old server, or set a new <code>SUFFIX</code> before sourcing <code>config.sh</code></td>
+</tr>
+<tr>
+<td><code>az sql db create</code> with <code>--use-free-limit</code> fails</td>
+<td>No free database left in your subscription, free databases in another region, or a subscription type that is not eligible</td>
+<td>Use the serverless command in the Task 2 box</td>
+</tr>
+<tr>
+<td>Error 40615: <em>Client with IP address '…' is not allowed to access the server</em></td>
+<td>No firewall rule matches your current IP — Cloud Shell's IP may have changed</td>
+<td>Re-run the Task 3 commands, wait up to five minutes, retry</td>
+</tr>
+<tr>
+<td>Error 40613: <em>Database 'sqldb-orders' on server '…' is not currently available</em></td>
+<td>The serverless database is paused and is resuming</td>
+<td>Wait 30–60 seconds and run the command again</td>
+</tr>
+<tr>
+<td><code>Login failed for user '&lt;token-identified principal&gt;'</code></td>
+<td>You are signed in to Azure as a different account from the server's Entra admin</td>
+<td>Run <code>az account show --query user.name</code>; sign in as the admin or add yourself as a database user</td>
+</tr>
+<tr>
+<td><code>Could not get a Microsoft Entra access token for Azure SQL</code></td>
+<td>Your Cloud Shell or CLI session has expired</td>
+<td>Run <code>az login</code>, then try again</td>
+</tr>
+<tr>
+<td><code>sqlcmd: command not found</code> or a login timeout from your own PC</td>
+<td>You are not in Cloud Shell, or your network blocks outbound port 1433</td>
+<td>Use Cloud Shell, or the portal Query editor (port 443 only)</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li>Give a second account in your own tenant read-only access: in the Query editor run
+<code>CREATE USER [user@yourtenant.onmicrosoft.com] FROM EXTERNAL PROVIDER;</code> and
+<code>ALTER ROLE db_datareader ADD MEMBER [user@yourtenant.onmicrosoft.com];</code>, then sign in as that user in a private
+browser window and try an <code>INSERT</code>.</li>
+<li>Connect from <strong>VS Code</strong> with the <strong>MSSQL extension</strong> on your own PC, using Microsoft Entra ID authentication. You will
+need a firewall rule for your PC's address too.</li>
+<li>If you used the serverless fallback, set <code>--auto-pause-delay 15</code> with <code>az sql db update</code>, close every tool, and check
+<code>az sql db show ... --query status</code> after about 20 minutes: it should say <code>Paused</code>.</li>
+<li>On the free offer, open the database's <em>Overview › Free monthly vCore amount</em> metric and create an alert for when
+fewer than 10,000 vCore-seconds remain.</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build the following, any way you like (portal, CLI, Bicep):</p>
+<ol>
+<li>A resource group <code>rg-lunch11-&lt;suffix&gt;</code> created with <code>ensure_rg</code> (or tagged <code>course=azure-fundamentals-lunches</code> and
+<code>lunch=11</code>) in your lab region.</li>
+<li>A logical server <code>sql-nusa-&lt;suffix&gt;</code> with <strong>Microsoft Entra-only authentication</strong> enabled and <strong>your own account</strong>
+as the Microsoft Entra admin.</li>
+<li>A database <code>sqldb-orders</code> on <strong>General Purpose serverless</strong> compute with auto-pause enabled — on the free offer if
+your subscription allows it.</li>
+<li>A server-level firewall rule that allows your <strong>current Cloud Shell IP address</strong>, and no rule that allows all Azure
+services or the whole internet.</li>
+<li>A table <code>dbo.Orders</code> with <strong>at least one order</strong> in it (<code>orders.sql</code> adds seven).</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="10-app-service.html"><small>← Previous lab</small>10 · Move the storefront to PaaS</a><a class="next" href="12-cosmos-db.html"><small>Next lab →</small>12 · A product catalogue that scales</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/11-relational-databases-basic/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

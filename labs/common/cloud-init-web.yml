@@ -1,0 +1,39 @@
+#cloud-config
+# -----------------------------------------------------------------------------
+# Tiny demo web server used by several labs (load balancing, scale sets, ...).
+# It uses Python's built-in HTTP server, so it needs NO outbound internet access
+# and works in private subnets. The page shows the VM name and availability zone.
+#   /          -> "Nusantara Retail" page with host name and zone
+#   /health    -> "ok"  (use it for load balancer health probes)
+# -----------------------------------------------------------------------------
+write_files:
+  - path: /etc/systemd/system/nusa-web.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Nusantara Retail demo web server
+      After=network-online.target
+
+      [Service]
+      ExecStart=/usr/bin/python3 -m http.server 80 --directory /var/www/nusa
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - |
+    mkdir -p /var/www/nusa
+    ZONE=$(curl -s -H Metadata:true --max-time 5 "http://169.254.169.254/metadata/instance/compute/zone?api-version=2021-02-01&format=text")
+    [ -z "$ZONE" ] && ZONE="none (regional)"
+    cat > /var/www/nusa/index.html <<EOF
+    <!DOCTYPE html>
+    <html lang="en"><head><meta charset="utf-8"><title>Nusantara Retail</title></head>
+    <body style="font-family:Segoe UI,Arial,sans-serif;margin:3rem">
+    <h1>Nusantara Retail</h1>
+    <p>Served by <strong>$(hostname)</strong> in availability zone <strong>${ZONE}</strong>.</p>
+    </body></html>
+    EOF
+    echo ok > /var/www/nusa/health
+    systemctl daemon-reload
+    systemctl enable --now nusa-web.service

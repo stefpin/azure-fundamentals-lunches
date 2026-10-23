@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Lunch 31 · Governance at scale — Interactive demo</title>
+<style>
+/* =====================================================================
+   LUNCH DEMO PLAYER · v1.0 · shared styles
+   Copy this block unchanged into every demo. Put demo-specific CSS in the
+   "DEMO-SPECIFIC STYLES" block at the end of this <style> element.
+   ===================================================================== */
+:root{
+  --bg:#f4f6fa; --surface:#ffffff; --ink:#1b1b1b; --muted:#56607a; --line:#cfd8e6;
+  --accent:#0078d4; --accent-ink:#ffffff; --accent-soft:#deecf9;
+  --ok:#107c10; --ok-soft:#dff6dd; --bad:#c50f1f; --bad-soft:#fde7e9;
+  --warn:#8a5d00; --warn-soft:#fff4ce; --hl:#e8a200;
+  --node:#ffffff; --node-stroke:#7d8ca8; --zone:#eef4fc; --region:#f8fafd;
+  --flow:#0078d4; --packet:#0078d4;
+  --c-compute:#e6f1fb; --c-network:#e3f6f4; --c-data:#efe9fb; --c-security:#fff3dc;
+  --c-identity:#e9f7e7; --c-ops:#eef0f4; --c-ext:#ffffff;
+  --radius:12px; --shadow:0 1px 2px rgb(0 0 0 / 6%), 0 6px 18px rgb(0 0 0 / 6%);
+  --font:"Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono:ui-monospace, "Cascadia Code", Consolas, "Liberation Mono", monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1520; --surface:#18202d; --ink:#e8edf5; --muted:#a3adbf; --line:#33415a;
+    --accent:#4ea8ff; --accent-ink:#0b1220; --accent-soft:#1d3350;
+    --ok:#6ccb5f; --ok-soft:#1f3a1f; --bad:#ff6b75; --bad-soft:#3d1d22;
+    --warn:#f5c451; --warn-soft:#3b3218; --hl:#ffc83d;
+    --node:#1f2a3a; --node-stroke:#6b7d9c; --zone:#172234; --region:#121a27;
+    --flow:#4ea8ff; --packet:#4ea8ff;
+    --c-compute:#16314d; --c-network:#123a37; --c-data:#2a2346; --c-security:#3a2f14;
+    --c-identity:#1b3a1d; --c-ops:#232b38; --c-ext:#1f2a3a;
+    --shadow:0 1px 2px rgb(0 0 0 / 40%), 0 6px 18px rgb(0 0 0 / 30%);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.5}
+.wrap{max-inline-size:1200px;margin-inline:auto;padding:16px}
+header.top .kicker{color:var(--muted);font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;margin:0}
+header.top h1{margin:.15rem 0 .35rem;font-size:clamp(1.25rem,2.4vw,1.85rem);line-height:1.2}
+header.top .lede{margin:0 0 14px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.stage,.narration{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.stage{padding:8px}
+.stage svg{display:block;inline-size:100%;block-size:auto}
+.narration{padding:16px}
+@media (min-width:901px){.narration{position:sticky;inset-block-start:12px}}
+.step-count{color:var(--muted);font-size:.85rem;margin:0}
+.narration h2{margin:.2rem 0 .4rem;font-size:1.15rem;line-height:1.3}
+.narration p{margin:.45rem 0}
+.tip{background:var(--accent-soft);border-inline-start:4px solid var(--accent);padding:8px 12px;border-radius:8px;font-size:.92rem}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-block:12px;align-items:center}
+button,select{font:inherit;font-size:.92rem;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:focus-visible,select:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.speed{color:var(--muted);font-size:.85rem;display:inline-flex;gap:6px;align-items:center}
+.progress{block-size:6px;background:var(--accent-soft);border-radius:99px;overflow:hidden}
+.progress>div{block-size:100%;inline-size:0;background:var(--accent);transition:inline-size .4s ease}
+.steps-list{margin:12px 0 0;padding-inline-start:22px;font-size:.86rem;color:var(--muted)}
+.steps-list li{margin-block:2px}
+.steps-list li.current{color:var(--ink);font-weight:600}
+.steps-list button{background:none;border:0;padding:2px 0;color:inherit;text-align:start;font-weight:inherit;cursor:pointer}
+.steps-list button:hover{color:var(--accent)}
+.hint{color:var(--muted);font-size:.78rem}
+.noscript{background:var(--warn-soft);padding:12px;border-radius:8px}
+footer{color:var(--muted);font-size:.82rem;margin-block-start:18px}
+footer a{color:var(--accent)}
+/* ---------- SVG vocabulary ---------- */
+svg text{fill:var(--ink);font-family:var(--font);font-size:15px}
+svg text.small{font-size:12.5px;fill:var(--muted)}
+svg text.title{font-size:17px;font-weight:600}
+svg text.big{font-size:22px;font-weight:600}
+svg text.mono{font-family:var(--mono);font-size:13px}
+svg .node > rect, svg .node > circle, svg .node > ellipse{fill:var(--node);stroke:var(--node-stroke);stroke-width:1.5}
+svg .node.compute > rect{fill:var(--c-compute)}
+svg .node.network > rect{fill:var(--c-network)}
+svg .node.data > rect{fill:var(--c-data)}
+svg .node.security > rect{fill:var(--c-security)}
+svg .node.identity > rect{fill:var(--c-identity)}
+svg .node.ops > rect{fill:var(--c-ops)}
+svg .node.ext > rect{fill:var(--c-ext)}
+svg .zone > rect{fill:var(--zone);stroke:var(--node-stroke);stroke-width:1.2;stroke-dasharray:6 5}
+svg .region > rect{fill:var(--region);stroke:var(--node-stroke);stroke-width:1.2}
+svg .wire{fill:none;stroke:var(--node-stroke);stroke-width:2}
+svg .arrowhead{fill:var(--node-stroke)}
+svg .badge > rect{fill:var(--accent);stroke:none}
+svg .badge > text{fill:var(--accent-ink);font-size:12px;font-weight:600}
+svg .callout > rect{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.2}
+/* ---------- step states (driven by the engine) ---------- */
+[data-el]{transition:opacity .45s ease}
+[data-el]:not(.is-visible){opacity:0}
+.is-dim{opacity:.22 !important}
+.is-hl > rect, .is-hl > circle, .is-hl > ellipse, .is-hl > polygon,
+rect.is-hl, circle.is-hl, ellipse.is-hl, polygon.is-hl, path.is-hl{stroke:var(--hl) !important;stroke-width:4 !important}
+.is-ok > rect, .is-ok > circle, .is-ok > ellipse, rect.is-ok, circle.is-ok{stroke:var(--ok) !important;fill:var(--ok-soft) !important;stroke-width:3 !important}
+.is-bad > rect, .is-bad > circle, .is-bad > ellipse, rect.is-bad, circle.is-bad{stroke:var(--bad) !important;fill:var(--bad-soft) !important;stroke-width:3 !important}
+path.is-ok{stroke:var(--ok) !important;stroke-width:3 !important}
+path.is-bad{stroke:var(--bad) !important;stroke-width:3 !important}
+path.is-flow{stroke:var(--flow) !important;stroke-width:3 !important;stroke-dasharray:10 8;animation:lunch-flow .9s linear infinite}
+path.is-flow.is-bad{stroke:var(--bad) !important}
+path.is-flow.is-ok{stroke:var(--ok) !important}
+@keyframes lunch-flow{to{stroke-dashoffset:-18}}
+.packet{fill:var(--packet);stroke:var(--surface);stroke-width:2}
+.packet.bad{fill:var(--bad)}
+.packet.ok{fill:var(--ok)}
+.packet.warn{fill:var(--hl)}
+@media (prefers-reduced-motion: reduce){
+  [data-el], .progress>div{transition:none}
+  path.is-flow{animation:none}
+}
+/* =====================================================================
+   DEMO-SPECIFIC STYLES (optional — keep small, use the variables above)
+   ===================================================================== */
+svg .badge > text{font-size:12.5px}
+#w-init-nusa, #w-init-lz, #w-rem-log{stroke-dasharray:6 4}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">Lunch 31 · Resource Hierarchy and Governance (Advanced) · Interactive demo</p>
+    <h1>One hierarchy, one initiative, every subscription</h1>
+    <p class="lede">Watch a landing-zone hierarchy build out, an initiative assigned at a management group cascade down to every subscription, a DeployIfNotExists remediation fail and then succeed, and an exemption keep an exception visible. Press ▶ Play, or step through with Next and Back.</p>
+  </header>
+
+  <main class="layout">
+    <section class="stage" aria-label="Animated diagram">
+            <svg id="stage" viewBox="0 0 960 560" role="img" aria-labelledby="svgTitle svgDesc">
+        <title id="svgTitle">Nusantara Retail's management group hierarchy and policy-driven governance</title>
+        <desc id="svgDesc">Under the tenant root group, an intermediate root named nusa gets Platform, Landing zones, Sandboxes and Decommissioned management groups. Subscriptions are placed into Corp, Online and Sandboxes. An initiative saved at nusa and assigned at Landing zones cascades to the orders, storefront and loyalty subscriptions. A DeployIfNotExists remediation task first fails because its identity has no role on the log-nusa workspace, then succeeds after a role is granted. A Waiver exemption marks the loyalty beta storage account as exempt for 30 days, and a Git pipeline deploys everything as code.</desc>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+          </marker>
+        </defs>
+
+        <!-- Hierarchy wires -->
+        <path id="w-root-nusa" class="wire" d="M480,56 L480,74" marker-end="url(#arrow)" data-el/>
+        <path id="w-nusa-plat" class="wire" d="M480,122 L480,132 L120,132 L120,144" marker-end="url(#arrow)" data-el/>
+        <path id="w-nusa-lz" class="wire" d="M480,122 L480,144" marker-end="url(#arrow)" data-el/>
+        <path id="w-nusa-sbx" class="wire" d="M480,122 L480,132 L745,132 L745,144" marker-end="url(#arrow)" data-el/>
+        <path id="w-nusa-dec" class="wire" d="M480,122 L480,132 L875,132 L875,144" marker-end="url(#arrow)" data-el/>
+        <path id="w-plat-tree" class="wire" d="M30,186 L30,325 M30,211 L38,211 M30,249 L38,249 M30,287 L38,287 M30,325 L38,325" data-el/>
+        <path id="w-lz-corp" class="wire" d="M480,186 L480,193 L320,193 L320,198" marker-end="url(#arrow)" data-el/>
+        <path id="w-lz-online" class="wire" d="M480,186 L480,193 L550,193 L550,198" marker-end="url(#arrow)" data-el/>
+        <path id="w-corp-orders" class="wire" d="M320,234 L320,256" marker-end="url(#arrow)" data-el/>
+        <path id="w-online-store" class="wire" d="M550,234 L550,246 L475,246 L475,256" marker-end="url(#arrow)" data-el/>
+        <path id="w-online-loyal" class="wire" d="M550,234 L550,246 L620,246 L620,256" marker-end="url(#arrow)" data-el/>
+        <path id="w-sbx-dewi" class="wire" d="M745,186 L745,256" marker-end="url(#arrow)" data-el/>
+        <path id="w-sub-sql" class="wire" d="M320,298 L320,316" marker-end="url(#arrow)" data-el data-start/>
+        <path id="w-sub-app" class="wire" d="M475,298 L475,316" marker-end="url(#arrow)" data-el data-start/>
+        <path id="w-sub-beta" class="wire" d="M620,298 L620,316" marker-end="url(#arrow)" data-el data-start/>
+
+        <!-- Policy, remediation and code wires -->
+        <path id="w-init-nusa" class="wire" d="M612,99 L582,99" marker-end="url(#arrow)" data-el/>
+        <path id="w-init-lz" class="wire" d="M700,126 C700,152 640,166 582,166" marker-end="url(#arrow)" data-el/>
+        <path id="w-rem-sql" class="wire" d="M320,440 L320,372" marker-end="url(#arrow)" data-el/>
+        <path id="w-rem-app" class="wire" d="M475,440 L475,372" marker-end="url(#arrow)" data-el/>
+        <path id="w-rem-log" class="wire" d="M250,468 C230,468 232,398 212,398" marker-end="url(#arrow)" data-el/>
+        <path id="w-ex-beta" class="wire" d="M620,436 L620,372" marker-end="url(#arrow)" data-el/>
+        <path id="w-git-pipe" class="wire" d="M170,40 L188,40" marker-end="url(#arrow)" data-el/>
+        <path id="w-pipe-nusa" class="wire" d="M360,40 C372,40 368,92 378,92" marker-end="url(#arrow)" data-el/>
+
+        <!-- Tenant root and intermediate root -->
+        <g id="n-root" class="node ops" data-el data-start>
+          <rect x="380" y="16" width="200" height="40" rx="12"/>
+          <text x="480" y="41" text-anchor="middle">Tenant root group</text>
+        </g>
+        <g id="n-nusa" class="node ops" data-el>
+          <rect x="380" y="76" width="200" height="46" rx="12"/>
+          <text x="480" y="96" text-anchor="middle">nusa</text>
+          <text x="480" y="114" text-anchor="middle" class="small">intermediate root</text>
+        </g>
+
+        <!-- Second level -->
+        <g id="n-plat" class="node ops" data-el>
+          <rect x="20" y="146" width="200" height="40" rx="12"/>
+          <text x="120" y="171" text-anchor="middle">Platform</text>
+        </g>
+        <g id="n-lz" class="node ops" data-el>
+          <rect x="380" y="146" width="200" height="40" rx="12"/>
+          <text x="480" y="171" text-anchor="middle">Landing zones</text>
+        </g>
+        <g id="n-sbx" class="node ops" data-el>
+          <rect x="690" y="146" width="110" height="40" rx="12"/>
+          <text x="745" y="171" text-anchor="middle">Sandboxes</text>
+        </g>
+        <g id="n-dec" class="node ops" data-el>
+          <rect x="810" y="146" width="130" height="40" rx="12"/>
+          <text x="875" y="171" text-anchor="middle">Decommissioned</text>
+        </g>
+
+        <!-- Platform children and the central workspace -->
+        <g id="n-sec" class="node ops" data-el>
+          <rect x="40" y="196" width="170" height="30" rx="10"/>
+          <text x="125" y="216" text-anchor="middle">Security</text>
+        </g>
+        <g id="n-mgmt" class="node ops" data-el>
+          <rect x="40" y="234" width="170" height="30" rx="10"/>
+          <text x="125" y="254" text-anchor="middle">Management</text>
+        </g>
+        <g id="n-conn" class="node ops" data-el>
+          <rect x="40" y="272" width="170" height="30" rx="10"/>
+          <text x="125" y="292" text-anchor="middle">Connectivity</text>
+        </g>
+        <g id="n-idn" class="node ops" data-el>
+          <rect x="40" y="310" width="170" height="30" rx="10"/>
+          <text x="125" y="330" text-anchor="middle">Identity</text>
+        </g>
+        <g id="n-log" class="node data" data-el>
+          <rect x="40" y="360" width="170" height="52" rx="12"/>
+          <text x="125" y="382" text-anchor="middle">log-nusa</text>
+          <text x="125" y="401" text-anchor="middle" class="small">workspace · Management</text>
+        </g>
+
+        <!-- Landing zone children -->
+        <g id="n-corp" class="node ops" data-el>
+          <rect x="250" y="200" width="140" height="34" rx="10"/>
+          <text x="320" y="222" text-anchor="middle">Corp</text>
+        </g>
+        <g id="n-online" class="node ops" data-el>
+          <rect x="475" y="200" width="150" height="34" rx="10"/>
+          <text x="550" y="222" text-anchor="middle">Online</text>
+        </g>
+
+        <!-- Subscriptions -->
+        <g id="n-sub-orders" class="node compute" data-el data-start>
+          <rect x="250" y="258" width="140" height="40" rx="12"/>
+          <text x="320" y="283" text-anchor="middle">sub-orders</text>
+        </g>
+        <g id="n-sub-store" class="node compute" data-el data-start>
+          <rect x="410" y="258" width="130" height="40" rx="12"/>
+          <text x="475" y="283" text-anchor="middle">sub-storefront</text>
+        </g>
+        <g id="n-sub-loyal" class="node compute" data-el data-start>
+          <rect x="550" y="258" width="140" height="40" rx="12"/>
+          <text x="620" y="283" text-anchor="middle">sub-loyalty</text>
+        </g>
+        <g id="n-sub-dewi" class="node compute" data-el data-start>
+          <rect x="695" y="258" width="100" height="40" rx="12"/>
+          <text x="745" y="283" text-anchor="middle">sub-dewi</text>
+        </g>
+
+        <!-- Workload resources -->
+        <g id="n-r-sql" class="node data" data-el data-start>
+          <rect x="250" y="318" width="140" height="52" rx="12"/>
+          <text x="320" y="340" text-anchor="middle">sql-orders</text>
+          <text id="t-sql" x="320" y="360" text-anchor="middle" class="small">orders database</text>
+        </g>
+        <g id="n-r-app" class="node compute" data-el data-start>
+          <rect x="410" y="318" width="130" height="52" rx="12"/>
+          <text x="475" y="340" text-anchor="middle">app-storefront</text>
+          <text id="t-app" x="475" y="360" text-anchor="middle" class="small">web app</text>
+        </g>
+        <g id="n-r-beta" class="node data" data-el data-start>
+          <rect x="550" y="318" width="140" height="52" rx="12"/>
+          <text x="620" y="340" text-anchor="middle">st-loyaltybeta</text>
+          <text id="t-beta" x="620" y="360" text-anchor="middle" class="small">beta · West Europe</text>
+        </g>
+
+        <!-- The initiative -->
+        <g id="n-init" class="node security" data-el>
+          <rect x="612" y="14" width="328" height="112" rx="12"/>
+          <text x="776" y="38" text-anchor="middle" class="title">Nusantara baseline</text>
+          <text x="776" y="58" text-anchor="middle" class="small">saved at nusa · assigned at Landing zones</text>
+          <text x="776" y="78" text-anchor="middle" class="small">Allowed locations · Deny</text>
+          <text x="776" y="96" text-anchor="middle" class="small">costCenter tag · Modify</text>
+          <text x="776" y="114" text-anchor="middle" class="small">Diagnostics to log-nusa · DeployIfNotExists</text>
+        </g>
+        <g id="b-mode" class="badge" data-el>
+          <rect x="232" y="154" width="140" height="24" rx="12"/>
+          <text id="t-mode" x="302" y="171" text-anchor="middle" class="small">DoNotEnforce first</text>
+        </g>
+
+        <!-- Compliance view -->
+        <g id="n-comp" class="node ops" data-el>
+          <rect x="700" y="318" width="240" height="104" rx="12"/>
+          <text x="820" y="342" text-anchor="middle" class="title">Compliance</text>
+          <text id="t-c-ok" x="820" y="366" text-anchor="middle">Compliant: –</text>
+          <text id="t-c-bad" x="820" y="386" text-anchor="middle">Non-compliant: –</text>
+          <text id="t-c-ex" x="820" y="406" text-anchor="middle">Exempt: –</text>
+        </g>
+
+        <!-- Remediation -->
+        <g id="n-remed" class="node identity" data-el>
+          <rect x="250" y="440" width="300" height="56" rx="12"/>
+          <text x="400" y="464" text-anchor="middle">Remediation task</text>
+          <text x="400" y="484" text-anchor="middle" class="small">DeployIfNotExists · managed identity</text>
+        </g>
+        <g id="b-role" class="badge" data-el>
+          <rect x="30" y="416" width="190" height="22" rx="11"/>
+          <text x="125" y="432" text-anchor="middle" class="small">Log Analytics Contributor</text>
+        </g>
+
+        <!-- Governance as code -->
+        <g id="n-git" class="node ext" data-el>
+          <rect x="20" y="16" width="150" height="48" rx="12"/>
+          <text x="95" y="38" text-anchor="middle">Git repository</text>
+          <text x="95" y="56" text-anchor="middle" class="small">policy as code</text>
+        </g>
+        <g id="n-pipe" class="node ext" data-el>
+          <rect x="190" y="16" width="170" height="48" rx="12"/>
+          <text x="275" y="38" text-anchor="middle">Pipeline</text>
+          <text x="275" y="56" text-anchor="middle" class="small">deployment stack</text>
+        </g>
+
+        <!-- Callouts -->
+        <g id="c-bp" class="callout" data-el data-start>
+          <rect x="20" y="150" width="210" height="104" rx="10"/>
+          <text x="125" y="176" text-anchor="middle" class="title">Rizky's blueprint</text>
+          <text x="125" y="198" text-anchor="middle" class="small">no new assignments</text>
+          <text x="125" y="218" text-anchor="middle" class="small">after Oct 31, 2026;</text>
+          <text x="125" y="238" text-anchor="middle" class="small">retired Jan 31, 2027</text>
+        </g>
+        <g id="c-err" class="callout" data-el>
+          <rect x="20" y="436" width="210" height="100" rx="10"/>
+          <text x="125" y="462" text-anchor="middle" class="title">Deployment failed</text>
+          <text x="125" y="484" text-anchor="middle" class="small">no role on log-nusa,</text>
+          <text x="125" y="504" text-anchor="middle" class="small">which is outside the</text>
+          <text x="125" y="524" text-anchor="middle" class="small">assignment scope</text>
+        </g>
+        <g id="c-exempt" class="callout" data-el>
+          <rect x="566" y="436" width="180" height="104" rx="10"/>
+          <text x="656" y="462" text-anchor="middle" class="title">Waiver · 30 days</text>
+          <text x="656" y="484" text-anchor="middle" class="small">scope: loyalty beta RG</text>
+          <text x="656" y="504" text-anchor="middle" class="small">approved by Ibu Sari</text>
+          <text x="656" y="524" text-anchor="middle" class="small">ticket NUSA-1042</text>
+        </g>
+
+        <!-- Packets are drawn here by the engine; keep this group last -->
+        <g id="packets"></g>
+      </svg>
+    </section>
+
+    <aside class="narration" aria-label="Narration and controls">
+      <p class="step-count" id="stepCount">Step 1</p>
+      <h2 id="stepTitle">Loading…</h2>
+      <p id="stepText" aria-live="polite"></p>
+      <p id="stepTip" class="tip" hidden></p>
+      <div class="controls" role="group" aria-label="Playback controls">
+        <button id="prev" type="button" aria-label="Previous step">◀ Back</button>
+        <button id="play" type="button" class="primary" aria-pressed="false">▶ Play</button>
+        <button id="next" type="button" aria-label="Next step">Next ▶</button>
+        <button id="restart" type="button" aria-label="Restart from the first step">↺ Restart</button>
+        <label class="speed">Speed
+          <select id="speed">
+            <option value="1.5">Relaxed</option>
+            <option value="1" selected>Normal</option>
+            <option value="0.7">Brisk</option>
+          </select>
+        </label>
+      </div>
+      <div class="progress" aria-hidden="true"><div id="bar"></div></div>
+      <ol id="stepsList" class="steps-list" aria-label="All steps"></ol>
+      <p class="hint">Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.</p>
+      <noscript><p class="noscript">This interactive demo needs JavaScript. The reading for this lunch covers the same story.</p></noscript>
+    </aside>
+  </main>
+
+  <footer>
+    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/31-governance-at-scale.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+  </footer>
+</div>
+
+<!-- =====================================================================
+     DEMO CONTENT — the only script you edit. Must be valid JSON.
+     Keys per step:
+       title, text, tip            narration (plain text; tip is optional)
+       show, hide      [ids]       cumulative visibility of [data-el] elements
+       highlight, ok, bad, flow, dim  [ids]   apply to this step only
+       packets   [pathId | {"path":id,"dur":1.6,"delay":0,"stopAt":1,"cls":"bad|ok|warn"}]
+       set       {"id":"new text"} cumulative text changes
+       view      "x y w h"         cumulative camera (SVG viewBox)
+       duration  number (ms)       optional autoplay override
+     ===================================================================== -->
+<script type="application/json" id="demo-steps">
+[
+  {
+    "title": "Seven subscriptions, no structure",
+    "text": "Nusantara Retail now has seven subscriptions; four are shown here. Every one of them sits directly under the tenant root group, and each was configured by hand, a little differently each time. The guardrails from Lunch 18 protect only one of them. Rizky's blueprint, which stamped tags and roles onto new subscriptions, stops accepting new assignments at the end of October 2026.",
+    "highlight": [
+      "n-sub-orders",
+      "n-sub-store",
+      "n-sub-loyal",
+      "n-sub-dewi"
+    ]
+  },
+  {
+    "title": "Create an intermediate root",
+    "text": "Instead of hanging rules on the tenant root group, the platform team creates an intermediate root called nusa, just below it. Everything the company governs will live under nusa, while the tenant root stays almost empty. New or acquired subscriptions stay outside until someone deliberately moves them in. A management group's ID can never change, so choose it with care.",
+    "hide": [
+      "c-bp"
+    ],
+    "show": [
+      "n-nusa",
+      "w-root-nusa"
+    ],
+    "highlight": [
+      "n-nusa"
+    ],
+    "flow": [
+      "w-root-nusa"
+    ]
+  },
+  {
+    "title": "Platform holds shared services",
+    "text": "Platform holds the shared foundations, each in its own subscription: Security for SIEM tooling, Management for central logging, Connectivity for the hub network and Identity for domain services. The log-nusa workspace lives in the Management subscription. The platform team gets its rights here through Privileged Identity Management: eligible roles, activated only when needed and audited.",
+    "show": [
+      "n-plat",
+      "w-nusa-plat",
+      "w-plat-tree",
+      "n-sec",
+      "n-mgmt",
+      "n-conn",
+      "n-idn",
+      "n-log"
+    ],
+    "highlight": [
+      "n-plat",
+      "n-log"
+    ],
+    "flow": [
+      "w-nusa-plat"
+    ]
+  },
+  {
+    "title": "Landing zones by archetype",
+    "text": "Landing zones hold the workloads, split by archetype: Corp for applications that need the corporate network, Online for internet-facing ones. Sandboxes isolate experiments under lighter rules, and Decommissioned parks cancelled subscriptions until they are deleted. There are no groups for departments, environments or regions, so the tree stays three or four levels deep and is organised by the rules each workload needs.",
+    "show": [
+      "n-lz",
+      "w-nusa-lz",
+      "n-corp",
+      "n-online",
+      "w-lz-corp",
+      "w-lz-online",
+      "n-sbx",
+      "w-nusa-sbx",
+      "n-dec",
+      "w-nusa-dec"
+    ],
+    "highlight": [
+      "n-lz",
+      "n-corp",
+      "n-online",
+      "n-sbx",
+      "n-dec"
+    ],
+    "flow": [
+      "w-nusa-lz",
+      "w-nusa-sbx",
+      "w-nusa-dec"
+    ]
+  },
+  {
+    "title": "Vending places every subscription",
+    "text": "Subscription vending turns a request into a governed subscription. A pipeline creates it, places it in the right management group, peers its network to the hub, and assigns Entra groups, a budget and tags. Orders lands in Corp, storefront and loyalty in Online, and Dewi's experiments in Sandboxes, which also becomes the default group for every new subscription.",
+    "show": [
+      "w-corp-orders",
+      "w-online-store",
+      "w-online-loyal",
+      "w-sbx-dewi"
+    ],
+    "ok": [
+      "n-sub-orders",
+      "n-sub-store",
+      "n-sub-loyal",
+      "n-sub-dewi"
+    ],
+    "flow": [
+      "w-corp-orders",
+      "w-online-store",
+      "w-online-loyal",
+      "w-sbx-dewi"
+    ],
+    "packets": [
+      {
+        "path": "w-corp-orders",
+        "cls": "ok",
+        "dur": 1.0
+      },
+      {
+        "path": "w-online-store",
+        "delay": 0.3,
+        "cls": "ok",
+        "dur": 1.0
+      },
+      {
+        "path": "w-online-loyal",
+        "delay": 0.6,
+        "cls": "ok",
+        "dur": 1.0
+      },
+      {
+        "path": "w-sbx-dewi",
+        "delay": 0.9,
+        "cls": "ok",
+        "dur": 1.2
+      }
+    ]
+  },
+  {
+    "title": "One initiative, saved high",
+    "text": "The Nusantara baseline initiative bundles three policies: allowed locations with Deny, the costCenter tag with Modify, and diagnostic settings to log-nusa with DeployIfNotExists. It is saved at the intermediate root, so any group below nusa can use it, and assigned once at Landing zones with parameters. It starts in DoNotEnforce mode: report everything, block nothing.",
+    "show": [
+      "n-init",
+      "w-init-nusa",
+      "w-init-lz",
+      "b-mode"
+    ],
+    "highlight": [
+      "n-init",
+      "n-nusa",
+      "n-lz"
+    ],
+    "flow": [
+      "w-init-nusa",
+      "w-init-lz"
+    ],
+    "packets": [
+      {
+        "path": "w-init-nusa",
+        "dur": 0.8
+      },
+      {
+        "path": "w-init-lz",
+        "delay": 0.5,
+        "dur": 1.2
+      }
+    ]
+  },
+  {
+    "title": "The assignment cascades down",
+    "text": "Inheritance does the rest. The assignment flows from Landing zones to Corp and Online, and into every subscription, resource group and resource below them: today's three and next year's twenty. Sandboxes and Platform are untouched, because they do not sit under Landing zones. Placing a subscription in the right group is now all it takes to govern it.",
+    "highlight": [
+      "n-sub-orders",
+      "n-sub-store",
+      "n-sub-loyal"
+    ],
+    "dim": [
+      "n-sbx",
+      "n-sub-dewi",
+      "w-sbx-dewi",
+      "n-plat",
+      "n-sec",
+      "n-mgmt",
+      "n-conn",
+      "n-idn",
+      "n-dec"
+    ],
+    "flow": [
+      "w-lz-corp",
+      "w-lz-online",
+      "w-corp-orders",
+      "w-online-store",
+      "w-online-loyal",
+      "w-sub-sql",
+      "w-sub-app",
+      "w-sub-beta"
+    ],
+    "packets": [
+      {
+        "path": "w-lz-corp",
+        "dur": 0.8
+      },
+      {
+        "path": "w-lz-online",
+        "dur": 0.8
+      },
+      {
+        "path": "w-corp-orders",
+        "delay": 0.8,
+        "dur": 0.6
+      },
+      {
+        "path": "w-online-store",
+        "delay": 0.8,
+        "dur": 0.6
+      },
+      {
+        "path": "w-online-loyal",
+        "delay": 0.8,
+        "dur": 0.6
+      },
+      {
+        "path": "w-sub-sql",
+        "delay": 1.4,
+        "dur": 0.5
+      },
+      {
+        "path": "w-sub-app",
+        "delay": 1.4,
+        "dur": 0.5
+      },
+      {
+        "path": "w-sub-beta",
+        "delay": 1.4,
+        "dur": 0.5
+      }
+    ]
+  },
+  {
+    "title": "The first compliance scan",
+    "text": "Then the first compliance evaluation finishes. Two resources send no diagnostic logs to log-nusa, and the loyalty team's beta storage account sits in West Europe, outside the allowed regions. Nothing was blocked, because the assignment is still in DoNotEnforce mode. The compliance view simply shows what needs fixing before enforcement begins.",
+    "show": [
+      "n-comp"
+    ],
+    "bad": [
+      "n-r-sql",
+      "n-r-app",
+      "n-r-beta"
+    ],
+    "highlight": [
+      "n-comp"
+    ],
+    "set": {
+      "t-sql": "no diagnostics ✗",
+      "t-app": "no diagnostics ✗",
+      "t-beta": "West Europe ✗",
+      "t-c-ok": "Compliant: 0",
+      "t-c-bad": "Non-compliant: 3",
+      "t-c-ex": "Exempt: 0"
+    }
+  },
+  {
+    "title": "Remediation fails outside its scope",
+    "text": "A DeployIfNotExists remediation task starts, acting through the assignment's managed identity. Each deployment must create a diagnostic setting that points at log-nusa. But the workspace lives in the Management subscription, outside the assignment's scope, and the identity has no role there. Every deployment fails with an authorization error. The policy was right; the permissions were incomplete.",
+    "show": [
+      "n-remed",
+      "w-rem-sql",
+      "w-rem-app",
+      "w-rem-log",
+      "c-err"
+    ],
+    "bad": [
+      "w-rem-log",
+      "n-log",
+      "w-rem-sql",
+      "w-rem-app"
+    ],
+    "view": "0 150 700 409",
+    "packets": [
+      {
+        "path": "w-rem-sql",
+        "cls": "bad",
+        "stopAt": 0.5,
+        "dur": 0.9
+      },
+      {
+        "path": "w-rem-app",
+        "cls": "bad",
+        "stopAt": 0.5,
+        "dur": 0.9,
+        "delay": 0.2
+      },
+      {
+        "path": "w-rem-log",
+        "cls": "bad",
+        "stopAt": 0.7,
+        "dur": 1.1,
+        "delay": 0.4
+      }
+    ]
+  },
+  {
+    "title": "Grant the role, run again",
+    "text": "You grant the identity Log Analytics Contributor on log-nusa: the scope it writes to, not only the scope it is assigned at. A new remediation task succeeds. Both resources get diagnostic settings, and their logs start arriving in the workspace. Once the assignment is enforced, resources created later get theirs automatically, about ten minutes after they appear.",
+    "view": "0 0 960 560",
+    "hide": [
+      "c-err"
+    ],
+    "show": [
+      "b-role"
+    ],
+    "ok": [
+      "n-r-sql",
+      "n-r-app",
+      "w-rem-sql",
+      "w-rem-app",
+      "w-rem-log",
+      "n-log"
+    ],
+    "bad": [
+      "n-r-beta"
+    ],
+    "set": {
+      "t-sql": "diagnostics ✓",
+      "t-app": "diagnostics ✓",
+      "t-c-ok": "Compliant: 2",
+      "t-c-bad": "Non-compliant: 1"
+    },
+    "packets": [
+      {
+        "path": "w-rem-log",
+        "cls": "ok",
+        "dur": 1.0
+      },
+      {
+        "path": "w-rem-sql",
+        "cls": "ok",
+        "dur": 0.8,
+        "delay": 0.4
+      },
+      {
+        "path": "w-rem-app",
+        "cls": "ok",
+        "dur": 0.8,
+        "delay": 0.6
+      }
+    ]
+  },
+  {
+    "title": "A Waiver for the beta",
+    "text": "The loyalty beta needs West Europe for thirty days while a partner tests an integration. Ibu Sari accepts the risk, so the platform team creates a Waiver exemption on the beta's resource group, with an expiry date and the ticket number in its metadata. The account now shows as Exempt: still visible to auditors, and non-compliant again the day the waiver expires.",
+    "show": [
+      "c-exempt",
+      "w-ex-beta"
+    ],
+    "highlight": [
+      "n-r-beta",
+      "c-exempt"
+    ],
+    "flow": [
+      "w-ex-beta"
+    ],
+    "set": {
+      "t-beta": "Exempt · 30 days",
+      "t-c-bad": "Non-compliant: 0",
+      "t-c-ex": "Exempt: 1"
+    },
+    "packets": [
+      {
+        "path": "w-ex-beta",
+        "dur": 0.9
+      }
+    ]
+  },
+  {
+    "title": "Governance as code",
+    "text": "Finally, nobody clicks policies into the portal any more. Definitions, assignments and exemptions live in Git, every change is a reviewed pull request, and a pipeline deploys them through a deployment stack whose deny settings protect what it manages: the replacement for the retiring blueprint. Enforcement then rolls out ring by ring, and Resource Graph reports compliance across every subscription.",
+    "show": [
+      "n-git",
+      "n-pipe",
+      "w-git-pipe",
+      "w-pipe-nusa"
+    ],
+    "highlight": [
+      "n-git",
+      "n-pipe"
+    ],
+    "flow": [
+      "w-git-pipe",
+      "w-pipe-nusa",
+      "w-init-nusa",
+      "w-init-lz"
+    ],
+    "set": {
+      "t-mode": "Enforced in rings"
+    },
+    "packets": [
+      {
+        "path": "w-git-pipe",
+        "dur": 0.6
+      },
+      {
+        "path": "w-pipe-nusa",
+        "delay": 0.6,
+        "dur": 0.9
+      },
+      {
+        "path": "w-init-lz",
+        "delay": 1.5,
+        "dur": 1.0
+      }
+    ]
+  },
+  {
+    "title": "Recap: govern from the top",
+    "text": "Recap: design the hierarchy for policy, not for the org chart. Vend subscriptions straight into the right group. Save definitions high and assign them once, starting in DoNotEnforce. Give remediation identities roles everywhere they write. Keep exceptions visible with time-boxed exemptions, and manage all of it as code.",
+    "highlight": [
+      "n-nusa",
+      "n-lz",
+      "n-init"
+    ],
+    "ok": [
+      "n-r-sql",
+      "n-r-app",
+      "n-sub-orders",
+      "n-sub-store",
+      "n-sub-loyal"
+    ],
+    "tip": "In Lab 31 you build a small version in your own tenant: an intermediate root with platform, landing zones and corp groups, a custom initiative from JSON files, remediation, a Waiver exemption, Resource Graph queries and a policy-as-code export."
+  }
+]
+</script>
+
+<script>
+/* =====================================================================
+   LUNCH DEMO PLAYER · v1.0 · engine
+   Copy this script unchanged into every demo. It reads the JSON above.
+   ===================================================================== */
+(function () {
+  'use strict';
+  var STEPS;
+  try {
+    STEPS = JSON.parse(document.getElementById('demo-steps').textContent);
+  } catch (err) {
+    STEPS = [{ title: 'Demo data error', text: 'The steps for this demo could not be loaded: ' + err.message }];
+  }
+  if (!Array.isArray(STEPS) || STEPS.length === 0) {
+    STEPS = [{ title: 'No steps yet', text: 'This demo has no steps.' }];
+  }
+
+  var byId = function (id) { return document.getElementById(id); };
+  var svg = byId('stage');
+  var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var reduceMotion = !!(mq && mq.matches);
+  var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
+  var TRANSIENT_CLASSES = ['is-hl', 'is-ok', 'is-bad', 'is-flow', 'is-dim'];
+  var els = Array.prototype.slice.call(document.querySelectorAll('[data-el]'));
+  var initialVisible = {};
+  els.forEach(function (el) { if (el.hasAttribute('data-start')) { initialVisible[el.id] = true; } });
+  var originalText = {};
+  STEPS.forEach(function (s) {
+    Object.keys(s.set || {}).forEach(function (id) {
+      var el = byId(id);
+      if (el && !(id in originalText)) { originalText[id] = el.textContent; }
+    });
+  });
+  var baseView = svg.getAttribute('viewBox') || '0 0 960 560';
+  var currentView = parseView(baseView);
+  var lastViewKey = baseView;
+  var current = 0, playing = false, timer = null, speed = 1, packetAnims = [], viewAnim = 0;
+
+  function parseView(v) { return String(v).trim().split(/[\s,]+/).map(Number); }
+
+  function stateAt(i) {
+    var visible = Object.assign({}, initialVisible);
+    var text = Object.assign({}, originalText);
+    var view = baseView;
+    for (var k = 0; k <= i; k++) {
+      var s = STEPS[k] || {};
+      (s.show || []).forEach(function (id) { visible[id] = true; });
+      (s.hide || []).forEach(function (id) { delete visible[id]; });
+      if (s.set) { Object.keys(s.set).forEach(function (id) { text[id] = s.set[id]; }); }
+      if (s.view) { view = s.view; }
+    }
+    return { visible: visible, text: text, view: view };
+  }
+
+  function setView(target) {
+    var to = parseView(target);
+    if (to.length !== 4 || to.some(function (n) { return isNaN(n); })) { return; }
+    if (viewAnim) { cancelAnimationFrame(viewAnim); viewAnim = 0; }
+    if (reduceMotion) { currentView = to; svg.setAttribute('viewBox', to.join(' ')); return; }
+    var from = currentView.slice(), t0 = null, D = 800;
+    function ease(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+    function frame(t) {
+      if (t0 === null) { t0 = t; }
+      var k = Math.min(1, (t - t0) / D), e = ease(k);
+      currentView = from.map(function (a, idx) { return a + (to[idx] - a) * e; });
+      svg.setAttribute('viewBox', currentView.join(' '));
+      viewAnim = k < 1 ? requestAnimationFrame(frame) : 0;
+    }
+    viewAnim = requestAnimationFrame(frame);
+  }
+
+  function clearPackets() {
+    packetAnims.forEach(function (a) { a.stop(); });
+    packetAnims = [];
+  }
+
+  function runPacket(spec) {
+    var o = typeof spec === 'string' ? { path: spec } : (spec || {});
+    var path = byId(o.path);
+    if (!path || typeof path.getTotalLength !== 'function') { return; }
+    var len = path.getTotalLength();
+    var layer = byId('packets') || svg;
+    var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('r', String(o.r || 7));
+    dot.setAttribute('class', 'packet' + (o.cls ? ' ' + o.cls : ''));
+    layer.appendChild(dot);
+    var stopAt = o.stopAt == null ? 1 : Math.max(0, Math.min(1, Number(o.stopAt)));
+    var dur = (o.dur || 1.6) * 1000 * speed, delay = (o.delay || 0) * 1000 * speed, hold = 600;
+    var stopped = false, raf = 0, start = null;
+    function place(f) {
+      var p = path.getPointAtLength(len * f);
+      dot.setAttribute('cx', String(p.x));
+      dot.setAttribute('cy', String(p.y));
+    }
+    packetAnims.push({
+      stop: function () {
+        stopped = true;
+        if (raf) { cancelAnimationFrame(raf); }
+        if (dot.parentNode) { dot.parentNode.removeChild(dot); }
+      }
+    });
+    if (reduceMotion) { place(stopAt); return; }
+    function frame(t) {
+      if (stopped) { return; }
+      if (start === null) { start = t; }
+      var elapsed = t - start - delay;
+      if (elapsed < 0) { dot.setAttribute('opacity', '0'); raf = requestAnimationFrame(frame); return; }
+      var phase = elapsed % (dur + hold);
+      dot.setAttribute('opacity', phase > dur ? '0.35' : '1');
+      place(Math.min(phase / dur, 1) * stopAt);
+      raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  function render(i) {
+    current = Math.max(0, Math.min(STEPS.length - 1, i));
+    var s = STEPS[current] || {};
+    var st = stateAt(current);
+    Array.prototype.forEach.call(document.querySelectorAll('.is-hl, .is-ok, .is-bad, .is-flow, .is-dim'), function (el) {
+      TRANSIENT_CLASSES.forEach(function (c) { el.classList.remove(c); });
+    });
+    els.forEach(function (el) { el.classList.toggle('is-visible', !!st.visible[el.id]); });
+    Object.keys(TRANSIENT).forEach(function (key) {
+      (s[key] || []).forEach(function (id) {
+        var el = byId(id);
+        if (!el) { return; }
+        el.classList.add(TRANSIENT[key]);
+        if (key !== 'dim' && el.hasAttribute('data-el')) { el.classList.add('is-visible'); }
+      });
+    });
+    Object.keys(st.text).forEach(function (id) {
+      var el = byId(id);
+      if (el) { el.textContent = st.text[id]; }
+    });
+    if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
+    clearPackets();
+    (s.packets || []).forEach(runPacket);
+    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepTitle').textContent = s.title || '';
+    byId('stepText').textContent = s.text || '';
+    var tip = byId('stepTip');
+    if (s.tip) { tip.textContent = s.tip; tip.hidden = false; } else { tip.textContent = ''; tip.hidden = true; }
+    byId('bar').style.inlineSize = ((current + 1) / STEPS.length * 100) + '%';
+    byId('prev').disabled = current === 0;
+    byId('next').disabled = current === STEPS.length - 1;
+    Array.prototype.forEach.call(document.querySelectorAll('#stepsList li'), function (li, k) {
+      li.classList.toggle('current', k === current);
+      var b = li.querySelector('button');
+      if (b) {
+        if (k === current) { b.setAttribute('aria-current', 'step'); } else { b.removeAttribute('aria-current'); }
+      }
+    });
+    try { history.replaceState(null, '', '#step=' + (current + 1)); } catch (err) { /* file:// or sandboxed frame */ }
+  }
+
+  function stepDuration(s) {
+    if (s && s.duration) { return Number(s.duration); }
+    var words = (((s && s.title) || '') + ' ' + ((s && s.text) || '') + ' ' + ((s && s.tip) || '')).trim().split(/\s+/).length;
+    return Math.max(5000, words * 340);
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!playing) { return; }
+    timer = setTimeout(function () {
+      if (current < STEPS.length - 1) { render(current + 1); schedule(); } else { setPlaying(false); }
+    }, stepDuration(STEPS[current]) * speed);
+  }
+
+  function setPlaying(p) {
+    playing = p;
+    var b = byId('play');
+    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.setAttribute('aria-pressed', p ? 'true' : 'false');
+    if (p && current === STEPS.length - 1) { render(0); }
+    schedule();
+  }
+
+  function go(i) { render(i); if (playing) { schedule(); } }
+
+  var list = byId('stepsList');
+  STEPS.forEach(function (s, k) {
+    var li = document.createElement('li');
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = s.title || ('Step ' + (k + 1));
+    b.addEventListener('click', function () { go(k); });
+    li.appendChild(b);
+    list.appendChild(li);
+  });
+
+  byId('prev').addEventListener('click', function () { go(current - 1); });
+  byId('next').addEventListener('click', function () { go(current + 1); });
+  byId('restart').addEventListener('click', function () { go(0); });
+  byId('play').addEventListener('click', function () { setPlaying(!playing); });
+  byId('speed').addEventListener('change', function (e) {
+    speed = Number(e.target.value) || 1;
+    if (playing) { schedule(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    var tag = ((e.target && e.target.tagName) || '').toLowerCase();
+    if (tag === 'select' || tag === 'input' || tag === 'textarea') { return; }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+  });
+  if (mq && mq.addEventListener) {
+    mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
+  }
+
+  var m = /step=(\d+)/.exec(window.location.hash || '');
+  render(m ? Number(m[1]) - 1 : 0);
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+})();
+</script>
+</body>
+</html>

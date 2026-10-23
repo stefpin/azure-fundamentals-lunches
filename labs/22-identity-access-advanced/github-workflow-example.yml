@@ -1,0 +1,41 @@
+# =============================================================================
+# Lab 22 · Sample GitHub Actions workflow: sign in to Azure with OpenID Connect.
+# No client secret is stored anywhere.
+#
+# How to use it (optional part of the lab, Task 7):
+#   1. Copy this file to .github/workflows/azure-oidc.yml in the GitHub repository
+#      named in your federated credential, on the main branch.
+#   2. In the repository: Settings › Secrets and variables › Actions
+#        Secrets:   AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_SUBSCRIPTION_ID
+#        Variable:  AZURE_RESOURCE_GROUP
+#      (solution.sh and Task 7 print the values. The IDs aren't secrets, but storing
+#      them as secrets keeps them out of the logs.)
+#   3. Push to main, or run the workflow by hand from the Actions tab on main.
+# =============================================================================
+name: Azure OIDC sign-in (Lab 22)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # lets the job request an OIDC token from GitHub
+  contents: read    # only needed if you add actions/checkout to deploy files from the repo
+
+jobs:
+  show-access:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sign in to Azure with OpenID Connect (no secret)
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Show what this workload identity can see
+        run: |
+          az account show --query "{subscription:name, signedInAs:user.name, type:user.type}" --output table
+          az resource list --resource-group "${{ vars.AZURE_RESOURCE_GROUP }}" \
+            --query "[].{name:name, type:type}" --output table

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 26 · Connect head office · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 26: Connect head office. about 90 minutes, including 30–45 minutes of waiting for the gateways, cost 💲💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 26 · Connect head office">
+<meta property="og:description" content="Hands-on Azure lab 26: Connect head office. about 90 minutes, including 30–45 minutes of waiting for the gateways, cost 💲💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/26-hybrid-connectivity.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="26" style="--c:#7b4ff0">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 26</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>26</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Connect head office</h1>
+        <p class="lab-story">🏪 <b>Episode 26 · A Proper Private Line</b> — Forty stores upload their sales over the internet — and one upload failed three nights in a row. <a href="../lunches/26-hybrid-connectivity.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 90 minutes, including 30–45 minutes of waiting for the gateways</span>
+          <span class="chip cost">💲💲💲 noticeable charges while running</span>
+          <span class="chip">Difficulty ★★★</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 10 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--tour-the-network-while-the-gateways-build">Task 1 · Tour the network while the gateways build</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--read-while-you-wait-3045-minutes">Task 2 · Read while you wait (30–45 minutes)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--inspect-the-finished-gateways">Task 3 · Inspect the finished gateways</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--create-the-connections-with-a-shared-key-generated-at-run-time">Task 4 · Create the connections with a shared key generated at run time</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--watch-the-tunnel-come-up">Task 5 · Watch the tunnel come up</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--send-traffic-through-the-tunnel">Task 6 · Send traffic through the tunnel</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--read-the-route-azure-added">Task 7 · Read the route Azure added</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-8-optional--compare-with-vnet-peering">Task 8 (optional) · Compare with VNet peering</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/26-hybrid-connectivity/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/26-hybrid-connectivity/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>7 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/26-hybrid-connectivity/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/26-hybrid-connectivity/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/26-hybrid-connectivity" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Pak Budi wants head office in Jakarta (10.0.0.0/16) to reach Nusantara Retail's Azure network (10.40.0.0/16) over a
+private, encrypted link instead of exposing servers to the internet. Nobody can ship a VPN appliance to your desk, so
+<code>setup.sh</code> <strong>simulates head office with a second virtual network</strong> that has its own VPN gateway: Azure plays both
+sides. You connect the two <strong>route-based VpnGw1AZ</strong> gateways with <strong>VNet-to-VNet connections</strong> in both directions,
+protected by a <strong>shared key generated at run time</strong>. Then you watch the status reach <strong>Connected</strong>, prove that
+<code>vm-azure-1</code> and <code>vm-hq-1</code> talk to each other on private IP addresses through the tunnel, and read the route Azure
+added. An optional task compares the result with VNet peering.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch26-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph hq[&quot;vnet-nusa-hq 10.0.0.0/16 · simulated head office&quot;]
+      vmhq[&quot;vm-hq-1&lt;br/&gt;10.0.1.10 · no public IP&quot;]
+      gwhq[&quot;vgw-nusa-hq · VpnGw1AZ&lt;br/&gt;GatewaySubnet 10.0.255.0/27&quot;]
+    end
+    subgraph az[&quot;vnet-nusa-azure 10.40.0.0/16 · Azure&quot;]
+      vmaz[&quot;vm-azure-1&lt;br/&gt;10.40.1.10 · no public IP&quot;]
+      gwaz[&quot;vgw-nusa-azure · VpnGw1AZ&lt;br/&gt;GatewaySubnet 10.40.255.0/27&quot;]
+    end
+  end
+  vmhq --- gwhq
+  vmaz --- gwaz
+  gwhq &lt;--&gt;|&quot;IPsec/IKE tunnel · con-hq-to-azure + con-azure-to-hq · shared key&quot;| gwaz
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<aside class="callout caution" data-icon="🛑">
+<p><span class="callout-title">Caution</span><strong>💲💲💲 — the meter starts when <code>setup.sh</code> starts the gateways.</strong> A VPN gateway is billed for every hour it exists,
+whether or not any traffic flows, and this lab runs two of them (plus their public IPs and two small VMs). Do the lab
+in one sitting, never leave it running overnight, and run <code>bash cleanup.sh</code> as soon as <code>verify.sh</code> passes — or as soon
+as you decide to stop. For numbers, price a <strong>VpnGw1AZ</strong> gateway for your region in the
+<a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">Azure pricing calculator</a>.</p>
+</aside>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>). Contributor
+on the subscription is enough: this lab creates no role assignments.</li>
+<li>About two hours in which you can finish what you start. Most of the waiting happens at the beginning.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install.</li>
+<li>Get the lab files and load the shared settings:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/26-hybrid-connectivity
+source ../common/config.sh
+RG=$(rg_name 26)
+PSK_FILE=&quot;$HOME/.azlunches-lab26-psk&quot;
+</code></pre></div>
+<ul>
+<li>Create the starting point. The script takes about 5 minutes:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<p><code>setup.sh</code> builds two &quot;sites&quot; in one resource group. Each gets a virtual network with a <strong>GatewaySubnet</strong> (/27, no
+network security group) and a workload subnet with an NSG, a small <code>$VM_SIZE_SMALL</code> VM <strong>without a public IP</strong> that runs
+a tiny web server, and a zone-redundant <strong>Standard public IP</strong>. Last, it <strong>starts</strong> a route-based <strong>VpnGw1AZ</strong> gateway in
+each network with <code>--no-wait</code>. The script finishes, but the gateways keep building in Azure for <strong>30–45 minutes or
+more</strong>, even if you close Cloud Shell. Write down the suffix the script prints.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist. Finish with the <strong>Clean up</strong> section, even if you stop halfway — and even if
+the gateways are still building.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–7 below (Task 8 is optional)</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>run <code>setup.sh</code>, read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Plan your time like this:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Clock</th>
+<th>You</th>
+<th>Azure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00</td>
+<td>run <code>setup.sh</code> (about 5 minutes)</td>
+<td>creates the networks and VMs, starts both gateways</td>
+</tr>
+<tr>
+<td>0:05</td>
+<td>Task 1: tour the half-built network</td>
+<td>gateways building</td>
+</tr>
+<tr>
+<td>0:15</td>
+<td>Task 2: read while you wait</td>
+<td>gateways building</td>
+</tr>
+<tr>
+<td>about 0:50</td>
+<td>Tasks 3–7 (and the optional Task 8)</td>
+<td>gateways ready; the tunnel comes up within minutes</td>
+</tr>
+<tr>
+<td>about 1:25</td>
+<td><code>verify.sh</code>, then <code>cleanup.sh</code></td>
+<td>deletes everything in the background (10–20 minutes)</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--tour-the-network-while-the-gateways-build" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Tour the network while the gateways build</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--tour-the-network-while-the-gateways-build" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Look at what exists before the tunnel does — you'll compare it with the end result.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network vnet-gateway list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{gateway:name, sku:sku.name, generation:vpnGatewayGeneration, type:vpnType, state:provisioningState}&quot; \
+  --output table
+
+az network vnet subnet list --resource-group &quot;$RG&quot; --vnet-name vnet-nusa-azure \
+  --query &quot;[].{subnet:name, prefix:addressPrefix || addressPrefixes[0], nsg:networkSecurityGroup.id}&quot; \
+  --output table
+</code></pre></div>
+<p>Now try to reach head office from the Azure VM. Run Command executes the script inside the VM through the VM agent, so
+you don't need SSH or a public IP. The first run takes a minute or two.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-azure-1 \
+  --command-id RunShellScript --scripts &quot;ping -c 3 -W 2 10.0.1.10&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Finally, look at the routes the network interface of <code>vm-azure-1</code> uses. This takes up to a minute.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>NIC_AZ=$(az vm show --resource-group &quot;$RG&quot; --name vm-azure-1 \
+  --query &quot;networkProfile.networkInterfaces[0].id&quot; --output tsv)
+az network nic show-effective-route-table --ids &quot;$NIC_AZ&quot; --output table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Home › Virtual network gateways</em> lists both gateways while they build. For the routes, open
+<em>vm-azure-1 › Networking</em>, select the network interface, and choose <strong>Effective routes</strong>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> both gateways show <strong>VpnGw1AZ</strong>, <strong>Generation1</strong>, <strong>RouteBased</strong> and the state <strong>Updating</strong>. The
+GatewaySubnet (10.40.255.0/27) has no NSG; <code>snet-app</code> has one. The ping reports <code>100% packet loss</code>. The route table
+has <code>10.40.0.0/16</code> with next hop <strong>VnetLocal</strong> and <code>10.0.0.0/8</code> with next hop <strong>None</strong> — Azure <em>drops</em> traffic for
+private ranges it has no better route for, which is exactly what happened to your ping.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--read-while-you-wait-3045-minutes" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Read while you wait (30–45 minutes)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--read-while-you-wait-3045-minutes" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Each gateway is really a pair of Microsoft-managed instances that Azure places in your GatewaySubnet, spreads across
+availability zones and configures — one active, one on standby. That takes time, which is why real gateway changes
+are planned ahead and never done &quot;just quickly&quot;. Check progress every ten minutes or so:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network vnet-gateway list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{gateway:name, state:provisioningState}&quot; --output table
+</code></pre></div>
+<p>Use the time well. Each item below takes 5–10 minutes:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Read</th>
+<th>Look for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/vpn-gateway/about-gateway-skus" target="_blank" rel="noopener">About VPN Gateway SKUs</a></td>
+<td>VpnGw1AZ's tunnel limit and benchmark throughput, and why the non-AZ SKUs are going away</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/vpn-gateway/vpn-gateway-howto-vnet-vnet-cli" target="_blank" rel="noopener">Connect VNets with a VNet-to-VNet connection (Azure CLI)</a></td>
+<td>the steps <code>setup.sh</code> automated and the ones you'll do in Task 4; how it differs from site-to-site</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/virtual-network/virtual-networks-udr-overview" target="_blank" rel="noopener">Virtual network traffic routing</a></td>
+<td>the <strong>None</strong> routes from Task 1, longest prefix match, and which route wins when two have the same prefix</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/expressroute/expressroute-introduction" target="_blank" rel="noopener">What is Azure ExpressRoute?</a></td>
+<td>the two peerings, and why a private circuit behaves more predictably than the internet</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/virtual-wan/virtual-wan-about" target="_blank" rel="noopener">What is Azure Virtual WAN?</a></td>
+<td>Basic vs Standard, and when forty stores make a managed hub the simpler design</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Note</span>Cloud Shell closes after about <strong>20 minutes without input</strong>. That doesn't affect the gateways — they build in Azure,
+not in your shell. When you come back, reload your settings:
+<code>cd ~/azure-fundamentals-lunches/labs/26-hybrid-connectivity &amp;&amp; source ../common/config.sh &amp;&amp; RG=$(rg_name 26) &amp;&amp; PSK_FILE=&quot;$HOME/.azlunches-lab26-psk&quot;</code>.
+In an ephemeral Cloud Shell session (no storage), clone the repository again and set <code>SUFFIX=&lt;the suffix you wrote down&gt;</code> before you <code>source</code> the settings.</p>
+</aside>
+<p>If you'd rather watch than poll, <code>az network vnet-gateway wait --resource-group &quot;$RG&quot; --name vgw-nusa-hq --created --timeout 4500</code> returns when that gateway reaches <strong>Succeeded</strong> — but keep the tab active so Cloud Shell doesn't time out.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> both gateways show <strong>Succeeded</strong>. If one shows <strong>Failed</strong>, see Troubleshooting.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--inspect-the-finished-gateways" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Inspect the finished gateways</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--inspect-the-finished-gateways" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>for gw in vgw-nusa-azure vgw-nusa-hq; do
+  az network vnet-gateway show --resource-group &quot;$RG&quot; --name &quot;$gw&quot; \
+    --query &quot;{name:name, state:provisioningState, sku:sku.name, generation:vpnGatewayGeneration, vpnType:vpnType, activeActive:activeActive, asn:bgpSettings.asn}&quot; \
+    --output table
+done
+
+az network public-ip list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{name:name, address:ipAddress, sku:sku.name, zones:to_string(zones)}&quot; --output table
+</code></pre></div>
+<p>What you're looking at:</p>
+<ul>
+<li><strong>VpnGw1AZ, Generation1</strong> — the smallest zone-redundant SKU (up to 30 site-to-site tunnels). New gateways must use an
+AZ SKU; the old non-zonal VpnGw1–5 can no longer be created.</li>
+<li><strong>activeActive False</strong> — the default <em>active-standby</em> mode: one instance carries the tunnel and the other takes over
+during maintenance or a failure, after a short interruption. Production gateways usually run active-active.</li>
+<li><strong>asn 65515</strong> — the default BGP autonomous system number. This lab doesn't use BGP; the stretch goals do.</li>
+<li>The <strong>public IP addresses</strong> are what a real head-office device would connect to — and what Pak Budi would allow
+through his firewall.</li>
+</ul>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> both gateways are <strong>Succeeded</strong>, <strong>VpnGw1AZ</strong>, <strong>Generation1</strong>, <strong>RouteBased</strong>, with
+<code>activeActive</code> <strong>False</strong> and ASN <strong>65515</strong>. Both public IPs are <strong>Standard</strong> with zones <code>[&quot;1&quot;,&quot;2&quot;,&quot;3&quot;]</code> (or <code>null</code> if
+you ran <code>setup.sh</code> with <code>PIP_ZONES=&quot;&quot;</code> in a region without availability zones).</p>
+</div>
+</div></section><section class="lab-section" id="task-4--create-the-connections-with-a-shared-key-generated-at-run-time" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Create the connections with a shared key generated at run time</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--create-the-connections-with-a-shared-key-generated-at-run-time" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Both ends of an IPsec tunnel must hold the same <strong>pre-shared key</strong>. Generate a strong one in a file that only you can
+read, so it never appears on screen or in your command history:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>[[ -s &quot;$PSK_FILE&quot; ]] || ( umask 077; openssl rand -hex 24 &gt; &quot;$PSK_FILE&quot; )
+ls -l &quot;$PSK_FILE&quot;
+</code></pre></div>
+<p><code>openssl rand -hex 24</code> produces 48 hexadecimal characters (192 random bits); letters and digits only, which every VPN
+device accepts. Now create one connection on each gateway. A VNet-to-VNet link always has two halves, and both must
+carry the same key:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network vpn-connection create --resource-group &quot;$RG&quot; --name con-azure-to-hq --location &quot;$LOCATION&quot; \
+  --vnet-gateway1 vgw-nusa-azure --vnet-gateway2 vgw-nusa-hq \
+  --shared-key &quot;$(cat &quot;$PSK_FILE&quot;)&quot; --output none
+
+az network vpn-connection create --resource-group &quot;$RG&quot; --name con-hq-to-azure --location &quot;$LOCATION&quot; \
+  --vnet-gateway1 vgw-nusa-hq --vnet-gateway2 vgw-nusa-azure \
+  --shared-key &quot;$(cat &quot;$PSK_FILE&quot;)&quot; --output none
+</code></pre></div>
+<p>With a VNet-to-VNet connection, Azure fills in the other side's address space for you. For the real head office you
+would instead create a <strong>local network gateway</strong> (Pak Budi's public IP and 10.0.0.0/16), connect to it with
+<code>--local-gateway2</code>, and type the same key into his VPN device — the stretch goals let you rehearse that.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Virtual network gateways › vgw-nusa-azure › Settings › Connections › + Add</em>, connection type
+<strong>VNet-to-VNet</strong>, second gateway <code>vgw-nusa-hq</code>, then the same for the other direction. To paste the key without
+printing it in the terminal, open the file in the Cloud Shell editor: <code>code &quot;$PSK_FILE&quot;</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>az network vpn-connection list --resource-group &quot;$RG&quot; --query &quot;[].{name:name, type:connectionType, state:provisioningState}&quot; --output table</code>
+shows <code>con-azure-to-hq</code> and <code>con-hq-to-azure</code>, both <strong>Vnet2Vnet</strong> and <strong>Succeeded</strong>. <code>ls -l</code> showed the key file
+as <code>-rw-------</code>. Anyone with enough rights on a connection can read its key back from Azure
+(<code>az network vpn-connection shared-key show</code>), so treat access to connections like access to a secret.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--watch-the-tunnel-come-up" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Watch the tunnel come up</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--watch-the-tunnel-come-up" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The gateways now run <strong>IKE</strong>: they agree on encryption algorithms and prove to each other that they know the same key
+without ever sending it. Then they set up <strong>IPsec security associations</strong>, and from then on every packet between the
+networks travels encrypted. Check the status:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>for con in con-azure-to-hq con-hq-to-azure; do
+  az network vpn-connection show --resource-group &quot;$RG&quot; --name &quot;$con&quot; \
+    --query &quot;{name:name, status:connectionStatus, protocol:connectionProtocol, bytesIn:ingressBytesTransferred, bytesOut:egressBytesTransferred}&quot; \
+    --output table
+done
+</code></pre></div>
+<p>Repeat it every 30 seconds until both say <strong>Connected</strong> — usually within a few minutes. Or let the CLI wait for you:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network vpn-connection wait --resource-group &quot;$RG&quot; --name con-hq-to-azure \
+  --custom &quot;connectionStatus==&#x27;Connected&#x27;&quot; --interval 20 --timeout 900
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> both connections show <strong>Connected</strong> with protocol <strong>IKEv2</strong>. You may see <code>Unknown</code> or <code>Connecting</code>
+first — that's normal. The byte counters are small until you send traffic in Task 6.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--send-traffic-through-the-tunnel" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Send traffic through the tunnel</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--send-traffic-through-the-tunnel" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>From Azure to head office — ping, then ask the head-office web server for its health page:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-azure-1 \
+  --command-id RunShellScript \
+  --scripts &quot;ping -c 4 -W 2 10.0.1.10; curl -s --max-time 5 http://10.0.1.10/health&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>And back from head office to Azure, this time fetching the home page:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-hq-1 \
+  --command-id RunShellScript \
+  --scripts &quot;ping -c 4 -W 2 10.40.1.10; curl -s --max-time 5 http://10.40.1.10/&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Neither NSG has a single custom rule, yet the traffic gets in. The default rule <strong>AllowVnetInBound</strong> allows traffic
+from the <strong>VirtualNetwork</strong> service tag, and that tag includes address ranges connected through the VPN gateway. In
+production you'd tighten this: Pak Budi's whole network doesn't need to reach every Azure server.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> both pings report <code>0% packet loss</code> (round trips of a few milliseconds). The first command ends with
+<code>ok</code>; the second prints a small HTML page that says <em>Served by <strong>vm-azure-1</strong></em>. Run the Task 5 loop again: the byte
+counters have grown.</p>
+</div>
+</div></section><section class="lab-section" id="task-7--read-the-route-azure-added" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">Read the route Azure added</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--read-the-route-azure-added" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>NIC_AZ=$(az vm show --resource-group &quot;$RG&quot; --name vm-azure-1 \
+  --query &quot;networkProfile.networkInterfaces[0].id&quot; --output tsv)
+az network nic show-effective-route-table --ids &quot;$NIC_AZ&quot; --output table
+</code></pre></div>
+<p>Compare it with Task 1. There's a new route for <strong>10.0.0.0/16</strong> whose source and next hop are both
+<strong>VirtualNetworkGateway</strong>. The old <code>10.0.0.0/8 → None</code> route is still there, but Azure uses the <strong>longest prefix
+match</strong>: for 10.0.1.10, the /16 route is more specific than the /8 one, so the packet goes to the gateway instead of
+being dropped. Everything else in 10.0.0.0/8 is still dropped.</p>
+<p>Now check the other side yourself: get the network interface of <code>vm-hq-1</code> the same way and look at its routes.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> on <code>vm-azure-1</code>, <code>10.0.0.0/16</code> is <strong>Active</strong> with next hop type <strong>VirtualNetworkGateway</strong>. On
+<code>vm-hq-1</code>, the matching route is for <code>10.40.0.0/16</code>. You added no route table and no static route: the gateways did
+it, and they would update the routes automatically if either address space changed.</p>
+</div>
+</div></section><section class="lab-section" id="task-8-optional--compare-with-vnet-peering" data-kind="task"><h2><span class="title">Task 8 (optional) · Compare with VNet peering</span><button class="btn btn-sm done-toggle" type="button" data-task="task-8-optional--compare-with-vnet-peering" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Both &quot;sites&quot; are really Azure virtual networks, and between Azure networks <strong>VNet peering</strong> is usually the better
+tool: no gateways, no encryption overhead, lower latency, and you pay per GB instead of per gateway hour. Peer them
+while the VPN is still up and see which path Azure picks:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network vnet peering create --resource-group &quot;$RG&quot; --name peer-azure-to-hq \
+  --vnet-name vnet-nusa-azure --remote-vnet vnet-nusa-hq --allow-vnet-access true --output none
+az network vnet peering create --resource-group &quot;$RG&quot; --name peer-hq-to-azure \
+  --vnet-name vnet-nusa-hq --remote-vnet vnet-nusa-azure --allow-vnet-access true --output none
+
+az network nic show-effective-route-table --ids &quot;$NIC_AZ&quot; --output table
+az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-azure-1 \
+  --command-id RunShellScript --scripts &quot;ping -c 4 -W 2 10.0.1.10&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>The CLI needs <code>--allow-vnet-access true</code> written out — its default for this flag is <code>false</code>. A peering only works when
+both directions exist.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> there are now two routes for <code>10.0.0.0/16</code>. The <strong>virtual network peering</strong> route is <em>Active</em> and
+the gateway route is <em>Invalid</em>: Azure prefers system routes for peerings, even over gateway routes for the same
+prefix. Compare the <code>time=</code> values of the pings with Task 6 — they're usually a little lower.</p>
+</div>
+<p>Remove the peering before you continue — <code>verify.sh</code> checks that traffic uses the tunnel:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network vnet peering delete --resource-group &quot;$RG&quot; --vnet-name vnet-nusa-azure --name peer-azure-to-hq
+az network vnet peering delete --resource-group &quot;$RG&quot; --vnet-name vnet-nusa-hq --name peer-hq-to-azure
+</code></pre></div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The most common reason a real tunnel never comes up is a <strong>mismatched pre-shared key</strong> — someone mistyped it on the
+device or rotated it on only one side. Give the head-office half a different key:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network vpn-connection shared-key update --resource-group &quot;$RG&quot; \
+  --connection-name con-hq-to-azure --value &quot;NotTheRightKey123&quot; --output none
+</code></pre></div>
+<p>Run the status loop from Task 5 for the next few minutes, then repeat the first ping from Task 6.</p>
+<p><strong>Symptom:</strong> the connections drop out of <strong>Connected</strong> (you may see <code>Connecting</code> or <code>NotConnected</code>) and the ping
+reports <code>100% packet loss</code>. Nothing else changed — the gateways, routes and NSGs are all fine.</p>
+<details class="plain"><summary>Hint: what went wrong, and the fix</summary>
+<p>During IKE each side proves that it knows the key. The keys differ, so authentication fails and no IPsec security
+associations are created; without them, no traffic can flow. Put the right key back on the head-office half:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network vpn-connection shared-key update --resource-group &quot;$RG&quot; \
+  --connection-name con-hq-to-azure --value &quot;$(cat &quot;$PSK_FILE&quot;)&quot; --output none
+</code></pre></div>
+<p>Within a few minutes both connections are <strong>Connected</strong> again and the ping works. With a real device you would compare
+its IKE logs with the Azure side; Network Watcher's <strong>VPN troubleshoot</strong> tells you when the cause is an authentication
+failure.</p>
+<p>If the status still says <strong>Connected</strong> a good five minutes after you set the wrong key, the old security associations
+are still alive. Force a new negotiation with <code>az network vnet-gateway reset --resource-group &quot;$RG&quot; --name vgw-nusa-hq</code>
+(it takes several minutes), and then watch the failure appear.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. The script reads the
+effective routes and runs a small ping and HTTP test inside each VM through Run Command, so it takes 2–3 minutes.
+Remove the optional peering from Task 8 first.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>The script asks for confirmation (set <code>ASSUME_YES=1</code> to skip the question). It deletes the resource group
+<code>rg-lunch26-&lt;suffix&gt;</code> — gateways, connections, public IPs, VMs, disks and networks — and removes the shared key file
+<code>~/.azlunches-lab26-psk</code>. Nothing was created outside the resource group.</p>
+<p>Deleting the gateways takes a while, often 10–20 minutes, and <strong>billing stops when they're gone</strong>. Half an hour later,
+check that nothing is left:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az group list --tag lunch=26 --output table
+</code></pre></div>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A gateway's state is <strong>Failed</strong></td>
+<td>Creation hit a transient platform error</td>
+<td><code>az network vnet-gateway delete --resource-group &quot;$RG&quot; --name &lt;gateway&gt;</code>, then run <code>bash setup.sh</code> again — it recreates only what's missing</td>
+</tr>
+<tr>
+<td><code>setup.sh</code> fails while creating a gateway because of the SKU</td>
+<td>You set <code>VPN_SKU</code> to a non-AZ SKU such as <code>VpnGw1</code>, which can't be created any more</td>
+<td>Run it again without <code>VPN_SKU</code>, or use <code>VpnGw2AZ</code>–<code>VpnGw5AZ</code></td>
+</tr>
+<tr>
+<td><code>vpn-connection create</code> fails with <code>AnotherOperationInProgress</code> or says the gateway isn't ready</td>
+<td>A gateway is still building or updating</td>
+<td>Wait until both gateways show <strong>Succeeded</strong> (Task 2), then retry</td>
+</tr>
+<tr>
+<td>A connection stays <code>Connecting</code> or <code>NotConnected</code> for more than 10 minutes</td>
+<td>The two halves have different shared keys</td>
+<td>Set both to the key in <code>$PSK_FILE</code> with <code>shared-key update</code> (see Break it and fix it)</td>
+</tr>
+<tr>
+<td><code>$PSK_FILE</code> is missing after a Cloud Shell restart, but the connections exist</td>
+<td>The file lived in an ephemeral session</td>
+<td>Recover the key into a new file: <code>( umask 077; az network vpn-connection shared-key show --resource-group &quot;$RG&quot; --connection-name con-azure-to-hq --query value --output tsv &gt; &quot;$PSK_FILE&quot; )</code></td>
+</tr>
+<tr>
+<td>Status <strong>Connected</strong>, but ping reports <code>100% packet loss</code></td>
+<td>A VM is stopped, the optional peering was deleted on one side only, or a custom NSG rule blocks the traffic</td>
+<td>Check <code>az vm get-instance-view</code> power state, the effective routes (Task 7) and the NSG rules; remove leftover peerings</td>
+</tr>
+<tr>
+<td><code>(Conflict) Run command extension execution is in progress</code></td>
+<td>Another Run Command is still running on the same VM</td>
+<td>Wait until it finishes, then retry — one script per VM at a time</td>
+</tr>
+<tr>
+<td><code>verify.sh</code> reports a next hop other than <strong>VirtualNetworkGateway</strong></td>
+<td>The optional peering from Task 8 is still in place</td>
+<td>Delete both peerings (end of Task 8) and run <code>verify.sh</code> again</td>
+</tr>
+<tr>
+<td>Cloud Shell timed out during a wait</td>
+<td>20 minutes without input</td>
+<td>Reopen it, reload the settings (note in Task 2) and rerun the command; the gateways kept going</td>
+</tr>
+<tr>
+<td><code>az group list --tag lunch=26</code> still shows the group long after cleanup</td>
+<td>Gateway deletion is slow</td>
+<td>Wait another 15 minutes; if the group remains, run <code>bash cleanup.sh</code> again</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li>
+<p><strong>Rehearse the real site-to-site setup.</strong> After <code>verify.sh</code> passes, delete the two VNet-to-VNet connections and
+describe each side as an &quot;on-premises&quot; site with a <strong>local network gateway</strong> — exactly what you'd do for Pak Budi's
+device:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network vpn-connection delete --resource-group &quot;$RG&quot; --name con-azure-to-hq
+az network vpn-connection delete --resource-group &quot;$RG&quot; --name con-hq-to-azure
+HQ_IP=$(az network public-ip show --resource-group &quot;$RG&quot; --name pip-vgw-nusa-hq --query ipAddress --output tsv)
+AZ_IP=$(az network public-ip show --resource-group &quot;$RG&quot; --name pip-vgw-nusa-azure --query ipAddress --output tsv)
+az network local-gateway create --resource-group &quot;$RG&quot; --name lgw-nusa-hq \
+  --gateway-ip-address &quot;$HQ_IP&quot; --local-address-prefixes 10.0.0.0/16
+az network local-gateway create --resource-group &quot;$RG&quot; --name lgw-nusa-azure \
+  --gateway-ip-address &quot;$AZ_IP&quot; --local-address-prefixes 10.40.0.0/16
+az network vpn-connection create --resource-group &quot;$RG&quot; --name con-s2s-azure-to-hq \
+  --vnet-gateway1 vgw-nusa-azure --local-gateway2 lgw-nusa-hq --shared-key &quot;$(cat &quot;$PSK_FILE&quot;)&quot;
+az network vpn-connection create --resource-group &quot;$RG&quot; --name con-s2s-hq-to-azure \
+  --vnet-gateway1 vgw-nusa-hq --local-gateway2 lgw-nusa-azure --shared-key &quot;$(cat &quot;$PSK_FILE&quot;)&quot;
+</code></pre></div>
+<p>The connection type is now <strong>IPsec</strong>, and you maintain the address prefixes yourself. For a real device, the
+portal's <strong>Download configuration</strong> on such a connection produces a sample configuration for common VPN devices.</p>
+</li>
+<li>
+<p><strong>Peek at IKE:</strong> <code>az network vpn-connection list-ike-sas --resource-group &quot;$RG&quot; --name con-azure-to-hq</code> (a preview
+command) shows the negotiated IKE security associations, including the encryption and integrity algorithms.</p>
+</li>
+<li>
+<p><strong>Try BGP:</strong> give the gateways different private ASNs (<code>az network vnet-gateway update --asn 65010</code>, and 65020 on the
+other), enable BGP on both connections (<code>az network vpn-connection update --enable-bgp true</code>), and compare
+<code>az network vnet-gateway list-learned-routes</code> before and after. Each gateway update can take a long time, so only do
+this if your budget allows the extra hour.</p>
+</li>
+<li>
+<p><strong>Price the options for Ibu Sari:</strong> in the <a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">pricing calculator</a>,
+compare a month of one VpnGw1AZ gateway, a 50 Mbps ExpressRoute circuit with an ErGw1Az gateway, and a Virtual WAN
+hub with a site-to-site VPN scale unit. Which would you propose for one head office? For forty stores?</p>
+</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Run <code>bash setup.sh</code>, then build the following any way you like (portal, CLI, Bicep):</p>
+<ol>
+<li><code>vnet-nusa-azure</code> (10.40.0.0/16) and <code>vnet-nusa-hq</code> (10.0.0.0/16) each have a <code>GatewaySubnet</code> of /27 or larger
+(<code>setup.sh</code> creates these; don't change the address plan).</li>
+<li><code>vgw-nusa-azure</code> and <code>vgw-nusa-hq</code> are <strong>route-based</strong> VPN gateways with an <strong>AZ SKU</strong>, in the <strong>Succeeded</strong> state,
+each with a <strong>Standard</strong>, zone-redundant public IP (created by <code>setup.sh</code>; you wait for them).</li>
+<li>Two <strong>VNet-to-VNet</strong> connections, <code>con-azure-to-hq</code> and <code>con-hq-to-azure</code>, use the same shared key, <strong>generated at
+run time</strong> — never typed, printed or committed.</li>
+<li>Both connections are <strong>Connected</strong>.</li>
+<li>The network interface of <code>vm-azure-1</code> routes <strong>10.0.0.0/16</strong> to the <strong>virtual network gateway</strong> (no peering in place).</li>
+<li><code>vm-azure-1</code> and <code>vm-hq-1</code> can ping each other and fetch each other's <code>/health</code> page, in both directions.</li>
+<li>You can explain why the GatewaySubnet has no NSG and why the NSGs needed no new rules (not checked by the script).</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode. <strong>Then run <code>bash cleanup.sh</code>.</strong></p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="25-networking-advanced.html"><small>← Previous lab</small>25 · Hub and spoke for Nusantara Retail</a><a class="next" href="27-load-balancing-advanced.html"><small>Next lab →</small>27 · Protect and route the storefront</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/26-hybrid-connectivity/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

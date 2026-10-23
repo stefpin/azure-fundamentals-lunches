@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Lunch 01 · From click to resource — Interactive demo</title>
+<style>
+/* =====================================================================
+   LUNCH DEMO PLAYER · v1.0 · shared styles
+   Copy this block unchanged into every demo. Put demo-specific CSS in the
+   "DEMO-SPECIFIC STYLES" block at the end of this <style> element.
+   ===================================================================== */
+:root{
+  --bg:#f4f6fa; --surface:#ffffff; --ink:#1b1b1b; --muted:#56607a; --line:#cfd8e6;
+  --accent:#0078d4; --accent-ink:#ffffff; --accent-soft:#deecf9;
+  --ok:#107c10; --ok-soft:#dff6dd; --bad:#c50f1f; --bad-soft:#fde7e9;
+  --warn:#8a5d00; --warn-soft:#fff4ce; --hl:#e8a200;
+  --node:#ffffff; --node-stroke:#7d8ca8; --zone:#eef4fc; --region:#f8fafd;
+  --flow:#0078d4; --packet:#0078d4;
+  --c-compute:#e6f1fb; --c-network:#e3f6f4; --c-data:#efe9fb; --c-security:#fff3dc;
+  --c-identity:#e9f7e7; --c-ops:#eef0f4; --c-ext:#ffffff;
+  --radius:12px; --shadow:0 1px 2px rgb(0 0 0 / 6%), 0 6px 18px rgb(0 0 0 / 6%);
+  --font:"Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono:ui-monospace, "Cascadia Code", Consolas, "Liberation Mono", monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1520; --surface:#18202d; --ink:#e8edf5; --muted:#a3adbf; --line:#33415a;
+    --accent:#4ea8ff; --accent-ink:#0b1220; --accent-soft:#1d3350;
+    --ok:#6ccb5f; --ok-soft:#1f3a1f; --bad:#ff6b75; --bad-soft:#3d1d22;
+    --warn:#f5c451; --warn-soft:#3b3218; --hl:#ffc83d;
+    --node:#1f2a3a; --node-stroke:#6b7d9c; --zone:#172234; --region:#121a27;
+    --flow:#4ea8ff; --packet:#4ea8ff;
+    --c-compute:#16314d; --c-network:#123a37; --c-data:#2a2346; --c-security:#3a2f14;
+    --c-identity:#1b3a1d; --c-ops:#232b38; --c-ext:#1f2a3a;
+    --shadow:0 1px 2px rgb(0 0 0 / 40%), 0 6px 18px rgb(0 0 0 / 30%);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.5}
+.wrap{max-inline-size:1200px;margin-inline:auto;padding:16px}
+header.top .kicker{color:var(--muted);font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;margin:0}
+header.top h1{margin:.15rem 0 .35rem;font-size:clamp(1.25rem,2.4vw,1.85rem);line-height:1.2}
+header.top .lede{margin:0 0 14px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.stage,.narration{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.stage{padding:8px}
+.stage svg{display:block;inline-size:100%;block-size:auto}
+.narration{padding:16px}
+@media (min-width:901px){.narration{position:sticky;inset-block-start:12px}}
+.step-count{color:var(--muted);font-size:.85rem;margin:0}
+.narration h2{margin:.2rem 0 .4rem;font-size:1.15rem;line-height:1.3}
+.narration p{margin:.45rem 0}
+.tip{background:var(--accent-soft);border-inline-start:4px solid var(--accent);padding:8px 12px;border-radius:8px;font-size:.92rem}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-block:12px;align-items:center}
+button,select{font:inherit;font-size:.92rem;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:focus-visible,select:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.speed{color:var(--muted);font-size:.85rem;display:inline-flex;gap:6px;align-items:center}
+.progress{block-size:6px;background:var(--accent-soft);border-radius:99px;overflow:hidden}
+.progress>div{block-size:100%;inline-size:0;background:var(--accent);transition:inline-size .4s ease}
+.steps-list{margin:12px 0 0;padding-inline-start:22px;font-size:.86rem;color:var(--muted)}
+.steps-list li{margin-block:2px}
+.steps-list li.current{color:var(--ink);font-weight:600}
+.steps-list button{background:none;border:0;padding:2px 0;color:inherit;text-align:start;font-weight:inherit;cursor:pointer}
+.steps-list button:hover{color:var(--accent)}
+.hint{color:var(--muted);font-size:.78rem}
+.noscript{background:var(--warn-soft);padding:12px;border-radius:8px}
+footer{color:var(--muted);font-size:.82rem;margin-block-start:18px}
+footer a{color:var(--accent)}
+/* ---------- SVG vocabulary ---------- */
+svg text{fill:var(--ink);font-family:var(--font);font-size:15px}
+svg text.small{font-size:12.5px;fill:var(--muted)}
+svg text.title{font-size:17px;font-weight:600}
+svg text.big{font-size:22px;font-weight:600}
+svg text.mono{font-family:var(--mono);font-size:13px}
+svg .node > rect, svg .node > circle, svg .node > ellipse{fill:var(--node);stroke:var(--node-stroke);stroke-width:1.5}
+svg .node.compute > rect{fill:var(--c-compute)}
+svg .node.network > rect{fill:var(--c-network)}
+svg .node.data > rect{fill:var(--c-data)}
+svg .node.security > rect{fill:var(--c-security)}
+svg .node.identity > rect{fill:var(--c-identity)}
+svg .node.ops > rect{fill:var(--c-ops)}
+svg .node.ext > rect{fill:var(--c-ext)}
+svg .zone > rect{fill:var(--zone);stroke:var(--node-stroke);stroke-width:1.2;stroke-dasharray:6 5}
+svg .region > rect{fill:var(--region);stroke:var(--node-stroke);stroke-width:1.2}
+svg .wire{fill:none;stroke:var(--node-stroke);stroke-width:2}
+svg .arrowhead{fill:var(--node-stroke)}
+svg .badge > rect{fill:var(--accent);stroke:none}
+svg .badge > text{fill:var(--accent-ink);font-size:12px;font-weight:600}
+svg .callout > rect{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.2}
+/* ---------- step states (driven by the engine) ---------- */
+[data-el]{transition:opacity .45s ease}
+[data-el]:not(.is-visible){opacity:0}
+.is-dim{opacity:.22 !important}
+.is-hl > rect, .is-hl > circle, .is-hl > ellipse, .is-hl > polygon,
+rect.is-hl, circle.is-hl, ellipse.is-hl, polygon.is-hl, path.is-hl{stroke:var(--hl) !important;stroke-width:4 !important}
+.is-ok > rect, .is-ok > circle, .is-ok > ellipse, rect.is-ok, circle.is-ok{stroke:var(--ok) !important;fill:var(--ok-soft) !important;stroke-width:3 !important}
+.is-bad > rect, .is-bad > circle, .is-bad > ellipse, rect.is-bad, circle.is-bad{stroke:var(--bad) !important;fill:var(--bad-soft) !important;stroke-width:3 !important}
+path.is-ok{stroke:var(--ok) !important;stroke-width:3 !important}
+path.is-bad{stroke:var(--bad) !important;stroke-width:3 !important}
+path.is-flow{stroke:var(--flow) !important;stroke-width:3 !important;stroke-dasharray:10 8;animation:lunch-flow .9s linear infinite}
+path.is-flow.is-bad{stroke:var(--bad) !important}
+path.is-flow.is-ok{stroke:var(--ok) !important}
+@keyframes lunch-flow{to{stroke-dashoffset:-18}}
+.packet{fill:var(--packet);stroke:var(--surface);stroke-width:2}
+.packet.bad{fill:var(--bad)}
+.packet.ok{fill:var(--ok)}
+.packet.warn{fill:var(--hl)}
+@media (prefers-reduced-motion: reduce){
+  [data-el], .progress>div{transition:none}
+  path.is-flow{animation:none}
+}
+/* =====================================================================
+   DEMO-SPECIFIC STYLES (optional — keep small, use the variables above)
+   ===================================================================== */
+svg .gauge-track{fill:var(--accent-soft);stroke:var(--node-stroke);stroke-width:1.2}
+svg .gauge-fill{fill:var(--accent)}
+svg .gauge-over{fill:var(--bad)}
+svg .tick{fill:none;stroke:var(--muted);stroke-width:2;stroke-dasharray:4 3}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">Lunch 01 · Before You Begin · Interactive demo</p>
+    <h1>From click to resource</h1>
+    <p class="lede">Follow requests from the Azure portal, the Azure CLI and Azure PowerShell through Azure Resource Manager to the resource providers, watch a budget fill up to 50, 80 and 100%, and see what deleting a resource group really does. Press ▶ Play to watch, or step through with Next and Back.</p>
+  </header>
+
+  <main class="layout">
+    <section class="stage" aria-label="Animated diagram">
+      <svg id="stage" viewBox="0 0 960 560" role="img" aria-labelledby="svgTitle svgDesc">
+        <title id="svgTitle">Requests from the Azure portal, the Azure CLI and Azure PowerShell flowing through Azure Resource Manager to resource providers, with a monthly budget gauge and alert</title>
+        <desc id="svgDesc">Three tools on the left send requests to Azure Resource Manager in the middle, which checks identity, permissions and validity before passing each request to a resource provider: Microsoft.Resources, Microsoft.Storage or Microsoft.Compute. The providers build a resource group, a storage account and a virtual machine inside the lab subscription on the right. At the bottom, a monthly budget gauge fills to 50, 80 and 100 percent and sends alert e-mails; finally the resource group is deleted with everything inside it.</desc>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+          </marker>
+        </defs>
+
+        <!-- Static background: the lab subscription -->
+        <g class="region"><rect x="704" y="22" width="236" height="342" rx="16"/><text x="720" y="48" class="title">Lab subscription</text></g>
+
+        <!-- Wires: tools to Azure Resource Manager (visible from the start) -->
+        <path id="w-portal-arm" class="wire" d="M214,96 C242,96 242,110 268,110" marker-end="url(#arrow)" data-el data-start/>
+        <path id="w-cli-arm" class="wire" d="M214,200 L268,200" marker-end="url(#arrow)" data-el data-start/>
+        <path id="w-ps-arm" class="wire" d="M214,304 C242,304 242,290 268,290" marker-end="url(#arrow)" data-el data-start/>
+
+        <!-- Wires: Azure Resource Manager to resource providers -->
+        <path id="w-arm-res" class="wire" d="M440,110 C468,110 468,92 494,92" marker-end="url(#arrow)" data-el/>
+        <path id="w-arm-sto" class="wire" d="M440,200 L494,200" marker-end="url(#arrow)" data-el/>
+        <path id="w-arm-cmp" class="wire" d="M440,290 C468,290 468,308 494,308" marker-end="url(#arrow)" data-el/>
+
+        <!-- Wires: resource providers to resources -->
+        <path id="w-res-rg" class="wire" d="M676,92 L714,92" marker-end="url(#arrow)" data-el/>
+        <path id="w-sto-st" class="wire" d="M676,200 C700,200 708,178 732,178" marker-end="url(#arrow)" data-el/>
+        <path id="w-cmp-vm" class="wire" d="M676,308 C700,308 708,292 732,292" marker-end="url(#arrow)" data-el/>
+
+        <!-- Tools -->
+        <g id="n-portal" class="node ext" data-el data-start>
+          <rect x="24" y="56" width="190" height="80" rx="12"/>
+          <text x="119" y="90" text-anchor="middle" class="title">Azure portal</text>
+          <text x="119" y="114" text-anchor="middle" class="small">click Create</text>
+        </g>
+        <g id="n-cli" class="node ext" data-el data-start>
+          <rect x="24" y="160" width="190" height="80" rx="12"/>
+          <text x="119" y="194" text-anchor="middle" class="title">Azure CLI</text>
+          <text id="t-cli" x="119" y="218" text-anchor="middle" class="small">Cloud Shell · Bash</text>
+        </g>
+        <g id="n-ps" class="node ext" data-el data-start>
+          <rect x="24" y="264" width="190" height="80" rx="12"/>
+          <text x="119" y="298" text-anchor="middle" class="title">Azure PowerShell</text>
+          <text id="t-ps" x="119" y="322" text-anchor="middle" class="small">Az module</text>
+        </g>
+
+        <!-- Azure Resource Manager and its three checks -->
+        <g id="n-arm" class="node ops" data-el data-start>
+          <rect x="270" y="40" width="170" height="320" rx="12"/>
+          <text x="355" y="72" text-anchor="middle" class="title">Azure Resource</text>
+          <text x="355" y="94" text-anchor="middle" class="title">Manager</text>
+          <text x="355" y="116" text-anchor="middle" class="small">management.azure.com</text>
+          <text id="t-arm" x="355" y="304" text-anchor="middle" class="small">waiting for requests</text>
+        </g>
+        <g id="c-auth" class="node identity" data-el data-start>
+          <rect x="284" y="134" width="142" height="40" rx="10"/>
+          <text x="355" y="159" text-anchor="middle">Who are you?</text>
+        </g>
+        <g id="c-rbac" class="node identity" data-el data-start>
+          <rect x="284" y="184" width="142" height="40" rx="10"/>
+          <text x="355" y="209" text-anchor="middle">Allowed?</text>
+        </g>
+        <g id="c-valid" class="node security" data-el data-start>
+          <rect x="284" y="234" width="142" height="40" rx="10"/>
+          <text x="355" y="259" text-anchor="middle">Valid request?</text>
+        </g>
+
+        <!-- Resource providers -->
+        <g id="n-rp-res" class="node network" data-el>
+          <rect x="496" y="56" width="180" height="72" rx="12"/>
+          <text x="586" y="88" text-anchor="middle" class="mono">Microsoft.Resources</text>
+          <text x="586" y="110" text-anchor="middle" class="small">resource groups</text>
+        </g>
+        <g id="n-rp-sto" class="node data" data-el>
+          <rect x="496" y="164" width="180" height="72" rx="12"/>
+          <text x="586" y="196" text-anchor="middle" class="mono">Microsoft.Storage</text>
+          <text x="586" y="218" text-anchor="middle" class="small">storage accounts</text>
+        </g>
+        <g id="n-rp-cmp" class="node compute" data-el>
+          <rect x="496" y="272" width="180" height="72" rx="12"/>
+          <text x="586" y="304" text-anchor="middle" class="mono">Microsoft.Compute</text>
+          <text x="586" y="326" text-anchor="middle" class="small">virtual machines</text>
+        </g>
+
+        <!-- The lab's resource group and what gets built inside it -->
+        <g id="z-rg" class="zone" data-el>
+          <rect x="716" y="62" width="212" height="290" rx="14"/>
+          <text x="730" y="86" class="small">rg-lunch01-ab12c</text>
+          <text x="730" y="106" class="small">tags: course · lunch=01</text>
+        </g>
+        <g id="n-st" class="node data" data-el>
+          <rect x="734" y="142" width="176" height="72" rx="12"/>
+          <text x="822" y="174" text-anchor="middle" class="mono">stnusaab12c</text>
+          <text x="822" y="196" text-anchor="middle" class="small">storage account</text>
+        </g>
+        <g id="n-vm" class="node compute" data-el>
+          <rect x="734" y="256" width="176" height="72" rx="12"/>
+          <text x="822" y="288" text-anchor="middle" class="mono">vm-web-1</text>
+          <text x="822" y="310" text-anchor="middle" class="small">virtual machine</text>
+        </g>
+
+        <!-- Shown after the resource group is deleted -->
+        <g id="n-gone" data-el>
+          <text x="822" y="190" text-anchor="middle" class="small">rg-lunch01-ab12c deleted</text>
+          <text x="822" y="214" text-anchor="middle" class="small">storage account and VM gone</text>
+          <text x="822" y="238" text-anchor="middle" class="small">no more charges</text>
+        </g>
+
+        <!-- The error a typo produces (same space as the budget, shown earlier) -->
+        <g id="n-error" class="callout" data-el>
+          <rect x="24" y="384" width="652" height="156" rx="12"/>
+          <text x="44" y="414" class="title">Rejected by Azure Resource Manager</text>
+          <text x="44" y="446" class="mono">(LocationNotAvailableForResourceGroup)</text>
+          <text x="44" y="470" class="mono">The provided location 'southeastasai'</text>
+          <text x="44" y="494" class="mono">is not available for resource group.</text>
+          <text x="44" y="522" class="small">Nothing was created. Fix: use a valid region name such as southeastasia.</text>
+        </g>
+
+        <!-- Monthly budget gauge -->
+        <g id="n-gauge" data-el>
+          <g id="n-gaugebox" class="node ops">
+            <rect x="24" y="384" width="652" height="156" rx="12"/>
+          </g>
+          <text x="44" y="414" class="title">Monthly budget · actual cost</text>
+          <rect class="gauge-track" x="56" y="432" width="560" height="30" rx="8"/>
+          <path class="tick" d="M336,426 L336,468"/>
+          <path class="tick" d="M504,426 L504,468"/>
+          <path class="tick" d="M616,426 L616,468"/>
+          <text x="336" y="488" text-anchor="middle" class="small">50%</text>
+          <text x="504" y="488" text-anchor="middle" class="small">80%</text>
+          <text x="616" y="488" text-anchor="middle" class="small">100%</text>
+          <text id="t-spend" x="56" y="522">Spent this month: 0% of budget</text>
+        </g>
+        <rect id="g-fill-a" class="gauge-fill" x="56" y="432" width="101" height="30" rx="8" data-el/>
+        <rect id="g-fill-50" class="gauge-fill" x="56" y="432" width="280" height="30" rx="8" data-el/>
+        <rect id="g-fill-80" class="gauge-fill" x="56" y="432" width="448" height="30" rx="8" data-el/>
+        <rect id="g-fill-100" class="gauge-fill" x="56" y="432" width="560" height="30" rx="8" data-el/>
+        <rect id="g-fill-over" class="gauge-over" x="610" y="432" width="30" height="30" rx="8" data-el/>
+
+        <!-- Budget alert e-mail -->
+        <path id="w-gauge-alert" class="wire" d="M676,456 L702,456" marker-end="url(#arrow)" data-el/>
+        <g id="n-alertbox" class="callout" data-el>
+          <rect x="704" y="384" width="236" height="156" rx="12"/>
+          <text x="822" y="414" text-anchor="middle" class="title">✉ Budget alert</text>
+          <text id="t-alert" x="822" y="446" text-anchor="middle">Actual cost passed 50%</text>
+          <text x="822" y="472" text-anchor="middle" class="small">budget-azure-lunches</text>
+          <text id="t-alert3" x="822" y="504" text-anchor="middle" class="small">to: you and the finance team</text>
+        </g>
+
+        <!-- Packets are drawn here by the engine; keep this group last -->
+        <g id="packets"></g>
+      </svg>
+    </section>
+
+    <aside class="narration" aria-label="Narration and controls">
+      <p class="step-count" id="stepCount">Step 1</p>
+      <h2 id="stepTitle">Loading…</h2>
+      <p id="stepText" aria-live="polite"></p>
+      <p id="stepTip" class="tip" hidden></p>
+      <div class="controls" role="group" aria-label="Playback controls">
+        <button id="prev" type="button" aria-label="Previous step">◀ Back</button>
+        <button id="play" type="button" class="primary" aria-pressed="false">▶ Play</button>
+        <button id="next" type="button" aria-label="Next step">Next ▶</button>
+        <button id="restart" type="button" aria-label="Restart from the first step">↺ Restart</button>
+        <label class="speed">Speed
+          <select id="speed">
+            <option value="1.5">Relaxed</option>
+            <option value="1" selected>Normal</option>
+            <option value="0.7">Brisk</option>
+          </select>
+        </label>
+      </div>
+      <div class="progress" aria-hidden="true"><div id="bar"></div></div>
+      <ol id="stepsList" class="steps-list" aria-label="All steps"></ol>
+      <p class="hint">Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.</p>
+      <noscript><p class="noscript">This interactive demo needs JavaScript. The reading for this lunch covers the same story.</p></noscript>
+    </aside>
+  </main>
+
+  <footer>
+    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/01-before-you-begin.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+  </footer>
+</div>
+
+<!-- =====================================================================
+     DEMO CONTENT — the only script you edit. Must be valid JSON.
+     Keys per step:
+       title, text, tip            narration (plain text; tip is optional)
+       show, hide      [ids]       cumulative visibility of [data-el] elements
+       highlight, ok, bad, flow, dim  [ids]   apply to this step only
+       packets   [pathId | {"path":id,"dur":1.6,"delay":0,"stopAt":1,"cls":"bad|ok|warn"}]
+       set       {"id":"new text"} cumulative text changes
+       view      "x y w h"         cumulative camera (SVG viewBox)
+       duration  number (ms)       optional autoplay override
+     ===================================================================== -->
+<script type="application/json" id="demo-steps">
+[
+  {
+    "title": "A clean lab, three ways in",
+    "text": "Meet your starting point: a personal lab subscription with nothing in it yet. On the left are three ways in: the Azure portal, the Azure CLI in Cloud Shell, and Azure PowerShell. In the middle stands Azure Resource Manager, the single front door that every request must pass through, whichever tool sends it.",
+    "highlight": ["n-arm"]
+  },
+  {
+    "title": "Resource providers do the building",
+    "duration": 20000,
+    "text": "Behind Resource Manager sit the resource providers. Each one builds one family of resources: Microsoft.Resources for resource groups, Microsoft.Storage for storage accounts and Microsoft.Compute for virtual machines. You never call a provider directly. Resource Manager first checks every request, then decides which provider receives it.",
+    "show": ["n-rp-res", "n-rp-sto", "n-rp-cmp", "w-arm-res", "w-arm-sto", "w-arm-cmp"],
+    "highlight": ["n-rp-res", "n-rp-sto", "n-rp-cmp"],
+    "view": "220 10 600 350"
+  },
+  {
+    "title": "Click Create in the portal",
+    "duration": 24000,
+    "text": "You create a resource group in the portal. The browser sends the request, with your sign-in token, to Resource Manager. It checks who you are with Microsoft Entra ID, checks that your role allows the action, and validates the request. Only then does Microsoft.Resources create rg-lunch01-ab12c inside your subscription.",
+    "view": "0 0 960 560",
+    "show": ["w-res-rg", "z-rg"],
+    "highlight": ["n-portal"],
+    "ok": ["c-auth", "c-rbac", "c-valid"],
+    "flow": ["w-portal-arm", "w-arm-res", "w-res-rg"],
+    "packets": [{"path": "w-portal-arm", "dur": 1.2}, {"path": "w-arm-res", "delay": 1.3, "dur": 1.0}, {"path": "w-res-rg", "delay": 2.4, "dur": 0.8}],
+    "set": {"t-arm": "PUT resource group ✓"}
+  },
+  {
+    "title": "The CLI uses the same door",
+    "duration": 24000,
+    "text": "Now Dewi's way: az storage account create in Cloud Shell. A different tool, but the same path. The request reaches the same Resource Manager, passes the same three checks and goes to Microsoft.Storage, which builds the storage account in the same resource group. A command and a click give the same result.",
+    "show": ["w-sto-st", "n-st"],
+    "highlight": ["n-cli"],
+    "ok": ["c-auth", "c-rbac", "c-valid"],
+    "flow": ["w-cli-arm", "w-arm-sto", "w-sto-st"],
+    "packets": [{"path": "w-cli-arm", "dur": 1.2}, {"path": "w-arm-sto", "delay": 1.3, "dur": 1.0}, {"path": "w-sto-st", "delay": 2.4, "dur": 0.8}],
+    "set": {"t-cli": "az storage account create", "t-arm": "PUT storage account ✓"}
+  },
+  {
+    "title": "PowerShell, same story",
+    "duration": 24000,
+    "text": "Pak Budi prefers PowerShell, so he runs New-AzVM. Resource Manager checks his request in exactly the same way and hands it to Microsoft.Compute, which builds the virtual machine. Three tools, three people, one front door, and one place where identity, permissions and policy are enforced for everybody.",
+    "show": ["w-cmp-vm", "n-vm"],
+    "highlight": ["n-ps"],
+    "ok": ["c-auth", "c-rbac", "c-valid"],
+    "flow": ["w-ps-arm", "w-arm-cmp", "w-cmp-vm"],
+    "packets": [{"path": "w-ps-arm", "dur": 1.2}, {"path": "w-arm-cmp", "delay": 1.3, "dur": 1.0}, {"path": "w-cmp-vm", "delay": 2.4, "dur": 0.8}],
+    "set": {"t-ps": "New-AzVM", "t-arm": "PUT virtual machine ✓"}
+  },
+  {
+    "title": "A typo stops at the door",
+    "duration": 24000,
+    "text": "Dewi types southeastasai instead of southeastasia. Resource Manager validates the request before any provider gets involved, and rejects it. Nothing is created and nothing is charged. The error code, LocationNotAvailableForResourceGroup, is specific and easy to search for, and the message lists the valid region names. Read errors from the top: code first, then message.",
+    "show": ["n-error"],
+    "highlight": ["n-error"],
+    "ok": ["c-auth", "c-rbac"],
+    "bad": ["c-valid"],
+    "packets": [{"path": "w-cli-arm", "dur": 1.2, "stopAt": 0.92, "cls": "bad"}],
+    "set": {"t-cli": "location: southeastasai", "t-arm": "request rejected ✗"}
+  },
+  {
+    "title": "Resources quietly cost money",
+    "text": "Back to the resources that were created. The storage account and the virtual machine cost money for every hour they exist, whether anybody uses them or not. This is where your guardrail comes in: a monthly budget at subscription scope, with alerts at 50, 80 and 100 percent of actual cost.",
+    "hide": ["n-error"],
+    "show": ["n-gauge", "g-fill-a"],
+    "highlight": ["n-gaugebox", "n-st", "n-vm"],
+    "set": {"t-cli": "Cloud Shell · Bash", "t-arm": "waiting for requests", "t-spend": "Spent this month: 18% of budget"}
+  },
+  {
+    "title": "50 percent: the first e-mail",
+    "text": "Half the budget is used, so the 50 percent alert fires and an e-mail arrives from azure-noreply@microsoft.com. Remember the delay: cost data can take 8 to 24 hours to arrive, and budgets are evaluated about once a day, so the e-mail describes yesterday's spending. Nothing is stopped. The message simply says: take a look.",
+    "show": ["g-fill-50", "w-gauge-alert", "n-alertbox"],
+    "highlight": ["n-alertbox"],
+    "flow": ["w-gauge-alert"],
+    "packets": [{"path": "w-gauge-alert", "dur": 0.8}],
+    "set": {"t-spend": "Spent this month: 52% of budget", "t-alert": "Actual cost passed 50%"}
+  },
+  {
+    "title": "80 percent: time to act",
+    "text": "At 80 percent the second alert arrives. This is the useful one, because there is still time to act before the month ends. You open Cost analysis, notice the virtual machine that ran all weekend, and decide it should not exist yet. Ibu Sari's finance team can be on the recipient list too, so nobody is surprised by the invoice.",
+    "show": ["g-fill-80"],
+    "highlight": ["n-alertbox", "n-vm"],
+    "flow": ["w-gauge-alert"],
+    "packets": [{"path": "w-gauge-alert", "dur": 0.8}],
+    "set": {"t-spend": "Spent this month: 81% of budget", "t-alert": "Actual cost passed 80%"}
+  },
+  {
+    "title": "100 percent: an alarm, not a brake",
+    "text": "Suppose nobody acts. Spending passes 100 percent and the last alert fires, but the virtual machine keeps running and keeps costing money. A budget never stops or deletes anything. On a credit-based subscription the spending limit is the real brake: when the credit is gone, resources are disabled. On pay-as-you-go, you are the brake.",
+    "show": ["g-fill-100", "g-fill-over"],
+    "highlight": ["n-alertbox"],
+    "bad": ["n-vm"],
+    "flow": ["w-gauge-alert"],
+    "packets": [{"path": "w-gauge-alert", "dur": 0.8, "cls": "bad"}],
+    "set": {"t-spend": "Spent: 104% of budget · the VM is still running", "t-alert": "Actual cost passed 100%", "t-alert3": "nothing has been stopped"}
+  },
+  {
+    "title": "Delete the group, delete everything",
+    "duration": 24000,
+    "text": "The fix is one command: az group delete. Resource Manager asks each provider to remove what it built, and the storage account and the virtual machine disappear together with the group. One resource group per lab, tagged with the lunch number, turns cleanup into a single reliable step. The meter stops, although this month's spending stays on the bill.",
+    "hide": ["n-st", "n-vm", "z-rg", "w-res-rg", "w-sto-st", "w-cmp-vm"],
+    "show": ["n-gone"],
+    "highlight": ["n-cli"],
+    "ok": ["c-auth", "c-rbac", "c-valid", "n-gaugebox"],
+    "flow": ["w-cli-arm", "w-arm-res"],
+    "packets": [{"path": "w-cli-arm", "dur": 1.2, "cls": "warn"}, {"path": "w-arm-res", "delay": 1.3, "dur": 1.0, "cls": "warn"}],
+    "set": {"t-cli": "az group delete", "t-arm": "DELETE group ✓", "t-spend": "Meter stopped · 104% stays on this month's bill"}
+  },
+  {
+    "title": "Your turn: build the guardrails",
+    "text": "Recap. Every tool goes through Azure Resource Manager. Resource providers do the building. Validation catches mistakes before anything is created. A budget warns you but never stops anything. Deleting a resource group removes everything inside it. In Lab 01 you do all of this for real, in your own subscription.",
+    "highlight": ["n-arm", "n-gaugebox"],
+    "set": {"t-cli": "Cloud Shell · Bash", "t-arm": "waiting for requests"},
+    "tip": "Lab 01: open Cloud Shell, run check-environment.sh, create a monthly budget with 50/80/100% alerts, then create, inspect and delete a tagged resource group."
+  }
+]
+</script>
+
+<script>
+/* =====================================================================
+   LUNCH DEMO PLAYER · v1.0 · engine
+   Copy this script unchanged into every demo. It reads the JSON above.
+   ===================================================================== */
+(function () {
+  'use strict';
+  var STEPS;
+  try {
+    STEPS = JSON.parse(document.getElementById('demo-steps').textContent);
+  } catch (err) {
+    STEPS = [{ title: 'Demo data error', text: 'The steps for this demo could not be loaded: ' + err.message }];
+  }
+  if (!Array.isArray(STEPS) || STEPS.length === 0) {
+    STEPS = [{ title: 'No steps yet', text: 'This demo has no steps.' }];
+  }
+
+  var byId = function (id) { return document.getElementById(id); };
+  var svg = byId('stage');
+  var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var reduceMotion = !!(mq && mq.matches);
+  var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
+  var TRANSIENT_CLASSES = ['is-hl', 'is-ok', 'is-bad', 'is-flow', 'is-dim'];
+  var els = Array.prototype.slice.call(document.querySelectorAll('[data-el]'));
+  var initialVisible = {};
+  els.forEach(function (el) { if (el.hasAttribute('data-start')) { initialVisible[el.id] = true; } });
+  var originalText = {};
+  STEPS.forEach(function (s) {
+    Object.keys(s.set || {}).forEach(function (id) {
+      var el = byId(id);
+      if (el && !(id in originalText)) { originalText[id] = el.textContent; }
+    });
+  });
+  var baseView = svg.getAttribute('viewBox') || '0 0 960 560';
+  var currentView = parseView(baseView);
+  var lastViewKey = baseView;
+  var current = 0, playing = false, timer = null, speed = 1, packetAnims = [], viewAnim = 0;
+
+  function parseView(v) { return String(v).trim().split(/[\s,]+/).map(Number); }
+
+  function stateAt(i) {
+    var visible = Object.assign({}, initialVisible);
+    var text = Object.assign({}, originalText);
+    var view = baseView;
+    for (var k = 0; k <= i; k++) {
+      var s = STEPS[k] || {};
+      (s.show || []).forEach(function (id) { visible[id] = true; });
+      (s.hide || []).forEach(function (id) { delete visible[id]; });
+      if (s.set) { Object.keys(s.set).forEach(function (id) { text[id] = s.set[id]; }); }
+      if (s.view) { view = s.view; }
+    }
+    return { visible: visible, text: text, view: view };
+  }
+
+  function setView(target) {
+    var to = parseView(target);
+    if (to.length !== 4 || to.some(function (n) { return isNaN(n); })) { return; }
+    if (viewAnim) { cancelAnimationFrame(viewAnim); viewAnim = 0; }
+    if (reduceMotion) { currentView = to; svg.setAttribute('viewBox', to.join(' ')); return; }
+    var from = currentView.slice(), t0 = null, D = 800;
+    function ease(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+    function frame(t) {
+      if (t0 === null) { t0 = t; }
+      var k = Math.min(1, (t - t0) / D), e = ease(k);
+      currentView = from.map(function (a, idx) { return a + (to[idx] - a) * e; });
+      svg.setAttribute('viewBox', currentView.join(' '));
+      viewAnim = k < 1 ? requestAnimationFrame(frame) : 0;
+    }
+    viewAnim = requestAnimationFrame(frame);
+  }
+
+  function clearPackets() {
+    packetAnims.forEach(function (a) { a.stop(); });
+    packetAnims = [];
+  }
+
+  function runPacket(spec) {
+    var o = typeof spec === 'string' ? { path: spec } : (spec || {});
+    var path = byId(o.path);
+    if (!path || typeof path.getTotalLength !== 'function') { return; }
+    var len = path.getTotalLength();
+    var layer = byId('packets') || svg;
+    var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('r', String(o.r || 7));
+    dot.setAttribute('class', 'packet' + (o.cls ? ' ' + o.cls : ''));
+    layer.appendChild(dot);
+    var stopAt = o.stopAt == null ? 1 : Math.max(0, Math.min(1, Number(o.stopAt)));
+    var dur = (o.dur || 1.6) * 1000 * speed, delay = (o.delay || 0) * 1000 * speed, hold = 600;
+    var stopped = false, raf = 0, start = null;
+    function place(f) {
+      var p = path.getPointAtLength(len * f);
+      dot.setAttribute('cx', String(p.x));
+      dot.setAttribute('cy', String(p.y));
+    }
+    packetAnims.push({
+      stop: function () {
+        stopped = true;
+        if (raf) { cancelAnimationFrame(raf); }
+        if (dot.parentNode) { dot.parentNode.removeChild(dot); }
+      }
+    });
+    if (reduceMotion) { place(stopAt); return; }
+    function frame(t) {
+      if (stopped) { return; }
+      if (start === null) { start = t; }
+      var elapsed = t - start - delay;
+      if (elapsed < 0) { dot.setAttribute('opacity', '0'); raf = requestAnimationFrame(frame); return; }
+      var phase = elapsed % (dur + hold);
+      dot.setAttribute('opacity', phase > dur ? '0.35' : '1');
+      place(Math.min(phase / dur, 1) * stopAt);
+      raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  function render(i) {
+    current = Math.max(0, Math.min(STEPS.length - 1, i));
+    var s = STEPS[current] || {};
+    var st = stateAt(current);
+    Array.prototype.forEach.call(document.querySelectorAll('.is-hl, .is-ok, .is-bad, .is-flow, .is-dim'), function (el) {
+      TRANSIENT_CLASSES.forEach(function (c) { el.classList.remove(c); });
+    });
+    els.forEach(function (el) { el.classList.toggle('is-visible', !!st.visible[el.id]); });
+    Object.keys(TRANSIENT).forEach(function (key) {
+      (s[key] || []).forEach(function (id) {
+        var el = byId(id);
+        if (!el) { return; }
+        el.classList.add(TRANSIENT[key]);
+        if (key !== 'dim' && el.hasAttribute('data-el')) { el.classList.add('is-visible'); }
+      });
+    });
+    Object.keys(st.text).forEach(function (id) {
+      var el = byId(id);
+      if (el) { el.textContent = st.text[id]; }
+    });
+    if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
+    clearPackets();
+    (s.packets || []).forEach(runPacket);
+    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepTitle').textContent = s.title || '';
+    byId('stepText').textContent = s.text || '';
+    var tip = byId('stepTip');
+    if (s.tip) { tip.textContent = s.tip; tip.hidden = false; } else { tip.textContent = ''; tip.hidden = true; }
+    byId('bar').style.inlineSize = ((current + 1) / STEPS.length * 100) + '%';
+    byId('prev').disabled = current === 0;
+    byId('next').disabled = current === STEPS.length - 1;
+    Array.prototype.forEach.call(document.querySelectorAll('#stepsList li'), function (li, k) {
+      li.classList.toggle('current', k === current);
+      var b = li.querySelector('button');
+      if (b) {
+        if (k === current) { b.setAttribute('aria-current', 'step'); } else { b.removeAttribute('aria-current'); }
+      }
+    });
+    try { history.replaceState(null, '', '#step=' + (current + 1)); } catch (err) { /* file:// or sandboxed frame */ }
+  }
+
+  function stepDuration(s) {
+    if (s && s.duration) { return Number(s.duration); }
+    var words = (((s && s.title) || '') + ' ' + ((s && s.text) || '') + ' ' + ((s && s.tip) || '')).trim().split(/\s+/).length;
+    return Math.max(5000, words * 340);
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!playing) { return; }
+    timer = setTimeout(function () {
+      if (current < STEPS.length - 1) { render(current + 1); schedule(); } else { setPlaying(false); }
+    }, stepDuration(STEPS[current]) * speed);
+  }
+
+  function setPlaying(p) {
+    playing = p;
+    var b = byId('play');
+    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.setAttribute('aria-pressed', p ? 'true' : 'false');
+    if (p && current === STEPS.length - 1) { render(0); }
+    schedule();
+  }
+
+  function go(i) { render(i); if (playing) { schedule(); } }
+
+  var list = byId('stepsList');
+  STEPS.forEach(function (s, k) {
+    var li = document.createElement('li');
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = s.title || ('Step ' + (k + 1));
+    b.addEventListener('click', function () { go(k); });
+    li.appendChild(b);
+    list.appendChild(li);
+  });
+
+  byId('prev').addEventListener('click', function () { go(current - 1); });
+  byId('next').addEventListener('click', function () { go(current + 1); });
+  byId('restart').addEventListener('click', function () { go(0); });
+  byId('play').addEventListener('click', function () { setPlaying(!playing); });
+  byId('speed').addEventListener('change', function (e) {
+    speed = Number(e.target.value) || 1;
+    if (playing) { schedule(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    var tag = ((e.target && e.target.tagName) || '').toLowerCase();
+    if (tag === 'select' || tag === 'input' || tag === 'textarea') { return; }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+  });
+  if (mq && mq.addEventListener) {
+    mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
+  }
+
+  var m = /step=(\d+)/.exec(window.location.hash || '');
+  render(m ? Number(m[1]) - 1 : 0);
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+})();
+</script>
+</body>
+</html>

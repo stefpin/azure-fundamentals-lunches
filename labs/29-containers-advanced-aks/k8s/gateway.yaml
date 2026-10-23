@@ -1,0 +1,34 @@
+# Lab 29 · stretch goal: layer-7 ingress with the Kubernetes Gateway API, served by the
+# application routing add-on's Gateway API implementation (GatewayClass "approuting-istio").
+# Enable it first:  az aks update -g "$RG" -n aks-nusa --enable-gateway-api --enable-app-routing-istio
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: storefront-gateway
+  namespace: nusa
+spec:
+  gatewayClassName: approuting-istio
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: storefront
+  namespace: nusa
+spec:
+  parentRefs:
+    - name: storefront-gateway
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: storefront
+          port: 80

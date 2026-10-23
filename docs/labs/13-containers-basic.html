@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 13 · Package the storefront · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 13: Package the storefront. about 45 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 13 · Package the storefront">
+<meta property="og:description" content="Hands-on Azure lab 13: Package the storefront. about 45 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/13-containers-basic.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="13" style="--c:#11935a">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#11935a">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 13</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>13</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Package the storefront</h1>
+        <p class="lab-story">🏪 <b>Episode 13 · It Works on My Machine</b> — The most expensive sentence in the office. <a href="../lunches/13-containers-basic.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 45 minutes</span>
+          <span class="chip cost">💲 free or close to free</span>
+          <span class="chip">Difficulty ★★☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 7 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--create-a-private-registry-and-import-the-storefront-image">Task 1 · Create a private registry and import the storefront image</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--run-a-container-in-seconds-with-container-instances">Task 2 · Run a container in seconds with Container Instances</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--deploy-to-container-apps-and-pull-with-a-managed-identity">Task 3 · Deploy to Container Apps and pull with a managed identity</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--watch-it-scale-from-zero-to-five-and-back">Task 4 · Watch it scale from zero to five and back</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--release-v2-to-20-of-shoppers">Task 5 · Release v2 to 20% of shoppers</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/app/Dockerfile" target="_blank" rel="noopener"><span>app/Dockerfile</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/13-containers-basic" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Nusantara Retail wants one package for the storefront that runs the same everywhere, and a hosting option that costs
+nothing at three in the morning. You will create a private <strong>Azure Container Registry</strong> and import a small Microsoft
+sample web app into it as <code>storefront:v1</code>. You will run the same image in seconds on <strong>Azure Container Instances</strong>,
+then deploy it from your registry to <strong>Azure Container Apps</strong>, pulling with the app's managed identity instead of a
+password. Finally you will load-test it (replicas 0 → 5 → 0), release a second revision to 20% of requests, and repair
+a broken target port.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  MCR[&quot;mcr.microsoft.com&lt;br/&gt;azuredocs/aks-helloworld:v1&quot;]
+  subgraph rg[&quot;rg-lunch13-&amp;lt;suffix&amp;gt;&quot;]
+    ACR[(&quot;acrnusa&amp;lt;suffix&amp;gt;&lt;br/&gt;storefront:v1&quot;)]
+    ACI[&quot;ci-nusa-storefront&lt;br/&gt;Container Instances&quot;]
+    subgraph cae[&quot;Container Apps environment cae-nusa&quot;]
+      APP[&quot;ca-nusa-storefront&lt;br/&gt;revision v1: 80%&lt;br/&gt;revision v2: 20%&quot;]
+    end
+  end
+  MCR --&gt;|&quot;az acr import&quot;| ACR
+  MCR --&gt;|&quot;pull (public image)&quot;| ACI
+  ACR --&gt;|&quot;pull with the app&#x27;s managed identity&quot;| APP
+  SHOP[&quot;Shoppers and your curl loop&quot;] --&gt;|HTTPS| APP
+  SHOP --&gt;|HTTP| ACI
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>The sample image is a tiny Microsoft web app that listens on <strong>port 80</strong> and shows the value of the <code>TITLE</code> environment
+variable as its page title. It was written for AKS walkthroughs, but that does not matter: a container image runs
+anywhere. Changing <code>TITLE</code> lets you see at a glance which copy or revision answered a request.</p>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install.</li>
+<li>Get the lab files and load the shared settings:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/13-containers-basic
+source ../common/config.sh
+RG=$(rg_name 13)
+ACR_NAME=&quot;acrnusa${SUFFIX}&quot;
+APP=ca-nusa-storefront
+</code></pre></div>
+<ul>
+<li>Make sure the resource providers this lab uses are registered. It is a one-time step per subscription and can take a
+minute or two:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>for ns in Microsoft.ContainerRegistry Microsoft.ContainerInstance Microsoft.App Microsoft.OperationalInsights; do
+  az provider register --namespace &quot;$ns&quot; --wait
+done
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist. Finish with the <strong>Clean up</strong> section, even if you stop halfway.
+If Cloud Shell times out, open it again, <code>cd</code> back into this folder and re-run the <code>source</code> and variable lines above
+(and any <code>LOGIN_SERVER=</code>, <code>FQDN=</code> or <code>REV1=</code> lines from the task you were on).</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–5 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--create-a-private-registry-and-import-the-storefront-image" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Create a private registry and import the storefront image</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--create-a-private-registry-and-import-the-storefront-image" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A registry is the single source of truth for your images. <code>az acr import</code> copies an image from another registry
+inside Azure, so you do not need Docker in Cloud Shell.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ensure_rg &quot;$RG&quot; 13
+
+az acr create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$ACR_NAME&quot; \
+  --sku Basic \
+  --location &quot;$LOCATION&quot; \
+  --output none
+
+LOGIN_SERVER=$(az acr show --name &quot;$ACR_NAME&quot; --query loginServer --output tsv)
+echo &quot;Login server: $LOGIN_SERVER&quot;
+
+az acr import \
+  --name &quot;$ACR_NAME&quot; \
+  --source mcr.microsoft.com/azuredocs/aks-helloworld:v1 \
+  --image storefront:v1
+
+az acr repository show-tags --name &quot;$ACR_NAME&quot; --repository storefront --output table
+az acr show --name &quot;$ACR_NAME&quot; --query &quot;{tier:sku.name, adminUser:adminUserEnabled}&quot; --output table
+</code></pre></div>
+<p>Notice that the image now has a new name in your registry, <code>storefront:v1</code>, while its content (and digest) is
+identical to the Microsoft original. The admin user is <code>false</code>: nothing in this lab needs a registry password.</p>
+<p><strong>Optional — build in the cloud with ACR Tasks.</strong> The <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/app/Dockerfile" target="_blank" rel="noopener"><code>app/Dockerfile</code></a> adds one layer on top of
+the sample image (a new default title). If your subscription allows ACR Tasks, build it in Azure:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az acr build --registry &quot;$ACR_NAME&quot; --image storefront:v1-built ./app
+</code></pre></div>
+<p>If you see <code>TasksOperationsNotAllowed</code>, your subscription uses Azure free credits and ACR Tasks runs are paused for it
+at the time of writing. Skip this step; the import above is all the lab needs.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Home › Container registries › acrnusa… › Services › Repositories › storefront</em> shows the tag
+and its digest. <em>Settings › Access keys</em> shows that the admin user is off.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>az acr repository show-tags</code> lists <code>v1</code>, and the registry shows <code>Basic</code> with the admin user <code>false</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--run-a-container-in-seconds-with-container-instances" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Run a container in seconds with Container Instances</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--run-a-container-in-seconds-with-container-instances" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Container Instances runs one container group with no cluster and no VM to look after. You pay per second while it runs.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az container create \
+  --resource-group &quot;$RG&quot; \
+  --name ci-nusa-storefront \
+  --image mcr.microsoft.com/azuredocs/aks-helloworld:v1 \
+  --os-type Linux \
+  --cpu 1 --memory 1.5 \
+  --ports 80 \
+  --dns-name-label &quot;nusa-store-${SUFFIX}&quot; \
+  --environment-variables TITLE=&quot;Nusantara Retail storefront on Container Instances&quot; \
+  --output none
+
+az container show --resource-group &quot;$RG&quot; --name ci-nusa-storefront \
+  --query &quot;{state:instanceView.state, fqdn:ipAddress.fqdn}&quot; --output table
+
+ACI_FQDN=$(az container show --resource-group &quot;$RG&quot; --name ci-nusa-storefront --query ipAddress.fqdn --output tsv)
+curl -s &quot;http://${ACI_FQDN}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+az container logs --resource-group &quot;$RG&quot; --name ci-nusa-storefront
+</code></pre></div>
+<p>Why does this container group pull from Microsoft's public registry and not from yours? To pull from a private
+registry, Container Instances needs a <strong>user-assigned</strong> managed identity that holds AcrPull; it cannot use a
+system-assigned identity for image pulls. Stretch goal 1 shows how. Container Apps, next, can use its own
+system-assigned identity. Notice also that the address is plain HTTP: Container Instances gives you an IP address and a
+DNS name, not a managed HTTPS endpoint.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Home › Container instances › ci-nusa-storefront</em> shows the state and FQDN on <strong>Overview</strong>,
+and <strong>Containers › Logs</strong> shows the same output as <code>az container logs</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the state is <code>Running</code>, the FQDN looks like <code>nusa-store-&lt;suffix&gt;.&lt;region&gt;.azurecontainer.io</code>, and
+<code>curl</code> prints <code>&lt;title&gt;Nusantara Retail storefront on Container Instances&lt;/title&gt;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--deploy-to-container-apps-and-pull-with-a-managed-identity" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Deploy to Container Apps and pull with a managed identity</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--deploy-to-container-apps-and-pull-with-a-managed-identity" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>First create the environment, the secure boundary that your apps share. It takes two to four minutes. If you do not
+name a Log Analytics workspace, the CLI creates one for the environment's logs and tells you so.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az containerapp env create \
+  --name cae-nusa \
+  --resource-group &quot;$RG&quot; \
+  --location &quot;$LOCATION&quot; \
+  --output none
+</code></pre></div>
+<p>Now create the app from <strong>your</strong> registry:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az containerapp create \
+  --name &quot;$APP&quot; \
+  --resource-group &quot;$RG&quot; \
+  --environment cae-nusa \
+  --image &quot;${LOGIN_SERVER}/storefront:v1&quot; \
+  --registry-server &quot;$LOGIN_SERVER&quot; \
+  --registry-identity system \
+  --ingress external \
+  --target-port 80 \
+  --min-replicas 0 \
+  --max-replicas 5 \
+  --scale-rule-name http-busy \
+  --scale-rule-type http \
+  --scale-rule-http-concurrency 10 \
+  --env-vars TITLE=&quot;Nusantara Retail storefront v1&quot; \
+  --output none
+</code></pre></div>
+<p>What the important flags do:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--registry-identity system</code></td>
+<td>Turn on the app's system-assigned managed identity, grant it <strong>AcrPull</strong> on your registry and pull with it. Because the CLI does several steps for you, <code>--no-wait</code> is not allowed with this option.</td>
+</tr>
+<tr>
+<td><code>--ingress external --target-port 80</code></td>
+<td>Publish the app on a public HTTPS address and forward requests to port 80, where the sample app listens.</td>
+</tr>
+<tr>
+<td><code>--min-replicas 0 --max-replicas 5</code></td>
+<td>Scale to zero when idle; never run more than five replicas.</td>
+</tr>
+<tr>
+<td><code>--scale-rule-type http --scale-rule-http-concurrency 10</code></td>
+<td>Add a replica for roughly every 10 concurrent requests.</td>
+</tr>
+<tr>
+<td><code>--env-vars TITLE=...</code></td>
+<td>A setting inside the revision template; changing it later creates a new revision.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Open the app and prove that no password was involved:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>FQDN=$(az containerapp show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --query properties.configuration.ingress.fqdn --output tsv)
+echo &quot;https://${FQDN}&quot;
+curl -s &quot;https://${FQDN}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+
+az containerapp show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;properties.configuration.registries&quot; --output table
+
+PRINCIPAL_ID=$(az containerapp show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query identity.principalId --output tsv)
+ACR_ID=$(az acr show --name &quot;$ACR_NAME&quot; --query id --output tsv)
+az role assignment list --assignee &quot;$PRINCIPAL_ID&quot; --scope &quot;$ACR_ID&quot; --query &quot;[].roleDefinitionName&quot; --output tsv
+</code></pre></div>
+<p>The first request may take a few seconds: that is the cold start of the first replica.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open <em>Container Apps › ca-nusa-storefront</em>. <strong>Settings › Identity</strong> shows the system-assigned
+identity, <strong>Application › Containers</strong> shows the image from your registry, and <strong>Application › Revisions and
+replicas</strong> shows the running revision.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>curl</code> prints <code>&lt;title&gt;Nusantara Retail storefront v1&lt;/title&gt;</code>, the registries table shows your
+login server with identity <code>system</code>, and the role list prints <code>AcrPull</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-4--watch-it-scale-from-zero-to-five-and-back" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Watch it scale from zero to five and back</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--watch-it-scale-from-zero-to-five-and-back" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Check how many replicas are running now. Just after creation you may see 1; after about five quiet minutes you
+should see 0.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az containerapp replica list --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query &quot;length(@)&quot; --output tsv
+</code></pre></div>
+<p>Now play the 12.12 sale. The loop below sends about two minutes of traffic, 40 requests at a time, and counts the
+replicas every 15 seconds while it runs:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>end=$((SECONDS + 120))
+while (( SECONDS &lt; end )); do
+  seq 1 400 | xargs -P 40 -I{} curl -s -o /dev/null &quot;https://${FQDN}/&quot;
+done &amp;
+LOAD_PID=$!
+
+for i in $(seq 1 8); do
+  sleep 15
+  echo &quot;$(date +%T)  replicas: $(az containerapp replica list --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query &#x27;length(@)&#x27; --output tsv)&quot;
+done
+wait &quot;$LOAD_PID&quot;
+</code></pre></div>
+<p>The count climbs, and it never passes five because that is your maximum. When the load stops, the platform waits
+before it removes replicas: the cool-down before the last replica goes is 300 seconds by default. Check again after
+about seven minutes:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>sleep 420
+az containerapp replica list --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query &quot;length(@)&quot; --output tsv
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>ca-nusa-storefront › Monitoring › Metrics</em>, metric <strong>Replica Count</strong>, aggregation <strong>Max</strong>,
+time range <strong>Last 30 minutes</strong> draws the whole 0 → 5 → 0 curve. The <strong>Requests</strong> metric shows the load you sent.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> you saw the replica count rise to 5 (and no higher) during the load, and fall back to 0 once
+traffic stopped.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--release-v2-to-20-of-shoppers" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Release v2 to 20% of shoppers</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--release-v2-to-20-of-shoppers" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A canary release needs two active revisions and a traffic rule. The order of the steps matters.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code># 1. Allow several revisions to be active at the same time.
+az containerapp revision set-mode --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --mode multiple --output none
+
+# 2. Pin all traffic to the current revision BEFORE you deploy anything new.
+REV1=$(az containerapp show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query properties.latestRevisionName --output tsv)
+az containerapp ingress traffic set --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --revision-weight &quot;${REV1}=100&quot; --output none
+
+# 3. Deploy v2. A new environment variable is a revision-scope change, so it creates a new revision.
+az containerapp update --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --set-env-vars TITLE=&quot;Nusantara Retail storefront v2&quot; \
+  --revision-suffix v2 \
+  --output none
+REV2=&quot;${APP}--v2&quot;
+
+# 4. Test v2 on its own address before any shopper sees it.
+REV2_FQDN=$(az containerapp revision show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --revision &quot;$REV2&quot; \
+  --query properties.fqdn --output tsv)
+curl -s &quot;https://${REV2_FQDN}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+
+# 5. Canary: 80% stays on v1, 20% goes to v2.
+az containerapp ingress traffic set --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --revision-weight &quot;${REV1}=80&quot; &quot;${REV2}=20&quot; --output none
+
+az containerapp revision list --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;[].{revision:name, active:properties.active, traffic:properties.trafficWeight, replicas:properties.replicas}&quot; \
+  --output table
+</code></pre></div>
+<p>Without step 2, the existing rule &quot;100% to the latest revision&quot; would have sent every shopper to v2 the moment it
+became ready. Now sample the public address 40 times and count which title answered:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>for i in $(seq 1 40); do curl -s &quot;https://${FQDN}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;; done | sort | uniq -c
+</code></pre></div>
+<p>Expect roughly 32 answers from v1 and 8 from v2; the exact numbers vary from run to run.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Application › Revisions and replicas</em> (called <em>Revision management</em> in some portal
+versions) shows both revisions, their traffic percentages and their own URLs, and lets you change the split with a
+few clicks.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the revision list shows two active revisions with traffic <code>80</code> and <code>20</code>, and your sample shows
+both titles, mostly v1.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Rizky has decided that &quot;all our apps listen on 8080 now&quot; and updates the ingress without checking the image:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az containerapp ingress update --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --target-port 8080 --output none
+
+for i in $(seq 1 5); do
+  curl -s -o /dev/null -w &quot;%{http_code}\n&quot; --max-time 30 &quot;https://${FQDN}/&quot;
+done
+</code></pre></div>
+<p><strong>Symptom:</strong> instead of <code>200</code> you get errors or timeouts (<code>000</code> means <code>curl</code> gave up), and after a while the revisions
+report that they are not healthy:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az containerapp revision list --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;[].{revision:name, health:properties.healthState, running:properties.runningState}&quot; --output table
+</code></pre></div>
+<p>Notice that <strong>both</strong> revisions broke at once. Find the cause and repair it.</p>
+<details class="plain"><summary>Hint</summary>
+<p>Compare <code>az containerapp show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query properties.configuration.ingress.targetPort</code>
+with the port the sample app actually listens on (look back at <code>--ports 80</code> in Task 2). Ingress is an
+<strong>application-scope</strong> setting: it applies to every revision at once and does not create a new revision.</p>
+</details>
+<details class="plain"><summary>Fix</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az containerapp ingress update --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --target-port 80 --output none
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; --max-time 60 &quot;https://${FQDN}/&quot;
+</code></pre></div>
+<p>The target port must match the port the process listens on inside the container. <code>EXPOSE</code> in a Dockerfile only
+documents it.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes the resource group <code>rg-lunch13-&lt;suffix&gt;</code> with everything in it: the registry, the container group, the
+Container Apps environment and app, and the Log Analytics workspace. Nothing in this lab lives outside the resource
+group: the AcrPull role assignment sits on the registry, and the app's system-assigned identity is deleted with the
+app. Deletion continues in the background for a few minutes.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>The registry DNS name acrnusa….azurecr.io is already in use</code></td>
+<td>Registry names are global and someone else has yours</td>
+<td>Choose another suffix: <code>export SUFFIX=&lt;5 new lowercase letters or digits&gt;</code> then <code>source ../common/config.sh</code> again and re-set the variables</td>
+</tr>
+<tr>
+<td><code>(TasksOperationsNotAllowed) ACR Tasks requests for the registry … are not permitted</code></td>
+<td>ACR Tasks runs are paused for subscriptions on Azure free credits</td>
+<td>Skip the optional <code>az acr build</code>; <code>az acr import</code> is all the lab needs</td>
+</tr>
+<tr>
+<td><code>(MissingSubscriptionRegistration) The subscription is not registered to use namespace 'Microsoft.App'</code></td>
+<td>Resource provider not registered yet</td>
+<td>Run the <code>az provider register</code> loop from <strong>Before you start</strong> and try again</td>
+</tr>
+<tr>
+<td><code>DNS name label not available</code> when creating the container group</td>
+<td>Someone already uses that label in the region</td>
+<td>Use another label, for example <code>--dns-name-label &quot;nusa-store-${SUFFIX}-2&quot;</code></td>
+</tr>
+<tr>
+<td>Container app creation fails with <code>... UNAUTHORIZED: authentication required ...</code></td>
+<td>The identity's AcrPull assignment has not propagated yet, or your registry uses the ABAC permissions mode</td>
+<td>Wait a minute and run <code>az containerapp update --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --image &quot;${LOGIN_SERVER}/storefront:v1&quot;</code>. If <code>az acr show --name &quot;$ACR_NAME&quot; --query roleAssignmentMode</code> says <code>AbacRepositoryPermissions</code>, assign <strong>Container Registry Repository Reader</strong> to the app's identity instead of AcrPull</td>
+</tr>
+<tr>
+<td><code>unrecognized arguments</code> or <code>the following arguments are required</code> from an <code>az containerapp</code> command</td>
+<td>An older Azure CLI (likely on a local PC)</td>
+<td>Run <code>az upgrade</code>; if you use the Container Apps extension, <code>az extension add --name containerapp --upgrade</code></td>
+</tr>
+<tr>
+<td>The replica count never reaches 5</td>
+<td>Not enough concurrent requests</td>
+<td>Raise the parallelism (<code>-P 60</code>) or the duration, and make sure <code>FQDN</code> is set</td>
+</tr>
+<tr>
+<td>Replicas stay above 0 long after the test</td>
+<td>The cool-down has not finished, or a load loop is still running</td>
+<td>Wait 5–10 minutes; run <code>jobs</code> and <code>kill %1</code> if a background loop is still alive</td>
+</tr>
+<tr>
+<td>All 40 sample requests show v1</td>
+<td>v2 still has 0% of the traffic</td>
+<td><code>az containerapp ingress traffic show --name &quot;$APP&quot; --resource-group &quot;$RG&quot;</code> and repeat Task 5 step 5</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ol>
+<li>
+<p><strong>Pull into Container Instances from your registry.</strong> Create a user-assigned identity, give it AcrPull, and let a
+second container group use it:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az identity create --resource-group &quot;$RG&quot; --name id-nusa-acrpull --output none
+ID_RES=$(az identity show --resource-group &quot;$RG&quot; --name id-nusa-acrpull --query id --output tsv)
+ID_PRINCIPAL=$(az identity show --resource-group &quot;$RG&quot; --name id-nusa-acrpull --query principalId --output tsv)
+ACR_ID=$(az acr show --name &quot;$ACR_NAME&quot; --query id --output tsv)
+az role assignment create --assignee-object-id &quot;$ID_PRINCIPAL&quot; --assignee-principal-type ServicePrincipal \
+  --role AcrPull --scope &quot;$ACR_ID&quot; --output none
+sleep 60   # give the role assignment time to propagate
+az container create --resource-group &quot;$RG&quot; --name ci-nusa-private \
+  --image &quot;${LOGIN_SERVER}/storefront:v1&quot; --acr-identity &quot;$ID_RES&quot; --assign-identity &quot;$ID_RES&quot; \
+  --os-type Linux --cpu 1 --memory 1.5 --ports 80 --dns-name-label &quot;nusa-private-${SUFFIX}&quot; --output none
+</code></pre></div>
+<p>If the pull is refused, read the prerequisites in the Container Instances article about deploying from a registry
+with a managed identity; they change from time to time.</p>
+</li>
+<li>
+<p><strong>Use your own build.</strong> If <code>az acr build</code> worked in Task 1, deploy <code>storefront:v1-built</code> as a third revision and
+give it 10% of the traffic.</p>
+</li>
+<li>
+<p><strong>Add a label.</strong> A label gives v2 a stable test address that does not change when you move it to another
+revision; find the label's URL under <em>Revisions and replicas</em>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az containerapp revision label add --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --label staging --revision &quot;$REV2&quot;
+</code></pre></div>
+</li>
+<li>
+<p><strong>Watch the logs.</strong> Stream console output while you send requests; add <code>--type system</code> to see the platform's
+scaling events instead:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az containerapp logs show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --follow
+</code></pre></div>
+</li>
+<li>
+<p><strong>Finish the release.</strong> After <code>verify.sh</code> passes, move 100% of the traffic to v2 and deactivate v1:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az containerapp ingress traffic set --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --revision-weight &quot;${REV2}=100&quot;
+az containerapp revision deactivate --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --revision &quot;$REV1&quot;
+</code></pre></div>
+</li>
+</ol>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build the following, any way you like (portal, CLI, Bicep):</p>
+<ol>
+<li>A resource group <code>rg-lunch13-&lt;suffix&gt;</code> in your lab region, created with <code>ensure_rg &quot;$(rg_name 13)&quot; 13</code> so that
+<code>cleanup.sh</code> can find it.</li>
+<li>A container registry <code>acrnusa&lt;suffix&gt;</code> with the admin user disabled, containing the image <code>storefront:v1</code> copied
+from <code>mcr.microsoft.com/azuredocs/aks-helloworld:v1</code> (the app listens on port 80).</li>
+<li>A container group <code>ci-nusa-storefront</code> that runs the same sample image with a public DNS name label and answers
+HTTP 200 on port 80.</li>
+<li>A Container Apps environment <code>cae-nusa</code> with a container app <code>ca-nusa-storefront</code> that runs <code>storefront:v1</code> from your
+registry and authenticates with its <strong>system-assigned managed identity</strong> (no registry passwords), with external
+ingress on target port 80, between 0 and 5 replicas, and an HTTP scale rule.</li>
+<li>Multiple revision mode with two active revisions. The newer revision sets the environment variable <code>TITLE</code>, and
+traffic is split 80/20 with the 20% going to the newer revision.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="12-cosmos-db.html"><small>← Previous lab</small>12 · A product catalogue that scales</a><a class="next" href="14-serverless.html"><small>Next lab →</small>14 · React to new orders automatically</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+#cloud-config
+# -----------------------------------------------------------------------------
+# Lab 08 · tiny "app tier" for vm-app.
+# Answers HTTP on TCP 8080 with a one-line JSON message. It uses Python's
+# built-in HTTP server, so it needs NO outbound internet access and works in a
+# private subnet before the NAT gateway exists.
+#   GET http://<vm-app private IP>:8080/  ->  {"service": "nusantara-retail-app-tier", ...}
+# -----------------------------------------------------------------------------
+write_files:
+  - path: /var/www/nusa-app/index.html
+    permissions: '0644'
+    content: |
+      {"service": "nusantara-retail-app-tier", "status": "ok", "port": 8080}
+  - path: /etc/systemd/system/nusa-app.service
+    permissions: '0644'
+    content: |
+      [Unit]
+      Description=Nusantara Retail demo app tier (TCP 8080)
+      After=network-online.target
+
+      [Service]
+      ExecStart=/usr/bin/python3 -m http.server 8080 --directory /var/www/nusa-app
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+
+runcmd:
+  - systemctl daemon-reload
+  - systemctl enable --now nusa-app.service

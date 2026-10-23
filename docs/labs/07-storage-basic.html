@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 07 · Store product images and invoices · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 07: Store product images and invoices. about 45 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 07 · Store product images and invoices">
+<meta property="og:description" content="Hands-on Azure lab 07: Store product images and invoices. about 45 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/07-storage-basic.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="07" style="--c:#e2482f">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#e2482f">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 07</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>07</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Store product images and invoices</h1>
+        <p class="lab-story">🏪 <b>Episode 07 · The USB Drive Goes Home on Fridays</b> — Forty thousand photos and ten years of invoices live on one disk next to the pantry. <a href="../lunches/07-storage-basic.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 45 minutes</span>
+          <span class="chip cost">💲 free or close to free</span>
+          <span class="chip">Difficulty ★☆☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 9 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--create-a-secure-storage-account">Task 1 · Create a secure storage account</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--give-yourself-a-data-role">Task 2 · Give yourself a data role</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--create-containers-and-upload-invoices-with-the-azure-cli">Task 3 · Create containers and upload invoices with the Azure CLI</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--upload-product-images-with-azcopy">Task 4 · Upload product images with AzCopy</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--move-blobs-to-cooler-tiers--and-meet-rehydration">Task 5 · Move blobs to cooler tiers — and meet rehydration</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--share-one-image-with-a-user-delegation-sas">Task 6 · Share one image with a user delegation SAS</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--create-an-azure-files-share-for-the-stores">Task 7 · Create an Azure Files share for the stores</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/.gitignore" target="_blank" rel="noopener"><span>.gitignore</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/invoices/INV-2026-0001.txt" target="_blank" rel="noopener"><span>sample-files/invoices/INV-2026-0001.txt</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/invoices/INV-2026-0002.txt" target="_blank" rel="noopener"><span>sample-files/invoices/INV-2026-0002.txt</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/products/batik-shirt.svg" target="_blank" rel="noopener"><span>sample-files/products/batik-shirt.svg</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/products/kebaya-blue.svg" target="_blank" rel="noopener"><span>sample-files/products/kebaya-blue.svg</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/products/songket-scarf.svg" target="_blank" rel="noopener"><span>sample-files/products/songket-scarf.svg</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/store-docs/price-list-2026-10.csv" target="_blank" rel="noopener"><span>sample-files/store-docs/price-list-2026-10.csv</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>3 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/07-storage-basic" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Nusantara Retail is moving its files off the server next to the pantry. You create a secure general-purpose v2 storage
+account, give yourself a data role, upload invoices with the Azure CLI and product images with AzCopy, move older data
+to cheaper access tiers, share one product image with Rizky the contractor through a link that expires after an hour,
+and create an Azure Files share for the stores' price lists.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  you([&quot;You · Storage Blob Data Contributor&quot;])
+  rizky([&quot;Rizky · 1-hour read-only SAS&quot;])
+  subgraph rg[&quot;rg-lunch07-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph st[&quot;stnusa07&amp;lt;suffix&amp;gt; · StorageV2 · LRS · TLS 1.2 · no anonymous access&quot;]
+      P[&quot;Container: products&lt;br/&gt;3 images · 1 in Cool&quot;]
+      I[&quot;Container: invoices&lt;br/&gt;2 invoices · 1 in Archive&quot;]
+      F[&quot;File share: store-docs&lt;br/&gt;price list&quot;]
+    end
+  end
+  you -- &quot;az CLI + AzCopy (Entra ID)&quot; --&gt; P
+  you --&gt; I
+  you -- &quot;account key (CLI fetches it)&quot; --&gt; F
+  rizky -. &quot;HTTPS GET with SAS&quot; .-&gt; P
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources and assign roles (Owner, or Contributor plus User Access
+Administrator) — see <a href="01-before-you-begin.html">Lab 01</a>.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install: the Azure CLI,
+AzCopy and <code>curl</code> are already there.</li>
+<li>Get the lab files and load the shared settings:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/07-storage-basic
+source ../common/config.sh
+RG=$(rg_name 07)
+ACCOUNT=&quot;stnusa07${SUFFIX}&quot;
+mkdir -p work
+echo &quot;Resource group: $RG   Storage account: $ACCOUNT&quot;
+</code></pre></div>
+<ul>
+<li>This lab has no <code>setup.sh</code>: creating the account is part of the lab.</li>
+</ul>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist. Here the cost is tiny (a few kilobytes of data), but finish with the
+<strong>Clean up</strong> section anyway, even if you stop halfway. If Cloud Shell restarts, run the block above again to restore
+your variables.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–7 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--create-a-secure-storage-account" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Create a secure storage account</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--create-a-secure-storage-account" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A storage account is the namespace for all your data, so its security settings come first. You set them explicitly:
+the Azure CLI defaults to read-access geo-redundant storage (<code>Standard_RAGRS</code>) and leaves the minimum TLS version unset
+unless you ask.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ensure_rg &quot;$RG&quot; 07
+
+az storage account create \
+  --name &quot;$ACCOUNT&quot; \
+  --resource-group &quot;$RG&quot; \
+  --location &quot;$LOCATION&quot; \
+  --kind StorageV2 \
+  --sku Standard_LRS \
+  --access-tier Hot \
+  --min-tls-version TLS1_2 \
+  --allow-blob-public-access false \
+  --https-only true \
+  --output none
+</code></pre></div>
+<p>What each choice means: <strong>StorageV2</strong> is the general-purpose v2 account type; <strong>Standard_LRS</strong> keeps three copies in one
+datacenter (cheapest — fine for a lab); <strong>Hot</strong> is the default tier for new blobs; <strong>TLS 1.2</strong> rejects older encryption
+protocols; anonymous blob access is <strong>disallowed</strong> for the whole account; and only <strong>HTTPS</strong> is accepted.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Storage accounts › Create</em>. On <strong>Basics</strong> choose your resource group, the name, your region,
+<em>Standard</em> performance and <em>LRS</em>. On <strong>Advanced</strong> keep <em>Require secure transfer</em> checked, uncheck <em>Allow enabling
+anonymous access on individual containers</em>, and set <em>Minimum TLS version</em> to 1.2. Then come back for Task 2.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> this command shows <code>StorageV2</code>, <code>Standard_LRS</code>, <code>TLS1_2</code>, <code>False</code> (anonymous access) and <code>True</code>
+(HTTPS only), plus your blob endpoint:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage account show --name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;{kind:kind, sku:sku.name, tls:minimumTlsVersion, anonymous:allowBlobPublicAccess, httpsOnly:enableHttpsTrafficOnly, blob:primaryEndpoints.blob}&quot; \
+  --output table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-2--give-yourself-a-data-role" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Give yourself a data role</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--give-yourself-a-data-role" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>You created the account, but managing an account (control plane) and reading its data (data plane) are different
+permissions. First, see what happens without a data role:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage container list --account-name &quot;$ACCOUNT&quot; --auth-mode login --output table
+</code></pre></div>
+<p>Unless you already hold a blob data role at a higher scope, the command fails with <em>&quot;You do not have the required
+permissions needed to perform this operation…&quot;</em> — even if you are Owner of the subscription. <code>--auth-mode login</code>
+means &quot;use my Microsoft Entra identity&quot;, and that identity needs a <strong>data role</strong>. Assign <strong>Storage Blob Data
+Contributor</strong> to yourself, scoped to just this account (least privilege), and wait until it takes effect:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ACCOUNT_ID=$(az storage account show --name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; --query id --output tsv)
+
+az role assignment create \
+  --assignee-object-id &quot;$(my_object_id)&quot; \
+  --assignee-principal-type User \
+  --role &quot;Storage Blob Data Contributor&quot; \
+  --scope &quot;$ACCOUNT_ID&quot; \
+  --output none
+
+wait_until &quot;your data role to take effect&quot; 600 \
+  az storage container list --account-name &quot;$ACCOUNT&quot; --auth-mode login \
+  &amp;&amp; echo &quot;Data role is active.&quot;
+</code></pre></div>
+<p>New role assignments usually work within a minute or two, but they can take several minutes; <code>wait_until</code> retries every
+10 seconds.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Storage account › <em>Access control (IAM)</em> › <em>Add role assignment</em> › <em>Storage Blob Data
+Contributor</em> › <em>Members: User, group, or service principal</em> › select yourself › <em>Review + assign</em>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>az storage container list --account-name &quot;$ACCOUNT&quot; --auth-mode login --output table</code> now returns an
+empty list without an error, and
+<code>az role assignment list --assignee &quot;$(my_object_id)&quot; --scope &quot;$ACCOUNT_ID&quot; --query &quot;[].roleDefinitionName&quot; --output tsv</code>
+prints <code>Storage Blob Data Contributor</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--create-containers-and-upload-invoices-with-the-azure-cli" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Create containers and upload invoices with the Azure CLI</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--create-containers-and-upload-invoices-with-the-azure-cli" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Containers group blobs. Create one for product images and one for invoices, then upload the two sample invoices with
+your Entra identity:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>for c in products invoices; do
+  az storage container create --account-name &quot;$ACCOUNT&quot; --name &quot;$c&quot; --auth-mode login --output none
+done
+
+for f in sample-files/invoices/*.txt; do
+  az storage blob upload \
+    --account-name &quot;$ACCOUNT&quot; \
+    --container-name invoices \
+    --name &quot;$(basename &quot;$f&quot;)&quot; \
+    --file &quot;$f&quot; \
+    --overwrite \
+    --auth-mode login \
+    --output none
+done
+</code></pre></div>
+<p><code>--overwrite</code> lets you re-run the loop safely; without it, uploading a blob that already exists fails.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> two invoices in the hot tier:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name invoices --auth-mode login \
+  --query &quot;[].{name:name, bytes:properties.contentLength, tier:properties.blobTier}&quot; --output table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-4--upload-product-images-with-azcopy" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Upload product images with AzCopy</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--upload-product-images-with-azcopy" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>AzCopy is built for bulk transfers: it copies many files in parallel and can resume an interrupted job. It is
+preinstalled in Cloud Shell, but it does <strong>not</strong> automatically use your Cloud Shell sign-in. You have three ways to
+authorize it: append a SAS to the URL, run <code>azcopy login</code> (a device-code sign-in that needs a secret store such as a
+Linux keyring), or tell AzCopy to borrow the Azure CLI's token. The last option is the simplest in Cloud Shell:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>export AZCOPY_AUTO_LOGIN_TYPE=AZCLI
+export AZCOPY_TENANT_ID=&quot;$(az account show --query tenantId --output tsv)&quot;
+azcopy --version
+
+azcopy copy &quot;sample-files/products/*&quot; &quot;https://${ACCOUNT}.blob.core.windows.net/products/&quot;
+azcopy list &quot;https://${ACCOUNT}.blob.core.windows.net/products&quot;
+</code></pre></div>
+<p>AzCopy still uses your <strong>data role</strong> — it simply obtains the token from the Azure CLI. The job summary should end
+with <code>Final Job Status: Completed</code> and three completed file transfers. AzCopy also guesses each file's content type
+from its extension, so the images are stored as <code>image/svg+xml</code> and display correctly in a browser.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> three images in <code>products</code>, each with content type <code>image/svg+xml</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name products --auth-mode login \
+  --query &quot;[].{name:name, type:properties.contentSettings.contentType, tier:properties.blobTier}&quot; --output table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-5--move-blobs-to-cooler-tiers--and-meet-rehydration" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Move blobs to cooler tiers — and meet rehydration</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--move-blobs-to-cooler-tiers--and-meet-rehydration" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Last season's songket scarf photo is rarely viewed, so it moves to <strong>Cool</strong>. Invoice INV-2026-0001 is paid and closed,
+so it moves to <strong>Archive</strong>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage blob set-tier --account-name &quot;$ACCOUNT&quot; --container-name products \
+  --name songket-scarf.svg --tier Cool --auth-mode login
+az storage blob set-tier --account-name &quot;$ACCOUNT&quot; --container-name invoices \
+  --name INV-2026-0001.txt --tier Archive --auth-mode login
+
+for c in products invoices; do
+  az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name &quot;$c&quot; --auth-mode login \
+    --query &quot;[].{name:name, tier:properties.blobTier, inferred:properties.blobTierInferred}&quot; --output table
+done
+</code></pre></div>
+<p>Blobs you never touched show the account default (<code>Hot</code>) as an <em>inferred</em> tier. Now try to read the archived invoice:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage blob download --account-name &quot;$ACCOUNT&quot; --container-name invoices \
+  --name INV-2026-0001.txt --file work/INV-2026-0001.txt --auth-mode login --output none
+</code></pre></div>
+<p>It fails with <em>&quot;This operation is not permitted on an archived blob&quot;</em> (<code>BlobArchived</code>). An archived blob is offline.
+To read it you <strong>rehydrate</strong> it. Copying it to a new blob in an online tier leaves the archived original untouched,
+which avoids the early deletion charge (archive expects 180 days):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage blob copy start \
+  --account-name &quot;$ACCOUNT&quot; \
+  --source-container invoices --source-blob INV-2026-0001.txt \
+  --destination-container invoices --destination-blob INV-2026-0001-rehydrated.txt \
+  --tier Hot --rehydrate-priority Standard \
+  --auth-mode login --output none
+
+az storage blob show --account-name &quot;$ACCOUNT&quot; --container-name invoices \
+  --name INV-2026-0001-rehydrated.txt --auth-mode login \
+  --query &quot;{tier:properties.blobTier, status:properties.rehydrationStatus, priority:rehydratePriority}&quot; \
+  --output table
+</code></pre></div>
+<p>The copy shows tier <code>Archive</code> and status <code>rehydrate-pending-to-hot</code>. Standard priority can take up to 15 hours, so
+<strong>don't wait</strong> — the lesson is the delay itself. (High priority is faster and pricier, and is meant for emergencies.)</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Storage browser › Blob containers › invoices</em> › select a blob › <em>Change tier</em>. When you change
+an archived blob back to an online tier, the same dialog asks for a <em>Rehydrate priority</em>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>songket-scarf.svg</code> shows tier <code>Cool</code>, <code>INV-2026-0001.txt</code> shows <code>Archive</code>, and the rehydrated
+copy reports <code>rehydrate-pending-to-hot</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--share-one-image-with-a-user-delegation-sas" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Share one image with a user delegation SAS</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--share-one-image-with-a-user-delegation-sas" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Rizky needs to download one product image this afternoon. You won't give him the account key (it unlocks
+everything) and you won't turn on anonymous access. Instead you create a <strong>user delegation SAS</strong>: a URL token signed
+with a key you obtain through your Entra identity, limited to <strong>read</strong> on <strong>one blob</strong> for <strong>one hour</strong>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>EXPIRY=$(date -u -d &quot;+1 hour&quot; &#x27;+%Y-%m-%dT%H:%MZ&#x27;)
+
+SAS_URL=$(az storage blob generate-sas \
+  --account-name &quot;$ACCOUNT&quot; \
+  --container-name products \
+  --name batik-shirt.svg \
+  --permissions r \
+  --expiry &quot;$EXPIRY&quot; \
+  --https-only \
+  --auth-mode login \
+  --as-user \
+  --full-uri \
+  --output tsv)
+
+echo &quot;${SAS_URL%%sig=*}sig=&lt;hidden&gt;&quot;
+</code></pre></div>
+<p>The printed URL hides the signature, but look at the other query parameters: <code>sp=r</code> (read only), <code>se=</code> (the expiry),
+<code>spr=https</code> (HTTPS only), and <code>skoid</code>/<code>sktid</code> — the object ID and tenant of the user who signed it. Those <code>sk…</code> fields are
+what make it a <em>user delegation</em> SAS. Now test it like Rizky would, with no Azure sign-in at all:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>curl -s -o work/batik-shirt.svg -w &quot;With the SAS:    HTTP %{http_code}\n&quot; &quot;$SAS_URL&quot;
+curl -s -o /dev/null -w &quot;Without the SAS: HTTP %{http_code}\n&quot; \
+  &quot;https://${ACCOUNT}.blob.core.windows.net/products/batik-shirt.svg&quot;
+curl -s &quot;https://${ACCOUNT}.blob.core.windows.net/products/batik-shirt.svg&quot; | grep -o &#x27;&lt;Code&gt;[^&lt;]*&lt;/Code&gt;&#x27;
+head -c 100 work/batik-shirt.svg; echo
+</code></pre></div>
+<p>With the SAS you get <code>200</code> and the SVG lands in <code>work/</code>. Without it you get an error, typically <code>409</code> with
+<code>PublicAccessNotPermitted</code> — anonymous access is off for the whole account. Always quote SAS URLs in double quotes:
+the <code>&amp;</code> characters would otherwise split the command.</p>
+<p>If a link ever leaks, you can invalidate <strong>every</strong> user delegation SAS for the account at once (it can take a few
+minutes, because keys are cached):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code># Only when you need it — this breaks all user delegation SAS links for the account:
+# az storage account revoke-delegation-keys --name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot;
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Storage browser › products</em> › select <code>batik-shirt.svg</code> › <em>Generate SAS</em>. Choose <em>Signing
+method: User delegation key</em>, <em>Permissions: Read</em>, an expiry one hour from now and <em>HTTPS only</em>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the first <code>curl</code> prints <code>HTTP 200</code>, the second prints an error code, and
+<code>work/batik-shirt.svg</code> starts with <code>&lt;svg</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-7--create-an-azure-files-share-for-the-stores" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">Create an Azure Files share for the stores</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--create-an-azure-files-share-for-the-stores" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Store managers want a shared drive for price lists. Azure Files gives you a managed SMB share. Create a 1 GiB share
+(standard shares in a general-purpose v2 account bill for the data you actually store) and upload this month's price
+list:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage share-rm create \
+  --resource-group &quot;$RG&quot; \
+  --storage-account &quot;$ACCOUNT&quot; \
+  --name store-docs \
+  --quota 1 \
+  --enabled-protocols SMB \
+  --output none
+
+az storage file upload \
+  --account-name &quot;$ACCOUNT&quot; \
+  --share-name store-docs \
+  --source sample-files/store-docs/price-list-2026-10.csv \
+  --auth-mode key \
+  --output none
+
+az storage file list --account-name &quot;$ACCOUNT&quot; --share-name store-docs --auth-mode key --output table
+</code></pre></div>
+<p>Notice <code>--auth-mode key</code>. With no other credentials, the CLI uses your Owner or Contributor permission to <strong>fetch the
+account key</strong> and signs the request with it — that is Shared Key authorization in action, and it is why the list-keys
+permission is so powerful. For file data, Entra-based access needs extra roles and flags (see the stretch goals), and
+SMB clients typically mount shares with identity-based authentication or the account key. Lunch 24 shows how to switch
+Shared Key off once nothing depends on it.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Storage account › <em>Data storage › File shares</em> (the portal may call them <em>Classic file
+shares</em>) › <em>+ File share</em>. Open the share and select <strong>Connect</strong> to see a ready-made mount script for Windows, Linux or
+macOS. Mounting needs outbound TCP port 445, which many home and office networks block.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong>
+<code>az storage share-rm list --resource-group &quot;$RG&quot; --storage-account &quot;$ACCOUNT&quot; --query &quot;[].name&quot; --output tsv</code> prints
+<code>store-docs</code>, and the file list shows <code>price-list-2026-10.csv</code>.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A SAS can only do what it says, for as long as it says. Break it twice.</p>
+<p><strong>A — A read-only SAS can't upload.</strong> Rizky also wants to upload a new product photo, so you send him… a read-only SAS:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>RO_URL=$(az storage blob generate-sas --account-name &quot;$ACCOUNT&quot; --container-name products \
+  --name new-arrival.svg --permissions r --expiry &quot;$EXPIRY&quot; --https-only \
+  --auth-mode login --as-user --full-uri --output tsv)
+
+curl -s -o work/put-result.xml -w &quot;Upload with a read-only SAS: HTTP %{http_code}\n&quot; \
+  -X PUT -H &quot;x-ms-blob-type: BlockBlob&quot; \
+  --data-binary @sample-files/products/kebaya-blue.svg &quot;$RO_URL&quot;
+grep -o &#x27;&lt;Code&gt;[^&lt;]*&lt;/Code&gt;&#x27; work/put-result.xml
+</code></pre></div>
+<p>You get <code>403</code> with <code>AuthorizationPermissionMismatch</code>: the signature is valid, but the SAS doesn't grant write access.</p>
+<details class="plain"><summary>Hint: fix A</summary>
+<p>Generate a new SAS for that blob name with <strong>create</strong> and <strong>write</strong> permissions, still short-lived:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>RW_URL=$(az storage blob generate-sas --account-name &quot;$ACCOUNT&quot; --container-name products \
+  --name new-arrival.svg --permissions cw --expiry &quot;$EXPIRY&quot; --https-only \
+  --auth-mode login --as-user --full-uri --output tsv)
+curl -s -o /dev/null -w &quot;Upload with a create/write SAS: HTTP %{http_code}\n&quot; \
+  -X PUT -H &quot;x-ms-blob-type: BlockBlob&quot; -H &quot;Content-Type: image/svg+xml&quot; \
+  --data-binary @sample-files/products/kebaya-blue.svg &quot;$RW_URL&quot;
+</code></pre></div>
+<p><code>201</code> means the blob was created. Grant the smallest set of permissions that does the job — and nothing more.</p>
+</details>
+<p><strong>B — An expired SAS stops working.</strong> Create a link that lives for about two minutes, prove it works, then wait:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>SHORT_EXPIRY=$(date -u -d &quot;+2 minutes&quot; &#x27;+%Y-%m-%dT%H:%MZ&#x27;)
+SHORT_URL=$(az storage blob generate-sas --account-name &quot;$ACCOUNT&quot; --container-name products \
+  --name batik-shirt.svg --permissions r --expiry &quot;$SHORT_EXPIRY&quot; --https-only \
+  --auth-mode login --as-user --full-uri --output tsv)
+
+curl -s -o /dev/null -w &quot;Before expiry: HTTP %{http_code}\n&quot; &quot;$SHORT_URL&quot;
+echo &quot;Waiting 3 minutes for the SAS to expire…&quot;; sleep 180
+curl -s -o work/expired.xml -w &quot;After expiry:  HTTP %{http_code}\n&quot; &quot;$SHORT_URL&quot;
+grep -o &#x27;&lt;Code&gt;[^&lt;]*&lt;/Code&gt;&#x27; work/expired.xml
+</code></pre></div>
+<p>After the wait you get <code>403</code> with <code>AuthenticationFailed</code>; the error details say the signature isn't valid in the
+current time frame.</p>
+<details class="plain"><summary>Hint: fix B</summary>
+<p>You can't extend a SAS — its expiry is part of the signature. Generate a new one with a sensible lifetime (as in
+Task 6) and send the new link. Keep lifetimes short on purpose: an expired link is useless to whoever finds it later.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. The data-plane checks use
+your data role from Task 2.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+unset AZCOPY_AUTO_LOGIN_TYPE AZCOPY_TENANT_ID SAS_URL RO_URL RW_URL SHORT_URL
+</code></pre></div>
+<p>This deletes the resource group <code>rg-lunch07-&lt;suffix&gt;</code> (with the storage account and its role assignment) and the local
+<code>work/</code> folder. Deletion continues in the background for a few minutes. Deleting the archived invoice early triggers a
+prorated early deletion charge for a few kilobytes — a fraction of a cent.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>The storage account named stnusa07… is already taken.</code></td>
+<td>Storage account names are global; someone has the same name</td>
+<td>Set a different name, for example <code>ACCOUNT=&quot;stnusa07${SUFFIX}x&quot;</code>, and use it in every command</td>
+</tr>
+<tr>
+<td><code>You do not have the required permissions needed to perform this operation…</code></td>
+<td>No data role yet, or it hasn't propagated</td>
+<td>Finish Task 2; wait a few minutes and retry</td>
+</tr>
+<tr>
+<td><code>az role assignment create</code> fails with <code>AuthorizationFailed</code></td>
+<td>You can't assign roles (Contributor alone can't)</td>
+<td>Use a subscription where you are Owner or User Access Administrator</td>
+</tr>
+<tr>
+<td>AzCopy reports an authentication or 403 error</td>
+<td>The <code>AZCOPY_*</code> variables were lost (new Cloud Shell session) or the data role isn't active</td>
+<td>Re-run the two <code>export</code> lines in Task 4; or try <code>export AZCOPY_AUTO_LOGIN_TYPE=DEVICE</code> and follow the device-code prompt</td>
+</tr>
+<tr>
+<td><code>This operation is not permitted on an archived blob.</code></td>
+<td>The blob is in the archive tier</td>
+<td>Expected in Task 5 — rehydrate it first</td>
+</tr>
+<tr>
+<td><code>curl</code> returns <code>403</code> with <code>AuthenticationFailed</code></td>
+<td>The SAS expired, or the URL was cut at an <code>&amp;</code></td>
+<td>Generate a new SAS; wrap the URL in double quotes</td>
+</tr>
+<tr>
+<td><code>curl</code> returns <code>403</code> with <code>AuthorizationPermissionMismatch</code></td>
+<td>The SAS lacks the permission for that operation</td>
+<td>Generate a SAS with the right permissions (Break it and fix it, part A)</td>
+</tr>
+<tr>
+<td><code>az storage file upload</code> fails with <code>KeyBasedAuthenticationNotPermitted</code></td>
+<td>Shared Key is disabled on the account (for example by a policy)</td>
+<td>Use the Entra route from the stretch goals</td>
+</tr>
+<tr>
+<td><code>date: invalid date '+1 hour'</code></td>
+<td>You are on macOS, not Cloud Shell</td>
+<td>Use Cloud Shell, or <code>date -u -v+1H '+%Y-%m-%dT%H:%MZ'</code> on macOS</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li>Upload to the file share with Entra ID instead of the key: assign yourself <strong>Storage File Data Privileged
+Contributor</strong> on the account, then use <code>--auth-mode login --enable-file-backup-request-intent</code> with
+<code>az storage file upload</code>. What does &quot;backup intent&quot; bypass, and why is that role called <em>privileged</em>?</li>
+<li>Open the account's <strong>Redundancy</strong> page in the portal. Which options can you switch to directly, and which need a
+conversion? Why would the archived invoice block a move to ZRS?</li>
+<li>Change the account's default access tier to <strong>Cool</strong> (<code>az storage account update --access-tier Cool</code>) and list the
+blobs again. Which blobs changed tier, and which kept an explicitly set tier?</li>
+<li>Use <strong>Azure Storage Explorer</strong> on your PC to browse the account with your Entra sign-in.</li>
+<li>Mount the <code>store-docs</code> share from your laptop with the portal's <em>Connect</em> script (if your network allows port 445).</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build the following, any way you like (portal, CLI, Bicep):</p>
+<ol>
+<li>A resource group named <code>rg-lunch07-&lt;suffix&gt;</code> (use <code>ensure_rg &quot;$RG&quot; 07</code> so cleanup can find it).</li>
+<li>A storage account named <code>stnusa07&lt;suffix&gt;</code>: general-purpose v2 (<code>StorageV2</code>), <code>Standard_LRS</code>, minimum TLS 1.2,
+anonymous blob access disallowed, HTTPS only.</li>
+<li>You hold <strong>Storage Blob Data Contributor</strong> (or Owner) on the account.</li>
+<li>A container with at least two blobs, and at least one blob in the <strong>Cool</strong> tier. (The guided path also archives an
+invoice — verify.sh reports archived blobs as a note.)</li>
+<li>A one-hour, read-only <strong>user delegation SAS</strong> for one image that returns HTTP 200 with <code>curl</code> — verify.sh can't
+check this one, so prove it to yourself.</li>
+<li>An Azure Files share named <code>store-docs</code> containing at least one file.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="06-virtual-machines-basic.html"><small>← Previous lab</small>06 · Your first web server VM</a><a class="next" href="08-networking-basic.html"><small>Next lab →</small>08 · Build Nusantara Retail&#x27;s network</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

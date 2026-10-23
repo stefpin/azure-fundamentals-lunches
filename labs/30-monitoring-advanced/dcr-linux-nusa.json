@@ -1,0 +1,48 @@
+{
+  "properties": {
+    "description": "Nusantara Retail Linux baseline: Syslog Warning and above, and a few performance counters every 60 seconds.",
+    "dataSources": {
+      "syslog": [
+        {
+          "name": "syslog-warning-and-above",
+          "streams": ["Microsoft-Syslog"],
+          "facilityNames": ["auth", "authpriv", "cron", "daemon", "syslog", "user"],
+          "logLevels": ["Warning", "Error", "Critical", "Alert", "Emergency"]
+        }
+      ],
+      "performanceCounters": [
+        {
+          "name": "perf-basics",
+          "streams": ["Microsoft-Perf"],
+          "samplingFrequencyInSeconds": 60,
+          "counterSpecifiers": [
+            "Processor(*)\\% Processor Time",
+            "Memory(*)\\% Used Memory",
+            "Memory(*)\\Available MBytes Memory",
+            "Logical Disk(*)\\% Free Space",
+            "Network(*)\\Total Bytes Transmitted",
+            "Network(*)\\Total Bytes Received"
+          ]
+        }
+      ]
+    },
+    "destinations": {
+      "logAnalytics": [
+        {
+          "name": "la-nusa",
+          "workspaceResourceId": "__WORKSPACE_RESOURCE_ID__"
+        }
+      ]
+    },
+    "dataFlows": [
+      {
+        "streams": ["Microsoft-Syslog"],
+        "destinations": ["la-nusa"]
+      },
+      {
+        "streams": ["Microsoft-Perf"],
+        "destinations": ["la-nusa"]
+      }
+    ]
+  }
+}

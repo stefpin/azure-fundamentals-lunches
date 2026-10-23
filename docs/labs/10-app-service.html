@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 10 · Move the storefront to PaaS · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 10: Move the storefront to PaaS. about 45 minutes (+15 minutes for the optional slot stretch), cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 10 · Move the storefront to PaaS">
+<meta property="og:description" content="Hands-on Azure lab 10: Move the storefront to PaaS. about 45 minutes (+15 minutes for the optional slot stretch), cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/10-app-service.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="10" style="--c:#11935a">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#11935a">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 10</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>10</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Move the storefront to PaaS</h1>
+        <p class="lab-story">🏪 <b>Episode 10 · Dewi&#x27;s Friday Nights</b> — Patching servers every Friday night is not what a developer was hired for. <a href="../lunches/10-app-service.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 45 minutes (+15 minutes for the optional slot stretch)</span>
+          <span class="chip cost">💲 free or close to free</span>
+          <span class="chip">Difficulty ★☆☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 8 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--meet-the-app-and-create-the-resource-group">Task 1 · Meet the app and create the resource group</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--deploy-with-one-command">Task 2 · Deploy with one command</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--configure-the-store-with-an-app-setting">Task 3 · Configure the store with an app setting</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--force-https">Task 4 · Force HTTPS</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--watch-the-log-stream">Task 5 · Watch the log stream</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--see-what-you-are-paying-for">Task 6 · See what you are paying for</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/10-app-service/.gitignore" target="_blank" rel="noopener"><span>.gitignore</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/10-app-service/app/app.py" target="_blank" rel="noopener"><span>app/app.py</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/10-app-service/app/requirements.txt" target="_blank" rel="noopener"><span>app/requirements.txt</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/10-app-service/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/10-app-service/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/10-app-service/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/10-app-service/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>3 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/10-app-service" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Nusantara Retail's storefront moves off its virtual machines and onto <strong>Azure App Service</strong>. You deploy the provided
+Python (Flask) storefront to a Linux App Service plan on the <strong>Free (F1)</strong> tier, configure the store name as an <strong>app
+setting</strong>, force <strong>HTTPS</strong>, and watch the app's <strong>log stream</strong>. Then you break the configuration on purpose, read the
+logs to find out why, and fix it. In the optional stretch you scale the plan to <strong>Standard (S1)</strong>, deploy version 2 to a
+<strong>staging slot</strong> and <strong>swap</strong> it into production without downtime.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  you[&quot;You in Cloud Shell&quot;] --&gt;|&quot;az webapp up / az webapp deploy&quot;| app
+  subgraph rg[&quot;rg-lunch10-&amp;lt;suffix&amp;gt;&quot;]
+    plan[&quot;App Service plan asp-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;Linux · Free F1&quot;]
+    app[&quot;Web app app-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;Python 3.12 · STORE_NAME · HTTPS only&quot;]
+    slot[&quot;staging slot&lt;br/&gt;(stretch, Standard S1)&quot;]
+    plan --- app
+    app -.-&gt;|swap| slot
+  end
+  shopper[&quot;Shopper&#x27;s browser&quot;] --&gt;|HTTPS| app
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install.</li>
+<li>Get the lab files and load the shared settings and this lab's names:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/10-app-service
+source ../common/config.sh
+source lab.env
+echo &quot;Group: $RG   Plan: $PLAN   App: $APP   Runtime: $RUNTIME&quot;
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>The Free tier costs nothing, but the stretch goal uses a Standard plan that is billed per hour while it exists. Finish
+with the <strong>Clean up</strong> section, even if you stop halfway. Opened a new Cloud Shell session? Run the three lines starting
+with <code>cd</code>, <code>source</code> and <code>source</code> again so the variables come back.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–6 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--meet-the-app-and-create-the-resource-group" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Meet the app and create the resource group</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--meet-the-app-and-create-the-resource-group" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Before you hand code to a platform, know what the code expects. This storefront needs one setting, <code>STORE_NAME</code>, and
+shows which instance and host name served each request.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ensure_rg &quot;$RG&quot; 10
+sed -n &#x27;1,14p&#x27; app/app.py          # the docstring explains the settings the app reads
+cat app/requirements.txt           # Flask and Gunicorn: App Service installs these for you
+az webapp list-runtimes --os-type linux --output table | grep -i python
+</code></pre></div>
+<p>The last command lists the Python versions App Service offers on Linux. You should see <code>PYTHON:3.12</code> among them. If a
+newer Azure CLI shows a different layout, look for the 3.12 line anyway. If 3.12 has gone, pick a listed version, run
+<code>export LAB10_RUNTIME=&quot;PYTHON:3.13&quot;</code> (for example) and <code>source lab.env</code> again.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the group exists and carries the lab tags:
+<code>az group show --name &quot;$RG&quot; --query &quot;{name:name, location:location, lunch:tags.lunch}&quot; --output table</code></p>
+</div>
+</div></section><section class="lab-section" id="task-2--deploy-with-one-command" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Deploy with one command</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--deploy-with-one-command" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p><code>az webapp up</code> is the shortest path from a folder of code to a running web app. It creates the plan and the app, turns
+on build automation, zips the current folder and deploys it. It must run <strong>from the folder that contains the code</strong>.
+Expect 3–6 minutes, most of it while App Service installs Flask and Gunicorn.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>cd app
+az webapp up \
+  --name &quot;$APP&quot; \
+  --resource-group &quot;$RG&quot; \
+  --plan &quot;$PLAN&quot; \
+  --location &quot;$LOCATION&quot; \
+  --runtime &quot;$RUNTIME&quot; \
+  --sku F1
+cd ..
+</code></pre></div>
+<p>While it runs, read what it is doing: it creates the plan <code>asp-nusa-&lt;suffix&gt;</code> on the Free tier (always Linux for
+Python apps, so there's no operating system to choose), creates the web app with the Python stack, enables the <code>SCM_DO_BUILD_DURING_DEPLOYMENT</code> build setting, uploads a zip of the folder and
+prints a summary. On the server, the build system (Oryx) creates a virtual environment and installs <code>requirements.txt</code>;
+then App Service finds <code>app.py</code> and starts it with Gunicorn. <code>az webapp up</code> also saves your choices in <code>app/.azure/config</code>
+so that a second run in the same folder needs no parameters.</p>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Note</span>Azure CLI 2.87 (June 2026) formally <strong>deprecated</strong> <code>az webapp up</code>. It still works and prints a yellow warning. Scripts
+should use the explicit commands below, which is what <code>solution.sh</code> does. If your CLI no longer has <code>az webapp up</code>,
+use these instead:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az appservice plan create -g &quot;$RG&quot; -n &quot;$PLAN&quot; --location &quot;$LOCATION&quot; --is-linux --sku F1 --output none
+az webapp create -g &quot;$RG&quot; -n &quot;$APP&quot; --plan &quot;$PLAN&quot; --runtime &quot;$RUNTIME&quot; --output none
+az webapp config appsettings set -g &quot;$RG&quot; -n &quot;$APP&quot; --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true --output none
+mkdir -p &quot;$OUT_DIR&quot;
+(cd app &amp;&amp; python3 -m zipfile -c &quot;$OUT_DIR/storefront-v1.zip&quot; app.py requirements.txt)
+az webapp deploy -g &quot;$RG&quot; -n &quot;$APP&quot; --src-path &quot;$OUT_DIR/storefront-v1.zip&quot; --type zip
+</code></pre></div>
+</aside>
+<p>Now read the app's host name from Azure (new apps can get a longer, unique host name, so don't guess it) and call the
+health endpoint:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>HOST=$(az webapp show -g &quot;$RG&quot; -n &quot;$APP&quot; --query defaultHostName --output tsv)
+echo &quot;https://$HOST&quot;
+curl -s &quot;https://$HOST/health&quot;; echo
+</code></pre></div>
+<p>Don't open the home page yet: it needs the setting you add in Task 3. (If you're curious and open it anyway, you get a
+polite error page. That is on purpose; you'll see why in <em>Break it and fix it</em>.)</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Create a resource › Web App</em>: Publish <strong>Code</strong>, Runtime stack <strong>Python 3.12</strong>, Operating System
+<strong>Linux</strong>, your region, Pricing plan <strong>Free F1</strong> › <em>Review + create</em>. Then deploy the code with the explicit
+<code>az webapp deploy</code> commands from the note above and continue with Task 3.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>curl</code> prints <code>ok</code>, and
+<code>az webapp show -g &quot;$RG&quot; -n &quot;$APP&quot; --query &quot;{state:state, host:defaultHostName}&quot; --output table</code> shows <code>Running</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--configure-the-store-with-an-app-setting" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Configure the store with an app setting</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--configure-the-store-with-an-app-setting" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>App settings are name–value pairs that App Service passes to your code as <strong>environment variables</strong>. The same code can
+then run as the Kemang store in production and as a test store in staging, with no code change. Changing a setting
+restarts the app, so give it about 30 seconds.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az webapp config appsettings set -g &quot;$RG&quot; -n &quot;$APP&quot; --settings &quot;STORE_NAME=${STORE}&quot; --output none
+az webapp config appsettings list -g &quot;$RG&quot; -n &quot;$APP&quot; --query &quot;[].name&quot; --output tsv
+</code></pre></div>
+<p>You should see <code>STORE_NAME</code> and <code>SCM_DO_BUILD_DURING_DEPLOYMENT</code>. Now open <code>https://$HOST</code> in your browser: the page shows
+the store name, <strong>Version 1.0</strong>, the instance that served you and the host name.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open the web app › <em>Settings › Environment variables › App settings</em> › <strong>+ Add</strong>, enter
+<code>STORE_NAME</code>, select <strong>Apply</strong>, then <strong>Confirm</strong> the restart. Anyone who can read the app's configuration can read
+these values, so never put passwords here: Lunch 15 replaces secrets with Key Vault references.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>curl -s &quot;https://$HOST/&quot; | grep -o &quot;$STORE&quot;</code> prints <code>Nusantara Retail - Kemang</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-4--force-https" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Force HTTPS</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--force-https" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>App Service terminates TLS at its front ends, and every app gets a certificate for its <code>azurewebsites.net</code> name. Plain
+HTTP still works until you switch on <strong>HTTPS Only</strong>, which redirects every <code>http://</code> request to <code>https://</code>.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>curl -s -o /dev/null -w &quot;%{http_code}\n&quot; &quot;http://$HOST/&quot;                       # probably 200: plain HTTP is allowed
+az webapp update -g &quot;$RG&quot; -n &quot;$APP&quot; --https-only true --output none
+curl -s -o /dev/null -w &quot;%{http_code} -&gt; %{redirect_url}\n&quot; &quot;http://$HOST/&quot;    # now a 301 redirect to https://
+az webapp config show -g &quot;$RG&quot; -n &quot;$APP&quot; --query minTlsVersion --output tsv    # 1.2 or higher
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Settings › Configuration › General settings</em>: set <strong>HTTPS Only</strong> to <em>On</em> and check
+<strong>Minimum inbound TLS Version</strong>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>az webapp show -g &quot;$RG&quot; -n &quot;$APP&quot; --query httpsOnly --output tsv</code> prints <code>true</code>, and the second
+<code>curl</code> shows <code>301 -&gt; https://...</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--watch-the-log-stream" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Watch the log stream</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--watch-the-log-stream" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>When something goes wrong in production, the first place to look is what the app itself writes. App Service collects
+the container's console output; the <strong>log stream</strong> shows it live.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az webapp log config -g &quot;$RG&quot; -n &quot;$APP&quot; --docker-container-logging filesystem --output none
+az webapp log tail -g &quot;$RG&quot; -n &quot;$APP&quot;
+</code></pre></div>
+<p>Leave it running and refresh the storefront in your browser a few times. Within about 30 seconds you see lines such as
+<code>INFO [storefront] Served the home page for Nusantara Retail - Kemang (version 1.0, instance ...)</code>, mixed with
+platform messages about the container. Press <strong>Ctrl+C</strong> to stop streaming.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Monitoring › Log stream</em> shows the same output. <em>Diagnose and solve problems</em> is the next
+stop when the log isn't enough.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> at least one <code>[storefront] Served the home page</code> line appeared in the stream.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--see-what-you-are-paying-for" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">See what you are paying for</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--see-what-you-are-paying-for" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Your app runs on the plan, and the plan is what you pay for. Look at it.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az appservice plan show -g &quot;$RG&quot; -n &quot;$PLAN&quot; \
+  --query &quot;{tier:sku.tier, size:sku.name, instances:sku.capacity, linux:reserved}&quot; --output table
+az webapp list-instances -g &quot;$RG&quot; -n &quot;$APP&quot; --query &quot;[].name&quot; --output tsv
+</code></pre></div>
+<p>The Free tier runs your app on <strong>shared</strong> infrastructure with a daily CPU quota of 60 minutes, one instance, no custom
+domains, no deployment slots, no autoscale and no SLA. That is perfect for learning and useless for the 12.12 sale.
+In the portal, open the plan's <em>Scale up (App Service plan)</em> page to compare what each tier adds, without changing
+anything.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the table shows tier <code>Free</code>, size <code>F1</code>, one instance and <code>linux</code> = <code>True</code>.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Someone &quot;tidies up&quot; the configuration and deletes a setting they didn't recognise. Do it yourself:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az webapp config appsettings delete -g &quot;$RG&quot; -n &quot;$APP&quot; --setting-names STORE_NAME --output none
+sleep 45                                                     # the app restarts after a settings change
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; &quot;https://$HOST/&quot;
+</code></pre></div>
+<p><strong>Symptom:</strong> the page answers <strong>500</strong>, and the browser shows <em>&quot;Sorry, the shop is having a moment.&quot;</em> The page gives
+customers no details, which is deliberate. Find the cause the way an engineer would: start the log stream with
+<code>az webapp log tail -g &quot;$RG&quot; -n &quot;$APP&quot;</code>, refresh the page, and read the <code>ERROR</code> line.</p>
+<details class="plain"><summary>Hint and fix</summary>
+<p>The log says <code>Required app setting STORE_NAME is missing</code>. Put the setting back and wait for the restart:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az webapp config appsettings set -g &quot;$RG&quot; -n &quot;$APP&quot; --settings &quot;STORE_NAME=${STORE}&quot; --output none
+sleep 30 &amp;&amp; curl -s -o /dev/null -w &quot;%{http_code}\n&quot; &quot;https://$HOST/&quot;     # 200 again
+</code></pre></div>
+<p>Two lessons: keep error pages generic for customers but specific in your logs, and treat configuration as part of the
+release (in Lunch 20 it becomes code). In production you would also alert on a rise in HTTP 5xx responses (Lunch 16).</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. The stretch slot is
+reported as a note, so the core lab passes without it.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes the resource group <code>rg-lunch10-&lt;suffix&gt;</code> (the plan, the web app and any slot) and removes the local files
+in <code>~/lab10-out</code> and <code>app/.azure</code>. Nothing is created outside the resource group. Deletion continues in the background
+for a few minutes.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Yellow warning that <code>az webapp up</code> is deprecated</td>
+<td>Azure CLI 2.87 and later mark the command as deprecated</td>
+<td>Expected. The command still works; or use the explicit commands in the Task 2 note</td>
+</tr>
+<tr>
+<td><code>Website with given name app-nusa-… already exists.</code></td>
+<td>Web app names are global and yours is taken</td>
+<td><code>export LAB10_APP=&quot;app-nusa-${SUFFIX}2&quot;</code>, then <code>source lab.env</code> and repeat Task 2</td>
+</tr>
+<tr>
+<td><code>This region has quota of 0 instances for your subscription. Try selecting different region or SKU.</code></td>
+<td>Some trial and student subscriptions have no App Service quota in a region</td>
+<td>Run <code>cleanup.sh</code>, <code>export LOCATION=eastasia</code> (or another region), source both files again and restart the lab</td>
+</tr>
+<tr>
+<td>The browser shows the App Service default Python page, not the storefront</td>
+<td>The code wasn't deployed, or App Service couldn't find <code>app.py</code></td>
+<td>Run Task 2 again from inside the <code>app</code> folder; check that <code>app.py</code> and <code>requirements.txt</code> are at the root of the zip</td>
+</tr>
+<tr>
+<td><code>:( Application Error</code> page</td>
+<td>The container failed to start</td>
+<td>Run <code>az webapp log tail</code> and look for a Python traceback; <em>Diagnose and solve problems</em> helps too</td>
+</tr>
+<tr>
+<td><em>&quot;Sorry, the shop is having a moment.&quot;</em> (HTTP 500)</td>
+<td><code>STORE_NAME</code> is missing or empty</td>
+<td>Run the Task 3 command again</td>
+</tr>
+<tr>
+<td><code>Error 403 - This web app is stopped.</code></td>
+<td>The app was stopped, or the Free tier used its 60 CPU minutes for the day</td>
+<td><code>az webapp start -g &quot;$RG&quot; -n &quot;$APP&quot;</code>, or wait for the daily quota to reset</td>
+</tr>
+<tr>
+<td><code>az webapp log tail</code> shows nothing</td>
+<td>Logging is off, or nobody has visited the site yet</td>
+<td>Run the <code>az webapp log config</code> command, wait 30 seconds and refresh the page</td>
+</tr>
+<tr>
+<td>Creating the <code>staging</code> slot fails</td>
+<td>Deployment slots need the Standard tier or higher</td>
+<td>Scale the plan to S1 first (stretch step 1)</td>
+</tr>
+<tr>
+<td><code>curl: (6) Could not resolve host</code></td>
+<td><code>$HOST</code> is empty, usually in a new Cloud Shell session</td>
+<td>Source both files again and re-run the <code>HOST=$(...)</code> line from Task 2</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><p><strong>A zero-downtime release with a staging slot</strong> (💲💲, about 15 minutes). Deployment slots start at the Standard tier,
+so you pay for an S1 instance while it exists.</p>
+<ol>
+<li>
+<p>Scale the plan up and create the slot, copying production's settings. HTTPS Only belongs to each slot and never
+travels in a swap, so set it on the slot too:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az appservice plan update -g &quot;$RG&quot; -n &quot;$PLAN&quot; --sku S1 --output none
+az webapp deployment slot create -g &quot;$RG&quot; -n &quot;$APP&quot; --slot staging --configuration-source &quot;$APP&quot; --output none
+az webapp update -g &quot;$RG&quot; -n &quot;$APP&quot; --slot staging --https-only true --output none
+az webapp config appsettings set -g &quot;$RG&quot; -n &quot;$APP&quot; --slot staging --settings SCM_DO_BUILD_DURING_DEPLOYMENT=true --output none
+</code></pre></div>
+</li>
+<li>
+<p>Build version 2.0 from a copy of the code and deploy it to the slot only:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>rm -rf &quot;$OUT_DIR/v2&quot; &amp;&amp; mkdir -p &quot;$OUT_DIR/v2&quot; &amp;&amp; cp app/app.py app/requirements.txt &quot;$OUT_DIR/v2/&quot;
+sed -i &#x27;s/^APP_VERSION = &quot;1.0&quot;/APP_VERSION = &quot;2.0&quot;/&#x27; &quot;$OUT_DIR/v2/app.py&quot;
+(cd &quot;$OUT_DIR/v2&quot; &amp;&amp; python3 -m zipfile -c &quot;$OUT_DIR/storefront-v2.zip&quot; app.py requirements.txt)
+az webapp deploy -g &quot;$RG&quot; -n &quot;$APP&quot; --slot staging --src-path &quot;$OUT_DIR/storefront-v2.zip&quot; --type zip
+</code></pre></div>
+</li>
+<li>
+<p>Test the slot on its own host name. Production still shows Version 1.0:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>STAGING_HOST=$(az webapp show -g &quot;$RG&quot; -n &quot;$APP&quot; --slot staging --query defaultHostName --output tsv)
+curl -s &quot;https://$STAGING_HOST/&quot; | grep -o &quot;Version [0-9.]*&quot;
+curl -s &quot;https://$HOST/&quot; | grep -o &quot;Version [0-9.]*&quot;
+</code></pre></div>
+</li>
+<li>
+<p>Swap. To see that no request fails, open a second Cloud Shell session (the <em>Open new session</em> button) and start a
+poller there first:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>cd ~/azure-fundamentals-lunches/labs/10-app-service &amp;&amp; source ../common/config.sh &amp;&amp; source lab.env
+HOST=$(az webapp show -g &quot;$RG&quot; -n &quot;$APP&quot; --query defaultHostName --output tsv)
+for i in $(seq 1 60); do curl -s -o /dev/null -w &quot;%{http_code} &quot; &quot;https://$HOST/&quot;; sleep 2; done
+</code></pre></div>
+<p>Then, in the first session:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az webapp deployment slot swap -g &quot;$RG&quot; -n &quot;$APP&quot; --slot staging --target-slot production
+curl -s &quot;https://$HOST/&quot; | grep -o &quot;Version [0-9.]*&quot;      # Version 2.0
+</code></pre></div>
+</li>
+<li>
+<p>Roll back by running the same swap again: Version 1.0 returns after a short warm-up, with no redeployment.</p>
+</li>
+</ol>
+<p><strong>More ideas</strong></p>
+<ul>
+<li>On S1, scale out to two instances with <code>az appservice plan update -g &quot;$RG&quot; -n &quot;$PLAN&quot; --number-of-workers 2</code>, then
+run <code>curl -s &quot;https://$HOST/&quot; | grep -o 'instance&lt;/dt&gt;&lt;dd&gt;[^&lt;]*'</code> a few times. Requests without a session cookie can
+land on either instance.</li>
+<li>Give App Service a health check path so it can take a sick instance out of rotation:
+<code>az webapp config set -g &quot;$RG&quot; -n &quot;$APP&quot; --generic-configurations '{&quot;healthCheckPath&quot;: &quot;/health&quot;}'</code>.</li>
+<li>Fork the repository and connect <em>Deployment Center</em> to GitHub Actions, so every push to <code>main</code> deploys.</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build the following, any way you like (portal, CLI, Bicep):</p>
+<ol>
+<li>A resource group <code>rg-lunch10-&lt;suffix&gt;</code> in your lab region.</li>
+<li>A <strong>Linux</strong> App Service plan <code>asp-nusa-&lt;suffix&gt;</code> (the Free F1 tier is enough).</li>
+<li>A web app <code>app-nusa-&lt;suffix&gt;</code> with the <strong>Python 3.12</strong> stack, running the code in <code>app/</code>.</li>
+<li>An app setting <code>STORE_NAME</code> with your store's name; <code>https://&lt;host&gt;/</code> returns HTTP 200 and shows that name.</li>
+<li><strong>HTTPS Only</strong> switched on.</li>
+</ol>
+<p>Optional: a <code>staging</code> slot on a Standard plan, with version 2.0 swapped into production (<code>verify.sh</code> reports it as a
+note). Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="09-load-balancing-basic.html"><small>← Previous lab</small>09 · Keep the shop open when a server fails</a><a class="next" href="11-relational-databases-basic.html"><small>Next lab →</small>11 · Nusantara Retail&#x27;s orders database</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/10-app-service/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

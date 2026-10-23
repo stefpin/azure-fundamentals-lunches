@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 08 · Build Nusantara Retail&#x27;s network · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 08: Build Nusantara Retail&#x27;s network. about 50 minutes, cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 08 · Build Nusantara Retail&#x27;s network">
+<meta property="og:description" content="Hands-on Azure lab 08: Build Nusantara Retail&#x27;s network. about 50 minutes, cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/08-networking-basic.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="08" style="--c:#e2482f">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#e2482f">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 08</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>08</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Build Nusantara Retail&#x27;s network</h1>
+        <p class="lab-story">🏪 <b>Episode 08 · Don&#x27;t Overlap My Network</b> — Pak Budi&#x27;s 10.0.0.0/16 must never clash — and Rizky wants SSH open to the whole internet. <a href="../lunches/08-networking-basic.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 50 minutes</span>
+          <span class="chip cost">💲💲 small charges while running</span>
+          <span class="chip">Difficulty ★★☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 9 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--plan-and-create-the-virtual-network">Task 1 · Plan and create the virtual network</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--write-the-security-rules-nsgs-and-an-application-security-group">Task 2 · Write the security rules: NSGs and an application security group</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--create-the-web-and-app-vms">Task 3 · Create the web and app VMs</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--test-traffic-from-the-internet-and-between-the-tiers">Task 4 · Test traffic from the internet and between the tiers</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--give-the-private-app-tier-a-way-out">Task 5 · Give the private app tier a way out</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--diagnose-with-ip-flow-verify">Task 6 · Diagnose with IP flow verify</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--publish-names-in-a-public-dns-zone">Task 7 · Publish names in a public DNS zone</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/08-networking-basic/app-cloud-init.yml" target="_blank" rel="noopener"><span>app-cloud-init.yml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/08-networking-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/08-networking-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>10 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/08-networking-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>7 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/08-networking-basic" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>The storefront network Dewi asked for: a virtual network on <code>10.20.0.0/16</code> that never overlaps Pak Budi's head office
+(<code>10.0.0.0/16</code>), split into a <strong>web tier</strong> that shoppers can reach and a <strong>private app tier</strong> that nobody on the internet
+can see. Network security groups and an application security group allow exactly two things in — HTTP to the web
+servers and TCP 8080 from the web servers to the app tier — and a NAT gateway gives the app tier one predictable address
+for outbound calls. You prove every rule with real traffic and with Network Watcher's IP flow verify, and publish <code>www</code>
+and <code>shop</code> names in a public Azure DNS zone.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  you[&quot;You, in Cloud Shell&quot;] --&gt;|&quot;HTTP 80&quot;| pip[&quot;pip-vm-web&lt;br/&gt;Standard public IP&quot;]
+  subgraph rg[&quot;rg-lunch08-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph vnet[&quot;vnet-nusa-shop · 10.20.0.0/16&quot;]
+      subgraph web[&quot;snet-web · 10.20.1.0/24 · nsg-web · private subnet&quot;]
+        vmweb[&quot;vm-web · 10.20.1.4&lt;br/&gt;in asg-web&quot;]
+      end
+      subgraph app[&quot;snet-app · 10.20.2.0/24 · nsg-app · private subnet&quot;]
+        vmapp[&quot;vm-app · 10.20.2.4&lt;br/&gt;no public IP&quot;]
+      end
+    end
+    nat[&quot;ng-nusa-app&lt;br/&gt;NAT gateway + pip-ng-nusa-app&quot;]
+    dns[&quot;Azure DNS zone&lt;br/&gt;www (A) · shop (CNAME)&quot;]
+  end
+  pip --&gt; vmweb
+  vmweb --&gt;|&quot;TCP 8080 only&quot;| vmapp
+  vmapp --&gt;|&quot;outbound&quot;| nat --&gt; internet[&quot;Internet&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install.</li>
+<li>About 4 vCPUs of free quota in your region: the lab runs two <code>$VM_SIZE_SMALL</code> VMs (2 vCPUs each by default).</li>
+<li>Get the lab files, load the shared settings and define a few variables. If Cloud Shell reconnects during the lab,
+run this block again before you continue:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/08-networking-basic
+source ../common/config.sh
+RG=$(rg_name 08)
+VNET=vnet-nusa-shop
+ZONE=&quot;nusantara-retail-${SUFFIX}.xyz&quot;
+
+# Helper: run shell commands inside a VM through the Azure VM agent (no SSH, no public IP needed).
+# Each call takes 20-40 seconds.
+run_on() {
+  az vm run-command invoke -g &quot;$RG&quot; -n &quot;$1&quot; --command-id RunShellScript \
+    --scripts &quot;$2&quot; --query &quot;value[0].message&quot; -o tsv
+}
+</code></pre></div>
+<ul>
+<li>This lab has no <code>setup.sh</code>: building the network <em>is</em> the lab.</li>
+</ul>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist — mainly the two VMs, the public IPs and the NAT gateway. Finish with the
+<strong>Clean up</strong> section, even if you stop halfway.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–7 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--plan-and-create-the-virtual-network" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Plan and create the virtual network</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--plan-and-create-the-virtual-network" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The address plan comes first, because it is the one thing you can't change later without rebuilding. The storefront
+gets <code>10.20.0.0/16</code> — far away from head office's <code>10.0.0.0/16</code> — with one /24 per tier and plenty of room to grow.
+Both subnets are <strong>private subnets</strong>: no default outbound internet access. Recent Azure tools already create subnets in
+new VNets that way; setting the flag explicitly documents your intent and gives the same result with older tools.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ensure_rg &quot;$RG&quot; 08
+
+az network vnet create -g &quot;$RG&quot; -n &quot;$VNET&quot; --location &quot;$LOCATION&quot; \
+  --address-prefixes 10.20.0.0/16 --output none
+
+az network vnet subnet create -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-web \
+  --address-prefixes 10.20.1.0/24 --default-outbound-access false --output none
+
+az network vnet subnet create -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-app \
+  --address-prefixes 10.20.2.0/24 --default-outbound-access false --output none
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Home › Virtual networks › Create</em> — on the <strong>IP addresses</strong> tab, set the address space to
+<code>10.20.0.0/16</code>, delete the suggested default subnet and add <code>snet-web</code> and <code>snet-app</code>. Keep the private subnet option
+(no default outbound access) switched on; the portal enables it by default. Then come back for Task 2.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> two subnets, both with <code>False</code> in the <em>defaultOutbound</em> column:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network vnet subnet list -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; \
+  --query &quot;[].{subnet:name, prefix:addressPrefix || addressPrefixes[0], defaultOutbound:defaultOutboundAccess}&quot; -o table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-2--write-the-security-rules-nsgs-and-an-application-security-group" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Write the security rules: NSGs and an application security group</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--write-the-security-rules-nsgs-and-an-application-security-group" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>One NSG per subnet keeps the rules in one readable place per tier. The application security group <code>asg-web</code> names the
+<em>role</em> &quot;web server&quot;, so rules don't depend on IP addresses.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network nsg create -g &quot;$RG&quot; -n nsg-web --location &quot;$LOCATION&quot; --output none
+az network nsg create -g &quot;$RG&quot; -n nsg-app --location &quot;$LOCATION&quot; --output none
+az network asg create -g &quot;$RG&quot; -n asg-web --location &quot;$LOCATION&quot; --output none
+
+# nsg-web: shoppers may reach the web servers on HTTP, nothing else from the internet.
+az network nsg rule create -g &quot;$RG&quot; --nsg-name nsg-web -n Allow-HTTP-Internet \
+  --priority 100 --direction Inbound --access Allow --protocol Tcp \
+  --source-address-prefixes Internet --source-port-ranges &#x27;*&#x27; \
+  --destination-asgs asg-web --destination-port-ranges 80 --output none
+
+# nsg-app: only web servers may call the app tier, and only on TCP 8080 ...
+az network nsg rule create -g &quot;$RG&quot; --nsg-name nsg-app -n Allow-Web-To-App-8080 \
+  --priority 100 --direction Inbound --access Allow --protocol Tcp \
+  --source-asgs asg-web --source-port-ranges &#x27;*&#x27; \
+  --destination-address-prefixes 10.20.2.0/24 --destination-port-ranges 8080 --output none
+
+# ... and everything else from inside the VNet is denied, long before the default AllowVnetInBound (65000).
+az network nsg rule create -g &quot;$RG&quot; --nsg-name nsg-app -n Deny-VNet-Inbound \
+  --priority 4000 --direction Inbound --access Deny --protocol &#x27;*&#x27; \
+  --source-address-prefixes VirtualNetwork --source-port-ranges &#x27;*&#x27; \
+  --destination-address-prefixes &#x27;*&#x27; --destination-port-ranges &#x27;*&#x27; --output none
+
+# Attach each NSG to its subnet.
+az network vnet subnet update -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-web --nsg nsg-web --output none
+az network vnet subnet update -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-app --nsg nsg-app --output none
+</code></pre></div>
+<p>Notice what you did <em>not</em> write: no rule for SSH. Inbound SSH from the internet falls through to <code>DenyAllInBound</code>.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open <strong>nsg-app › Inbound security rules</strong> to see your two rules sorted above the three default
+rules. The portal makes the priority order very visual. Then come back for Task 3.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>nsg-app</code> lists your rules at 100 and 4000 above the defaults, and both subnets show their NSG:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network nsg rule list -g &quot;$RG&quot; --nsg-name nsg-app --include-default \
+  --query &quot;[?direction==&#x27;Inbound&#x27;] | sort_by(@, &amp;priority)[].{priority:priority, name:name, access:access, port:destinationPortRange}&quot; -o table
+az network vnet subnet list -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; --query &quot;[].{subnet:name, nsg:networkSecurityGroup.id}&quot; -o table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-3--create-the-web-and-app-vms" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Create the web and app VMs</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--create-the-web-and-app-vms" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p><code>vm-web</code> gets a Standard public IP and joins <code>asg-web</code>. <code>vm-app</code> gets no public IP at all. Both use <code>--nsg &quot;&quot;</code> so the
+CLI doesn't add a NIC-level NSG next to your subnet NSGs. The web VM runs the course's shared cloud-init web server
+(port 80); the app VM runs this lab's <code>app-cloud-init.yml</code>, a tiny service on port 8080. Neither needs internet access
+to start. Each VM takes 2–4 minutes; read section 4 of the lunch while you wait.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm create -g &quot;$RG&quot; -n vm-web --location &quot;$LOCATION&quot; \
+  --image &quot;$VM_IMAGE&quot; --size &quot;$VM_SIZE_SMALL&quot; \
+  --vnet-name &quot;$VNET&quot; --subnet snet-web --private-ip-address 10.20.1.4 \
+  --public-ip-address pip-vm-web --public-ip-sku Standard \
+  --nsg &quot;&quot; --asgs asg-web \
+  --admin-username &quot;$ADMIN_USER&quot; --generate-ssh-keys \
+  --custom-data &quot;$AZL_COMMON_DIR/cloud-init-web.yml&quot; --output none
+
+az vm create -g &quot;$RG&quot; -n vm-app --location &quot;$LOCATION&quot; \
+  --image &quot;$VM_IMAGE&quot; --size &quot;$VM_SIZE_SMALL&quot; \
+  --vnet-name &quot;$VNET&quot; --subnet snet-app --private-ip-address 10.20.2.4 \
+  --public-ip-address &quot;&quot; --nsg &quot;&quot; \
+  --admin-username &quot;$ADMIN_USER&quot; --generate-ssh-keys \
+  --custom-data app-cloud-init.yml --output none
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Create a virtual machine › Networking</em> tab: choose <code>vnet-nusa-shop</code> and the subnet, and set
+<strong>NIC network security group</strong> to <strong>None</strong> (the subnet NSG already protects it). After <code>vm-web</code> is created, open
+<em>vm-web › Networking › Application security groups</em> and add its network interface to <code>asg-web</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>vm-web</code> has a public IP and <code>vm-app</code> has none; <code>vm-web</code>'s NIC is a member of <code>asg-web</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm list -g &quot;$RG&quot; -d --query &quot;[].{vm:name, private:privateIps, public:publicIps, state:powerState}&quot; -o table
+WEB_NIC_ID=$(az vm show -g &quot;$RG&quot; -n vm-web --query &quot;networkProfile.networkInterfaces[0].id&quot; -o tsv)
+az network nic show --ids &quot;$WEB_NIC_ID&quot; --query &quot;ipConfigurations[0].applicationSecurityGroups[].id&quot; -o tsv
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-4--test-traffic-from-the-internet-and-between-the-tiers" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Test traffic from the internet and between the tiers</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--test-traffic-from-the-internet-and-between-the-tiers" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Now prove the rules with real packets. Give cloud-init a minute or two after the VMs are created.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>WEB_IP=$(az network public-ip show -g &quot;$RG&quot; -n pip-vm-web --query ipAddress -o tsv)
+echo &quot;vm-web public IP: $WEB_IP&quot;
+
+# From Cloud Shell (the internet): HTTP works, SSH doesn&#x27;t.
+curl -s --max-time 10 &quot;http://$WEB_IP&quot; | grep -o &#x27;&lt;h1&gt;.*&lt;/h1&gt;&#x27;
+timeout 5 bash -c &quot;&lt;/dev/tcp/$WEB_IP/22&quot; 2&gt;/dev/null &amp;&amp; echo &quot;port 22 is OPEN&quot; || echo &quot;port 22 is closed&quot;
+
+# From vm-web to vm-app: 8080 works, SSH (22) is blocked by Deny-VNet-Inbound.
+run_on vm-web &#x27;curl -s --max-time 5 http://10.20.2.4:8080/ || echo &quot;8080 BLOCKED&quot;&#x27;
+run_on vm-web &#x27;timeout 5 bash -c &quot;&lt;/dev/tcp/10.20.2.4/22&quot; &amp;&amp; echo &quot;22 OPEN&quot; || echo &quot;22 BLOCKED&quot;&#x27;
+</code></pre></div>
+<p>Without your rule at 4000, the second Run Command would print <code>22 OPEN</code>: the default <code>AllowVnetInBound</code> lets everything
+inside the VNet through.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>&lt;h1&gt;Nusantara Retail&lt;/h1&gt;</code>, <code>port 22 is closed</code>, a JSON line containing
+<code>nusantara-retail-app-tier</code>, and <code>22 BLOCKED</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--give-the-private-app-tier-a-way-out" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Give the private app tier a way out</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--give-the-private-app-tier-a-way-out" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p><code>vm-app</code> must call the payment provider on the internet. First see what a private subnet means in practice, then add
+the recommended explicit outbound method: a NAT gateway.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code># Before: vm-app has no public IP and lives in a private subnet.
+run_on vm-app &#x27;curl -s --max-time 10 https://api.ipify.org || echo &quot;NO OUTBOUND ACCESS&quot;&#x27;
+</code></pre></div>
+<p>The command takes a little longer and prints <code>NO OUTBOUND ACCESS</code> — even though <code>nsg-app</code> contains the default rule
+<code>AllowInternetOutBound</code>. Permission isn't a path. Run Command itself still works, because the VM agent talks to Azure
+through the platform address <code>168.63.129.16</code>, not through the internet.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network public-ip create -g &quot;$RG&quot; -n pip-ng-nusa-app --location &quot;$LOCATION&quot; \
+  --sku Standard --allocation-method Static --output none
+
+az network nat gateway create -g &quot;$RG&quot; -n ng-nusa-app --location &quot;$LOCATION&quot; \
+  --public-ip-addresses pip-ng-nusa-app --idle-timeout 4 --output none
+
+az network vnet subnet update -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-app \
+  --nat-gateway ng-nusa-app --output none
+
+NAT_IP=$(az network public-ip show -g &quot;$RG&quot; -n pip-ng-nusa-app --query ipAddress -o tsv)
+echo &quot;NAT gateway public IP: $NAT_IP&quot;
+
+# After: the same test now succeeds and shows which address the internet sees.
+run_on vm-app &#x27;curl -s --max-time 10 https://api.ipify.org || echo &quot;NO OUTBOUND ACCESS&quot;&#x27;
+</code></pre></div>
+<p>No route table, no change on the VM: the NAT gateway serves every VM in <code>snet-app</code>. Nothing on the internet can open a
+connection to <code>vm-app</code> through it.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Create a resource › NAT gateway</em> — on the <strong>Outbound IP</strong> tab create a new public IP, and on
+the <strong>Networking</strong> tab pick <code>vnet-nusa-shop</code> and tick <code>snet-app</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> before the NAT gateway, <code>NO OUTBOUND ACCESS</code>; afterwards, an IP address that equals <code>$NAT_IP</code>. If
+the first try after creating the NAT gateway still fails, wait a minute and run it again.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--diagnose-with-ip-flow-verify" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Diagnose with IP flow verify</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--diagnose-with-ip-flow-verify" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Network Watcher's <strong>IP flow verify</strong> tests one packet against the NSG rules that apply to a VM, without sending any
+traffic, and names the rule that decided. Use it whenever &quot;it doesn't connect&quot; and you want evidence.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>MY_IP=$(my_public_ip); echo &quot;Your public IP: $MY_IP&quot;
+
+# 1. Web tier -&gt; app tier on 8080: expect Allow, rule Allow-Web-To-App-8080.
+az network watcher test-ip-flow -g &quot;$RG&quot; --vm vm-app --direction Inbound --protocol TCP \
+  --local 10.20.2.4:8080 --remote 10.20.1.4:50000 -o table
+
+# 2. Web tier -&gt; app tier on 22: expect Deny, rule Deny-VNet-Inbound.
+az network watcher test-ip-flow -g &quot;$RG&quot; --vm vm-app --direction Inbound --protocol TCP \
+  --local 10.20.2.4:22 --remote 10.20.1.4:50000 -o table
+
+# 3. You (the internet) -&gt; vm-web on 22 and on 80: expect Deny (DenyAllInBound), then Allow (Allow-HTTP-Internet).
+az network watcher test-ip-flow -g &quot;$RG&quot; --vm vm-web --direction Inbound --protocol TCP \
+  --local 10.20.1.4:22 --remote &quot;$MY_IP&quot;:50000 -o table
+az network watcher test-ip-flow -g &quot;$RG&quot; --vm vm-web --direction Inbound --protocol TCP \
+  --local 10.20.1.4:80 --remote &quot;$MY_IP&quot;:50000 -o table
+
+# 4. vm-app -&gt; internet on 443: Allow (AllowInternetOutBound). IP flow verify checks rules, not paths.
+az network watcher test-ip-flow -g &quot;$RG&quot; --vm vm-app --direction Outbound --protocol TCP \
+  --local 10.20.2.4:50000 --remote 13.107.21.200:443 -o table
+</code></pre></div>
+<p>Want the full picture? The effective security rules show the merged rules on a NIC, with <code>asg-web</code> and the service tags
+expanded into real address ranges:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>APP_NIC_ID=$(az vm show -g &quot;$RG&quot; -n vm-app --query &quot;networkProfile.networkInterfaces[0].id&quot; -o tsv)
+az network nic list-effective-nsg --ids &quot;$APP_NIC_ID&quot; \
+  --query &quot;value[].effectiveSecurityRules[].{name:name, priority:priority, direction:direction, access:access}&quot; -o table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Network Watcher › IP flow verify</em> asks for the same five values in a form, and <em>Network
+Watcher › Effective security rules</em> shows the merged view per NIC.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> Allow · Deny · Deny · Allow · Allow, each with the name of the rule that decided — for example
+<code>securityRules/Deny-VNet-Inbound</code> or <code>defaultSecurityRules/DenyAllInBound</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-7--publish-names-in-a-public-dns-zone" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">Publish names in a public DNS zone</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--publish-names-in-a-public-dns-zone" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Shoppers type names, not IP addresses. Create a public zone, add an <code>A</code> record for <code>www</code> and a <code>CNAME</code> that makes <code>shop</code>
+an alias of <code>www</code>. You don't own the domain <code>nusantara-retail-&lt;suffix&gt;.xyz</code>, so nobody on the internet will be sent to
+your Azure name servers — but you can ask them directly, which is how you test a zone before delegating a real domain.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network dns zone create -g &quot;$RG&quot; -n &quot;$ZONE&quot; --output none
+az network dns record-set a add-record -g &quot;$RG&quot; -z &quot;$ZONE&quot; -n www -a &quot;$WEB_IP&quot; --ttl 300 --output none
+az network dns record-set cname set-record -g &quot;$RG&quot; -z &quot;$ZONE&quot; -n shop -c &quot;www.$ZONE&quot; --ttl 300 --output none
+
+az network dns record-set list -g &quot;$RG&quot; -z &quot;$ZONE&quot; -o table
+
+NS1=$(az network dns zone show -g &quot;$RG&quot; -n &quot;$ZONE&quot; --query &quot;nameServers[0]&quot; -o tsv)
+echo &quot;Asking name server $NS1&quot;
+nslookup &quot;www.$ZONE&quot; &quot;$NS1&quot;
+nslookup &quot;shop.$ZONE&quot; &quot;$NS1&quot;
+
+# Without the name server, your normal resolver can&#x27;t find it: the domain isn&#x27;t delegated to Azure DNS.
+nslookup &quot;www.$ZONE&quot; || true
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Create a resource › DNS zone</em>, then <strong>+ Record set</strong> inside the zone. The <strong>Overview</strong> page
+lists the four name servers you would give to a domain registrar. <code>dig @&quot;$NS1&quot; &quot;www.$ZONE&quot;</code> works in Cloud Shell too.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the <code>www</code> query returns <code>$WEB_IP</code>; the <code>shop</code> query shows <code>canonical name = www.&lt;your zone&gt;</code> and
+the same address; the last query fails to find the name.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Rizky &quot;tightens security&quot; on a Friday afternoon. Add his rule:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network nsg rule create -g &quot;$RG&quot; --nsg-name nsg-app -n Deny-Web-Subnet \
+  --priority 90 --direction Inbound --access Deny --protocol &#x27;*&#x27; \
+  --source-address-prefixes 10.20.1.0/24 --source-port-ranges &#x27;*&#x27; \
+  --destination-address-prefixes &#x27;*&#x27; --destination-port-ranges &#x27;*&#x27; --output none
+</code></pre></div>
+<p>Wait about 30 seconds, then repeat the app call from Task 4:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>run_on vm-web &#x27;curl -s --max-time 5 http://10.20.2.4:8080/ || echo &quot;8080 BLOCKED&quot;&#x27;
+</code></pre></div>
+<p><strong>Symptom:</strong> <code>8080 BLOCKED</code>, although <code>Allow-Web-To-App-8080</code> is still there. Find the culprit with evidence, then fix
+it.</p>
+<details class="plain"><summary>Hint and fix</summary>
+<p>Run the first IP flow verify test from Task 6 again. It now answers <strong>Deny</strong> with <code>securityRules/Deny-Web-Subnet</code>:
+priority 90 is checked before your allow at 100, and the first match wins. Remove the rule (or renumber it above 100
+if Rizky really needs it):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network nsg rule delete -g &quot;$RG&quot; --nsg-name nsg-app -n Deny-Web-Subnet
+run_on vm-web &#x27;curl -s --max-time 5 http://10.20.2.4:8080/ || echo &quot;8080 BLOCKED&quot;&#x27;
+</code></pre></div>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. The script takes about three minutes because it runs real traffic tests through Run
+Command and asks IP flow verify about the key rules. If a check fails, the message tells you which task to revisit.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes the resource group <code>rg-lunch08-&lt;suffix&gt;</code> and everything in it: VMs, disks, public IPs, the NAT gateway,
+NSGs, the ASG and the DNS zone. Deletion continues in the background for a few minutes. Nothing was created outside the
+resource group: Network Watcher (in <code>NetworkWatcherRG</code>) is a free, shared regional resource that Azure enabled for you,
+and the SSH key in <code>~/.ssh</code> is reused by other labs.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>curl</code> to the web VM's public IP hangs or prints nothing</td>
+<td>cloud-init still starting the web server, the HTTP rule missing, or <code>vm-web</code>'s NIC not in <code>asg-web</code></td>
+<td>Wait two minutes; check the Task 2 and Task 3 checkpoints; run IP flow verify test 3 for port 80</td>
+</tr>
+<tr>
+<td><code>az vm create</code> fails with <code>SkuNotAvailable</code></td>
+<td><code>$VM_SIZE_SMALL</code> isn't offered to your subscription in this region</td>
+<td>List sizes with <code>az vm list-skus -l &quot;$LOCATION&quot; --size Standard_B -o table</code>, then <code>export VM_SIZE_SMALL=&lt;size&gt;</code> and <code>source ../common/config.sh</code> again</td>
+</tr>
+<tr>
+<td><code>Operation could not be completed as it results in exceeding approved ... Cores quota</code></td>
+<td>Not enough free vCPU quota in the region</td>
+<td>Delete VMs from other labs (<code>bash cleanup.sh</code> in their folders) or request more quota</td>
+</tr>
+<tr>
+<td><code>Run command extension execution is in progress. Please wait for completion before invoking a run command.</code></td>
+<td>Run Command runs one script at a time per VM</td>
+<td>Wait 30 seconds and run it again</td>
+</tr>
+<tr>
+<td>The <em>before</em> test in Task 5 prints an IP address instead of <code>NO OUTBOUND ACCESS</code></td>
+<td>The subnet isn't private, or the NAT gateway is already attached</td>
+<td><code>az network vnet subnet show -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-app --query &quot;{private:defaultOutboundAccess, nat:natGateway.id}&quot;</code>. If you made the subnet private after creating <code>vm-app</code>, deallocate and start the VM</td>
+</tr>
+<tr>
+<td>The <em>after</em> test in Task 5 still prints <code>NO OUTBOUND ACCESS</code></td>
+<td>The association is still applying, or the NAT gateway has no public IP</td>
+<td>Wait a minute and retry; check <code>natGateway.id</code> on <code>snet-app</code> and <code>az network nat gateway show -g &quot;$RG&quot; -n ng-nusa-app --query publicIpAddresses</code></td>
+</tr>
+<tr>
+<td><code>az network watcher test-ip-flow</code> reports that Network Watcher isn't enabled or found for the region</td>
+<td>You opted out of automatic enablement</td>
+<td><code>az network watcher configure -g NetworkWatcherRG -l &quot;$LOCATION&quot; --enabled true</code></td>
+</tr>
+<tr>
+<td>IP flow verify fails for one VM only</td>
+<td>The VM is stopped (deallocated)</td>
+<td><code>az vm start -g &quot;$RG&quot; -n &lt;vm&gt;</code></td>
+</tr>
+<tr>
+<td><code>nslookup</code> says <code>NXDOMAIN</code> even with <code>$NS1</code></td>
+<td>Typo in the zone or record name, or <code>$ZONE</code> not set in this shell</td>
+<td>Re-run the <em>Before you start</em> block; <code>az network dns record-set list -g &quot;$RG&quot; -z &quot;$ZONE&quot; -o table</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li>Create <code>asg-app</code>, add <code>vm-app</code>'s NIC to it, and change <code>Allow-Web-To-App-8080</code> to use <code>--destination-asgs asg-app</code>.
+Your rules now contain no IP addresses at all.</li>
+<li>Add an <strong>alias record</strong> that follows the public IP resource instead of copying its address:
+<code>az network dns record-set a create -g &quot;$RG&quot; -z &quot;$ZONE&quot; -n store --target-resource &quot;$(az network public-ip show -g &quot;$RG&quot; -n pip-vm-web --query id -o tsv)&quot;</code>.</li>
+<li>In the portal, run <strong>Network Watcher › Connection troubleshoot</strong> from <code>vm-web</code> to <code>10.20.2.4</code> port 8080, then to port
+22, and compare the answer with IP flow verify.</li>
+<li>Turn on <strong>VNet flow logs</strong> for <code>vnet-nusa-shop</code> in the portal (<em>Network Watcher › Flow logs › Create</em>, target type
+<em>Virtual network</em>). They need a storage account in the same region; delete both when you finish.</li>
+<li>Read about the zone-redundant <strong>StandardV2</strong> NAT gateway SKU, which needs StandardV2 public IPs, and decide when the
+storefront would need it.</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build the following, any way you like (portal, CLI, Bicep). Use these names so <code>verify.sh</code> can find your resources:</p>
+<ol>
+<li>Resource group <code>rg-lunch08-&lt;suffix&gt;</code> (the value of <code>rg_name 08</code>) in <code>$LOCATION</code>, created with <code>ensure_rg</code> so it
+carries the course tags.</li>
+<li>Virtual network <code>vnet-nusa-shop</code> with address space <code>10.20.0.0/16</code>, and two <strong>private subnets</strong> (no default outbound
+access): <code>snet-web</code> <code>10.20.1.0/24</code> and <code>snet-app</code> <code>10.20.2.0/24</code>.</li>
+<li>NSG <code>nsg-web</code> associated with <code>snet-web</code> and NSG <code>nsg-app</code> associated with <code>snet-app</code>. Keep all rules on these two
+subnet NSGs: the VMs' network interfaces have no NSG of their own.</li>
+<li>Application security group <code>asg-web</code>.</li>
+<li>VM <code>vm-web</code> (<code>$VM_SIZE_SMALL</code>, <code>$VM_IMAGE</code>, the shared <code>cloud-init-web.yml</code>) in <code>snet-web</code>, with a Standard public
+IP, its NIC in <code>asg-web</code>. HTTP (TCP 80) from the internet reaches it; SSH (TCP 22) from the internet does not.</li>
+<li>VM <code>vm-app</code> (<code>$VM_SIZE_SMALL</code>, <code>$VM_IMAGE</code>, this lab's <code>app-cloud-init.yml</code>) in <code>snet-app</code> with <strong>no</strong> public IP.
+Members of <code>asg-web</code> can reach it on TCP 8080 only; any other traffic from inside the VNet (for example TCP 22 from
+<code>vm-web</code>) is denied.</li>
+<li>A NAT gateway with a Standard public IP attached to <code>snet-app</code>; <code>vm-app</code>'s outbound connections leave from that IP.</li>
+<li>A public DNS zone in the resource group with an <code>A</code> record <code>www</code> pointing to <code>vm-web</code>'s public IP and a <code>CNAME</code>
+record <code>shop</code> pointing to <code>www.&lt;your zone&gt;</code>.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="07-storage-basic.html"><small>← Previous lab</small>07 · Store product images and invoices</a><a class="next" href="09-load-balancing-basic.html"><small>Next lab →</small>09 · Keep the shop open when a server fails</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/08-networking-basic/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

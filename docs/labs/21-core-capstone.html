@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 21 · Capstone project · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 21: Capstone project. about 2–3 hours including deployment waits; split it into three sessions if you like, cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 21 · Capstone project">
+<meta property="og:description" content="Hands-on Azure lab 21: Capstone project. about 2–3 hours including deployment waits; split it into three sessions if you like, cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/21-core-capstone.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="21" style="--c:#d98a00">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#d98a00">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 21</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>21</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Capstone project</h1>
+        <p class="lab-story">🏪 <b>Episode 21 · Friday&#x27;s Answer</b> — The monthly meeting is on Friday. The director wants a straight answer — with numbers. <a href="../lunches/21-core-capstone.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 2–3 hours including deployment waits; split it into three sessions if you like</span>
+          <span class="chip cost">💲💲 small charges while running</span>
+          <span class="chip">Difficulty ★★★</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 11 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--read-the-blueprint-before-you-build-15-min">Task 1 · Read the blueprint before you build (≈15 min)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--preview-and-deploy-20-min-mostly-waiting">Task 2 · Preview and deploy (≈20 min, mostly waiting)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--follow-one-request-end-to-end-15-min">Task 3 · Follow one request end to end (≈15 min)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--lose-a-zone-keep-the-shop-open-25-min">Task 4 · Lose a zone, keep the shop open (≈25 min)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--check-the-security-and-governance-guardrails-20-min">Task 5 · Check the security and governance guardrails (≈20 min)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--check-the-operations-guardrails-20-min">Task 6 · Check the operations guardrails (≈20 min)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--put-a-budget-on-it-portal-10-min">Task 7 · Put a budget on it (portal, ≈10 min)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-8--answer-the-director-with-rto-and-rpo-15-min-no-azure-changes">Task 8 · Answer the director with RTO and RPO (≈15 min, no Azure changes)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-9--do-a-well-architected-self-review-20-min">Task 9 · Do a Well-Architected self-review (≈20 min)</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/deploy.sh" target="_blank" rel="noopener"><span>deploy.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/main.bicep" target="_blank" rel="noopener"><span>infra/main.bicep</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/keyvault.bicep" target="_blank" rel="noopener"><span>infra/modules/keyvault.bicep</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/monitoring.bicep" target="_blank" rel="noopener"><span>infra/modules/monitoring.bicep</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/network.bicep" target="_blank" rel="noopener"><span>infra/modules/network.bicep</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/policy.bicep" target="_blank" rel="noopener"><span>infra/modules/policy.bicep</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/sql.bicep" target="_blank" rel="noopener"><span>infra/modules/sql.bicep</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/web.bicep" target="_blank" rel="noopener"><span>infra/modules/web.bicep</span><small>7 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/review-checklist.md" target="_blank" rel="noopener"><span>review-checklist.md</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>8 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/21-core-capstone" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its own steps (the provided Bicep files and <code>deploy.sh</code>).</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>You deploy Nusantara Retail's core platform — the design the whole core month has been building — from one modular
+Bicep template: a private network, two web servers in two availability zones behind a Standard load balancer, an Azure
+SQL database that accepts only Microsoft Entra identities, a Key Vault that uses Azure RBAC, monitoring with three alert
+rules, an Allowed locations policy, and (in the portal) a budget. Then you treat it like production: you follow a
+request end to end, switch off zone 1 and prove the shop stays open, check every guardrail, answer the director's
+question with RTO and RPO, and review the design against the Well-Architected pillars.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shopper([&quot;Shopper (your browser or curl)&quot;]) --&gt;|&quot;HTTP 80&quot;| pip[&quot;pip-nusa-shop&lt;br/&gt;Standard · zones 1, 2, 3&quot;]
+  subgraph rg[&quot;rg-lunch21-&amp;lt;suffix&amp;gt; · your region&quot;]
+    pip --&gt; lb[&quot;lb-nusa-shop&lt;br/&gt;probe /health · rule 80 · outbound rule&quot;]
+    subgraph vnet[&quot;vnet-nusa-capstone · 10.21.0.0/16&quot;]
+      subgraph web[&quot;snet-web · nsg-web · private subnet&quot;]
+        vm1[&quot;vm-web-1&lt;br/&gt;zone 1 · no public IP&quot;]
+        vm2[&quot;vm-web-2&lt;br/&gt;zone 2 · no public IP&quot;]
+      end
+      data[&quot;snet-data · nsg-data&lt;br/&gt;kept free for private endpoints&quot;]
+    end
+    lb --&gt; vm1 &amp; vm2
+    sql[(&quot;sql-nusa-&amp;lt;suffix&amp;gt; · sqldb-orders&lt;br/&gt;Entra-only · serverless&quot;)]
+    kv[&quot;kv-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;Azure RBAC · 1 secret&quot;]
+    law[&quot;log-nusa&lt;br/&gt;Log Analytics workspace&quot;]
+    ag[&quot;ag-nusa-oncall&lt;br/&gt;3 alert rules&quot;]
+    pol{{&quot;Allowed locations policy&quot;}}
+  end
+  kv -. &quot;audit logs&quot; .-&gt; law
+  ag -. &quot;e-mail&quot; .-&gt; you([&quot;You, on call&quot;])
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bicep module</th>
+<th>What it creates</th>
+<th>Lunch</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>infra/modules/network.bicep</code></td>
+<td><code>vnet-nusa-capstone</code> (10.21.0.0/16), private subnets <code>snet-web</code> and <code>snet-data</code>, NSGs <code>nsg-web</code> and <code>nsg-data</code></td>
+<td>08</td>
+</tr>
+<tr>
+<td><code>infra/modules/web.bicep</code></td>
+<td><code>pip-nusa-shop</code>, <code>lb-nusa-shop</code>, <code>vm-web-1</code> (zone 1), <code>vm-web-2</code> (zone 2) with their NICs and disks</td>
+<td>03, 06, 09</td>
+</tr>
+<tr>
+<td><code>infra/modules/sql.bicep</code></td>
+<td>logical server <code>sql-nusa-&lt;suffix&gt;</code>, serverless database <code>sqldb-orders</code></td>
+<td>11, 17</td>
+</tr>
+<tr>
+<td><code>infra/modules/keyvault.bicep</code></td>
+<td><code>kv-nusa-&lt;suffix&gt;</code>, secret <code>sql-connection-string</code>, your Key Vault Secrets Officer role</td>
+<td>15</td>
+</tr>
+<tr>
+<td><code>infra/modules/monitoring.bicep</code></td>
+<td><code>log-nusa</code>, action group <code>ag-nusa-oncall</code>, alerts <code>alert-web-cpu-high</code>, <code>alert-lb-backend-health</code>, <code>alert-web-vm-stopped</code>, Key Vault audit logs</td>
+<td>16</td>
+</tr>
+<tr>
+<td><code>infra/modules/policy.bicep</code></td>
+<td>assignment <code>allowed-locations</code> of the built-in <strong>Allowed locations</strong> policy</td>
+<td>18</td>
+</tr>
+<tr>
+<td><em>(portal, Task 7)</em></td>
+<td>budget <code>budget-lunch21</code> with 50/80/100% alerts</td>
+<td>19</td>
+</tr>
+<tr>
+<td><code>infra/main.bicep</code></td>
+<td>wires the six modules together; <code>deploy.sh</code> runs it with what-if first</td>
+<td>20</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you are <strong>Owner</strong> — Task 2 creates a role assignment and a policy assignment. Use a
+personal or dedicated lab subscription, never a company one (see <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. The Azure CLI and Bicep are already there.</li>
+<li>A region with availability zones. The default, <code>southeastasia</code>, works; if you use <code>indonesiacentral</code>, run the
+environment check below first. You need <strong>4 vCPUs</strong> of quota in the region (two <code>Standard_B2ats_v2</code> web VMs with 2 vCPUs each).</li>
+<li>An e-mail address you can read during the lab — the alerts go there.</li>
+<li>Get the lab files and load the shared settings and this lab's names:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/21-core-capstone
+source ../common/config.sh
+source lab.env                          # resource names plus two helpers: who_answers and watch_shop
+echo &quot;$RG&quot;                              # rg-lunch21-&lt;suffix&gt;
+bash ../common/check-environment.sh     # optional: region, VM sizes and quota
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>The platform costs a little every hour it exists (two small VMs, a load balancer and a public IP; the database is free
+or pauses). Finish with <strong>Clean up</strong>, even if you stop halfway. Splitting the lab over several days? Run
+<code>bash cleanup.sh</code> at the end of each session and <code>bash deploy.sh</code> at the start of the next — rebuilding from code takes
+about 15 minutes, and that is exactly the point of infrastructure as code.</p>
+</aside>
+<p>Every time you open a new Cloud Shell session, go back to the lab folder and run
+<code>source ../common/config.sh &amp;&amp; source lab.env</code> again before you continue.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Session</th>
+<th>Tasks</th>
+<th>About</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 · Build</td>
+<td>1 Read the blueprint · 2 Deploy · 3 Follow a request</td>
+<td>50 min</td>
+</tr>
+<tr>
+<td>2 · Prove</td>
+<td>4 Lose a zone · 5 Security and governance · 6 Operations</td>
+<td>65 min</td>
+</tr>
+<tr>
+<td>3 · Decide</td>
+<td>7 Budget · 8 Answer the director · 9 Well-Architected review · Break it and fix it · Clean up</td>
+<td>65 min</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–9 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you finished the core month and want to design it yourself</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way (your own Bicep is the best way), then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--read-the-blueprint-before-you-build-15-min" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Read the blueprint before you build (≈15 min)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--read-the-blueprint-before-you-build-15-min" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>In a real team nobody deploys a template they have not read. Reviewing infrastructure as code is how you catch an open
+port or a missing tag <em>before</em> it costs money. Open the files in the Cloud Shell editor (<code>code infra/main.bicep</code>) or
+read them on GitHub.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ls -R infra
+</code></pre></div>
+<p>Find each of these lines and say out loud why it is there:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Look for</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>main.bicep</code></td>
+<td><code>network.outputs.webSubnetId</code></td>
+<td>modules pass values to each other through outputs; Bicep orders the deployment from these references</td>
+</tr>
+<tr>
+<td><code>network.bicep</code></td>
+<td><code>defaultOutboundAccess: false</code></td>
+<td>a <strong>private subnet</strong>: VMs get no hidden internet access (Lunch 08)</td>
+</tr>
+<tr>
+<td><code>network.bicep</code></td>
+<td><code>sourceAddressPrefix: 'AzureLoadBalancer'</code></td>
+<td>the health probe must be allowed in, or every server looks dead</td>
+</tr>
+<tr>
+<td><code>web.bicep</code></td>
+<td><code>zones: [ zone ]</code> inside the VM loop</td>
+<td>one VM per availability zone</td>
+</tr>
+<tr>
+<td><code>web.bicep</code></td>
+<td><code>loadFileAsBase64('../../../common/cloud-init-web.yml')</code></td>
+<td>the shared web server set-up, read at compile time; the path is relative to <code>web.bicep</code></td>
+</tr>
+<tr>
+<td><code>web.bicep</code></td>
+<td><code>disableOutboundSnat: true</code> and <code>outboundRules</code></td>
+<td>explicit outbound access through the load balancer for the private VMs</td>
+</tr>
+<tr>
+<td><code>sql.bicep</code></td>
+<td><code>azureADOnlyAuthentication: true</code></td>
+<td>no SQL logins and no passwords; only Microsoft Entra identities</td>
+</tr>
+<tr>
+<td><code>sql.bicep</code></td>
+<td><code>useFreeLimit</code> and <code>freeLimitExhaustionBehavior: 'AutoPause'</code></td>
+<td>the free offer database pauses instead of billing you</td>
+</tr>
+<tr>
+<td><code>keyvault.bicep</code></td>
+<td><code>enableRbacAuthorization: true</code> and <code>scope: vault</code></td>
+<td>Azure RBAC for secrets, with your role on this vault only</td>
+</tr>
+<tr>
+<td><code>monitoring.bicep</code></td>
+<td>three alert resources</td>
+<td>capacity (CPU), application health (probe) and change (VM stopped)</td>
+</tr>
+<tr>
+<td><code>policy.bicep</code></td>
+<td><code>e56962a6-4747-49cd-b67b-bf8b01975c4c</code></td>
+<td>Bicep needs the built-in policy's ID; the comment shows how to check it</td>
+</tr>
+</tbody>
+</table></div>
+<p>Now let Bicep check the files:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az bicep build --file infra/main.bicep --stdout &gt; /dev/null &amp;&amp; echo &quot;main.bicep compiles&quot;
+az bicep lint --file infra/main.bicep      # no output means no linter warnings
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>main.bicep compiles</code> is printed, and you can point to the module that creates each box in the
+diagram above. Quick test: which file would you change to add a third web server in zone 3?</p>
+<details class="plain"><summary>Answer</summary>
+<p><code>web.bicep</code> — add <code>'3'</code> to the <code>zones</code> parameter (and check your vCPU quota first).</p>
+</details>
+</div>
+</div></section><section class="lab-section" id="task-2--preview-and-deploy-20-min-mostly-waiting" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Preview and deploy (≈20 min, mostly waiting)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--preview-and-deploy-20-min-mostly-waiting" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p><code>deploy.sh</code> does what a careful engineer does by hand: it finds out who you are (your user principal name and object
+ID become the Azure SQL administrator and the Key Vault secrets officer), makes sure you have an SSH key, compiles the
+templates, shows a <strong>what-if</strong> preview and only deploys after you say yes.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash deploy.sh
+</code></pre></div>
+<p>Read the what-if output like a code review: every <code>+ Create</code> line is something that will exist, cost money or change who
+can do what. You should see the network, the web tier, the database, the vault, its secret and role assignment, the
+workspace, the action group, three alert rules, a diagnostic setting and the policy assignment. A few lines may be
+marked as noise or ignored; that is normal. Type <code>y</code> to deploy. The deployment takes about 10–15 minutes, and the
+script then waits until the storefront answers.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Watch the deployment while it runs: <em>Resource groups › rg-lunch21-&lt;suffix&gt; › Settings ›
+Deployments</em>. You see <code>capstone</code> plus one nested deployment per module (<code>network</code>, <code>web</code>, <code>sql</code>, <code>keyvault</code>,
+<code>monitoring</code>, <code>policy</code>), which shows the order Bicep worked out from the outputs.</p>
+</aside>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Note</span>Expect a few e-mails from Azure Monitor: one saying you were added to the action group, and possibly a
+<em>backend health</em> alert that fires and resolves while the web servers boot. That is your monitoring already working.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the deployment succeeded and the storefront answers.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az deployment group show -g &quot;$RG&quot; -n &quot;$DEPLOYMENT&quot; --query properties.provisioningState -o tsv   # Succeeded
+curl -s &quot;http://$(lb_ip)/&quot; | grep -o &#x27;Served by.*&lt;/p&gt;&#x27; | sed &#x27;s/&lt;[^&gt;]*&gt;//g&#x27;
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-3--follow-one-request-end-to-end-15-min" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Follow one request end to end (≈15 min)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--follow-one-request-end-to-end-15-min" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A shopper's request crosses five things you built in the core month. Follow it hop by hop, so that later you can
+explain to anyone where it could break.</p>
+<ol>
+<li>
+<p><strong>Who answers?</strong> Send ten requests. The load balancer hashes each new connection, so you see both servers and both zones.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>who_answers 10
+</code></pre></div>
+</li>
+<li>
+<p><strong>The front door</strong> — a zone-redundant Standard public IP with a DNS name:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network public-ip show -g &quot;$RG&quot; -n &quot;$PIP&quot; \
+  --query &quot;{ip:ipAddress, fqdn:dnsSettings.fqdn, sku:sku.name, zones:join(&#x27;,&#x27;, zones)}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>The load balancer</strong> — health probe, rule and outbound rule:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network lb show -g &quot;$RG&quot; -n &quot;$LB&quot; \
+  --query &quot;{probePath:probes[0].requestPath, everySeconds:probes[0].intervalInSeconds, rulePort:loadBalancingRules[0].frontendPort, outboundRules:length(outboundRules)}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>The network security group</strong> — what may enter the subnet:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network nsg rule list -g &quot;$RG&quot; --nsg-name &quot;$NSG&quot; \
+  --query &quot;[].{rule:name, priority:priority, from:sourceAddressPrefix, port:destinationPortRange, access:access}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>The servers</strong> — private addresses only:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm list -g &quot;$RG&quot; -d --query &quot;[].{vm:name, zone:zones[0], privateIp:privateIps, publicIp:publicIps}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>The way out.</strong> The VMs have no public IP and sit in a private subnet, yet they can reach the internet — through
+the load balancer's outbound rule. Ask a VM which address the internet sees (Run Command takes about a minute):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript \
+  --scripts &quot;curl -s --max-time 10 https://api.ipify.org&quot; --query &quot;value[0].message&quot; -o tsv
+lb_ip
+</code></pre></div>
+</li>
+</ol>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>lb-nusa-shop › Monitoring › Insights</em> draws the frontend, rule, probe and backend pool as a
+diagram with live health. <em>rg-lunch21-&lt;suffix&gt; › Resource visualizer</em> shows how all the resources connect.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> both <code>vm-web-1</code> and <code>vm-web-2</code> answer, the public IP lists zones <code>1,2,3</code>, the VMs show no public IP,
+and the address the VM reports in step 6 is the same as <code>lb_ip</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-4--lose-a-zone-keep-the-shop-open-25-min" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Lose a zone, keep the shop open (≈25 min)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--lose-a-zone-keep-the-shop-open-25-min" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>This is the moment the director cares about. You cannot switch off a real Azure datacenter, but you can remove
+everything <em>you</em> run in zone 1 — <code>vm-web-1</code> — and watch what shoppers experience.</p>
+<ol>
+<li>
+<p>Deallocate <code>vm-web-1</code> in the background and immediately start watching the shop for about two and a half minutes:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm deallocate -g &quot;$RG&quot; -n &quot;$VM1&quot; --no-wait
+watch_shop 150
+</code></pre></div>
+<p>You should see something like this: a mix at first, perhaps one or two <code>(no answer)</code> lines while the probe notices
+the server is gone, then only <code>vm-web-2</code>.</p>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Copy</button></div><pre><code>10:02:11  vm-web-1
+10:02:13  vm-web-2
+10:02:16  (no answer)
+10:02:18  vm-web-2
+10:02:20  vm-web-2
+</code></pre></div>
+<p>Count the <code>(no answer)</code> lines and multiply by two seconds: that is your <strong>measured RTO</strong> for a zone failure. Write it
+down; you need it in Task 8.</p>
+</li>
+<li>
+<p>Confirm the VM is really gone and see who did it — the activity log records every control-plane action:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm get-instance-view -g &quot;$RG&quot; -n &quot;$VM1&quot; \
+  --query &quot;instanceView.statuses[?starts_with(code, &#x27;PowerState/&#x27;)].displayStatus | [0]&quot; -o tsv
+az monitor activity-log list -g &quot;$RG&quot; --offset 1h \
+  --query &quot;[?operationName.value==&#x27;Microsoft.Compute/virtualMachines/deallocate/action&#x27;].{time:eventTimestamp, who:caller, status:status.value}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p>Check your inbox. Within a few minutes the activity log alert <strong>alert-web-vm-stopped</strong> e-mails you: monitoring
+noticed the change before any customer complained.</p>
+</li>
+<li>
+<p>Look at the probe's view: <em>lb-nusa-shop › Monitoring › Metrics › Health Probe Status</em>, aggregation <strong>Avg</strong>, then
+<strong>Apply splitting</strong> by <strong>Backend IP Address</strong>. The line for <code>vm-web-1</code> stops — the load balancer does not probe a
+deallocated VM at all, which is why this lab also has the activity log alert.</p>
+</li>
+<li>
+<p>Bring zone 1 back and watch it rejoin the rotation without any configuration change:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm start -g &quot;$RG&quot; -n &quot;$VM1&quot;
+who_answers 10
+</code></pre></div>
+</li>
+</ol>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Note</span><strong>Variation — the application fails, not the server.</strong> Stop only the web service on <code>vm-web-2</code>. The VM keeps
+running, its health probe fails, the load balancer routes around it, and within about 5–10 minutes the metric alert
+<strong>alert-lb-backend-health</strong> e-mails you. Different failure, different signal.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM2&quot; --command-id RunShellScript --scripts &quot;systemctl stop nusa-web&quot; -o none
+who_answers 6        # only vm-web-1 answers
+# ...wait for the e-mail, then repair it:
+az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM2&quot; --command-id RunShellScript --scripts &quot;systemctl start nusa-web&quot; -o none
+</code></pre></div>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the shop answered throughout (apart from a few seconds), you received the <em>VM stopped</em> e-mail, you
+wrote down your measured RTO, and <code>who_answers 10</code> shows both servers again.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--check-the-security-and-governance-guardrails-20-min" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Check the security and governance guardrails (≈20 min)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--check-the-security-and-governance-guardrails-20-min" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Security in this design is a stack of small, checkable decisions. Check them one by one.</p>
+<ol>
+<li>
+<p><strong>Key Vault uses Azure RBAC, and you hold a role on this vault only:</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az keyvault show -n &quot;$KV&quot; \
+  --query &quot;{rbac:properties.enableRbacAuthorization, softDeleteDays:properties.softDeleteRetentionInDays, purgeProtection:properties.enablePurgeProtection}&quot; -o table
+KV_ID=$(az keyvault show -n &quot;$KV&quot; --query id -o tsv)
+az role assignment list --scope &quot;$KV_ID&quot; --query &quot;[].{role:roleDefinitionName, who:principalName}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>Read the secret.</strong> It is safe to print because it contains no password — that is the whole point of Microsoft
+Entra authentication. (A brand-new role assignment can take up to about 10 minutes to work; if you get
+<code>Forbidden</code>, wait and retry.)</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az keyvault secret show --vault-name &quot;$KV&quot; -n &quot;$SECRET&quot; --query value -o tsv
+</code></pre></div>
+</li>
+<li>
+<p><strong>Azure SQL accepts only Microsoft Entra identities, and nobody can connect from the internet yet:</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az sql server ad-only-auth get -g &quot;$RG&quot; -n &quot;$SQL&quot; --query azureAdOnlyAuthentication   # true
+az sql server ad-admin list -g &quot;$RG&quot; -s &quot;$SQL&quot; --query &quot;[].login&quot; -o tsv                # you
+az sql server firewall-rule list -g &quot;$RG&quot; -s &quot;$SQL&quot; -o table                            # empty
+az sql db show -g &quot;$RG&quot; -s &quot;$SQL&quot; -n &quot;$DB&quot; \
+  --query &quot;{tier:currentServiceObjectiveName, autoPauseMinutes:autoPauseDelay, freeOffer:useFreeLimit}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>The policy guardrail.</strong> List the assignment, then try to break the rule with a free resource (an empty NSG) in
+another region:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy assignment list -g &quot;$RG&quot; --query &quot;[].{name:name, displayName:displayName, mode:enforcementMode}&quot; -o table
+OTHER_REGION=$([[ &quot;$LOCATION&quot; == &quot;eastus&quot; ]] &amp;&amp; echo westeurope || echo eastus)
+az network nsg create -g &quot;$RG&quot; -n nsg-policy-test --location &quot;$OTHER_REGION&quot;
+</code></pre></div>
+<p>Expected: an error with the code <code>RequestDisallowedByPolicy</code> and the message Nusantara Retail wrote into the
+assignment. A new assignment takes about five minutes to take effect; if the NSG <em>was</em> created, delete it
+(<code>az network nsg delete -g &quot;$RG&quot; -n nsg-policy-test</code>), wait a few minutes and try again.</p>
+</li>
+</ol>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>kv-nusa-&lt;suffix&gt; › Access control (IAM) › Role assignments</em> shows your role; <em>sql-nusa-&lt;suffix&gt;
+› Settings › Microsoft Entra ID</em> shows the &quot;Support only Microsoft Entra authentication&quot; setting; <em>Policy ›
+Compliance</em> shows the assignment (the first compliance results appear only after an evaluation cycle, which can take a while).</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> RBAC is <code>true</code>, the secret prints a connection string with <code>Authentication=Active Directory Default</code> and no password, Entra-only authentication is <code>true</code>, there are no firewall rules, and the out-of-region NSG
+was denied.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--check-the-operations-guardrails-20-min" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Check the operations guardrails (≈20 min)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--check-the-operations-guardrails-20-min" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Operations answers three questions: will we know, will the right person hear about it, and can we find out what happened?</p>
+<ol>
+<li>
+<p><strong>The alert rules and who they notify:</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az monitor metrics alert list -g &quot;$RG&quot; --query &quot;[].{rule:name, severity:severity, enabled:enabled}&quot; -o table
+az monitor activity-log alert list -g &quot;$RG&quot; --query &quot;[].{rule:name, enabled:enabled}&quot; -o table
+az monitor action-group show -g &quot;$RG&quot; -n &quot;$AG&quot; --query &quot;{enabled:enabled, shortName:groupShortName, emails:length(emailReceivers)}&quot; -o table
+</code></pre></div>
+<p>In the portal, <em>Monitor › Alerts</em> (filtered to your resource group) lists the alerts that fired in Task 4.</p>
+</li>
+<li>
+<p><strong>Metrics without any agent.</strong> Azure collects host metrics for every VM:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>VM1_ID=$(az vm show -g &quot;$RG&quot; -n &quot;$VM1&quot; --query id -o tsv)
+az monitor metrics list --resource &quot;$VM1_ID&quot; --metric &quot;Percentage CPU&quot; --interval PT5M --offset 1h --aggregation Average -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>Logs: who read the secret?</strong> Your secret read in Task 5 was recorded. In the portal open <em>log-nusa › Logs</em>,
+switch to KQL mode and run this query (the first records can take 10–15 minutes to arrive):</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>search &quot;SecretGet&quot;
+| where TimeGenerated &gt; ago(4h)
+| project TimeGenerated, $table, OperationName
+| order by TimeGenerated desc
+</code></pre></div>
+<p><code>search</code> looks in every table, so it works whichever table your workspace uses for Key Vault logs
+(<code>AzureDiagnostics</code> by default). Lunch 30 teaches KQL properly.</p>
+</li>
+<li>
+<p><strong>Backups you did not have to configure.</strong> Azure SQL Database backs itself up; check the restore window:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az sql db show -g &quot;$RG&quot; -s &quot;$SQL&quot; -n &quot;$DB&quot; --query &quot;{earliestRestore:earliestRestoreDate, backupStorage:currentBackupStorageRedundancy}&quot; -o table
+az sql db str-policy show -g &quot;$RG&quot; -s &quot;$SQL&quot; -n &quot;$DB&quot; --query retentionDays    # 7
+</code></pre></div>
+<p><code>earliestRestore</code> stays empty until the first full backup finishes, usually within about half an hour of creation.</p>
+</li>
+<li>
+<p><em>(Optional)</em> <strong>Make the CPU alert fire.</strong> Keep <code>vm-web-2</code> busy for 15 minutes; within about 10 minutes
+<strong>alert-web-cpu-high</strong> e-mails you, and it resolves itself after the loop ends.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM2&quot; --command-id RunShellScript \
+  --scripts &quot;nohup timeout 900 sh -c &#x27;while :; do :; done&#x27; &gt; /dev/null 2&gt;&amp;1 &amp;&quot; -o none
+</code></pre></div>
+</li>
+</ol>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> three enabled alert rules point to <code>ag-nusa-oncall</code>, you can see CPU metrics, your <code>SecretGet</code>
+appears in the workspace, and the database reports a 7-day restore window.</p>
+</div>
+</div></section><section class="lab-section" id="task-7--put-a-budget-on-it-portal-10-min" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">Put a budget on it (portal, ≈10 min)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--put-a-budget-on-it-portal-10-min" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Budgets are created in the portal here because that is where you set the e-mail alerts comfortably. A budget never
+stops resources; it warns people in time.</p>
+<ol>
+<li>Portal › <em>Resource groups</em> › <strong>rg-lunch21-&lt;suffix&gt;</strong> › <em>Cost Management</em> › <strong>Budgets</strong> › <strong>+ Add</strong>.</li>
+<li><strong>Name</strong> <code>budget-lunch21</code> (the scripts look for this name), <strong>Reset period</strong> Monthly, <strong>Amount</strong> a small number in
+your billing currency — for example the equivalent of US$10.</li>
+<li><strong>Next</strong> › <strong>Alert conditions</strong>: add <em>Actual</em> at <strong>50</strong>, <strong>80</strong> and <strong>100</strong> percent, and <em>Forecasted</em> at <strong>100</strong> percent.
+Add your e-mail address under <strong>Alert recipients</strong>.</li>
+<li><strong>Create</strong>.</li>
+</ol>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Note</span>Cost data arrives with a delay of several hours, so a new budget shows little spending at first and alerts are never
+instant. If the <em>Budgets</em> page says your subscription offer is not supported, read the steps, skip the task, and
+expect <code>verify.sh</code> to show a note instead of a check.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az consumption budget list -g &quot;$RG&quot; --query &quot;[].{name:name, amount:amount, period:timeGrain}&quot; -o table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="task-8--answer-the-director-with-rto-and-rpo-15-min-no-azure-changes" data-kind="task"><h2><span class="task-tag">Task 8</span><span class="title">Answer the director with RTO and RPO (≈15 min, no Azure changes)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-8--answer-the-director-with-rto-and-rpo-15-min-no-azure-changes" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Ibu Sari asked: <em>&quot;If that server dies, how long can't we sell?&quot;</em> Answer with evidence from this lab, not with hope.
+Copy this table into your notes and fill it in.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Failure</th>
+<th>What protects us in this design</th>
+<th>Evidence from the lab</th>
+<th>RTO (time we can't sell)</th>
+<th>RPO (orders we could lose)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One web server fails</td>
+<td></td>
+<td>Task 4 variation</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Zone 1 fails</td>
+<td></td>
+<td>Task 4 measurement</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Someone deletes today's orders</td>
+<td></td>
+<td>Task 6, step 4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>The whole region is lost</td>
+<td></td>
+<td>—</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>Then write a five-sentence message to Ibu Sari: plain words, numbers, one sentence on what would make the weakest
+row better and what it would cost (open the <a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">pricing calculator</a> if you
+want a figure).</p>
+<details class="plain"><summary>Sample answer</summary>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Failure</th>
+<th>What protects us</th>
+<th>Evidence</th>
+<th>RTO</th>
+<th>RPO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One web server fails</td>
+<td>Health probe + second server</td>
+<td>probe marked it down; the other server answered</td>
+<td>seconds</td>
+<td>none (web servers hold no data)</td>
+</tr>
+<tr>
+<td>Zone 1 fails</td>
+<td>Servers in two zones, zone-redundant public IP</td>
+<td>a few <code>(no answer)</code> lines, then only <code>vm-web-2</code></td>
+<td>seconds</td>
+<td>none for the web tier; the lab database is <em>not</em> zone-redundant, so production must enable it</td>
+</tr>
+<tr>
+<td>Someone deletes today's orders</td>
+<td>Automatic backups, point-in-time restore (7 days)</td>
+<td><code>earliestRestoreDate</code>, retention 7 days</td>
+<td>minutes to an hour (restore creates a new database; size matters)</td>
+<td>minutes — log backups run roughly every 5–10 minutes, plus any orders taken after the mistake</td>
+</tr>
+<tr>
+<td>Region lost</td>
+<td>Nothing yet except the Bicep files</td>
+<td>—</td>
+<td>hours to rebuild in another region; data only if a copy exists there</td>
+<td>everything since the last copy outside the region</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>&quot;Ibu Sari, if a server or even one of Azure's datacenter zones in the region fails, the shop keeps selling: we
+measured a pause of a few seconds and no lost orders. If someone deletes orders by mistake, we can restore the database
+to any moment in the last seven days and would re-enter at most a few minutes of orders. If the whole region were lost,
+which is rare, we could rebuild the shop elsewhere from our templates within hours, but today's orders would be at
+risk. Keeping a continuously updated copy of the database in a second region closes that gap; Lunch 28 shows how, and I
+can price it for the next meeting. Production should also make the database zone-redundant, which this lab skipped to
+save money.&quot;</em></p>
+</details>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> every row has an RTO and an RPO, and your message names one improvement with its cost trade-off.</p>
+</div>
+</div></section><section class="lab-section" id="task-9--do-a-well-architected-self-review-20-min" data-kind="task"><h2><span class="task-tag">Task 9</span><span class="title">Do a Well-Architected self-review (≈20 min)</span><button class="btn btn-sm done-toggle" type="button" data-task="task-9--do-a-well-architected-self-review-20-min" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Open <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/review-checklist.md" target="_blank" rel="noopener"><code>review-checklist.md</code></a>. For each pillar, run the commands, mark every check ✅, ⚠️ or ❌,
+and finish the <em>Trade-offs you accepted</em> and <em>Your top three improvements</em> sections. Be strict: the lab build has
+several deliberate gaps (HTTP only, a database that is not zone-redundant, purge protection off) and the review is
+where you say so.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> every check has a mark, at least three trade-offs are written down, and your top three improvements
+each name the lunch that teaches the fix.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p><strong>Drift.</strong> Someone &quot;tidies up&quot; the network security group by hand and removes the rule for shoppers:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network nsg rule delete -g &quot;$RG&quot; --nsg-name &quot;$NSG&quot; -n Allow-HTTP-Internet
+curl -s -m 5 -o /dev/null -w &#x27;%{http_code}\n&#x27; &quot;http://$(lb_ip)/&quot;    # 000 = no answer
+</code></pre></div>
+<p>The shop is down — yet in the portal the load balancer's <strong>Health Probe Status</strong> stays at 100%. Why are both servers
+&quot;healthy&quot; while no shopper gets through? And what is the fastest <em>safe</em> way to repair it?</p>
+<details class="plain"><summary>Hint and fix</summary>
+<p>The probe comes from the <code>AzureLoadBalancer</code> service tag, which still has its own rule, so the servers look healthy.
+Shoppers come from the <code>Internet</code> tag, whose rule you deleted, and the default rules deny that traffic.</p>
+<p>Do not re-create the rule by hand — you might type a different priority or port. Run the template again:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash deploy.sh
+</code></pre></div>
+<p>The what-if shows <code>~ Modify</code> on <code>nsg-web</code> with the missing rule; confirm, and the shop is back. Infrastructure as code
+turns &quot;what did someone change?&quot; into a diff. To stop such changes in the first place, deploy the template as a
+deployment stack with deny settings (Lunch 20) — see the stretch goals.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>: network and NSG rules, both VMs running in zones 1 and 2 without public IPs, the
+zone-redundant Standard public IP and load balancer (probe, rule, outbound rule, two backends, HTTP 200 from both
+servers), Entra-only Azure SQL with TLS 1.2+ and a 7-day restore window, the RBAC Key Vault and its password-free
+secret, the workspace, action group, CPU and activity log alerts, Key Vault audit logs, the Allowed locations policy,
+and the budget. If a check fails, the message tells you which task to revisit.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes the budget, the policy assignment, your role assignment on the vault, the Key Vault itself (deleted <strong>and
+purged</strong>, so the name is free again), any deployment stack from the stretch goals, and resource group
+<code>rg-lunch21-&lt;suffix&gt;</code> with everything in it. Deletion continues in the background for a few minutes; check with
+<code>az group list --tag lunch=21 -o table</code>. Your SSH key in <code>~/.ssh</code> stays — it is not an Azure resource.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SkuNotAvailable</code> … <em>&quot;The requested size for resource … is currently not available in location … zones …&quot;</em></td>
+<td>The VM size (<code>$VM_SIZE_SMALL</code>) is not offered in that zone for your subscription</td>
+<td>Pick another allowed size: <code>VM_SIZE_SMALL=Standard_B2ts_v2 bash deploy.sh</code> (list sizes with <code>az vm list-skus --location &quot;$LOCATION&quot; --size Standard_B --zone -o table</code>)</td>
+</tr>
+<tr>
+<td><em>&quot;Operation could not be completed as it results in exceeding approved … Cores quota&quot;</em></td>
+<td>Not enough vCPU quota in the region</td>
+<td>Delete VMs left over from other labs (each web VM needs 2 vCPUs), or request more quota</td>
+</tr>
+<tr>
+<td><code>ConflictError</code> … <em>&quot;A vault with the same name already exists in deleted state&quot;</em></td>
+<td>A Key Vault from an earlier run is soft-deleted</td>
+<td>Let <code>deploy.sh</code> purge it when it asks, or <code>az keyvault purge --name &quot;$KV&quot; --location &quot;$LOCATION&quot;</code></td>
+</tr>
+<tr>
+<td>A deployment error about the free offer or <code>useFreeLimit</code></td>
+<td>Free databases already used in another region, or an offer that does not support them</td>
+<td><code>USE_FREE_SQL_OFFER=false bash deploy.sh</code> (a small serverless database that pauses when idle)</td>
+</tr>
+<tr>
+<td><code>deploy.sh</code> says it could not read your Microsoft Entra profile</td>
+<td>Guest account or restricted directory</td>
+<td>Set <code>SQL_ADMIN_UPN</code> and <code>SQL_ADMIN_OBJECT_ID</code> yourself, as the message shows</td>
+</tr>
+<tr>
+<td><code>RequestDisallowedByPolicy</code> when <strong>you</strong> redeploy</td>
+<td>You changed <code>LOCATION</code> after the first deployment; the policy allows only the first region</td>
+<td>Use the original region, or run <code>cleanup.sh</code> first</td>
+</tr>
+<tr>
+<td><code>PropertyChangeNotAllowed</code> … <code>linuxConfiguration.ssh.publicKeys</code></td>
+<td>Your SSH key changed between deployments</td>
+<td>Restore the old key, or run <code>cleanup.sh</code> and deploy again</td>
+</tr>
+<tr>
+<td><code>Forbidden</code> … <em>&quot;Caller is not authorized to perform action on resource&quot;</em> … <code>secrets/getSecret/action</code></td>
+<td>The new role assignment has not reached Key Vault yet</td>
+<td>Wait about 10 minutes and try again</td>
+</tr>
+<tr>
+<td><code>curl</code> gets no answer right after deployment</td>
+<td>The web servers are still running cloud-init</td>
+<td>Wait 2–3 minutes; check with <code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript --scripts &quot;systemctl status nusa-web --no-pager&quot;</code></td>
+</tr>
+<tr>
+<td><code>LoadBalancingRuleMustDisableSNATSinceSameFrontendIPConfigurationIsReferencedByOutboundRule</code> (Challenge mode)</td>
+<td>The load-balancing rule still does SNAT while an outbound rule uses the same frontend</td>
+<td>Set <code>disableOutboundSnat: true</code> on the rule</td>
+</tr>
+<tr>
+<td>The out-of-region NSG in Task 5 was <strong>not</strong> denied</td>
+<td>The assignment is still propagating</td>
+<td>Delete the test NSG, wait about five minutes, retry</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li>
+<p><strong>Freeze the design.</strong> Deploy the same template as a deployment stack that denies changes, then try the Break it
+exercise again (exclude yourself with <code>--deny-settings-excluded-principals</code> if you want to keep fixing things):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ALERT_EMAIL=&quot;you@example.com&quot;        # your address
+az stack group create --name capstone-stack --resource-group &quot;$RG&quot; --template-file infra/main.bicep \
+  --parameters suffix=&quot;$SUFFIX&quot; vmSize=&quot;$VM_SIZE_SMALL&quot; sshPublicKey=&quot;$(cat ~/.ssh/id_rsa.pub)&quot; \
+               sqlAdminLogin=&quot;$(my_upn)&quot; sqlAdminObjectId=&quot;$(my_object_id)&quot; alertEmail=&quot;$ALERT_EMAIL&quot; \
+  --action-on-unmanage deleteAll --deny-settings-mode denyWriteAndDelete
+</code></pre></div>
+<p><code>cleanup.sh</code> deletes the stack first, so its deny settings never block the clean-up.</p>
+</li>
+<li>
+<p><strong>Zone 3.</strong> Add <code>'3'</code> to the <code>zones</code> parameter in <code>web.bicep</code> and redeploy (6 vCPUs in total — check your quota first).</p>
+</li>
+<li>
+<p><strong>Zone-redundant database.</strong> Set <code>zoneRedundant: true</code> in <code>sql.bicep</code> with <code>USE_FREE_SQL_OFFER=false</code>, check the
+what-if, and compare the price in the pricing calculator before you deploy.</p>
+</li>
+<li>
+<p><strong>NAT gateway instead of an outbound rule</strong> (Lunches 08 and 25): give <code>snet-web</code> a NAT gateway and remove the
+outbound rule. Which is simpler to operate?</p>
+</li>
+<li>
+<p><strong>Managed identity end to end</strong> (Lunch 15): give the VMs system-assigned identities with <em>Key Vault Secrets User</em>,
+then read the secret from inside <code>vm-web-1</code> with Run Command.</p>
+</li>
+<li>
+<p><strong>Guest logs</strong> (Lunch 30): collect syslog from the VMs into <code>log-nusa</code> with the Azure Monitor Agent and a data collection rule.</p>
+</li>
+<li>
+<p><strong>Second opinion:</strong> take the free <a href="https://learn.microsoft.com/assessments/azure-architecture-review/" target="_blank" rel="noopener">Azure Well-Architected Review</a>
+for the storefront and compare it with your checklist.</p>
+</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build Nusantara Retail's core platform any way you like — your own Bicep is the best way — using the names below so
+<code>verify.sh</code> can find everything. The shared settings give you <code>$LOCATION</code> and <code>$SUFFIX</code>; <code>lab.env</code> lists every name.</p>
+<ol>
+<li>Resource group <code>rg-lunch21-&lt;suffix&gt;</code> tagged <code>course=azure-fundamentals-lunches</code> and <code>lunch=21</code> (use <code>ensure_rg &quot;$RG&quot; 21</code>).</li>
+<li>Virtual network <code>vnet-nusa-capstone</code> with a <strong>private</strong> subnet <code>snet-web</code> (default outbound access disabled) protected
+by NSG <code>nsg-web</code>, which allows TCP 80 from <code>Internet</code> and from <code>AzureLoadBalancer</code> and nothing else inbound.</li>
+<li>Ubuntu VMs <code>vm-web-1</code> in zone 1 and <code>vm-web-2</code> in zone 2, without public IPs, running the shared web server
+(<code>labs/common/cloud-init-web.yml</code>).</li>
+<li>Zone-redundant Standard public IP <code>pip-nusa-shop</code> on Standard load balancer <code>lb-nusa-shop</code> with an HTTP probe on
+<code>/health</code>, a TCP 80 rule, an outbound rule and both VMs in the backend pool. The storefront answers HTTP 200 from both servers.</li>
+<li>Logical server <code>sql-nusa-&lt;suffix&gt;</code> with Microsoft Entra-only authentication (you as administrator) and TLS 1.2 or
+later, and a General Purpose serverless database <code>sqldb-orders</code> that keeps at least 7 days of point-in-time restore.</li>
+<li>Key Vault <code>kv-nusa-&lt;suffix&gt;</code> using the Azure RBAC permission model, with a secret <code>sql-connection-string</code> that
+contains no password; your data-plane role is assigned on the vault only.</li>
+<li>Log Analytics workspace <code>log-nusa</code> receiving the vault's audit logs; action group <code>ag-nusa-oncall</code> with your e-mail;
+an enabled metric alert on the VMs' <em>Percentage CPU</em>; an enabled activity log alert for stopped or deallocated VMs.</li>
+<li>The built-in <strong>Allowed locations</strong> policy assigned to the resource group, allowing your region.</li>
+<li>A budget on the resource group with e-mail alerts.</li>
+<li>Everything except the budget comes from code, and running it twice changes nothing.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Read the modules in <a href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/21-core-capstone/infra" target="_blank" rel="noopener"><code>infra/</code></a>, look at <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/solution.sh" target="_blank" rel="noopener"><code>solution.sh</code></a>, or
+switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="20-infrastructure-as-code-bicep.html"><small>← Previous lab</small>20 · Nineteen lunches of clicks in one file</a><a class="next" href="22-identity-access-advanced.html"><small>Next lab →</small>22 · Passwordless pipelines and least privilege</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

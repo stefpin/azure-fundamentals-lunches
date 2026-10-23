@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 18 · A Storage Account in West Europe — Lunch 18: Governance and Compliance (Basic): Azure Policy, Locks, Tags and Microsoft Purview · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 18 · Governance and Compliance (Basic): Azure Policy, Locks, Tags and Microsoft Purview. Untagged resources, data in the wrong region, and nothing stopped anyone. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 18 · A Storage Account in West Europe — Lunch 18: Governance and Compliance (Basic): Azure Policy, Locks, Tags and Microsoft Purview">
+<meta property="og:description" content="Lunch 18 · Governance and Compliance (Basic): Azure Policy, Locks, Tags and Microsoft Purview. Untagged resources, data in the wrong region, and nothing stopped anyone. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/lunches/18-governance-compliance-basic.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lunch" data-lunch="18" style="--c:#d98a00">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 18</span> Season 1 · 🛡️ Part 4 · Secure, operate &amp; govern</div>
+      <h1>A Storage Account in West Europe</h1>
+      <div class="lunch-title">Lunch 18 · Governance and Compliance (Basic): Azure Policy, Locks, Tags and Microsoft Purview</div>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure management and governance</span>
+        <span class="chip cost">🔬 Lab · about 45 minutes · 💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Who Made server-baru-final2?">↩ 04</a><a class="chip" href="05-identity-access-basic.html" title="Just Give Him My Password">↩ 05</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 17 · Ransomware in Surabaya, you ran a real restore drill and protected the backups with soft delete.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, happy"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director's question · 64% ready</b>After this episode you can say: “We recover from deletions, and guardrails stop the mistakes that cause them.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today's menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-governance-means-guardrails-not-gates">Governance means guardrails, not gates</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-azure-policy-definitions-initiatives-and-assignments">Azure Policy: definitions, initiatives and assignments</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-effects-what-happens-when-a-rule-matches">Effects: what happens when a rule matches</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-tags-and-locks-label-everything-protect-what-matters">Tags and locks: label everything, protect what matters</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-beyond-resource-settings-microsoft-purview-the-service-trust-portal-and-the-privacy-statement">Beyond resource settings: Microsoft Purview, the Service Trust Portal and the privacy statement</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-how-it-fits-together-for-nusantara-retail">How it fits together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/18-governance-compliance-basic.html">🔬 Open Lab 18</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today's menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span>Explain what cloud governance means and decide which tool answers which question: Azure RBAC, Azure Policy or a resource lock.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span>Describe the building blocks of Azure Policy — definitions, initiatives, assignments, scopes, parameters, compliance and exemptions.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span>Choose a policy effect (Deny, Audit, Modify, Append, DeployIfNotExists, AuditIfNotExists, Disabled) for a requirement and predict when it runs.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span>Design a small tagging strategy and enforce it with policy instead of good intentions.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="I can do this now">✓</button><span>Describe what Microsoft Purview, the Service Trust Portal and the Microsoft Privacy Statement are for, and what replaces Azure Blueprints.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 18</span>
+        <div class="story-body"><p>Monday morning, and Ibu Sari forwards you two e-mails. The first is from finance: last month's Azure invoice has a
+storage line in West Europe that nobody can explain, and half of the resources carry no tags, so nobody knows which
+department should pay for them. The second is from Nusantara Retail's legal advisor, reminding everyone that customer
+data must stay in approved regions close to home.</p>
+<p>You dig in. Dewi created a test storage account in West Europe because it was near the top of a drop-down list, then
+forgot about it. Rizky, the contractor, almost deleted the resource group that holds the orders database while
+&quot;tidying up&quot; — he had the permissions, so nothing stopped him. Nobody did anything malicious. There were simply no
+guardrails.</p>
+<p>Ibu Sari's question is short: <em>&quot;Can Azure stop these mistakes before they happen — and prove to an auditor that it
+did?&quot;</em> Today you answer it with Azure Policy, tags, locks and a first look at Microsoft Purview.</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-governance-means-guardrails-not-gates" data-spy><span class="scene-no">Scene 1 of 6</span><h3>Governance means guardrails, not gates</h3><div class="prose"><p>Before the cloud, governance at Nusantara Retail was a locked server room and Pak Budi's signature on every purchase
+order. Nothing reached production without crossing his desk. In Azure, anyone with the right role can create a
+database in thirty seconds, from a laptop, at midnight. That speed is why you moved to the cloud, so you do not want
+the signature back. You want <strong>guardrails</strong>: rules the platform enforces automatically, so the safe path is also the
+easy path.</p>
+<p><strong>Cloud governance</strong> is the set of rules, processes and tools that keeps your use of Azure aligned with the business:
+costs stay predictable, data stays where the law wants it, and security settings do not drift. <strong>Compliance</strong> is the
+part where you can <em>prove</em> it — to an auditor, a regulator or your own director — with evidence instead of promises.</p>
+<p>Each governance question maps to a specific tool:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Tool</th>
+<th>What it looks at</th>
+<th>Example at Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Who may do this?</td>
+<td><strong>Azure role-based access control (RBAC)</strong> — Lunch 05</td>
+<td>the identity making the request and its role at that scope</td>
+<td>Rizky gets Contributor on the test resource group only</td>
+</tr>
+<tr>
+<td>Is the result allowed to exist?</td>
+<td><strong>Azure Policy</strong></td>
+<td>the properties of the resource being created or changed, no matter who asks</td>
+<td>storage accounts only in Southeast Asia or Indonesia Central</td>
+</tr>
+<tr>
+<td>Must this never be deleted or changed by accident?</td>
+<td><strong>Resource lock</strong></td>
+<td>delete (or any write) operations on a locked scope, for everyone</td>
+<td>nobody can delete the orders database, not even an Owner</td>
+</tr>
+<tr>
+<td>What is it, and who pays for it?</td>
+<td><strong>Tags</strong></td>
+<td>name/value labels on resources</td>
+<td><code>costCenter=CC-1001</code> on everything the storefront uses</td>
+</tr>
+<tr>
+<td>Where is our sensitive data, and who touches it?</td>
+<td><strong>Microsoft Purview</strong></td>
+<td>the data itself, across Azure, Microsoft 365 and beyond</td>
+<td>find every file that contains customer phone numbers</td>
+</tr>
+</tbody>
+</table></div>
+<p>The first three work together on every request. When Dewi runs <code>az storage account create</code>, Azure Resource Manager
+(Lunch 04) authenticates her with Microsoft Entra ID, checks her RBAC permissions, and then evaluates policy
+assignments and locks before anything reaches the storage resource provider. A role says <em>Dewi</em> may create storage
+accounts; a policy can still say <em>this</em> storage account, in West Europe, may not exist. Every check must say yes.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  D[&quot;Dewi: create a storage account&lt;br/&gt;in West Europe&quot;] --&gt; ARM[&quot;Azure Resource Manager&quot;]
+  ARM --&gt; ID{&quot;Microsoft Entra ID&lt;br/&gt;who are you?&quot;}
+  ID -- &quot;signed in&quot; --&gt; RBAC{&quot;Azure RBAC&lt;br/&gt;may you do this here?&quot;}
+  RBAC -- &quot;no role&quot; --&gt; E1[&quot;AuthorizationFailed&quot;]
+  RBAC -- &quot;role allows it&quot; --&gt; POL{&quot;Azure Policy and locks&lt;br/&gt;is the result allowed?&quot;}
+  POL -- &quot;a Deny rule matches&quot; --&gt; E2[&quot;RequestDisallowedByPolicy&quot;]
+  POL -- &quot;the scope is locked&quot; --&gt; E3[&quot;ScopeLocked&quot;]
+  POL -- &quot;all checks pass&quot; --&gt; RP[&quot;Storage resource provider&lt;br/&gt;creates the account&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>When a deployment fails, the error code tells you which guardrail stopped it: <code>AuthorizationFailed</code> points to RBAC,
+<code>RequestDisallowedByPolicy</code> to Azure Policy (the message names the assignment that blocked you), and <code>ScopeLocked</code>
+to a lock. Read the code before you ask anyone for more permissions.</p>
+</aside>
+</div></article><article class="scene-card" id="2-azure-policy-definitions-initiatives-and-assignments" data-spy><span class="scene-no">Scene 2 of 6</span><h3>Azure Policy: definitions, initiatives and assignments</h3><div class="prose"><p>Azure Policy has three objects you will meet everywhere.</p>
+<p>A <strong>policy definition</strong> is a rule written in JSON. It has an <code>if</code> part — a condition on resource properties, such as
+&quot;the location is not in this list&quot; — and a <code>then</code> part, the <strong>effect</strong> that happens when the condition is true. Azure
+ships thousands of <strong>built-in definitions</strong> that Microsoft maintains, such as <em>Allowed locations</em> and <em>Require a tag on
+resources</em>. When nothing fits, you write a <strong>custom definition</strong>. <strong>Parameters</strong> make a definition reusable:
+<em>Allowed locations</em> does not hard-code a region; it asks for a list when you use it.</p>
+<p>An <strong>initiative</strong> (the CLI and the API call it a <em>policy set</em>) groups definitions that serve one goal, so you manage
+them as a single item. Microsoft publishes regulatory initiatives that map the controls of a standard to policies —
+for example ISO/IEC 27001, PCI DSS, and the <strong>Microsoft cloud security benchmark</strong> that Defender for Cloud
+(Lunch 15) assigns by default. A retailer that takes card payments, like Nusantara Retail, pays close attention to the
+PCI DSS one.</p>
+<p>An <strong>assignment</strong> is where a definition or initiative starts working. It connects the rule to a <strong>scope</strong> — a
+management group, subscription, resource group or single resource — and supplies the parameter values: &quot;Allowed
+locations, on the production subscription, with Indonesia Central and Southeast Asia.&quot; Everything below the scope
+inherits the assignment, just as role assignments inherit (Lunch 04). An assignment can also carry <strong>exclusions</strong>
+(child scopes it skips), a custom <strong>non-compliance message</strong> that appears in the error, and an <strong>enforcement mode</strong>:
+<em>Default</em> enforces the effect, while <em>DoNotEnforce</em> only reports, which is how you test a new rule without breaking
+anyone's deployment.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  D1[&quot;Definition&lt;br/&gt;Allowed locations&quot;] --&gt; I[&quot;Initiative&lt;br/&gt;Nusantara baseline&quot;]
+  D2[&quot;Definition&lt;br/&gt;Require a tag on resources&quot;] --&gt; I
+  D3[&quot;Definition&lt;br/&gt;Inherit a tag from the&lt;br/&gt;resource group if missing&quot;] --&gt; I
+  I --&gt; A[&quot;Assignment at the subscription&lt;br/&gt;locations = indonesiacentral, southeastasia&lt;br/&gt;tagName = costCenter&quot;]
+  A --&gt; RG1[&quot;rg-storefront-prod&quot;]
+  A --&gt; RG2[&quot;rg-storefront-test&quot;]
+  RG1 --&gt; R1[&quot;every resource inside&lt;br/&gt;inherits the rules&quot;]
+  RG2 --&gt; R2[&quot;every resource inside&lt;br/&gt;inherits the rules&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Three details trip up almost everyone. First, the <strong>mode</strong> of a definition decides what it evaluates. Tag and location
+rules usually use <em>Indexed</em> mode, which only looks at resource types that support tags and locations — and skips
+resource groups. That is why <em>Allowed locations</em> does not stop anyone creating a resource group in West Europe; a
+separate built-in, <em>Allowed locations for resource groups</em>, does that. Second, a resource group's location is only
+where its metadata lives. The resources inside can sit in any region, so restricting the group alone protects
+nothing. Third, assignments stack. When several assignments apply to a resource, each one is evaluated on its own and
+the result is the most restrictive combination. A team cannot &quot;opt out&quot; of a subscription-level Deny by assigning a
+friendlier policy to its own resource group; only an exclusion or an exemption on the original assignment can do that.</p>
+<p>To find a built-in, open <strong>Policy › Definitions</strong> in the portal and filter by category (<em>Tags</em>, <em>General</em>,
+<em>Storage</em>…), or search from Cloud Shell with <code>az policy definition list</code>. Read the description and the parameters
+before you assign anything — the display name rarely tells the whole story.</p>
+</div></article><article class="scene-card" id="3-effects-what-happens-when-a-rule-matches" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Effects: what happens when a rule matches</h3><div class="prose"><p>The effect is the rule's answer. Choosing the right one is most of the skill.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Effect</th>
+<th>What it does</th>
+<th>When it acts</th>
+<th>Use it when…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deny</strong></td>
+<td>Blocks the create or update request; existing resources are only reported</td>
+<td>before the request reaches the resource provider</td>
+<td>the rule is non-negotiable, such as data residency</td>
+</tr>
+<tr>
+<td><strong>Audit</strong></td>
+<td>Lets the request through and marks the resource non-compliant</td>
+<td>after Deny, before the resource provider</td>
+<td>you want visibility first, or the rule is advice</td>
+</tr>
+<tr>
+<td><strong>Modify</strong></td>
+<td>Adds, replaces or removes tags and some properties in the request; fixes existing resources through remediation</td>
+<td>before Deny</td>
+<td>the fix can be automatic, such as copying a tag</td>
+</tr>
+<tr>
+<td><strong>Append</strong></td>
+<td>Adds fields to the request, but cannot fix existing resources</td>
+<td>before Deny</td>
+<td>a built-in still uses it; for tags, prefer Modify</td>
+</tr>
+<tr>
+<td><strong>AuditIfNotExists</strong></td>
+<td>After deployment, checks that a related resource exists and reports if it is missing</td>
+<td>after the resource provider succeeds</td>
+<td>VMs should have the Azure Monitor Agent, but you only want to know</td>
+</tr>
+<tr>
+<td><strong>DeployIfNotExists</strong></td>
+<td>After deployment, deploys the missing related resource with a template; fixes existing resources through remediation</td>
+<td>after the resource provider succeeds</td>
+<td>every database should send its logs to the central workspace</td>
+</tr>
+<tr>
+<td><strong>Disabled</strong></td>
+<td>Switches the rule off without deleting the assignment</td>
+<td>checked first</td>
+<td>you need to pause a rule whose effect is a parameter</td>
+</tr>
+</tbody>
+</table></div>
+<p>The order matters. Azure Policy checks <strong>Disabled</strong> first, then lets <strong>Append</strong> and <strong>Modify</strong> change the request,
+then evaluates <strong>Deny</strong>, then <strong>Audit</strong>. <strong>AuditIfNotExists</strong> and <strong>DeployIfNotExists</strong> run only after the resource
+provider reports success. Because Modify runs before Deny, a Modify rule that adds a missing tag can turn a request
+that a Deny rule would have blocked into one that passes. You will see exactly this in the lab.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  REQ[&quot;Create or update request&quot;] --&gt; DIS{&quot;Disabled?&quot;}
+  DIS -- &quot;no&quot; --&gt; MOD[&quot;Append and Modify&lt;br/&gt;may change the request&quot;]
+  MOD --&gt; DENY{&quot;Deny matches?&quot;}
+  DENY -- &quot;yes&quot; --&gt; BLK[&quot;Blocked&lt;br/&gt;RequestDisallowedByPolicy&quot;]
+  DENY -- &quot;no&quot; --&gt; AUD[&quot;Audit records&lt;br/&gt;non-compliance&quot;]
+  AUD --&gt; RP[&quot;Resource provider&lt;br/&gt;creates the resource&quot;]
+  RP --&gt; AFTER[&quot;AuditIfNotExists and&lt;br/&gt;DeployIfNotExists check&lt;br/&gt;related resources&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>A few newer effects exist for special cases: <strong>DenyAction</strong> blocks delete requests on matching resources, <strong>Manual</strong>
+lets you attest to controls that cannot be checked automatically, and <strong>Mutate</strong> and <strong>addToNetworkGroup</strong> serve AKS
+and Azure Virtual Network Manager.</p>
+<p>Modify and DeployIfNotExists change things on your behalf, so their assignment needs a <strong>managed identity</strong>
+(Lunch 15) holding the roles the definition lists. New and updated resources are handled as they arrive. Resources that
+existed before the assignment are only <em>reported</em> until you run a <strong>remediation task</strong>, which uses that identity to fix
+them in bulk.</p>
+<p><strong>Compliance</strong> is the report card. Each resource gets a <strong>compliance state</strong> per assignment — <em>Compliant</em>,
+<em>Non-compliant</em>, <em>Exempt</em>, <em>Not started</em> and a few rarer ones. Evaluation happens when a resource is created or
+updated (results appear about 15 minutes later), when an assignment is created or changed (it takes about five minutes
+to apply, then the scan begins), once every 24 hours for everything, and on demand with
+<code>az policy state trigger-scan</code>. When a resource legitimately cannot comply — a two-week marketing test that needs
+another region — you grant an <strong>exemption</strong> instead of weakening the rule. <em>Waiver</em> means &quot;we accept this for now&quot;;
+<em>Mitigated</em> means &quot;we meet the intent another way&quot;; an expiry date makes sure nobody forgets. Lunch 31 goes deeper.</p>
+</div></article><article class="scene-card" id="4-tags-and-locks-label-everything-protect-what-matters" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Tags and locks: label everything, protect what matters</h3><div class="prose"><p>A <strong>tag</strong> is a name/value pair — <code>costCenter=CC-1001</code> — that you attach to a subscription, resource group or resource
+(but not to a management group). Tags cost nothing and power a lot: cost reports grouped by department (Lunch 19),
+automation that stops <code>environment=dev</code> machines at night, and queries that answer &quot;what belongs to the storefront?&quot;.
+Four rules to remember:</p>
+<ul>
+<li>Resources do <strong>not</strong> inherit their resource group's tags. If you want inheritance, a policy has to do it.</li>
+<li>Each resource, resource group or subscription holds up to 50 tags. Names are case-insensitive but values are
+case-sensitive, so <code>Finance</code> and <code>finance</code> end up as two different lines in a cost report.</li>
+<li>Tags are plain text that shows up in exports, logs and invoices. Never put a secret in a tag.</li>
+<li>Not every resource type supports tags. Check the documentation before you build a rule around one.</li>
+</ul>
+<p>A <strong>tagging strategy</strong> is short on purpose. Nusantara Retail starts with four mandatory tags:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Example value</th>
+<th>Why it exists</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>costCenter</code></td>
+<td><code>CC-1001</code> (e-commerce)</td>
+<td>finance charges the right department</td>
+</tr>
+<tr>
+<td><code>environment</code></td>
+<td><code>prod</code>, <code>test</code> or <code>dev</code></td>
+<td>automation and alerts treat them differently</td>
+</tr>
+<tr>
+<td><code>owner</code></td>
+<td><code>team-storefront</code></td>
+<td>someone answers when the resource misbehaves</td>
+</tr>
+<tr>
+<td><code>dataClassification</code></td>
+<td><code>confidential</code></td>
+<td>anything holding customer data gets extra scrutiny</td>
+</tr>
+</tbody>
+</table></div>
+<p>Policy turns the strategy into reality. <em>Require a tag on resources</em> (Deny) refuses untagged resources. <em>Add a tag to
+resources</em> and <em>Inherit a tag from the resource group if missing</em> (both Modify) fill the gap automatically, so people
+only have to tag the resource group. Combine an inherit rule with a require rule and you get convenience plus a
+backstop.</p>
+<p>A <strong>resource lock</strong> protects what must not change by accident. <strong>CanNotDelete</strong> (<em>Delete</em> in the portal) allows reads
+and updates but blocks deletion; <strong>ReadOnly</strong> (<em>Read-only</em>) blocks every write. Locks apply to subscriptions, resource
+groups and resources, are inherited by everything below, and override RBAC — even an Owner must remove the lock first.
+Only roles with <code>Microsoft.Authorization/locks/*</code> permissions, such as Owner and User Access Administrator, can create
+or delete them.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>Locks are blunter than they look. A ReadOnly lock blocks operations that use POST, so it stops you listing storage
+account keys, starting or restarting VMs in a locked resource group, or scaling an App Service plan. A CanNotDelete
+lock on one resource blocks deletion of its whole resource group. And locks protect only the control plane: someone
+with data access can still delete the blobs inside a &quot;locked&quot; storage account. Locks prevent accidents; backups
+(Lunch 17) recover from them.</p>
+</aside>
+</div></article><article class="scene-card" id="5-beyond-resource-settings-microsoft-purview-the-service-trust-portal-and-the-privacy-statement" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Beyond resource settings: Microsoft Purview, the Service Trust Portal and the privacy statement</h3><div class="prose"><p>Azure Policy governs how resources are <em>configured</em>. It cannot tell you that a CSV file in a storage account holds
+40,000 customer phone numbers, or that someone e-mailed it outside the company. That is the job of
+<strong>Microsoft Purview</strong>, Microsoft's family of data governance, data security and data compliance solutions. It works
+across Azure, Microsoft 365, on-premises sources and other clouds, and you manage it in the Microsoft Purview portal.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Capability</th>
+<th>What it does</th>
+<th>Nusantara Retail example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data governance</td>
+<td><strong>Data Map</strong></td>
+<td>scans data sources and classifies what it finds</td>
+<td>discover which databases and storage accounts hold customer data</td>
+</tr>
+<tr>
+<td>Data governance</td>
+<td><strong>Unified Catalog</strong></td>
+<td>a searchable catalog with owners, glossary terms and data quality</td>
+<td>Dewi finds the trusted orders dataset instead of copying a stale one</td>
+</tr>
+<tr>
+<td>Data security</td>
+<td><strong>Information Protection</strong> (sensitivity labels)</td>
+<td>labels and protects documents and data by sensitivity</td>
+<td>the loyalty-member export is labelled <em>Confidential</em></td>
+</tr>
+<tr>
+<td>Data security</td>
+<td><strong>Data Loss Prevention</strong></td>
+<td>detects and blocks risky sharing of sensitive information</td>
+<td>card numbers cannot leave by e-mail</td>
+</tr>
+<tr>
+<td>Data security</td>
+<td><strong>Insider Risk Management</strong></td>
+<td>spots risky user activity</td>
+<td>someone who is leaving downloads the customer list</td>
+</tr>
+<tr>
+<td>Data compliance</td>
+<td><strong>Compliance Manager</strong></td>
+<td>tracks your controls against regulations and scores progress</td>
+<td>prepare for a personal-data-protection audit</td>
+</tr>
+<tr>
+<td>Data compliance</td>
+<td><strong>Audit</strong>, <strong>eDiscovery</strong>, <strong>Data Lifecycle Management</strong></td>
+<td>records activity, finds content for legal cases, keeps or deletes data on schedule</td>
+<td>keep invoices for the required period, then delete them</td>
+</tr>
+</tbody>
+</table></div>
+<p>At AZ-900 level, remember the split: Azure Policy for resource configuration, Purview for the data itself.</p>
+<p>Two Microsoft resources answer the question &quot;how do we know <em>Microsoft</em> is compliant?&quot;. The <strong>Service Trust Portal</strong>
+(servicetrust.microsoft.com) publishes independent audit reports and certifications for Microsoft's cloud services —
+ISO/IEC 27001, SOC 1, 2 and 3, PCI DSS, CSA STAR and many regional ones — plus whitepapers. Some documents need a
+sign-in with a work account. When Nusantara Retail's auditor asks for proof that Azure's datacenters meet PCI DSS,
+that is where you send them. The <strong>Microsoft Privacy Statement</strong> (privacy.microsoft.com) explains what personal data
+Microsoft collects through its products, how it uses that data, and the choices people have. Together they cover
+Microsoft's half of the shared responsibility model; Azure Policy and Purview help you with yours.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span><strong>Azure Blueprints is retired — do not start anything new with it.</strong> Blueprints, a preview service that packaged
+policies, role assignments and templates, has blocked new definitions since July 31, 2026, blocks new assignments from
+October 31, 2026, and is fully retired on January 31, 2027. Use Azure Policy for the rules and <strong>deployment stacks</strong>,
+with <strong>template specs</strong> or Git for versioning, to deploy and protect resources as a unit. Lunch 20 shows stacks in
+action, and Lunch 31 covers migration.</p>
+</aside>
+</div></article><article class="scene-card" id="6-how-it-fits-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>How it fits together for Nusantara Retail</h3><div class="prose"><p>Back to Ibu Sari's question. Here is the first governance baseline you propose, and the tool that carries each rule:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Tool and setting</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Customer data stays close to home</td>
+<td><em>Allowed locations</em> (Deny) on the subscription: Indonesia Central for production, Southeast Asia for labs</td>
+</tr>
+<tr>
+<td>Every cost is traceable</td>
+<td><em>Inherit a tag from the resource group if missing</em> (Modify) plus <em>Require a tag on resources</em> (Deny) for <code>costCenter</code></td>
+</tr>
+<tr>
+<td>The orders database survives a tidy-up</td>
+<td>a CanNotDelete lock on its resource group</td>
+</tr>
+<tr>
+<td>Contractors do only what they must</td>
+<td>RBAC: Rizky gets Contributor on the test resource group only</td>
+</tr>
+<tr>
+<td>Auditors get evidence</td>
+<td>the Azure Policy compliance view, Defender for Cloud regulatory compliance, the Service Trust Portal</td>
+</tr>
+<tr>
+<td>Sensitive data is known and protected</td>
+<td>Microsoft Purview scans, planned for next quarter</td>
+</tr>
+</tbody>
+</table></div>
+<p>Roll it out gently. Assign new rules in Audit or DoNotEnforce mode first, read the compliance report for a week, talk
+to the teams whose resources show up, and only then switch to Deny. Fix existing resources with remediation tasks
+rather than one-off scripts, so the fix is repeatable. When someone needs an exception, write an exemption with an
+expiry date instead of quietly removing the rule.</p>
+<p>The baseline pays off in the next lunches: the <code>costCenter</code> tag drives the cost reports in Lunch 19, and in Lunch 20
+you deploy rules and resources with Bicep and protect them with a deployment stack.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>Dewi's pipeline creates a storage account without tags in <code>rg-storefront-test</code>, which is tagged
+<code>costCenter=CC-1001</code>. Both <em>Require a tag on resources</em> and <em>Inherit a tag from the resource group if missing</em> are
+assigned for <code>costCenter</code>. Does her deployment succeed? What changes if someone removes the tag from the resource
+group?</p>
+</aside>
+<p>Ready for more? <strong>Lunch 31 · Governance at Scale</strong> takes these ideas to management groups, initiatives across many
+subscriptions, and policy as code.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · A deployment meets the policy engine</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../demos/18-governance-compliance-basic.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../demos/18-governance-compliance-basic.html" title="Interactive demo: A deployment meets the policy engine" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/18-governance-compliance-basic/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>The request for West Europe is stopped by the policy engine even though Dewi's role allows her to create storage
+accounts — and the error names the assignment that blocked it.</li>
+<li>Existing resources are never deleted by a Deny rule; they turn up as non-compliant in the compliance view.</li>
+<li>The same untagged request fails before the resource group has a <code>costCenter</code> tag and succeeds afterwards, because
+Modify runs before Deny.</li>
+<li>A remediation task, acting through the assignment's managed identity, fixes the resources that existed before the
+rules.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Rizky has Contributor on the resource group that holds the orders database. You must make sure nobody — not even an
+Owner — deletes it by accident, while updates keep working. What do you use?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>A <strong>CanNotDelete</strong> lock on the database (or on its resource group). Locks apply to everyone regardless of role, and
+CanNotDelete still allows reads and updates — removing Rizky's role would block his legitimate work too.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Finance wants every new resource to carry <code>costCenter</code>. Developers forget tags, but every resource group is tagged
+when it is created. Which built-in policies give the least friction, and what about resources that already exist?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Assign <strong>Inherit a tag from the resource group if missing</strong> (Modify), optionally backed by <strong>Require a tag on
+resources</strong> (Deny), and run a <strong>remediation task</strong> for the existing resources. Modify runs before Deny, so untagged
+requests in tagged groups are fixed instead of refused, and remediation handles what existed before the assignment.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>You assign <em>Allowed locations</em> (Southeast Asia only) to the subscription. The next morning an existing storage
+account in West Europe shows as <em>Non-compliant</em>, but it still works. Why was it not removed, and what are your
+options?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Deny only blocks create and update requests</strong>; existing resources are evaluated and reported, never deleted. You
+either move or recreate the data in an allowed region and delete the old account, or grant a time-limited
+<strong>exemption</strong> (Waiver) if there is a business reason to keep it for now.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>An auditor asks for an independent report showing that Microsoft's cloud services meet ISO/IEC 27001. Where do you
+send them?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>To the <strong>Service Trust Portal</strong>. It publishes third-party audit reports and certifications for Microsoft's cloud
+services, whereas Microsoft Purview and Azure Policy are about <em>your</em> data and <em>your</em> resources.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>A colleague proposes Azure Blueprints to stamp out a standard setup for the new loyalty-app subscription. What do you
+recommend?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Don't: <strong>Azure Blueprints is retired</strong> (no new assignments from October 31, 2026; fully retired January 31, 2027).
+Use Azure Policy for the rules and <strong>deployment stacks</strong> with template specs or Git for the resources, because that
+is Microsoft's recommended replacement.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Azure RBAC decides <em>who</em> may act, Azure Policy decides <em>what</em> may exist, and resource locks protect what must not be deleted or changed by accident — use all three together.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>A policy definition is an if/then rule, an initiative bundles definitions, and an assignment applies them to a scope with parameters; everything below the scope inherits the assignment.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>The effect decides the response: Deny blocks, Audit reports, Modify and Append change the request first, and DeployIfNotExists and AuditIfNotExists check related resources after deployment. Modify and DeployIfNotExists need a managed identity, plus remediation tasks for resources that already exist.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Tags drive cost reports and automation but are not inherited — keep a short mandatory list and enforce it with policy.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Microsoft Purview governs and protects the data itself; the Service Trust Portal and the Microsoft Privacy Statement answer the auditor and the lawyer; Azure Blueprints is retired, so use policy plus deployment stacks.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>18</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Keep data in the right place</h3>
+          <div class="prose"><p>You will put Ibu Sari's first guardrails on a lab resource group: resources only in your lab region, a mandatory
+<code>costCenter</code> tag, and automatic tag inheritance from the resource group. Then you will prove that a deployment in
+another region is refused, watch a Modify rule rescue an untagged deployment, fix two &quot;legacy&quot; resources with a
+remediation task, and read the compliance report — the same evidence an auditor would ask for.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 45 minutes</span><span class="chip cost">💲 free or close to free</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/18-governance-compliance-basic.html">Start Lab 18 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/governance/policy/overview" target="_blank" rel="noopener"><b>Microsoft Learn: What is Azure Policy?</b><span>The official overview, including how policy and RBAC differ and the limits per scope.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/governance/policy/concepts/effect-basics" target="_blank" rel="noopener"><b>Microsoft Learn: Azure Policy definitions effect basics</b><span>Every effect, the order of evaluation and how layered assignments combine.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-resource-manager/management/lock-resources" target="_blank" rel="noopener"><b>Microsoft Learn: Lock your Azure resources to protect your infrastructure</b><span>The full list of surprising things a lock blocks.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/purview/purview" target="_blank" rel="noopener"><b>Microsoft Learn: Learn about Microsoft Purview</b><span>A tour of the data security, governance and compliance solutions.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">📜</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Rule Maker</h2>
+        <p class="muted">Enforce rules with Azure Policy.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“We recover from deletions, and guardrails stop the mistakes that cause them.”</b></p>
+        <div class="teaser"><b>Next episode · 19</b><h4>The Invoice Nobody Can Read</h4><p>The first real Azure bill arrives, and it is bigger than the spreadsheet.</p><p style="margin-top:10px"><a href="19-cost-management.html">Watch Episode 19 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="17-backup-disaster-recovery.html"><small>← Previous episode</small>17 · Ransomware in Surabaya</a><a class="next" href="19-cost-management.html"><small>Next episode →</small>19 · The Invoice Nobody Can Read</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/18-governance-compliance-basic/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

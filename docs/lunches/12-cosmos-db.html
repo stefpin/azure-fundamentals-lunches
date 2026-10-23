@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 12 · The 140-Column Table — Lunch 12: NoSQL with Azure Cosmos DB (Basic) · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 12 · NoSQL with Azure Cosmos DB (Basic). Every new product type means another late-night schema change. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 12 · The 140-Column Table — Lunch 12: NoSQL with Azure Cosmos DB (Basic)">
+<meta property="og:description" content="Lunch 12 · NoSQL with Azure Cosmos DB (Basic). Every new product type means another late-night schema change. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/lunches/12-cosmos-db.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lunch" data-lunch="12" style="--c:#11935a">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 12</span> Season 1 · 🧩 Part 3 · Platform services &amp; data</div>
+      <h1>The 140-Column Table</h1>
+      <div class="lunch-title">Lunch 12 · NoSQL with Azure Cosmos DB (Basic)</div>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure architecture and services</span>
+        <span class="chip cost">🔬 Lab · about 45 minutes · 💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Who Made server-baru-final2?">↩ 04</a><a class="chip" href="05-identity-access-basic.html" title="Just Give Him My Password">↩ 05</a><a class="chip" href="11-relational-databases-basic.html" title="The Three-Week-Old Backup">↩ 11</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 11 · The Three-Week-Old Backup, orders now live in Azure SQL, with Entra-only sign-in and automatic backups.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, calmer"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director's question · 46% ready</b>After this episode you can say: “Failures go unnoticed, orders are restorable, and the catalogue scales on demand.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today's menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-nosql-in-one-page-data-models-and-cosmos-db-apis">NoSQL in one page: data models and Cosmos DB APIs</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-accounts-containers-and-request-units">Accounts, containers and request units</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-partitioning-the-one-decision-you-cant-undo">Partitioning: the one decision you can&#x27;t undo</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-going-global-regions-and-the-five-consistency-levels">Going global: regions and the five consistency levels</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-how-it-fits-together-for-nusantara-retail">How it fits together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/12-cosmos-db.html">🔬 Open Lab 12</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today's menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> the four NoSQL data models and <strong>choose</strong> the right Azure Cosmos DB API for a workload.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Describe</strong> how accounts, databases, containers and items fit together, and how request units are billed in provisioned, autoscale, serverless and free-tier setups.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> a partition key that spreads data and traffic evenly, and <strong>spot</strong> a hot partition before it hurts.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Compare</strong> the five consistency levels and <strong>decide</strong> when Cosmos DB, rather than Azure SQL, is the right home for your data.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 12</span>
+        <div class="story-body"><p>Dewi drops a printout on your desk: the <code>Products</code> table from the storefront database. It has 140 columns, and most rows
+leave more than a hundred of them empty. Coffee needs a roast level and a grind, batik needs a fabric and a size chart,
+the new rattan baskets need dimensions. Every new product type means another schema change, another late-night
+migration and, usually, another bug.</p>
+<p>Marketing wants a mobile app before the 12.12 sale, when catalogue traffic can jump twentyfold in an hour. Ibu Sari has
+two questions of her own: can we pay only for what shoppers actually use, and can customers in Medan and Makassar get
+pages as fast as customers in Jakarta?</p>
+<p>Orders and payments can stay in Azure SQL from Lunch 11 — they need relational rules. The catalogue is a different
+animal. Today's question: <strong>where should a catalogue that changes shape every week, and must stay fast during a
+sale-day spike, live?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 5 scenes</span></div>
+      
+      <article class="scene-card" id="1-nosql-in-one-page-data-models-and-cosmos-db-apis" data-spy><span class="scene-no">Scene 1 of 5</span><h3>NoSQL in one page: data models and Cosmos DB APIs</h3><div class="prose"><p>A relational database stores rows in tables with a fixed schema, joins tables at query time and wraps changes in
+transactions that can touch many tables. That model is excellent for orders and money. It is less comfortable when every
+record wants a different shape, or when one server can no longer keep up.</p>
+<p><strong>NoSQL</strong> (&quot;not only SQL&quot;) databases relax some of those rules to gain flexibility and scale. They usually offer a
+flexible schema, horizontal scale-out across many machines, and very fast reads and writes by key. In exchange you give
+up most joins, and transactions shrink to a smaller scope. NoSQL is not &quot;better&quot; than relational; it is a different set
+of trade-offs. There are four common <strong>data models</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Data model</th>
+<th>Shape of the data</th>
+<th>Nusantara Retail example</th>
+<th>Cosmos DB API</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Document</strong></td>
+<td>Self-describing JSON documents; each can carry its own fields</td>
+<td>A coffee with a roast level next to a batik shirt with sizes</td>
+<td>API for NoSQL, API for MongoDB</td>
+</tr>
+<tr>
+<td><strong>Key-value</strong></td>
+<td>A value fetched by one unique key</td>
+<td>A shopping cart looked up by its cart ID</td>
+<td>API for Table (and point reads in any API)</td>
+</tr>
+<tr>
+<td><strong>Column-family</strong></td>
+<td>Wide rows whose columns can differ, grouped into families</td>
+<td>Footfall-sensor readings per store, per minute</td>
+<td>API for Apache Cassandra</td>
+</tr>
+<tr>
+<td><strong>Graph</strong></td>
+<td>Vertices (things) joined by edges (relationships)</td>
+<td>&quot;Shoppers who bought kopi also bought…&quot;</td>
+<td>API for Apache Gremlin</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Azure Cosmos DB</strong> is Azure's fully managed NoSQL database. Microsoft runs the servers, replicas, patching and backups;
+you get automatic indexing, replication to as many regions as you like, and a latency commitment: reads and writes under
+10 ms at the 99th percentile (with an exception for strong consistency across several regions, covered in section 4).</p>
+<p>You pick an <strong>API</strong> when you create an account, and you can't change it later. The API decides which wire protocol,
+drivers and query language your application uses:</p>
+<ul>
+<li><strong>API for NoSQL</strong> — the native API: JSON items, a SQL-like query language, and new features (such as vector search)
+first. It is the default choice for new applications.</li>
+<li><strong>API for MongoDB</strong> — speaks the MongoDB wire protocol, so existing Mongo apps and tools move across with few changes.
+The vCore-based MongoDB offering became a separate product in November 2025: <strong>Azure DocumentDB</strong>.</li>
+<li><strong>API for Apache Cassandra</strong> and <strong>API for Apache Gremlin</strong> — for existing Cassandra (CQL) and graph applications.</li>
+<li><strong>API for Table</strong> — a key-value API for apps written for Azure Table Storage that need more speed or global reach.</li>
+</ul>
+<p><strong>Azure Cosmos DB for PostgreSQL</strong> still appears in older material. It is on a retirement path and new deployments are
+blocked; Microsoft points distributed PostgreSQL work to elastic clusters in Azure Database for PostgreSQL instead.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Starting from scratch? Choose <strong>API for NoSQL</strong>. The other APIs exist mainly to bring existing applications across
+without a rewrite. Everything in this lunch and its lab uses API for NoSQL.</p>
+</aside>
+</div></article><article class="scene-card" id="2-accounts-containers-and-request-units" data-spy><span class="scene-no">Scene 2 of 5</span><h3>Accounts, containers and request units</h3><div class="prose"><p>Cosmos DB organises everything in four levels:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  ACC[&quot;Account: cosmos-nusa-xxxxx&lt;br/&gt;API, regions, default consistency, capacity mode&quot;]
+  ACC --&gt; DB1[&quot;Database: catalog&quot;]
+  ACC --&gt; DB2[&quot;Database: shopping&quot;]
+  DB1 --&gt; C1[&quot;Container: products&lt;br/&gt;partition key /category&quot;]
+  DB1 --&gt; C2[&quot;Container: reviews&lt;br/&gt;partition key /productId&quot;]
+  DB2 --&gt; C3[&quot;Container: carts&lt;br/&gt;partition key /cartId, TTL 7 days&quot;]
+  C1 --&gt; I1[&quot;Item: p-coffee-001&lt;br/&gt;category coffee, roast medium&quot;]
+  C1 --&gt; I2[&quot;Item: p-batik-002&lt;br/&gt;category batik, sizes M L XL&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<ul>
+<li>The <strong>account</strong> is the top-level resource with a globally unique name and its own endpoint
+(<code>https://&lt;account&gt;.documents.azure.com</code>). Regions, the API, the default consistency level and the capacity mode are
+account settings.</li>
+<li>A <strong>database</strong> is a namespace that groups containers. It can optionally share throughput between its containers.</li>
+<li>A <strong>container</strong> is the unit of scale. You choose its <strong>partition key</strong> when you create it, and it holds the indexing
+policy and optional <strong>time to live (TTL)</strong>, which deletes items automatically after a set period — perfect for
+abandoned carts.</li>
+<li>An <strong>item</strong> is one JSON document of up to 2 MB. Every item needs an <code>id</code>, which must be unique within its partition
+key value. Items in the same container don't need the same fields: the coffee and the batik shirt live side by side.</li>
+</ul>
+<p>Every operation costs <strong>request units (RUs)</strong>, a single currency that blends CPU, memory and I/O. Reading one 1 KB item
+by its <code>id</code> and partition key — a <strong>point read</strong> — costs 1 RU. Writes cost more, because every write also updates the
+indexes. A query's cost depends on how much data it has to touch. The same query over the same data always costs the
+same, and every response reports its charge, so you can measure instead of guess.</p>
+<p>That makes capacity planning a spreadsheet exercise rather than a hardware guess. Suppose the storefront serves 300
+product pages per second (one point read each, about 1 RU) and 100 category pages per second (one query each, say
+3 RU after you measure it). That is 300 + 300 = 600 RU/s of reads. Add the writes from stock updates, round up for the
+sale, and you have a number to provision — or a reason to choose serverless while traffic is still small.</p>
+<p>How you pay for RUs depends on the <strong>capacity mode</strong> you choose for the account:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>You pay for</th>
+<th>Good for</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Provisioned, manual</strong></td>
+<td>The RU/s you reserve, per hour (at least 400 RU/s per container)</td>
+<td>Steady, predictable traffic</td>
+<td>You pay for idle capacity; requests above it are throttled with HTTP 429</td>
+</tr>
+<tr>
+<td><strong>Provisioned, autoscale</strong></td>
+<td>The highest RU/s used each hour, between 10% and 100% of a maximum you set</td>
+<td>Spiky traffic, such as the 12.12 sale</td>
+<td>The floor is 10% of the maximum, even when idle</td>
+</tr>
+<tr>
+<td><strong>Serverless</strong></td>
+<td>Only the RUs you consume, plus storage</td>
+<td>Development, testing, low or bursty traffic</td>
+<td>Single region only; costs vary with usage, so watch the meter</td>
+</tr>
+<tr>
+<td><strong>Free tier</strong> (a discount on provisioned)</td>
+<td>Nothing for the first 1,000 RU/s and 25 GB, for the lifetime of the account</td>
+<td>Learning and small production apps</td>
+<td>One free-tier account per subscription, chosen at creation; not available for serverless</td>
+</tr>
+</tbody>
+</table></div>
+<p>When a request needs more RU/s than the container has, Cosmos DB answers with HTTP 429 &quot;request rate too large&quot; and the
+SDK retries after a short wait. Occasional 429s are normal; constant 429s mean you need more throughput or a better
+design.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>Provisioned throughput is billed <strong>in every region</strong> of the account: 1,000 RU/s in three regions is 3,000 RU/s on the
+bill. And because free tier is one account per subscription and can only be switched on at creation time, it is easy
+to &quot;use it up&quot; on a forgotten experiment. Check before you create: the portal greys the option out if it's taken.</p>
+</aside>
+</div></article><article class="scene-card" id="3-partitioning-the-one-decision-you-cant-undo" data-spy><span class="scene-no">Scene 3 of 5</span><h3>Partitioning: the one decision you can't undo</h3><div class="prose"><p>Cosmos DB scales by splitting a container across many machines, and the <strong>partition key</strong> decides how. All items with
+the same partition key value form a <strong>logical partition</strong>: every coffee product when the key is <code>/category</code>. A logical
+partition holds up to 20 GB, and it is also the boundary for transactions — a stored procedure or transactional batch
+can only change items that share one partition key value.</p>
+<p>Behind the scenes, Cosmos DB hashes each key value and places logical partitions on <strong>physical partitions</strong>, the replica
+sets that do the work. You never manage physical partitions; Cosmos DB splits them as data and throughput grow. What you
+need to know is their ceiling: one physical partition serves up to 10,000 RU/s and 50 GB, so a single logical partition
+can never use more than that. A <strong>hot partition</strong> is one key value that receives far more traffic than the rest. It hits
+the ceiling and gets throttled while the other partitions sit idle.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  W[&quot;12.12 sale orders&lt;br/&gt;partition key /storeId&quot;] --&gt; H{&quot;hash of storeId&quot;}
+  H --&gt;|&quot;ONLINE: most writes&quot;| L1[&quot;Logical partition ONLINE&quot;]
+  H --&gt;|&quot;JKT-01&quot;| L2[&quot;Logical partition JKT-01&quot;]
+  H --&gt;|&quot;SBY-01&quot;| L3[&quot;Logical partition SBY-01&quot;]
+  L1 --&gt; P1[&quot;Physical partition A&lt;br/&gt;at its ceiling: HTTP 429&quot;]
+  L2 --&gt; P2[&quot;Physical partition B&lt;br/&gt;mostly idle&quot;]
+  L3 --&gt; P2
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>A good partition key has a wide range of values, spreads both storage and requests evenly, never changes for an item,
+and appears as an equality filter in your most frequent queries. The practical method is to start from the queries, not
+from the data: list the five requests your app makes most often, note which property each one filters on, and look for
+the property that appears in most of them. When no single property works, you can build a <strong>synthetic key</strong> by joining
+two values, such as <code>JKT-01|2026-12-12</code>. Here are Nusantara Retail's candidates:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Container</th>
+<th>Candidate key</th>
+<th>Verdict</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>products</td>
+<td><code>/category</code></td>
+<td>✅ Fine for a catalogue</td>
+<td>A few thousand items, read-heavy, and most pages ask &quot;everything in this category&quot;. Few values, so keep an eye on a &quot;promo&quot; category during the sale.</td>
+</tr>
+<tr>
+<td>products</td>
+<td><code>/id</code></td>
+<td>⚠️ Possible</td>
+<td>Perfect spread and cheap point reads, but every category page becomes a cross-partition query.</td>
+</tr>
+<tr>
+<td>orders</td>
+<td><code>/storeId</code></td>
+<td>❌ Hot partition</td>
+<td>Only 41 values, and the online store takes most orders; one store's history also grows toward the 20 GB limit.</td>
+</tr>
+<tr>
+<td>orders</td>
+<td><code>/orderDate</code></td>
+<td>❌ Hot partition</td>
+<td>Every write today lands on today's value — the classic anti-pattern.</td>
+</tr>
+<tr>
+<td>orders</td>
+<td><code>/orderId</code></td>
+<td>✅ Good for writes</td>
+<td>Spreads writes perfectly and supports point reads by order number, but &quot;show my orders&quot; must ask every partition.</td>
+</tr>
+<tr>
+<td>orders</td>
+<td><code>/customerId</code></td>
+<td>✅ Best fit</td>
+<td>High cardinality and matches the &quot;my orders&quot; page. If a few corporate buyers grow huge, use hierarchical keys.</td>
+</tr>
+</tbody>
+</table></div>
+<p>When a query includes the partition key, Cosmos DB sends it to one physical partition. When it doesn't, it becomes a
+<strong>cross-partition query</strong> that fans out to every physical partition, adding roughly 2–3 RU per partition plus extra
+latency. In a small container with one physical partition you barely notice; with fifty partitions, every search costs
+fifty times the overhead.</p>
+<p>You can't change a container's partition key in place: you create a new container and copy the data across (container
+copy jobs help). If one level isn't enough, <strong>hierarchical partition keys</strong> let you combine up to three levels, such as
+<code>/customerId</code> then <code>/orderId</code>.</p>
+</div></article><article class="scene-card" id="4-going-global-regions-and-the-five-consistency-levels" data-spy><span class="scene-no">Scene 4 of 5</span><h3>Going global: regions and the five consistency levels</h3><div class="prose"><p>Adding a region to a Cosmos DB account takes a single click or command. Each region holds a full copy of the data, your
+application reads from the nearest one, and provisioned RU/s apply in every region. By default one region accepts writes
+and the others serve reads; with <strong>multi-region writes</strong>, every region accepts writes and Cosmos DB resolves conflicting
+updates — by default, the last write wins. Service-managed failover can promote another region if the write region goes
+down.</p>
+<p>Replication between regions is asynchronous, so physics forces a choice: how fresh must a read be, and how much latency
+and cost will you accept for it? Cosmos DB gives you five <strong>consistency levels</strong>, from strongest to weakest:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Level</th>
+<th>What a reader is promised</th>
+<th>Nusantara Retail use</th>
+<th>Price of the promise</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Strong</strong></td>
+<td>Always the latest committed write</td>
+<td>Stock count for the very last batik in a flash sale</td>
+<td>Reads cost about twice the RUs; across regions every write waits for all regions; not allowed with multi-region writes</td>
+</tr>
+<tr>
+<td><strong>Bounded staleness</strong></td>
+<td>Lags behind by at most K versions or T seconds</td>
+<td>Live sale dashboard that may be up to a minute old</td>
+<td>Reads cost about twice the RUs</td>
+</tr>
+<tr>
+<td><strong>Session</strong> (default)</td>
+<td>Within one session you always read your own writes, in order</td>
+<td>Dewi edits a price and sees her change immediately</td>
+<td>Same cost as the weaker levels</td>
+</tr>
+<tr>
+<td><strong>Consistent prefix</strong></td>
+<td>Never sees writes out of order, but may lag</td>
+<td>An order's status timeline</td>
+<td>Single-replica reads</td>
+</tr>
+<tr>
+<td><strong>Eventual</strong></td>
+<td>No ordering guarantee; replicas converge over time</td>
+<td>Product view counters and &quot;likes&quot;</td>
+<td>Cheapest and fastest</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant D as Dewi (admin app)
+  participant J as Indonesia Central (write region)
+  participant S as Southeast Asia (read region)
+  participant P as Shopper in Singapore
+  D-&gt;&gt;J: Set kopi price to Rp 89.000
+  J--&gt;&gt;D: Write committed
+  J--)S: Replicate (asynchronous)
+  P-&gt;&gt;S: Read the price
+  Note over P,S: Eventual may still show Rp 99.000. Session shows the new price only to Dewi&#x27;s session. Strong never shows the old price, but the write waited for both regions.
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>The default level is set on the account, and you can change it at any time. A client can then ask for a weaker level
+for its own requests, but never a stronger one. Session is the default because it suits most applications: a user always
+sees their own changes, while reads stay as cheap and fast as eventual.</p>
+<p>Consistency also shapes disaster recovery. If a whole region is lost, the writes that hadn't replicated yet are lost
+with it. Microsoft's documentation puts that window at under 15 minutes for session, consistent prefix and eventual in a
+multi-region account, and at zero for strong — which is exactly why strong consistency makes every write wait for the
+other regions. Multi-region accounts also raise the availability SLA, up to 99.999% depending on the configuration.
+Lunch 17 calls this window the <strong>recovery point objective</strong>.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>During the 12.12 flash sale, the price of a batik shirt drops at exactly 00:00. Shoppers in
+Singapore are served from the Southeast Asia replica. Is a few seconds of old price acceptable, or must every shopper
+see the new price instantly? Which level would you choose — and what would it cost?</p>
+</aside>
+</div></article><article class="scene-card" id="5-how-it-fits-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 5 of 5</span><h3>How it fits together for Nusantara Retail</h3><div class="prose"><p>Three more features make Cosmos DB pleasant to work with:</p>
+<ul>
+<li><strong>Automatic indexing.</strong> By default every property of every item is indexed, so new fields like <code>roastLevel</code> are
+queryable the moment they appear — no index design required. To save RUs on write-heavy containers, you can exclude
+paths you never filter on.</li>
+<li><strong>Change feed.</strong> Every container keeps an ordered record of inserts and updates (ordered per partition key). An Azure
+Function (Lunch 14) can react to it: refresh the search index, or tell waiting shoppers that a sold-out batik is back
+in stock. By default deletes don't appear; a mode that captures them requires continuous backup.</li>
+<li><strong>Built-in backups.</strong> Every account is backed up automatically. The default periodic mode takes a full backup every
+four hours and keeps the latest two; continuous mode adds point-in-time restore for the last 7, 30 or 35 days. Lunch
+17 puts these into a disaster recovery plan.</li>
+</ul>
+<p>So which database should Nusantara Retail use? Both, each for what it does best:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Choose <strong>Azure SQL</strong> when…</th>
+<th>Choose <strong>Azure Cosmos DB</strong> when…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data is naturally relational: orders, payments, invoices</td>
+<td>Records vary in shape: catalogues, profiles, carts</td>
+</tr>
+<tr>
+<td>You need joins, reports and transactions across many tables</td>
+<td>You read and write by key at very high speed</td>
+</tr>
+<tr>
+<td>One region (plus a DR copy) is enough</td>
+<td>Users on several continents need local reads, or local writes</td>
+</tr>
+<tr>
+<td>Your team already thinks in T-SQL</td>
+<td>You want elastic throughput, from serverless to millions of RU/s</td>
+</tr>
+</tbody>
+</table></div>
+<p>The design you will build in the lab: a Cosmos DB for NoSQL account with a <code>catalog</code> database and a <code>products</code>
+container partitioned by <code>/category</code>. Dewi's storefront reads a category page with one single-partition query and a
+product page with one point read. Development uses <strong>serverless</strong>, because it costs nearly nothing when idle;
+production would move to <strong>autoscale</strong> before the sale, with a ceiling sized from measured RUs. The app authenticates
+with Microsoft Entra ID and a Cosmos DB data-plane role (Lunch 05 and Lunch 15), not with account keys.</p>
+<p>Production would live in <strong>Indonesia Central</strong> for data residency. Product names and prices aren't personal data, so a
+read region in Southeast Asia could serve shoppers abroad — carts holding customer IDs deserve a residency check first.</p>
+<p>Before you build, learn from the mistakes teams make most often with their first Cosmos DB app:</p>
+<ul>
+<li><strong>Running every page as a <code>SELECT *</code> across all partitions.</strong> It works on day one with 30 items and gets slower and
+more expensive with every product you add. Point reads and single-partition queries keep the cost flat.</li>
+<li><strong>Pasting account keys into configuration files.</strong> A key opens every database in the account, and it never expires.
+Use Microsoft Entra ID with a data-plane role, and disable key-based authentication once nothing needs it.</li>
+<li><strong>Creating databases and containers from application code.</strong> Treat them as infrastructure: create them with the CLI
+or Bicep (Lunch 20), and give the app a data role that can read and write items but not reshape the account.</li>
+<li><strong>Forgetting TTL.</strong> Abandoned carts and expired sessions pile up and cost storage forever unless a TTL removes them.</li>
+<li><strong>Leaving provisioned throughput on idle test containers.</strong> 400 RU/s bills every hour, used or not; serverless or
+the free tier is kinder to a development budget.</li>
+</ul>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Partition keys and consistency levels in Azure Cosmos DB</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../demos/12-cosmos-db.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../demos/12-cosmos-db.html" title="Interactive demo: Partition keys and consistency levels in Azure Cosmos DB" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/12-cosmos-db/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>How the partition key decides where every item lands, and why a single busy key value becomes a hot partition.</li>
+<li>The difference between a query that names its partition key and one that has to ask every partition.</li>
+<li>What a shopper in Singapore sees under eventual, session and strong consistency — and what each choice costs.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi adds a new product type almost every week, each with its own attributes. The team is starting a new service
+from scratch. Which Cosmos DB API should they choose?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>API for NoSQL.</strong> It stores schema-free JSON items, indexes new properties automatically and gets new features
+first; the other APIs mainly exist to move existing MongoDB, Cassandra, Gremlin or Table apps across.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>An <code>orders</code> container is partitioned by <code>/storeId</code>. During the 12.12 sale, writes for the online store fail with
+HTTP 429, even though the container's total RU/s are far from used up. What is happening, and what would you change?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>A hot partition.</strong> One key value (the online store) receives most writes and hits the per-partition ceiling while
+other partitions idle. Re-create the container with a high-cardinality key such as <code>/customerId</code> (or hierarchical
+keys) and copy the data, because a partition key can't be changed in place.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Your lab subscription already has a free-tier Cosmos DB account from a past experiment. You want a short-lived
+account for a 45-minute lab that costs almost nothing. What do you choose?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>A serverless account.</strong> Free tier is limited to one account per subscription and can't be added later, while
+serverless bills only the request units you actually consume plus storage.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Dewi must always see her own price changes immediately; other shoppers can lag a little. Which consistency level is
+the cheapest that meets the need?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Session</strong>, the default. It guarantees read-your-own-writes within a session while keeping single-replica reads,
+so reads don't cost the double RUs of strong or bounded staleness.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>The finance team needs month-end reports joining payments, invoices and refunds, with transactions that update all
+three together. Cosmos DB or Azure SQL?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Azure SQL.</strong> The data is relational and needs multi-table joins and transactions; in Cosmos DB, transactions are
+limited to items that share one partition key value.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Cosmos DB is a fully managed NoSQL database; choose <strong>API for NoSQL</strong> for new apps, because the API can't be changed after the account is created.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Everything costs <strong>request units</strong>: a 1 KB point read is 1 RU, and you pay for them through provisioned, autoscale or serverless capacity — plus one free-tier account per subscription.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>The <strong>partition key</strong> is a one-way door: pick a property with many values that spreads traffic evenly and appears in your most common queries, or you'll build a hot partition.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Five <strong>consistency levels</strong> trade freshness against latency and cost; <strong>session</strong> is the default and the right answer for most apps.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Use Cosmos DB for flexible, fast, globally distributed data such as catalogues and carts, and keep relational, transaction-heavy data like orders and payments in <strong>Azure SQL</strong>.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>12</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>A product catalogue that scales</h3>
+          <div class="prose"><p>You'll build Nusantara Retail's catalogue in a serverless Cosmos DB for NoSQL account, give yourself data access with
+Microsoft Entra ID instead of keys, load 30 products with a small Python script, and compare the RU cost of point reads,
+single-partition queries and cross-partition queries. You'll double the cost of a read by changing the consistency
+level, then fix an expensive search query by adding the partition key.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 45 minutes</span><span class="chip cost">💲 free or close to free</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/12-cosmos-db.html">Start Lab 12 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/cosmos-db/partitioning" target="_blank" rel="noopener"><b>Microsoft Learn: Partitioning and horizontal scaling in Azure Cosmos DB</b><span>Logical and physical partitions, anti-patterns and the partition key strategies side by side.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/cosmos-db/consistency-levels" target="_blank" rel="noopener"><b>Microsoft Learn: Consistency levels in Azure Cosmos DB</b><span>The precise guarantees behind each level, including quorum reads and the RPO of each choice.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/cosmos-db/request-units" target="_blank" rel="noopener"><b>Microsoft Learn: Request Units in Azure Cosmos DB</b><span>What drives RU charges and how capacity modes bill them.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🌐</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Catalogue Wrangler</h2>
+        <p class="muted">Model and partition NoSQL data.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“Failures go unnoticed, orders are restorable, and the catalogue scales on demand.”</b></p>
+        <div class="teaser"><b>Next episode · 13</b><h4>It Works on My Machine</h4><p>The most expensive sentence in the office.</p><p style="margin-top:10px"><a href="13-containers-basic.html">Watch Episode 13 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="11-relational-databases-basic.html"><small>← Previous episode</small>11 · The Three-Week-Old Backup</a><a class="next" href="13-containers-basic.html"><small>Next episode →</small>13 · It Works on My Machine</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/12-cosmos-db/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

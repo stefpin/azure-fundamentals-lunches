@@ -1,0 +1,22 @@
+# Lab 29 · Horizontal Pod Autoscaler: 3 to 10 storefront pods, aiming for 50% of the CPU request.
+# Imperative equivalent:  kubectl autoscale deployment storefront -n nusa --min=3 --max=10 --cpu=50%
+# (older kubectl versions use --cpu-percent=50 instead of --cpu=50%)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: storefront
+  namespace: nusa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: storefront
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50

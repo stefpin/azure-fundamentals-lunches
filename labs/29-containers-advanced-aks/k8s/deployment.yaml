@@ -1,0 +1,71 @@
+# Lab 29 · the storefront deployment
+# Desired state: three replicas of a small Microsoft sample web app that listens on port 80
+# and shows the TITLE environment variable as its page title.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storefront
+  namespace: nusa
+  labels:
+    app: storefront
+spec:
+  replicas: 3                  # the HPA from hpa.yaml takes over this number in Task 5
+  revisionHistoryLimit: 5      # how many old ReplicaSets to keep for "kubectl rollout undo"
+  selector:
+    matchLabels:
+      app: storefront
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1              # at most one extra pod while an update is in progress
+      maxUnavailable: 0        # never go below the desired number of ready pods
+  template:
+    metadata:
+      labels:
+        app: storefront
+    spec:
+      # Spread replicas across zones and nodes when there is more than one.
+      # "ScheduleAnyway" keeps the pods schedulable on a one-node lab cluster.
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: storefront
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels:
+              app: storefront
+      containers:
+        - name: storefront
+          image: mcr.microsoft.com/azuredocs/aks-helloworld:v1
+          ports:
+            - name: http
+              containerPort: 80
+          env:
+            - name: TITLE
+              value: "Nusantara Retail storefront v1"
+          resources:
+            requests:            # what the scheduler reserves; the HPA measures CPU against this
+              cpu: 50m
+              memory: 64Mi
+            limits:              # the ceiling: CPU is throttled, memory above the limit is OOMKilled
+              cpu: 250m
+              memory: 256Mi
+          readinessProbe:        # gate for traffic: only ready pods receive requests
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 3
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:         # restart the container if it stops answering
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 3

@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 30 · Why Was Checkout Slow on Friday? — Lunch 30: Monitoring (Advanced): Log Analytics, KQL and Application Insights · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 30 · Monitoring (Advanced): Log Analytics, KQL and Application Insights. The CPU was fine. Checkout took four seconds. 312 carts were abandoned. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 30 · Why Was Checkout Slow on Friday? — Lunch 30: Monitoring (Advanced): Log Analytics, KQL and Application Insights">
+<meta property="og:description" content="Lunch 30 · Monitoring (Advanced): Log Analytics, KQL and Application Insights. The CPU was fine. Checkout took four seconds. 312 carts were abandoned. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/lunches/30-monitoring-advanced.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lunch" data-lunch="30" style="--c:#7b4ff0">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 30</span> Season 2 · 🌊 Part 5 · Deep dives</div>
+      <h1>Why Was Checkout Slow on Friday?</h1>
+      <div class="lunch-title">Lunch 30 · Monitoring (Advanced): Log Analytics, KQL and Application Insights</div>
+      <div class="chips">
+        <span class="chip advanced">Advanced</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 Beyond AZ-900</span>
+        <span class="chip cost">🔬 Lab · about 60 minutes · 💲💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="16-monitoring-basic.html" title="Customers Knew First">↩ 16</a><a class="chip" href="06-virtual-machines-basic.html" title="Escape from the Pantry">↩ 06</a><a class="chip" href="10-app-service.html" title="Dewi&#x27;s Friday Nights">↩ 10</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 29 · Only Real Kubernetes Will Do, a small AKS cluster heals itself, scales and rolls out updates — and you know what it costs at 3 a.m.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-4"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, relaxed"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director's question · 98% ready</b>After this episode you can say: “Region down: minutes. And when checkout slows, we find out why within the hour.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today's menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-design-the-workspace-before-you-collect-anything">Design the workspace before you collect anything</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-getting-data-in-three-pipes">Getting data in: three pipes</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-kql-ask-questions-of-your-data">KQL: ask questions of your data</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-application-insights-see-inside-the-code">Application Insights: see inside the code</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-from-query-to-action--without-breaking-the-bank">From query to action — without breaking the bank</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-fridays-answer-for-nusantara-retail">Friday&#x27;s answer for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/30-monitoring-advanced.html">🔬 Open Lab 30</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today's menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Design</strong> a Log Analytics workspace: how many, where, who can read what, how long data stays, and which table plan each table needs.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> the right collection pipe — diagnostic settings, the Azure Monitor Agent with data collection rules, or Application Insights — for each kind of data.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Write</strong> KQL queries with <code>where</code>, <code>project</code>, <code>summarize</code>, <code>bin</code>, <code>render</code> and <code>join</code>, and <strong>turn</strong> a query into a log search alert.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Use</strong> Application Insights — OpenTelemetry, requests, dependencies, failures, availability tests and the application map — to find where the time goes.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 30</span>
+        <div class="story-body"><p>The alerts from Lunch 16 work. Last Friday the CPU alert stayed quiet — no server passed 50% CPU — yet checkout took
+four seconds, and the payments team counted 312 abandoned carts between 19:00 and 20:00.</p>
+<p>On Monday everyone has a theory. Dewi blames the product images in Blob storage. Pak Budi blames the VM that runs the
+order jobs. Rizky, the contractor, blames the payment provider. Each of them opens a different screen, and none of the
+screens agree.</p>
+<p>Ibu Sari asks the question that matters: &quot;Why was checkout slow on Friday — and will it happen again on 12.12?&quot;
+Harbolnas, the national online-shopping day, is less than two months away.</p>
+<p>Today you put all the evidence in one place, learn the language to question it, and turn the answer into an alert.</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-design-the-workspace-before-you-collect-anything" data-spy><span class="scene-no">Scene 1 of 6</span><h3>Design the workspace before you collect anything</h3><div class="prose"><p>A <strong>Log Analytics workspace</strong> is a regional Azure resource that stores log data in tables. Agent data, resource logs,
+the exported activity log and Application Insights telemetry all land in tables there, and every table has a schema,
+a retention period and a price. Because moving data between workspaces later is painful, a few design decisions belong
+at the start.</p>
+<p><strong>How many workspaces?</strong> As few as you can justify. One workspace makes cross-source questions easy: a single query
+can line up application requests with VM counters and storage logs. Split only for a real reason:</p>
+<ul>
+<li><strong>Data residency</strong> — Nusantara Retail's customer data must stay in Indonesia Central, so production logs that may
+contain customer details go to a workspace there.</li>
+<li><strong>Different owners</strong> — a security team running Microsoft Sentinel often wants its own workspace and access rules.</li>
+<li><strong>Billing or scale</strong> — separate cost centres, or very large volumes with their own pricing commitments.</li>
+</ul>
+<p>When you do split, the <code>workspace()</code> function lets one query read several workspaces.</p>
+<p><strong>Who can read what?</strong> With <strong>resource-context</strong> access, anyone who can read a resource can query that resource's logs
+without being given the whole workspace. <strong>Workspace-context</strong> access is for operators who need everything, and
+<strong>table-level</strong> permissions protect sensitive tables.</p>
+<p><strong>How long is data kept?</strong> A table on the Analytics plan has an <em>analytics retention</em> — 30 days by default (90 days for
+Application Insights tables and Sentinel-enabled workspaces), extendable to two years — during which it's fully
+queryable. Every table, whatever its plan, also has a <em>total retention</em> of up to 12 years. Data past the analytics
+retention moves to cheap <strong>long-term retention</strong>, which you reach with <strong>search jobs</strong> or by restoring it. The default
+retention is included in the ingestion price; you pay extra only for keeping data longer.</p>
+<p><strong>Which table plan?</strong> Every table has a plan that trades query power for price. (The current docs label the third plan
+<em>Auxiliary / Lake</em>.)</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Analytics</th>
+<th>Basic</th>
+<th>Auxiliary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Best for</td>
+<td>data you alert on and query every day</td>
+<td>troubleshooting and incident data</td>
+<td>verbose, rarely read logs kept for audit</td>
+</tr>
+<tr>
+<td>Which tables</td>
+<td>all</td>
+<td>selected Azure tables and custom tables</td>
+<td>selected Azure tables and custom tables</td>
+</tr>
+<tr>
+<td>Ingestion price</td>
+<td>standard</td>
+<td>reduced</td>
+<td>minimal</td>
+</tr>
+<tr>
+<td>Query price</td>
+<td>included</td>
+<td>charged per GB scanned</td>
+<td>charged per GB scanned</td>
+</tr>
+<tr>
+<td>Query speed</td>
+<td>fast</td>
+<td>fast</td>
+<td>slower</td>
+</tr>
+<tr>
+<td>Alerts</td>
+<td>yes</td>
+<td>simple log alerts only</td>
+<td>no</td>
+</tr>
+<tr>
+<td>Dashboards</td>
+<td>everything, including insights</td>
+<td>workbooks and Grafana</td>
+<td>workbooks and Grafana, slow to refresh</td>
+</tr>
+<tr>
+<td>Typical Nusantara table</td>
+<td><code>AppRequests</code>, <code>Perf</code>, <code>Syslog</code></td>
+<td>verbose container logs</td>
+<td>audit logs kept for years</td>
+</tr>
+</tbody>
+</table></div>
+<p>Section 5 returns to cost. For now, remember the rule behind every plan: the more often you need data quickly, the more
+you pay to store it.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph In[&quot;Collection&quot;]
+    DS[&quot;Diagnostic settings&quot;]
+    AMA[&quot;Azure Monitor Agent&lt;br/&gt;plus data collection rules&quot;]
+    AI[&quot;Application Insights&lt;br/&gt;OpenTelemetry&quot;]
+  end
+  subgraph WS[&quot;Log Analytics workspace log-nusa&quot;]
+    T1[&quot;StorageBlobLogs · AzureActivity&quot;]
+    T2[&quot;Heartbeat · Perf · Syslog&quot;]
+    T3[&quot;AppRequests · AppDependencies&lt;br/&gt;AppExceptions · AppTraces&quot;]
+  end
+  subgraph Out[&quot;Use&quot;]
+    Q[&quot;KQL in Log Analytics&quot;]
+    A[&quot;Log search alerts&quot;]
+    W[&quot;Workbooks · Grafana&quot;]
+  end
+  DS --&gt; T1
+  AMA --&gt; T2
+  AI --&gt; T3
+  WS --&gt; Q
+  WS --&gt; A
+  WS --&gt; W
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></article><article class="scene-card" id="2-getting-data-in-three-pipes" data-spy><span class="scene-no">Scene 2 of 6</span><h3>Getting data in: three pipes</h3><div class="prose"><p>Nusantara Retail's Friday evidence lives in three places — the platform, the servers and the application — and each
+has its own pipe into the workspace.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Pipe</th>
+<th>Lands in</th>
+<th>Remember</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Resource logs: blob reads, Key Vault access, SQL audit</td>
+<td>Diagnostic setting on the resource</td>
+<td>resource-specific tables such as <code>StorageBlobLogs</code> (or the older shared <code>AzureDiagnostics</code>)</td>
+<td>up to five settings per resource; use category groups such as <em>allLogs</em></td>
+</tr>
+<tr>
+<td>Activity log</td>
+<td>Diagnostic setting on the subscription</td>
+<td><code>AzureActivity</code></td>
+<td>free to ingest</td>
+</tr>
+<tr>
+<td>Guest OS: Syslog, Windows events, performance counters, text files</td>
+<td>Azure Monitor Agent + data collection rule</td>
+<td><code>Syslog</code>, <code>Event</code>, <code>Perf</code>, custom <code>_CL</code> tables</td>
+<td>needs a managed identity and an association</td>
+</tr>
+<tr>
+<td>Application requests, dependencies, exceptions, logs</td>
+<td>Application Insights</td>
+<td><code>AppRequests</code>, <code>AppDependencies</code>, <code>AppExceptions</code>, <code>AppTraces</code></td>
+<td>autoinstrumentation or OpenTelemetry</td>
+</tr>
+<tr>
+<td>Your own records</td>
+<td>Logs ingestion API + data collection rule</td>
+<td>custom <code>_CL</code> tables</td>
+<td>you define the schema</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Diagnostic settings</strong> route a resource's platform logs — and optionally its metrics — to a workspace, a storage
+account, Event Hubs or a partner solution. Prefer <strong>resource-specific</strong> tables, which have a proper schema per
+service, over the shared <code>AzureDiagnostics</code> table. One quirk surprises people: a diagnostic setting outlives its
+resource. If you delete a resource and later recreate one with the same name, the old setting can come back with it,
+so delete settings when you delete or rename resources. At scale, Azure Policy creates diagnostic settings for you
+(Lunch 31).</p>
+<p>The <strong>Azure Monitor Agent</strong> (AMA) is the only supported agent for collecting data from inside Windows and Linux
+machines, in Azure and — through Azure Arc — elsewhere. The legacy Log Analytics agent (also called MMA or OMS) was
+retired on August 31, 2024, and Microsoft warns that after March 2, 2026 its data uploads can stop at any time without
+notice; if you still find it on a server, migrating is urgent, not optional. AMA authenticates with the machine's
+<strong>managed identity</strong> (system-assigned is fine for a few machines; user-assigned scales better).</p>
+<p>The agent does nothing until it receives a <strong>data collection rule (DCR)</strong>. A DCR says three things:</p>
+<ol>
+<li><strong>What to collect</strong> — Syslog facilities with a minimum severity, performance counters with a sampling interval,
+Windows events filtered with XPath, or lines from text and JSON files.</li>
+<li><strong>How to shape it</strong> — an optional <strong>transformation</strong>, written in KQL, that drops rows or columns before they are
+stored.</li>
+<li><strong>Where to send it</strong> — one or more workspaces, or Azure Monitor Metrics.</li>
+</ol>
+<p>A <strong>DCR association</strong> links a machine to a rule. The relationship is many-to-many: one &quot;Linux baseline&quot; DCR can serve
+every server, while the payment server also gets an extra rule for its application log. Installing the agent alone
+collects nothing — a classic first-day surprise.</p>
+<p><strong>VM insights</strong> packages this for you. When you enable monitoring for a VM in the portal today, the recommended
+<em>metrics-based</em> experience collects a default set of OpenTelemetry guest metrics into an <strong>Azure Monitor workspace</strong>
+(queried with PromQL, default metrics free), and the classic <em>logs-based</em> experience stores performance data in Log
+Analytics for KQL, workbooks and multi-VM views. You can use both.</p>
+<p>Data isn't instant. Once a pipe is flowing, rows usually arrive within seconds to a few minutes. A brand-new agent,
+rule, diagnostic setting or table often needs 5–15 minutes before the first rows appear — plan your labs and your
+incident expectations accordingly.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Filter as early as possible. A DCR that collects Syslog at <em>Warning</em> and above sends a fraction of the data of one
+that collects <em>Debug</em>, and choosing only the counters you need beats collecting everything &quot;just in case&quot;. You can't
+query what you didn't collect, but you pay for everything you do.</p>
+</aside>
+</div></article><article class="scene-card" id="3-kql-ask-questions-of-your-data" data-spy><span class="scene-no">Scene 3 of 6</span><h3>KQL: ask questions of your data</h3><div class="prose"><p><strong>Kusto Query Language (KQL)</strong> is a read-only language. A query starts with a table and pipes the rows through
+operators, left to right, like a production line: each step receives rows and hands rows to the next. Three habits make
+queries fast and correct: start with the table, filter on time first, and only then filter, shape and aggregate.
+Table and column names are case-sensitive.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>What it does</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>where</code></td>
+<td>keep matching rows</td>
+<td><code>where TimeGenerated &gt; ago(1h)</code></td>
+</tr>
+<tr>
+<td><code>project</code></td>
+<td>choose, rename or reorder columns</td>
+<td><code>project TimeGenerated, Computer, SyslogMessage</code></td>
+</tr>
+<tr>
+<td><code>extend</code></td>
+<td>add a calculated column</td>
+<td><code>extend Seconds = DurationMs / 1000.0</code></td>
+</tr>
+<tr>
+<td><code>summarize</code></td>
+<td>aggregate rows into groups</td>
+<td><code>summarize count() by Computer</code></td>
+</tr>
+<tr>
+<td><code>bin()</code></td>
+<td>round values into buckets, usually time</td>
+<td><code>summarize avg(CounterValue) by bin(TimeGenerated, 5m)</code></td>
+</tr>
+<tr>
+<td><code>percentile()</code></td>
+<td>latency percentiles</td>
+<td><code>summarize p95 = percentile(DurationMs, 95)</code></td>
+</tr>
+<tr>
+<td><code>countif()</code></td>
+<td>count rows that match a condition</td>
+<td><code>summarize Failed = countif(Success == false)</code></td>
+</tr>
+<tr>
+<td><code>arg_max()</code></td>
+<td>the latest row per group</td>
+<td><code>summarize arg_max(TimeGenerated, *) by Computer</code></td>
+</tr>
+<tr>
+<td><code>top</code>, <code>sort by</code></td>
+<td>order rows</td>
+<td><code>top 10 by DurationMs desc</code></td>
+</tr>
+<tr>
+<td><code>render</code></td>
+<td>draw a chart</td>
+<td><code>render timechart</code></td>
+</tr>
+<tr>
+<td><code>join</code></td>
+<td>combine two tables on a key</td>
+<td><code>join kind=leftouter (AppExceptions) on OperationId</code></td>
+</tr>
+<tr>
+<td><code>union</code></td>
+<td>stack tables</td>
+<td><code>union AppTraces, AppExceptions</code></td>
+</tr>
+<tr>
+<td><code>let</code></td>
+<td>name a value or a subquery</td>
+<td><code>let slow = 1000;</code></td>
+</tr>
+<tr>
+<td><code>has</code>, <code>contains</code>, <code>=~</code></td>
+<td>text matching</td>
+<td><code>where Name has &quot;checkout&quot;</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Here is the query that started Nusantara Retail's investigation: the 95th-percentile duration of checkout requests in
+five-minute buckets.</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>AppRequests
+| where TimeGenerated between (datetime(2026-10-16 18:00) .. datetime(2026-10-16 21:00))
+| where Name has &quot;checkout&quot;
+| summarize p95 = percentile(DurationMs, 95), requests = count() by bin(TimeGenerated, 5m)
+| render timechart
+</code></pre></div>
+<p>A few traps catch almost everyone:</p>
+<ul>
+<li><strong><code>has</code> versus <code>contains</code>.</strong> <code>has</code> matches whole terms and uses the index, so it's fast; <code>contains</code> matches any
+substring and is slower. <code>==</code> is case-sensitive; <code>=~</code> isn't.</li>
+<li><strong>The default join.</strong> Without <code>kind=</code>, a join is <code>innerunique</code>, which silently keeps only one row per key on the left
+side. Write <code>kind=inner</code> or <code>kind=leftouter</code> on purpose, and filter both sides before joining.</li>
+<li><strong>Averages hide pain.</strong> An average checkout of 600 ms can hide one customer in twenty waiting four seconds. Use
+percentiles for latency.</li>
+<li><strong>Scope.</strong> Opening <em>Logs</em> from a resource's menu scopes queries to that resource; open it from the workspace (or
+<em>Monitor › Logs</em>) to see everything. Log Analytics also has a point-and-click <em>Simple</em> mode beside <em>KQL</em> mode.</li>
+</ul>
+<p>Queries on Analytics tables cost nothing extra; queries that touch Basic or Auxiliary tables are billed by the data
+they scan — one more reason to filter on time first.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  T[&quot;AppRequests&lt;br/&gt;48,210 rows&quot;] --&gt; W1[&quot;where time&lt;br/&gt;is Friday evening&quot;]
+  W1 --&gt; W2[&quot;where Name&lt;br/&gt;has checkout&quot;]
+  W2 --&gt; S[&quot;summarize p95&lt;br/&gt;by 5-minute bin&quot;]
+  S --&gt; R[&quot;render timechart&quot;]
+  S --&gt; AL[&quot;log search alert&lt;br/&gt;every 5 minutes&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></article><article class="scene-card" id="4-application-insights-see-inside-the-code" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Application Insights: see inside the code</h3><div class="prose"><p><strong>Application Insights</strong> is Azure Monitor's application performance monitoring feature. Every Application Insights
+resource you create today is <strong>workspace-based</strong>: the telemetry lands in tables in a Log Analytics workspace, and the
+resource adds the portal experiences and the <strong>connection string</strong> your app uses to send data. Classic resources, which
+kept data separately, were retired in February 2024.</p>
+<p>There are two ways to instrument an app:</p>
+<ul>
+<li><strong>Autoinstrumentation</strong> — no code changes. On App Service you turn on Application Insights (two app settings when
+scripted) for .NET, Java, Node.js and, on Linux, Python; Azure Functions and AKS have their own options. Support
+differs per language and host, and some combinations are still in preview, so check the support table for yours.</li>
+<li><strong>Code-based OpenTelemetry</strong> — you add Microsoft's OpenTelemetry distro to the app and initialise it at start-up. At
+the time of writing, new .NET, Node.js and Python apps use the Microsoft OpenTelemetry Distro, and Java uses the
+Azure Monitor OpenTelemetry Distro (a Java agent). OpenTelemetry is an open standard, so the same instrumentation can
+also send to other backends. <strong>Sampling</strong> keeps volume and cost under control.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Telemetry</th>
+<th>Table</th>
+<th>Answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Requests</td>
+<td><code>AppRequests</code></td>
+<td>Which pages and APIs were called, how long they took, and whether they failed</td>
+</tr>
+<tr>
+<td>Dependencies</td>
+<td><code>AppDependencies</code></td>
+<td>Which outgoing calls — SQL, HTTP APIs, storage — were slow or failing</td>
+</tr>
+<tr>
+<td>Exceptions</td>
+<td><code>AppExceptions</code></td>
+<td>What broke, with type, message and stack</td>
+</tr>
+<tr>
+<td>Traces</td>
+<td><code>AppTraces</code></td>
+<td>What the code logged along the way</td>
+</tr>
+<tr>
+<td>Availability results</td>
+<td><code>AppAvailabilityResults</code></td>
+<td>Whether the site answered from outside, from each test location</td>
+</tr>
+<tr>
+<td>Page views and browser timings</td>
+<td><code>AppPageViews</code>, <code>AppBrowserTimings</code></td>
+<td>What real users experienced in the browser (needs the browser SDK)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Every row of one user action shares an <strong>operation ID</strong>, so you can follow a single checkout from the browser through
+the web app to the payment API and back. The portal turns this into views you'll use constantly:</p>
+<ul>
+<li>The <strong>application map</strong> draws components and their dependencies, with call rates, durations and failure rates.</li>
+<li><strong>Performance</strong> and <strong>Failures</strong> list operations by duration or error count, show percentiles, and let you drill into
+one sample's <strong>end-to-end transaction</strong>.</li>
+<li><strong>Live metrics</strong> stream request rates, failures and server health in near real time while you deploy or test. It
+isn't available with every instrumentation (for example, App Service autoinstrumentation for Python).</li>
+<li><strong>Availability tests</strong> call a URL from Microsoft's test locations around the world. A <strong>standard test</strong> checks the
+status code, response time, content and TLS certificate validity; at least five locations are recommended, alerts
+fire when several locations fail, and standard tests are billed per run. The older URL ping tests are deprecated and
+scheduled for retirement on September 30, 2028.</li>
+</ul>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant B as Browser
+  participant W as Storefront web app
+  participant DB as Orders database
+  participant P as Payment API
+  B-&gt;&gt;W: POST /checkout (operation 7f3c)
+  W-&gt;&gt;DB: INSERT order (dependency, 40 ms)
+  W-&gt;&gt;P: authorise payment (dependency, 2,400 ms)
+  P--&gt;&gt;W: approved
+  W--&gt;&gt;B: 200 OK after 2,520 ms
+  Note over W,P: AppRequests and AppDependencies rows share operation 7f3c
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></article><article class="scene-card" id="5-from-query-to-action--without-breaking-the-bank" data-spy><span class="scene-no">Scene 5 of 6</span><h3>From query to action — without breaking the bank</h3><div class="prose"><p>A <strong>log search alert</strong> runs a KQL query on a schedule. You choose a <strong>measurement</strong> (the number of rows, or an
+aggregated column such as average duration), optional <strong>dimensions</strong> to split the result — one alert per computer or
+per operation — a <strong>threshold</strong>, a <strong>frequency</strong>, a <strong>window</strong> (how far back each run looks) and how many violations
+must occur before it fires. Rules are stateful by default, so they resolve themselves when the condition clears, and
+they notify people through the same action groups as the metric alerts from Lunch 16. Each rule has a monthly cost that
+rises with the evaluation frequency, so five minutes is a sensible default. Two habits help:</p>
+<ul>
+<li>Write the query to describe the problem, not the alert. Return the slow requests and let the rule count them, and
+avoid <code>take</code> and <code>limit</code>, which make results inconsistent between runs.</li>
+<li>Allow for ingestion delay. An alert can only fire after its rows have arrived, so give the window comfortably more
+time than the delay you normally see.</li>
+</ul>
+<p>For dashboards, <strong>workbooks</strong> combine parameters, queries, charts and text into interactive, shareable reports — the
+natural home for a &quot;checkout health&quot; page. <strong>Azure Monitor dashboards with Grafana</strong> add free, prebuilt Grafana
+dashboards inside the portal, and <strong>Azure Managed Grafana</strong> is the paid option for teams that also need non-Azure data
+sources and the full Grafana feature set. Business reports can go to <strong>Power BI</strong>. For charts over long periods,
+<strong>summary rules</strong> pre-aggregate raw data into a small table so dashboards stay fast.</p>
+<p>Logs are usually the largest line on a monitoring bill, and they grow quietly as teams add sources. Analytics ingestion
+is billed per GB — at the time of writing the first 5 GB per billing account per month are free on pay-as-you-go — and
+some tables, including <code>Heartbeat</code>, <code>AzureActivity</code> and <code>Usage</code>, are free to ingest. These levers keep the rest under
+control:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lever</th>
+<th>What it does</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Collect less</td>
+<td>DCR severity levels, fewer counters, longer sampling intervals, Application Insights sampling</td>
+<td>you can't query what you never collected</td>
+</tr>
+<tr>
+<td>Transform at ingestion</td>
+<td>a KQL transformation in the DCR drops noisy rows or columns before they're stored</td>
+<td>dropping more than half of the incoming data adds a processing charge for the excess</td>
+</tr>
+<tr>
+<td>Choose table plans</td>
+<td>Basic or Auxiliary for verbose data you rarely query</td>
+<td>queries are billed by data scanned; alerts are limited</td>
+</tr>
+<tr>
+<td>Right-size retention</td>
+<td>keep analytics retention short and older data in long-term retention</td>
+<td>search jobs and restores have their own charges</td>
+</tr>
+<tr>
+<td>Commitment tiers</td>
+<td>a discount for steady Analytics volume from 100 GB per day</td>
+<td>you pay for the tier even on quiet days</td>
+</tr>
+<tr>
+<td>Watch the <code>Usage</code> table</td>
+<td>shows which tables and resources send the most data</td>
+<td>review it after every new data source</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>A workspace <strong>daily cap</strong> stops collecting billable data for the rest of the day once the cap is reached. It protects
+the budget, but it blinds you exactly when an incident floods the logs. Use it only as a safety net set well above
+normal volume, and alert on rising ingestion instead.</p>
+</aside>
+</div></article><article class="scene-card" id="6-fridays-answer-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>Friday's answer for Nusantara Retail</h3><div class="prose"><p>With all three pipes feeding <code>log-nusa</code>, the Monday meeting changed. Instead of three screens and three theories, the
+team opened one workspace and asked questions in order, from symptom to cause:</p>
+<ol>
+<li><code>AppRequests</code> showed the p95 of checkout jumping from about 400 ms to 2.8 seconds at 19:05, while the home page and
+product list stayed fast. The problem was specific to checkout.</li>
+<li><code>AppDependencies</code> showed why: calls to the payment provider's API took 2.4 seconds at p95, while the database and
+Blob storage calls stayed normal. The application map drew the same picture, with one red line to the payment API.</li>
+<li><code>Perf</code> and <code>StorageBlobLogs</code> cleared the other suspects: the order-jobs VM stayed below 50% CPU, and blob latency was
+flat all evening. Dewi's images and Pak Budi's VM were innocent.</li>
+<li>Rizky was right. The payment provider had throttled merchants during the evening peak.</li>
+</ol>
+<p>The fix is part technical, part conversation: a standard availability test against the payment provider's status
+endpoint, a log search alert on the p95 of payment dependency calls, sensible timeouts with a friendly retry message for
+customers, a workbook the whole team can open, and a call with the provider about higher limits before 12.12. Ibu Sari
+got her answer in twenty minutes instead of a week of arguments — and the same queries will watch Harbolnas.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>Your log search alert runs every 5 minutes over the last 5 minutes, but during busy periods
+<code>Syslog</code> rows arrive up to 4 minutes late. What could go wrong, and which two settings would you change?</p>
+</aside>
+<p>Next, Lunch 31 scales governance across the whole company, including the Azure Policy definitions that deploy agents
+and diagnostic settings automatically.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Why was checkout slow on Friday? One workspace, three pipes, one query</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../demos/30-monitoring-advanced.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../demos/30-monitoring-advanced.html" title="Interactive demo: Why was checkout slow on Friday? One workspace, three pipes, one query" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/30-monitoring-advanced/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>Three pipes — agent with a DCR, Application Insights, diagnostic settings — feeding one workspace, each into its own
+tables.</li>
+<li>What happens when a DCR filters out the severity you needed, and why the fix takes a few minutes to show up.</li>
+<li>How each KQL operator changes the row count until a chart remains, and how the same query becomes an alert.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Pak Budi installed the Azure Monitor Agent on a new Linux VM an hour ago. The extension shows <em>Provisioning
+succeeded</em>, but the <code>Heartbeat</code> table has no rows for that VM. What is the most likely cause?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The VM has <strong>no data collection rule associated</strong> (or no managed identity for the agent to authenticate with).
+<em>Why:</em> the agent collects nothing until a DCR association tells it what to collect and where to send it.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>The security team needs three years of firewall logs for audits and queries them a few times a year. Which table plan
+fits, and what's the trade-off?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Auxiliary</strong> (or Basic), with total retention set to three years. <em>Why:</em> ingestion is far cheaper; in return queries
+are slower, are charged per GB scanned, and can't drive standard alerts — fine for rare audit questions.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Dewi writes <code>AppRequests | summarize avg(DurationMs)</code> and sees 620 ms, yet customers complain about four-second
+checkouts. What should she change?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Filter to the checkout operation and the right time range, then use <strong>percentiles</strong> per time bucket — for example
+<code>percentile(DurationMs, 95)</code> by <code>bin(TimeGenerated, 5m)</code>. <em>Why:</em> an average over everything hides the slow tail
+that customers actually feel.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>A join of failed requests with exceptions on <code>OperationId</code> returns fewer rows than expected. Which detail of KQL
+explains it?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Without <code>kind=</code>, a KQL join is <strong><code>innerunique</code></strong>, which keeps only one left-side row per key, and inner joins drop
+requests that have no exception at all. Use <code>kind=leftouter</code> (or <code>kind=inner</code>) on purpose. <em>Why:</em> the default join
+kind deduplicates the left side.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Nusantara Retail wants to know from outside the company network whether customers in Jakarta, Singapore and Tokyo
+can reach the storefront. Which feature fits, and which kind should you create?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>An Application Insights <strong>availability test</strong> of the <strong>standard</strong> kind, running from several locations (five or more
+is recommended), with an alert when multiple locations fail. <em>Why:</em> URL ping tests are deprecated, and standard
+tests also check TLS certificates, verbs and headers.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Design the workspace first — fewest workspaces that satisfy residency and ownership, resource-context access, the right retention, and the right table plan per table.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Use the right pipe: diagnostic settings for platform logs, the Azure Monitor Agent plus a data collection rule (associated, with a managed identity) for guest data, and Application Insights for application telemetry.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>KQL is a pipeline: start with the table, filter on time, then filter, summarise, bin and render; choose join kinds deliberately and prefer percentiles for latency.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Application Insights is workspace-based and OpenTelemetry-based: requests, dependencies, exceptions and traces share an operation ID, and standard availability tests watch from outside.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Turn good queries into log search alerts and workbooks — and control cost by collecting less, choosing table plans wisely and watching the <code>Usage</code> table.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>30</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Why was checkout slow on Friday?</h3>
+          <div class="prose"><p>You'll build Nusantara Retail's evidence room in one Log Analytics workspace: install the Azure Monitor Agent on a VM
+and connect it with a data collection rule from a JSON file, send a storage account's resource logs through a
+diagnostic setting, and connect a small Python storefront on App Service to workspace-based Application Insights with
+an availability test. Then you'll answer ten graded KQL questions, turn the slow-checkout query into a log search alert,
+and repair a DCR that silently drops the warnings you need.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 60 minutes</span><span class="chip cost">💲💲 small charges while running</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/30-monitoring-advanced.html">Start Lab 30 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/azure-monitor/logs/data-platform-logs" target="_blank" rel="noopener"><b>Microsoft Learn: Azure Monitor Logs overview</b><span>Workspaces, table plans and their features side by side.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-monitor/agents/azure-monitor-agent-manage" target="_blank" rel="noopener"><b>Microsoft Learn: Install and manage the Azure Monitor Agent</b><span>Installation options, identities and how to verify the agent with a Heartbeat query.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/kusto/query/tutorials/learn-common-operators" target="_blank" rel="noopener"><b>Microsoft Learn: Tutorial: Learn common KQL operators</b><span>A hands-on tour of the operators in this lunch, with sample data.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-monitor/app/opentelemetry-enable" target="_blank" rel="noopener"><b>Microsoft Learn: Enable OpenTelemetry in Application Insights</b><span>The current distros and how to connect an app with a connection string.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🔎</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>KQL Detective</h2>
+        <p class="muted">Find root causes with Log Analytics and KQL.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“Region down: minutes. And when checkout slows, we find out why within the hour.”</b></p>
+        <div class="teaser"><b>Next episode · 31</b><h4>Seven Subscriptions and a Merger</h4><p>Guardrails that protect one subscription won&#x27;t survive a merger.</p><p style="margin-top:10px"><a href="31-governance-at-scale.html">Watch Episode 31 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="29-containers-advanced-aks.html"><small>← Previous episode</small>29 · Only Real Kubernetes Will Do</a><a class="next" href="31-governance-at-scale.html"><small>Next episode →</small>31 · Seven Subscriptions and a Merger</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/30-monitoring-advanced/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

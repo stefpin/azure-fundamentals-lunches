@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 03 · Where Does the Shop Live? — Lunch 03: Azure Global Infrastructure: Regions, Availability Zones and Region Pairs (Basic) · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 03 · Azure Global Infrastructure: Regions, Availability Zones and Region Pairs (Basic). Jakarta or Singapore? And what happens when that building has a bad day? A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 03 · Where Does the Shop Live? — Lunch 03: Azure Global Infrastructure: Regions, Availability Zones and Region Pairs (Basic)">
+<meta property="og:description" content="Lunch 03 · Azure Global Infrastructure: Regions, Availability Zones and Region Pairs (Basic). Jakarta or Singapore? And what happens when that building has a bad day? A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/lunches/03-global-infrastructure.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lunch" data-lunch="03" style="--c:#1665d8">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 03</span> Season 1 · 🧱 Part 1 · Foundations</div>
+      <h1>Where Does the Shop Live?</h1>
+      <div class="lunch-title">Lunch 03 · Azure Global Infrastructure: Regions, Availability Zones and Region Pairs (Basic)</div>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure architecture and services</span>
+        <span class="chip cost">🔬 Lab · about 35 minutes · 💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="01-before-you-begin.html" title="The Room Next to the Pantry">↩ 01</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 02 · Rent, Don&#x27;t Buy?, you explained IaaS, PaaS and SaaS — and who is responsible for what — in money and in risk.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-0"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, sweating"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director's question · 7% ready</b>After this episode you can say: “Still days today. In Azure, a whole datacenter could fail without stopping us.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today's menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-from-a-building-to-a-geography">From a building to a geography</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-availability-zones-separate-buildings-inside-one-region">Availability zones: separate buildings inside one region</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-zonal-zone-redundant-and-nonzonal-resources">Zonal, zone-redundant and nonzonal resources</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-region-pairs-regions-without-a-pair-and-sovereign-clouds">Region pairs, regions without a pair, and sovereign clouds</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-choosing-a-region-for-nusantara-retail">Choosing a region for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/03-global-infrastructure.html">🔬 Open Lab 03</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today's menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> how datacenters, availability zones, regions and geographies fit together, and which kind of failure each level protects you from.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Compare</strong> zonal, zone-redundant and nonzonal (regional) resources, and pick the right behaviour for a web server, a public IP address and a storage account.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Describe</strong> what a region pair gives you, what it does not, and how to plan for a region without a pair such as Indonesia Central.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> a region for a workload by weighing data residency, latency, service and SKU availability, price, availability zones and disaster recovery options.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 03</span>
+        <div class="story-body"><p>The business case from last week landed well. Ibu Sari now asks the practical follow-up: <em>&quot;If we move the shop to
+Azure, where does it actually live? Jakarta? Singapore? And what happens when that building has a bad day, like our
+pantry room did when the roof leaked?&quot;</em></p>
+<p>Everyone has an opinion. Dewi wants the closest region because the checkout page feels slow on mobile networks. The
+finance team has heard that the same service can cost a different amount in another country. Pak Budi points out that
+the customer database holds names, phone numbers and delivery addresses of Indonesian shoppers, and the legal team
+would like that data to stay in Indonesia.</p>
+<p>You open the list of Azure regions and find dozens of names, zone counts, pairs and footnotes. Before anyone creates a
+production resource, you need a clear answer for the director: <strong>which region should Nusantara Retail use, and how does
+the shop survive a failure in a building, or in the whole region?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 5 scenes</span></div>
+      
+      <article class="scene-card" id="1-from-a-building-to-a-geography" data-spy><span class="scene-no">Scene 1 of 5</span><h3>From a building to a geography</h3><div class="prose"><p>Azure is not one giant computer in one place. It is a worldwide fleet of <strong>datacenters</strong>: buildings full of servers,
+storage and network equipment, each with its own power feeds, cooling and physical security. You never pick a
+datacenter directly. Azure groups datacenters into larger units, and you choose among those units instead.</p>
+<p>A <strong>region</strong> is a set of datacenters in one metropolitan area, connected by a fast, low-latency network. When you create
+a virtual machine, a storage account or a database, you almost always choose a region, and the resource lives there.
+Each region has a display name for people and a programmatic name for scripts: <em>Indonesia Central</em> is
+<code>indonesiacentral</code>, <em>Southeast Asia</em> is <code>southeastasia</code>. Microsoft's documentation lists more than 70 regions at the
+time of writing (October 2026), and new ones keep opening. Indonesia Central, in Jakarta, opened on May 27, 2025.</p>
+<p>A <strong>geography</strong> is a group of one or more regions that forms a data residency boundary, usually a country or a market
+such as Indonesia, Japan or Europe. Every region belongs to exactly one geography. This detail matters more than it
+first appears. Southeast Asia (Singapore) and East Asia (Hong Kong) belong to the <em>Asia Pacific</em> geography, while
+Indonesia Central belongs to the <em>Indonesia</em> geography. If Nusantara Retail must keep customer data inside Indonesia,
+the geography is the line it may not cross.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  G1[&quot;Geography: Indonesia&lt;br/&gt;(data residency boundary)&quot;] --&gt; R1[&quot;Region: Indonesia Central&lt;br/&gt;Jakarta · indonesiacentral&quot;]
+  G2[&quot;Geography: Asia Pacific&lt;br/&gt;(data residency boundary)&quot;] --&gt; R2[&quot;Region: Southeast Asia&lt;br/&gt;Singapore · southeastasia&quot;]
+  G2 --&gt; R3[&quot;Region: East Asia&lt;br/&gt;Hong Kong · eastasia&quot;]
+  R1 --&gt; Z1[&quot;Availability zone 1&quot;]
+  R1 --&gt; Z2[&quot;Availability zone 2&quot;]
+  R1 --&gt; Z3[&quot;Availability zone 3&quot;]
+  Z1 --&gt; D1[&quot;Datacenter&quot;]
+  Z1 --&gt; D2[&quot;Datacenter&quot;]
+  Z2 --&gt; D3[&quot;Datacenter&quot;]
+  Z3 --&gt; D4[&quot;Datacenter&quot;]
+  Z3 --&gt; D5[&quot;Datacenter&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>A handful of services are <strong>nonregional</strong>: you don't deploy them into a region at all. Microsoft Entra ID, Azure DNS,
+Azure Front Door and Azure Traffic Manager run across many regions, so the loss of one region doesn't take them down.
+Most of what you build in this course is regional, which means the region decision is one you will make again and
+again.</p>
+<p>Two practical notes before we go deeper. First, not every region is open to every customer: a few regions are
+restricted to specific scenarios, such as in-country disaster recovery, and need an access request. Second, the same
+service is not necessarily available in every region, and a new region often starts with a smaller catalogue than an
+established one. Section 5 shows how to check before you commit.</p>
+<p>You will see regions in three places. The portal's region dropdown groups them by geography, so Singapore appears as
+&quot;(Asia Pacific) Southeast Asia&quot;. The Azure CLI command <code>az account list-locations</code> returns every region your
+subscription can see, with its geography, physical location, paired region and zone details. And Microsoft's region
+list in the documentation shows the same facts for everyone, including regions you can't access yet.</p>
+</div></article><article class="scene-card" id="2-availability-zones-separate-buildings-inside-one-region" data-spy><span class="scene-no">Scene 2 of 5</span><h3>Availability zones: separate buildings inside one region</h3><div class="prose"><p>An <strong>availability zone</strong> is a separate group of one or more datacenters inside a region, with its own independent
+power, cooling and networking. Zones are placed apart on purpose, typically several kilometres and usually within about
+100 kilometres of each other, so a local power cut, fire or flood in one zone should leave the others running. They
+are also close on purpose: Microsoft aims for round trips between zones of under roughly two milliseconds, which is
+fast enough to copy data between zones synchronously, before a write is confirmed.</p>
+<p>Regions that offer zones have at least three, and a few have more (East US 2 has four at the time of writing).
+Southeast Asia, East Asia and Indonesia Central each have three. Some regions, mostly older or smaller ones, have no
+zones at all. And even in a region with zones, an individual service, tier or VM size may not support zones there yet,
+so always check before you design around them.</p>
+<p>Zones protect you from more than disasters. Microsoft aims to roll out platform updates to one zone at a time within a
+region, so a workload that runs in several zones keeps serving while one zone is being updated. Zones also contain
+smaller failures, such as a rack or a cluster going down, so the rest of your workload keeps running.</p>
+<p>There is one subtlety that surprises almost everyone. When you choose &quot;zone 1&quot;, you are choosing a <strong>logical zone</strong>.
+Azure maps logical zones to physical zones separately for each subscription, at the moment the subscription is
+created. Zone 1 in your subscription may therefore be a different building from zone 1 in a colleague's subscription.
+You can see your own mapping with <code>az account list-locations</code>, which you will do in the lab.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>Never assume that &quot;zone 1&quot; means the same building in two different subscriptions. If you split a workload across
+subscriptions and care about which physical zone each part lands in, check the logical-to-physical zone mapping for
+both subscriptions first.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>At the time of writing, Microsoft's availability zone documentation states that Azure doesn't charge for data
+transfer between availability zones in the same region. Spreading a workload across zones costs you the extra
+instances, not the traffic between them. Check the current pricing pages before you put this in a business case.</p>
+</aside>
+</div></article><article class="scene-card" id="3-zonal-zone-redundant-and-nonzonal-resources" data-spy><span class="scene-no">Scene 3 of 5</span><h3>Zonal, zone-redundant and nonzonal resources</h3><div class="prose"><p>Having zones in a region doesn't make your resources resilient automatically. What matters is how each resource uses
+them. Azure services show three behaviours:</p>
+<ul>
+<li>A <strong>zonal</strong> resource is pinned to one zone that you choose. A virtual machine and its managed disks created with
+<code>--zone 1</code> are zonal. A zonal resource is isolated from problems in other zones, but it shares the fate of its own
+zone: if zone 1 goes dark, so does the VM.</li>
+<li>A <strong>zone-redundant</strong> resource is spread or replicated across several zones by the service itself. Examples are a
+Standard public IP created as zone-redundant, a storage account that uses <strong>zone-redundant storage (ZRS)</strong>, the
+frontend of a Standard load balancer, and databases such as Azure SQL Database or Azure Cosmos DB with zone
+redundancy turned on. When a zone fails, Microsoft fails over to the remaining zones for you.</li>
+<li>A <strong>nonzonal</strong> resource, also called a <strong>regional</strong> resource, is not configured for zones, either because the region
+has none or because nobody chose any. Azure may place it in any zone and you don't control which one. If that zone has
+an outage, the resource may go down with it.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Behaviour</th>
+<th>Who picks the zone</th>
+<th>Survives the loss of one zone?</th>
+<th>Examples</th>
+<th>Good fit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zonal</td>
+<td>You (zone 1, 2 or 3)</td>
+<td>Only if you run copies in other zones yourself</td>
+<td>VM, managed disk, zonal public IP</td>
+<td>Several VMs spread over zones; very chatty components you want side by side</td>
+</tr>
+<tr>
+<td>Zone-redundant</td>
+<td>The service, across several zones</td>
+<td>Yes, Azure handles the failover</td>
+<td>ZRS storage, zone-redundant public IP, load balancer frontend, zone-redundant databases</td>
+<td>Shared building blocks that must keep working</td>
+</tr>
+<tr>
+<td>Nonzonal (regional)</td>
+<td>Nobody; Azure places it</td>
+<td>Not guaranteed</td>
+<td>Resources created without zone settings; anything in a region without zones</td>
+<td>Dev and test, or when another layer handles resilience</td>
+</tr>
+</tbody>
+</table></div>
+<p>Storage makes the difference concrete. <strong>Locally redundant storage (LRS)</strong> keeps three copies of your data inside a
+single datacenter: cheap, and fine for data you can rebuild, but a datacenter-wide problem can make all three copies
+unavailable at once. ZRS writes every change to copies in three or more zones before it confirms the write, so a whole
+zone can disappear without losing data or availability. Lunch 07 covers all the storage redundancy options.</p>
+<p>A design that survives the loss of any single zone is called <strong>zone-resilient</strong>. You get there in one of two ways: use
+zone-redundant services, or run several zonal instances in different zones behind something that spreads the traffic,
+such as a load balancer. The second pattern is exactly how you will protect Nusantara Retail's web servers in Lunch 09.</p>
+<p>Two mistakes are worth avoiding from day one. The first is copying a script that says <code>--zone 1</code> for every VM: you end
+up with a &quot;highly available&quot; pair of servers that both live in the same zone and fail together. Spread zonal resources
+deliberately, and remember that a zonal VM keeps its managed disks in the same zone. The second is treating zone
+redundancy as a backup. ZRS protects you from broken hardware and lost buildings, not from people: if someone deletes
+or overwrites a file, that change is applied to every copy in every zone within moments. Backups, soft delete and
+versioning (Lunches 17 and 24) cover that risk.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shoppers([&quot;Shoppers&quot;]) --&gt; pip
+  subgraph region[&quot;Region with three availability zones&quot;]
+    pip[&quot;Standard public IP&lt;br/&gt;zone-redundant&quot;]
+    subgraph z1[&quot;Zone 1&quot;]
+      vm1[&quot;vm-web-1&lt;br/&gt;zonal&quot;]
+      c1[(&quot;ZRS copy 1&quot;)]
+    end
+    subgraph z2[&quot;Zone 2&quot;]
+      vm2[&quot;vm-web-2&lt;br/&gt;zonal&quot;]
+      c2[(&quot;ZRS copy 2&quot;)]
+    end
+    subgraph z3[&quot;Zone 3&quot;]
+      c3[(&quot;ZRS copy 3&quot;)]
+    end
+  end
+  pip --&gt; vm1
+  pip --&gt; vm2
+  vm1 --&gt; c1
+  vm2 --&gt; c2
+  c1 -. synchronous copy .-&gt; c2
+  c2 -. synchronous copy .-&gt; c3
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p><strong>A closer look at Standard public IPs.</strong> Public IPs show why you should read defaults carefully. Basic SKU public IPs
+were retired on September 30, 2025, so every new public IP is Standard. A Standard public IP can be zonal (created with
+<code>--zone 1</code>) or zone-redundant (created with <code>--zone 1 2 3</code>). What about one created without any zone setting? In a
+region with availability zones, Microsoft now treats it as zone-redundant: all former nonzonal Standard IPs in
+zone-enabled regions were made zone-redundant, and an IP that shows zones 1, 2 and 3 behaves the same as one that shows
+no zones at all. In a region without zones, every public IP is nonzonal. Two more rules complete the picture: an IP's
+zone setting can't be changed after creation, and zone-redundant IPs can only be created where three zones are live.
+In the lab you'll create all three variants and compare their <code>zones</code> property. Writing the zones explicitly in your
+scripts makes your intent obvious to the next person who reads them.</p>
+</div></article><article class="scene-card" id="4-region-pairs-regions-without-a-pair-and-sovereign-clouds" data-spy><span class="scene-no">Scene 4 of 5</span><h3>Region pairs, regions without a pair, and sovereign clouds</h3><div class="prose"><p>Zones protect you inside a region. For the rare event that a whole region is lost, Azure has a second idea: <strong>region
+pairs</strong>. Microsoft associates some regions with a partner region, usually in the same geography and far enough away
+that a single disaster is unlikely to hit both. You can't choose your own pair; Microsoft defines it. Southeast Asia
+and East Asia are a pair.</p>
+<p>If your region has a pair and you use that pair as your secondary region, you get some platform benefits, and it pays
+to be precise about where they stop:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>A region pair gives you</th>
+<th>A region pair does <strong>not</strong> give you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sequential updates:</strong> Microsoft staggers planned platform updates across the two regions, so a faulty update is unlikely to hit both at once.</td>
+<td>Copies of your VMs, databases or files. Nothing is replicated unless you turn on a feature that does it.</td>
+</tr>
+<tr>
+<td><strong>Recovery priority:</strong> in a rare geography-wide outage, one region of every pair is prioritised for recovery.</td>
+<td>Automatic failover of your workload. You design, build and test that yourself.</td>
+</tr>
+<tr>
+<td><strong>Data residency:</strong> almost every pair stays inside one geography. Brazil South, paired with South Central US, is the well-known exception.</td>
+<td>A choice of partner. The pair is fixed by Microsoft.</td>
+</tr>
+<tr>
+<td>A ready-made target for the few services with built-in pair replication, such as geo-redundant storage (GRS).</td>
+<td>A guarantee that the services you use support pair-based replication at all.</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>A region pair is not a backup. Creating a resource in Southeast Asia does not copy it to East Asia. Only features you
+switch on, such as GRS for a storage account or a geo-replica for a database, move data to another region. Even then,
+Microsoft-managed failover of GRS accounts happens only in catastrophic situations, so plan and test your own failover
+whether or not your region has a pair.</p>
+</aside>
+<p><strong>Regions without a pair.</strong> Many newer regions have no pair at all and rely on availability zones as their main
+protection. In Asia Pacific these include Indonesia Central, Malaysia West and New Zealand North. &quot;No pair&quot; does not
+mean &quot;no disaster recovery&quot;. It means you choose the second region yourself and set up replication with features that
+work between any two regions, such as database geo-replicas, storage object replication, Azure Site Recovery for VMs,
+or backups copied to another region. What disappears are the conveniences that assume a pair: classic geo-redundant
+storage, for example, replicates to the paired region, so it isn't available where there is no pair. Lunch 17 builds a
+recovery plan for exactly this situation.</p>
+<p><strong>Sovereign clouds.</strong> Alongside the global Azure cloud, Microsoft runs separate instances for special legal and
+regulatory needs: <strong>Azure Government</strong> for US government agencies and their partners, and <strong>Azure operated by
+21Vianet</strong> in China. They have their own regions, their own sign-in and management endpoints, and often a smaller
+service catalogue. Nusantara Retail will never need them, but they explain why &quot;Azure&quot; can look different in another
+market, and why a script written for global Azure may not run there unchanged.</p>
+</div></article><article class="scene-card" id="5-choosing-a-region-for-nusantara-retail" data-spy><span class="scene-no">Scene 5 of 5</span><h3>Choosing a region for Nusantara Retail</h3><div class="prose"><p>Choosing a region is a design decision, not a default you accept in a dropdown. Work through the same six factors every
+time, and write the answers down so the next engineer understands why:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Factor</th>
+<th>Question to ask</th>
+<th>How to check</th>
+<th>Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data residency and compliance</td>
+<td>Must the data stay in a country or a geography?</td>
+<td>The region's geography in the region list; your legal or compliance team</td>
+<td>Customer data should stay in Indonesia, which points to Indonesia Central</td>
+</tr>
+<tr>
+<td>Latency</td>
+<td>Where are the users, and how far away is the region?</td>
+<td>Test from where your users are; Microsoft also publishes inter-region latency statistics</td>
+<td>Shoppers are spread across Indonesia, so Jakarta is the closest region</td>
+</tr>
+<tr>
+<td>Service and SKU availability</td>
+<td>Does the region offer every service, tier and VM size you need?</td>
+<td>The products-by-region page, <code>az provider show</code> and <code>az vm list-skus</code></td>
+<td>Check each service first; Southeast Asia has the broadest catalogue nearby</td>
+</tr>
+<tr>
+<td>Price</td>
+<td>Does the same thing cost more or less in this region?</td>
+<td>The pricing calculator with each candidate region selected</td>
+<td>Compare Jakarta and Singapore for the SKUs you will really use</td>
+</tr>
+<tr>
+<td>Availability zones</td>
+<td>Can you spread the workload across zones?</td>
+<td>The region list, and the zone mapping in the CLI</td>
+<td>Both regions have three zones</td>
+</tr>
+<tr>
+<td>Disaster recovery options</td>
+<td>Is there a pair, and which second region could you use?</td>
+<td>The region pairs list and each service's reliability guide</td>
+<td>Indonesia Central has no pair, so the plan is your own</td>
+</tr>
+</tbody>
+</table></div>
+<p>Distances matter for that last row. In Microsoft's published round-trip statistics between regions (median values for
+the 30 days ending July 30, 2026), Indonesia Central and Southeast Asia are about 16 to 17 milliseconds apart, while
+Indonesia Central to East Asia is about 47 milliseconds. Those numbers describe traffic inside Microsoft's network; what
+a shopper in Makassar experiences also depends on their mobile provider, which is why you should measure from where
+your users really are.</p>
+<p>Price deserves the same care. A small difference per hour turns into a real amount for servers that run all month, and
+a second region adds more than its own resources: replication traffic between regions appears on the bill as data
+transfer. Price the whole design in the pricing calculator, including the recovery region, before you promise Ibu Sari
+a number.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  A[&quot;New workload&quot;] --&gt; B{&quot;Must the data stay in&lt;br/&gt;one country or geography?&quot;}
+  B -- Yes --&gt; C[&quot;Shortlist regions inside that geography&quot;]
+  B -- No --&gt; D[&quot;Shortlist regions close to your users&quot;]
+  C --&gt; E{&quot;Are the services, SKUs&lt;br/&gt;and zones you need available?&quot;}
+  D --&gt; E
+  E -- No --&gt; F[&quot;Drop the region or change the design&quot;]
+  E -- Yes --&gt; G{&quot;Does the region have a pair?&quot;}
+  G -- Yes --&gt; H[&quot;Use the pair for pair-aware features&lt;br/&gt;and still plan your own failover&quot;]
+  G -- No --&gt; I[&quot;Pick your own recovery region,&lt;br/&gt;or rely on zones plus backups in the region&quot;]
+  H --&gt; J[&quot;Compare prices, then decide and document&quot;]
+  I --&gt; J
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>For Nusantara Retail the answer is taking shape. Production runs in <strong>Indonesia Central</strong>, spread across its three
+zones: zone-redundant services wherever they exist, and several zonal VMs where the design needs VMs. Backups stay in
+the region. Whether a second copy may live outside Indonesia, with Southeast Asia as the obvious candidate, is a
+question for the legal team, not for you alone. Meanwhile the labs use <strong>Southeast Asia</strong>, because it has three zones,
+a pair and the broadest service catalogue nearby; you can switch any lab to <code>indonesiacentral</code> by setting <code>LOCATION</code>.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>Ibu Sari asks, &quot;If the whole Jakarta region went down, would we lose customer data?&quot; With the
+plan above, what is your honest answer, and which single decision would change it?</p>
+</aside>
+<p>In the next lunch you look one level up from the region: how subscriptions, resource groups and Azure Resource Manager
+organise everything you create, wherever it lives.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · From the globe to a single datacenter</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../demos/03-global-infrastructure.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../demos/03-global-infrastructure.html" title="Interactive demo: From the globe to a single datacenter" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/03-global-infrastructure/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>How the camera zooms from the globe to a geography, a region, its three zones and finally the datacenters inside a
+zone, and what each level protects you from.</li>
+<li>When zone 1 fails: which resources keep working (zone-redundant) and which one goes down with its zone (zonal).</li>
+<li>How the design changes when a second web server runs in another zone.</li>
+<li>The difference between Southeast Asia, which has a pair, and Indonesia Central, which doesn't.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi creates the only web server with <code>--zone 2</code> and nothing in any other zone. Zone 2 then loses power. What
+happens to the shop, and what is the name for this kind of resource?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The VM is <strong>zonal</strong>, so it goes down with zone 2 and the shop is offline until the zone recovers. <em>Why:</em> a zonal
+resource shares the fate of its zone; to survive, run a second VM in another zone behind a load balancer.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Product photos are stored in Southeast Asia with zone-redundant storage (ZRS). Are they protected if the entire
+Southeast Asia region becomes unavailable?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>No. ZRS keeps copies in several zones of <strong>one</strong> region; a region-wide outage needs a copy in another region, for
+example geo-zone-redundant storage to East Asia or your own replication. <em>Why:</em> zones protect against the loss of a
+zone, not of a whole region.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>A colleague says: &quot;We're in Southeast Asia, which is paired with East Asia, so our VMs fail over to Hong Kong
+automatically.&quot; Is that right?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>No. A pair gives sequential updates, recovery priority and data residency, but it never copies or fails over your
+VMs; you would need something like Azure Site Recovery and a tested plan. <em>Why:</em> only features you turn on use the
+pair.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>The legal team decides that customer data must stay in Indonesia. Which region do you choose, and what does
+disaster recovery look like?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Indonesia Central, spread across its three zones, with backups kept in the region; any copy to another region, such
+as Southeast Asia, would leave Indonesia, so it needs the legal team's approval. <em>Why:</em> the region has no pair, and
+the geography is the data residency boundary.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>You create a Standard public IP in Southeast Asia without any zone setting, and <code>az network public-ip show</code> lists no
+zones. Is the IP zonal, zone-redundant or nonzonal?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Zone-redundant. In regions with availability zones, Standard public IPs created without zones are treated as
+zone-redundant; only in a region without zones would it be nonzonal. <em>Why:</em> Microsoft made all former nonzonal
+Standard IPs zone-redundant, so set zones explicitly when you want to make your intent visible.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>A <strong>geography</strong> is a data residency boundary, a <strong>region</strong> is a set of datacenters in one metro area, and an <strong>availability zone</strong> is a separate group of datacenters with its own power, cooling and network.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Zones only help if your resources use them: <strong>zonal</strong> resources share their zone's fate, <strong>zone-redundant</strong> resources survive a zone failure, and <strong>nonzonal</strong> resources give no guarantee.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p><strong>Region pairs</strong> bring sequential updates, recovery priority and data residency, but never automatic replication or failover of your workloads.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Regions <strong>without a pair</strong>, such as Indonesia Central, rely on zones; for regional disasters you choose your own second region and set up replication, if your data rules allow it.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Choose a region on <strong>residency, latency, service and SKU availability, price, zones and DR options</strong>, and verify each one with the documentation or the CLI before you build.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>03</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Explore regions and zones</h3>
+          <div class="prose"><p>On your own time, you will use the Azure CLI to list regions, their geographies and pairs, find your subscription's
+logical-to-physical zone mapping and check which VM sizes support zones. Then you create a zonal, a zone-redundant and
+a &quot;no zone&quot; Standard public IP and compare them, and build an LRS and a ZRS storage account side by side. It turns
+today's vocabulary into things you have seen with your own eyes, for almost no cost.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 35 minutes</span><span class="chip cost">💲 free or close to free</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/03-global-infrastructure.html">Start Lab 03 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/reliability/regions-overview" target="_blank" rel="noopener"><b>What are Azure regions?</b><span>Geographies, regions, nonregional services and the factors Microsoft suggests for choosing regions.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/reliability/availability-zones-overview" target="_blank" rel="noopener"><b>What are availability zones?</b><span>Zonal and zone-redundant support, logical and physical zones, and the current list of regions with zones.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/reliability/regions-paired" target="_blank" rel="noopener"><b>Azure region pairs and nonpaired regions</b><span>The full pair list, the asymmetric exceptions and the regions that have no pair.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/networking/azure-network-latency" target="_blank" rel="noopener"><b>Azure network round-trip latency statistics</b><span>Median latency between Azure regions, useful when you pick a recovery region.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🌏</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Region Scout</h2>
+        <p class="muted">Choose regions and zones with confidence.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“Still days today. In Azure, a whole datacenter could fail without stopping us.”</b></p>
+        <div class="teaser"><b>Next episode · 04</b><h4>Who Made server-baru-final2?</h4><p>Three weeks of experiments, no naming rules, and nobody knows what belongs to the shop.</p><p style="margin-top:10px"><a href="04-resource-hierarchy-basic.html">Watch Episode 04 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="02-cloud-concepts.html"><small>← Previous episode</small>02 · Rent, Don&#x27;t Buy?</a><a class="next" href="04-resource-hierarchy-basic.html"><small>Next episode →</small>04 · Who Made server-baru-final2?</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/03-global-infrastructure/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>

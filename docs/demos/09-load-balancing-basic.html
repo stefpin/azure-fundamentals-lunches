@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Lunch 09 · Load Balancing (Basic) — Interactive demo</title>
+<style>
+/* =====================================================================
+   LUNCH DEMO PLAYER · v1.0 · shared styles
+   Copy this block unchanged into every demo. Put demo-specific CSS in the
+   "DEMO-SPECIFIC STYLES" block at the end of this <style> element.
+   ===================================================================== */
+:root{
+  --bg:#f4f6fa; --surface:#ffffff; --ink:#1b1b1b; --muted:#56607a; --line:#cfd8e6;
+  --accent:#0078d4; --accent-ink:#ffffff; --accent-soft:#deecf9;
+  --ok:#107c10; --ok-soft:#dff6dd; --bad:#c50f1f; --bad-soft:#fde7e9;
+  --warn:#8a5d00; --warn-soft:#fff4ce; --hl:#e8a200;
+  --node:#ffffff; --node-stroke:#7d8ca8; --zone:#eef4fc; --region:#f8fafd;
+  --flow:#0078d4; --packet:#0078d4;
+  --c-compute:#e6f1fb; --c-network:#e3f6f4; --c-data:#efe9fb; --c-security:#fff3dc;
+  --c-identity:#e9f7e7; --c-ops:#eef0f4; --c-ext:#ffffff;
+  --radius:12px; --shadow:0 1px 2px rgb(0 0 0 / 6%), 0 6px 18px rgb(0 0 0 / 6%);
+  --font:"Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono:ui-monospace, "Cascadia Code", Consolas, "Liberation Mono", monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0f1520; --surface:#18202d; --ink:#e8edf5; --muted:#a3adbf; --line:#33415a;
+    --accent:#4ea8ff; --accent-ink:#0b1220; --accent-soft:#1d3350;
+    --ok:#6ccb5f; --ok-soft:#1f3a1f; --bad:#ff6b75; --bad-soft:#3d1d22;
+    --warn:#f5c451; --warn-soft:#3b3218; --hl:#ffc83d;
+    --node:#1f2a3a; --node-stroke:#6b7d9c; --zone:#172234; --region:#121a27;
+    --flow:#4ea8ff; --packet:#4ea8ff;
+    --c-compute:#16314d; --c-network:#123a37; --c-data:#2a2346; --c-security:#3a2f14;
+    --c-identity:#1b3a1d; --c-ops:#232b38; --c-ext:#1f2a3a;
+    --shadow:0 1px 2px rgb(0 0 0 / 40%), 0 6px 18px rgb(0 0 0 / 30%);
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);line-height:1.5}
+.wrap{max-inline-size:1200px;margin-inline:auto;padding:16px}
+header.top .kicker{color:var(--muted);font-size:.8rem;letter-spacing:.04em;text-transform:uppercase;margin:0}
+header.top h1{margin:.15rem 0 .35rem;font-size:clamp(1.25rem,2.4vw,1.85rem);line-height:1.2}
+header.top .lede{margin:0 0 14px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.layout{grid-template-columns:1fr}}
+.stage,.narration{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.stage{padding:8px}
+.stage svg{display:block;inline-size:100%;block-size:auto}
+.narration{padding:16px}
+@media (min-width:901px){.narration{position:sticky;inset-block-start:12px}}
+.step-count{color:var(--muted);font-size:.85rem;margin:0}
+.narration h2{margin:.2rem 0 .4rem;font-size:1.15rem;line-height:1.3}
+.narration p{margin:.45rem 0}
+.tip{background:var(--accent-soft);border-inline-start:4px solid var(--accent);padding:8px 12px;border-radius:8px;font-size:.92rem}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-block:12px;align-items:center}
+button,select{font:inherit;font-size:.92rem;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:6px 12px;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button:focus-visible,select:focus-visible{outline:3px solid var(--hl);outline-offset:2px}
+.speed{color:var(--muted);font-size:.85rem;display:inline-flex;gap:6px;align-items:center}
+.progress{block-size:6px;background:var(--accent-soft);border-radius:99px;overflow:hidden}
+.progress>div{block-size:100%;inline-size:0;background:var(--accent);transition:inline-size .4s ease}
+.steps-list{margin:12px 0 0;padding-inline-start:22px;font-size:.86rem;color:var(--muted)}
+.steps-list li{margin-block:2px}
+.steps-list li.current{color:var(--ink);font-weight:600}
+.steps-list button{background:none;border:0;padding:2px 0;color:inherit;text-align:start;font-weight:inherit;cursor:pointer}
+.steps-list button:hover{color:var(--accent)}
+.hint{color:var(--muted);font-size:.78rem}
+.noscript{background:var(--warn-soft);padding:12px;border-radius:8px}
+footer{color:var(--muted);font-size:.82rem;margin-block-start:18px}
+footer a{color:var(--accent)}
+/* ---------- SVG vocabulary ---------- */
+svg text{fill:var(--ink);font-family:var(--font);font-size:15px}
+svg text.small{font-size:12.5px;fill:var(--muted)}
+svg text.title{font-size:17px;font-weight:600}
+svg text.big{font-size:22px;font-weight:600}
+svg text.mono{font-family:var(--mono);font-size:13px}
+svg .node > rect, svg .node > circle, svg .node > ellipse{fill:var(--node);stroke:var(--node-stroke);stroke-width:1.5}
+svg .node.compute > rect{fill:var(--c-compute)}
+svg .node.network > rect{fill:var(--c-network)}
+svg .node.data > rect{fill:var(--c-data)}
+svg .node.security > rect{fill:var(--c-security)}
+svg .node.identity > rect{fill:var(--c-identity)}
+svg .node.ops > rect{fill:var(--c-ops)}
+svg .node.ext > rect{fill:var(--c-ext)}
+svg .zone > rect{fill:var(--zone);stroke:var(--node-stroke);stroke-width:1.2;stroke-dasharray:6 5}
+svg .region > rect{fill:var(--region);stroke:var(--node-stroke);stroke-width:1.2}
+svg .wire{fill:none;stroke:var(--node-stroke);stroke-width:2}
+svg .arrowhead{fill:var(--node-stroke)}
+svg .badge > rect{fill:var(--accent);stroke:none}
+svg .badge > text{fill:var(--accent-ink);font-size:12px;font-weight:600}
+svg .callout > rect{fill:var(--warn-soft);stroke:var(--warn);stroke-width:1.2}
+/* ---------- step states (driven by the engine) ---------- */
+[data-el]{transition:opacity .45s ease}
+[data-el]:not(.is-visible){opacity:0}
+.is-dim{opacity:.22 !important}
+.is-hl > rect, .is-hl > circle, .is-hl > ellipse, .is-hl > polygon,
+rect.is-hl, circle.is-hl, ellipse.is-hl, polygon.is-hl, path.is-hl{stroke:var(--hl) !important;stroke-width:4 !important}
+.is-ok > rect, .is-ok > circle, .is-ok > ellipse, rect.is-ok, circle.is-ok{stroke:var(--ok) !important;fill:var(--ok-soft) !important;stroke-width:3 !important}
+.is-bad > rect, .is-bad > circle, .is-bad > ellipse, rect.is-bad, circle.is-bad{stroke:var(--bad) !important;fill:var(--bad-soft) !important;stroke-width:3 !important}
+path.is-ok{stroke:var(--ok) !important;stroke-width:3 !important}
+path.is-bad{stroke:var(--bad) !important;stroke-width:3 !important}
+path.is-flow{stroke:var(--flow) !important;stroke-width:3 !important;stroke-dasharray:10 8;animation:lunch-flow .9s linear infinite}
+path.is-flow.is-bad{stroke:var(--bad) !important}
+path.is-flow.is-ok{stroke:var(--ok) !important}
+@keyframes lunch-flow{to{stroke-dashoffset:-18}}
+.packet{fill:var(--packet);stroke:var(--surface);stroke-width:2}
+.packet.bad{fill:var(--bad)}
+.packet.ok{fill:var(--ok)}
+.packet.warn{fill:var(--hl)}
+@media (prefers-reduced-motion: reduce){
+  [data-el], .progress>div{transition:none}
+  path.is-flow{animation:none}
+}
+/* =====================================================================
+   DEMO-SPECIFIC STYLES (optional — keep small, use the variables above)
+   ===================================================================== */
+svg .wire.probe{stroke-dasharray:5 5}
+svg .badge > text{font-size:12.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="kicker">Lunch 09 · Load Balancing (Basic) · Interactive demo</p>
+    <h1>Keep the shop open: Azure Load Balancer</h1>
+    <p class="lede">Two web servers in two availability zones behind one Standard load balancer. Watch requests spread out, a server fail its health probe and recover, an admin reach one VM, and the servers get a way out to the internet. Press ▶ Play, or step through with Next and Back.</p>
+  </header>
+
+  <main class="layout">
+    <section class="stage" aria-label="Animated diagram">
+      <svg id="stage" viewBox="0 0 960 560" role="img" aria-labelledby="svgTitle svgDesc">
+        <title id="svgTitle">A Standard load balancer spreading shopper traffic across two web servers in two availability zones</title>
+        <desc id="svgDesc">Shoppers on the left reach a zone-redundant frontend IP. The load balancer probes vm-web-1 in zone 1 and vm-web-2 in zone 2, sends new connections only to healthy servers, forwards admin SSH on port 50001 to vm-web-1, and translates outbound traffic from the servers to the frontend IP.</desc>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" class="arrowhead"/>
+          </marker>
+        </defs>
+
+        <!-- Azure region with two availability zones (appears in step 2) -->
+        <g id="z-region" class="region" data-el><rect x="470" y="30" width="470" height="500" rx="18"/><text x="490" y="62" class="title">Azure region · Southeast Asia</text><text x="490" y="516" class="small">vnet-nusa-web · snet-web (private subnet) · nsg-web</text></g>
+        <g id="z-1" class="zone" data-el><rect x="600" y="82" width="320" height="196" rx="14"/><text x="616" y="106" class="small">Availability zone 1</text></g>
+        <g id="z-2" class="zone" data-el><rect x="600" y="306" width="320" height="196" rx="14"/><text x="616" y="330" class="small">Availability zone 2</text></g>
+
+        <!-- Step 1 scenery: head office and the director's question -->
+        <g id="z-office" class="region" data-el data-start><rect x="300" y="96" width="300" height="190" rx="16"/><text x="316" y="122" class="small">Head office · server room by the pantry</text></g>
+        <g id="c-question" class="callout" data-el data-start><rect x="20" y="20" width="268" height="88" rx="10"/><text x="36" y="52" class="title">How long can't we sell?</text><text x="36" y="80" class="small">Ibu Sari, the director</text></g>
+
+        <!-- Callouts (one at a time, top left) -->
+        <g id="c-private" class="callout" data-el><rect x="20" y="20" width="420" height="88" rx="10"/><text x="36" y="52" class="title">No public IPs, private subnet</text><text x="36" y="80" class="small">the NSG allows TCP 80 · no default internet access</text></g>
+        <g id="c-pool" class="callout" data-el><rect x="20" y="20" width="420" height="88" rx="10"/><text x="36" y="52" class="title">Backend pool be-web: 2 NICs</text><text x="36" y="80" class="small">vm-web-1 (zone 1) · vm-web-2 (zone 2)</text></g>
+        <g id="c-probe" class="callout" data-el><rect x="20" y="20" width="420" height="88" rx="10"/><text x="36" y="52" class="title">Probes come from 168.63.129.16</text><text x="36" y="80" class="small">NSG rules call it the AzureLoadBalancer service tag</text></g>
+        <g id="c-hash" class="callout" data-el><rect x="20" y="20" width="420" height="88" rx="10"/><text x="36" y="52" class="title">A 5-tuple hash picks the server</text><text x="36" y="80" class="small">source IP + port · destination IP + port · protocol</text></g>
+        <g id="c-sticky" class="callout" data-el><rect x="20" y="20" width="420" height="88" rx="10"/><text x="36" y="52" class="title">Session persistence: Client IP</text><text x="36" y="80" class="small">same client address → same server (use sparingly)</text></g>
+        <g id="c-nat" class="callout" data-el><rect x="20" y="20" width="420" height="88" rx="10"/><text x="36" y="52" class="title">Port forwarding, not balancing</text><text x="36" y="80" class="small">the NSG checks port 22 · allow only your IP</text></g>
+        <g id="c-noout" class="callout" data-el><rect x="20" y="20" width="420" height="88" rx="10"/><text x="36" y="52" class="title">Private subnet + SNAT off on the rule</text><text x="36" y="80" class="small">no explicit outbound method = no way out</text></g>
+        <g id="c-snat" class="callout" data-el><rect x="20" y="20" width="420" height="88" rx="10"/><text x="36" y="52" class="title">SNAT: 10.9.1.x → frontend IP</text><text x="36" y="80" class="small">10,000 source ports per VM · about 64,000 per public IP</text></g>
+
+        <!-- Wires -->
+        <path id="w-old" class="wire" d="M190,179 L326,184" marker-end="url(#arrow)" data-el data-start/>
+        <path id="w-in" class="wire" d="M190,172 C220,172 222,152 246,152" marker-end="url(#arrow)" data-el/>
+        <path id="w-fe-lb" class="wire" d="M340,184 L340,197" marker-end="url(#arrow)" data-el/>
+        <path id="w-admin" class="wire" d="M190,295 C232,295 214,176 246,172" marker-end="url(#arrow)" data-el/>
+        <path id="w-lb-vm1" class="wire" d="M435,230 C540,230 560,175 636,175" marker-end="url(#arrow)" data-el/>
+        <path id="w-probe1" class="wire probe" d="M435,255 C540,255 560,195 636,195" marker-end="url(#arrow)" data-el/>
+        <path id="w-out1" class="wire" d="M640,215 C560,215 540,285 439,285" marker-end="url(#arrow)" data-el/>
+        <path id="w-lb-vm2" class="wire" d="M435,315 C540,315 560,405 636,405" marker-end="url(#arrow)" data-el/>
+        <path id="w-probe2" class="wire probe" d="M435,345 C540,345 560,425 636,425" marker-end="url(#arrow)" data-el/>
+        <path id="w-out2" class="wire" d="M640,445 C560,445 540,372 439,372" marker-end="url(#arrow)" data-el/>
+        <path id="w-api" class="wire" d="M300,402 C300,442 240,466 194,466" marker-end="url(#arrow)" data-el/>
+
+        <!-- Internet side -->
+        <g id="n-users" class="node ext" data-el data-start>
+          <rect x="30" y="134" width="160" height="78" rx="12"/>
+          <text x="110" y="168" text-anchor="middle">Shoppers</text>
+          <text x="110" y="191" text-anchor="middle" class="small">internet · browsers</text>
+        </g>
+        <g id="n-admin" class="node identity" data-el>
+          <rect x="30" y="262" width="160" height="66" rx="12"/>
+          <text x="110" y="290" text-anchor="middle">Admin · SSH</text>
+          <text x="110" y="312" text-anchor="middle" class="small">office IP only</text>
+        </g>
+        <g id="n-api" class="node ext" data-el>
+          <rect x="30" y="430" width="160" height="72" rx="12"/>
+          <text x="110" y="462" text-anchor="middle">Payment API</text>
+          <text x="110" y="484" text-anchor="middle" class="small">internet service</text>
+        </g>
+
+        <!-- Step 1: the old single server -->
+        <g id="n-old" class="node compute" data-el data-start>
+          <rect x="330" y="140" width="220" height="90" rx="12"/>
+          <text x="440" y="178" text-anchor="middle" class="title">Pantry server</text>
+          <text x="440" y="203" text-anchor="middle" class="small">one machine · one weak spot</text>
+        </g>
+
+        <!-- Load balancer -->
+        <g id="n-fe" class="node network" data-el>
+          <rect x="250" y="120" width="180" height="64" rx="12"/>
+          <text x="340" y="148" text-anchor="middle">Frontend IP</text>
+          <text x="340" y="170" text-anchor="middle" class="small">zone-redundant (1·2·3)</text>
+        </g>
+        <g id="n-lb" class="node network" data-el>
+          <rect x="245" y="200" width="190" height="200" rx="12"/>
+          <text x="340" y="226" text-anchor="middle" class="title">Load balancer</text>
+          <text x="340" y="246" text-anchor="middle" class="small">Standard SKU</text>
+        </g>
+        <g id="b-probe" class="badge" data-el><rect x="258" y="258" width="164" height="26" rx="6"/><text x="340" y="276" text-anchor="middle">probe · HTTP /health</text></g>
+        <g id="b-rule" class="badge" data-el><rect x="258" y="290" width="164" height="26" rx="6"/><text x="340" y="308" text-anchor="middle">rule · TCP 80 → 80</text></g>
+        <g id="b-nat" class="badge" data-el><rect x="258" y="322" width="164" height="26" rx="6"/><text x="340" y="340" text-anchor="middle">NAT rule · 50001 → 22</text></g>
+        <g id="b-out" class="badge" data-el><rect x="258" y="354" width="164" height="26" rx="6"/><text x="340" y="372" text-anchor="middle">outbound rule · SNAT</text></g>
+
+        <!-- Web servers -->
+        <g id="n-vm1" class="node compute" data-el>
+          <rect x="640" y="140" width="240" height="90" rx="12"/>
+          <text x="760" y="176" text-anchor="middle">vm-web-1</text>
+          <text id="t-vm1" x="760" y="201" text-anchor="middle" class="small">web server running</text>
+        </g>
+        <g id="n-vm2" class="node compute" data-el>
+          <rect x="640" y="370" width="240" height="90" rx="12"/>
+          <text x="760" y="406" text-anchor="middle">vm-web-2</text>
+          <text id="t-vm2" x="760" y="431" text-anchor="middle" class="small">web server running</text>
+        </g>
+
+        <!-- Packets are drawn here by the engine; keep this group last -->
+        <g id="packets"></g>
+      </svg>
+    </section>
+
+    <aside class="narration" aria-label="Narration and controls">
+      <p class="step-count" id="stepCount">Step 1</p>
+      <h2 id="stepTitle">Loading…</h2>
+      <p id="stepText" aria-live="polite"></p>
+      <p id="stepTip" class="tip" hidden></p>
+      <div class="controls" role="group" aria-label="Playback controls">
+        <button id="prev" type="button" aria-label="Previous step">◀ Back</button>
+        <button id="play" type="button" class="primary" aria-pressed="false">▶ Play</button>
+        <button id="next" type="button" aria-label="Next step">Next ▶</button>
+        <button id="restart" type="button" aria-label="Restart from the first step">↺ Restart</button>
+        <label class="speed">Speed
+          <select id="speed">
+            <option value="1.5">Relaxed</option>
+            <option value="1" selected>Normal</option>
+            <option value="0.7">Brisk</option>
+          </select>
+        </label>
+      </div>
+      <div class="progress" aria-hidden="true"><div id="bar"></div></div>
+      <ol id="stepsList" class="steps-list" aria-label="All steps"></ol>
+      <p class="hint">Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.</p>
+      <noscript><p class="noscript">This interactive demo needs JavaScript. The reading for this lunch covers the same story.</p></noscript>
+    </aside>
+  </main>
+
+  <footer>
+    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/09-load-balancing-basic.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+  </footer>
+</div>
+
+<!-- =====================================================================
+     DEMO CONTENT — the only script you edit. Must be valid JSON.
+     Keys per step:
+       title, text, tip            narration (plain text; tip is optional)
+       show, hide      [ids]       cumulative visibility of [data-el] elements
+       highlight, ok, bad, flow, dim  [ids]   apply to this step only
+       packets   [pathId | {"path":id,"dur":1.6,"delay":0,"stopAt":1,"cls":"bad|ok|warn"}]
+       set       {"id":"new text"} cumulative text changes
+       view      "x y w h"         cumulative camera (SVG viewBox)
+       duration  number (ms)       optional autoplay override
+     ===================================================================== -->
+<script type="application/json" id="demo-steps">
+[
+  {
+    "title": "One server, one weak spot",
+    "text": "Nusantara Retail's storefront still lives on one server next to the pantry, so every shopper's request lands on that single machine. When it reboots for patching or simply dies, the shop is closed. That is the director's question: if the server fails, how long can't we sell? Today you replace it with two servers and a load balancer.",
+    "highlight": [
+      "n-old"
+    ],
+    "packets": [
+      "w-old",
+      {
+        "path": "w-old",
+        "delay": 1.1
+      }
+    ]
+  },
+  {
+    "title": "Two web servers, two zones",
+    "text": "Dewi now runs the storefront on two small Ubuntu VMs: vm-web-1 in availability zone 1 and vm-web-2 in zone 2, each zone with its own power, cooling and network. The VMs have no public IP addresses and sit in a private subnet, so shoppers cannot reach them directly. They need one shared front door.",
+    "show": [
+      "z-region",
+      "z-1",
+      "z-2",
+      "n-vm1",
+      "n-vm2",
+      "c-private"
+    ],
+    "hide": [
+      "n-old",
+      "w-old",
+      "z-office",
+      "c-question"
+    ],
+    "highlight": [
+      "n-vm1",
+      "n-vm2"
+    ]
+  },
+  {
+    "title": "A front door: frontend and pool",
+    "text": "A Standard public load balancer gets one frontend IP address: a Standard public IP spread across zones 1, 2 and 3, so it survives the loss of any one zone. Behind it, the backend pool lists the network interfaces of both VMs. Shoppers only ever see the frontend address; servers can come and go behind it.",
+    "show": [
+      "n-fe",
+      "n-lb",
+      "w-in",
+      "w-fe-lb",
+      "c-pool"
+    ],
+    "hide": [
+      "c-private"
+    ],
+    "highlight": [
+      "n-fe",
+      "n-lb",
+      "n-vm1",
+      "n-vm2"
+    ],
+    "packets": [
+      "w-in"
+    ]
+  },
+  {
+    "title": "Health probes ask: are you OK?",
+    "text": "Every five seconds the health probe sends HTTP GET /health to each server, and only a 200 OK counts as healthy. The probes come from the platform address 168.63.129.16, which NSG rules call the AzureLoadBalancer service tag. Block it by mistake and every server looks dead. Only healthy members receive new connections.",
+    "show": [
+      "b-probe",
+      "w-probe1",
+      "w-probe2",
+      "c-probe"
+    ],
+    "hide": [
+      "c-pool"
+    ],
+    "flow": [
+      "w-probe1",
+      "w-probe2"
+    ],
+    "ok": [
+      "n-vm1",
+      "n-vm2"
+    ],
+    "set": {
+      "t-vm1": "healthy ✓ · /health = 200",
+      "t-vm2": "healthy ✓ · /health = 200"
+    },
+    "packets": [
+      "w-probe1",
+      {
+        "path": "w-probe2",
+        "delay": 0.4
+      }
+    ]
+  },
+  {
+    "title": "A rule spreads new connections",
+    "text": "The load-balancing rule says: TCP port 80 on the frontend goes to port 80 on healthy pool members. For each new connection the load balancer hashes five values — source IP and port, destination IP and port, protocol — and picks a server. A browser's next connection uses a new source port, so it may land in the other zone.",
+    "show": [
+      "b-rule",
+      "w-lb-vm1",
+      "w-lb-vm2",
+      "c-hash"
+    ],
+    "hide": [
+      "c-probe"
+    ],
+    "flow": [
+      "w-in",
+      "w-fe-lb",
+      "w-lb-vm1",
+      "w-lb-vm2"
+    ],
+    "packets": [
+      "w-in",
+      {
+        "path": "w-lb-vm1",
+        "delay": 0.9
+      },
+      {
+        "path": "w-in",
+        "delay": 1.4
+      },
+      {
+        "path": "w-lb-vm2",
+        "delay": 2.3
+      }
+    ]
+  },
+  {
+    "title": "Optional: stick to one server",
+    "text": "If an old application keeps the shopping cart in server memory, session persistence helps: in Client IP mode, the same client address always reaches the same server. Treat it as a crutch. Many shoppers behind one mobile carrier look like a single client, and a failed server loses its carts anyway. Keep session data outside the VMs.",
+    "show": [
+      "c-sticky"
+    ],
+    "hide": [
+      "c-hash"
+    ],
+    "highlight": [
+      "b-rule",
+      "n-vm1"
+    ],
+    "flow": [
+      "w-in",
+      "w-fe-lb",
+      "w-lb-vm1"
+    ],
+    "packets": [
+      "w-in",
+      {
+        "path": "w-lb-vm1",
+        "delay": 0.9
+      },
+      {
+        "path": "w-in",
+        "delay": 1.4
+      },
+      {
+        "path": "w-lb-vm1",
+        "delay": 2.3
+      }
+    ]
+  },
+  {
+    "title": "vm-web-2 fails its probe",
+    "text": "The web service on vm-web-2 crashes. The VM is still running, but nothing answers on port 80. The next probe gets no 200 OK, so the load balancer marks vm-web-2 unhealthy within seconds. Nobody filed a ticket and nobody changed DNS: the probe noticed on its own.",
+    "hide": [
+      "c-sticky"
+    ],
+    "view": "360 120 600 350",
+    "bad": [
+      "n-vm2",
+      "w-probe2"
+    ],
+    "set": {
+      "t-vm2": "probe failed ✗ · no answer"
+    },
+    "packets": [
+      {
+        "path": "w-probe2",
+        "stopAt": 0.85,
+        "cls": "bad"
+      },
+      {
+        "path": "w-probe1",
+        "delay": 0.3
+      }
+    ]
+  },
+  {
+    "title": "Traffic flows around the failure",
+    "text": "New connections now go only to vm-web-1. Shoppers already connected to vm-web-2 keep their open connection until it closes; everyone else is sent to zone 1. The same happens if all of zone 2 loses power: the zone-redundant frontend keeps answering from the surviving zones, and the shop stays open.",
+    "view": "0 0 960 560",
+    "dim": [
+      "n-vm2",
+      "w-lb-vm2",
+      "w-probe2"
+    ],
+    "ok": [
+      "n-vm1"
+    ],
+    "flow": [
+      "w-in",
+      "w-fe-lb",
+      "w-lb-vm1"
+    ],
+    "packets": [
+      "w-in",
+      {
+        "path": "w-lb-vm1",
+        "delay": 0.9
+      },
+      {
+        "path": "w-in",
+        "delay": 1.4
+      },
+      {
+        "path": "w-lb-vm1",
+        "delay": 2.3
+      }
+    ]
+  },
+  {
+    "title": "Recovery needs no ticket",
+    "text": "Dewi restarts the web service. The next probe receives 200 OK, vm-web-2 is marked healthy and starts receiving new connections again — nobody touched the load balancer. This is the heart of today's lab: stop a server on purpose, watch the requests move to the other zone, start it again and watch them come back.",
+    "set": {
+      "t-vm2": "healthy ✓ · /health = 200"
+    },
+    "ok": [
+      "n-vm1",
+      "n-vm2"
+    ],
+    "flow": [
+      "w-in",
+      "w-fe-lb",
+      "w-lb-vm1",
+      "w-lb-vm2"
+    ],
+    "packets": [
+      "w-in",
+      {
+        "path": "w-lb-vm1",
+        "delay": 0.9
+      },
+      {
+        "path": "w-in",
+        "delay": 1.4
+      },
+      {
+        "path": "w-lb-vm2",
+        "delay": 2.3
+      }
+    ]
+  },
+  {
+    "title": "Reaching one VM: inbound NAT",
+    "text": "Pak Budi still needs SSH for emergencies, but the VMs have no public IPs. An inbound NAT rule forwards frontend port 50001 to port 22 on vm-web-1 — always the same VM, because this is port forwarding, not balancing. The NSG checks the translated port 22, so allow it only from the office IP. Azure Bastion is the safer long-term habit.",
+    "show": [
+      "n-admin",
+      "w-admin",
+      "b-nat",
+      "c-nat"
+    ],
+    "highlight": [
+      "b-nat",
+      "n-vm1"
+    ],
+    "flow": [
+      "w-admin",
+      "w-fe-lb",
+      "w-lb-vm1"
+    ],
+    "packets": [
+      {
+        "path": "w-admin",
+        "cls": "warn"
+      },
+      {
+        "path": "w-lb-vm1",
+        "delay": 0.9,
+        "cls": "warn"
+      }
+    ]
+  },
+  {
+    "title": "The servers can't get out",
+    "text": "Now the other direction. vm-web-1 must download security updates and call the payment provider. But the subnet is private, and the load-balancing rule was created with outbound SNAT disabled. With no explicit outbound method, the request goes nowhere. The website still looks healthy, so this failure hides until updates or payments start failing.",
+    "show": [
+      "n-api",
+      "w-out1",
+      "w-api",
+      "c-noout"
+    ],
+    "hide": [
+      "c-nat"
+    ],
+    "bad": [
+      "w-out1"
+    ],
+    "highlight": [
+      "b-rule"
+    ],
+    "packets": [
+      {
+        "path": "w-out1",
+        "stopAt": 0.92,
+        "cls": "bad"
+      }
+    ]
+  },
+  {
+    "title": "An outbound rule opens the way",
+    "text": "An outbound rule translates the servers' private addresses to the frontend IP: that is SNAT. Each VM gets a fixed share of source ports, here 10,000 of the roughly 64,000 one public IP offers. The payment provider sees one known address it can put on its allow list. For many VMs or heavy outbound traffic, a NAT gateway scales better.",
+    "show": [
+      "b-out",
+      "w-out2",
+      "c-snat"
+    ],
+    "hide": [
+      "c-noout"
+    ],
+    "highlight": [
+      "b-out"
+    ],
+    "flow": [
+      "w-out1",
+      "w-out2",
+      "w-api"
+    ],
+    "packets": [
+      {
+        "path": "w-out1",
+        "cls": "ok"
+      },
+      {
+        "path": "w-out2",
+        "delay": 0.5,
+        "cls": "ok"
+      },
+      {
+        "path": "w-api",
+        "delay": 1.5,
+        "cls": "ok"
+      }
+    ]
+  },
+  {
+    "title": "Recap: one door, honest checks",
+    "text": "One zone-redundant frontend, a backend pool across two zones, a probe that tells the truth, a rule that spreads connections, a NAT rule for emergencies and an outbound rule for the way out. That answers most of the director's question: one server or a whole zone can fail and the shop keeps selling.",
+    "hide": [
+      "c-snat"
+    ],
+    "ok": [
+      "n-vm1",
+      "n-vm2"
+    ],
+    "highlight": [
+      "n-fe",
+      "n-lb"
+    ],
+    "flow": [
+      "w-in",
+      "w-fe-lb",
+      "w-lb-vm1",
+      "w-lb-vm2"
+    ],
+    "packets": [
+      "w-in",
+      {
+        "path": "w-lb-vm1",
+        "delay": 0.9
+      },
+      {
+        "path": "w-in",
+        "delay": 1.4
+      },
+      {
+        "path": "w-lb-vm2",
+        "delay": 2.3
+      }
+    ],
+    "tip": "Lab 09: build this design in Cloud Shell, then stop the web service on vm-web-2 and watch the shop stay open."
+  }
+]
+</script>
+
+<script>
+/* =====================================================================
+   LUNCH DEMO PLAYER · v1.0 · engine
+   Copy this script unchanged into every demo. It reads the JSON above.
+   ===================================================================== */
+(function () {
+  'use strict';
+  var STEPS;
+  try {
+    STEPS = JSON.parse(document.getElementById('demo-steps').textContent);
+  } catch (err) {
+    STEPS = [{ title: 'Demo data error', text: 'The steps for this demo could not be loaded: ' + err.message }];
+  }
+  if (!Array.isArray(STEPS) || STEPS.length === 0) {
+    STEPS = [{ title: 'No steps yet', text: 'This demo has no steps.' }];
+  }
+
+  var byId = function (id) { return document.getElementById(id); };
+  var svg = byId('stage');
+  var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var reduceMotion = !!(mq && mq.matches);
+  var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
+  var TRANSIENT_CLASSES = ['is-hl', 'is-ok', 'is-bad', 'is-flow', 'is-dim'];
+  var els = Array.prototype.slice.call(document.querySelectorAll('[data-el]'));
+  var initialVisible = {};
+  els.forEach(function (el) { if (el.hasAttribute('data-start')) { initialVisible[el.id] = true; } });
+  var originalText = {};
+  STEPS.forEach(function (s) {
+    Object.keys(s.set || {}).forEach(function (id) {
+      var el = byId(id);
+      if (el && !(id in originalText)) { originalText[id] = el.textContent; }
+    });
+  });
+  var baseView = svg.getAttribute('viewBox') || '0 0 960 560';
+  var currentView = parseView(baseView);
+  var lastViewKey = baseView;
+  var current = 0, playing = false, timer = null, speed = 1, packetAnims = [], viewAnim = 0;
+
+  function parseView(v) { return String(v).trim().split(/[\s,]+/).map(Number); }
+
+  function stateAt(i) {
+    var visible = Object.assign({}, initialVisible);
+    var text = Object.assign({}, originalText);
+    var view = baseView;
+    for (var k = 0; k <= i; k++) {
+      var s = STEPS[k] || {};
+      (s.show || []).forEach(function (id) { visible[id] = true; });
+      (s.hide || []).forEach(function (id) { delete visible[id]; });
+      if (s.set) { Object.keys(s.set).forEach(function (id) { text[id] = s.set[id]; }); }
+      if (s.view) { view = s.view; }
+    }
+    return { visible: visible, text: text, view: view };
+  }
+
+  function setView(target) {
+    var to = parseView(target);
+    if (to.length !== 4 || to.some(function (n) { return isNaN(n); })) { return; }
+    if (viewAnim) { cancelAnimationFrame(viewAnim); viewAnim = 0; }
+    if (reduceMotion) { currentView = to; svg.setAttribute('viewBox', to.join(' ')); return; }
+    var from = currentView.slice(), t0 = null, D = 800;
+    function ease(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
+    function frame(t) {
+      if (t0 === null) { t0 = t; }
+      var k = Math.min(1, (t - t0) / D), e = ease(k);
+      currentView = from.map(function (a, idx) { return a + (to[idx] - a) * e; });
+      svg.setAttribute('viewBox', currentView.join(' '));
+      viewAnim = k < 1 ? requestAnimationFrame(frame) : 0;
+    }
+    viewAnim = requestAnimationFrame(frame);
+  }
+
+  function clearPackets() {
+    packetAnims.forEach(function (a) { a.stop(); });
+    packetAnims = [];
+  }
+
+  function runPacket(spec) {
+    var o = typeof spec === 'string' ? { path: spec } : (spec || {});
+    var path = byId(o.path);
+    if (!path || typeof path.getTotalLength !== 'function') { return; }
+    var len = path.getTotalLength();
+    var layer = byId('packets') || svg;
+    var dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('r', String(o.r || 7));
+    dot.setAttribute('class', 'packet' + (o.cls ? ' ' + o.cls : ''));
+    layer.appendChild(dot);
+    var stopAt = o.stopAt == null ? 1 : Math.max(0, Math.min(1, Number(o.stopAt)));
+    var dur = (o.dur || 1.6) * 1000 * speed, delay = (o.delay || 0) * 1000 * speed, hold = 600;
+    var stopped = false, raf = 0, start = null;
+    function place(f) {
+      var p = path.getPointAtLength(len * f);
+      dot.setAttribute('cx', String(p.x));
+      dot.setAttribute('cy', String(p.y));
+    }
+    packetAnims.push({
+      stop: function () {
+        stopped = true;
+        if (raf) { cancelAnimationFrame(raf); }
+        if (dot.parentNode) { dot.parentNode.removeChild(dot); }
+      }
+    });
+    if (reduceMotion) { place(stopAt); return; }
+    function frame(t) {
+      if (stopped) { return; }
+      if (start === null) { start = t; }
+      var elapsed = t - start - delay;
+      if (elapsed < 0) { dot.setAttribute('opacity', '0'); raf = requestAnimationFrame(frame); return; }
+      var phase = elapsed % (dur + hold);
+      dot.setAttribute('opacity', phase > dur ? '0.35' : '1');
+      place(Math.min(phase / dur, 1) * stopAt);
+      raf = requestAnimationFrame(frame);
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  function render(i) {
+    current = Math.max(0, Math.min(STEPS.length - 1, i));
+    var s = STEPS[current] || {};
+    var st = stateAt(current);
+    Array.prototype.forEach.call(document.querySelectorAll('.is-hl, .is-ok, .is-bad, .is-flow, .is-dim'), function (el) {
+      TRANSIENT_CLASSES.forEach(function (c) { el.classList.remove(c); });
+    });
+    els.forEach(function (el) { el.classList.toggle('is-visible', !!st.visible[el.id]); });
+    Object.keys(TRANSIENT).forEach(function (key) {
+      (s[key] || []).forEach(function (id) {
+        var el = byId(id);
+        if (!el) { return; }
+        el.classList.add(TRANSIENT[key]);
+        if (key !== 'dim' && el.hasAttribute('data-el')) { el.classList.add('is-visible'); }
+      });
+    });
+    Object.keys(st.text).forEach(function (id) {
+      var el = byId(id);
+      if (el) { el.textContent = st.text[id]; }
+    });
+    if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
+    clearPackets();
+    (s.packets || []).forEach(runPacket);
+    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepTitle').textContent = s.title || '';
+    byId('stepText').textContent = s.text || '';
+    var tip = byId('stepTip');
+    if (s.tip) { tip.textContent = s.tip; tip.hidden = false; } else { tip.textContent = ''; tip.hidden = true; }
+    byId('bar').style.inlineSize = ((current + 1) / STEPS.length * 100) + '%';
+    byId('prev').disabled = current === 0;
+    byId('next').disabled = current === STEPS.length - 1;
+    Array.prototype.forEach.call(document.querySelectorAll('#stepsList li'), function (li, k) {
+      li.classList.toggle('current', k === current);
+      var b = li.querySelector('button');
+      if (b) {
+        if (k === current) { b.setAttribute('aria-current', 'step'); } else { b.removeAttribute('aria-current'); }
+      }
+    });
+    try { history.replaceState(null, '', '#step=' + (current + 1)); } catch (err) { /* file:// or sandboxed frame */ }
+  }
+
+  function stepDuration(s) {
+    if (s && s.duration) { return Number(s.duration); }
+    var words = (((s && s.title) || '') + ' ' + ((s && s.text) || '') + ' ' + ((s && s.tip) || '')).trim().split(/\s+/).length;
+    return Math.max(5000, words * 340);
+  }
+
+  function schedule() {
+    clearTimeout(timer);
+    if (!playing) { return; }
+    timer = setTimeout(function () {
+      if (current < STEPS.length - 1) { render(current + 1); schedule(); } else { setPlaying(false); }
+    }, stepDuration(STEPS[current]) * speed);
+  }
+
+  function setPlaying(p) {
+    playing = p;
+    var b = byId('play');
+    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.setAttribute('aria-pressed', p ? 'true' : 'false');
+    if (p && current === STEPS.length - 1) { render(0); }
+    schedule();
+  }
+
+  function go(i) { render(i); if (playing) { schedule(); } }
+
+  var list = byId('stepsList');
+  STEPS.forEach(function (s, k) {
+    var li = document.createElement('li');
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = s.title || ('Step ' + (k + 1));
+    b.addEventListener('click', function () { go(k); });
+    li.appendChild(b);
+    list.appendChild(li);
+  });
+
+  byId('prev').addEventListener('click', function () { go(current - 1); });
+  byId('next').addEventListener('click', function () { go(current + 1); });
+  byId('restart').addEventListener('click', function () { go(0); });
+  byId('play').addEventListener('click', function () { setPlaying(!playing); });
+  byId('speed').addEventListener('change', function (e) {
+    speed = Number(e.target.value) || 1;
+    if (playing) { schedule(); }
+  });
+  document.addEventListener('keydown', function (e) {
+    var tag = ((e.target && e.target.tagName) || '').toLowerCase();
+    if (tag === 'select' || tag === 'input' || tag === 'textarea') { return; }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(current + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
+    else if (e.key === 'Home') { e.preventDefault(); go(0); }
+    else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+  });
+  if (mq && mq.addEventListener) {
+    mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
+  }
+
+  var m = /step=(\d+)/.exec(window.location.hash || '');
+  render(m ? Number(m[1]) - 1 : 0);
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+})();
+</script>
+</body>
+</html>

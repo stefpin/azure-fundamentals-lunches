@@ -1,0 +1,11 @@
+// Orphan hunt: resources that keep billing without doing any useful work.
+// Portal: paste into Resource Graph Explorer and select Run query (it searches every subscription you can read).
+// CLI:    az graph query -q "$(grep -v '^//' orphan-hunt.kql)" --query data --output table
+// Finds unattached managed disks, public IP addresses associated with nothing, and App Service plans with no apps.
+// Check with the owner (see the tags) before you delete anything.
+Resources
+| where (type =~ 'microsoft.compute/disks' and tostring(properties.diskState) =~ 'Unattached')
+    or (type =~ 'microsoft.network/publicipaddresses' and isnull(properties.ipConfiguration) and isnull(properties.natGateway))
+    or (type =~ 'microsoft.web/serverfarms' and toint(properties.numberOfSites) == 0)
+| project type, name, resourceGroup, location, costCenter = tostring(tags['costCenter'])
+| order by type asc, name asc

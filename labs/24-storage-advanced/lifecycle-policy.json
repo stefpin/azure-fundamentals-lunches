@@ -1,0 +1,30 @@
+{
+  "rules": [
+    {
+      "enabled": true,
+      "name": "invoices-ten-years",
+      "type": "Lifecycle",
+      "definition": {
+        "filters": {
+          "blobTypes": [ "blockBlob" ],
+          "prefixMatch": [ "invoices/" ]
+        },
+        "actions": {
+          "baseBlob": {
+            "tierToCool": { "daysAfterModificationGreaterThan": 30 },
+            "tierToCold": { "daysAfterModificationGreaterThan": 90 },
+            "tierToArchive": {
+              "daysAfterModificationGreaterThan": 365,
+              "daysAfterLastTierChangeGreaterThan": 7
+            },
+            "delete": { "daysAfterModificationGreaterThan": 3650 }
+          },
+          "version": {
+            "tierToCold": { "daysAfterCreationGreaterThan": 30 },
+            "delete": { "daysAfterCreationGreaterThan": 365 }
+          }
+        }
+      }
+    }
+  ]
+}

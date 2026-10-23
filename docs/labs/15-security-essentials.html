@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 15 · Get the password out of the config file · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 15: Get the password out of the config file. about 45 minutes, cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="theme-color" content="#1665d8">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 15 · Get the password out of the config file">
+<meta property="og:description" content="Hands-on Azure lab 15: Get the password out of the config file. about 45 minutes, cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/labs/15-security-essentials.html">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=de889cceba">
+</head>
+<body data-root="../" data-page="lab" data-lab="15" style="--c:#d98a00">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#d98a00">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 15</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>15</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Get the password out of the config file</h1>
+        <p class="lab-story">🏪 <b>Episode 15 · The Password in the Zip File</b> — A database password went out in a chat message — and it has been in Git for two years. <a href="../lunches/15-security-essentials.html">Read the lunch</a></p>
+        <div class="meta">
+          <span class="chip">⏱ about 45 minutes</span>
+          <span class="chip cost">💲💲 small charges while running</span>
+          <span class="chip">Difficulty ★★☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 10 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--see-the-problem">Task 1 · See the problem</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--create-the-key-vault-with-the-rbac-permission-model">Task 2 · Create the key vault with the RBAC permission model</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--give-yourself-a-data-role-then-store-the-secret">Task 3 · Give yourself a data role, then store the secret</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--give-the-vm-a-managed-identity">Task 4 · Give the VM a managed identity</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--ask-for-the-secret-from-inside-the-vm--and-get-refused">Task 5 · Ask for the secret from inside the VM — and get refused</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--grant-least-privilege-and-try-again">Task 6 · Grant least privilege and try again</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--remove-the-password-from-the-config-file">Task 7 · Remove the password from the config file</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-8--review-your-secure-score-and-recommendations">Task 8 · Review your secure score and recommendations</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/cloud-init-app.yml" target="_blank" rel="noopener"><span>cloud-init-app.yml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/vm/read-secret.sh" target="_blank" rel="noopener"><span>vm/read-secret.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/vm/remove-password.sh" target="_blank" rel="noopener"><span>vm/remove-password.sh</span><small>1 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/15-security-essentials" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Nusantara Retail's storefront app server keeps the orders database password in plain text in
+<code>/etc/nusa/appsettings.json</code>. You will move that secret into <strong>Azure Key Vault</strong> (RBAC permission model), give the
+server a <strong>system-assigned managed identity</strong>, and prove — from inside the VM — that the identity is refused with
+<strong>403</strong> until you grant it <strong>Key Vault Secrets User</strong>, and then reads the secret with <strong>200 OK</strong>. Finally you remove the
+password from the file and review your <strong>secure score</strong> in Microsoft Defender for Cloud.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  you([&quot;You · Key Vault Secrets Officer&quot;]) -- &quot;stores the secret&quot; --&gt; kv
+  subgraph rg[&quot;rg-lunch15-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph vnet[&quot;vnet-nusa-app 10.15.0.0/16 · snet-app with a Key Vault service endpoint&quot;]
+      vm[&quot;vm-app-1&lt;br/&gt;system-assigned identity&lt;br/&gt;no public IP&quot;]
+    end
+    kv[&quot;kv-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;RBAC permission model&lt;br/&gt;secret: sql-connection&quot;]
+  end
+  vm -- &quot;1 · token request&quot; --&gt; imds[&quot;IMDS 169.254.169.254&quot;]
+  vm -- &quot;2 · GET secret with bearer token&quot; --&gt; kv
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources and <strong>assign roles</strong> (Owner, or Contributor plus User Access
+Administrator). See <a href="01-before-you-begin.html">Lab 01</a>.</li>
+<li>Sign in with a <strong>user account</strong> — the scripts look up your own object ID to give you a Key Vault role.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install.</li>
+<li>Get the lab files and load the shared settings:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/15-security-essentials
+source ../common/config.sh
+RG=$(rg_name 15)
+KV_NAME=&quot;kv-nusa-${SUFFIX}&quot;
+</code></pre></div>
+<ul>
+<li>Create the starting point — the app server with the password problem. It takes about 4 minutes:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<p><code>setup.sh</code> creates a virtual network whose subnet has <strong>no outbound internet access</strong> and <strong>no public IP</strong> on the VM.
+So that the VM can still reach Key Vault, the subnet gets a <strong>service endpoint</strong> for <code>Microsoft.KeyVault</code>: traffic to
+Key Vault travels over the Azure backbone. You manage the VM only through <strong>Run Command</strong>, so no SSH port is open.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist (a small VM, its disk, a key vault). Finish with the <strong>Clean up</strong> section,
+even if you stop halfway. Cleanup also <strong>purges</strong> the soft-deleted vault so its name is free again.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–8 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>run <code>setup.sh</code>, read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--see-the-problem" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">See the problem</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--see-the-problem" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Before fixing anything, look at what an attacker — or anyone who gets a copy of a backup — would find on the server.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-app-1 \
+  --command-id RunShellScript \
+  --scripts &quot;cloud-init status --wait &gt; /dev/null; ls -l /etc/nusa; cat /etc/nusa/appsettings.json&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Run Command uses the VM agent to run a script as root and returns the output. The first run takes a minute or so,
+because Azure installs the Run Command extension on the VM.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> you see <code>appsettings.json</code> with permissions <code>-rw-r--r--</code> (every user can read it) and a connection
+string containing <code>Password=</code>. The password is a throwaway value generated when the VM first booted. Treat it as
+leaked: the fix is not to hide it better, but to replace it and store the new one somewhere safer.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--create-the-key-vault-with-the-rbac-permission-model" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Create the key vault with the RBAC permission model</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--create-the-key-vault-with-the-rbac-permission-model" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az keyvault create --name &quot;$KV_NAME&quot; --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; \
+  --enable-rbac-authorization true \
+  --retention-days 7 \
+  --output none
+
+az keyvault show --name &quot;$KV_NAME&quot; \
+  --query &quot;{name:name, rbacModel:properties.enableRbacAuthorization, retentionDays:properties.softDeleteRetentionInDays, purgeProtection:properties.enablePurgeProtection, uri:properties.vaultUri}&quot; \
+  --output table
+</code></pre></div>
+<p>What the flags mean:</p>
+<ul>
+<li><code>--enable-rbac-authorization true</code> selects the <strong>Azure RBAC permission model</strong> for the data plane. Current CLI
+versions already default to it; writing it out makes your intent obvious.</li>
+<li><code>--retention-days 7</code> keeps a deleted vault recoverable for 7 days (the minimum; 90 is the default). Soft delete
+itself is always on.</li>
+<li>No <code>--enable-purge-protection</code>: purge protection is irreversible, and you want to purge this lab vault at the end.
+In production, turn it on.</li>
+</ul>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Home › Key vaults › Create</em>: pick your resource group and region, name <code>kv-nusa-&lt;suffix&gt;</code>,
+tier <strong>Standard</strong>, days to retain deleted vaults <strong>7</strong>, purge protection <strong>Disable</strong>; on the <strong>Access configuration</strong>
+tab choose <strong>Azure role-based access control</strong>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the table shows <code>rbacModel</code> <strong>True</strong>, <code>retentionDays</code> <strong>7</strong> and an empty <code>purgeProtection</code> column
+(not set). Note the <code>uri</code>: <code>https://kv-nusa-&lt;suffix&gt;.vault.azure.net/</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--give-yourself-a-data-role-then-store-the-secret" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Give yourself a data role, then store the secret</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--give-yourself-a-data-role-then-store-the-secret" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>You probably created the vault as Owner or Contributor. Try to list its secrets anyway:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az keyvault secret list --vault-name &quot;$KV_NAME&quot; --output table
+</code></pre></div>
+<p>You get <strong>Forbidden</strong>: <em>&quot;Caller is not authorized to perform action on resource&quot;</em> with the inner code
+<code>ForbiddenByRbac</code>. Owner and Contributor are control-plane roles; secrets live in the data plane. Give yourself the
+data-plane role for people who manage secrets, scoped to this vault only:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>KV_ID=$(az keyvault show --name &quot;$KV_NAME&quot; --query id --output tsv)
+ME=$(az ad signed-in-user show --query id --output tsv)
+
+az role assignment create --assignee-object-id &quot;$ME&quot; --assignee-principal-type User \
+  --role &quot;Key Vault Secrets Officer&quot; --scope &quot;$KV_ID&quot; --output none
+</code></pre></div>
+<p>Now store the orders connection string. Because the old password counts as leaked, generate a <strong>new</strong> one. (In real
+life you would change it in the database first; this lab has no real database.)</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>NEW_PW=&quot;$(openssl rand -base64 18)&quot;
+az keyvault secret set --vault-name &quot;$KV_NAME&quot; --name sql-connection \
+  --value &quot;Server=tcp:sql-nusa-orders.database.windows.net,1433;Database=orders;User ID=storefront;Password=${NEW_PW};Encrypt=True;&quot; \
+  --output none
+unset NEW_PW
+
+az keyvault secret list --vault-name &quot;$KV_NAME&quot; \
+  --query &quot;[].{id:id, enabled:attributes.enabled, created:attributes.created}&quot; --output table
+</code></pre></div>
+<p><code>--output none</code> matters: <code>secret set</code> returns the secret, value included, and you don't want it in your terminal
+history or a screen recording. <code>secret list</code> shows metadata only.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Still Forbidden right after the role assignment?</strong> Role assignments take a few minutes to propagate. Wait a minute
+and run the command again.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>secret list</code> shows one row whose <code>id</code> ends in <code>/secrets/sql-connection</code>, with <code>enabled</code> <strong>True</strong>.</p>
+</div>
+</div></section><section class="lab-section" id="task-4--give-the-vm-a-managed-identity" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Give the VM a managed identity</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--give-the-vm-a-managed-identity" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm identity assign --resource-group &quot;$RG&quot; --name vm-app-1 --output none
+
+PRINCIPAL_ID=$(az vm show --resource-group &quot;$RG&quot; --name vm-app-1 --query identity.principalId --output tsv)
+echo &quot;VM identity object ID: $PRINCIPAL_ID&quot;
+
+az ad sp show --id &quot;$PRINCIPAL_ID&quot; --query &quot;{displayName:displayName, type:servicePrincipalType}&quot; --output table
+</code></pre></div>
+<p>Azure created a service principal in Microsoft Entra ID for the VM and manages its credentials. Nobody — including
+you — ever sees a password for it.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open <code>vm-app-1</code> › <strong>Identity</strong> › <strong>System assigned</strong> › Status <strong>On</strong> › <strong>Save</strong>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the service principal's <code>displayName</code> is <strong>vm-app-1</strong> and its <code>type</code> is <strong>ManagedIdentity</strong>.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--ask-for-the-secret-from-inside-the-vm--and-get-refused" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Ask for the secret from inside the VM — and get refused</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--ask-for-the-secret-from-inside-the-vm--and-get-refused" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The script <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/vm/read-secret.sh" target="_blank" rel="noopener"><code>vm/read-secret.sh</code></a> runs <strong>inside</strong> the VM and does what a real app (or an Azure SDK)
+does behind the scenes:</p>
+<ol>
+<li><code>curl</code> the instance metadata endpoint <code>http://169.254.169.254/metadata/identity/oauth2/token</code> with the header
+<code>Metadata: true</code> and <code>resource=https://vault.azure.net</code> to get an access token for Key Vault;</li>
+<li><code>curl</code> the Key Vault REST API — <code>GET https://&lt;vault&gt;.vault.azure.net/secrets/sql-connection?api-version=2025-07-01</code>
+— with <code>Authorization: Bearer &lt;token&gt;</code>.</li>
+</ol>
+<p>It prints the token's audience and the identity's object ID (claims, not secrets), the HTTP status, and — on success —
+only a masked preview of the value.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-app-1 \
+  --command-id RunShellScript --scripts @vm/read-secret.sh --parameters &quot;$KV_NAME&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Expected output (your IDs differ):</p>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Copy</button></div><pre><code>Enable succeeded:
+[stdout]
+Step 1: ask the managed identity endpoint (IMDS) for a token, audience https://vault.azure.net
+  got a token (1500 characters); the token itself is never printed
+  token audience (aud):     https://vault.azure.net
+  identity object ID (oid): 4f6c1d2e-...
+Step 2: GET https://kv-nusa-ab12c.vault.azure.net/secrets/sql-connection
+  HTTP 403
+  error:   Forbidden / ForbiddenByRbac
+  message: Caller is not authorized to perform action on resource.
+RESULT: HTTP 403
+
+[stderr]
+</code></pre></div>
+<p>Read it like a security engineer: <strong>authentication worked</strong> (Key Vault accepted a valid token for the right audience),
+but <strong>authorization failed</strong> (this identity has no role on the vault).</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>RESULT: HTTP 403</code>, and the <code>oid</code> in the output equals <code>$PRINCIPAL_ID</code> from Task 4.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--grant-least-privilege-and-try-again" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Grant least privilege and try again</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--grant-least-privilege-and-try-again" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The app only needs to <strong>read</strong> secrets from <strong>this</strong> vault, so assign <strong>Key Vault Secrets User</strong> — not Officer, not
+Administrator — at vault scope:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az role assignment create --assignee-object-id &quot;$PRINCIPAL_ID&quot; --assignee-principal-type ServicePrincipal \
+  --role &quot;Key Vault Secrets User&quot; --scope &quot;$KV_ID&quot; --output none
+</code></pre></div>
+<p>The role needs a few minutes to propagate. This loop retries every minute for up to ten minutes:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>for i in 1 2 3 4 5 6 7 8 9 10; do
+  OUT=$(az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-app-1 \
+    --command-id RunShellScript --scripts @vm/read-secret.sh --parameters &quot;$KV_NAME&quot; \
+    --query &quot;value[0].message&quot; --output tsv)
+  echo &quot;$OUT&quot; | grep &quot;RESULT:&quot;
+  if echo &quot;$OUT&quot; | grep -q &quot;RESULT: HTTP 200&quot;; then echo &quot;$OUT&quot;; break; fi
+  echo &quot;Not yet - waiting 60 seconds for the role assignment to propagate...&quot;; sleep 60
+done
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Key vault › <strong>Access control (IAM)</strong> › <strong>Add role assignment</strong> › <strong>Key Vault Secrets User</strong> ›
+Assign access to <strong>Managed identity</strong> › <strong>Virtual machine</strong> › <code>vm-app-1</code> › <strong>Review + assign</strong>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>RESULT: HTTP 200</code> and a masked value starting with <code>Server=tcp:sql-nusa-orders...</code>. The VM read the
+secret without any password of its own.</p>
+</div>
+</div></section><section class="lab-section" id="task-7--remove-the-password-from-the-config-file" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">Remove the password from the config file</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--remove-the-password-from-the-config-file" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The app now needs only to know <strong>where</strong> the secret lives. <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/vm/remove-password.sh" target="_blank" rel="noopener"><code>vm/remove-password.sh</code></a> rewrites
+the config file with the vault URI and the secret's name:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-app-1 \
+  --command-id RunShellScript --scripts @vm/remove-password.sh --parameters &quot;$KV_NAME&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>A real storefront would read the secret at start-up with an Azure SDK (<code>DefaultAzureCredential</code> uses the managed
+identity automatically), keep it in memory, and pick up a new version after a rotation.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the new file has a <code>KeyVault</code> section with <code>VaultUri</code> and <code>OrdersConnectionSecretName</code>, and the last
+line says <code>RESULT: CONFIG CLEAN</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-8--review-your-secure-score-and-recommendations" data-kind="task"><h2><span class="task-tag">Task 8</span><span class="title">Review your secure score and recommendations</span><button class="btn btn-sm done-toggle" type="button" data-task="task-8--review-your-secure-score-and-recommendations" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Defender for Cloud's free <strong>foundational CSPM</strong> assesses your subscription against the Microsoft cloud security
+benchmark.</p>
+<ol>
+<li>In the portal, open <strong>Microsoft Defender for Cloud</strong> › <strong>Overview</strong> and find the <strong>secure score</strong> tile.</li>
+<li>Open <strong>Recommendations</strong>. Filter by your resource group <code>rg-lunch15-&lt;suffix&gt;</code> and open one recommendation for the
+VM or the key vault. Read the description, the affected resources and the remediation steps.</li>
+<li>Open <strong>Environment settings</strong> › your subscription › <strong>Defender plans</strong>. Notice that foundational CSPM is free and
+the workload protection plans (Servers, Storage, Key Vault…) are paid per resource. <strong>Don't</strong> turn paid plans on
+for this lab.</li>
+</ol>
+<p>You can also read the score from the CLI:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az security secure-scores list --output jsonc
+</code></pre></div>
+<p>Look for the current and maximum values of the score in the output.</p>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Note</span>New resources don't show up instantly: Defender for Cloud recalculates each control about every eight hours, and a
+brand-new subscription can take longer for its first assessment. If you see nothing for your lab resources yet, look
+at the recommendations for anything else in the subscription and come back to this task tomorrow.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> you can name your current secure score and one recommendation, and say whether fixing it would be
+free (a configuration change) or need a paid plan.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A classic mistake is asking for a token for the <strong>wrong audience</strong> — for example the Azure Resource Manager audience
+copied from another sample. Pass it as the second parameter of the script:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-app-1 \
+  --command-id RunShellScript --scripts @vm/read-secret.sh \
+  --parameters &quot;$KV_NAME&quot; &quot;https://management.azure.com/&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p><strong>Symptom:</strong> <code>HTTP 401</code>, error <code>Unauthorized</code>, message
+<code>AKV10022: Invalid audience. Expected https://vault.azure.net, found: https://management.azure.com/.</code></p>
+<details class="plain"><summary>Hint: what went wrong, and the fix</summary>
+<p>The token is perfectly valid — for Azure Resource Manager. Each token is minted for one audience, and Key Vault rejects
+tokens meant for someone else. That is an <strong>authentication</strong> failure (401), unlike the <strong>authorization</strong> failure (403)
+in Task 5. Fix it by requesting <code>resource=https://vault.azure.net</code> — run the command again without the second
+parameter, and you are back to <code>RESULT: HTTP 200</code>.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. The script runs two small
+read-only scripts inside the VM, so it takes about a minute.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>The script asks for confirmation (set <code>ASSUME_YES=1</code> to skip the question). It deletes the key vault, deletes the
+resource group <code>rg-lunch15-&lt;suffix&gt;</code> (VM, disk, network) in the background, and then <strong>purges</strong> the soft-deleted vault
+so the name <code>kv-nusa-&lt;suffix&gt;</code> is free again. Role assignments at vault scope disappear with the vault. If a vault
+has purge protection (see the stretch goals), the script tells you it can't be purged and that Azure removes it after
+its retention period.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>az keyvault create</code> fails with <code>VaultAlreadyExists</code> — the name &quot;is already in use&quot;</td>
+<td>A soft-deleted vault with the same name is left over from an earlier attempt (soft-deleted names stay reserved)</td>
+<td>Run <code>bash cleanup.sh</code> (it purges it), or <code>az keyvault purge --name &quot;$KV_NAME&quot; --location &quot;$LOCATION&quot;</code>; or recover it with <code>az keyvault recover --name &quot;$KV_NAME&quot;</code></td>
+</tr>
+<tr>
+<td><code>Forbidden</code> / <code>ForbiddenByRbac</code> from <code>az keyvault secret set</code> or <code>secret list</code></td>
+<td>You have no data-plane role yet, or it hasn't propagated</td>
+<td>Do Task 3's role assignment; wait one to five minutes and retry</td>
+</tr>
+<tr>
+<td>Run Command output says <code>RESULT: HTTP 403</code> after Task 6</td>
+<td>Propagation delay, or the role went to the wrong principal or scope</td>
+<td>Wait a few minutes; check <code>az role assignment list --scope &quot;$KV_ID&quot; --output table</code> shows <code>Key Vault Secrets User</code> for the VM's object ID</td>
+</tr>
+<tr>
+<td><code>RESULT: HTTP 401</code> with <code>AKV10022: Invalid audience</code></td>
+<td>The token was requested for a different resource</td>
+<td>Request <code>resource=https://vault.azure.net</code> (see Break it and fix it)</td>
+</tr>
+<tr>
+<td><code>RESULT: NO TOKEN</code> and IMDS answered <code>Identity not found</code></td>
+<td>The VM has no managed identity yet, or it was assigned seconds ago</td>
+<td>Do Task 4; wait a minute and retry</td>
+</tr>
+<tr>
+<td><code>RESULT: HTTP 000</code> — &quot;the VM could not reach the vault&quot;</td>
+<td>No network path: the service endpoint is missing, or you restricted the vault firewall</td>
+<td>Run <code>bash setup.sh</code> again (it re-applies the service endpoint); if you changed the vault firewall, allow <code>snet-app</code></td>
+</tr>
+<tr>
+<td><code>(Conflict) Run command extension execution is in progress</code></td>
+<td>Another Run Command is still running on the VM</td>
+<td>Wait until it finishes, then retry — one script at a time</td>
+</tr>
+<tr>
+<td><code>az ad signed-in-user show</code> fails</td>
+<td>Cloud Shell is signed in with a service principal or managed identity, not a user</td>
+<td>Run <code>az login</code> with your user account</td>
+</tr>
+<tr>
+<td>Defender for Cloud shows no recommendations for the lab resources</td>
+<td>Assessments run on a schedule</td>
+<td>Come back later — see the note in Task 8</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li><strong>Secret hygiene:</strong> give the secret an expiry date and a content type:
+<code>az keyvault secret set-attributes --vault-name &quot;$KV_NAME&quot; --name sql-connection --expires 2027-01-31T00:00:00Z --content-type &quot;text/plain&quot;</code>.
+Then rotate it by setting a new value and list the versions with <code>az keyvault secret list-versions</code>.</li>
+<li><strong>Lock the network:</strong> deny public access and allow only the app subnet:
+<code>az keyvault network-rule add --resource-group &quot;$RG&quot; --name &quot;$KV_NAME&quot; --vnet-name vnet-nusa-app --subnet snet-app</code>,
+then <code>az keyvault update --resource-group &quot;$RG&quot; --name &quot;$KV_NAME&quot; --default-action Deny</code>. The VM still reads the
+secret; <code>az keyvault secret list</code> from Cloud Shell is now blocked by the vault firewall. Set <code>--default-action Allow</code>
+again before you run <code>verify.sh</code>.</li>
+<li><strong>Feel purge protection:</strong> create a second vault <code>kv-nusa2-${SUFFIX}</code> with <code>--enable-purge-protection true --retention-days 7</code>, delete it, and try <code>az keyvault purge</code> on it. It refuses. (<code>cleanup.sh</code> deletes it, but its name
+stays reserved for seven days.)</li>
+<li><strong>Swap identities:</strong> create a user-assigned identity (<code>az identity create</code>), attach it to the VM
+(<code>az vm identity assign --identities &lt;its resource ID&gt;</code>) and give it the role instead. A VM with several identities
+must say which one it wants, so add <code>--data-urlencode &quot;client_id=&lt;its client ID&gt;&quot;</code> to the IMDS request in a copy of
+<code>vm/read-secret.sh</code>. Lunch 22 explains when a user-assigned identity is the better choice.</li>
+<li><strong>Audit:</strong> add a diagnostic setting that sends the vault's <code>AuditEvent</code> logs to a Log Analytics workspace, then find
+the VM's reads (Lunches 16 and 30).</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Run <code>bash setup.sh</code>, then build the following any way you like (portal, CLI, Bicep):</p>
+<ol>
+<li>A key vault named <code>kv-nusa-&lt;suffix&gt;</code> in <code>rg-lunch15-&lt;suffix&gt;</code>, using the <strong>Azure RBAC</strong> permission model.</li>
+<li>You hold <strong>Key Vault Secrets Officer</strong> on that vault (vault scope).</li>
+<li>The vault contains a secret named <code>sql-connection</code> holding a connection string with a <strong>new</strong> password.</li>
+<li><code>vm-app-1</code> has a <strong>system-assigned managed identity</strong>.</li>
+<li>That identity holds <strong>Key Vault Secrets User</strong> at vault scope and <strong>no other role assignment</strong> in the subscription.</li>
+<li>From inside <code>vm-app-1</code>, <code>vm/read-secret.sh</code> (run through Run Command) reports <code>RESULT: HTTP 200</code>.</li>
+<li><code>/etc/nusa/appsettings.json</code> on the VM no longer contains a password.</li>
+<li>You have looked at your secure score and at least one recommendation in Defender for Cloud (not checked by the script).</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="14-serverless.html"><small>← Previous lab</small>14 · React to new orders automatically</a><a class="next" href="16-monitoring-basic.html"><small>Next lab →</small>16 · Know before customers do</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional
+        Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material,
+    and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a>
+    and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies.
+    Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> ·
+    code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../assets/course-data.js?v=de889cceba" defer></script>
+<script src="../assets/site.js?v=de889cceba" defer></script>
+</body>
+</html>
