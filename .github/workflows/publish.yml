@@ -1,0 +1,126 @@
+name: Publish the course site
+
+# Runs on every push to main:
+#   1. unpack   - if a course-bundle.zip was uploaded to the repository root, unpack it over the
+#                 repository and commit the result (a bundle never changes workflow files)
+#   2. validate - demo validation, shell syntax and relative links
+#   3. build    - build the GitHub Pages site from the Markdown (tools/build_site.py)
+#   4. deploy   - publish docs/ to GitHub Pages (Settings > Pages > Source: GitHub Actions)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: publish-site
+  cancel-in-progress: false
+
+jobs:
+  unpack:
+    name: Unpack an uploaded course bundle
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.unpack.outputs.sha }}
+      has_site: ${{ steps.unpack.outputs.has_site }}
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+
+      - name: Unpack course-bundle.zip (if present) and commit it
+        id: unpack
+        run: |
+          set -euo pipefail
+          if [ -f course-bundle.zip ]; then
+            tmp="$(mktemp -d)"
+            unzip -q course-bundle.zip -d "$tmp"
+            src="$tmp"
+            if [ -d "$tmp/azure-fundamentals-lunches" ]; then src="$tmp/azure-fundamentals-lunches"; fi
+            # The workflow token may not change workflow files, so .github/workflows is left alone.
+            rsync -a --delete --exclude '.git/' --exclude '.github/workflows/' "$src/" ./
+            rm -f course-bundle.zip
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            if git diff --cached --quiet; then
+              echo "The bundle matches the repository: nothing to commit."
+            else
+              git commit -m "Unpack course bundle"
+              git push
+            fi
+          else
+            echo "No course-bundle.zip in this commit: nothing to unpack."
+          fi
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          if [ -f tools/build_site.py ]; then echo "has_site=true" >> "$GITHUB_OUTPUT"; else echo "has_site=false" >> "$GITHUB_OUTPUT"; fi
+
+  validate:
+    name: Validate course content
+    needs: unpack
+    if: needs.unpack.outputs.has_site == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.unpack.outputs.sha }}
+
+      - name: Validate interactive demos
+        run: python3 tools/validate_demo.py
+
+      - name: Check shell script syntax
+        run: |
+          status=0
+          while IFS= read -r -d '' script; do
+            if ! bash -n "$script"; then
+              echo "::error file=${script}::Shell syntax error"
+              status=1
+            fi
+          done < <(find labs -name '*.sh' -print0)
+          exit $status
+
+      - name: Check relative links
+        run: python3 tools/check_links.py
+
+  build:
+    name: Build the site
+    needs: unpack
+    if: needs.unpack.outputs.has_site == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.unpack.outputs.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Build docs/ from the Markdown
+        run: |
+          python3 -m pip install -r tools/requirements-site.txt
+          python3 tools/build_site.py
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: [validate, build]
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5
