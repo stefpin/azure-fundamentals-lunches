@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 24 · Faktur tahan ransomware · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 24: Faktur tahan ransomware. sekitar 60 menit (termasuk sekitar 5 menit untuk `setup.sh`), biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/24-storage-advanced.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/24-storage-advanced.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/24-storage-advanced.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/24-storage-advanced.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 24 · Faktur tahan ransomware">
+<meta property="og:description" content="Lab Azure praktik 24: Faktur tahan ransomware. sekitar 60 menit (termasuk sekitar 5 menit untuk `setup.sh`), biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/24-storage-advanced.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="24" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/24-storage-advanced.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 24</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>24</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Faktur tahan ransomware</h1>
+        <p class="lab-story">🏪 <b>Episode 24 · Terenkripsi Sebelum Jumat</b> — File seorang pemasok disandera ransomware dalam semalam — apakah giliran kita berikutnya? <a href="../lunches/24-storage-advanced.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 60 menit (termasuk sekitar 5 menit untuk `setup.sh`)</span>
+          <span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 11 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--membuat-account-faktur-dan-memberi-diri-anda-role-data">Tugas 1 · Membuat account faktur dan memberi diri Anda role data</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--mengaktifkan-lapisan-lapisan-perlindungan">Tugas 2 · Mengaktifkan lapisan-lapisan perlindungan</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--mengunggah-faktur-berperan-sebagai-ransomware-memulihkan-versi">Tugas 3 · Mengunggah faktur, berperan sebagai ransomware, memulihkan versi</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--menghapus-satu-faktur-lalu-seluruh-container--dan-mengembalikan-keduanya">Tugas 4 · Menghapus satu faktur, lalu seluruh container — dan mengembalikan keduanya</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--men-deploy-lifecycle-policy-sepuluh-tahun">Tugas 5 · Men-deploy lifecycle policy sepuluh tahun</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--membuat-tahun-pajak-yang-sudah-ditutup-menjadi-immutable">Tugas 6 · Membuat tahun pajak yang sudah ditutup menjadi immutable</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--memberi-account-private-endpoint-dan-private-dns-zone">Tugas 7 · Memberi account private endpoint dan private DNS zone</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-8--membandingkan-jawaban-dns-cloud-shell-vs-di-dalam-jaringan">Tugas 8 · Membandingkan jawaban DNS: Cloud Shell vs di dalam jaringan</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-9--menutup-pintu-publik--selesaikan-pekerjaan-data-plane-lebih-dulu">Tugas 9 · Menutup pintu publik — selesaikan pekerjaan data plane lebih dulu</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/24-storage-advanced/.gitignore" target="_blank" rel="noopener"><span>.gitignore</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/24-storage-advanced/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/24-storage-advanced/lifecycle-policy.json" target="_blank" rel="noopener"><span>lifecycle-policy.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/24-storage-advanced/sample-files/INV-2025-0999.txt" target="_blank" rel="noopener"><span>sample-files/INV-2025-0999.txt</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/24-storage-advanced/sample-files/INV-2026-0042.txt" target="_blank" rel="noopener"><span>sample-files/INV-2026-0042.txt</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/24-storage-advanced/sample-files/INV-2026-0043.txt" target="_blank" rel="noopener"><span>sample-files/INV-2026-0043.txt</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/24-storage-advanced/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/24-storage-advanced/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>14 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/24-storage-advanced/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/24-storage-advanced" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Seorang pemasok Nusantara Retail terkena ransomware. Anda memastikan serangan serupa tidak akan membuat Nusantara
+kehilangan fakturnya: Anda mengaktifkan versioning, soft delete, dan change feed, lalu berperan sebagai penyerang —
+menimpa satu faktur, menghapus faktur lain, bahkan menghapus seluruh container — dan memulihkan semuanya. Anda
+menambahkan lifecycle policy sepuluh tahun dan retention policy tulis-sekali (<em>write-once</em>) untuk tahun pajak yang sudah
+ditutup. Terakhir, Anda memberi account sebuah private endpoint dan private DNS zone, membuktikan dari VM di dalam
+jaringan bahwa nama account kini diterjemahkan ke alamat IP privat, lalu mematikan public network access.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  cs([&quot;Cloud Shell&lt;br/&gt;(internet)&quot;])
+  subgraph rg[&quot;rg-lunch24-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph vnet[&quot;vnet-nusa-lab24 · 10.24.0.0/16&quot;]
+      vm[&quot;vm-dns-1&lt;br/&gt;snet-vm · tanpa IP publik&quot;]
+      pe[&quot;pe-stnusa24-blob&lt;br/&gt;snet-pe · 10.24.2.x&quot;]
+    end
+    nat[&quot;NAT gateway&lt;br/&gt;hanya keluar&quot;]
+    dns[&quot;Private DNS zone&lt;br/&gt;privatelink.blob.core.windows.net&quot;]
+    subgraph st[&quot;stnusa24&amp;lt;suffix&amp;gt; · versioning · soft delete · change feed · aturan lifecycle&quot;]
+      inv[&quot;invoices&quot;]
+      worm[&quot;invoices-2025&lt;br/&gt;time-based retention (unlocked)&quot;]
+    end
+  end
+  vm --&gt;|&quot;10.24.2.x&quot;| pe --&gt; inv
+  dns -.-&gt;|&quot;menjawab 10.24.2.x di dalam VNet&quot;| vm
+  vm --- nat
+  cs -.-&gt;|&quot;public endpoint&lt;br/&gt;Disabled di Tugas 9&quot;| inv
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda bisa membuat resource dan memberikan role (Owner, atau Contributor ditambah User Access
+Administrator) — lihat <a href="01-before-you-begin.html">Lab 01</a>.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang.</li>
+<li>Baca dulu <a href="../lunches/24-storage-advanced.html">bacaan Makan Siang 24</a>; lab ini mengasumsikan Anda sudah tahu
+apa itu versi, soft delete, immutability, dan private endpoint.</li>
+<li>Ambil file lab dan muat pengaturan bersama (jalankan blok ini lagi setiap kali Cloud Shell dimulai ulang):</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/24-storage-advanced
+source ../common/config.sh
+RG=$(rg_name 24)
+ACCOUNT=&quot;stnusa24${SUFFIX}&quot;
+VNET=vnet-nusa-lab24
+ZONE=privatelink.blob.core.windows.net
+ACCOUNT_ID=$(az storage account show --name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; --query id --output tsv 2&gt;/dev/null)
+mkdir -p work
+echo &quot;Resource group: $RG   Storage account: $ACCOUNT&quot;
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya — virtual network dengan dua subnet, NAT gateway, dan VM Linux kecil tanpa alamat IP publik.
+Prosesnya sekitar 5 menit; baca bagian 3 dari bacaan makan siang sambil menunggu:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<p>VM ini hanya ada untuk menguji DNS dan jalur jaringan dari <em>dalam</em> virtual network. VM ini tidak punya IP publik dan
+tidak punya aturan inbound; Anda menjangkaunya lewat <strong>Run Command</strong>, yang membutuhkan HTTPS keluar untuk mengembalikan
+hasilnya — itulah sebabnya <code>setup.sh</code> menambahkan NAT gateway (subnet baru tidak punya akses internet keluar bawaan).</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>VM, NAT gateway, dan private endpoint ditagih per jam. Akhiri dengan bagian <strong>Bersihkan</strong>, walaupun Anda berhenti di
+tengah jalan — dan <strong>jangan pernah mengunci</strong> retention policy di Tugas 6, atau account tidak bisa dihapus selama
+berhari-hari.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–9 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>jalankan <code>bash setup.sh</code>, baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--membuat-account-faktur-dan-memberi-diri-anda-role-data" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Membuat account faktur dan memberi diri Anda role data</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--membuat-account-faktur-dan-memberi-diri-anda-role-data" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Account-nya bertipe general-purpose v2 dengan locally redundant storage (murah, dan mendukung archive tier yang dipakai
+aturan lifecycle Anda), TLS 1.2, dan tanpa akses anonim. Anda bekerja dengan data blob lewat identitas Microsoft Entra
+Anda, jadi Anda membutuhkan role data.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage account create \
+  --name &quot;$ACCOUNT&quot; \
+  --resource-group &quot;$RG&quot; \
+  --location &quot;$LOCATION&quot; \
+  --kind StorageV2 \
+  --sku Standard_LRS \
+  --min-tls-version TLS1_2 \
+  --allow-blob-public-access false \
+  --https-only true \
+  --output none
+
+ACCOUNT_ID=$(az storage account show --name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; --query id --output tsv)
+
+az role assignment create \
+  --assignee-object-id &quot;$(my_object_id)&quot; \
+  --assignee-principal-type User \
+  --role &quot;Storage Blob Data Contributor&quot; \
+  --scope &quot;$ACCOUNT_ID&quot; \
+  --output none
+
+wait_until &quot;your data role to take effect&quot; 600 \
+  az storage container list --account-name &quot;$ACCOUNT&quot; --auth-mode login \
+  &amp;&amp; echo &quot;Data role is active.&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>Data role is active.</code> tercetak, dan
+<code>az role assignment list --assignee &quot;$(my_object_id)&quot; --scope &quot;$ACCOUNT_ID&quot; --query &quot;[].roleDefinitionName&quot; --output tsv</code>
+menampilkan <code>Storage Blob Data Contributor</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--mengaktifkan-lapisan-lapisan-perlindungan" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Mengaktifkan lapisan-lapisan perlindungan</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--mengaktifkan-lapisan-lapisan-perlindungan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Satu perintah mengaktifkan versioning, soft delete 14 hari untuk blob dan untuk container, serta change feed:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage account blob-service-properties update \
+  --account-name &quot;$ACCOUNT&quot; \
+  --resource-group &quot;$RG&quot; \
+  --enable-versioning true \
+  --enable-delete-retention true --delete-retention-days 14 \
+  --enable-container-delete-retention true --container-delete-retention-days 14 \
+  --enable-change-feed true \
+  --output none
+</code></pre></div>
+<p>Anda sengaja membiarkan <strong>point-in-time restore</strong> nonaktif: fitur itu tidak bisa digabungkan dengan immutability policy
+yang Anda tambahkan di Tugas 6.
+(Point-in-time restore menjadi tantangan tambahan, di account terpisah.)</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Storage account › <em>Data management</em> › <em>Data protection</em>. Centang versioning, soft delete untuk
+blob dan container (14 hari), serta blob change feed, lalu <em>Save</em>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> perintah ini mencetak <code>True</code>, <code>14</code>, <code>14</code>, <code>True</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage account blob-service-properties show --account-name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;{versioning:isVersioningEnabled, blobSoftDeleteDays:deleteRetentionPolicy.days, containerSoftDeleteDays:containerDeleteRetentionPolicy.days, changeFeed:changeFeed.enabled}&quot; \
+  --output table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-3--mengunggah-faktur-berperan-sebagai-ransomware-memulihkan-versi" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Mengunggah faktur, berperan sebagai ransomware, memulihkan versi</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--mengunggah-faktur-berperan-sebagai-ransomware-memulihkan-versi" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Buat container <code>invoices</code> dan unggah dua faktur:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage container create --account-name &quot;$ACCOUNT&quot; --name invoices --auth-mode login --output none
+
+for f in sample-files/INV-2026-0042.txt sample-files/INV-2026-0043.txt; do
+  az storage blob upload --account-name &quot;$ACCOUNT&quot; --container-name invoices \
+    --name &quot;$(basename &quot;$f&quot;)&quot; --file &quot;$f&quot; --auth-mode login --output none
+done
+</code></pre></div>
+<p>Sekarang jadilah penyerang. Ransomware tidak perlu menghapus apa pun — ia cukup menimpa file dengan &quot;sampah&quot; terenkripsi:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>printf &#x27;ENCRYPTED BY RANSOMWARE - pay by Friday to get your invoice back\n&#x27; &gt; work/INV-2026-0042.txt
+az storage blob upload --account-name &quot;$ACCOUNT&quot; --container-name invoices --name INV-2026-0042.txt \
+  --file work/INV-2026-0042.txt --overwrite --auth-mode login --output none
+
+rm -f work/check.txt
+az storage blob download --account-name &quot;$ACCOUNT&quot; --container-name invoices --name INV-2026-0042.txt \
+  --file work/check.txt --auth-mode login --output none
+cat work/check.txt
+</code></pre></div>
+<p>Tanpa versioning, faktur itu pasti sudah lenyap. Tampilkan daftar versinya — setiap penulisan membuat satu versi, dengan
+timestamp sebagai ID-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name invoices --include v --prefix INV-2026-0042 \
+  --auth-mode login --query &quot;[].{name:name, versionId:versionId, current:isCurrentVersion}&quot; --output table
+</code></pre></div>
+<p>Versi tertua menyimpan faktur aslinya. Baca versi itu, lalu <strong>promosikan</strong> dengan menyalinnya ke atas blob saat ini:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ORIGINAL=$(az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name invoices --include v \
+  --prefix INV-2026-0042.txt --auth-mode login \
+  --query &quot;sort_by([?name==&#x27;INV-2026-0042.txt&#x27;], &amp;versionId)[0].versionId&quot; --output tsv)
+echo &quot;Original version: $ORIGINAL&quot;
+
+rm -f work/original.txt
+az storage blob download --account-name &quot;$ACCOUNT&quot; --container-name invoices --name INV-2026-0042.txt \
+  --version-id &quot;$ORIGINAL&quot; --file work/original.txt --auth-mode login --output none
+head -n 3 work/original.txt
+
+az storage blob copy start --account-name &quot;$ACCOUNT&quot; \
+  --destination-container invoices --destination-blob INV-2026-0042.txt \
+  --source-uri &quot;https://${ACCOUNT}.blob.core.windows.net/invoices/INV-2026-0042.txt?versionId=${ORIGINAL}&quot; \
+  --auth-mode login --output none
+</code></pre></div>
+<p>Penyalinan itu membuat versi saat ini yang <em>baru</em> dengan isi asli; versi terenkripsi tertinggal sebagai previous
+version, yang nanti dibersihkan oleh aturan lifecycle (Tugas 5).</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Storage browser › <code>invoices</code> › <code>INV-2026-0042.txt</code> › tab <em>Versions</em> › pilih versi tertua ›
+<em>Make current version</em>. Portal melakukan penyalinan yang sama untuk Anda.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> unduh blob itu lagi (perintah <code>download</code> dan <code>cat</code> di atas) — baris pertamanya berbunyi
+<code>PT NUSANTARA RETAIL - INVOICE INV-2026-0042</code>, dan daftar versi kini menampilkan tiga versi.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--menghapus-satu-faktur-lalu-seluruh-container--dan-mengembalikan-keduanya" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Menghapus satu faktur, lalu seluruh container — dan mengembalikan keduanya</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--menghapus-satu-faktur-lalu-seluruh-container--dan-mengembalikan-keduanya" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Hapus faktur kedua lalu lihat isi container:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage blob delete --account-name &quot;$ACCOUNT&quot; --container-name invoices --name INV-2026-0043.txt \
+  --auth-mode login --output none
+az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name invoices --auth-mode login --query &quot;[].name&quot; --output tsv
+az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name invoices --include v --prefix INV-2026-0043 \
+  --auth-mode login --query &quot;[].{name:name, versionId:versionId, current:isCurrentVersion}&quot; --output table
+</code></pre></div>
+<p>Faktur itu tidak muncul di daftar biasa, tetapi versinya masih ada: dengan versioning aktif, penghapusan hanya mengubah
+versi saat ini menjadi previous version. (<code>az storage blob undelete</code> memulihkan versi yang <em>di-soft-delete</em>; perintah
+itu tidak mengembalikan versi saat ini, jadi caranya di sini adalah promosi.) Promosikan versi terbaru, persis seperti di
+Tugas 3:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>LATEST=$(az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name invoices --include v \
+  --prefix INV-2026-0043.txt --auth-mode login \
+  --query &quot;sort_by([?name==&#x27;INV-2026-0043.txt&#x27;], &amp;versionId)[-1].versionId&quot; --output tsv)
+
+az storage blob copy start --account-name &quot;$ACCOUNT&quot; \
+  --destination-container invoices --destination-blob INV-2026-0043.txt \
+  --source-uri &quot;https://${ACCOUNT}.blob.core.windows.net/invoices/INV-2026-0043.txt?versionId=${LATEST}&quot; \
+  --auth-mode login --output none
+</code></pre></div>
+<p>Sekarang yang lebih besar: seseorang menghapus <strong>seluruh container</strong>. Container soft delete menyimpannya selama 14 hari.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage container delete --account-name &quot;$ACCOUNT&quot; --name invoices --auth-mode login --output none
+
+az storage container list --account-name &quot;$ACCOUNT&quot; --include-deleted --auth-mode login \
+  --query &quot;[?deleted].{name:name, version:version}&quot; --output table
+
+DELETED_VERSION=$(az storage container list --account-name &quot;$ACCOUNT&quot; --include-deleted --auth-mode login \
+  --query &quot;[?name==&#x27;invoices&#x27; &amp;&amp; deleted] | [0].version&quot; --output tsv)
+
+az storage container restore --account-name &quot;$ACCOUNT&quot; --name invoices \
+  --deleted-version &quot;$DELETED_VERSION&quot; --auth-mode login --output none
+</code></pre></div>
+<p>Jika restore menampilkan pesan <em>The specified container is being deleted</em>, tunggu 30 detik lalu jalankan perintah
+terakhir sekali lagi.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong>
+<code>az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name invoices --auth-mode login --query &quot;[].name&quot; --output tsv</code>
+kembali menampilkan kedua faktur — container itu kembali lengkap dengan blob dan versinya.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--men-deploy-lifecycle-policy-sepuluh-tahun" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Men-deploy lifecycle policy sepuluh tahun</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--men-deploy-lifecycle-policy-sepuluh-tahun" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Lihat <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/24-storage-advanced/lifecycle-policy.json" target="_blank" rel="noopener"><code>lifecycle-policy.json</code></a>: satu aturan untuk block blob yang namanya diawali <code>invoices/</code>
+(nama container). Versi saat ini pindah ke cool setelah 30 hari, ke cold setelah 90 hari, dan ke archive setelah satu
+tahun — tetapi tidak dalam 7 hari setelah perpindahan tier, sehingga faktur yang baru di-rehydrate tidak langsung
+diarsipkan lagi — dan dihapus setelah 3.650 hari. Previous version pindah ke cold setelah 30 hari dan dihapus setelah
+satu tahun, sehingga sisa-sisa ransomware tidak menumpuk.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>cat lifecycle-policy.json
+
+az storage account management-policy create --account-name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --policy @lifecycle-policy.json --output none
+</code></pre></div>
+<p>Jarak antarlangkah diatur agar setiap faktur tinggal di setiap tier setidaknya selama durasi penyimpanan minimum tier
+tersebut (30, 90, dan 180 hari), sehingga aturan ini tidak pernah menimbulkan biaya penghapusan dini. Platform menjalankan
+aturan lifecycle sekali sehari, dan kebijakan baru bisa memerlukan hingga 24 jam untuk mulai bekerja — faktur Anda yang
+baru berumur beberapa menit tidak akan berpindah hari ini.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Storage account › <em>Data management</em> › <em>Lifecycle management</em> › <em>Add a rule</em>. Setelah menyimpan,
+buka <em>Code view</em> untuk melihat JSON yang sama.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> perintah ini menampilkan aturan <code>invoices-ten-years</code> dalam keadaan aktif, dengan 30, 90, 365, dan
+3650:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage account management-policy show --account-name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;policy.rules[].{rule:name, enabled:enabled, cool:definition.actions.baseBlob.tierToCool.daysAfterModificationGreaterThan, cold:definition.actions.baseBlob.tierToCold.daysAfterModificationGreaterThan, archive:definition.actions.baseBlob.tierToArchive.daysAfterModificationGreaterThan, delete:definition.actions.baseBlob.delete.daysAfterModificationGreaterThan}&quot; \
+  --output table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-6--membuat-tahun-pajak-yang-sudah-ditutup-menjadi-immutable" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Membuat tahun pajak yang sudah ditutup menjadi immutable</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--membuat-tahun-pajak-yang-sudah-ditutup-menjadi-immutable" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Tahun pajak 2025 sudah ditutup; fakturnya tidak boleh berubah. Buat container untuknya, unggah fakturnya, lalu tambahkan
+<strong>time-based retention policy</strong> selama satu hari (di dunia nyata: sepuluh tahun, atau 3.650 hari):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage container create --account-name &quot;$ACCOUNT&quot; --name invoices-2025 --auth-mode login --output none
+az storage blob upload --account-name &quot;$ACCOUNT&quot; --container-name invoices-2025 --name INV-2025-0999.txt \
+  --file sample-files/INV-2025-0999.txt --auth-mode login --output none
+
+az storage container immutability-policy create --account-name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --container-name invoices-2025 --period 1 --output none
+
+az storage container immutability-policy show --account-name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --container-name invoices-2025 --query &quot;{state:state, days:immutabilityPeriodSinceCreationInDays}&quot; --output table
+</code></pre></div>
+<p>Beri kebijakan itu sedikit waktu untuk berlaku, lalu coba hapus fakturnya — seperti yang akan dilakukan penyerang yang
+memegang izin seperti milik Anda:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>sleep 45
+az storage blob delete --account-name &quot;$ACCOUNT&quot; --container-name invoices-2025 --name INV-2025-0999.txt \
+  --auth-mode login
+</code></pre></div>
+<p>Penghapusan ditolak dengan <code>BlobImmutableDueToPolicy</code> (HTTP 409), walaupun Anda punya akses data penuh. Kebijakan itu
+melindungi setiap blob selama satu hari setelah blob dibuat; setelah itu, blob boleh dihapus tetapi tetap tidak boleh
+diubah.</p>
+<p><strong>Locked vs unlocked.</strong> Kebijakan Anda berstatus <strong>Unlocked</strong>: ia sudah memblokir penghapusan dan perubahan, tetapi Anda
+masih bisa memperpendek atau menghapusnya. Karena itulah kebijakan ini cocok untuk pengujian — dan itulah sebabnya
+<code>cleanup.sh</code> bisa membereskan lab ini. Kebijakan <strong>Locked</strong> (<code>az storage container immutability-policy lock</code>) hanya bisa
+<em>diperpanjang</em>, paling banyak lima kali, dan tidak pernah bisa dihapus. Selama terkunci, blob yang dilindungi tidak bisa
+dihapus sebelum periodenya berakhir, dan storage account tidak bisa dihapus selama container itu masih ada. Itulah yang
+diinginkan auditor untuk faktur sepuluh tahun — dan itulah sebabnya Anda <strong>tidak</strong> menguncinya di lab.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Container <code>invoices-2025</code> › <em>Settings</em> › <em>Access policy</em> › <em>Immutable blob storage</em> ›
+<em>Add policy</em> › <em>Time-based retention</em>, 1 hari.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> perintah <code>show</code> mencetak <code>Unlocked</code> dan <code>1</code>, dan penghapusan gagal dengan pesan
+<code>This operation is not permitted as the blob is immutable due to a policy.</code></p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--memberi-account-private-endpoint-dan-private-dns-zone" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Memberi account private endpoint dan private DNS zone</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--memberi-account-private-endpoint-dan-private-dns-zone" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Private endpoint menaruh sebuah network interface untuk layanan <strong>blob</strong> milik account ke dalam <code>snet-pe</code>. Karena Anda
+pemilik account tersebut, koneksinya disetujui secara otomatis.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network private-endpoint create \
+  --resource-group &quot;$RG&quot; \
+  --name pe-stnusa24-blob \
+  --location &quot;$LOCATION&quot; \
+  --vnet-name &quot;$VNET&quot; \
+  --subnet snet-pe \
+  --private-connection-resource-id &quot;$ACCOUNT_ID&quot; \
+  --group-id blob \
+  --connection-name pec-stnusa24-blob \
+  --output none
+</code></pre></div>
+<p>Tanpa DNS, tidak akan ada yang memakainya. Buat private DNS zone, tautkan ke virtual network, lalu tambahkan <strong>DNS zone
+group</strong> ke endpoint, yang menulis (dan memelihara) A record untuk account Anda di zona tersebut:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network private-dns zone create --resource-group &quot;$RG&quot; --name &quot;$ZONE&quot; --output none
+
+az network private-dns link vnet create --resource-group &quot;$RG&quot; --zone-name &quot;$ZONE&quot; \
+  --name link-vnet-nusa-lab24 --virtual-network &quot;$VNET&quot; --registration-enabled false --output none
+
+az network private-endpoint dns-zone-group create --resource-group &quot;$RG&quot; --endpoint-name pe-stnusa24-blob \
+  --name default --private-dns-zone &quot;$ZONE&quot; --zone-name blob --output none
+
+az network private-dns record-set a list --resource-group &quot;$RG&quot; --zone-name &quot;$ZONE&quot; \
+  --query &quot;[].{name:name, ip:aRecords[0].ipv4Address}&quot; --output table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Storage account › <em>Security + networking</em> › <em>Networking</em> › <em>Private endpoints</em> ›
+<em>+ Private endpoint</em>. Pilih sub-resource <em>blob</em>, subnet <code>snet-pe</code>, dan <em>Integrate with private DNS zone: Yes</em> — portal
+membuat zona, tautan, dan zone group untuk Anda.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> daftar record menampilkan nama account Anda dengan alamat di <code>10.24.2.0/24</code> (biasanya <code>10.24.2.4</code>),
+dan
+<code>az network private-endpoint show --resource-group &quot;$RG&quot; --name pe-stnusa24-blob --query &quot;privateLinkServiceConnections[0].privateLinkServiceConnectionState.status&quot; --output tsv</code>
+mencetak <code>Approved</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-8--membandingkan-jawaban-dns-cloud-shell-vs-di-dalam-jaringan" data-kind="task"><h2><span class="task-tag">Tugas 8</span><span class="title">Membandingkan jawaban DNS: Cloud Shell vs di dalam jaringan</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-8--membandingkan-jawaban-dns-cloud-shell-vs-di-dalam-jaringan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Dari Cloud Shell, yang berjalan di sisi internet:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>nslookup &quot;${ACCOUNT}.blob.core.windows.net&quot;
+</code></pre></div>
+<p>Anda melihat rangkaian alias — mula-mula <code>&lt;account&gt;.privatelink.blob.core.windows.net</code>, lalu sebuah nama host storage
+publik — dan alamat IP <strong>publik</strong>. Cloud Shell tidak berada di <code>vnet-nusa-lab24</code>, jadi private zone tidak berlaku
+baginya.</p>
+<p>Sekarang ajukan pertanyaan yang sama dari <code>vm-dns-1</code>, di dalam virtual network. Run Command memerlukan 20–60 detik:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-dns-1 --command-id RunShellScript \
+  --scripts &quot;nslookup ${ACCOUNT}.blob.core.windows.net || getent hosts ${ACCOUNT}.blob.core.windows.net&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Nama yang sama, alias yang sama ke <code>privatelink</code>, tetapi kali ini private DNS zone yang tertaut menjawab dengan
+<strong>10.24.2.4</strong> (atau alamat mana pun yang ditampilkan Tugas 7). Aplikasi sama sekali tidak mengubah connection
+string-nya — DNS-lah yang melakukan pengalihan.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Cloud Shell menampilkan alamat publik; VM menampilkan alamat <code>10.24.2.x</code> milik private endpoint Anda.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-9--menutup-pintu-publik--selesaikan-pekerjaan-data-plane-lebih-dulu" data-kind="task"><h2><span class="task-tag">Tugas 9</span><span class="title">Menutup pintu publik — selesaikan pekerjaan data plane lebih dulu</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-9--menutup-pintu-publik--selesaikan-pekerjaan-data-plane-lebih-dulu" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Menonaktifkan public network access memblokir <strong>setiap</strong> request yang sampai ke public endpoint, termasuk request Anda
+sendiri dari Cloud Shell dan dari Storage browser di portal. Operasi manajemen (control plane, yaitu mengelola resource
+dan pengaturannya) lewat Azure Resource Manager tetap berjalan, tetapi apa pun yang menyentuh data blob kini harus datang
+lewat private endpoint. Jadi, selesaikan dulu tugas-tugas data plane. Di sini tinggal satu lagi: <strong>user delegation SAS</strong>
+hanya-baca untuk sebuah faktur, berlaku satu jam, yang akan Anda pakai untuk menguji kedua jalur jaringan. (Membuatnya
+berarti meminta user delegation key ke endpoint blob — panggilan data plane yang akan gagal setelah pintu ditutup.)</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>EXPIRY=$(date -u -d &quot;+1 hour&quot; &#x27;+%Y-%m-%dT%H:%MZ&#x27;)
+SAS_URL=$(az storage blob generate-sas --account-name &quot;$ACCOUNT&quot; --container-name invoices \
+  --name INV-2026-0042.txt --permissions r --expiry &quot;$EXPIRY&quot; --https-only \
+  --auth-mode login --as-user --full-uri --output tsv)
+
+curl -s -o /dev/null -w &quot;Cloud Shell, public access on: HTTP %{http_code}\n&quot; &quot;$SAS_URL&quot;
+</code></pre></div>
+<p>Sekarang tutup pintunya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage account update --name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --public-network-access Disabled --output none
+
+az storage account show --name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;{publicNetworkAccess:publicNetworkAccess, defaultAction:networkRuleSet.defaultAction}&quot; --output table
+</code></pre></div>
+<p>Uji dari Cloud Shell (jika Anda masih mendapat 200, tunggu satu menit — perubahan jaringan butuh sedikit waktu):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>curl -s -o work/blocked.xml -w &quot;Cloud Shell, public access Disabled: HTTP %{http_code}\n&quot; &quot;$SAS_URL&quot;
+grep -o &#x27;&lt;Code&gt;[^&lt;]*&lt;/Code&gt;&#x27; work/blocked.xml
+
+az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name invoices --auth-mode login --output table
+</code></pre></div>
+<p>Keduanya gagal: <code>curl</code> mendapat <code>403</code> dengan <code>AuthorizationFailure</code>, dan CLI melaporkan <em>This request is not authorized
+to perform this operation.</em> (request ini tidak diizinkan menjalankan operasi tersebut) — kredensialnya sah, tetapi
+datang dari jaringan yang salah. Sekarang coba URL SAS yang sama persis dari VM di dalam virtual network, lewat private
+endpoint:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-dns-1 --command-id RunShellScript \
+  --scripts &quot;curl -s -w &#x27;\nHTTP %{http_code}\n&#x27; &#x27;${SAS_URL}&#x27;&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Fakturnya kembali dengan <code>HTTP 200</code>. URL yang sama, SAS yang sama — satu-satunya perbedaan adalah jalur jaringannya.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Storage account › <em>Security + networking</em> › <em>Networking</em> › <em>Public network access</em> ›
+<em>Disabled</em> › <em>Save</em>. Lalu buka <em>Storage browser</em> dan lihat sendiri pesan error-nya.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Cloud Shell mendapat <code>403</code> / <code>AuthorizationFailure</code>; VM mendapat teks faktur dan <code>HTTP 200</code>.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Seorang rekan &quot;merapikan&quot; private DNS zone dan menghapus tautannya ke virtual network. Simulasikan kejadian itu:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network private-dns link vnet delete --resource-group &quot;$RG&quot; --zone-name &quot;$ZONE&quot; \
+  --name link-vnet-nusa-lab24 --yes
+sleep 60
+
+az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-dns-1 --command-id RunShellScript \
+  --scripts &quot;resolvectl flush-caches; nslookup ${ACCOUNT}.blob.core.windows.net; curl -s -o /dev/null -w &#x27;HTTP %{http_code}\n&#x27; &#x27;${SAS_URL}&#x27;&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p><strong>Gejala:</strong> VM kini mendapat alamat IP <em>publik</em>, dan request gagal dengan <code>HTTP 403</code>. Private endpoint masih ada dan
+masih berstatus disetujui — tetapi tanpa tautan zona, jawaban DNS mengirim VM ke public endpoint (keluar lewat NAT
+gateway), yang sudah Anda nonaktifkan di Tugas 9. (Jika sudah lewat lebih dari satu jam, SAS-nya kedaluwarsa dan Anda
+tetap mendapat 403; jawaban <code>nslookup</code> saja sudah cukup membuktikannya.)</p>
+<details class="plain"><summary>Petunjuk: perbaikannya</summary>
+<p>Buat ulang tautan itu persis seperti di Tugas 7, tunggu satu menit, lalu jalankan Run Command yang sama sekali lagi:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network private-dns link vnet create --resource-group &quot;$RG&quot; --zone-name &quot;$ZONE&quot; \
+  --name link-vnet-nusa-lab24 --virtual-network &quot;$VNET&quot; --registration-enabled false --output none
+</code></pre></div>
+<p>VM kembali mendapat <code>10.24.2.x</code> dan <code>HTTP 200</code>. Pelajarannya: private endpoint baru separuh pekerjaan — klien harus
+menerjemahkan nama lewat zona yang tertaut ke jaringan <em>mereka</em> (atau lewat server DNS yang meneruskan ke zona itu).</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu
+Anda ulangi. <code>verify.sh</code> hanya memakai panggilan manajemen, jadi skrip ini tetap berjalan walaupun public network access
+kini Disabled.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+unset SAS_URL
+</code></pre></div>
+<p>Perintah ini menghapus retention policy unlocked pada <code>invoices-2025</code>, menghapus resource group <code>rg-lunch24-&lt;suffix&gt;</code>
+(beserta storage account, private endpoint, private DNS zone, VM, NAT gateway, dan virtual network), serta folder lokal
+<code>work/</code>. Penghapusan berlanjut di latar belakang selama beberapa menit.</p>
+<details class="plain"><summary>Jika Anda telanjur mengunci kebijakan</summary>
+<p>Kebijakan yang terkunci tidak bisa dihapus, jadi storage account (dan resource group-nya) bertahan sampai masa retensi
+berakhir — satu hari setelah setiap blob dibuat, jika Anda memakai <code>--period 1</code>. <code>cleanup.sh</code> tetap menghapus semua yang
+lain. Setelah periode itu berakhir:</p>
+<ol>
+<li>Aktifkan kembali public network access:
+<code>az storage account update --name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; --public-network-access Enabled --default-action Allow</code></li>
+<li>Kosongkan <code>invoices-2025</code>: hapus blob-blobnya beserta previous version-nya (menghapus versi membutuhkan <strong>Storage Blob
+Data Owner</strong>, yang bisa Anda berikan kepada diri sendiri seperti di Tugas 1).</li>
+<li>Hapus container lewat control plane:
+<code>az storage container-rm delete --storage-account &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; --name invoices-2025 --yes</code></li>
+<li>Jalankan <code>bash cleanup.sh</code> lagi.</li>
+</ol>
+<p>Jika Azure masih menolak, baca dokumentasi WORM container-level atau ajukan support request. Sementara itu, beberapa
+kilobyte di account LRS hampir tidak memakan biaya.</p>
+</details>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setup.sh</code> gagal dengan <code>SkuNotAvailable</code></td>
+<td>Ukuran VM itu sedang tidak ditawarkan di region Anda</td>
+<td>Jalankan <code>VM_SIZE_SMALL=Standard_B2ats_v2 bash setup.sh</code>, atau pilih ukuran dari <code>az vm list-skus --location &quot;$LOCATION&quot; --size Standard_B --output table</code></td>
+</tr>
+<tr>
+<td><code>The storage account named stnusa24… is already taken.</code></td>
+<td>Nama storage account bersifat global</td>
+<td>Tetapkan <code>ACCOUNT=&quot;stnusa24${SUFFIX}x&quot;</code> dan pakai di mana-mana (skrip-skrip juga mematuhi <code>ACCOUNT</code>)</td>
+</tr>
+<tr>
+<td><code>You do not have the required permissions needed to perform this operation…</code></td>
+<td>Role data dari Tugas 1 belum aktif</td>
+<td>Tunggu beberapa menit lalu coba lagi</td>
+</tr>
+<tr>
+<td><code>The specified container is being deleted. Try operation later.</code></td>
+<td>Anda memulihkan atau membuat ulang container beberapa detik setelah menghapusnya</td>
+<td>Tunggu 30 detik lalu coba lagi</td>
+</tr>
+<tr>
+<td><code>This operation is not permitted as the blob is immutable due to a policy.</code></td>
+<td>Retention policy bekerja (Tugas 6)</td>
+<td>Memang diharapkan — justru itu tujuannya</td>
+</tr>
+<tr>
+<td><code>This request is not authorized to perform this operation.</code></td>
+<td>Public network access Disabled (Tugas 9), dan Anda berada di sisi publik</td>
+<td>Diharapkan setelah Tugas 9; pekerjaan data plane kini harus datang dari dalam virtual network</td>
+</tr>
+<tr>
+<td>Run Command macet, kehabisan waktu, atau tidak mengembalikan output</td>
+<td>VM tidak punya akses keluar (NAT gateway hilang) atau masih menyala</td>
+<td>Jalankan lagi <code>bash setup.sh</code> (aman dijalankan ulang), tunggu satu menit, lalu coba lagi</td>
+</tr>
+<tr>
+<td><code>Run command extension execution is in progress…</code></td>
+<td>Run Command sebelumnya masih berjalan</td>
+<td>Tunggu sampai selesai; jalankan satu perintah dalam satu waktu</td>
+</tr>
+<tr>
+<td><code>nslookup: command not found</code> di VM</td>
+<td>Image-nya tidak punya alat DNS</td>
+<td>Perintahnya otomatis beralih ke <code>getent hosts</code>, yang mencetak alamat hasil resolusi</td>
+</tr>
+<tr>
+<td><code>management-policy create</code> mengeluh tidak bisa mem-parse kebijakan</td>
+<td>File JSON sudah diedit dan tidak valid lagi</td>
+<td>Periksa dengan <code>python3 -m json.tool lifecycle-policy.json</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li><strong>Hapus sebuah previous version</strong> dari <code>INV-2026-0042.txt</code> di portal (tab <em>Versions</em>). Dengan Storage Blob Data
+Contributor, upaya itu gagal — menghapus versi membutuhkan <strong>Storage Blob Data Owner</strong>. Mengapa itu menjadi lapisan
+pertahanan yang berguna? (Kerjakan sebelum Tugas 9, atau aktifkan kembali public access sebentar.)</li>
+<li><strong>Point-in-time restore:</strong> buat account kedua (bukan account ini — PITR, alias point-in-time restore, dan immutability
+tidak bisa berbagi satu account), aktifkan point-in-time restore 6 hari dan soft delete 7 hari, ubah beberapa blob,
+lalu gunakan <em>Containers</em> › <em>Restore containers</em> di portal untuk memutar baliknya.</li>
+<li><strong>Baca change feed:</strong> sebelum Tugas 9, tampilkan daftarnya dengan <code>az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name '$blobchangefeed' --auth-mode login --query &quot;[].name&quot; --output tsv</code>.
+File log muncul setelah beberapa menit dan mencatat setiap create, update, dan delete yang Anda lakukan.</li>
+<li><strong>Larang Shared Key</strong> dengan <code>az storage account update --allow-shared-key-access false</code> lalu coba
+<code>az storage container list --account-name &quot;$ACCOUNT&quot; --auth-mode key</code>. Error apa yang Anda dapat, dan jenis SAS mana
+yang berhenti berfungsi?</li>
+<li><strong>Object replication:</strong> replikasikan <code>invoices</code> ke account kedua di <code>$SECONDARY_LOCATION</code> (<em>Data management</em> ›
+<em>Object replication</em>). Apa yang harus dimiliki kedua account lebih dulu?</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Jalankan <code>bash setup.sh</code> lebih dulu, lalu bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep),
+di <code>rg-lunch24-&lt;suffix&gt;</code>:</p>
+<ol>
+<li>Storage account general-purpose v2 bernama <code>stnusa24&lt;suffix&gt;</code> (LRS sudah cukup).</li>
+<li>Blob versioning, blob soft delete, dan container soft delete (masing-masing minimal 7 hari), serta change feed —
+semuanya aktif.</li>
+<li>Latihan pemulihan (buktikan kepada diri Anda sendiri; <code>verify.sh</code> tidak bisa memeriksanya): timpa sebuah faktur dan
+pulihkan versi aslinya; hapus sebuah faktur dan kembalikan; hapus sebuah container dan pulihkan.</li>
+<li>Aturan lifecycle yang aktif, yang memindahkan blob ke tier yang lebih dingin dan menghapusnya di akhir masa hidupnya
+(misalnya dari <code>lifecycle-policy.json</code>).</li>
+<li>Container <code>invoices-2025</code> dengan time-based retention policy yang tetap <strong>unlocked</strong>.</li>
+<li>Private endpoint untuk sub-resource <code>blob</code> di <code>snet-pe</code> milik <code>vnet-nusa-lab24</code>, dan private DNS zone
+<code>privatelink.blob.core.windows.net</code> di resource group yang sama, tertaut ke <code>vnet-nusa-lab24</code>, dengan A record untuk
+account tersebut. Dari <code>vm-dns-1</code>, nama account diterjemahkan ke alamat <code>10.24.2.x</code>.</li>
+<li>Public network access <strong>Disabled</strong> — setelah semua pekerjaan data plane Anda selesai.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="23-virtual-machines-advanced.html"><small>← Lab sebelumnya</small>23 · Siap menghadapi promo 12.12</a><a class="next" href="25-networking-advanced.html"><small>Lab berikutnya →</small>25 · Hub-and-spoke untuk Nusantara Retail</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/24-storage-advanced/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

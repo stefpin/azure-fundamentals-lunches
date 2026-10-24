@@ -1,9 +1,12 @@
 # Lunch 17 · Backup and Disaster Recovery (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 4:** Secure, operate and govern
 > **Time:** 60 minutes · **Prerequisite lunches:** 03, 06, 07
 > **AZ-900 skill area:** Beyond AZ-900 (reliability in practice)
 > **Lab:** [Lab 17 · The restore drill](../../labs/17-backup-disaster-recovery/README.md) — 60–90 minutes (mostly waiting) · cost 💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -29,9 +32,10 @@ By the end of this lunch you will be able to:
 
 ## 🏪 Meanwhile at Nusantara Retail
 
-On Monday morning, Pak Budi forwards a news story: a retail chain in Surabaya was hit by ransomware over the weekend.
+On Monday morning, Pak Budi forwards a news story: nine days ago, a retail chain in Surabaya was hit by
+ransomware.
 The attackers didn't just encrypt the servers. They first signed in with a stolen administrator password and deleted
-the backups. Nine days later, the chain's web shop is still offline.
+the backups. The chain's web shop is still offline today.
 
 Ibu Sari calls a meeting. "We moved the storefront to Azure," she says, "so we're safe, right?" Dewi points out that
 the orders database is zone-redundant. Pak Budi remembers configuring "the backup job" on the old server in 2019 and
@@ -266,7 +270,7 @@ advice. Southeast Asia, in Singapore, is the natural candidate: close, with thre
 
 | Component | High availability in Indonesia Central | Backup | Disaster recovery to Southeast Asia |
 |---|---|---|---|
-| Storefront VMs | spread across zones behind a load balancer | Azure Backup, daily, zone-redundant vault | Site Recovery, with a test failover every quarter |
+| Storefront VMs | spread across zones behind a load balancer | Azure Backup, daily, zone-redundant vault | Site Recovery, with a test failover twice a year |
 | Orders database (Azure SQL) | zone-redundant database | automatic point-in-time backups | failover group |
 | Catalogue (Cosmos DB) | zone redundancy | continuous backup | Southeast Asia as a second region |
 | Product photos (Blob Storage) | zone-redundant storage | soft delete and versioning | object replication to an account in Southeast Asia |
@@ -366,6 +370,16 @@ What to watch for:
   an admin account is compromised.
 - **Site Recovery** gives minute-level RPO in another region. For a nonpaired region like Indonesia Central you choose
   the secondary region yourself, weigh data residency, and **test** with drills.
+
+## 🗒️ Field notes from Stefanus
+
+> **Ask who can delete the last copy.** In design reviews I ask one question about every backup: *which accounts
+> could destroy the last copy of this data, and are they the same accounts that run production?* If they are, one
+> stolen password takes out the system and its way back together. So I want multi-user authorization with the
+> Resource Guard in a subscription the production admins can't touch, and alerts on deleted backup data that reach
+> someone outside the team. Then I ask how quickly we would honestly notice an attack; if it could take longer than
+> 14 days, I extend soft-delete retention. And the person who runs the restore drill is never the person who designed
+> the backup: a runbook that only its author can follow is a single point of failure with a name.
 
 ## 🔬 Your lab: The restore drill
 

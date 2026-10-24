@@ -1,8 +1,11 @@
 # Lab 31 · Governance for the whole company
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 31 · Resource Hierarchy and Governance (Advanced)](../../lunches/31-governance-at-scale/README.md)
 > **Time:** about 60 minutes, including 15–25 minutes of waiting for Azure Policy · **Cost:** 💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★★
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by `setup.sh`.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

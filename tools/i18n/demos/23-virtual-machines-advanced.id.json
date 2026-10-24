@@ -1,0 +1,152 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 23 · Virtual Machines (Lanjutan) — Demo interaktif",
+    "kicker": "Makan Siang 23 · Virtual Machines (Lanjutan) · Demo interaktif",
+    "title": "Siap menghadapi 12.12: scale set yang membesar, bertahan, dan menyusut",
+    "lede": "Saksikan scale set Flexible membesar menyambut malam belanja online terbesar di Indonesia, menjaga toko tetap buka saat satu zona gagal, menyusut lagi setelah cool-down — dan lihat sebuah Spot VM di-evict. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Scale set Flexible yang melakukan autoscale di tiga availability zone untuk promo 12.12",
+    "svgDesc": "Pembeli menjangkau Standard load balancer di Indonesia Central. Di belakangnya, sebuah virtual machine scale set Flexible punya satu instance di masing-masing dari tiga availability zone. Azure Monitor mengirim Percentage CPU ke pengaturan autoscale, yang membesarkan set dari tiga menjadi enam instance selama lonjakan 12.12, menjaga toko tetap buka saat zona 2 gagal, lalu menyusutkannya lagi setelah cool-down. Sebuah panel membandingkan availability set dengan zona, dan Spot VM yang menjalankan batch job di-evict dengan pemberitahuan 30 detik."
+  },
+  "steps": [
+    {
+      "title": "Hitung mundur menuju 12.12",
+      "text": "Setiap tanggal 12 Desember, Hari Belanja Online Nasional, kunjungan ke toko Nusantara Retail melonjak selama beberapa jam. Tahun ini toko online berjalan di scale set Flexible di Indonesia Central: tiga instance, satu di setiap availability zone, di belakang Standard load balancer. Sanggupkah ia membesar menyambut lonjakan, lalu menyusut lagi sebelum sarapan?"
+    },
+    {
+      "title": "Kenali bagian-bagiannya",
+      "text": "Model scale set menyimpan resepnya — image, ukuran, cloud-init, dan pengaturan jaringan — sehingga setiap instance baru identik. Azure Monitor mengumpulkan Percentage CPU tiap instance, dan pengaturan autoscale mengubah angka-angka itu menjadi keputusan, antara minimum 3 dan maksimum 9 instance. NAT gateway memberi instance akses keluar yang eksplisit untuk update."
+    },
+    {
+      "title": "Malam yang biasa",
+      "text": "Pukul 21.00 tanggal 11 Desember, semuanya tenang. Load balancer membagi koneksi baru ke tiga instance, dan health probe-nya menanyakan /health ke setiap instance setiap beberapa detik. Rata-rata CPU berkisar 30 persen — di antara ambang scale-in dan scale-out — sehingga autoscale tidak melakukan apa pun."
+    },
+    {
+      "title": "Tengah malam: lonjakan datang",
+      "text": "Pukul 00.00 flash sale dibuka dan lalu lintas melonjak sekitar delapan kali lipat. Semua instance sibuk dan rata-rata CPU naik melewati 85 persen. Satu menit CPU tinggi belum membuktikan apa-apa, jadi aturan scale-out melihat rata-rata lima menit: lonjakan singkat tidak akan menambah server yang sebenarnya tidak Anda perlukan.",
+      "set": {
+        "t-clock": "12 Des · 00.00",
+        "t-traffic": "lalu lintas ~8×",
+        "t-cpu": "rata-rata 85%",
+        "t-vm-1a": "vm 1 · CPU 85%",
+        "t-vm-2a": "vm 2 · CPU 85%",
+        "t-vm-3a": "vm 3 · CPU 85%"
+      }
+    },
+    {
+      "title": "Aturan scale-out terpicu",
+      "text": "Setelah lima menit di atas 70 persen, aturan scale-out terpicu. Autoscale memeriksa batasnya — tiga instance sekarang, paling banyak sembilan — lalu meminta scale set menambah tiga lagi. Kemudian cool-down lima menit milik aturan itu dimulai, memberi waktu bagi instance baru untuk booting dan bagi metrik untuk stabil sebelum keputusan berikutnya.",
+      "set": {
+        "t-count": "instance: 3 → 6"
+      }
+    },
+    {
+      "title": "Instance baru di setiap zona",
+      "text": "Scale set membuat tiga VM dari modelnya dan menyebarnya merata, satu per zona. Masing-masing menyalakan image yang sama, menjalankan cloud-init yang sama, dan bergabung ke backend pool load balancer. Mereka belum melayani pelanggan: health probe harus melihat /health menjawab dulu sebelum ada request yang dikirim ke mereka.",
+      "set": {
+        "t-vm-1b": "vm 4 · booting",
+        "t-vm-2b": "vm 5 · booting",
+        "t-vm-3b": "vm 6 · booting"
+      }
+    },
+    {
+      "title": "Enam instance sehat berbagi beban",
+      "text": "Semenit kemudian ketiga instance baru lolos health probe. Load balancer kini membagi kerumunan 12.12 ke enam VM di tiga zona, dan rata-rata CPU turun ke sekitar 45 persen. Halaman checkout kembali cepat, dan tidak ada yang perlu bangun tengah malam untuk menambah server secara manual.",
+      "set": {
+        "t-vm-1b": "vm 4 · sehat",
+        "t-vm-2b": "vm 5 · sehat",
+        "t-vm-3b": "vm 6 · sehat",
+        "t-vm-1a": "vm 1 · CPU 45%",
+        "t-vm-2a": "vm 2 · CPU 45%",
+        "t-vm-3a": "vm 3 · CPU 45%",
+        "t-cpu": "rata-rata 45%",
+        "t-count": "instance: 6"
+      }
+    },
+    {
+      "title": "Satu zona padam",
+      "text": "Pukul 00.40 masalah listrik membuat availability zone 2 offline. Dua instance di sana berhenti menjawab /health, jadi load balancer mengirim semua request ke zona 1 dan 3, dan frontend zone-redundant-nya tetap memakai alamat IP yang sama. CPU naik di instance yang tersisa, dan autoscale bisa menambah instance di zona yang sehat — karena itulah batas maksimum menyisakan ruang cadangan.",
+      "set": {
+        "t-clock": "12 Des · 00.40",
+        "t-vm-2a": "vm 2 · zona mati",
+        "t-vm-2b": "vm 5 · zona mati",
+        "t-vm-1a": "vm 1 · CPU 65%",
+        "t-vm-3a": "vm 3 · CPU 65%",
+        "t-cpu": "rata-rata 65%"
+      }
+    },
+    {
+      "title": "Fault domain versus zona",
+      "text": "Mengapa zona, bukan availability set? Availability set menaruh VM-nya di satu pusat data, tersebar di maksimal tiga fault domain — rak dengan listrik dan switch jaringannya sendiri — dan maksimal 20 update domain untuk pemeliharaan terencana. Hasilnya 99,95 persen. Zona adalah pusat data yang terpisah, sehingga dua instance atau lebih di beberapa zona mendapat 99,99 persen."
+    },
+    {
+      "title": "Lonjakan berlalu, set menyusut",
+      "text": "Pukul 02.00 zona 2 sudah pulih dan rata-rata CPU turun di bawah 30 persen. Autoscale baru melakukan scale-in jika semua aturan scale-in sepakat, dan ia membuang satu instance per cool-down, setelah memastikan set yang lebih kecil tidak perlu langsung scale-out lagi. Sebelum sarapan set kembali ke tiga instance, dan tagihan ikut menyusut.",
+      "set": {
+        "t-clock": "12 Des · 02.00",
+        "t-traffic": "kembali normal",
+        "t-cpu": "rata-rata 20%",
+        "t-count": "instance: 6 → 3",
+        "t-vm-1a": "vm 1 · sehat",
+        "t-vm-2a": "vm 2 · sehat",
+        "t-vm-3a": "vm 3 · sehat"
+      }
+    },
+    {
+      "title": "Spot VM untuk sif malam",
+      "text": "Sepanjang malam, sebuah batch job membuat thumbnail untuk ribuan foto produk baru. Job ini berjalan di Spot VM: kapasitas sisa Azure dengan diskon besar, tanpa SLA. Eviction policy-nya Deallocate dan harga maksimumnya -1, jadi Azure tidak pernah meng-evict-nya karena harga — hanya ketika Azure membutuhkan kapasitasnya kembali."
+    },
+    {
+      "title": "Di-evict dengan pemberitahuan 30 detik",
+      "text": "Pukul 03.10 Azure membutuhkan kapasitasnya kembali. Scheduled Events memperingatkan VM sekitar 30 detik sebelumnya, job menyimpan checkpoint, dan VM di-deallocate. Disknya tetap ada, sehingga job bisa dilanjutkan saat kapasitas tersedia lagi. Toko online sama sekali tidak terganggu, karena tidak ada layanan yang diandalkan pelanggan berjalan di Spot.",
+      "set": {
+        "t-spot": "di-evict · deallocated",
+        "t-clock": "12 Des · 03.10"
+      }
+    },
+    {
+      "title": "Rangkuman: siap menghadapi 12.12",
+      "text": "Satu model scale set, tiga zona, aturan CPU dengan ambang dan cool-down yang masuk akal, dan kapasitas mengikuti permintaan ke dua arah. Kehilangan satu zona, toko tetap buka; serahkan pekerjaan yang boleh terputus kepada Spot. Di Lab 23 Anda membangun scale set, memasang autoscale, membangkitkan beban CPU, dan menyaksikannya membesar.",
+      "tip": "Lab 23 · Siap menghadapi promo 12.12 (sekitar 60 menit): scale set Flexible di zona 1–3 di belakang Standard load balancer, aturan autoscale, uji beban CPU, Spot VM opsional, dan patch assessment dengan Azure Update Manager.",
+      "set": {
+        "t-spot": "job dilanjutkan nanti",
+        "t-clock": "12 Des · 08.00"
+      }
+    }
+  ],
+  "svg": {
+    "Azure region · Indonesia Central": "Region Azure · Indonesia Central",
+    "Zone 1": "Zona 1",
+    "Zone 2": "Zona 2",
+    "Zone 3": "Zona 3",
+    "Shoppers": "Pembeli",
+    "11 Dec · 21:00": "11 Des · 21.00",
+    "normal evening": "malam biasa",
+    "average 30%": "rata-rata 30%",
+    "min 3 · max 9": "min 3 · maks 9",
+    "instances: 3": "instance: 3",
+    "zone-redundant IP": "IP zone-redundant",
+    "Flexible mode": "mode Flexible",
+    "zones 1 · 2 · 3": "zona 1 · 2 · 3",
+    "explicit outbound": "outbound eksplisit",
+    "vm 1 · healthy": "vm 1 · sehat",
+    "vm 4 · healthy": "vm 4 · sehat",
+    "vm 2 · healthy": "vm 2 · sehat",
+    "vm 5 · healthy": "vm 5 · sehat",
+    "vm 3 · healthy": "vm 3 · sehat",
+    "vm 6 · healthy": "vm 6 · sehat",
+    "Availability set · one datacenter": "Availability set · satu pusat data",
+    "rack A": "rak A",
+    "rack B": "rak B",
+    "rack C": "rak C",
+    "Fault domain: rack, power, switch": "Fault domain: rak, listrik, switch",
+    "Update domain: one reboot group": "Update domain: satu grup reboot",
+    "2+ VMs in a set: 99.95%": "2+ VM dalam set: 99,95%",
+    "2+ VMs across zones: 99.99%": "2+ VM lintas zona: 99,99%",
+    "Spot VMs · batch jobs": "Spot VM · batch job",
+    "product-photo thumbnails": "thumbnail foto produk",
+    "running at Spot price": "berjalan dengan harga Spot",
+    "about 30 s warning in the VM": "peringatan ~30 dtk di VM",
+    "job saves a checkpoint": "job menyimpan checkpoint",
+    "no Spot for checkout": "checkout tanpa Spot"
+  }
+}

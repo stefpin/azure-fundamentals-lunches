@@ -1,8 +1,11 @@
 # Lab 14 · React to new orders automatically
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 14 · Serverless: Azure Functions, Logic Apps and Event Grid](../../lunches/14-serverless/README.md)
 > **Time:** about 50 minutes · **Cost:** 💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by `setup.sh`.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 
@@ -80,9 +83,9 @@ cat function/function_app.py
 cat function/host.json
 ```
 
-In `function_app.py`, notice the three decorators on `new_order`: `@app.route` makes it an **HTTP trigger** for
-`POST /api/orders`; the app-wide `http_auth_level=FUNCTION` means callers need a **function key**; and
-`@app.queue_output(..., connection="OrdersStorage")` is the **output binding**. The code only calls `msg.set(...)`; the
+In `function_app.py`, notice the three decorators on `new_order`: `@app.function_name` names the function,
+`@app.route` makes it an **HTTP trigger** for `POST /api/orders`, and `@app.queue_output(..., connection="OrdersStorage")`
+is the **output binding**. The app-wide `http_auth_level=FUNCTION` means callers need a **function key**. The code only calls `msg.set(...)`; the
 Functions host writes the queue message. `host.json` pins the extension bundle (the set of binding extensions) to
 version 4 and sets `messageEncoding` to `none`, so queue messages are plain JSON that you can read.
 

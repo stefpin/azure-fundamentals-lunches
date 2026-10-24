@@ -271,7 +271,7 @@ svg .node > rect.subnet{fill:var(--surface);stroke-dasharray:5 4}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/06-virtual-machines-basic.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/06-virtual-machines-basic.html" data-href-id="../id/lunches/06-virtual-machines-basic.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -538,10 +538,126 @@ svg .node > rect.subnet{fill:var(--surface);stroke-dasharray:5 4}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 06 · Virtual Machines (Dasar) — Demo interaktif",
+   "kicker": "Makan Siang 06 · Virtual Machines (Dasar) · Demo interaktif",
+   "title": "Apa yang sebenarnya tercipta saat Anda membuat VM",
+   "lede": "Ikuti satu <code>az vm create<\/code> saat ia berubah menjadi enam resource Azure, saksikan SSH berhasil masuk sementara HTTP diblokir, dan lihat meteran mana yang berhenti saat VM dimatikan. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Apa yang dibuat Azure untuk satu virtual machine, serta bagaimana lalu lintas dan tagihan berperilaku",
+   "svgDesc": "Cloud Shell mengirim az vm create ke Azure Resource Manager. Di dalam sebuah resource group, muncul virtual network dengan subnet, Standard public IP, network security group, network interface, VM vm-web-1, OS disk, dan kemudian data disk. SSH dari Cloud Shell lolos melewati NSG, HTTP dari pembeli diblokir sampai port 80 dibuka, VM mengunduh update melalui public IP-nya, dan meteran compute serta disk menunjukkan apa yang ditagih saat VM dalam keadaan stopped atau deallocated."
+  },
+  "steps": [
+   {
+    "title": "Toko online keluar dari pantry",
+    "text": "Toko online Nusantara Retail masih berjalan di satu server fisik di sebelah pantry. Dewi membuka Azure Cloud Shell dan mengetik satu perintah, az vm create. Perhatikan apa yang sebenarnya dibangun oleh satu perintah itu, bagaimana lalu lintas sampai ke VM baru, dan meteran mana yang tetap berjalan saat VM dimatikan."
+   },
+   {
+    "title": "Satu permintaan tiba di Resource Manager",
+    "text": "Perintah itu menjadi satu permintaan ke Azure Resource Manager, pintu depan untuk setiap operasi create, update, dan delete. Resource Manager memeriksa siapa Dewi, apa yang boleh dia lakukan, dan kebijakan apa yang berlaku. Lalu ia menyerahkan pekerjaannya ke resource provider: Microsoft.Network untuk bagian jaringan dan Microsoft.Compute untuk VM beserta disknya."
+   },
+   {
+    "title": "Pertama, jaringan privat",
+    "text": "Microsoft.Network membuat virtual network vnet-nusa-web, 10.20.0.0/16, dengan subnet snet-web, 10.20.1.0/24. Dewi sengaja memilih rentang ini supaya tidak pernah bentrok dengan 10.0.0.0/16 milik kantor pusat. Subnet di virtual network baru bersifat privat secara default: tidak ada isinya yang otomatis mendapat jalur ke internet."
+   },
+   {
+    "title": "Pintu depan dan penjaganya",
+    "text": "Berikutnya dibuat sebuah Standard public IP address — statis, dan tertutup untuk lalu lintas masuk sampai ada aturan yang mengizinkan — serta network security group nsg-web. Karena ini VM Linux, CLI menambahkan satu aturan inbound: izinkan SSH di port 22 dari mana saja. Aturan default menolak semua lalu lintas lain dari internet."
+   },
+   {
+    "title": "NIC, VM, dan OS disk",
+    "text": "Sebuah network interface bergabung ke subnet dengan alamat privat 10.20.1.4. Microsoft.Compute lalu menempatkan vm-web-1 di sebuah host fisik: size Standard_B2ats_v2, image Ubuntu 24.04 LTS, Trusted Launch aktif. OS disk-nya adalah managed disk terpisah yang dibuat dari image. Satu perintah, enam resource terpisah — masing-masing dengan resource ID sendiri."
+   },
+   {
+    "title": "Meteran mulai berjalan",
+    "text": "Selama VM berjalan, dua meteran berdetak. Meteran compute menagih vCPU dan memori yang ditempati VM di host-nya. Meteran disk menagih ukuran yang dipesan (provisioned) untuk setiap managed disk, entah disk itu penuh atau kosong. Public IP menambahkan biaya kecilnya sendiri."
+   },
+   {
+    "title": "SSH berhasil masuk",
+    "text": "Dewi terhubung dari Cloud Shell dengan SSH. Paketnya sampai ke public IP, NSG menemukan aturan allow untuk port 22, dan NIC meneruskannya ke VM. Private key Dewi tidak pernah meninggalkan Cloud Shell; VM hanya menyimpan pasangan publiknya, jadi tidak ada kata sandi yang bisa ditebak oleh bot."
+   },
+   {
+    "title": "Outbound eksplisit untuk update",
+    "text": "Di dalam VM, Dewi memasang nginx dengan apt. Unduhannya keluar melalui Standard public IP milik VM sendiri menuju mirror paket Ubuntu. Public IP pada VM adalah metode outbound eksplisit, jadi cara ini tetap berhasil bahkan di subnet privat. Tanpa public IP, dia akan membutuhkan NAT gateway atau outbound rule pada load balancer."
+   },
+   {
+    "title": "HTTP diblokir",
+    "text": "nginx sudah berjalan, jadi seorang pembeli membuka situsnya. Permintaannya sampai ke public IP, tetapi NSG tidak punya aturan untuk port 80. Aturan default DenyAllInBound membuangnya, dan browser terus berputar sampai waktunya habis. nginx bahkan tidak pernah melihat permintaan itu — masalahnya ada di depan VM.",
+    "set": {
+     "t-rule80": "HTTP 80 · ditolak ✗"
+    }
+   },
+   {
+    "title": "Buka port 80",
+    "text": "Dewi menjalankan az vm open-port dengan port 80. Aturan allow baru dengan priority 900 bergabung ke NSG. Aturan diperiksa mulai dari angka terkecil, jadi HTTP kini cocok dengan aturan baru itu jauh sebelum mencapai aturan deny default. Permintaan pembeli mengalir sampai ke nginx, dan halamannya muncul.",
+    "set": {
+     "t-rule80": "HTTP 80 · izinkan (900)"
+    }
+   },
+   {
+    "title": "Data disk untuk foto produk",
+    "text": "Foto produk mendapat Standard SSD 8 GiB sendiri, dipasang di LUN 0. Azure memasang disknya, tetapi Linux hanya melihat perangkat kosong, jadi Dewi memakai Run Command untuk membuat partisi, memformat, dan me-mount-nya di /datadrive dengan entri fstab. B2ats_v2 tidak punya temporary disk, dan data penting memang tidak boleh disimpan di disk semacam itu."
+   },
+   {
+    "title": "Stopped bukan deallocated",
+    "text": "Pukul 18.00, Dewi menjalankan az vm stop. Ubuntu mati, tetapi VM tetap menempati tempatnya di host — statusnya Stopped (allocated) — sehingga meteran compute terus berjalan. Shutdown dari dalam sistem operasi pun hasilnya persis sama. Inilah kejutan yang ditemukan tim keuangan di tagihan.",
+    "set": {
+     "t-vm-state": "stopped (allocated)",
+     "t-compute": "masih ditagih"
+    }
+   },
+   {
+    "title": "Deallocate menghentikan meteran compute",
+    "text": "Sekarang dia menjalankan az vm deallocate. Azure melepaskan kapasitas host, statusnya menjadi Deallocated, dan meteran compute berhenti. Meteran disk tetap berjalan karena disknya masih ada, dan public IP statis tetap mempertahankan alamat beserta biaya kecilnya. Tombol Stop di portal dan auto-shutdown juga melakukan deallocate.",
+    "set": {
+     "t-vm-state": "deallocated",
+     "t-compute": "berhenti · tidak ditagih",
+     "t-disk": "masih ditagih"
+    }
+   },
+   {
+    "title": "Rangkuman: sewa dengan benar",
+    "text": "Satu perintah membangun enam resource, dan perintah kedua menambahkan data disk. NSG menentukan apa yang boleh masuk, public IP memberi akses outbound eksplisit, dan hanya deallocation yang menghentikan tagihan compute. Selanjutnya, bangun sendiri di Lab 06 — lalu rusak aturan port 80 dengan sengaja dan perbaiki.",
+    "tip": "Lab 06 · VM web server pertama Anda (sekitar 45 menit di Cloud Shell): buat VM, terbitkan halaman Nusantara Retail, buka port 80, mount data disk, resize, jadwalkan auto-shutdown, dan bandingkan stopped dengan deallocated.",
+    "set": {
+     "t-vm-state": "running",
+     "t-compute": "berjalan · ditagih",
+     "t-disk": "ditagih"
+    }
+   }
+  ],
+  "svg": {
+   "Azure region · Southeast Asia": "Region Azure · Southeast Asia",
+   "Ubuntu mirror": "Mirror Ubuntu",
+   "package downloads": "unduhan paket",
+   "Explicit outbound": "Outbound eksplisit",
+   "via the VM's public IP": "lewat public IP milik VM",
+   "Shopper": "Pembeli",
+   "web browser": "browser web",
+   "checks access, then calls providers": "cek akses, lalu memanggil provider",
+   "Standard · static": "Standard · statis",
+   "SSH 22 · allow": "SSH 22 · izinkan",
+   "HTTP 80 · no rule": "HTTP 80 · tanpa aturan",
+   "allow HTTP · 900": "izinkan HTTP · 900",
+   "Compute meter": "Meteran compute",
+   "running · billed": "berjalan · ditagih",
+   "while allocated": "selama dialokasikan",
+   "Disk meter": "Meteran disk",
+   "billed": "ditagih",
+   "per GiB provisioned": "per GiB yang dipesan"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -557,6 +673,119 @@ svg .node > rect.subnet{fill:var(--surface);stroke-dasharray:5 4}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -676,7 +905,7 @@ svg .node > rect.subnet{fill:var(--surface);stroke-dasharray:5 4}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -711,7 +940,7 @@ svg .node > rect.subnet{fill:var(--surface);stroke-dasharray:5 4}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -724,7 +953,7 @@ svg .node > rect.subnet{fill:var(--surface);stroke-dasharray:5 4}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -745,7 +974,7 @@ svg .node > rect.subnet{fill:var(--surface);stroke-dasharray:5 4}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -753,7 +982,7 @@ svg .node > rect.subnet{fill:var(--surface);stroke-dasharray:5 4}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

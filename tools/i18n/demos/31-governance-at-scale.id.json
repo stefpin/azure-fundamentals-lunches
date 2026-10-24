@@ -1,0 +1,110 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 31 · Tata kelola skala besar — Demo interaktif",
+    "kicker": "Makan Siang 31 · Hierarki Resource dan Tata Kelola (Lanjutan) · Demo interaktif",
+    "title": "Satu hierarki, satu initiative, semua subscription",
+    "lede": "Saksikan hierarki landing zone terbentuk, sebuah initiative yang ditetapkan di management group mengalir turun ke setiap subscription, remediasi DeployIfNotExists gagal lalu berhasil, dan sebuah exemption menjaga pengecualian tetap terlihat. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Hierarki management group Nusantara Retail dan tata kelola berbasis policy",
+    "svgDesc": "Di bawah tenant root group, sebuah intermediate root bernama nusa mendapat management group Platform, Landing zones, Sandboxes, dan Decommissioned. Subscription ditempatkan di Corp, Online, dan Sandboxes. Sebuah initiative yang disimpan di nusa dan ditetapkan di Landing zones mengalir ke subscription orders, storefront, dan loyalty. Remediation task DeployIfNotExists awalnya gagal karena identitasnya tidak punya role di workspace log-nusa, lalu berhasil setelah role itu diberikan. Exemption Waiver menandai storage account beta loyalty sebagai Exempt selama 30 hari, dan pipeline Git men-deploy semuanya sebagai kode."
+  },
+  "steps": [
+    {
+      "title": "Tujuh subscription, tanpa struktur",
+      "text": "Nusantara Retail kini punya tujuh subscription; empat di antaranya tampil di sini. Semuanya berada langsung di bawah tenant root group, dan masing-masing dikonfigurasi manual, setiap kali sedikit berbeda. Pagar pengaman dari Makan Siang 18 hanya melindungi satu di antaranya. Blueprint buatan Rizky, yang dulu mencap tag dan role ke setiap subscription baru, berhenti menerima assignment baru pada akhir Oktober 2026."
+    },
+    {
+      "title": "Membuat intermediate root",
+      "text": "Alih-alih menggantungkan aturan di tenant root group, tim platform membuat intermediate root bernama nusa tepat di bawahnya. Semua yang diatur perusahaan akan tinggal di bawah nusa, sementara tenant root tetap hampir kosong. Subscription baru atau hasil akuisisi tetap di luar sampai seseorang sengaja memindahkannya ke dalam. ID management group tidak pernah bisa diubah, jadi pilihlah dengan cermat."
+    },
+    {
+      "title": "Platform menampung layanan bersama",
+      "text": "Platform menampung fondasi bersama, masing-masing di subscription-nya sendiri: Security untuk perangkat SIEM, Management untuk logging terpusat, Connectivity untuk jaringan hub, dan Identity untuk layanan domain. Workspace log-nusa tinggal di subscription Management. Tim platform mendapat haknya di sini melalui Privileged Identity Management: role eligible yang diaktifkan hanya saat dibutuhkan, dan selalu diaudit."
+    },
+    {
+      "title": "Landing zones per arketipe",
+      "text": "Landing zones menampung workload, dibagi per arketipe: Corp untuk aplikasi yang butuh jaringan korporat, Online untuk aplikasi yang menghadap internet. Sandboxes mengisolasi eksperimen dengan aturan lebih ringan, dan Decommissioned memarkir subscription yang dibatalkan sampai dihapus. Tidak ada grup untuk departemen, lingkungan, atau region, sehingga pohon tetap tiga atau empat tingkat dan tersusun menurut aturan yang dibutuhkan tiap workload."
+    },
+    {
+      "title": "Vending menempatkan setiap subscription",
+      "text": "Subscription vending mengubah sebuah permintaan menjadi subscription yang sudah tertata. Sebuah pipeline membuatnya, menempatkannya di management group yang tepat, menyambungkan (peering) jaringannya ke hub, lalu menetapkan grup Entra, budget, dan tag. Orders mendarat di Corp, storefront dan loyalty di Online, dan eksperimen Dewi di Sandboxes, yang sekaligus menjadi grup default untuk setiap subscription baru."
+    },
+    {
+      "title": "Satu initiative, disimpan di atas",
+      "text": "Initiative baseline Nusantara membundel tiga policy: lokasi yang diizinkan dengan Deny, tag costCenter dengan Modify, dan diagnostic settings ke log-nusa dengan DeployIfNotExists. Initiative ini disimpan di intermediate root, sehingga grup mana pun di bawah nusa bisa memakainya, lalu ditetapkan sekali di Landing zones dengan parameter. Ia dimulai dalam mode DoNotEnforce: laporkan semuanya, jangan blokir apa pun."
+    },
+    {
+      "title": "Assignment mengalir ke bawah",
+      "text": "Pewarisan mengerjakan sisanya. Assignment mengalir dari Landing zones ke Corp dan Online, lalu ke setiap subscription, resource group, dan resource di bawahnya: tiga yang ada hari ini dan dua puluh pada tahun depan. Sandboxes dan Platform tidak tersentuh, karena tidak berada di bawah Landing zones. Kini, menempatkan subscription di grup yang tepat sudah cukup untuk mengaturnya."
+    },
+    {
+      "title": "Pemindaian kepatuhan pertama",
+      "text": "Lalu evaluasi kepatuhan yang pertama selesai. Dua resource tidak mengirim log diagnostik ke log-nusa, dan storage account beta milik tim loyalitas berada di West Europe, di luar region yang diizinkan. Tidak ada yang diblokir, karena assignment masih dalam mode DoNotEnforce. Tampilan kepatuhan hanya menunjukkan apa yang perlu dibenahi sebelum penegakan aturan dimulai.",
+      "set": {
+        "t-sql": "tanpa diagnostik ✗",
+        "t-app": "tanpa diagnostik ✗",
+        "t-beta": "West Europe ✗",
+        "t-c-ok": "Compliant: 0",
+        "t-c-bad": "Non-compliant: 3",
+        "t-c-ex": "Exempt: 0"
+      }
+    },
+    {
+      "title": "Remediasi gagal di luar scope-nya",
+      "text": "Sebuah remediation task DeployIfNotExists dimulai, bertindak melalui managed identity milik assignment. Setiap deployment harus membuat diagnostic setting yang menunjuk ke log-nusa. Namun workspace itu tinggal di subscription Management, di luar scope assignment, dan identitasnya tidak punya role di sana. Setiap deployment gagal dengan error otorisasi. Policy-nya benar; izinnya yang belum lengkap."
+    },
+    {
+      "title": "Berikan role, jalankan lagi",
+      "text": "Anda memberi identitas itu role Log Analytics Contributor di log-nusa: scope yang ia tulisi, bukan hanya scope tempat ia ditetapkan. Remediation task yang baru berhasil. Kedua resource mendapat diagnostic settings, dan log mulai berdatangan ke workspace. Begitu assignment diberlakukan, resource yang dibuat belakangan otomatis mendapatkannya, sekitar sepuluh menit setelah muncul.",
+      "set": {
+        "t-sql": "diagnostik ✓",
+        "t-app": "diagnostik ✓",
+        "t-c-ok": "Compliant: 2",
+        "t-c-bad": "Non-compliant: 1"
+      }
+    },
+    {
+      "title": "Waiver untuk beta",
+      "text": "Beta aplikasi loyalitas butuh West Europe selama tiga puluh hari selagi mitra menguji sebuah integrasi. Ibu Sari menerima risikonya, jadi tim platform membuat exemption Waiver di resource group beta, lengkap dengan tanggal kedaluwarsa dan nomor tiket di metadatanya. Akun itu kini tampil sebagai Exempt: tetap terlihat oleh auditor, dan kembali tidak patuh tepat pada hari waiver berakhir.",
+      "set": {
+        "t-beta": "Exempt · 30 hari",
+        "t-c-bad": "Non-compliant: 0",
+        "t-c-ex": "Exempt: 1"
+      }
+    },
+    {
+      "title": "Tata kelola sebagai kode",
+      "text": "Akhirnya, tak ada lagi yang mengeklik policy di portal. Definisi, assignment, dan exemption tinggal di Git, setiap perubahan adalah pull request yang ditinjau, dan sebuah pipeline men-deploy-nya melalui deployment stack yang deny settings-nya melindungi apa yang dikelolanya: pengganti blueprint yang akan pensiun. Penegakan lalu diluncurkan ring demi ring, dan Resource Graph melaporkan kepatuhan di setiap subscription.",
+      "set": {
+        "t-mode": "Berlaku per ring"
+      }
+    },
+    {
+      "title": "Rangkuman: atur dari puncak",
+      "text": "Rangkuman: rancang hierarki untuk policy, bukan untuk bagan organisasi. Vending subscription langsung ke grup yang tepat. Simpan definisi di atas dan tetapkan sekali, dimulai dengan DoNotEnforce. Beri identitas remediasi role di semua tempat yang ditulisinya. Jaga pengecualian tetap terlihat dengan exemption berbatas waktu, dan kelola semuanya sebagai kode.",
+      "tip": "Di Lab 31 Anda membangun versi kecilnya di tenant sendiri: intermediate root dengan grup platform, landing zones, dan corp, initiative kustom dari file JSON, remediasi, exemption Waiver, query Resource Graph, dan ekspor policy-as-code."
+    }
+  ],
+  "svg": {
+    "orders database": "database pesanan",
+    "web app": "aplikasi web",
+    "saved at nusa · assigned at Landing zones": "disimpan di nusa · ditetapkan di Landing zones",
+    "costCenter tag · Modify": "tag costCenter · Modify",
+    "Diagnostics to log-nusa · DeployIfNotExists": "Diagnostik ke log-nusa · DeployIfNotExists",
+    "DoNotEnforce first": "DoNotEnforce dulu",
+    "Compliance": "Kepatuhan",
+    "Git repository": "Repositori Git",
+    "policy as code": "policy sebagai kode",
+    "Rizky's blueprint": "Blueprint Rizky",
+    "no new assignments": "tanpa assignment baru",
+    "after Oct 31, 2026;": "setelah 31 Okt 2026;",
+    "retired Jan 31, 2027": "pensiun 31 Jan 2027",
+    "Deployment failed": "Deployment gagal",
+    "no role on log-nusa,": "tanpa role di log-nusa,",
+    "which is outside the": "yang berada di luar",
+    "assignment scope": "scope assignment",
+    "Waiver · 30 days": "Waiver · 30 hari",
+    "scope: loyalty beta RG": "scope: RG beta loyalty",
+    "approved by Ibu Sari": "disetujui Ibu Sari",
+    "ticket NUSA-1042": "tiket NUSA-1042"
+  }
+}

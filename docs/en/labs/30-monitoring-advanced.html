@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 30 · Why was checkout slow on Friday? · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 30: Why was checkout slow on Friday?. about 60 minutes, cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/30-monitoring-advanced.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/30-monitoring-advanced.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/30-monitoring-advanced.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/30-monitoring-advanced.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 30 · Why was checkout slow on Friday?">
+<meta property="og:description" content="Hands-on Azure lab 30: Why was checkout slow on Friday?. about 60 minutes, cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/30-monitoring-advanced.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lab" data-lab="30" style="--c:#7b4ff0">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/labs/30-monitoring-advanced.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 30</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>30</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Why was checkout slow on Friday?</h1>
+        <p class="lab-story">🏪 <b>Episode 30 · Why Was Checkout Slow on Friday?</b> — The CPU was fine. Checkout took four seconds. 312 carts were abandoned. <a href="../lunches/30-monitoring-advanced.html">Read the lunch</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ about 60 minutes</span>
+          <span class="chip cost">💲💲 small charges while running</span>
+          <span class="chip">Difficulty ★★★</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 9 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--tour-the-evidence-room">Task 1 · Tour the evidence room</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--give-the-vm-an-identity-and-the-azure-monitor-agent">Task 2 · Give the VM an identity and the Azure Monitor Agent</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--tell-the-agent-what-to-collect-a-data-collection-rule">Task 3 · Tell the agent what to collect: a data collection rule</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--platform-logs-a-diagnostic-setting-for-blob-storage">Task 4 · Platform logs: a diagnostic setting for Blob storage</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--application-insights-for-the-storefront">Task 5 · Application Insights for the storefront</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--ten-kql-questions">Task 6 · Ten KQL questions</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--from-query-to-alert">Task 7 · From query to alert</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/app/app.py" target="_blank" rel="noopener"><span>app/app.py</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/app/requirements.txt" target="_blank" rel="noopener"><span>app/requirements.txt</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/dcr-linux-nusa.json" target="_blank" rel="noopener"><span>dcr-linux-nusa.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>7 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/traffic.sh" target="_blank" rel="noopener"><span>traffic.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>7 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/30-monitoring-advanced" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Last Friday Nusantara Retail's checkout took four seconds while every CPU chart looked fine. Dewi blames the product
+images, Pak Budi the order-jobs VM, Rizky the payment provider. Today you build the evidence room that settles it: one
+Log Analytics workspace fed by three pipes — the Azure Monitor Agent with a data collection rule on the VM, a diagnostic
+setting on Blob storage, and Application Insights on the storefront web app. Then you answer ten graded KQL questions,
+turn the slow-checkout query into a log search alert, and repair a data collection rule that silently drops warnings.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch30-&amp;lt;suffix&amp;gt;&quot;]
+    VM[&quot;vm-nusa-app&lt;br/&gt;Azure Monitor Agent&quot;]
+    DCR[&quot;dcr-linux-nusa&lt;br/&gt;data collection rule&quot;]
+    ST[&quot;stnusalog&amp;lt;suffix&amp;gt;&lt;br/&gt;Blob storage&quot;]
+    APP[&quot;app-nusa30-&amp;lt;suffix&amp;gt;&lt;br/&gt;Python storefront&quot;]
+    APPI[&quot;appi-nusa-shop&lt;br/&gt;Application Insights&quot;]
+    LAW[(&quot;log-nusa&lt;br/&gt;Log Analytics workspace&quot;)]
+    AL[&quot;alert-slow-checkout&lt;br/&gt;log search alert&quot;]
+    TEST[&quot;avail-nusa-health&lt;br/&gt;standard availability test&quot;]
+  end
+  VM --- DCR
+  DCR -- &quot;Syslog, Perf, Heartbeat&quot; --&gt; LAW
+  ST -- &quot;diagnostic setting&quot; --&gt; LAW
+  APP -- &quot;autoinstrumentation&quot; --&gt; APPI
+  APPI -- &quot;AppRequests, AppTraces&quot; --&gt; LAW
+  TEST -- &quot;every 5 minutes&quot; --&gt; APP
+  LAW --&gt; AL
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources and assign roles on them (see <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install: <code>setup.sh</code> adds
+the Azure CLI extensions this lab uses (<code>monitor-control-service</code>, <code>application-insights</code>, <code>scheduled-query</code> and
+<code>log-analytics</code>).</li>
+<li>Optional: an email address you can read during the lab, if you want the alert in your inbox.</li>
+<li>Get the lab files and load the shared settings and the lab's resource names:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/30-monitoring-advanced
+source ../common/config.sh
+source lab.env
+</code></pre></div>
+<ul>
+<li>Create the starting point: the workspace <code>log-nusa</code>, the VM <code>vm-nusa-app</code>, the storage account <code>stnusalog&lt;suffix&gt;</code>
+and the storefront web app — with nothing monitored yet. It takes about 6–10 minutes:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist. Finish with the <strong>Clean up</strong> section, even if you stop halfway.</p>
+</aside>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Note</span>Monitoring data isn't instant. A brand-new agent, rule, diagnostic setting or Application Insights resource usually
+needs <strong>5–15 minutes</strong> before its first rows appear. The tasks are ordered so you can keep working while data starts
+flowing; Task 6 is where you query it.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Cloud Shell disconnects after about 20 minutes without typing. If that happens, reconnect and reload the variables:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>cd ~/azure-fundamentals-lunches/labs/30-monitoring-advanced &amp;&amp; source ../common/config.sh &amp;&amp; source lab.env
+LAW_ID=$(az monitor log-analytics workspace show -g &quot;$RG&quot; -n &quot;$LAW&quot; --query id -o tsv)
+LAW_GUID=$(az monitor log-analytics workspace show -g &quot;$RG&quot; -n &quot;$LAW&quot; --query customerId -o tsv)
+VM_ID=$(az vm show -g &quot;$RG&quot; -n &quot;$VM&quot; --query id -o tsv)
+ST_ID=$(az storage account show -g &quot;$RG&quot; -n &quot;$ST&quot; --query id -o tsv)
+HOST=$(az webapp show -g &quot;$RG&quot; -n &quot;$APP&quot; --query defaultHostName -o tsv)
+kql() { az monitor log-analytics query --workspace &quot;$LAW_GUID&quot; --analytics-query &quot;$1&quot; --output table; }
+</code></pre></div>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–7 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--tour-the-evidence-room" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Tour the evidence room</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--tour-the-evidence-room" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Start with the empty workspace: where it lives, how long it keeps data, and how to ask it a question from Cloud Shell.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>LAW_ID=$(az monitor log-analytics workspace show --resource-group &quot;$RG&quot; --workspace-name &quot;$LAW&quot; --query id --output tsv)
+LAW_GUID=$(az monitor log-analytics workspace show --resource-group &quot;$RG&quot; --workspace-name &quot;$LAW&quot; --query customerId --output tsv)
+
+az monitor log-analytics workspace show --resource-group &quot;$RG&quot; --workspace-name &quot;$LAW&quot; \
+  --query &quot;{name:name, location:location, pricing:sku.name, retentionDays:retentionInDays, workspaceGuid:customerId}&quot; \
+  --output yaml
+
+# Plan and retention of a table you&#x27;ll fill today
+az monitor log-analytics workspace table show --resource-group &quot;$RG&quot; --workspace-name &quot;$LAW&quot; --name Syslog \
+  --query &quot;{table:name, plan:plan || properties.plan, analyticsDays:retentionInDays || properties.retentionInDays, totalDays:totalRetentionInDays || properties.totalRetentionInDays}&quot; \
+  --output yaml
+
+# A small helper that runs KQL from Cloud Shell. It needs the workspace GUID, not the name.
+kql() { az monitor log-analytics query --workspace &quot;$LAW_GUID&quot; --analytics-query &quot;$1&quot; --output table; }
+kql &#x27;print Message = &quot;Selamat siang from log-nusa&quot;, Now = now()&#x27;
+</code></pre></div>
+<p>The workspace has two IDs: the Azure resource ID (<code>LAW_ID</code>), which you use to <em>send</em> data to it, and the workspace
+GUID (<code>LAW_GUID</code>, called <em>Workspace ID</em> in the portal), which you use to <em>query</em> it.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open <code>log-nusa</code> › <em>Settings › Tables</em> to see every table's plan and retention, then <em>Logs</em>.
+Switch the editor from <em>Simple mode</em> to <em>KQL mode</em> — you'll use KQL mode for the rest of the lab.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>retentionDays: 30</code>, the <code>Syslog</code> table on the <code>Analytics</code> plan with 30 days of analytics
+retention, and one row with your greeting and the current time.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--give-the-vm-an-identity-and-the-azure-monitor-agent" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Give the VM an identity and the Azure Monitor Agent</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--give-the-vm-an-identity-and-the-azure-monitor-agent" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The Azure Monitor Agent signs in to Azure Monitor with the VM's <strong>managed identity</strong> — no keys or workspace secrets. Give
+the VM a system-assigned identity, then install the agent as a VM extension:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>VM_ID=$(az vm show --resource-group &quot;$RG&quot; --name &quot;$VM&quot; --query id --output tsv)
+
+az vm identity assign --resource-group &quot;$RG&quot; --name &quot;$VM&quot; --output none
+
+az vm extension set \
+  --resource-group &quot;$RG&quot; \
+  --vm-name &quot;$VM&quot; \
+  --name AzureMonitorLinuxAgent \
+  --publisher Microsoft.Azure.Monitor \
+  --enable-auto-upgrade true \
+  --output none
+
+az vm show --resource-group &quot;$RG&quot; --name &quot;$VM&quot; --query identity.type --output tsv
+az vm extension list --resource-group &quot;$RG&quot; --vm-name &quot;$VM&quot; \
+  --query &quot;[].{name:name, version:typeHandlerVersion, state:provisioningState, autoUpgrade:enableAutomaticUpgrade}&quot; \
+  --output table
+</code></pre></div>
+<p>Now ask the workspace whether the agent reports anything:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kql &#x27;Heartbeat | where TimeGenerated &gt; ago(1h) | summarize count() by Computer&#x27;
+</code></pre></div>
+<p>Nothing. That's expected: the agent doesn't collect anything until a data collection rule tells it what to collect and
+where to send it. That's Task 3.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> VM › <em>Settings › Identity</em> › <em>System assigned: On</em>. Then VM › <em>Settings › Extensions +
+applications</em> › <em>Add</em> › <em>Azure Monitor Agent for Linux</em>. (Creating a data collection rule in the portal also installs
+the agent for you.)</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the identity type is <code>SystemAssigned</code>, <code>AzureMonitorLinuxAgent</code> shows <code>Succeeded</code> with auto-upgrade
+on, and the Heartbeat query returns no rows.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--tell-the-agent-what-to-collect-a-data-collection-rule" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Tell the agent what to collect: a data collection rule</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--tell-the-agent-what-to-collect-a-data-collection-rule" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Read the rule first — it's short:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>cat dcr-linux-nusa.json
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>What it says</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dataSources.syslog</code></td>
+<td>collect Syslog from the <code>auth</code>, <code>authpriv</code>, <code>cron</code>, <code>daemon</code>, <code>syslog</code> and <code>user</code> facilities, at <strong>Warning</strong> and above</td>
+</tr>
+<tr>
+<td><code>dataSources.performanceCounters</code></td>
+<td>sample CPU, memory, disk and network counters every 60 seconds</td>
+</tr>
+<tr>
+<td><code>destinations.logAnalytics</code></td>
+<td>one destination named <code>la-nusa</code>: the workspace whose resource ID replaces <code>__WORKSPACE_RESOURCE_ID__</code></td>
+</tr>
+<tr>
+<td><code>dataFlows</code></td>
+<td>send the Syslog and Perf streams to <code>la-nusa</code> (they land in the <code>Syslog</code> and <code>Perf</code> tables)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Fill in your workspace, create the rule, and associate it with the VM:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>mkdir -p &quot;$OUT_DIR&quot;
+sed &quot;s|__WORKSPACE_RESOURCE_ID__|${LAW_ID}|&quot; dcr-linux-nusa.json &gt; &quot;$OUT_DIR/dcr.json&quot;
+
+az monitor data-collection rule create \
+  --resource-group &quot;$RG&quot; \
+  --location &quot;$LOCATION&quot; \
+  --name &quot;$DCR&quot; \
+  --rule-file &quot;$OUT_DIR/dcr.json&quot; \
+  --output none
+DCR_ID=$(az monitor data-collection rule show --resource-group &quot;$RG&quot; --name &quot;$DCR&quot; --query id --output tsv)
+
+az monitor data-collection rule association create \
+  --name &quot;$DCR_ASSOC&quot; \
+  --rule-id &quot;$DCR_ID&quot; \
+  --resource &quot;$VM_ID&quot; \
+  --output none
+
+az monitor data-collection rule association list --resource &quot;$VM_ID&quot; \
+  --query &quot;[].{association:name, rule:dataCollectionRuleId || properties.dataCollectionRuleId}&quot; --output table
+</code></pre></div>
+<p>The rule must be in the same region as the workspace it sends to; here everything is in <code>$LOCATION</code>. The association is
+what connects one machine to one rule — in production, Azure Policy creates associations for every new VM (Lunch 31).</p>
+<p>Now give the order-jobs server something to say. Run Command writes three messages to Syslog at three severities:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name &quot;$VM&quot; --command-id RunShellScript \
+  --scripts &quot;logger -p user.warning -t nusa-orders &#x27;Order batch 4471 retry 3/5: payment API slow&#x27;; logger -p user.info -t nusa-orders &#x27;Order batch 4471 started&#x27;; logger -p user.err -t nusa-orders &#x27;Order batch 4470 failed after 5 retries&#x27;&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Which of the three should reach the workspace? You'll check in Task 6. Heartbeats should start within about 5–10
+minutes; carry on with Task 4 meanwhile.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Monitor › Settings › Data Collection Rules</em> › <em>Create</em>. On <em>Resources</em> add <code>vm-nusa-app</code>; on
+<em>Collect and deliver</em> add <em>Linux Syslog</em> (minimum log level <em>LOG_WARNING</em>) and <em>Performance Counters</em>, each with
+<code>log-nusa</code> as the destination. Open the finished rule's <em>JSON View</em> and compare it with the file.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the association list shows <code>dcra-vm-nusa-app</code> pointing at <code>.../dataCollectionRules/dcr-linux-nusa</code>,
+and Run Command returns without errors.</p>
+</div>
+</div></section><section class="lab-section" id="task-4--platform-logs-a-diagnostic-setting-for-blob-storage" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Platform logs: a diagnostic setting for Blob storage</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--platform-logs-a-diagnostic-setting-for-blob-storage" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Dewi's product images live in Blob storage. Who reads them, how fast, and which reads fail? The storage service writes
+those resource logs only if you route them somewhere. For storage, the setting goes on the <strong>blob service</strong>
+(<code>.../blobServices/default</code>), not on the storage account itself:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ST_ID=$(az storage account show --resource-group &quot;$RG&quot; --name &quot;$ST&quot; --query id --output tsv)
+
+# Which log categories does the blob service offer?
+az monitor diagnostic-settings categories list --resource &quot;$ST_ID/blobServices/default&quot; \
+  --query &quot;(value || @)[].{category:name, type:categoryType}&quot; --output table
+
+az monitor diagnostic-settings create \
+  --name &quot;$DIAG&quot; \
+  --resource &quot;$ST_ID/blobServices/default&quot; \
+  --workspace &quot;$LAW_ID&quot; \
+  --logs &#x27;[{&quot;categoryGroup&quot;:&quot;allLogs&quot;,&quot;enabled&quot;:true}]&#x27; \
+  --output none
+
+az monitor diagnostic-settings list --resource &quot;$ST_ID/blobServices/default&quot; \
+  --query &quot;(value || @)[].{name:name, workspace:workspaceId, logs:logs[].categoryGroup}&quot; --output yaml
+</code></pre></div>
+<ul>
+<li><code>categoryGroup: allLogs</code> means &quot;every log category, including any added later&quot; — here <code>StorageRead</code>, <code>StorageWrite</code>
+and <code>StorageDelete</code>. The <code>audit</code> group is the smaller alternative.</li>
+<li>Storage logs land in the resource-specific table <code>StorageBlobLogs</code>.</li>
+<li>A diagnostic setting outlives its resource. That's why <code>cleanup.sh</code> deletes it explicitly.</li>
+</ul>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Storage account › <em>Monitoring › Diagnostic settings</em> › select <strong>blob</strong> › <em>Add diagnostic
+setting</em>. Tick <em>allLogs</em> and <em>Send to Log Analytics workspace</em> › <code>log-nusa</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> one setting named <code>diag-blob-to-log-nusa</code> whose workspace ends in <code>/workspaces/log-nusa</code> and whose
+logs list <code>allLogs</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--application-insights-for-the-storefront" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Application Insights for the storefront</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--application-insights-for-the-storefront" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The storefront in <code>app/app.py</code> contains no monitoring code at all. You'll turn on <strong>autoinstrumentation</strong>: App Service
+loads Microsoft's OpenTelemetry-based agent into the Python process and sends requests, exceptions and logged warnings
+to a workspace-based Application Insights resource.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az monitor app-insights component create \
+  --app &quot;$APPI&quot; \
+  --resource-group &quot;$RG&quot; \
+  --location &quot;$LOCATION&quot; \
+  --workspace &quot;$LAW_ID&quot; \
+  --application-type web \
+  --output none
+APPI_ID=$(az monitor app-insights component show --app &quot;$APPI&quot; --resource-group &quot;$RG&quot; --query id --output tsv)
+CONN=$(az monitor app-insights component show --app &quot;$APPI&quot; --resource-group &quot;$RG&quot; --query connectionString --output tsv)
+
+az webapp config appsettings set --resource-group &quot;$RG&quot; --name &quot;$APP&quot; \
+  --settings &quot;APPLICATIONINSIGHTS_CONNECTION_STRING=$CONN&quot; \
+             &quot;ApplicationInsightsAgent_EXTENSION_VERSION=~3&quot; \
+             &quot;OTEL_SERVICE_NAME=nusa-storefront&quot; \
+  --output none
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>App setting</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APPLICATIONINSIGHTS_CONNECTION_STRING</code></td>
+<td>where to send telemetry (it identifies <code>appi-nusa-shop</code>)</td>
+</tr>
+<tr>
+<td><code>ApplicationInsightsAgent_EXTENSION_VERSION=~3</code></td>
+<td>turns on the App Service-managed agent on Linux</td>
+</tr>
+<tr>
+<td><code>OTEL_SERVICE_NAME</code></td>
+<td>a standard OpenTelemetry setting: the name shown on the application map and in <code>AppRoleName</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Changing app settings restarts the app. Next, watch the storefront from outside with a <strong>standard availability test</strong>
+that calls <code>/health</code> every 5 minutes from five locations: Singapore, Hong Kong, Japan, Australia and the US West Coast.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>HOST=$(az webapp show --resource-group &quot;$RG&quot; --name &quot;$APP&quot; --query defaultHostName --output tsv)
+
+az monitor app-insights web-test create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$WEBTEST&quot; \
+  --location &quot;$LOCATION&quot; \
+  --web-test-kind standard \
+  --defined-web-test-name &quot;$WEBTEST&quot; \
+  --synthetic-monitor-id &quot;$WEBTEST&quot; \
+  --enabled true \
+  --frequency 300 \
+  --timeout 30 \
+  --retry-enabled true \
+  --locations Id=apac-sg-sin-azr \
+  --locations Id=apac-hk-hkn-azr \
+  --locations Id=apac-jp-kaw-edge \
+  --locations Id=emea-au-syd-edge \
+  --locations Id=us-ca-sjc-azr \
+  --http-verb GET \
+  --request-url &quot;https://$HOST/health&quot; \
+  --expected-status-code 200 \
+  --tags &quot;hidden-link:$APPI_ID=Resource&quot; \
+  --output none
+</code></pre></div>
+<p>The <code>hidden-link</code> tag is what attaches the test to <code>appi-nusa-shop</code>, so its results appear under <em>Availability</em> and in
+the <code>AppAvailabilityResults</code> table. Standard tests are billed per run, so this lab keeps the frequency at 5 minutes.</p>
+<p>Finally, play Friday evening. <code>traffic.sh</code> sends shoppers to the storefront and reads and writes product images; run it
+in the background for 25 minutes:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>nohup bash traffic.sh 25 &gt; &quot;$OUT_DIR/traffic.log&quot; 2&gt;&amp;1 &amp;
+sleep 60; tail -n 3 &quot;$OUT_DIR/traffic.log&quot;
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Web app › <em>Monitoring › Application Insights</em> › <em>Turn on Application Insights</em> sets the same
+app settings for you. For the test: <code>appi-nusa-shop</code> › <em>Investigate › Availability</em> › <em>Add Standard test</em>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the traffic log shows rounds with some slow and a few failed checkouts, and
+<code>az monitor app-insights web-test list --resource-group &quot;$RG&quot; --query &quot;[].name&quot; --output tsv</code> prints <code>avail-nusa-health</code>.
+If the log mentions failed storage calls, your new role assignment is still propagating — keep going.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--ten-kql-questions" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Ten KQL questions</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--ten-kql-questions" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Give the pipes about ten minutes after Task 5, then check what has arrived:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kql &#x27;union isfuzzy=true withsource=SourceTable Heartbeat, Syslog, Perf, StorageBlobLogs, AppRequests, AppTraces, AppExceptions, AppAvailabilityResults
+| where TimeGenerated &gt; ago(1h)
+| summarize Rows = count() by SourceTable&#x27;
+</code></pre></div>
+<p>The portal is the comfortable place for this task: <code>log-nusa</code> › <em>Logs</em>, <em>KQL mode</em>, time range <em>Set in query</em>. Every
+solution below also works in Cloud Shell as <code>kql '&lt;query&gt;'</code> (charts are portal-only; the CLI prints the rows).</p>
+<p>Grading: ★ = 1 point, ★★ = 2 points, ★★★ = 3 points — 20 points in total. Write your query, run it, and only then open
+the solution. Fourteen points or more and you're ready for on-call.</p>
+<p><strong>1. ★ Is the agent alive?</strong> Which computers send heartbeats through the Azure Monitor Agent, and when did each last
+check in?</p>
+<details class="plain"><summary>Solution 1</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>Heartbeat
+| where TimeGenerated &gt; ago(1h)
+| where Category == &quot;Azure Monitor Agent&quot;
+| summarize LastSeen = max(TimeGenerated), Heartbeats = count() by Computer, OSType, Version
+</code></pre></div>
+<p>Expect one row for <code>vm-nusa-app</code> with roughly one heartbeat per minute since the association. <code>Heartbeat</code> is free to
+ingest.</p>
+</details>
+<p><strong>2. ★ What did the order-jobs server warn about?</strong> List the Syslog warnings of the last four hours, newest first.</p>
+<details class="plain"><summary>Solution 2</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>Syslog
+| where TimeGenerated &gt; ago(4h)
+| where SeverityLevel =~ &quot;warning&quot;
+| project TimeGenerated, Computer, Facility, ProcessName, SyslogMessage
+| sort by TimeGenerated desc
+</code></pre></div>
+<p>Your <em>Order batch 4471 retry 3/5</em> message from <code>nusa-orders</code> is there. Remove the severity filter and you'll also find
+the <em>err</em> message — but never the <em>info</em> one: the DCR collects Warning and above, so the agent dropped it at the source.</p>
+</details>
+<p><strong>3. ★ What happened to the product images?</strong> Count blob operations by operation name, result and authentication type.</p>
+<details class="plain"><summary>Solution 3</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>StorageBlobLogs
+| where TimeGenerated &gt; ago(4h)
+| summarize Requests = count() by OperationName, StatusText, AuthenticationType
+| sort by Requests desc
+</code></pre></div>
+<p>You'll see <code>PutBlob</code>, <code>ListBlobs</code> and <code>GetBlob</code> with <code>Success</code> over <code>OAuth</code>, plus <code>GetBlob</code> with <code>BlobNotFound</code> — the
+12.12 banner that doesn't exist. Rows with <code>AuthorizationPermissionMismatch</code> come from the minutes before your role
+assignment applied.</p>
+</details>
+<p><strong>4. ★★ Is Pak Budi's VM busy?</strong> Chart the average CPU of each computer in 5-minute buckets for the last hour.</p>
+<details class="plain"><summary>Solution 4</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>Perf
+| where TimeGenerated &gt; ago(1h)
+| where ObjectName == &quot;Processor&quot; and CounterName == &quot;% Processor Time&quot;
+| summarize AvgCpu = avg(CounterValue) by bin(TimeGenerated, 5m), Computer
+| render timechart
+</code></pre></div>
+<p>A flat, low line: the VM is innocent.</p>
+</details>
+<p><strong>5. ★★ How much memory is left?</strong> Show only the newest <em>Available MBytes Memory</em> sample for each computer.</p>
+<details class="plain"><summary>Solution 5</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>Perf
+| where TimeGenerated &gt; ago(1h)
+| where ObjectName == &quot;Memory&quot; and CounterName == &quot;Available MBytes Memory&quot;
+| summarize arg_max(TimeGenerated, CounterValue) by Computer
+| project Computer, LastSample = TimeGenerated, AvailableMB = CounterValue
+</code></pre></div>
+<p><code>arg_max(TimeGenerated, CounterValue)</code> keeps the whole latest row per computer instead of averaging.</p>
+</details>
+<p><strong>6. ★★ Which operations fail?</strong> For each request name, show the number of requests, failures and the failure
+percentage, worst first.</p>
+<details class="plain"><summary>Solution 6</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>AppRequests
+| where TimeGenerated &gt; ago(1h)
+| summarize Requests = count(), Failed = countif(Success == false) by Name
+| extend FailedPct = round(100.0 * Failed / Requests, 1)
+| sort by FailedPct desc
+</code></pre></div>
+<p><code>POST /checkout</code> fails about 7% of the time; <code>GET /products</code>, <code>GET /</code> and the availability test's <code>GET /health</code> don't
+fail at all.</p>
+</details>
+<p><strong>7. ★★ What did the code say?</strong> Count the warnings that mention the payment gateway in 5-minute buckets, as a column
+chart.</p>
+<details class="plain"><summary>Solution 7</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>AppTraces
+| where TimeGenerated &gt; ago(1h)
+| where SeverityLevel == 2 and Message has &quot;Payment gateway&quot;
+| summarize Warnings = count() by bin(TimeGenerated, 5m)
+| render columnchart
+</code></pre></div>
+<p>In <code>AppTraces</code>, <code>SeverityLevel</code> 2 means <em>Warning</em>. These rows come from Python's <code>logging</code> module — autoinstrumentation
+collects the root logger.</p>
+</details>
+<p><strong>8. ★★★ The chart for Ibu Sari.</strong> Plot the median and the 95th-percentile duration of checkout requests in 5-minute
+buckets.</p>
+<details class="plain"><summary>Solution 8</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>AppRequests
+| where TimeGenerated &gt; ago(1h)
+| where Name has &quot;checkout&quot;
+| summarize p50 = percentile(DurationMs, 50), p95 = percentile(DurationMs, 95) by bin(TimeGenerated, 5m)
+| render timechart
+</code></pre></div>
+<p>The median stays around 200–300 ms while the p95 sits near 2,500–3,000 ms: most customers are fine, and one in five
+waits for the payment provider. An average would have hidden that.</p>
+</details>
+<p><strong>9. ★★★ Why did those checkouts fail?</strong> List the failed requests of the last hour with the exception type and message
+of the same operation. Keep failed requests that have no exception.</p>
+<details class="plain"><summary>Solution 9</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>AppRequests
+| where TimeGenerated &gt; ago(1h) and Success == false
+| project TimeGenerated, OperationId, Name, ResultCode, DurationMs
+| join kind=leftouter (
+    AppExceptions
+    | where TimeGenerated &gt; ago(1h)
+    | summarize arg_max(TimeGenerated, ExceptionType, OuterMessage) by OperationId
+  ) on OperationId
+| project TimeGenerated, Name, ResultCode, DurationMs, ExceptionType, OuterMessage
+| sort by TimeGenerated desc
+</code></pre></div>
+<p>Every failure is a <code>POST /checkout</code> with result code 500 after about three seconds, and the exception says the
+payment provider didn't answer. <code>kind=leftouter</code> keeps requests without an exception, and the <code>summarize</code> on the right
+side keeps one exception per operation so rows don't multiply. Rizky was right.</p>
+</details>
+<p><strong>10. ★★★ What does this evidence cost?</strong> Show the billable megabytes ingested per table over the last day, largest
+first, as a pie chart.</p>
+<details class="plain"><summary>Solution 10</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>Usage
+| where TimeGenerated &gt; ago(1d)
+| where IsBillable == true
+| summarize BillableMB = round(sum(Quantity), 2) by DataType
+| sort by BillableMB desc
+| render piechart
+</code></pre></div>
+<p><code>Quantity</code> is in MB. <code>Heartbeat</code> doesn't appear because it's free. <code>Usage</code> is written in batches, so early in the lab
+it may still be empty — run it again at the end.</p>
+</details>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> questions 1, 6 and 8 return rows. If a table is still empty, wait a few minutes and use the
+Troubleshooting table.</p>
+</div>
+</div></section><section class="lab-section" id="task-7--from-query-to-alert" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">From query to alert</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--from-query-to-alert" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Question 8 found the problem; now make sure you hear about it next time. A <strong>log search alert</strong> runs a query on a
+schedule. If you want an email, create an action group first (skip this block otherwise):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>export ALERT_EMAIL=&quot;you@example.com&quot;     # change this to your own address
+az monitor action-group create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$AG&quot; \
+  --short-name nusaoncall \
+  --action email oncall-email &quot;$ALERT_EMAIL&quot; usecommonalertschema \
+  --output none
+AG_ID=$(az monitor action-group show --resource-group &quot;$RG&quot; --name &quot;$AG&quot; --query id --output tsv)
+</code></pre></div>
+<p>Create the rule. If you skipped the action group, leave out the <code>--action-groups</code> line:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az monitor scheduled-query create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$ALERT&quot; \
+  --location &quot;$LOCATION&quot; \
+  --scopes &quot;$LAW_ID&quot; \
+  --condition &quot;count &#x27;SlowCheckout&#x27; &gt; 3 at least 1 violations out of 1 aggregated points&quot; \
+  --condition-query SlowCheckout=&quot;AppRequests | where Name has &#x27;checkout&#x27; and DurationMs &gt; 1000&quot; \
+  --window-size 10m \
+  --evaluation-frequency 5m \
+  --severity 3 \
+  --description &quot;More than 3 checkouts slower than 1 second in 10 minutes&quot; \
+  --action-groups &quot;$AG_ID&quot; \
+  --output none
+
+az monitor scheduled-query show --resource-group &quot;$RG&quot; --name &quot;$ALERT&quot; \
+  --query &quot;{enabled:enabled, every:evaluationFrequency, window:windowSize, query:criteria.allOf[0].query, operator:criteria.allOf[0].operator, threshold:criteria.allOf[0].threshold}&quot; \
+  --output yaml
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--condition-query SlowCheckout=&quot;…&quot;</code></td>
+<td>the query, under a placeholder name; it returns the slow checkouts, not a verdict</td>
+</tr>
+<tr>
+<td><code>--condition &quot;count 'SlowCheckout' &gt; 3 …&quot;</code></td>
+<td>count the rows the query returns and fire when there are more than 3</td>
+</tr>
+<tr>
+<td><code>--window-size 10m</code></td>
+<td>each run looks at the last 10 minutes: twice the frequency, so rows that arrive late are still counted</td>
+</tr>
+<tr>
+<td><code>--evaluation-frequency 5m</code></td>
+<td>run every 5 minutes (1-minute rules cost more)</td>
+</tr>
+<tr>
+<td><code>--scopes &quot;$LAW_ID&quot;</code></td>
+<td>the workspace that holds <code>AppRequests</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>The alert needs slow checkouts to count. If <code>traffic.sh</code> has finished (<code>tail -n 2 &quot;$OUT_DIR/traffic.log&quot;</code> says
+<em>Done</em>), start it again:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>nohup bash traffic.sh 15 &gt; &quot;$OUT_DIR/traffic.log&quot; 2&gt;&amp;1 &amp;
+</code></pre></div>
+<p>The alert fires within about 5–15 minutes. Watch <em>Monitor › Alerts</em> in the portal, filtered on your resource group.</p>
+<p><strong>Optional — a workbook for the whole team (portal, about 5 minutes):</strong> <code>log-nusa</code> › <em>Workbooks</em> › <em>New</em>. <em>Add › Add
+query</em>, paste solution 8 and choose <em>Time chart</em>; add a second query with solution 6 as a <em>Grid</em>. Select <em>Done editing</em>,
+then <em>Save</em> it as <code>Checkout health</code> in your lab resource group. That's the page Ibu Sari can open before 12.12.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Run solution 8 without the <code>render</code> line in <em>Logs</em>, then select <em>New alert rule</em>. The query
+comes with it: set <em>Measure</em> to <em>Table rows</em>, <em>Aggregation granularity</em> to 10 minutes, the threshold to 3 and the
+frequency to 5 minutes.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the rule shows <code>enabled: true</code>, <code>every: PT5M</code>, <code>window: PT10M</code> and <code>threshold: 3.0</code>, and a fired
+<code>alert-slow-checkout</code> alert (Sev 3) appears under <em>Monitor › Alerts</em> — plus an email if you created the action group.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Rizky trimmed the data collection rule &quot;to cut the log bill&quot;. Apply his version:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>sed &#x27;s/&quot;Warning&quot;, //&#x27; &quot;$OUT_DIR/dcr.json&quot; &gt; &quot;$OUT_DIR/dcr-rizky.json&quot;
+grep logLevels &quot;$OUT_DIR/dcr-rizky.json&quot;
+az monitor data-collection rule create --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; --name &quot;$DCR&quot; \
+  --rule-file &quot;$OUT_DIR/dcr-rizky.json&quot; --output none
+</code></pre></div>
+<p>Wait about five minutes for the agent to pick up the change, then let the order-jobs server report two problems with the
+marker <code>rizkytest</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name &quot;$VM&quot; --command-id RunShellScript \
+  --scripts &quot;logger -p user.warning -t nusa-orders &#x27;Payment API slow again (rizkytest)&#x27;; logger -p user.err -t nusa-orders &#x27;Order batch 4480 failed (rizkytest)&#x27;&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p><strong>Symptom:</strong> ten minutes later, only one of the two messages is in the workspace, and <code>bash verify.sh</code> fails a check.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kql &#x27;Syslog | where TimeGenerated &gt; ago(30m) | where SyslogMessage has &quot;rizkytest&quot; | project TimeGenerated, SeverityLevel, SyslogMessage&#x27;
+</code></pre></div>
+<details class="plain"><summary>Hint: what's missing, and how do you fix it?</summary>
+<p>The error arrived; the warning didn't. Rizky's rule lists only <code>Error</code>, <code>Critical</code>, <code>Alert</code> and <code>Emergency</code>, so the
+agent now drops every warning on the VM before it's sent — including the &quot;payment API slow&quot; warnings that would have
+explained Friday. Filtering at the source is the right way to save money, but only for data nobody needs.</p>
+<p>Re-create the rule from the original file, which includes <code>Warning</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az monitor data-collection rule create --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; --name &quot;$DCR&quot; \
+  --rule-file &quot;$OUT_DIR/dcr.json&quot; --output none
+</code></pre></div>
+<p>Wait about five minutes, run the <code>logger</code> command again with the marker <code>rizkyfixed</code>, and query for it ten minutes
+later: both severities arrive. The warning you sent during the break is gone for good — the agent doesn't backfill
+what a rule filtered out.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. The last section counts rows
+per table as notes: if a table is still empty, wait a few minutes and run the script again.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes, in order: the diagnostic setting on the blob service (diagnostic settings can outlive their resource),
+your Storage Blob Data Contributor role assignment, the workspace <code>log-nusa</code> — permanently, instead of keeping it
+soft-deleted for 14 days — and then resource group <code>rg-lunch30-&lt;suffix&gt;</code> with everything else in it: the VM and its
+network resources, the storage account, the App Service plan and web app, Application Insights with its availability
+test, the data collection rule, the alert rule and the action group. It also removes the local folder
+<code>$HOME/lab30-out</code>. Deletion continues in the background for a few minutes.</p>
+<p>If you created a subscription-level diagnostic setting in the stretch goals, delete it too — it isn't in the resource
+group.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>An <code>az monitor data-collection</code>, <code>app-insights</code>, <code>scheduled-query</code> or <code>log-analytics query</code> command asks to install an extension, or says it isn't recognized</td>
+<td>the CLI extension isn't installed in this Cloud Shell</td>
+<td>run <code>bash setup.sh</code> again, or <code>az extension add --name monitor-control-service</code> (and <code>application-insights</code>, <code>scheduled-query</code>, <code>log-analytics</code>)</td>
+</tr>
+<tr>
+<td><code>setup.sh</code> fails on the App Service plan with a quota error</td>
+<td>your subscription has no quota for Basic plans in this region</td>
+<td>run <code>export LAB30_APP_SKU=F1</code> (Free) or choose another <code>LOCATION</code>, then <code>source lab.env</code> and <code>bash setup.sh</code> again</td>
+</tr>
+<tr>
+<td>No <code>Heartbeat</code> rows 15 minutes after Task 3</td>
+<td>no managed identity, no association, the agent can't reach Azure Monitor, or the rule and workspace are in different regions</td>
+<td>re-run the Task 2 and Task 3 checks; the VM needs its public IP for outbound HTTPS; recreate the rule in the workspace's region</td>
+</tr>
+<tr>
+<td><code>Heartbeat</code> rows arrive but no Syslog warnings</td>
+<td>the rule doesn't include <code>Warning</code>, or the message was sent before the rule applied</td>
+<td><code>grep logLevels &quot;$OUT_DIR/dcr.json&quot;</code>; send a new warning with Task 3's <code>logger</code> command and wait 10 minutes</td>
+</tr>
+<tr>
+<td><code>StorageBlobLogs</code> stays empty</td>
+<td>the diagnostic setting is on the storage account instead of <code>.../blobServices/default</code>, or no blob traffic yet</td>
+<td>re-run Task 4 exactly; check <code>$OUT_DIR/traffic.log</code> for storage rounds</td>
+</tr>
+<tr>
+<td><code>traffic.sh</code> reports failed storage rounds for more than 10 minutes</td>
+<td>the role assignment from <code>setup.sh</code> is missing</td>
+<td><code>az role assignment create --assignee-object-id &quot;$(az ad signed-in-user show --query id -o tsv)&quot; --assignee-principal-type User --role &quot;Storage Blob Data Contributor&quot; --scope &quot;$ST_ID&quot;</code></td>
+</tr>
+<tr>
+<td>No <code>AppRequests</code> rows 15 minutes after Task 5</td>
+<td>the app settings are missing or misspelled, or the app hasn't restarted</td>
+<td>check them with <code>az webapp config appsettings list --resource-group &quot;$RG&quot; --name &quot;$APP&quot; --output table</code>; <code>az webapp restart --resource-group &quot;$RG&quot; --name &quot;$APP&quot;</code>; make sure <code>traffic.sh</code> is still running</td>
+</tr>
+<tr>
+<td><code>az monitor log-analytics query</code> says the workspace wasn't found</td>
+<td>you passed the workspace name or resource ID</td>
+<td>use the GUID: <code>$LAW_GUID</code> (the <em>Workspace ID</em> in the portal)</td>
+</tr>
+<tr>
+<td>The alert rule can't be created: <em>Failed to resolve table or column expression named 'AppRequests'</em></td>
+<td>Application Insights hasn't sent its first data yet</td>
+<td>wait until question 6 returns rows, then run the command again (or add <code>--skip-query-validation true</code>)</td>
+</tr>
+<tr>
+<td>The alert hasn't fired after 15 minutes</td>
+<td>not enough slow checkouts in a 10-minute window</td>
+<td>check that <code>traffic.sh</code> is running (<code>tail &quot;$OUT_DIR/traffic.log&quot;</code>); start it again with <code>nohup bash traffic.sh 15 &gt; &quot;$OUT_DIR/traffic.log&quot; 2&gt;&amp;1 &amp;</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li><strong>Transform at ingestion:</strong> add <code>&quot;transformKql&quot;: &quot;source | where ProcessName != \&quot;nusa-orders\&quot;&quot;</code> to the Syslog data
+flow in a copy of <code>$OUT_DIR/dcr.json</code>, re-create the rule from the copy, and confirm that a new <code>nusa-orders</code> warning
+no longer arrives while other Syslog warnings still do. Re-create the rule from <code>$OUT_DIR/dcr.json</code> afterwards.</li>
+<li><strong>Table plans:</strong> open <code>log-nusa</code> › <em>Settings › Tables</em>, find a table you filled today that offers the <em>Basic</em> plan,
+and read what changes (query price, alerts, retention) before you switch. Note that a table's plan can be changed only
+once a week.</li>
+<li><strong>The application map:</strong> open <code>appi-nusa-shop</code> › <em>Investigate › Application map</em>, then <em>Performance</em> › <code>POST /checkout</code>
+› drill into a slow sample to see its end-to-end transaction.</li>
+<li><strong>Activity log in the workspace:</strong> create a subscription diagnostic setting that sends the activity log to <code>log-nusa</code>
+(<code>az monitor diagnostic-settings subscription create</code>), query <code>AzureActivity</code>, and delete the setting with
+<code>az monitor diagnostic-settings subscription delete</code> before you clean up.</li>
+<li><strong>Grafana:</strong> open <em>Monitor › Dashboards with Grafana</em> and explore the prebuilt dashboards for your VM and App Service.</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Run <code>bash setup.sh</code> to get resource group <code>rg-lunch30-&lt;suffix&gt;</code> with workspace <code>log-nusa</code>, VM <code>vm-nusa-app</code>, storage
+account <code>stnusalog&lt;suffix&gt;</code> and web app <code>app-nusa30-&lt;suffix&gt;</code>. Then build the following, any way you like (portal, CLI,
+Bicep):</p>
+<ol>
+<li><code>vm-nusa-app</code> has a <strong>system-assigned managed identity</strong> and the <strong>Azure Monitor Agent</strong> extension.</li>
+<li>A <strong>data collection rule</strong> associated with the VM collects Syslog at <strong>Warning</strong> and above and at least one
+performance counter, and sends both to <code>log-nusa</code>. (<code>dcr-linux-nusa.json</code> is a valid starting point.)</li>
+<li>A <strong>diagnostic setting</strong> on the storage account's <strong>blob service</strong> sends the <strong>allLogs</strong> category group to <code>log-nusa</code>.</li>
+<li>A <strong>workspace-based</strong> Application Insights resource named <code>appi-nusa-shop</code> that uses <code>log-nusa</code>; the web app sends
+telemetry to it through <strong>autoinstrumentation</strong>; an enabled <strong>standard availability test</strong> linked to it checks the
+storefront.</li>
+<li>A <strong>log search alert</strong> named <code>alert-slow-checkout</code>, scoped to <code>log-nusa</code> (or <code>appi-nusa-shop</code>), that queries
+<code>AppRequests</code> and fires when more than 3 checkouts take longer than 1 second.</li>
+<li>Generate traffic with <code>bash traffic.sh 20</code> and answer questions 6, 8 and 9 of Task 6 with your own queries.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="29-containers-advanced-aks.html"><small>← Previous lab</small>29 · Kubernetes for the microservices team</a><a class="next" href="31-governance-at-scale.html"><small>Next lab →</small>31 · Governance for the whole company</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

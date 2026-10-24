@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 25 · Prove the Traffic Is Inspected — Lunch 25: Virtual Networking (Advanced) · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 25 · Virtual Networking (Advanced). Finance wants its own network, and the auditor wants proof of what can talk to it. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/25-networking-advanced.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/25-networking-advanced.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/25-networking-advanced.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/25-networking-advanced.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 25 · Prove the Traffic Is Inspected — Lunch 25: Virtual Networking (Advanced)">
+<meta property="og:description" content="Lunch 25 · Virtual Networking (Advanced). Finance wants its own network, and the auditor wants proof of what can talk to it. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/25-networking-advanced.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lunch" data-lunch="25" style="--c:#7b4ff0">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/lunches/25-networking-advanced.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 25</span> Season 2 · 🌊 Part 5 · Deep dives</div>
+      <h1>Prove the Traffic Is Inspected</h1>
+      <div class="lunch-title">Lunch 25 · Virtual Networking (Advanced)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+      <div class="chips">
+        <span class="chip advanced">Advanced</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 Beyond AZ-900</span>
+        <span class="chip cost">🔬 Lab · about 60 minutes · 💲💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="08-networking-basic.html" title="Don&#x27;t Overlap My Network">↩ 08</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 24 · Encrypted by Friday, invoices are versioned, immutable and reachable only through a private endpoint.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, happy"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director&#x27;s question · 84% ready</b>After this episode you can say: “We keep selling, and every network path is one we chose and can inspect.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#field-notes">🗒️ Notes</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today&#x27;s menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-peering-and-the-hub-and-spoke-shape">Peering and the hub-and-spoke shape</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-how-azure-chooses-a-route">How Azure chooses a route</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-inspecting-traffic-azure-firewall-and-network-virtual-appliances">Inspecting traffic: Azure Firewall and network virtual appliances</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-edge-services-in-the-hub-nat-gateway-azure-bastion-and-ddos-protection">Edge services in the hub: NAT gateway, Azure Bastion and DDoS Protection</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-reaching-paas-privately-endpoints-and-dns">Reaching PaaS privately: endpoints and DNS</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-operating-it-at-scale-for-nusantara-retail">Operating it at scale for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Field notes</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/25-networking-advanced.html">🔬 Open Lab 25</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today&#x27;s menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Design</strong> a hub-and-spoke network with virtual network peering, and explain why peering isn't transitive and what gateway transit adds.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Predict</strong> which route Azure picks for a packet, from system routes, user-defined routes and next-hop types — and prove it with effective routes and next hop.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Compare</strong> Azure Firewall SKUs with network virtual appliances, and place NAT gateway, Azure Bastion and DDoS Protection in a hub.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> how a private endpoint's name resolves to a private IP address, and when you need Azure DNS Private Resolver.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Use</strong> Network Watcher and Azure Virtual Network Manager to operate many networks with evidence rather than hope.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 25</span>
+        <div class="story-body"><p>Six months after Lunch 08, the storefront network works so well that the finance team wants its own back-office
+application in Azure — in a separate network, with its own owners and its own budget. Ibu Sari's auditor arrives with
+two uncomfortable questions: which systems can talk to the finance network, and can you <em>prove</em> that the traffic between
+them is inspected?</p>
+<p>Pak Budi is planning the VPN to head office for Lunch 26 and has one condition: &quot;One connection into Azure. Not one per
+network.&quot; Dewi only wants the storefront to call the back-office API without filing a ticket each time. And everybody
+agrees that the invoices storage account should stop answering the internet altogether.</p>
+<p>Today's question: how do you connect many networks through one controlled hub — and prove where every packet goes?</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-peering-and-the-hub-and-spoke-shape" data-spy><span class="scene-no">Scene 1 of 6</span><h3>Peering and the hub-and-spoke shape</h3><div class="prose"><p><strong>Virtual network peering</strong> connects two VNets so that their resources talk over private IP addresses on Microsoft's
+backbone. <strong>Regional peering</strong> joins VNets in the same region; <strong>global peering</strong> joins VNets in different regions.
+In the same region, latency between peered VMs equals latency inside one VNet, and peering adds no bandwidth limit of its
+own — the VM size is the limit. Peering works across subscriptions and even Microsoft Entra tenants, and needs no
+gateway or encryption appliance. You pay a small charge per GB that crosses a peering, in each direction.</p>
+<p>Two rules carry over from Lunch 08. The address spaces must not overlap, and a peering has two halves: you create one
+link from each VNet. With one link the status is <em>Initiated</em>; with both it becomes <em>Connected</em>. If one link is deleted,
+the other shows <em>Disconnected</em> and must be recreated. You can still grow a peered VNet's address space later without
+downtime; afterwards you <strong>sync</strong> the peering so the other side learns the new range.</p>
+<p>The rule that surprises people is that <strong>peering is not transitive</strong>. Each peering adds routes only for the <em>direct</em>
+neighbour's address space. If spoke1 and spoke2 are both peered with a hub, spoke1 still has no route to spoke2:</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph hub[&quot;vnet-nusa-hub · 10.30.0.0/16&quot;]
+    nva[&quot;Router or firewall&lt;br/&gt;10.30.1.4&quot;]
+  end
+  s1[&quot;vnet-nusa-spoke1&lt;br/&gt;10.31.0.0/16 · storefront&quot;] &lt;--&gt;|&quot;peering&quot;| hub
+  s2[&quot;vnet-nusa-spoke2&lt;br/&gt;10.32.0.0/16 · back office&quot;] &lt;--&gt;|&quot;peering&quot;| hub
+  s1 -. &quot;no route: not transitive&quot; .- s2
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>That limitation is the reason for the <strong>hub-and-spoke</strong> design. Shared services live in the <strong>hub</strong>: a firewall or
+network virtual appliance, the VPN or ExpressRoute gateway, Azure Bastion and DNS services. Each workload gets its own
+<strong>spoke</strong>, peered only with the hub. Spokes are isolated by default, can belong to different teams and subscriptions,
+and share one inspection point and one connection to head office. When two spokes must talk, you have three options:
+route through an appliance in the hub (inspected), peer the two spokes directly (fast, but uninspected and growing as
+N × (N − 1) / 2 peerings), or let Azure Virtual Network Manager create direct spoke connectivity (section 6).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Peering setting</th>
+<th>Set it on</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Allow access</strong> to the peered network</td>
+<td>Both links</td>
+<td>The basic switch; without it the peering carries nothing</td>
+</tr>
+<tr>
+<td><strong>Allow forwarded traffic</strong></td>
+<td>The link of the network that <em>receives</em> forwarded packets — here, each spoke's link to the hub</td>
+<td>Accepts packets that didn't originate in the peer, for example packets forwarded by the hub's appliance</td>
+</tr>
+<tr>
+<td><strong>Allow gateway transit</strong></td>
+<td>The hub's links</td>
+<td>Lets spokes share the hub's VPN or ExpressRoute gateway</td>
+</tr>
+<tr>
+<td><strong>Use remote gateways</strong></td>
+<td>A spoke's link to the hub</td>
+<td>Sends the spoke's on-premises traffic through the hub's gateway; the spoke can't have its own gateway</td>
+</tr>
+</tbody>
+</table></div>
+<p>Gateway transit works over both regional and global peering, and Lunch 26 uses it. One more surprise: Azure-provided
+DNS doesn't resolve VM names across peerings — for that you need private DNS zones (section 5).</p>
+</div></article><article class="scene-card" id="2-how-azure-chooses-a-route" data-spy><span class="scene-no">Scene 2 of 6</span><h3>How Azure chooses a route</h3><div class="prose"><p>Every subnet has a route table, even if you never create one. Azure fills it with <strong>system routes</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Address prefix</th>
+<th>Next hop type</th>
+<th>Added when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Each address range of the VNet</td>
+<td>Virtual network</td>
+<td>Always — subnets reach each other without any setup</td>
+</tr>
+<tr>
+<td>Each range of a peered VNet</td>
+<td>VNet peering</td>
+<td>A peering is connected</td>
+</tr>
+<tr>
+<td>On-premises prefixes</td>
+<td>Virtual network gateway</td>
+<td>A VPN or ExpressRoute gateway learns them (Lunch 26)</td>
+</tr>
+<tr>
+<td><code>0.0.0.0/0</code></td>
+<td>Internet</td>
+<td>Always — traffic to Azure services' public IPs still stays on Microsoft's backbone</td>
+</tr>
+<tr>
+<td><code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code>, <code>100.64.0.0/10</code> and a few other reserved ranges</td>
+<td>None (drop)</td>
+<td>Always — unless the range is part of your own address space</td>
+</tr>
+</tbody>
+</table></div>
+<p>You change routing with <strong>user-defined routes (UDRs)</strong>. They live in a <strong>route table</strong> resource that you associate with
+subnets: zero or more subnets per table, at most one table per subnet, and by default up to 400 routes per table. Each
+UDR pairs an address prefix with one of five next hop types:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Next hop type (CLI value)</th>
+<th>Where matching traffic goes</th>
+<th>Typical use at Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Virtual appliance (<code>VirtualAppliance</code>)</td>
+<td>A private IP you name: an appliance VM's NIC with IP forwarding on, or an internal load balancer's frontend</td>
+<td>Send spoke-to-spoke and internet traffic through the hub's firewall</td>
+</tr>
+<tr>
+<td>Virtual network gateway (<code>VirtualNetworkGateway</code>)</td>
+<td>The VNet's VPN gateway — not an ExpressRoute gateway, whose routes come from BGP</td>
+<td>Force internet-bound traffic to head office over the VPN</td>
+</tr>
+<tr>
+<td>Virtual network (<code>VnetLocal</code>)</td>
+<td>Normal delivery inside the VNet</td>
+<td>Keep traffic inside one subnet out of a broader appliance route</td>
+</tr>
+<tr>
+<td>Internet (<code>Internet</code>)</td>
+<td>Azure's internet path; traffic to Azure services' public IPs stays on Microsoft's backbone</td>
+<td>Let one prefix bypass a <code>0.0.0.0/0</code> route to the firewall</td>
+</tr>
+<tr>
+<td>None (<code>None</code>)</td>
+<td>Nowhere: the packet is dropped</td>
+<td>Block a range on purpose, such as another spoke</td>
+</tr>
+</tbody>
+</table></div>
+<p>You can't create peering or service-endpoint routes yourself; Azure adds them. One trap from Lunch 08: in a private
+subnet, a UDR with next hop <code>Internet</code> doesn't create a way out. Without a NAT gateway or public IP, those connections
+still fail.</p>
+<p>Azure picks a route in two steps:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  pkt[&quot;Packet to 10.32.1.4 leaves a VM in spoke1&quot;] --&gt; lpm[&quot;1. Longest matching prefix wins&lt;br/&gt;10.32.0.0/16 beats 10.0.0.0/8 beats 0.0.0.0/0&quot;]
+  lpm --&gt; tie{&quot;Several routes with the&lt;br/&gt;same prefix?&quot;}
+  tie -- &quot;no&quot; --&gt; hop[&quot;Use that route&#x27;s next hop&quot;]
+  tie -- &quot;yes&quot; --&gt; pref[&quot;2. User-defined route,&lt;br/&gt;then BGP route, then system route&quot;] --&gt; hop
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Before you add a UDR, spoke1's packet for <code>10.32.1.4</code> matches only <code>10.0.0.0/8</code> and <code>0.0.0.0/0</code>. The /8 is longer, so
+the next hop is <strong>None</strong> and the packet is silently dropped. Add a UDR for <code>10.32.0.0/16</code> with next hop
+<code>VirtualAppliance 10.30.1.4</code>, and that /16 wins.</p>
+<p>Two tools show the truth. <strong>Effective routes</strong> list every route on a NIC with its source (Default, User or gateway)
+and state (Active or Invalid). <strong>Next hop</strong> in Network Watcher answers for a single destination.</p>
+<p>Routing through an appliance takes more than a route, though:</p>
+<ol>
+<li>A UDR with next hop <code>VirtualAppliance</code> and the appliance's IP, on every subnet whose traffic should be inspected.</li>
+<li><strong>IP forwarding</strong> enabled on the appliance's NIC. Without it, Azure drops packets that aren't addressed to that NIC.</li>
+<li>Forwarding switched on inside the appliance's operating system or software.</li>
+<li>A <strong>return route</strong> on the other side, so replies come back through the same appliance.</li>
+<li><strong>Allow forwarded traffic</strong> on the receiving spoke's peering, and NSGs that permit the flow.</li>
+</ol>
+<p>Put the appliance in its own subnet: a route table that sends a subnet's traffic to an appliance in that same subnet can
+create a loop.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Once the hub has a VPN or ExpressRoute gateway, it advertises head-office routes to every peered spoke that uses it.
+Those learned routes are more specific than a <code>0.0.0.0/0</code> UDR and would bypass your firewall. Route tables have a
+setting to stop gateway route propagation on the spokes' subnets; then a UDR for head office's range sends that
+traffic through the firewall too. Never disable it on <code>GatewaySubnet</code> itself.</p>
+</aside>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>Asymmetric routing is the classic hub-and-spoke bug. If spoke1 sends through the firewall but spoke2's replies take
+the direct way — or have no route at all — a stateful firewall sees only half of each conversation and drops it.
+Always create routes in pairs, and check both directions with next hop.</p>
+</aside>
+</div></article><article class="scene-card" id="3-inspecting-traffic-azure-firewall-and-network-virtual-appliances" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Inspecting traffic: Azure Firewall and network virtual appliances</h3><div class="prose"><p>A <strong>network virtual appliance (NVA)</strong> is a VM that routes, filters or optimises traffic: a vendor firewall or an SD-WAN
+router from Azure Marketplace, or — as in the lab — a plain Linux VM with forwarding switched on. With an NVA you own the
+patching, the scaling and the high availability. A single appliance VM is a single point of failure for every spoke, so
+production designs run two or more instances behind an internal Standard load balancer with HA ports (Lunch 09), and
+the UDRs point at the load balancer's frontend IP instead of one VM.</p>
+<p><strong>Azure Firewall</strong> is the managed alternative: a stateful firewall as a service with built-in high availability,
+availability zone support and autoscaling. It lives in a dedicated subnet named <code>AzureFirewallSubnet</code> and denies
+everything that no rule allows. It comes in three SKUs:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Basic</th>
+<th>Standard</th>
+<th>Premium</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Designed for</td>
+<td>Small and medium environments</td>
+<td>Most production hubs</td>
+<td>Highly sensitive workloads such as payments</td>
+</tr>
+<tr>
+<td>Throughput (at the time of writing)</td>
+<td>Up to 250 Mbps</td>
+<td>Up to 30 Gbps</td>
+<td>Up to 100 Gbps</td>
+</tr>
+<tr>
+<td>Threat intelligence</td>
+<td>Alert only</td>
+<td>Alert and deny</td>
+<td>Alert and deny</td>
+</tr>
+<tr>
+<td>Extra features</td>
+<td>Stateful rules, NAT, application FQDN filtering</td>
+<td>Adds network-level FQDN filtering, web categories, DNS proxy</td>
+<td>Adds TLS inspection, intrusion detection and prevention (IDPS), full URL filtering</td>
+</tr>
+</tbody>
+</table></div>
+<p>Rules come in three kinds. <strong>DNAT rules</strong> publish an internal service on the firewall's public IP. <strong>Network rules</strong>
+filter by IP address, port, protocol and service tag. <strong>Application rules</strong> allow or deny outbound HTTP, HTTPS and SQL
+traffic by fully qualified domain name, such as <code>*.ubuntu.com</code>. Azure processes DNAT rules first, then network rules,
+then application rules; inside each kind, rule collections run in priority order and the first match wins.</p>
+<p>Rules live in a <strong>Firewall Policy</strong>, a separate resource that several firewalls can share; the older &quot;classic&quot; rules
+stored on the firewall itself are legacy. <strong>Azure Firewall Manager</strong> manages policies centrally across many firewalls,
+including parent policies with company-wide rules that child policies inherit.</p>
+<p>Cost has two parts: a fixed charge for every hour the firewall exists, and a charge per GB processed — rising from
+Basic to Premium. Choose the lowest SKU that meets the security and throughput needs, and never leave a lab firewall
+running overnight.</p>
+</div></article><article class="scene-card" id="4-edge-services-in-the-hub-nat-gateway-azure-bastion-and-ddos-protection" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Edge services in the hub: NAT gateway, Azure Bastion and DDoS Protection</h3><div class="prose"><p>You met <strong>NAT gateway</strong> in Lunch 08 as the default way out of a private subnet. Three details matter at scale. First,
+it hands out <strong>SNAT ports</strong> — the source ports used when many private addresses share a public one — dynamically to
+every VM in its subnets, so it rarely runs out; each extra public IP (up to 16) or a public IP prefix enlarges the pool.
+Second, its TCP <strong>idle timeout</strong> is 4 minutes by default and can be raised to 120; keepalives reset it. Third, it has a
+place in a precedence chain: a UDR that sends <code>0.0.0.0/0</code> to an appliance or gateway beats NAT gateway, which beats a
+VM's own public IP, which beats load balancer outbound rules. In a hub-and-spoke design you therefore send spoke
+internet traffic to the firewall and attach the NAT gateway to <code>AzureFirewallSubnet</code>, so the firewall's outbound
+connections use the NAT gateway's addresses. A NAT gateway serves subnets of one VNet only. The <strong>StandardV2</strong> SKU adds
+zone redundancy, IPv6 and flow logs; it needs StandardV2 public IPs and can't be upgraded in place from Standard.</p>
+<p><strong>Azure Bastion</strong> gives admins browser-based RDP and SSH over TLS to VMs that have no public IP at all. Placed in the
+hub, the dedicated SKUs reach VMs in peered spokes:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>SKU</th>
+<th>Good fit</th>
+<th>Highlights</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Developer</td>
+<td>Dev/test, one VM at a time</td>
+<td>Free and shared; no dedicated subnet; no peering support; selected regions</td>
+</tr>
+<tr>
+<td>Basic</td>
+<td>Small production estates</td>
+<td>Dedicated host with two fixed instances; reaches peered VNets</td>
+</tr>
+<tr>
+<td>Standard</td>
+<td>Larger teams</td>
+<td>Host scaling, native SSH/RDP clients through the CLI, IP-based connections, shareable links</td>
+</tr>
+<tr>
+<td>Premium</td>
+<td>Regulated workloads</td>
+<td>Everything in Standard plus session recording and private-only deployment</td>
+</tr>
+</tbody>
+</table></div>
+<p>Dedicated SKUs need a subnet named <code>AzureBastionSubnet</code> of /26 or larger. You can upgrade a SKU but not downgrade it.</p>
+<p><strong>DDoS protection</strong> starts for free: Azure's infrastructure protection covers every public IP automatically. For the
+storefront's busiest days you can add <strong>DDoS IP Protection</strong>, billed per protected public IP, or <strong>DDoS Network
+Protection</strong>, a plan for whole VNets that adds access to the DDoS rapid response team, cost protection and a WAF
+discount.</p>
+</div></article><article class="scene-card" id="5-reaching-paas-privately-endpoints-and-dns" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Reaching PaaS privately: endpoints and DNS</h3><div class="prose"><p>PaaS services such as Azure Storage and Azure SQL Database have public endpoints. Azure offers two ways to reach them
+from a VNet:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Service endpoint</th>
+<th>Private endpoint (Azure Private Link)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What it is</td>
+<td>An optimised route from a subnet to a service, with the VNet identity attached</td>
+<td>A network interface with a private IP in your subnet, mapped to one specific resource</td>
+</tr>
+<tr>
+<td>The service's public endpoint</td>
+<td>Stays public; you restrict it to selected subnets</td>
+<td>Can be switched off completely</td>
+</tr>
+<tr>
+<td>From peered VNets and on-premises</td>
+<td>Not by default</td>
+<td>Yes, over peering, VPN or ExpressRoute</td>
+</tr>
+<tr>
+<td>DNS changes</td>
+<td>None</td>
+<td>Required: a private DNS zone</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Free</td>
+<td>Per endpoint per hour, plus per GB processed</td>
+</tr>
+</tbody>
+</table></div>
+<p>Private endpoints are the stronger choice for the invoices account, but only if DNS cooperates. The application keeps
+using the public name, so its connection string and TLS certificate still match. The name resolves like this:</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant VM as vm-spoke1
+  participant ADNS as Azure DNS 168.63.129.16
+  participant PUB as Public DNS
+  participant PZ as Private zone privatelink.blob.core.windows.net
+  VM-&gt;&gt;ADNS: stnusa.blob.core.windows.net?
+  ADNS-&gt;&gt;PUB: look up the public name
+  PUB--&gt;&gt;ADNS: CNAME stnusa.privatelink.blob.core.windows.net
+  ADNS-&gt;&gt;PZ: is a private zone linked to this VNet?
+  PZ--&gt;&gt;ADNS: A record 10.30.3.4
+  ADNS--&gt;&gt;VM: 10.30.3.4 (private IP)
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>The <strong>privatelink alias</strong> is public: anyone can look it up. What turns it into a private IP is a <strong>private DNS zone</strong>
+with the service's recommended name — <code>privatelink.blob.core.windows.net</code> for blobs, <code>privatelink.database.windows.net</code>
+for Azure SQL — and a <strong>virtual network link</strong> from that zone to every VNet that must resolve privately. A DNS zone
+group on the private endpoint keeps the <code>A</code> record up to date. Outside those VNets, the same chain ends at the public
+IP, where the account refuses the connection because public network access is disabled.</p>
+<p>The usual failure is a VNet that isn't linked to the zone, or one that uses custom DNS servers (such as Pak Budi's
+domain controllers) that don't forward to Azure DNS. The VM then gets the public IP and an &quot;access denied&quot;.</p>
+<p>One routing detail catches firewall designs: by default, NSGs and UDRs don't apply to traffic <em>to</em> a private endpoint.
+If the auditor wants spoke-to-endpoint traffic filtered by NSGs or sent through the firewall, enable <strong>private endpoint
+network policies</strong> on the endpoint's subnet first.</p>
+<p>Head office has the opposite problem: on-premises servers can't reach <code>168.63.129.16</code>. <strong>Azure DNS Private Resolver</strong>
+solves both directions without DNS VMs. An <strong>inbound endpoint</strong> is a private IP in the hub. On-premises DNS servers
+conditionally forward the service's <em>public</em> zone to it — <code>blob.core.windows.net</code>, not the <code>privatelink</code> zone — and
+because the private zones are linked to the hub, the answers come back private. An <strong>outbound endpoint</strong> with a <strong>DNS forwarding ruleset</strong> sends queries for on-premises
+domains, such as <code>corp.nusantararetail.local</code>, from Azure to Pak Budi's DNS servers. Each endpoint needs its own subnet
+of /28 to /24, delegated to the resolver, and hybrid resolution needs the VPN or ExpressRoute from Lunch 26.</p>
+</div></article><article class="scene-card" id="6-operating-it-at-scale-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>Operating it at scale for Nusantara Retail</h3><div class="prose"><p>With two spokes, everything above fits on a whiteboard. With twenty, consistency becomes the problem.
+<strong>Azure Virtual Network Manager</strong> manages VNets centrally across subscriptions and management groups. You define
+<strong>network groups</strong>, either by picking VNets or dynamically with Azure Policy conditions such as a tag. Then you apply
+<strong>connectivity configurations</strong> (hub-and-spoke, optionally with direct connectivity between spokes, or a full mesh),
+<strong>security admin rules</strong> that are evaluated <em>before</em> NSGs — a &quot;Deny&quot; or &quot;Always allow&quot; admin rule ends the evaluation
+— and <strong>routing configurations</strong> that manage UDRs at scale. It can also manage IP address pools so new VNets never
+overlap. It's billed per managed VNet, so it pays off with growth rather than on day one.</p>
+<p>Network Watcher remains the source of evidence:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Next hop</strong></td>
+<td>Where does Azure send a packet from this VM to that address, and which route table decided?</td>
+</tr>
+<tr>
+<td><strong>Effective routes</strong></td>
+<td>Every route on a NIC, with its source and whether it's active</td>
+</tr>
+<tr>
+<td><strong>Connection troubleshoot</strong></td>
+<td>Can a real connection be made from this VM to that VM, address or URL, and where does it fail?</td>
+</tr>
+<tr>
+<td><strong>VNet flow logs</strong></td>
+<td>Which flows were allowed or denied across a whole VNet? NSG flow logs retire on September 30, 2027.</td>
+</tr>
+<tr>
+<td><strong>Traffic analytics</strong></td>
+<td>Who talks to whom, and how much — flow logs turned into maps in Log Analytics (Lunch 30)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Put together, Nusantara Retail's target hub holds Azure Firewall with a Firewall Policy, a NAT gateway on its subnet,
+Azure Bastion, a DNS Private Resolver for head office and, from Lunch 26, a VPN gateway shared through gateway transit.
+The storefront and back-office spokes peer only with the hub; their route tables send <code>0.0.0.0/0</code> and each other's
+ranges to the firewall. The invoices account and the orders database sit behind private endpoints with linked private
+DNS zones, and VNet flow logs feed Log Analytics. The auditor's questions now have answers that come from Azure, not
+from a diagram.</p>
+<p>Follow Dewi's API call once more. The storefront VM sends to the back office; the user route on its subnet sends the
+packet to the firewall; a network rule in the Firewall Policy allows TCP 443 from the storefront range to the
+back-office range; the hub-to-spoke peering delivers it; and the back office's route table sends the reply back through
+the same firewall. Every step has a name, a priority and a log entry.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>The auditor asks you to prove that storefront-to-back-office traffic is inspected. Which two
+Network Watcher results would you show, and what exactly should each one say?</p>
+</aside>
+<p>Next lunch connects head office to this hub with VPN Gateway and compares ExpressRoute and Virtual WAN.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Through the hub: routes, routers and private names</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/25-networking-advanced.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/25-networking-advanced.html" title="Interactive demo: Through the hub: routes, routers and private names" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/25-networking-advanced/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>The effective-routes panel: which route wins for <code>10.32.1.4</code> before and after the user-defined route.</li>
+<li>The hub VM: the packet arrives there but goes no further until IP forwarding is switched on.</li>
+<li>The name-resolution panel: the public name becomes a privatelink alias, and only a linked private zone turns it into
+a private IP.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Spoke1 and spoke2 are both peered with the hub, and all peerings show <em>Connected</em>. <code>vm-spoke1</code> still can't reach
+<code>vm-spoke2</code>. Name two ways to fix it.</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Route through the hub — user-defined routes on both spokes with next hop <code>VirtualAppliance</code> set to the hub's
+firewall or appliance, IP forwarding on that appliance and <em>allow forwarded traffic</em> on the spoke peerings — or
+connect the spokes directly with their own peering (or Virtual Network Manager's direct connectivity). <em>Why:</em>
+peering is non-transitive; each peering only adds routes for its direct neighbour.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Spoke1's subnet has a UDR <code>0.0.0.0/0 → VirtualAppliance 10.30.1.4</code>. A VM in spoke1 sends a packet to <code>10.31.1.10</code>,
+another VM in the same VNet. Where does it go?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Straight to the other VM inside the VNet (next hop <em>Virtual network</em>). <em>Why:</em> the system route for <code>10.31.0.0/16</code> is
+a longer prefix than <code>0.0.0.0/0</code>, and the longest matching prefix wins before route sources are compared.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Next hop from <code>vm-spoke1</code> to <code>vm-spoke2</code> says <em>VirtualAppliance 10.30.1.4</em>, yet the ping fails. What do you check?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>IP forwarding on the hub VM's NIC, forwarding inside its operating system, a return route on spoke2 that points back
+through the hub, <em>allow forwarded traffic</em> on the spokes' peerings, and any NSG or OS firewall on the way. <em>Why:</em>
+next hop only proves the first routing decision; the appliance and the return path must cooperate too.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p><code>stnusa</code> has a private endpoint in the hub, but a VM in spoke2 resolves <code>stnusa.blob.core.windows.net</code> to a public
+IP and gets &quot;access denied&quot;. What is the most likely cause?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The private DNS zone <code>privatelink.blob.core.windows.net</code> isn't linked to spoke2's VNet, or spoke2 uses custom DNS
+servers that don't forward to Azure DNS. <em>Why:</em> the privatelink CNAME is public; only a linked private zone turns it
+into the private endpoint's IP.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Once the VPN is up, Pak Budi's head-office DNS servers must resolve Nusantara's private endpoints. What do you deploy,
+and how do his servers use it?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Azure DNS Private Resolver in the hub with an inbound endpoint, and private DNS zones linked to the hub VNet. Head
+office adds conditional forwarders for the services' public zones, such as <code>blob.core.windows.net</code>, that point to
+the inbound endpoint's IP. <em>Why:</em> on-premises machines can't reach Azure DNS at <code>168.63.129.16</code>, but they can reach a
+private IP in the hub over the VPN, and the resolver asks Azure DNS from inside a linked VNet.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Peering is private, fast and non-transitive. Hub-and-spoke centralises shared services, and spoke-to-spoke traffic needs a hub appliance, an extra peering or Virtual Network Manager's direct connectivity.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Azure picks the longest matching prefix, then prefers a user-defined route over BGP over system routes. Private ranges you don't own go to <em>None</em>. Effective routes and next hop show the real answer.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>Routing through an appliance takes a UDR with next hop <code>VirtualAppliance</code>, IP forwarding on the NIC and in the OS, a matching return route and <em>allow forwarded traffic</em> on the receiving peering.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Azure Firewall (Basic, Standard, Premium) is the managed inspection point, with DNAT, network and application rules in a Firewall Policy. NAT gateway gives the hub predictable egress, Bastion replaces public management ports, and DDoS Protection adds paid protection on top of the free baseline.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Private endpoints only work when DNS does: public name → privatelink CNAME → private zone <code>A</code> record → private IP. Link the zones to every VNet that needs them, and use DNS Private Resolver for hybrid resolution.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Field notes from Stefanus</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Narrate the packet, both ways.</strong> In every hub-and-spoke review I ask one person to walk a single packet from the
+storefront to the back office out loud: which route table sends it to the hub, which firewall rule lets it through,
+which peering setting accepts it on the other side — and then the same for the reply. The moment someone says &quot;and
+then it just gets there&quot;, I have found the part that nobody owns. I want next-hop output from both VMs in the change
+ticket, not a diagram. And when someone tells me a private endpoint &quot;is blocked&quot;, I don't touch the firewall first:
+I run nslookup from the VM that fails. If the answer is a public IP, the problem is DNS, and no firewall rule will
+fix it.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">More about the author →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>25</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Hub and spoke for Nusantara Retail</h3>
+          <div class="prose"><p><code>setup.sh</code> builds a hub and two spokes with one small VM each and no public IPs. You peer the spokes with the hub,
+prove that spoke-to-spoke traffic fails because peering isn't transitive, turn the hub VM into a router with IP
+forwarding, and add route tables so the storefront and back office talk through the hub. Effective routes, next hop and
+a forwarded-packet counter on the hub prove every hop. An optional path swaps the router for Azure Firewall.</p>
+<p>earlier lab needed)</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 60 minutes</span><span class="chip cost">💲💲 small charges while running</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/25-networking-advanced.html">Start Lab 25 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/virtual-network/virtual-network-peering-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Azure virtual network peering</b><span>Regional and global peering, gateway transit, service chaining and pricing.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/virtual-network/virtual-networks-udr-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Azure virtual network traffic routing</b><span>Every system route, next-hop type and the route selection rules, with a worked example.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/firewall/choose-firewall-sku" target="_blank" rel="noopener"><b>Microsoft Learn: Choose the right Azure Firewall SKU</b><span>The Basic, Standard and Premium feature comparison.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/private-link/private-endpoint-dns" target="_blank" rel="noopener"><b>Microsoft Learn: Azure Private Endpoint private DNS zone values</b><span>The right <code>privatelink</code> zone name for each service.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🛤️</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Hub Builder</h2>
+        <p class="muted">Design hub-and-spoke networks with routing.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“We keep selling, and every network path is one we chose and can inspect.”</b></p>
+        <div class="teaser"><b>Next episode · 26</b><h4>A Proper Private Line</h4><p>Forty stores upload their sales over the internet — and one upload failed three nights in a row.</p><p style="margin-top:10px"><a href="26-hybrid-connectivity.html">Watch Episode 26 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="24-storage-advanced.html"><small>← Previous episode</small>24 · Encrypted by Friday</a><a class="next" href="26-hybrid-connectivity.html"><small>Next episode →</small>26 · A Proper Private Line</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/25-networking-advanced/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

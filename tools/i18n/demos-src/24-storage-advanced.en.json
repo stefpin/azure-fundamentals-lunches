@@ -1,0 +1,171 @@
+{
+  "page": {
+    "doc_title": "Lunch 24 · Storage (Advanced) — Interactive demo",
+    "kicker": "Lunch 24 · Storage (Advanced) · Interactive demo",
+    "title": "Ten years, one ransomware attack and two roads in",
+    "lede": "Follow one Nusantara Retail invoice through a ten-year lifecycle, watch versioning, soft delete and a retention policy defeat ransomware, then move the traffic from the public endpoint to a private one. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "A blob's ten-year lifecycle, versioning and soft delete against ransomware, and private versus public endpoint traffic",
+    "svgDesc": "Scene one shows an invoice moving along a timeline from the hot tier to cool, cold and archive and finally being deleted by a lifecycle rule. Scene two shows a container with a current version and previous versions: ransomware overwrites and deletes the invoice, previous versions are promoted back, deleted versions wait in a soft-delete bin, and a container with a time-based retention policy refuses a delete. Scene three shows Cloud Shell on the internet and a VM in a virtual network reaching a storage account, first through the public endpoint, then through a private endpoint with a private DNS zone, and finally with public network access disabled."
+  },
+  "steps": [
+    {
+      "title": "Ten years of one invoice",
+      "text": "Ransomware has just hit a supplier in Surabaya. Nusantara Retail's invoices must survive that kind of attack, stay unchanged for the tax office, cost little for ten years and be reachable only from the company's own network. Follow one invoice, INV-2026-0042, from the day it lands in the hot tier."
+    },
+    {
+      "title": "A rule cools it down",
+      "text": "Nobody tiers millions of invoices by hand. A lifecycle rule, which the platform runs once a day, moves each invoice to cool after 30 days and to cold after 90. Storage gets cheaper as the invoice gets quieter, and the invoice spends 60 days in cool, more than that tier's 30-day minimum.",
+      "set": {
+        "t-day": "Day 90 · now in Cold"
+      }
+    },
+    {
+      "title": "Archive, then a planned goodbye",
+      "text": "After a year the rule archives the invoice: the cheapest tier, but offline until someone rehydrates it. After 3,650 days the rule deletes it. Old versions need their own rule, because lifecycle management never deletes a current version while previous versions of it remain.",
+      "set": {
+        "t-day": "Day 3,650 · deleted on schedule"
+      }
+    },
+    {
+      "title": "Three safety nets switched on",
+      "text": "Now the dangerous part. Dewi turns on versioning, so every write keeps the old content; soft delete, which keeps deleted blobs, versions and containers for 14 days; and the change feed, a log of every change. The finance app writes INV-2026-0042 as version 1, the original."
+    },
+    {
+      "title": "Ransomware overwrites the invoice",
+      "text": "At 2:14 a.m., ransomware with stolen credentials overwrites the invoice with encrypted garbage. Without versioning the original would be gone. With versioning, version 1 simply becomes a read-only previous version, and the encrypted content is version 2. The change feed records which blob changed, and when.",
+      "set": {
+        "t-cur-sub": "v2 · ENCRYPTED BY RANSOMWARE",
+        "t-feed": "change feed · 02:14 overwrite INV-2026-0042.txt"
+      }
+    },
+    {
+      "title": "Promote the clean version",
+      "text": "In the morning Dewi copies version 1 over the blob. The copy becomes version 3, the current version, and the original invoice is back. The encrypted version 2 stays behind as a previous version until a lifecycle rule removes it. For thousands of blobs, point-in-time restore does this in one operation.",
+      "set": {
+        "t-cur-sub": "v3 · copy of v1 — the original is back",
+        "t-feed": "change feed · 08:05 copy v1 over INV-2026-0042.txt"
+      }
+    },
+    {
+      "title": "A delete leaves a version",
+      "text": "The attacker tries again and deletes the invoice. The container listing now looks empty, but nothing is destroyed: with versioning on, a delete only turns the current version into previous version 3. Had the attacker deleted the whole container, container soft delete would keep it, and everything in it, for 14 days.",
+      "set": {
+        "t-cur": "INV-2026-0042.txt · no current version",
+        "t-cur-sub": "the container listing looks empty",
+        "t-feed": "change feed · 09:30 delete INV-2026-0042.txt"
+      }
+    },
+    {
+      "title": "Versions put up a fight",
+      "text": "Dewi promotes version 3 and the invoice is back once more. A smarter attacker would delete the previous versions too, but that needs the Storage Blob Data Owner role, and even then each deleted version waits in the soft-delete bin for 14 days. These layers buy time; they can't stop someone who controls the account.",
+      "set": {
+        "t-cur": "INV-2026-0042.txt · current version",
+        "t-cur-sub": "v4 · copy of v3 — restored again",
+        "t-bin": "v1, v2 · deleted versions",
+        "t-feed": "change feed · 09:41 delete versions v1, v2"
+      }
+    },
+    {
+      "title": "WORM says no",
+      "text": "Closed tax years live in invoices-2025, protected by a time-based retention policy. The attacker's delete is refused with error 409, BlobImmutableDueToPolicy, whatever role they hold. A new policy starts unlocked for testing. Once locked, it can only be extended, and nobody can delete these invoices, or the account holding them, until the ten years are up."
+    },
+    {
+      "title": "The public road",
+      "text": "Last question: who can even reach the account? By default its public endpoint accepts connections from anywhere, and each request is judged only by its credentials. Cloud Shell on the internet connects this way. So does vm-dns-1 inside the virtual network, because DNS gives it the public IP address too."
+    },
+    {
+      "title": "A private endpoint plus DNS",
+      "text": "A private endpoint gives the account's blob service a private IP address, 10.24.2.4, in snet-pe. A private DNS zone named privatelink.blob.core.windows.net, linked to the virtual network, answers the same account name with that address. The VM's connection string doesn't change, but its traffic now stays inside the network.",
+      "set": {
+        "t-dns": "DNS in the VNet: stnusa24….blob.core.windows.net → 10.24.2.4"
+      }
+    },
+    {
+      "title": "Close the public door",
+      "text": "With every data-plane task done, Dewi sets public network access to Disabled. Cloud Shell's request now gets 403 AuthorizationFailure, even with a valid SAS, while the VM still reads invoices through the private endpoint. If someone removes the DNS zone link, the VM resolves the public IP again and gets the same 403.",
+      "set": {
+        "t-pna": "Public access: Disabled"
+      }
+    },
+    {
+      "title": "Recap and your lab",
+      "text": "Lifecycle rules make ten years of invoices cheap. Versioning and soft delete undo overwrites and deletes, and a locked retention policy refuses them outright. A private endpoint with a linked private DNS zone keeps traffic inside the network, and disabling public access closes the other road. Together they answer Ibu Sari's questions.",
+      "tip": "In Lab 24 you overwrite and delete invoices and bring them back, add an unlocked retention policy, then compare nslookup answers from a VM and from Cloud Shell before you disable public access."
+    }
+  ],
+  "svg": [
+    "One invoice, ten years: a lifecycle rule at work",
+    "Day 0 · uploaded to Hot",
+    "INV-2026-0042.txt",
+    "opened often in its first month",
+    "Lifecycle rule · invoices-ten-years",
+    "prefix invoices/ · runs once a day",
+    "cool after 30 days · cold after 90 days",
+    "archive after 1 year · delete after 10 years",
+    "timeline not to scale",
+    "Hot",
+    "day 0",
+    "online · read often",
+    "Cool",
+    "after 30 days",
+    "minimum stay 30 days",
+    "Cold",
+    "after 90 days",
+    "minimum stay 90 days",
+    "Archive",
+    "after 1 year",
+    "offline · 180-day min",
+    "Deleted",
+    "after 10 years",
+    "retention ends",
+    "Each step waits out the tier's minimum stay, so there are no early deletion fees.",
+    "Old versions have their own rule: cold after 30 days, deleted after a year.",
+    "Storage price falls at every step; reading gets slower and dearer.",
+    "Ransomware meets versioning, soft delete and WORM",
+    "Versioning: on",
+    "Soft delete: 14 days",
+    "Change feed: on",
+    "Finance app",
+    "writes invoices",
+    "Ransomware",
+    "stolen credentials",
+    "Container: invoices",
+    "INV-2026-0042.txt · current version",
+    "v1 · the original invoice",
+    "Previous versions (read-only)",
+    "v1 · original invoice",
+    "v2 · ENCRYPTED BY RANSOMWARE",
+    "v3 · original content (was current)",
+    "change feed · no events yet",
+    "Soft-delete bin",
+    "kept 14 days, then gone",
+    "empty",
+    "invoices-2025",
+    "time-based retention",
+    "locked · 10 years",
+    "no changes, no deletes",
+    "Refused: 409 BlobImmutableDueToPolicy",
+    "Two roads to the same storage account",
+    "Cloud Shell",
+    "on the internet",
+    "Public endpoint",
+    "public IP address",
+    "403 AuthorizationFailure",
+    "stnusa24…",
+    "blob service",
+    "invoices · invoices-2025",
+    "Public access: Enabled",
+    "vnet-nusa-lab24 · 10.24.0.0/16",
+    "snet-vm · 10.24.1.0/24",
+    "snet-pe · 10.24.2.0/24",
+    "vm-dns-1",
+    "10.24.1.4 · no public IP",
+    "Private endpoint",
+    "10.24.2.4 · sub-resource blob",
+    "DNS in the VNet: stnusa24….blob.core.windows.net → public IP",
+    "Private DNS zone",
+    "privatelink.blob.core.windows.net",
+    "A stnusa24… → 10.24.2.4",
+    "link"
+  ]
+}

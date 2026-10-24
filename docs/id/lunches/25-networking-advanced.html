@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 25 · Buktikan Trafiknya Diperiksa — Makan Siang 25: Virtual Networking (Lanjutan) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 25 · Virtual Networking (Lanjutan). Bagian keuangan ingin jaringan sendiri, dan auditor minta bukti siapa saja yang bisa berkomunikasi dengannya. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/25-networking-advanced.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/25-networking-advanced.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/25-networking-advanced.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/25-networking-advanced.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 25 · Buktikan Trafiknya Diperiksa — Makan Siang 25: Virtual Networking (Lanjutan)">
+<meta property="og:description" content="Makan Siang 25 · Virtual Networking (Lanjutan). Bagian keuangan ingin jaringan sendiri, dan auditor minta bukti siapa saja yang bisa berkomunikasi dengannya. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/25-networking-advanced.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="25" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/25-networking-advanced.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 25</span> Season 2 · 🌊 Bagian 5 · Pendalaman</div>
+      <h1>Buktikan Trafiknya Diperiksa</h1>
+      <div class="lunch-title">Makan Siang 25 · Virtual Networking (Lanjutan)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip advanced">Lanjutan</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 Di luar cakupan AZ-900</span>
+        <span class="chip cost">🔬 Lab · sekitar 60 menit · 💲💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="08-networking-basic.html" title="Jangan Tabrak Jaringan Saya">↩ 08</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 24 · Terenkripsi Sebelum Jumat, faktur kini punya versi, tidak bisa diubah, dan hanya bisa dijangkau lewat private endpoint.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, senang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 84% siap</b>Setelah episode ini Anda bisa menjawab: “Kita tetap jualan, dan setiap jalur jaringan adalah jalur yang kita pilih dan bisa kita periksa.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-peering-dan-bentuk-hub-and-spoke">Peering dan bentuk hub-and-spoke</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-bagaimana-azure-memilih-rute">Bagaimana Azure memilih rute</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-menginspeksi-lalu-lintas-azure-firewall-dan-network-virtual-appliance">Menginspeksi lalu lintas: Azure Firewall dan network virtual appliance</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-layanan-edge-di-hub-nat-gateway-azure-bastion-dan-ddos-protection">Layanan edge di hub: NAT gateway, Azure Bastion, dan DDoS Protection</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-menjangkau-paas-secara-privat-endpoint-dan-dns">Menjangkau PaaS secara privat: endpoint dan DNS</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-mengoperasikannya-dalam-skala-besar-untuk-nusantara-retail">Mengoperasikannya dalam skala besar untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/25-networking-advanced.html">🔬 Buka Lab 25</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Merancang</strong> jaringan hub-and-spoke dengan virtual network peering, serta menjelaskan mengapa peering tidak transitif dan apa yang ditambahkan oleh gateway transit.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memprediksi</strong> rute yang dipilih Azure untuk sebuah paket — berdasarkan system route, user-defined route, dan jenis next hop — lalu membuktikannya dengan effective routes dan next hop.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membandingkan</strong> SKU Azure Firewall dengan network virtual appliance, serta menempatkan NAT gateway, Azure Bastion, dan DDoS Protection di dalam hub.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> bagaimana nama sebuah private endpoint di-resolve menjadi alamat IP privat, dan kapan Anda membutuhkan Azure DNS Private Resolver.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menggunakan</strong> Network Watcher dan Azure Virtual Network Manager untuk mengoperasikan banyak jaringan berdasarkan bukti, bukan harapan.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 25</span>
+        <div class="story-body"><p>Enam bulan setelah Makan Siang 08, jaringan toko online berjalan begitu mulus sampai-sampai tim keuangan ingin aplikasi
+back office mereka sendiri di Azure — di jaringan terpisah, dengan pemilik sendiri dan anggaran sendiri. Lalu datanglah
+auditor Ibu Sari dengan dua pertanyaan yang membuat ruang rapat mendadak hening: sistem mana saja yang bisa berkomunikasi
+dengan jaringan keuangan, dan bisakah Anda <em>membuktikan</em> bahwa lalu lintas di antara keduanya diperiksa?</p>
+<p>Pak Budi sedang menyiapkan VPN ke kantor pusat untuk Makan Siang 26 dan hanya punya satu syarat: &quot;Satu koneksi ke Azure.
+Bukan satu per jaringan.&quot; Dewi cuma ingin toko online bisa memanggil API back office tanpa harus mengajukan tiket setiap
+kali. Dan semua orang sepakat: storage account tempat faktur disimpan sudah waktunya berhenti meladeni internet sama
+sekali.</p>
+<p>Pertanyaan hari ini: bagaimana menghubungkan banyak jaringan melalui satu hub yang terkendali — dan membuktikan ke mana
+setiap paket pergi?</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-peering-dan-bentuk-hub-and-spoke" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Peering dan bentuk hub-and-spoke</h3><div class="prose"><p><strong>Virtual network peering</strong> menyambungkan dua VNet (<em>jaringan virtual</em>) sehingga resource (<em>sumber daya</em>) di dalamnya
+bisa saling berbicara memakai alamat IP privat, melalui backbone — jaringan tulang punggung — milik Microsoft.
+<strong>Regional peering</strong> menyambungkan VNet di region (<em>wilayah</em>) yang sama; <strong>global peering</strong> menyambungkan VNet di region
+yang berbeda. Di region yang sama, latensi antar-VM (<em>komputer virtual</em>) yang di-peering setara dengan latensi di dalam
+satu VNet, dan peering tidak menambahkan batas bandwidth sendiri — batasnya adalah ukuran VM. Peering bisa melintasi
+subscription (<em>langganan</em>), bahkan tenant Microsoft Entra yang berbeda, dan tidak memerlukan gateway ataupun perangkat
+enkripsi. Anda membayar biaya kecil per GB yang melewati peering, untuk masing-masing arah.</p>
+<p>Dua aturan dari Makan Siang 08 tetap berlaku. Ruang alamat (address space) kedua VNet tidak boleh tumpang-tindih, dan
+sebuah peering punya dua bagian: Anda membuat satu link dari masing-masing VNet. Dengan satu link, statusnya <em>Initiated</em>;
+dengan keduanya, statusnya menjadi <em>Connected</em>. Jika salah satu link dihapus, link yang tersisa menampilkan
+<em>Disconnected</em> dan harus dibuat ulang. Anda tetap bisa memperluas ruang alamat VNet yang sudah di-peering tanpa
+downtime; setelah itu Anda melakukan <strong>sync</strong> pada peering agar sisi seberang mengetahui rentang alamat yang baru.</p>
+<p>Aturan yang paling sering mengejutkan orang: <strong>peering tidak transitif</strong>. Setiap peering hanya menambahkan rute untuk
+ruang alamat tetangga <em>langsung</em>-nya. Jika spoke1 dan spoke2 sama-sama di-peering dengan hub, spoke1 tetap tidak punya
+rute ke spoke2:</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph hub[&quot;vnet-nusa-hub · 10.30.0.0/16&quot;]
+    nva[&quot;Router atau firewall&lt;br/&gt;10.30.1.4&quot;]
+  end
+  s1[&quot;vnet-nusa-spoke1&lt;br/&gt;10.31.0.0/16 · toko online&quot;] &lt;--&gt;|&quot;peering&quot;| hub
+  s2[&quot;vnet-nusa-spoke2&lt;br/&gt;10.32.0.0/16 · back office&quot;] &lt;--&gt;|&quot;peering&quot;| hub
+  s1 -. &quot;tidak ada rute: tidak transitif&quot; .- s2
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Ibaratnya daftar kontak WhatsApp. Anda menyimpan nomor Pak Budi, dan Pak Budi menyimpan nomor Dewi — tetapi itu tidak
+berarti ponsel Anda otomatis punya nomor Dewi. Untuk menghubungi Dewi, Anda harus menyimpan nomornya sendiri, atau
+menitipkan pesan lewat Pak Budi. Dua pilihan itulah yang sebentar lagi kita temui: peering langsung, atau perantara di
+hub.</p>
+<p>Keterbatasan inilah alasan lahirnya desain <strong>hub-and-spoke</strong> (poros dan jari-jari, seperti roda sepeda). Layanan bersama
+ditempatkan di <strong>hub</strong>: firewall atau network virtual appliance, gateway VPN atau ExpressRoute, Azure Bastion, dan
+layanan DNS. Setiap workload (aplikasi beserta resource-nya) mendapat <strong>spoke</strong> sendiri, yang hanya di-peering dengan
+hub. Secara default spoke saling terisolasi, boleh dimiliki tim dan subscription yang berbeda, dan berbagi satu titik
+inspeksi serta satu koneksi ke kantor pusat. Ketika dua spoke harus berkomunikasi, Anda punya tiga pilihan: merutekan
+lalu lintasnya lewat appliance di hub (diinspeksi), membuat peering langsung di antara kedua spoke (cepat, tetapi tidak
+diinspeksi, dan jumlahnya membengkak menjadi N × (N − 1) / 2 peering), atau membiarkan Azure Virtual Network Manager
+membuat konektivitas langsung antar-spoke (bagian 6).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Setelan peering</th>
+<th>Diatur di</th>
+<th>Fungsinya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Allow access</strong> ke jaringan yang di-peering</td>
+<td>Kedua link</td>
+<td>Sakelar dasar; tanpanya peering tidak membawa apa pun</td>
+</tr>
+<tr>
+<td><strong>Allow forwarded traffic</strong></td>
+<td>Link milik jaringan yang <em>menerima</em> paket terusan — di sini, link setiap spoke ke hub</td>
+<td>Menerima paket yang tidak berasal dari peer itu sendiri, misalnya paket yang diteruskan oleh appliance di hub</td>
+</tr>
+<tr>
+<td><strong>Allow gateway transit</strong></td>
+<td>Link milik hub</td>
+<td>Memungkinkan spoke ikut memakai gateway VPN atau ExpressRoute milik hub</td>
+</tr>
+<tr>
+<td><strong>Use remote gateways</strong></td>
+<td>Link spoke ke hub</td>
+<td>Mengirim lalu lintas spoke yang menuju on-premises (jaringan di lokasi Anda sendiri) lewat gateway hub; spoke itu tidak boleh punya gateway sendiri</td>
+</tr>
+</tbody>
+</table></div>
+<p>Gateway transit bekerja di regional maupun global peering, dan Makan Siang 26 memakainya. Satu kejutan lagi: DNS bawaan
+Azure (Azure-provided DNS) tidak me-resolve nama VM melintasi peering — untuk itu Anda membutuhkan private DNS zone
+(bagian 5).</p>
+</div></article><article class="scene-card" id="2-bagaimana-azure-memilih-rute" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Bagaimana Azure memilih rute</h3><div class="prose"><p>Sebuah rute pada dasarnya adalah pasangan dua hal: <em>awalan alamat</em> (address prefix) — rentang tujuan seperti
+<code>10.32.0.0/16</code> — dan <em>next hop</em>, yaitu pihak berikutnya yang menerima paket. Setiap subnet punya route table (tabel
+rute), bahkan jika Anda tidak pernah membuatnya. Azure mengisinya dengan <strong>system route</strong> (rute sistem):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Awalan alamat</th>
+<th>Jenis next hop</th>
+<th>Ditambahkan saat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Setiap rentang alamat VNet</td>
+<td>Virtual network</td>
+<td>Selalu — antar-subnet bisa saling menjangkau tanpa pengaturan apa pun</td>
+</tr>
+<tr>
+<td>Setiap rentang VNet yang di-peering</td>
+<td>VNet peering</td>
+<td>Sebuah peering berstatus connected</td>
+</tr>
+<tr>
+<td>Prefix on-premises</td>
+<td>Virtual network gateway</td>
+<td>Gateway VPN atau ExpressRoute mempelajarinya (Makan Siang 26)</td>
+</tr>
+<tr>
+<td><code>0.0.0.0/0</code></td>
+<td>Internet</td>
+<td>Selalu — lalu lintas ke IP publik layanan Azure tetap berada di backbone Microsoft</td>
+</tr>
+<tr>
+<td><code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code>, <code>100.64.0.0/10</code> dan beberapa rentang cadangan lainnya</td>
+<td>None (dibuang)</td>
+<td>Selalu — kecuali rentang itu bagian dari ruang alamat Anda sendiri</td>
+</tr>
+</tbody>
+</table></div>
+<p>Anda mengubah perutean dengan <strong>user-defined route (UDR)</strong> — rute yang Anda tentukan sendiri. UDR disimpan di dalam
+resource <strong>route table</strong> yang Anda kaitkan (associate) dengan subnet: satu tabel boleh dipakai nol atau lebih subnet,
+satu subnet paling banyak memakai satu tabel, dan secara default sebuah tabel memuat hingga 400 rute. Setiap UDR
+memasangkan sebuah awalan alamat dengan salah satu dari lima jenis next hop:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Jenis next hop (nilai CLI)</th>
+<th>Ke mana lalu lintas yang cocok dikirim</th>
+<th>Penggunaan umum di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Virtual appliance (<code>VirtualAppliance</code>)</td>
+<td>IP privat yang Anda tentukan: network interface (NIC) milik VM appliance dengan IP forwarding aktif, atau frontend sebuah internal load balancer</td>
+<td>Mengirim lalu lintas antar-spoke dan lalu lintas internet melalui firewall di hub</td>
+</tr>
+<tr>
+<td>Virtual network gateway (<code>VirtualNetworkGateway</code>)</td>
+<td>VPN gateway milik VNet — bukan ExpressRoute gateway, yang rutenya datang dari BGP</td>
+<td>Memaksa lalu lintas internet keluar lewat kantor pusat melalui VPN</td>
+</tr>
+<tr>
+<td>Virtual network (<code>VnetLocal</code>)</td>
+<td>Pengiriman normal di dalam VNet</td>
+<td>Mengecualikan lalu lintas di dalam satu subnet dari rute appliance yang lebih luas</td>
+</tr>
+<tr>
+<td>Internet (<code>Internet</code>)</td>
+<td>Jalur internet Azure; lalu lintas ke IP publik layanan Azure tetap di backbone Microsoft</td>
+<td>Membiarkan satu prefix melewati rute <code>0.0.0.0/0</code> yang mengarah ke firewall</td>
+</tr>
+<tr>
+<td>None (<code>None</code>)</td>
+<td>Tidak ke mana-mana: paket dibuang</td>
+<td>Sengaja memblokir sebuah rentang, misalnya spoke lain</td>
+</tr>
+</tbody>
+</table></div>
+<p>Anda tidak bisa membuat rute peering atau rute service endpoint sendiri; Azure yang menambahkannya. <strong>BGP</strong> (Border
+Gateway Protocol) di tabel tadi adalah protokol yang dipakai router untuk saling mengabarkan rute; Anda akan berkenalan
+lebih dekat dengannya di Makan Siang 26. Satu jebakan dari Makan Siang 08: di subnet privat, UDR dengan next hop
+<code>Internet</code> tidak menciptakan jalan keluar. Tanpa NAT gateway atau IP publik, koneksi tersebut tetap gagal.</p>
+<p>Azure memilih rute dalam dua langkah:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  pkt[&quot;Paket ke 10.32.1.4 keluar dari VM di spoke1&quot;] --&gt; lpm[&quot;1. Prefix terpanjang yang cocok menang&lt;br/&gt;10.32.0.0/16 mengalahkan 10.0.0.0/8, yang mengalahkan 0.0.0.0/0&quot;]
+  lpm --&gt; tie{&quot;Ada beberapa rute dengan&lt;br/&gt;prefix yang sama?&quot;}
+  tie -- &quot;tidak&quot; --&gt; hop[&quot;Pakai next hop dari rute itu&quot;]
+  tie -- &quot;ya&quot; --&gt; pref[&quot;2. User-defined route,&lt;br/&gt;lalu rute BGP, lalu system route&quot;] --&gt; hop
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Bayangkan kurir paket yang membaca alamat. &quot;Jl. Sudirman No. 5, Jakarta&quot; jauh lebih rinci daripada sekadar &quot;Jakarta&quot;,
+jadi kurir mengikuti petunjuk yang paling rinci. Angka di belakang garis miring bekerja dengan cara yang sama: makin
+besar angkanya (/16 dibanding /8, apalagi /0), makin sempit rentangnya dan makin spesifik rutenya.</p>
+<p>Sebelum Anda menambahkan UDR, paket dari spoke1 untuk <code>10.32.1.4</code> hanya cocok dengan <code>10.0.0.0/8</code> dan <code>0.0.0.0/0</code>. /8
+lebih panjang, sehingga next hop-nya <strong>None</strong> dan paket dibuang diam-diam. Tambahkan UDR untuk <code>10.32.0.0/16</code> dengan
+next hop <code>VirtualAppliance 10.30.1.4</code>, dan /16 itulah yang menang.</p>
+<p>Dua alat menunjukkan kenyataannya. <strong>Effective routes</strong> menampilkan setiap rute pada sebuah NIC beserta sumbernya
+(Default, User, atau gateway) dan statusnya (Active atau Invalid). <strong>Next hop</strong> di Network Watcher menjawab untuk satu
+tujuan tertentu.</p>
+<p>Namun, merutekan lalu lintas lewat appliance butuh lebih dari sekadar rute:</p>
+<ol>
+<li>UDR dengan next hop <code>VirtualAppliance</code> dan IP appliance tersebut, di setiap subnet yang lalu lintasnya harus
+diinspeksi.</li>
+<li><strong>IP forwarding</strong> diaktifkan pada NIC appliance. Tanpanya, Azure membuang paket yang tidak dialamatkan ke NIC itu.</li>
+<li>Forwarding dinyalakan di dalam sistem operasi atau perangkat lunak appliance.</li>
+<li><strong>Rute balik</strong> (return route) di sisi seberang, supaya balasan kembali melalui appliance yang sama.</li>
+<li><strong>Allow forwarded traffic</strong> pada peering spoke penerima, serta NSG yang mengizinkan alirannya.</li>
+</ol>
+<p>Ibaratnya resepsionis di lobi gedung kantor. Aturan standarnya: ia hanya menerima paket yang ditujukan kepadanya sendiri;
+paket untuk orang lain ditolak di meja depan. IP forwarding adalah izin agar ia boleh menerima titipan dan meneruskannya
+ke penerima yang sebenarnya — dan karena ada dua &quot;atasan&quot; yang berwenang, yaitu Azure (di NIC) dan sistem operasi (di
+dalam VM), keduanya harus sama-sama memberi izin.</p>
+<p>Letakkan appliance di subnet-nya sendiri: route table yang mengirim lalu lintas sebuah subnet ke appliance di subnet
+yang sama bisa menciptakan loop.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Begitu hub memiliki gateway VPN atau ExpressRoute, hub mengiklankan rute kantor pusat ke setiap spoke ter-peering yang
+memakai gateway tersebut. Rute hasil belajar itu lebih spesifik daripada UDR <code>0.0.0.0/0</code>, sehingga lalu lintas ke
+kantor pusat akan melewati (bypass) firewall Anda. Route table punya setelan untuk menghentikan propagasi rute gateway
+di subnet milik spoke; setelah itu, UDR untuk rentang kantor pusat ikut mengirim lalu lintas tersebut melalui
+firewall. Jangan pernah menonaktifkannya di <code>GatewaySubnet</code> itu sendiri.</p>
+</aside>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Perutean asimetris (asymmetric routing) adalah bug klasik hub-and-spoke. Jika spoke1 mengirim lewat firewall, tetapi
+balasan dari spoke2 mengambil jalan langsung — atau sama sekali tidak punya rute — firewall stateful (yang mengikuti
+setiap percakapan dari awal sampai akhir) hanya melihat separuh dari setiap percakapan lalu membuangnya. Selalu buat
+rute secara berpasangan, dan periksa kedua arah dengan next hop.</p>
+</aside>
+</div></article><article class="scene-card" id="3-menginspeksi-lalu-lintas-azure-firewall-dan-network-virtual-appliance" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Menginspeksi lalu lintas: Azure Firewall dan network virtual appliance</h3><div class="prose"><p><strong>Network virtual appliance (NVA)</strong> adalah VM yang merutekan, menyaring, atau mengoptimalkan lalu lintas: firewall dari
+vendor atau router SD-WAN (software-defined WAN) dari Azure Marketplace, atau — seperti di lab — VM Linux biasa yang
+fitur forwarding-nya dinyalakan. Dengan NVA, Andalah yang menanggung patching, scaling, dan high availability
+(<em>ketersediaan tinggi</em>)-nya. Satu VM appliance adalah titik kegagalan tunggal (single point of failure) bagi setiap
+spoke, sehingga desain produksi menjalankan dua instance atau lebih di belakang internal load balancer Standard dengan
+aturan HA ports, yang meneruskan semua port sekaligus (Makan Siang 09), dan UDR diarahkan ke IP frontend load balancer
+itu, bukan ke satu VM.</p>
+<p><strong>Azure Firewall</strong> adalah alternatif terkelola: firewall stateful sebagai layanan, dengan high availability bawaan,
+dukungan availability zone (<em>zona ketersediaan</em>), dan autoscaling. Azure Firewall tinggal di subnet khusus bernama
+<code>AzureFirewallSubnet</code> dan menolak semua hal yang tidak diizinkan oleh sebuah aturan. Tersedia tiga SKU (tingkatan
+produk):</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Basic</th>
+<th>Standard</th>
+<th>Premium</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dirancang untuk</td>
+<td>Lingkungan kecil dan menengah</td>
+<td>Sebagian besar hub produksi</td>
+<td>Workload yang sangat sensitif, seperti pembayaran</td>
+</tr>
+<tr>
+<td>Throughput (saat tulisan ini dibuat)</td>
+<td>Hingga 250 Mbps</td>
+<td>Hingga 30 Gbps</td>
+<td>Hingga 100 Gbps</td>
+</tr>
+<tr>
+<td>Threat intelligence</td>
+<td>Hanya memberi peringatan (alert)</td>
+<td>Memberi peringatan dan memblokir (alert and deny)</td>
+<td>Memberi peringatan dan memblokir (alert and deny)</td>
+</tr>
+<tr>
+<td>Fitur tambahan</td>
+<td>Aturan stateful, NAT, penyaringan FQDN aplikasi</td>
+<td>Menambahkan penyaringan FQDN tingkat jaringan, kategori web, DNS proxy</td>
+<td>Menambahkan inspeksi TLS (membuka enkripsi untuk diperiksa), deteksi dan pencegahan intrusi (IDPS), penyaringan URL penuh</td>
+</tr>
+</tbody>
+</table></div>
+<p>Aturan (rule) terbagi menjadi tiga jenis. <strong>DNAT rule</strong> (destination NAT; NAT atau network address translation adalah
+penerjemahan alamat) memublikasikan layanan internal di IP publik firewall. <strong>Network rule</strong> menyaring berdasarkan
+alamat IP, port, protokol, dan service tag (label siap pakai untuk sekelompok alamat IP, misalnya milik sebuah layanan
+Azure). <strong>Application rule</strong> mengizinkan atau menolak lalu lintas keluar HTTP, HTTPS, dan SQL berdasarkan nama domain
+lengkap (FQDN, fully qualified domain name), misalnya <code>*.ubuntu.com</code>. Azure memproses DNAT rule lebih dulu, lalu network
+rule, lalu application rule; di dalam setiap jenis, rule collection dijalankan sesuai urutan prioritas, dan kecocokan
+pertama yang menang.</p>
+<p>Aturan disimpan di <strong>Firewall Policy</strong>, resource terpisah yang bisa dipakai bersama oleh beberapa firewall; aturan
+&quot;classic&quot; lama yang disimpan langsung di firewall sudah tergolong legacy. <strong>Azure Firewall Manager</strong> mengelola policy
+secara terpusat di banyak firewall, termasuk parent policy berisi aturan untuk seluruh perusahaan yang diwarisi oleh
+child policy.</p>
+<p>Biayanya terdiri dari dua bagian: biaya tetap untuk setiap jam firewall itu ada, dan biaya per GB yang diproses —
+semuanya makin tinggi dari Basic ke Premium. Pilih SKU terendah yang memenuhi kebutuhan keamanan dan throughput, dan
+jangan pernah membiarkan firewall lab menyala semalaman.</p>
+</div></article><article class="scene-card" id="4-layanan-edge-di-hub-nat-gateway-azure-bastion-dan-ddos-protection" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Layanan edge di hub: NAT gateway, Azure Bastion, dan DDoS Protection</h3><div class="prose"><p>Anda sudah berkenalan dengan <strong>NAT gateway</strong> di Makan Siang 08 sebagai jalan keluar default dari subnet privat. Dalam
+skala besar, ada tiga detail yang penting. Pertama, NAT gateway membagikan <strong>port SNAT</strong> — port sumber yang dipakai
+ketika banyak alamat privat berbagi satu alamat publik — secara dinamis ke setiap VM di subnet-subnetnya, sehingga
+jarang kehabisan; setiap IP publik tambahan (hingga 16) atau sebuah public IP prefix memperbesar kumpulan port itu.
+Kedua, <strong>idle timeout</strong> TCP-nya (batas waktu koneksi yang menganggur) secara default 4 menit dan bisa dinaikkan hingga
+120 menit; keepalive (paket kecil penanda bahwa koneksi masih hidup) akan me-reset-nya. Ketiga, NAT gateway punya tempat
+dalam rantai prioritas: UDR yang mengirim <code>0.0.0.0/0</code> ke appliance atau gateway mengalahkan NAT gateway, NAT gateway
+mengalahkan IP publik milik VM itu sendiri, dan IP publik VM mengalahkan outbound rule load balancer. Karena itu, dalam
+desain hub-and-spoke Anda mengirim lalu lintas internet dari spoke ke firewall dan memasang NAT gateway di
+<code>AzureFirewallSubnet</code>, sehingga koneksi keluar firewall memakai alamat milik NAT gateway. Satu NAT gateway hanya
+melayani subnet dari satu VNet. SKU <strong>StandardV2</strong> menambahkan zone redundancy, IPv6, dan flow log; SKU ini membutuhkan
+IP publik StandardV2 dan tidak bisa di-upgrade di tempat (in place) dari Standard.</p>
+<p><strong>Azure Bastion</strong> memberi admin akses RDP (Remote Desktop Protocol) dan SSH (Secure Shell) berbasis browser, melalui
+TLS (enkripsi yang sama dengan HTTPS), ke VM yang sama sekali tidak punya IP publik. Jika ditempatkan di hub, SKU
+dedicated bisa menjangkau VM di spoke yang di-peering:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>SKU</th>
+<th>Cocok untuk</th>
+<th>Sorotan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Developer</td>
+<td>Dev/test, satu VM dalam satu waktu</td>
+<td>Gratis dan dipakai bersama; tanpa subnet khusus; tidak mendukung peering; hanya di region tertentu</td>
+</tr>
+<tr>
+<td>Basic</td>
+<td>Lingkungan produksi kecil</td>
+<td>Host khusus dengan dua instance tetap; menjangkau VNet yang di-peering</td>
+</tr>
+<tr>
+<td>Standard</td>
+<td>Tim yang lebih besar</td>
+<td>Host scaling, klien SSH/RDP native melalui CLI, koneksi berbasis IP, shareable link</td>
+</tr>
+<tr>
+<td>Premium</td>
+<td>Workload yang diatur regulasi</td>
+<td>Semua fitur Standard, plus perekaman sesi dan deployment khusus privat (private-only)</td>
+</tr>
+</tbody>
+</table></div>
+<p>SKU dedicated membutuhkan subnet bernama <code>AzureBastionSubnet</code> berukuran /26 atau lebih besar. Anda bisa menaikkan
+(upgrade) SKU, tetapi tidak bisa menurunkannya (downgrade).</p>
+<p><strong>Perlindungan DDoS</strong> — DDoS (distributed denial of service) adalah serangan banjir lalu lintas dari banyak sumber untuk
+melumpuhkan sebuah layanan — dimulai secara gratis: perlindungan infrastruktur Azure otomatis menjaga setiap IP publik.
+Untuk hari-hari tersibuk toko online, Anda bisa menambahkan <strong>DDoS IP Protection</strong>, yang ditagih per IP publik yang
+dilindungi, atau <strong>DDoS Network Protection</strong>, paket untuk seluruh VNet yang menambahkan akses ke tim DDoS rapid
+response, perlindungan biaya (cost protection), dan diskon WAF (web application firewall).</p>
+</div></article><article class="scene-card" id="5-menjangkau-paas-secara-privat-endpoint-dan-dns" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Menjangkau PaaS secara privat: endpoint dan DNS</h3><div class="prose"><p>Layanan PaaS (<em>platform sebagai layanan</em>) seperti Azure Storage dan Azure SQL Database punya public endpoint (<em>titik
+akhir publik</em>) — alamat yang bisa dihubungi dari internet. Azure menawarkan dua cara untuk menjangkaunya dari sebuah
+VNet:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Service endpoint</th>
+<th>Private endpoint (Azure Private Link)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Apa itu</td>
+<td>Rute yang dioptimalkan dari subnet ke sebuah layanan, dengan identitas VNet ikut disertakan</td>
+<td>Network interface dengan IP privat di subnet Anda, yang dipetakan ke satu resource tertentu</td>
+</tr>
+<tr>
+<td>Public endpoint milik layanan</td>
+<td>Tetap publik; Anda membatasinya ke subnet tertentu</td>
+<td>Bisa dimatikan sepenuhnya</td>
+</tr>
+<tr>
+<td>Dari VNet yang di-peering dan dari on-premises</td>
+<td>Tidak secara default</td>
+<td>Ya, melalui peering, VPN, atau ExpressRoute</td>
+</tr>
+<tr>
+<td>Perubahan DNS</td>
+<td>Tidak ada</td>
+<td>Wajib: sebuah private DNS zone</td>
+</tr>
+<tr>
+<td>Biaya</td>
+<td>Gratis</td>
+<td>Per endpoint per jam, ditambah per GB yang diproses</td>
+</tr>
+</tbody>
+</table></div>
+<p>Private endpoint (<em>titik akhir privat</em>) adalah pilihan yang lebih kuat untuk akun faktur, tetapi hanya jika DNS — &quot;buku
+telepon&quot; internet yang menerjemahkan nama menjadi alamat IP — mau bekerja sama. Aplikasi tetap memakai nama publik,
+sehingga connection string dan sertifikat TLS-nya tetap cocok. Nama itu di-resolve seperti ini:</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant VM as vm-spoke1
+  participant ADNS as Azure DNS 168.63.129.16
+  participant PUB as DNS publik
+  participant PZ as Zona privat privatelink.blob.core.windows.net
+  VM-&gt;&gt;ADNS: stnusa.blob.core.windows.net?
+  ADNS-&gt;&gt;PUB: cari nama publiknya
+  PUB--&gt;&gt;ADNS: CNAME stnusa.privatelink.blob.core.windows.net
+  ADNS-&gt;&gt;PZ: adakah zona privat yang ter-link ke VNet ini?
+  PZ--&gt;&gt;ADNS: A record 10.30.3.4
+  ADNS--&gt;&gt;VM: 10.30.3.4 (IP privat)
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p><strong>Alias privatelink</strong> (sebuah CNAME, yaitu record DNS yang berkata &quot;nama ini sebenarnya alias dari nama lain&quot;) bersifat
+publik: siapa pun bisa mencarinya. Yang mengubahnya menjadi IP privat adalah <strong>private DNS zone</strong> dengan nama yang
+direkomendasikan untuk layanan tersebut — <code>privatelink.blob.core.windows.net</code> untuk blob,
+<code>privatelink.database.windows.net</code> untuk Azure SQL — dan <strong>virtual network link</strong> dari zona itu ke setiap VNet yang harus
+me-resolve secara privat. DNS zone group pada private endpoint menjaga <code>A</code> record (record yang memetakan nama ke alamat
+IP) tetap mutakhir. Di luar VNet-VNet tersebut, rantai yang sama berakhir di IP publik, dan di sana akun menolak koneksi
+karena public network access dinonaktifkan.</p>
+<p>Ibaratnya buku telepon internal sebuah kantor. Orang luar menelepon nomor umum kantor, sedangkan karyawan di dalam gedung
+membuka buku telepon internal yang mencantumkan nomor ekstensi untuk nama yang sama. Private DNS zone adalah buku
+telepon internal itu, dan virtual network link menentukan &quot;gedung&quot; mana yang boleh memakainya. VNet tanpa link hanya
+memegang buku telepon umum — padahal nomor umum itu sudah tidak mau mengangkat telepon.</p>
+<p>Kegagalan yang paling umum adalah VNet yang tidak di-link ke zona itu, atau VNet yang memakai server DNS kustom (seperti
+domain controller milik Pak Budi) yang tidak meneruskan kueri ke Azure DNS. VM lalu mendapat IP publik dan pesan
+&quot;access denied&quot;.</p>
+<p>Satu detail perutean sering menjebak desain firewall: secara default, NSG dan UDR tidak berlaku untuk lalu lintas yang
+<em>menuju</em> private endpoint. Jika auditor ingin lalu lintas dari spoke ke endpoint disaring NSG atau dikirim melalui
+firewall, aktifkan dulu <strong>private endpoint network policies</strong> di subnet milik endpoint.</p>
+<p>Kantor pusat punya masalah sebaliknya: server on-premises tidak bisa menjangkau <code>168.63.129.16</code>. <strong>Azure DNS Private
+Resolver</strong> menyelesaikan kedua arah tanpa perlu VM DNS. <strong>Inbound endpoint</strong> adalah sebuah IP privat di hub. Server DNS
+on-premises meneruskan secara bersyarat (conditional forwarding) zona <em>publik</em> milik layanan ke endpoint ini —
+<code>blob.core.windows.net</code>, bukan zona <code>privatelink</code> — dan karena private zone di-link ke hub, jawabannya kembali dalam
+bentuk privat. <strong>Outbound endpoint</strong> dengan <strong>DNS forwarding ruleset</strong> mengirim kueri untuk domain on-premises, seperti
+<code>corp.nusantararetail.local</code>, dari Azure ke server DNS Pak Budi. Setiap endpoint membutuhkan subnet sendiri berukuran
+/28 hingga /24 yang didelegasikan ke resolver, dan resolusi hibrida membutuhkan VPN atau ExpressRoute dari Makan
+Siang 26.</p>
+</div></article><article class="scene-card" id="6-mengoperasikannya-dalam-skala-besar-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Mengoperasikannya dalam skala besar untuk Nusantara Retail</h3><div class="prose"><p>Dengan dua spoke, semua hal di atas masih muat di satu papan tulis. Dengan dua puluh spoke, konsistensilah yang menjadi
+masalah. <strong>Azure Virtual Network Manager</strong> mengelola VNet secara terpusat lintas subscription dan management group
+(<em>grup manajemen</em>). Anda mendefinisikan <strong>network group</strong>, baik dengan memilih VNet satu per satu maupun secara dinamis
+dengan kondisi Azure Policy, misalnya berdasarkan tag. Lalu Anda menerapkan <strong>connectivity configuration</strong>
+(hub-and-spoke, opsional dengan konektivitas langsung antar-spoke, atau full mesh), <strong>security admin rule</strong> yang
+dievaluasi <em>sebelum</em> NSG — admin rule &quot;Deny&quot; atau &quot;Always allow&quot; langsung mengakhiri evaluasi — dan <strong>routing
+configuration</strong> yang mengelola UDR dalam skala besar. Layanan ini juga bisa mengelola IP address pool sehingga VNet baru
+tidak pernah tumpang-tindih. Tagihannya dihitung per VNet yang dikelola, jadi layanan ini makin menguntungkan seiring
+pertumbuhan, bukan sejak hari pertama.</p>
+<p>Network Watcher tetap menjadi sumber bukti:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Alat</th>
+<th>Menjawab</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Next hop</strong></td>
+<td>Ke mana Azure mengirim paket dari VM ini ke alamat itu, dan route table mana yang memutuskannya?</td>
+</tr>
+<tr>
+<td><strong>Effective routes</strong></td>
+<td>Setiap rute pada sebuah NIC, beserta sumbernya dan apakah rute itu aktif</td>
+</tr>
+<tr>
+<td><strong>Connection troubleshoot</strong></td>
+<td>Bisakah koneksi sungguhan dibuat dari VM ini ke VM, alamat, atau URL itu, dan di mana gagalnya?</td>
+</tr>
+<tr>
+<td><strong>VNet flow logs</strong></td>
+<td>Aliran mana yang diizinkan atau ditolak di seluruh VNet? NSG flow logs pensiun pada 30 September 2027.</td>
+</tr>
+<tr>
+<td><strong>Traffic analytics</strong></td>
+<td>Siapa berbicara dengan siapa, dan seberapa banyak — flow log yang diolah menjadi peta di Log Analytics (Makan Siang 30)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Jika semuanya disatukan, hub target Nusantara Retail berisi Azure Firewall dengan Firewall Policy, NAT gateway di subnet
+firewall, Azure Bastion, DNS Private Resolver untuk kantor pusat, dan — mulai Makan Siang 26 — VPN gateway yang dipakai
+bersama melalui gateway transit. Spoke toko online dan spoke back office hanya di-peering dengan hub; route table mereka
+mengirim <code>0.0.0.0/0</code> dan rentang milik spoke seberang ke firewall. Akun faktur dan database pesanan berada di balik
+private endpoint dengan private DNS zone yang ter-link, dan VNet flow logs mengalir ke Log Analytics. Pertanyaan auditor
+kini punya jawaban yang datang dari Azure, bukan dari diagram.</p>
+<p>Mari kita ikuti sekali lagi panggilan API milik Dewi. VM toko online mengirim ke back office; user route di subnet-nya
+mengirim paket ke firewall; network rule di Firewall Policy mengizinkan TCP 443 dari rentang toko online ke rentang back
+office; peering hub-ke-spoke mengantarkannya; dan route table back office mengirim balasannya kembali melalui firewall
+yang sama. Setiap langkah punya nama, prioritas, dan entri log.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Auditor meminta Anda membuktikan bahwa lalu lintas dari toko online ke back office
+diinspeksi. Dua hasil Network Watcher mana yang akan Anda tunjukkan, dan apa persisnya yang harus tertulis di
+masing-masing?</p>
+</aside>
+<p>Makan siang berikutnya menghubungkan kantor pusat ke hub ini dengan VPN Gateway, serta membandingkan ExpressRoute dan
+Virtual WAN.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Lewat hub: rute, router, dan nama privat</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/25-networking-advanced.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/25-networking-advanced.html?lang=id" title="Demo interaktif: Lewat hub: rute, router, dan nama privat" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/25-networking-advanced/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Panel effective routes: rute mana yang menang untuk <code>10.32.1.4</code> sebelum dan sesudah user-defined route ditambahkan.</li>
+<li>VM hub: paket tiba di sana, tetapi tidak bergerak lebih jauh sampai IP forwarding dinyalakan.</li>
+<li>Panel resolusi nama: nama publik berubah menjadi alias privatelink, dan hanya private zone yang ter-link yang
+mengubahnya menjadi IP privat.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Spoke1 dan spoke2 sama-sama di-peering dengan hub, dan semua peering menunjukkan <em>Connected</em>. Namun <code>vm-spoke1</code> tetap
+tidak bisa menjangkau <code>vm-spoke2</code>. Sebutkan dua cara untuk memperbaikinya.</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Rutekan lewat hub — user-defined route di kedua spoke dengan next hop <code>VirtualAppliance</code> yang diarahkan ke firewall
+atau appliance di hub, IP forwarding di appliance tersebut, dan <em>allow forwarded traffic</em> di peering milik spoke —
+atau hubungkan kedua spoke secara langsung dengan peering mereka sendiri (atau konektivitas langsung dari Virtual
+Network Manager). <em>Alasannya:</em> peering tidak transitif; setiap peering hanya menambahkan rute untuk tetangga
+langsungnya.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Subnet spoke1 punya UDR <code>0.0.0.0/0 → VirtualAppliance 10.30.1.4</code>. Sebuah VM di spoke1 mengirim paket ke
+<code>10.31.1.10</code>, VM lain di VNet yang sama. Ke mana paket itu pergi?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Langsung ke VM lain itu di dalam VNet (next hop <em>Virtual network</em>). <em>Alasannya:</em> system route untuk <code>10.31.0.0/16</code>
+adalah prefix yang lebih panjang daripada <code>0.0.0.0/0</code>, dan prefix terpanjang yang cocok menang sebelum sumber rute
+dibandingkan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Next hop dari <code>vm-spoke1</code> ke <code>vm-spoke2</code> menunjukkan <em>VirtualAppliance 10.30.1.4</em>, tetapi ping tetap gagal. Apa yang
+Anda periksa?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>IP forwarding di NIC VM hub, forwarding di dalam sistem operasinya, rute balik di spoke2 yang mengarah kembali lewat
+hub, <em>allow forwarded traffic</em> di peering milik spoke, serta NSG atau firewall OS di sepanjang jalur. <em>Alasannya:</em>
+next hop hanya membuktikan keputusan perutean yang pertama; appliance dan jalur pulangnya juga harus ikut bekerja
+sama.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p><code>stnusa</code> punya private endpoint di hub, tetapi sebuah VM di spoke2 me-resolve <code>stnusa.blob.core.windows.net</code> ke IP
+publik dan mendapat &quot;access denied&quot;. Apa penyebab yang paling mungkin?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Private DNS zone <code>privatelink.blob.core.windows.net</code> tidak di-link ke VNet spoke2, atau spoke2 memakai server DNS
+kustom yang tidak meneruskan kueri ke Azure DNS. <em>Alasannya:</em> CNAME privatelink bersifat publik; hanya private zone
+yang ter-link yang mengubahnya menjadi IP milik private endpoint.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Setelah VPN aktif, server DNS kantor pusat milik Pak Budi harus bisa me-resolve private endpoint Nusantara. Apa yang
+Anda deploy, dan bagaimana server-server itu memakainya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Azure DNS Private Resolver di hub dengan sebuah inbound endpoint, dan private DNS zone yang di-link ke VNet hub.
+Kantor pusat menambahkan conditional forwarder untuk zona publik milik layanan, seperti <code>blob.core.windows.net</code>, yang
+mengarah ke IP inbound endpoint. <em>Alasannya:</em> mesin on-premises tidak bisa menjangkau Azure DNS di <code>168.63.129.16</code>,
+tetapi bisa menjangkau IP privat di hub melalui VPN, dan resolver bertanya ke Azure DNS dari dalam VNet yang
+ter-link.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Peering itu privat, cepat, dan tidak transitif. Hub-and-spoke memusatkan layanan bersama, dan lalu lintas antar-spoke membutuhkan appliance di hub, peering tambahan, atau konektivitas langsung dari Virtual Network Manager.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Azure memilih prefix terpanjang yang cocok, lalu lebih memilih user-defined route daripada BGP, dan BGP daripada system route. Rentang privat yang bukan milik Anda diarahkan ke <em>None</em>. Effective routes dan next hop menunjukkan jawaban yang sebenarnya.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Merutekan lewat appliance membutuhkan UDR dengan next hop <code>VirtualAppliance</code>, IP forwarding di NIC dan di OS, rute balik yang sepadan, serta <em>allow forwarded traffic</em> di peering penerima.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Azure Firewall (Basic, Standard, Premium) adalah titik inspeksi terkelola, dengan DNAT rule, network rule, dan application rule di dalam Firewall Policy. NAT gateway memberi hub jalur keluar (egress) yang dapat diprediksi, Bastion menggantikan port manajemen publik, dan DDoS Protection menambahkan perlindungan berbayar di atas perlindungan dasar yang gratis.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Private endpoint hanya berfungsi jika DNS-nya berfungsi: nama publik → CNAME privatelink → <code>A</code> record di private zone → IP privat. Link zona ke setiap VNet yang membutuhkannya, dan gunakan DNS Private Resolver untuk resolusi hibrida.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Paket juga butuh tiket pulang.</strong> Di setiap review desain hub-and-spoke, saya meminta satu orang &quot;mengantar&quot; satu
+paket dari toko online ke back office sambil bercerita: route table mana yang mengirimnya ke hub, aturan firewall mana
+yang meloloskannya, setelan peering mana yang mau menerimanya di seberang — lalu ulangi semuanya untuk balasannya.
+Begitu terdengar kalimat &quot;nah, habis itu sampai sendiri&quot;, saya tahu di situlah bagian yang tidak ada pemiliknya.
+Sebagai bukti, saya minta hasil next hop dari kedua VM ditempel di tiket perubahan, bukan gambar diagram. Satu lagi:
+kalau ada yang bilang private endpoint &quot;diblokir&quot;, saya tidak langsung mengutak-atik firewall. Saya jalankan nslookup
+dari VM yang gagal. Kalau jawabannya IP publik, masalahnya ada di DNS, dan aturan firewall serapi apa pun tidak akan
+menolong.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>25</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Hub-and-spoke untuk Nusantara Retail</h3>
+          <div class="prose"><p><code>setup.sh</code> membangun satu hub dan dua spoke, masing-masing dengan satu VM kecil tanpa IP publik. Anda membuat peering
+antara setiap spoke dan hub, membuktikan bahwa lalu lintas antar-spoke gagal karena peering tidak transitif, mengubah VM
+hub menjadi router dengan IP forwarding, lalu menambahkan route table agar toko online dan back office berkomunikasi
+melalui hub. Effective routes, next hop, dan penghitung paket terusan (forwarded-packet counter) di hub membuktikan
+setiap lompatan. Jalur opsional mengganti router tersebut dengan Azure Firewall.</p>
+<p>dikerjakan terpisah (tidak memerlukan lab sebelumnya)</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 60 menit</span><span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/25-networking-advanced.html">Mulai Lab 25 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/virtual-network/virtual-network-peering-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Peering jaringan virtual Azure</b><span>Regional dan global peering, gateway transit, service chaining, dan harga.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/virtual-network/virtual-networks-udr-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Perutean lalu lintas jaringan virtual Azure</b><span>Setiap system route, jenis next hop, dan aturan pemilihan rute, lengkap dengan contoh kasus.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/firewall/choose-firewall-sku" target="_blank" rel="noopener"><b>Microsoft Learn: Memilih SKU Azure Firewall yang tepat</b><span>Perbandingan fitur Basic, Standard, dan Premium.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/private-link/private-endpoint-dns" target="_blank" rel="noopener"><b>Microsoft Learn: Nilai private DNS zone untuk Azure Private Endpoint</b><span>Nama zona <code>privatelink</code> yang tepat untuk setiap layanan.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🛤️</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Pembangun Hub</h2>
+        <p class="muted">Rancang jaringan hub-and-spoke beserta routing-nya.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Kita tetap jualan, dan setiap jalur jaringan adalah jalur yang kita pilih dan bisa kita periksa.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 26</b><h4>Jalur Privat yang Layak</h4><p>Empat puluh toko mengunggah data penjualan lewat internet — dan satu unggahan gagal tiga malam berturut-turut.</p><p style="margin-top:10px"><a href="26-hybrid-connectivity.html">Tonton Episode 26 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="24-storage-advanced.html"><small>← Episode sebelumnya</small>24 · Terenkripsi Sebelum Jumat</a><a class="next" href="26-hybrid-connectivity.html"><small>Episode berikutnya →</small>26 · Jalur Privat yang Layak</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/25-networking-advanced/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

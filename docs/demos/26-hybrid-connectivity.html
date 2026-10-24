@@ -341,7 +341,7 @@ svg .lane{stroke:transparent}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/26-hybrid-connectivity.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/26-hybrid-connectivity.html" data-href-id="../id/lunches/26-hybrid-connectivity.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -843,10 +843,145 @@ svg .lane{stroke:transparent}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 26 · Hybrid Connectivity — Demo interaktif",
+   "kicker": "Makan Siang 26 · Hybrid Connectivity · Demo interaktif",
+   "title": "Tunnel ke kantor pusat, jalur privat, dan satu hub untuk setiap toko",
+   "lede": "Saksikan tunnel VPN site-to-site terbentuk, membawa lalu lintas terenkripsi, lalu putus karena key yang tidak cocok; bandingkan dengan jalur privat ExpressRoute; lalu hubungkan empat puluh toko melalui hub Virtual WAN. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Kantor pusat terhubung ke Azure: tunnel VPN site-to-site, jalur privat ExpressRoute, dan hub Virtual WAN",
+   "svgDesc": "Adegan pertama: kantor pusat Nusantara Retail di Jakarta (10.0.0.0/16) dengan server gudang, perangkat VPN, dan router edge; internet publik di tengah; dan virtual network hub Azure (10.40.0.0/16) dengan GatewaySubnet yang berisi VPN gateway dan ExpressRoute gateway, ditambah Orders API. Sebuah tunnel IPsec terbentuk melalui internet, membawa lalu lintas terenkripsi, gagal ketika shared key di kedua sisi berbeda, lalu berfungsi lagi. Kemudian lalu lintas menempuh jalur privat ExpressRoute melalui penyedia dan edge Microsoft di peering location Jakarta, dengan VPN sebagai cadangan. Panel menampilkan status koneksi dan effective route untuk kantor pusat. Adegan kedua: hub Virtual WAN di Indonesia Central yang menghubungkan toko-toko, kantor pusat, staf jarak jauh, VNet toko online, dan hub kedua di Southeast Asia, diikuti tiga kartu rangkuman."
+  },
+  "steps": [
+   {
+    "title": "Kantor pusat bertemu cloud",
+    "text": "Setiap malam, server gudang di kantor pusat Jakarta mengirim pergerakan stok hari itu ke Orders API di Azure. Pak Budi menolak membuka kedua server ke internet, dan ia benar. Kedua sisi memakai alamat privat: 10.0.0.0/16 di kantor pusat, 10.40.0.0/16 di Azure. Saat ini, paket dari Azure ke 10.0.1.20 langsung dibuang, karena satu-satunya rute yang cocok, 10.0.0.0/8, punya next hop None."
+   },
+   {
+    "title": "Gateway di GatewaySubnet",
+    "text": "Di Azure, VPN gateway tinggal di subnet khusus bernama GatewaySubnet: /27 atau lebih besar, dan tidak pernah dengan NSG. Gateway VpnGw1AZ bersifat zone-redundant dan memakai IP publik Standard. Di kantor pusat, firewall Pak Budi menjadi perangkat VPN. Local network gateway memberi tahu Azure IP publik firewall itu dan rentang alamat di belakangnya, dan sebuah connection mengikat kedua ujung dengan shared key."
+   },
+   {
+    "title": "IKE: membuktikan shared key",
+    "text": "Begitu connection ada, kedua ujung mulai berbicara dengan IKE, Internet Key Exchange. Mereka menyepakati algoritma enkripsi dan saling membuktikan bahwa mereka memegang pre-shared key yang sama, tanpa pernah mengirimkan key itu sendiri. Hasilnya adalah IKE security association. Di atasnya, mereka membuat IPsec security association untuk lalu lintas sebenarnya. Selama kedua fase belum berhasil, statusnya Connecting.",
+    "set": {
+     "t-conn": "Status: Connecting (IKE)"
+    }
+   },
+   {
+    "title": "Connected: paket terenkripsi mengalir",
+    "text": "Kedua fase berhasil dan status berubah menjadi Connected. Firewall mengenkripsi setiap paket dari server gudang, membungkusnya dalam IPsec, lalu mengirimkannya melintasi internet, yang hanya melihat lalu lintas di antara dua alamat IP publik. VPN gateway mendekripsinya dan mengantarkannya ke Orders API. Azure juga menambahkan rute dengan sendirinya: 10.0.0.0/16 kini mengarah ke virtual network gateway.",
+    "set": {
+     "t-conn": "Status: Connected · IPsec",
+     "lbl-tunnel": "Tunnel IPsec · terenkripsi",
+     "t-route": "10.0.0.0/16 → VirtualNetworkGateway"
+    }
+   },
+   {
+    "title": "Satu key salah, tunnel lenyap",
+    "text": "Sebulan kemudian, Rizky merotasi key di firewall tetapi lupa mengubah sisi Azure. Pada negosiasi berikutnya autentikasi gagal, tidak ada security association yang terbentuk, dan status turun menjadi NotConnected. Paket kini berhenti di tepi tunnel yang hilang. Sebagian besar tunnel yang gagal berasal dari ketidakcocokan seperti ini: key, algoritma enkripsi, atau rentang alamat di kedua sisi tidak sepakat.",
+    "set": {
+     "t-conn": "Status: NotConnected · key tidak cocok",
+     "lbl-tunnel": "tanpa tunnel: key berbeda"
+    }
+   },
+   {
+    "title": "Sudah pulih, tetapi internet naik-turun",
+    "text": "Perbaikannya: satu key yang sama di kedua sisi, dibuat secara acak dan disimpan di tempat aman, seperti Key Vault. Tunnel kembali. Namun di akhir bulan, sinkronisasi malam merayap pelan: tunnel menumpang internet publik, jadi latensi dan throughput berubah-ubah mengikuti setiap provider di sepanjang jalan. Ibu Sari meminta sesuatu yang lebih dapat diprediksi sebelum gudang memindahkan lebih banyak data ke Azure.",
+    "set": {
+     "t-conn": "Status: Connected",
+     "lbl-tunnel": "Tunnel IPsec · terenkripsi",
+     "t-inet": "padat: latensi naik-turun"
+    }
+   },
+   {
+    "title": "ExpressRoute: jalur privat",
+    "text": "ExpressRoute menempuh jalan yang berbeda. Penyedia konektivitas menghubungkan router edge kantor pusat ke router edge Microsoft di peering location Jakarta, dan kedua sisi bertukar rute dengan BGP. Azure private peering membawa lalu lintas ke ExpressRoute gateway di GatewaySubnet yang sama dengan VPN gateway. Lalu lintasnya tidak pernah menyentuh internet publik, sehingga latensinya tetap dapat diprediksi.",
+    "set": {
+     "t-inet": "dipakai bersama, best effort"
+    }
+   },
+   {
+    "title": "Privat tidak sama dengan terenkripsi",
+    "text": "Hati-hati dengan satu asumsi: ExpressRoute itu privat, tetapi tidak terenkripsi secara default. Ketika data harus terenkripsi selama transit, gunakan TLS di aplikasi, MACsec di port ExpressRoute Direct, atau VPN IPsec di atas private peering. Circuit melalui penyedia berkisar dari 50 Mbps hingga 10 Gbps, dan pemesanannya memakan waktu berminggu-minggu selagi penyedia menyiapkan sisinya."
+   },
+   {
+    "title": "VPN tetap jadi cadangan",
+    "text": "Nusantara Retail mempertahankan site-to-site VPN setelah ExpressRoute hadir: kedua gateway bisa berbagi GatewaySubnet, dan Azure lebih memilih rute ExpressRoute selama circuit aktif. Ketika penyedia mengalami gangguan, rute BGP dari circuit ditarik dan lalu lintas kembali ke tunnel terenkripsi. Lebih lambat, tetapi gudang tetap bisa sinkron. Untuk ketahanan lebih tinggi, tambahkan ExpressRoute Metro atau circuit kedua.",
+    "set": {
+     "t-conn": "Status: Connected · cadangan dipakai",
+     "lbl-tunnel": "Tunnel IPsec · jalur cadangan"
+    }
+   },
+   {
+    "title": "Empat puluh toko, satu hub",
+    "text": "Tahun depan, keempat puluh toko bergabung. Dengan gateway biasa, itu berarti puluhan tunnel, local network gateway, dan peering, ditambah perutean di antara semuanya yang harus Anda bangun sendiri. Azure Virtual WAN mengubahnya menjadi layanan terkelola: satu virtual hub per region, dengan gateway untuk site-to-site VPN, user VPN, dan ExpressRoute, plus hub router. Perangkat SD-WAN di setiap toko terhubung ke hub Indonesia Central."
+   },
+   {
+    "title": "Any-to-any lewat hub",
+    "text": "Hub router pada virtual WAN Standard menyediakan transit any-to-any: sebuah toko bisa menjangkau kantor pusat dan VNet toko online, dan staf jarak jauh terhubung dengan user VPN serta akun Microsoft Entra ID mereka. Hub-hub dalam virtual WAN yang sama saling terhubung lewat backbone Microsoft, sehingga salinan pemulihan bencana di balik hub Southeast Asia juga terjangkau. Jenis Basic hanya mendukung site-to-site VPN."
+   },
+   {
+    "title": "Pilih jalur yang pas",
+    "text": "Tiga alat, tiga tugas. Site-to-site VPN terenkripsi, cepat dimulai, dan cadangan yang alami. ExpressRoute memberi jalur privat yang dapat diprediksi untuk lalu lintas besar dan stabil, dengan enkripsi ditambahkan bila data membutuhkannya. Virtual WAN mengelola hub dan transit begitu banyak lokasi bergabung. Apa pun pilihannya, rencanakan rentang alamat lebih dulu: jaringan yang tumpang-tindih tidak bisa dihubungkan tanpa NAT.",
+    "tip": "Di Lab 26 Anda membangun dua VPN gateway, menghubungkannya dengan shared key yang dibuat saat runtime, mengirim lalu lintas lewat tunnel — lalu menghapus semuanya di hari yang sama."
+   }
+  ],
+  "svg": {
+   "Head office · Jakarta": "Kantor pusat · Jakarta",
+   "Azure hub VNet": "VNet hub Azure",
+   "GatewaySubnet · no NSG": "GatewaySubnet · tanpa NSG",
+   "Public internet": "Internet publik",
+   "shared, best effort": "dipakai bersama, best effort",
+   "IKE: agree and authenticate": "IKE: bersepakat dan autentikasi",
+   "Warehouse server": "Server gudang",
+   "VPN device": "Perangkat VPN",
+   "firewall · public IP": "firewall · IP publik",
+   "Edge router": "Router edge",
+   "BGP over the circuit": "BGP lewat circuit",
+   "Provider network": "Jaringan penyedia",
+   "private circuit": "circuit privat",
+   "Jakarta peering location": "peering location Jakarta",
+   "encrypt it: TLS, MACsec or IPsec": "enkripsi sendiri: TLS, MACsec atau IPsec",
+   "Site-to-site connection": "Koneksi site-to-site",
+   "local network gateway: HQ public IP + 10.0.0.0/16": "local network gateway: IP publik HQ + 10.0.0.0/16",
+   "Status: not created": "Status: belum dibuat",
+   "traffic to head office, 10.0.1.20": "lalu lintas ke kantor pusat, 10.0.1.20",
+   "10.0.0.0/8 → None (dropped)": "10.0.0.0/8 → None (dibuang)",
+   "one managed hub per region · hubs meshed over Microsoft's backbone": "satu hub terkelola per region · antar-hub terhubung lewat backbone Microsoft",
+   "Store 1 · Medan": "Toko 1 · Medan",
+   "SD-WAN box · VPN": "Perangkat SD-WAN · VPN",
+   "Store 2 · Surabaya": "Toko 2 · Surabaya",
+   "+ 37 more stores": "+ 37 toko lainnya",
+   "Store 40 · Makassar": "Toko 40 · Makassar",
+   "Head office": "Kantor pusat",
+   "ExpressRoute + VPN backup": "ExpressRoute + VPN cadangan",
+   "Remote staff": "Staf jarak jauh",
+   "VNet · storefront": "VNet · toko online",
+   "orders API and web": "orders API dan web",
+   "disaster recovery VNet": "VNet pemulihan bencana",
+   "encrypted tunnel over the internet": "tunnel terenkripsi lewat internet",
+   "live in hours · pay per gateway hour": "siap dalam hitungan jam · bayar per jam gateway",
+   "start here, keep it as the backup": "mulai di sini, lalu jadikan cadangan",
+   "private path, predictable latency": "jalur privat, latensi dapat diprediksi",
+   "weeks to order · encrypt it yourself": "pemesanan berminggu-minggu · enkripsi sendiri",
+   "for heavy, steady traffic": "untuk lalu lintas besar dan stabil",
+   "managed hubs for many sites": "hub terkelola untuk banyak lokasi",
+   "any-to-any transit (Standard)": "transit any-to-any (Standard)",
+   "when the forty stores join": "saat empat puluh toko bergabung"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -862,6 +997,119 @@ svg .lane{stroke:transparent}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -981,7 +1229,7 @@ svg .lane{stroke:transparent}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -1016,7 +1264,7 @@ svg .lane{stroke:transparent}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -1029,7 +1277,7 @@ svg .lane{stroke:transparent}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -1050,7 +1298,7 @@ svg .lane{stroke:transparent}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -1058,7 +1306,7 @@ svg .lane{stroke:transparent}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

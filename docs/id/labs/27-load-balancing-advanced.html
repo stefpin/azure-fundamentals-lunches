@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 27 · Melindungi dan merutekan toko online · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 27: Melindungi dan merutekan toko online. sekitar 75 menit (termasuk 5–15 menit menunggu gateway), biaya 💲💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/27-load-balancing-advanced.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/27-load-balancing-advanced.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/27-load-balancing-advanced.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/27-load-balancing-advanced.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 27 · Melindungi dan merutekan toko online">
+<meta property="og:description" content="Lab Azure praktik 27: Melindungi dan merutekan toko online. sekitar 75 menit (termasuk 5–15 menit menunggu gateway), biaya 💲💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/27-load-balancing-advanced.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="27" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/27-load-balancing-advanced.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 27</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>27</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Melindungi dan merutekan toko online</h1>
+        <p class="lab-story">🏪 <b>Episode 27 · &#x27; OR 1=1--</b> — Log penuh string serangan, sementara pembeli di Makassar harus menunggu server di Jakarta. <a href="../lunches/27-load-balancing-advanced.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 75 menit (termasuk 5–15 menit menunggu gateway)</span>
+          <span class="chip cost">💲💲💲 biaya yang terasa selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★★</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 11 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--berkenalan-dengan-dua-aplikasi">Tugas 1 · Berkenalan dengan dua aplikasi</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--membuat-waf-policy-detection-dulu">Tugas 2 · Membuat WAF policy (Detection dulu)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--membuat-application-gateway-515-menit">Tugas 3 · Membuat Application Gateway (5–15 menit)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--mengajari-gateway-berbicara-dengan-app-service">Tugas 4 · Mengajari gateway berbicara dengan App Service</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--merutekan-images-ke-aplikasi-gambar">Tugas 5 · Merutekan /images/ ke aplikasi gambar</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--mengalihkan-waf-ke-prevention-dan-memblokir-serangan">Tugas 6 · Mengalihkan WAF ke Prevention dan memblokir serangan</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--profil-traffic-manager-dengan-routing-priority">Tugas 7 · Profil Traffic Manager dengan routing priority</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-8--failover-lewat-dns">Tugas 8 · Failover lewat DNS</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-9-opsional--menempatkan-front-door-standard-di-depan-toko-online">Tugas 9 (opsional) · Menempatkan Front Door Standard di depan toko online</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/app/images/images/batik.svg" target="_blank" rel="noopener"><span>app/images/images/batik.svg</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/app/images/images/index.html" target="_blank" rel="noopener"><span>app/images/images/index.html</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/app/images/index.html" target="_blank" rel="noopener"><span>app/images/index.html</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/app/storefront/index.html" target="_blank" rel="noopener"><span>app/storefront/index.html</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>6 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/27-load-balancing-advanced" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Toko online Nusantara Retail dan layanan gambarnya yang baru berjalan sebagai dua aplikasi App Service kecil. Anda
+menempatkan sebuah <strong>Application Gateway (WAF_v2)</strong> di depan keduanya, yang mengirim <code>/images/*</code> ke aplikasi gambar
+dan semua yang lain ke aplikasi toko online, serta sebuah <strong>WAF policy</strong> yang memblokir percobaan SQL injection dengan
+HTTP 403. Lalu Anda menambahkan profil <strong>Traffic Manager</strong> yang menjawab DNS dengan toko online sebagai pilihan
+pertama dan sebuah standby sebagai pilihan kedua, menghentikan toko online, dan menyaksikan jawaban DNS berubah.
+Secara opsional, Anda menempatkan <strong>Front Door Standard</strong> di depan toko online untuk melihat edge global bekerja.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shop([&quot;Pembeli / penyerang&lt;br/&gt;(curl dari Cloud Shell)&quot;]) --&gt;|HTTP :80| pip
+  subgraph rg[&quot;rg-lunch27-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph vnet[&quot;vnet-nusa-edge · snet-agw 10.27.0.0/24&quot;]
+      pip[&quot;pip-agw-nusa&quot;] --&gt; agw[&quot;agw-nusa · WAF_v2&lt;br/&gt;WAF policy waf-nusa (Prevention)&quot;]
+    end
+    agw --&gt;|&quot;/images/* · HTTPS 443&lt;br/&gt;nama host dari backend&quot;| img[&quot;app-nusa-img-&amp;lt;suffix&amp;gt;&lt;br/&gt;(aplikasi gambar)&quot;]
+    agw --&gt;|&quot;selain itu&quot;| store[&quot;app-nusa-store-&amp;lt;suffix&amp;gt;&lt;br/&gt;(aplikasi toko online)&quot;]
+    tm[&quot;tm-nusa · Traffic Manager&lt;br/&gt;routing Priority&quot;] -.-&gt;|&quot;prioritas 1&quot;| store
+    tm -.-&gt;|&quot;prioritas 2&quot;| img
+  end
+  dns([&quot;dig nusa-shop-&amp;lt;suffix&amp;gt;.trafficmanager.net&quot;]) -.-&gt;|hanya DNS| tm
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Sebuah subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. <code>dig</code> dan Python sudah terpasang di
+sana.</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/27-load-balancing-advanced
+source ../common/config.sh
+source lab.env          # resource names for this lab, plus helpers: load_hosts, gw_ip, tm_watch
+RG=$(rg_name 27)
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya — butuh sekitar 3–5 menit. Langkah ini membuat resource group, virtual network dengan subnet
+kosong <code>snet-agw</code> (10.27.0.0/24, khusus untuk gateway), sebuah App Service plan <strong>Free (F1)</strong>, dan dua aplikasi yang
+hanya menerima HTTPS, lalu men-deploy halaman-halaman di <a href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/27-load-balancing-advanced/app" target="_blank" rel="noopener"><code>app/</code></a>:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+load_hosts              # sets STORE_HOST and IMG_HOST — rerun it whenever you reconnect
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Ini lab 💲💲💲. Application Gateway WAF_v2 ditagih untuk setiap jam selama ia ada, sejak dibuat sampai Anda
+menghapusnya, bahkan tanpa lalu lintas sama sekali, dan Front Door yang opsional punya biaya dasar selama profilnya
+ada. Kerjakan lab ini dalam sekali duduk dan jalankan <strong>Bersihkan</strong> segera sesudahnya. Aplikasi App Service memakai
+tier Free. Jika Cloud Shell terputus, sambungkan lagi, lalu jalankan ulang <code>cd</code>, kedua baris <code>source</code>, dan
+<code>load_hosts</code>; resource tetap dibangun di Azure selama Anda terputus.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–8 (Tugas 9 opsional)</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>jalankan <code>bash setup.sh</code>, baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--berkenalan-dengan-dua-aplikasi" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Berkenalan dengan dua aplikasi</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--berkenalan-dengan-dua-aplikasi" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Setiap aplikasi memberi label pada halamannya sendiri, jadi Anda selalu bisa tahu siapa yang menjawab.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>curl -s &quot;https://${STORE_HOST}/&quot;        | grep -o &quot;Served by the [A-Z]* app&quot;
+curl -s &quot;https://${IMG_HOST}/images/&quot;   | grep -o &quot;Served by the [A-Z]* app&quot;
+curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;https://${STORE_HOST}/images/&quot;
+</code></pre></div>
+<p>Perintah terakhir mengembalikan <code>404</code>: aplikasi toko online tidak punya folder <code>/images/</code>. Hanya aplikasi gambar yang
+punya — nanti gateway harus mengirim request semacam itu ke sana.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> perintah pertama menampilkan <em>Served by the STOREFRONT app</em>, perintah kedua <em>Served by the IMAGES
+app</em>, dan perintah terakhir <code>HTTP 404</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--membuat-waf-policy-detection-dulu" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Membuat WAF policy (Detection dulu)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--membuat-waf-policy-detection-dulu" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><strong>WAF policy</strong> adalah resource tersendiri yang menyimpan pengaturan dan rule set firewall; Anda memasangkannya ke
+gateway pada tugas berikutnya. Microsoft menyarankan <strong>Default Rule Set (DRS) 2.2</strong> untuk policy baru (default CLI
+masih 2.1, jadi Anda menyebut versinya secara eksplisit). Mulailah di mode <strong>Detection</strong>: setiap kecocokan dicatat,
+tetapi tidak ada yang diblokir.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network application-gateway waf-policy create -g &quot;$RG&quot; -n &quot;$WAF_POLICY&quot; -l &quot;$LOCATION&quot; \
+  --type Microsoft_DefaultRuleSet --version 2.2 --output none
+
+az network application-gateway waf-policy policy-setting update -g &quot;$RG&quot; --policy-name &quot;$WAF_POLICY&quot; \
+  --mode Detection --state Enabled --request-body-check true --output none
+
+az network application-gateway waf-policy show -g &quot;$RG&quot; -n &quot;$WAF_POLICY&quot; \
+  --query &quot;{mode:policySettings.mode, state:policySettings.state, ruleSet:managedRules.managedRuleSets[0].ruleSetType, version:managedRules.managedRuleSets[0].ruleSetVersion}&quot; -o table
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>Detection</code>, <code>Enabled</code>, <code>Microsoft_DefaultRuleSet</code>, <code>2.2</code>. (Jika versi 2.2 ditolak di region
+Anda, buat policy dengan <code>--version 2.1</code> — lihat Pemecahan masalah.)</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--membuat-application-gateway-515-menit" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Membuat Application Gateway (5–15 menit)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--membuat-application-gateway-515-menit" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Gateway membutuhkan IP publik statis bertipe Standard dan subnet-nya sendiri. Anda membuatnya dengan:</p>
+<ul>
+<li><code>--sku WAF_v2</code> dan policy dari Tugas 2;</li>
+<li>autoscale antara 1 dan 2 instance, agar lab tetap kecil (minimumnya juga bisa 0 — autoscaling murni);</li>
+<li>listener di port 80, dan aplikasi toko online sebagai satu-satunya anggota backend pool default;</li>
+<li>backend settings yang berbicara <strong>HTTPS di port 443</strong> dengan aplikasi;</li>
+<li><code>--priority 100</code> untuk routing rule (rule v2 membutuhkan prioritas).</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network public-ip create -g &quot;$RG&quot; -n &quot;$PIP_AGW&quot; -l &quot;$LOCATION&quot; \
+  --sku Standard --allocation-method Static --output none
+
+az network application-gateway create -g &quot;$RG&quot; -n &quot;$AGW&quot; -l &quot;$LOCATION&quot; \
+  --sku WAF_v2 --min-capacity 1 --max-capacity 2 \
+  --vnet-name &quot;$VNET&quot; --subnet &quot;$SUBNET_AGW&quot; \
+  --public-ip-address &quot;$PIP_AGW&quot; --waf-policy &quot;$WAF_POLICY&quot; \
+  --frontend-port 80 --http-settings-protocol Https --http-settings-port 443 \
+  --servers &quot;$STORE_HOST&quot; --priority 100 --output none
+</code></pre></div>
+<p>Selagi gateway dibangun, baca lagi bagian 2 dan 3 dari makan siang ini. Perintah tadi membuat komponen default yang
+akan Anda pakai ulang: <code>appGatewayFrontendIP</code>, <code>appGatewayHttpListener</code>, <code>appGatewayBackendPool</code> (toko online),
+<code>appGatewayBackendHttpSettings</code>, dan rule <code>rule1</code>. Di region yang memiliki availability zone, gateway otomatis
+tersebar ke beberapa zona.</p>
+<p>Sekarang coba:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>GW_IP=$(gw_ip); echo &quot;$GW_IP&quot;
+curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;http://${GW_IP}/&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong>
+<code>az network application-gateway show -g &quot;$RG&quot; -n &quot;$AGW&quot; --query &quot;{sku:sku.name, state:operationalState}&quot; -o table</code>
+menampilkan <code>WAF_v2</code> dan <code>Running</code> — <strong>dan request-nya gagal</strong>, biasanya dengan <code>HTTP 502</code> (Bad Gateway). Itu memang
+sudah diduga; Tugas 4 menjelaskan sebabnya.</p>
+</div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Buka <code>agw-nusa</code> dan lihat <em>Backend health</em>: toko online berstatus <strong>Unhealthy</strong>, dan
+detailnya menyebut nama host atau common name sertifikat. Portal juga memungkinkan Anda menelusuri setiap komponen
+yang baru saja dibuat: <em>Listeners</em>, <em>Rules</em>, <em>Backend pools</em>, <em>Backend settings</em>, <em>Health probes</em>, dan policy <em>Web
+application firewall</em> yang terhubung.</p>
+</aside>
+</div></section><section class="lab-section" id="tugas-4--mengajari-gateway-berbicara-dengan-app-service" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Mengajari gateway berbicara dengan App Service</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--mengajari-gateway-berbicara-dengan-app-service" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>App Service menampung aplikasi milik banyak pelanggan di front end bersama dan menemukan aplikasi yang tepat
+berdasarkan <strong>nama host</strong> di setiap request. Gateway meneruskan nama host yang dipakai klien (di sini sebuah alamat
+IP), dan default health probe-nya memakai <code>127.0.0.1</code>. App Service tidak mengenali keduanya, dan sertifikat HTTPS-nya
+(<code>*.azurewebsites.net</code>) juga tidak cocok dengan keduanya — sehingga backend ditandai tidak sehat dan pembeli mendapat 502.</p>
+<p>Perbaikannya: buat backend settings <strong>mengambil nama host dari target backend</strong> (nama <code>*.azurewebsites.net</code> milik
+masing-masing aplikasi), lalu tambahkan custom probe yang mengambil nama host-nya dari pengaturan tersebut.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network application-gateway probe create -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n &quot;$PROBE_AGW&quot; \
+  --protocol Https --path / --host-name-from-http-settings true \
+  --interval 30 --timeout 30 --threshold 3 --output none
+
+az network application-gateway http-settings update -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; \
+  -n appGatewayBackendHttpSettings --host-name-from-backend-pool true --probe &quot;$PROBE_AGW&quot; --output none
+
+az network application-gateway show-backend-health -g &quot;$RG&quot; -n &quot;$AGW&quot; \
+  --query &quot;backendAddressPools[].backendHttpSettingsCollection[].servers[].{address:address, health:health}&quot; -o table
+
+curl -s &quot;http://${GW_IP}/&quot; | grep -o &quot;Served by the [A-Z]* app&quot;
+</code></pre></div>
+<p>Setiap perintah <code>application-gateway ... create/update</code> memperbarui seluruh gateway, jadi perkirakan satu atau dua
+menit untuk setiap perintah.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> host toko online menampilkan <code>Healthy</code>, dan gateway sekarang mengembalikan <em>Served by the
+STOREFRONT app</em>. Di produksi, sebaiknya Anda memasang <strong>custom domain</strong> yang sama di gateway dan di aplikasi,
+sehingga nama host tidak pernah perlu diubah (makan siangnya menjelaskan alasannya).</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--merutekan-images-ke-aplikasi-gambar" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Merutekan <code>/images/*</code> ke aplikasi gambar</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--merutekan-images-ke-aplikasi-gambar" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Tambahkan backend pool kedua untuk aplikasi gambar, sebuah <strong>URL path map</strong> yang mengirim <code>/images/*</code> ke sana (semua
+yang lain menuju pool default), lalu ubah <code>rule1</code> dari <em>Basic</em> menjadi <em>PathBasedRouting</em>. Beri tanda kutip pada
+<code>&quot;/images/*&quot;</code> agar shell tidak menjabarkan tanda bintangnya menjadi daftar file.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network application-gateway address-pool create -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n &quot;$POOL_IMG&quot; \
+  --servers &quot;$IMG_HOST&quot; --output none
+
+az network application-gateway url-path-map create -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n &quot;$PATH_MAP&quot; \
+  --rule-name images --paths &quot;/images/*&quot; \
+  --address-pool &quot;$POOL_IMG&quot; --http-settings appGatewayBackendHttpSettings \
+  --default-address-pool appGatewayBackendPool --default-http-settings appGatewayBackendHttpSettings \
+  --output none
+
+az network application-gateway rule update -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n rule1 \
+  --rule-type PathBasedRouting --url-path-map &quot;$PATH_MAP&quot; --output none
+</code></pre></div>
+<p>Satu objek backend settings melayani kedua pool: karena ia mengambil nama host dari target di masing-masing pool,
+setiap aplikasi menerima namanya sendiri. Uji kedua path dan gambarnya sekaligus:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>curl -s &quot;http://${GW_IP}/&quot;        | grep -o &quot;Served by the [A-Z]* app&quot;
+curl -s &quot;http://${GW_IP}/images/&quot; | grep -o &quot;Served by the [A-Z]* app&quot;
+curl -s -o /dev/null -w &quot;HTTP %{http_code} %{content_type}\n&quot; &quot;http://${GW_IP}/images/batik.svg&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>/</code> dilayani oleh aplikasi STOREFRONT, <code>/images/</code> oleh aplikasi IMAGES, dan file SVG
+mengembalikan <code>HTTP 200 image/svg+xml</code>. Buka <code>http://&lt;gateway IP&gt;/</code> di browser lalu klik tautan gambarnya. Gateway
+meneruskan <strong>path lengkap</strong>, itulah sebabnya aplikasi gambar menyimpan halamannya di folder <code>images</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--mengalihkan-waf-ke-prevention-dan-memblokir-serangan" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Mengalihkan WAF ke Prevention dan memblokir serangan</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--mengalihkan-waf-ke-prevention-dan-memblokir-serangan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Kirim probe SQL injection klasik (<code>?id=1' OR 1=1--</code>, dalam bentuk URL-encoded) selagi policy masih di mode Detection:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;http://${GW_IP}/?id=1%27%20OR%201%3D1--&quot;
+</code></pre></div>
+<p>Anda mendapat <code>HTTP 200</code>: di mode Detection, WAF hanya mencatat kecocokannya. Sekarang beralih ke Prevention:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network application-gateway waf-policy policy-setting update -g &quot;$RG&quot; --policy-name &quot;$WAF_POLICY&quot; \
+  --mode Prevention --state Enabled --request-body-check true --output none
+</code></pre></div>
+<p>Tunggu satu atau dua menit sampai perubahan itu tiba di gateway, lalu kirim request yang sama — dan satu request
+normal:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>curl -s -o /dev/null -w &quot;attack: HTTP %{http_code}\n&quot; &quot;http://${GW_IP}/?id=1%27%20OR%201%3D1--&quot;
+curl -s -o /dev/null -w &quot;normal: HTTP %{http_code}\n&quot; &quot;http://${GW_IP}/?id=42&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>attack: HTTP 403</code> dan <code>normal: HTTP 200</code>. Rule SQL injection berkategori <em>critical</em> (skor
+anomali 5), yang dengan sendirinya sudah mencapai ambang blokir 5; toko online tidak pernah melihat request
+tersebut.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--profil-traffic-manager-dengan-routing-priority" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Profil Traffic Manager dengan routing priority</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--profil-traffic-manager-dengan-routing-priority" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Traffic Manager menjawab kueri DNS; ia tidak pernah menyentuh lalu lintas HTTP. Buat profil <strong>Priority</strong> dengan TTL 30
+detik dan health check HTTPS yang cepat (setiap 10 detik, berstatus degraded setelah 3 kegagalan berturut-turut), lalu
+tambahkan kedua aplikasi sebagai <strong>external endpoint</strong>. (Aplikasi tier Free tidak bisa menjadi <em>Azure</em> endpoint; untuk
+itu dibutuhkan tier Standard atau lebih tinggi.)</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network traffic-manager profile create -g &quot;$RG&quot; -n &quot;$TM_PROFILE&quot; \
+  --routing-method Priority --unique-dns-name &quot;$TM_DNS&quot; --ttl 30 \
+  --protocol HTTPS --port 443 --path &quot;/&quot; --interval 10 --timeout 9 --max-failures 2 --output none
+
+az network traffic-manager endpoint create -g &quot;$RG&quot; --profile-name &quot;$TM_PROFILE&quot; -n ep-store \
+  --type externalEndpoints --target &quot;$STORE_HOST&quot; --priority 1 --endpoint-status Enabled --output none
+
+az network traffic-manager endpoint create -g &quot;$RG&quot; --profile-name &quot;$TM_PROFILE&quot; -n ep-images \
+  --type externalEndpoints --target &quot;$IMG_HOST&quot; --priority 2 --endpoint-status Enabled --output none
+</code></pre></div>
+<p>Di sini aplikasi gambar berperan sebagai salinan standby dari toko online; di produksi, perannya diisi oleh toko
+online yang sama di region kedua. Beri probe waktu satu menit, lalu lihat kesehatan endpoint dan jawaban DNS-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>tm_watch 3
+dig +noall +answer &quot;${TM_DNS}.trafficmanager.net&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> kedua endpoint berstatus <code>Online</code>, dan record DNS pertama adalah CNAME ke <code>app-nusa-store-…</code>,
+dengan TTL 30 detik atau kurang. Traffic Manager hanya membagikan sebuah nama; klien terhubung langsung ke
+aplikasinya.</p>
+</div>
+<p>Coba <code>curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;https://${TM_DNS}.trafficmanager.net/&quot;</code>: pemeriksaan TLS gagal,
+dan lewat HTTP biasa App Service menjawab dengan halaman <em>not found</em>. Aplikasi itu tidak mengenal nama
+<code>trafficmanager.net</code>. Di produksi, kedua aplikasi akan memakai <strong>custom domain</strong> yang sama (tier Basic atau lebih
+tinggi), dan domain itulah yang diarahkan ke Traffic Manager.</p>
+</div></section><section class="lab-section" id="tugas-8--failover-lewat-dns" data-kind="task"><h2><span class="task-tag">Tugas 8</span><span class="title">Failover lewat DNS</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-8--failover-lewat-dns" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Hentikan aplikasi toko online — setara dengan kehilangan situs utama — dan saksikan reaksi Traffic Manager:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az webapp stop -g &quot;$RG&quot; -n &quot;$APP_STORE&quot;
+tm_watch 9          # about 90 seconds
+</code></pre></div>
+<p>Dalam sekitar satu menit, aplikasi yang dihentikan gagal dalam tiga health check berturut-turut (<code>ep-store:Degraded</code>),
+dan jawaban DNS beralih ke <code>app-nusa-img-…</code>. Resolver mana pun yang sudah menyimpan jawaban lama di cache akan
+memakainya hingga TTL 30 detik habis; sebagian klien menyimpan cache lebih lama lagi. Waktu failover kira-kira sama
+dengan waktu deteksi ditambah TTL ditambah caching di klien. Sekarang pulihkan:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az webapp start -g &quot;$RG&quot; -n &quot;$APP_STORE&quot;
+tm_watch 9
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Anda melihat <code>ep-store</code> berubah menjadi <code>Degraded</code> dan jawaban DNS berpindah ke aplikasi gambar,
+lalu keduanya kembali <code>Online</code> dengan toko online kembali di urutan pertama.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-9-opsional--menempatkan-front-door-standard-di-depan-toko-online" data-kind="task"><h2><span class="task-tag">Tugas 9 (opsional)</span><span class="title">Menempatkan Front Door Standard di depan toko online</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-9-opsional--menempatkan-front-door-standard-di-depan-toko-online" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Front Door butuh sekitar 15 menit, sebagian besar untuk menunggu konfigurasinya sampai ke edge. Lewati tugas ini jika
+waktu atau anggaran Anda terbatas.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az provider register -n Microsoft.Cdn --wait
+
+az afd profile create -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --sku Standard_AzureFrontDoor --output none
+az afd endpoint create -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --endpoint-name &quot;$AFD_ENDPOINT&quot; \
+  --enabled-state Enabled --output none
+az afd origin-group create -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --origin-group-name og-storefront \
+  --probe-request-type GET --probe-protocol Https --probe-interval-in-seconds 60 --probe-path / \
+  --sample-size 4 --successful-samples-required 3 --additional-latency-in-milliseconds 50 --output none
+az afd origin create -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --origin-group-name og-storefront \
+  --origin-name storefront --host-name &quot;$STORE_HOST&quot; --origin-host-header &quot;$STORE_HOST&quot; \
+  --priority 1 --weight 1000 --enabled-state Enabled --http-port 80 --https-port 443 --output none
+az afd route create -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --endpoint-name &quot;$AFD_ENDPOINT&quot; \
+  --route-name route-default --origin-group og-storefront --supported-protocols Http Https \
+  --forwarding-protocol HttpsOnly --https-redirect Enabled --link-to-default-domain Enabled --output none
+
+AFD_HOST=$(az afd endpoint show -g &quot;$RG&quot; --profile-name &quot;$AFD_PROFILE&quot; --endpoint-name &quot;$AFD_ENDPOINT&quot; --query hostName -o tsv)
+echo &quot;https://${AFD_HOST}/&quot;
+</code></pre></div>
+<p>Perhatikan <code>--origin-host-header</code>: seperti Application Gateway, Front Door harus mengirim nama host milik aplikasi itu
+sendiri. Ulangi <code>curl -s &quot;https://${AFD_HOST}/&quot; | grep -o &quot;Served by the [A-Z]* app&quot;</code> setiap satu atau dua menit.
+Sampai konfigurasinya selesai tersebar, Anda akan mendapat halaman error dari Front Door, bukan dari aplikasi Anda.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> nama host Front Door (<code>…azurefd.net</code>) mengembalikan <em>Served by the STOREFRONT app</em>, lewat HTTPS
+dengan sertifikat Microsoft, dari edge location yang paling dekat dengan Cloud Shell Anda.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Dewi &quot;merapikan&quot; path rule dan tanpa sengaja menghapus satu huruf:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network application-gateway url-path-map rule update -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; \
+  --path-map-name &quot;$PATH_MAP&quot; -n images --paths &quot;/image/*&quot; --output none
+curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;http://${GW_IP}/images/&quot;
+</code></pre></div>
+<p><strong>Gejala:</strong> <code>/images/</code> sekarang mengembalikan <code>HTTP 404</code>, padahal kedua aplikasi sehat dan halaman backend health
+serba hijau.</p>
+<details class="plain"><summary>Petunjuk</summary>
+<p>Tanyakan kepada gateway bagaimana ia merutekan:
+<code>az network application-gateway url-path-map show -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n &quot;$PATH_MAP&quot; --query &quot;pathRules[].{name:name, paths:join(',', paths)}&quot; -o table</code>.
+Request yang tidak cocok dengan path rule mana pun dikirim ke pool <strong>default</strong>, yaitu aplikasi toko online, yang tidak
+punya folder <code>/images/</code> — jadi 404 itu berasal dari aplikasi toko online.</p>
+</details>
+<details class="plain"><summary>Perbaikan</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network application-gateway url-path-map rule update -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; \
+  --path-map-name &quot;$PATH_MAP&quot; -n images --paths &quot;/images/*&quot; --output none
+curl -s &quot;http://${GW_IP}/images/&quot; | grep -o &quot;Served by the [A-Z]* app&quot;
+</code></pre></div>
+<p>Pelajarannya: &quot;backend sehat, halaman salah&quot; biasanya berarti yang keliru adalah routing rule, bukan server.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu
+Anda ulangi. Jalankan setelah aplikasi dinyalakan kembali (Tugas 8) dan setidaknya dua menit setelah WAF dialihkan ke
+Prevention.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Perintah ini menghapus resource group <code>rg-lunch27-&lt;suffix&gt;</code> — gateway, WAF policy, IP publik, profil Traffic Manager,
+Front Door opsional, plan, dan aplikasi — beserta folder lokal <code>out</code>. Tidak ada yang berada di luar group itu. Gateway
+bisa butuh 5–10 menit untuk benar-benar hilang; penghapusan berlanjut di latar belakang.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setup.sh</code>: <code>az appservice plan create</code> menolak tier Free (misalnya pesan kuota atau &quot;not available&quot;)</td>
+<td>Plan Free dibatasi per subscription atau per region</td>
+<td><code>APP_SKU=B1 bash setup.sh</code> (ada biaya kecil per jam), atau gunakan region lain</td>
+</tr>
+<tr>
+<td><code>setup.sh</code> mencatat bahwa sebuah aplikasi <em>belum menampilkan</em> halamannya</td>
+<td>start pertama aplikasi tier Free bisa lambat</td>
+<td>tunggu satu menit, lalu <code>curl -s &quot;https://${STORE_HOST}/&quot;</code>; jalankan ulang <code>bash setup.sh</code> untuk deploy ulang</td>
+</tr>
+<tr>
+<td><code>waf-policy create</code> menolak <code>--version 2.2</code></td>
+<td>versi rule set itu belum ditawarkan untuk Anda</td>
+<td>buat dengan <code>--version 2.1</code> (masih didukung)</td>
+</tr>
+<tr>
+<td><code>application-gateway create</code> gagal dengan error tentang prioritas request routing rule</td>
+<td>rule v2 membutuhkan prioritas</td>
+<td>sertakan <code>--priority 100</code></td>
+</tr>
+<tr>
+<td><code>application-gateway create</code> gagal karena subnet sedang dipakai atau terlalu kecil</td>
+<td>subnet harus khusus untuk Application Gateway</td>
+<td>gunakan <code>snet-agw</code> (/24) yang masih kosong, yang dibuat oleh <code>setup.sh</code></td>
+</tr>
+<tr>
+<td><code>HTTP 502</code> dari gateway</td>
+<td>backend tidak sehat — hampir selalu karena nama host untuk App Service</td>
+<td>Tugas 4; periksa <code>show-backend-health</code></td>
+</tr>
+<tr>
+<td><code>HTTP 404</code> untuk <code>/images/</code> lewat gateway</td>
+<td>path rule tidak ada atau salah eja, atau <code>rule1</code> masih <em>Basic</em></td>
+<td><code>az network application-gateway rule show -g &quot;$RG&quot; --gateway-name &quot;$AGW&quot; -n rule1 --query ruleType</code>; Tugas 5</td>
+</tr>
+<tr>
+<td><code>rule update</code> ke PathBasedRouting gagal</td>
+<td>CLI versi Anda menolak perubahan itu</td>
+<td>portal: <em>agw-nusa › Rules › rule1 › Backend targets</em> › <em>Add multiple targets to create a path-based rule</em> (<code>/images/*</code> → <code>pool-images</code>)</td>
+</tr>
+<tr>
+<td>Serangan masih mengembalikan <code>200</code> setelah beralih ke Prevention</td>
+<td>perubahan policy belum tiba di gateway</td>
+<td>tunggu dua menit lalu coba lagi; pastikan dengan <code>waf-policy show ... --query policySettings.mode</code></td>
+</tr>
+<tr>
+<td>Halaman normal mengembalikan <code>403</code></td>
+<td>false positive WAF pada lalu lintas Anda sendiri</td>
+<td>beralih ke Detection, cari ID rule-nya di log WAF, tambahkan exclusion, lalu kembali ke Prevention</td>
+</tr>
+<tr>
+<td>Endpoint Traffic Manager tetap <code>Degraded</code></td>
+<td>probe tidak bisa mendapat <code>200</code> (aplikasi dihentikan, atau probe HTTP ke aplikasi yang hanya menerima HTTPS)</td>
+<td>nyalakan aplikasinya; profil harus mem-probe <code>HTTPS</code> di port 443</td>
+</tr>
+<tr>
+<td><code>dig</code> masih menampilkan aplikasi lama setelah failover</td>
+<td>caching DNS</td>
+<td>tunggu sampai TTL (30 detik) habis lalu coba lagi</td>
+</tr>
+<tr>
+<td>Front Door mengembalikan halaman error</td>
+<td>konfigurasi masih menyebar ke edge</td>
+<td>tunggu beberapa menit lalu coba lagi</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li><strong>Failover Front Door tanpa DNS:</strong> tambahkan aplikasi gambar sebagai origin kedua (<code>--priority 2</code>) ke
+<code>og-storefront</code>, hentikan toko online, dan saksikan Front Door beralih tanpa TTL yang perlu ditunggu.</li>
+<li><strong>Baca log WAF:</strong> kirim diagnostic log gateway ke sebuah Log Analytics workspace dan temukan request Anda yang
+diblokir di log firewall (Makan Siang 30 mengajarkan bahasa query-nya).</li>
+<li><strong>Custom rule WAF:</strong> blokir request yang <code>User-Agent</code>-nya mengandung <code>sqlmap</code>, atau batasi laju request (rate-limit)
+ke sebuah path, dengan <code>az network application-gateway waf-policy custom-rule create</code>.</li>
+<li><strong>Kunci aplikasinya:</strong> tambahkan access restriction App Service agar aplikasi hanya menerima lalu lintas dari
+gateway (IP publiknya, atau subnet-nya melalui service endpoint).</li>
+<li><strong>Bandingkan dengan portal:</strong> bangun ulang path rule lewat <em>Rules › Add a routing rule</em> dan perhatikan bagaimana
+portal mengelompokkan listener, backend targets, dan backend settings.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Jalankan <code>bash setup.sh</code>, lalu bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep), memakai
+nama-nama dari <code>lab.env</code>:</p>
+<ol>
+<li>WAF policy <code>waf-nusa</code>, dalam keadaan <strong>enabled</strong> di mode <strong>Prevention</strong>, dengan sebuah Microsoft Default Rule Set.</li>
+<li>Application Gateway <code>agw-nusa</code>, SKU <strong>WAF_v2</strong>, maksimal 2 instance, memakai <code>waf-nusa</code>, mendengarkan HTTP di port
+80 pada IP publik <code>pip-agw-nusa</code>, di subnet <code>snet-agw</code>.</li>
+<li>Backend settings lewat <strong>HTTPS 443</strong> yang mengambil nama host dari target backend, dengan custom probe yang
+mengambil nama host-nya dari pengaturan tersebut.</li>
+<li>Routing berbasis path: <code>/images/*</code> → aplikasi gambar; semua yang lain → aplikasi toko online.</li>
+<li>Probe SQL injection lewat gateway (<code>/?id=1' OR 1=1--</code>) dijawab dengan <strong>403</strong>, sementara <code>/</code> dan <code>/images/</code> tetap
+berfungsi.</li>
+<li>Profil Traffic Manager <code>tm-nusa</code> (nama DNS <code>nusa-shop-&lt;suffix&gt;</code>) dengan routing <strong>Priority</strong>, health check HTTPS,
+dan dua <strong>external endpoint</strong>: aplikasi toko online (prioritas 1) dan aplikasi gambar (prioritas 2).</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="26-hybrid-connectivity.html"><small>← Lab sebelumnya</small>26 · Menghubungkan kantor pusat</a><a class="next" href="28-relational-databases-advanced.html"><small>Lab berikutnya →</small>28 · Pesanan yang selamat dari gangguan region</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/27-load-balancing-advanced/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

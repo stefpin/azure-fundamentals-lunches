@@ -1,9 +1,12 @@
 # Lunch 03 · Azure Global Infrastructure: Regions, Availability Zones and Region Pairs (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 1:** Foundations
 > **Time:** 60 minutes · **Prerequisite lunches:** 01
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 03 · Explore regions and zones](../../labs/03-global-infrastructure/README.md) — about 35 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -365,6 +368,16 @@ What to watch for:
   second region and set up replication, if your data rules allow it.
 - Choose a region on **residency, latency, service and SKU availability, price, zones and DR options**, and verify each
   one with the documentation or the CLI before you build.
+
+## 🗒️ Field notes from Stefanus
+
+> **Name the failure before you pick the region.** Before anyone opens the region dropdown, I ask one question: *which
+> failure must this design survive — a rack, a building or a whole region?* Then every box on the architecture diagram
+> gets a label: zonal, zone-redundant or nonzonal. Unlabelled boxes are where the surprises hide, typically a "highly
+> available" pair of VMs that were both created with `--zone 1`. At the region level my rule is just as short: if
+> nobody can name the feature that copies the data to another region, there is no copy, pair or no pair. And I measure
+> latency from a phone on the kind of mobile network the users really have, never only from Cloud Shell: it runs
+> inside an Azure datacenter, so it can't tell me what a shopper feels.
 
 ## 🔬 Your lab: Explore regions and zones
 

@@ -1,0 +1,119 @@
+{
+  "page": {
+    "doc_title": "Lunch 09 · Load Balancing (Basic) — Interactive demo",
+    "kicker": "Lunch 09 · Load Balancing (Basic) · Interactive demo",
+    "title": "Keep the shop open: Azure Load Balancer",
+    "lede": "Two web servers in two availability zones behind one Standard load balancer. Watch requests spread out, a server fail its health probe and recover, an admin reach one VM, and the servers get a way out to the internet. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "A Standard load balancer spreading shopper traffic across two web servers in two availability zones",
+    "svgDesc": "Shoppers on the left reach a zone-redundant frontend IP. The load balancer probes vm-web-1 in zone 1 and vm-web-2 in zone 2, sends new connections only to healthy servers, forwards admin SSH on port 50001 to vm-web-1, and translates outbound traffic from the servers to the frontend IP."
+  },
+  "steps": [
+    {
+      "title": "One server, one weak spot",
+      "text": "Nusantara Retail's storefront still lives on one server next to the pantry, so every shopper's request lands on that single machine. When it reboots for patching or simply dies, the shop is closed. That is the director's question: if the server fails, how long can't we sell? Today you replace it with two servers and a load balancer."
+    },
+    {
+      "title": "Two web servers, two zones",
+      "text": "Dewi now runs the storefront on two small Ubuntu VMs: vm-web-1 in availability zone 1 and vm-web-2 in zone 2, each zone with its own power, cooling and network. The VMs have no public IP addresses and sit in a private subnet, so shoppers cannot reach them directly. They need one shared front door."
+    },
+    {
+      "title": "A front door: frontend and pool",
+      "text": "A Standard public load balancer gets one frontend IP address: a Standard public IP spread across zones 1, 2 and 3, so it survives the loss of any one zone. Behind it, the backend pool lists the network interfaces of both VMs. Shoppers only ever see the frontend address; servers can come and go behind it."
+    },
+    {
+      "title": "Health probes ask: are you OK?",
+      "text": "Every five seconds the health probe sends HTTP GET /health to each server, and only a 200 OK counts as healthy. The probes come from the platform address 168.63.129.16, which NSG rules call the AzureLoadBalancer service tag. Block it by mistake and every server looks dead. Only healthy members receive new connections.",
+      "set": {
+        "t-vm1": "healthy ✓ · /health = 200",
+        "t-vm2": "healthy ✓ · /health = 200"
+      }
+    },
+    {
+      "title": "A rule spreads new connections",
+      "text": "The load-balancing rule says: TCP port 80 on the frontend goes to port 80 on healthy pool members. For each new connection the load balancer hashes five values — source IP and port, destination IP and port, protocol — and picks a server. A browser's next connection uses a new source port, so it may land in the other zone."
+    },
+    {
+      "title": "Optional: stick to one server",
+      "text": "If an old application keeps the shopping cart in server memory, session persistence helps: in Client IP mode, the same client address always reaches the same server. Treat it as a crutch. Many shoppers behind one mobile carrier look like a single client, and a failed server loses its carts anyway. Keep session data outside the VMs."
+    },
+    {
+      "title": "vm-web-2 fails its probe",
+      "text": "The web service on vm-web-2 crashes. The VM is still running, but nothing answers on port 80. The next probe gets no 200 OK, so the load balancer marks vm-web-2 unhealthy within seconds. Nobody filed a ticket and nobody changed DNS: the probe noticed on its own.",
+      "set": {
+        "t-vm2": "probe failed ✗ · no answer"
+      }
+    },
+    {
+      "title": "Traffic flows around the failure",
+      "text": "New connections now go only to vm-web-1. Shoppers already connected to vm-web-2 keep their open connection until it closes; everyone else is sent to zone 1. The same happens if all of zone 2 loses power: the zone-redundant frontend keeps answering from the surviving zones, and the shop stays open."
+    },
+    {
+      "title": "Recovery needs no ticket",
+      "text": "Dewi restarts the web service. The next probe receives 200 OK, vm-web-2 is marked healthy and starts receiving new connections again — nobody touched the load balancer. This is the heart of today's lab: stop a server on purpose, watch the requests move to the other zone, start it again and watch them come back.",
+      "set": {
+        "t-vm2": "healthy ✓ · /health = 200"
+      }
+    },
+    {
+      "title": "Reaching one VM: inbound NAT",
+      "text": "Pak Budi still needs SSH for emergencies, but the VMs have no public IPs. An inbound NAT rule forwards frontend port 50001 to port 22 on vm-web-1 — always the same VM, because this is port forwarding, not balancing. The NSG checks the translated port 22, so allow it only from the office IP. Azure Bastion is the safer long-term habit."
+    },
+    {
+      "title": "The servers can't get out",
+      "text": "Now the other direction. vm-web-1 must download security updates and call the payment provider. But the subnet is private, and the load-balancing rule was created with outbound SNAT disabled. With no explicit outbound method, the request goes nowhere. The website still looks healthy, so this failure hides until updates or payments start failing."
+    },
+    {
+      "title": "An outbound rule opens the way",
+      "text": "An outbound rule translates the servers' private addresses to the frontend IP: that is SNAT. Each VM gets a fixed share of source ports, here 10,000 of the roughly 64,000 one public IP offers. The payment provider sees one known address it can put on its allow list. For many VMs or heavy outbound traffic, a NAT gateway scales better."
+    },
+    {
+      "title": "Recap: one door, honest checks",
+      "text": "One zone-redundant frontend, a backend pool across two zones, a probe that tells the truth, a rule that spreads connections, a NAT rule for emergencies and an outbound rule for the way out. That answers most of the director's question: one server or a whole zone can fail and the shop keeps selling.",
+      "tip": "Lab 09: build this design in Cloud Shell, then stop the web service on vm-web-2 and watch the shop stay open."
+    }
+  ],
+  "svg": [
+    "Azure region · Southeast Asia",
+    "vnet-nusa-web · snet-web (private subnet) · nsg-web",
+    "Availability zone 1",
+    "Availability zone 2",
+    "Head office · server room by the pantry",
+    "How long can't we sell?",
+    "Ibu Sari, the director",
+    "No public IPs, private subnet",
+    "the NSG allows TCP 80 · no default internet access",
+    "Backend pool be-web: 2 NICs",
+    "vm-web-1 (zone 1) · vm-web-2 (zone 2)",
+    "Probes come from 168.63.129.16",
+    "NSG rules call it the AzureLoadBalancer service tag",
+    "A 5-tuple hash picks the server",
+    "source IP + port · destination IP + port · protocol",
+    "Session persistence: Client IP",
+    "same client address → same server (use sparingly)",
+    "Port forwarding, not balancing",
+    "the NSG checks port 22 · allow only your IP",
+    "Private subnet + SNAT off on the rule",
+    "no explicit outbound method = no way out",
+    "SNAT: 10.9.1.x → frontend IP",
+    "10,000 source ports per VM · about 64,000 per public IP",
+    "Shoppers",
+    "internet · browsers",
+    "Admin · SSH",
+    "office IP only",
+    "Payment API",
+    "internet service",
+    "Pantry server",
+    "one machine · one weak spot",
+    "Frontend IP",
+    "zone-redundant (1·2·3)",
+    "Load balancer",
+    "Standard SKU",
+    "probe · HTTP /health",
+    "rule · TCP 80 → 80",
+    "NAT rule · 50001 → 22",
+    "outbound rule · SNAT",
+    "vm-web-1",
+    "web server running",
+    "vm-web-2"
+  ]
+}

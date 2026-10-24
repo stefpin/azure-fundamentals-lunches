@@ -381,7 +381,7 @@ svg .wire.probe{stroke-dasharray:5 5}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/27-load-balancing-advanced.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/27-load-balancing-advanced.html" data-href-id="../id/lunches/27-load-balancing-advanced.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -893,10 +893,214 @@ svg .wire.probe{stroke-dasharray:5 5}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 27 · Load Balancing (Lanjutan) — Demo interaktif",
+   "kicker": "Makan Siang 27 · Load Balancing (Lanjutan) · Demo interaktif",
+   "title": "Pilih pintu depan yang tepat: Front Door, Application Gateway, dan Traffic Manager",
+   "lede": "Telusuri pohon keputusannya, ikuti seorang pembeli di Surabaya menuju edge terdekat dan origin yang sehat, saksikan web application firewall memblokir request SQL injection, dan lihat Traffic Manager melakukan failover lewat DNS. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Memilih dan menggabungkan Azure Front Door, Application Gateway, Traffic Manager, dan Load Balancer",
+   "svgDesc": "Sebuah pohon keputusan menanyakan apakah lalu lintasnya HTTP atau HTTPS dan apakah ia mencakup beberapa region. Seorang pembeli di Surabaya mencapai edge Front Door di Jakarta, yang meneruskan request ke origin yang sehat dan beralih ke Southeast Asia ketika Indonesia Central gagal. Di dalam satu region, sebuah Application Gateway merutekan request per path ke dua aplikasi App Service, dan web application firewall-nya memblokir request SQL injection dengan 403. Terakhir, Traffic Manager menjawab pencarian DNS untuk layanan point-of-sale dan beralih ke prioritas 2 begitu jawaban yang tersimpan di cache kedaluwarsa."
+  },
+  "steps": [
+   {
+    "title": "Layanan mana yang berdiri di depan?",
+    "text": "Toko online Nusantara Retail butuh tiga hal sekaligus: mengirim /images/* ke aplikasi gambar yang baru, menghentikan serangan seperti SQL injection sebelum sampai ke kode, dan tetap berjualan jika satu region gagal total. Azure punya empat layanan yang bisa berdiri di depan sebuah aplikasi. Dua pertanyaan memilih yang tepat — dan kadang jawabannya adalah dua layanan yang bekerja sama."
+   },
+   {
+    "title": "Pertanyaan 1: HTTP atau HTTPS?",
+    "text": "Application Gateway dan Front Door adalah reverse proxy: keduanya mengakhiri koneksi, membaca setiap request HTTP, lalu bisa merutekannya berdasarkan nama host atau path, mengakhiri TLS, dan menjalankan web application firewall. Semua itu dirancang untuk lalu lintas web. Untuk yang lain — sinkronisasi mesin kasir lewat TCP biasa, game lewat UDP — Anda butuh layer 4 atau DNS: Load Balancer atau Traffic Manager."
+   },
+   {
+    "title": "Pertanyaan 2: satu region atau beberapa?",
+    "text": "Di dalam satu region, Application Gateway menangani lalu lintas web dan Azure Load Balancer menangani sisanya. Lintas region, Anda butuh layanan global. Front Door adalah proxy global yang berjalan di edge location Microsoft. Untuk protokol lain, cross-region load balancer menawarkan satu IP anycast statis, sedangkan Traffic Manager mengarahkan klien lewat jawaban DNS — protokol apa pun, tetapi failover-nya menunggu cache DNS."
+   },
+   {
+    "title": "Jawaban Nusantara: dua layanan",
+    "text": "Toko online adalah lalu lintas web untuk pembeli di seluruh Indonesia, dengan satu region cadangan. Jadi Front Door bekerja di edge, di depan sebuah Application Gateway di setiap region yang merutekan path ke aplikasi-aplikasinya. Sinkronisasi point-of-sale dari toko-toko adalah TCP biasa antara dua region, jadi ia mendapat profil Traffic Manager dengan routing priority. Sekarang ikuti seorang pembeli di Surabaya melewati desain ini."
+   },
+   {
+    "title": "Pembeli di Surabaya mencapai edge terdekat",
+    "text": "Seorang pembeli di Surabaya membuka toko online di ponselnya. DNS dan jaringan Front Door mengirimnya ke edge location terdekat — Jakarta — bukan ke server yang jauh. TLS berakhir di edge, dan WAF policy memeriksa request-nya di sana. Foto produk juga di-cache di edge, jadi request berikutnya untuk gambar yang sama tidak pernah keluar dari Jakarta."
+   },
+   {
+    "title": "Origin yang sehat menjawab",
+    "text": "Harga dan stok tidak bisa diambil dari cache, jadi edge meneruskan halaman produk lewat jaringan Microsoft ke sebuah origin. Origin group berisi dua Application Gateway: Indonesia Central dengan prioritas 1 dan Southeast Asia dengan prioritas 2. Health probe berjalan terus, dan keduanya menjawab. Front Door memilih origin sehat dengan prioritas terbaik, lalu yang latensinya paling rendah.",
+    "set": {
+     "t-o1": "sehat ✓ · melayani pembeli",
+     "t-o2": "sehat ✓ · standby"
+    }
+   },
+   {
+    "title": "Origin 1 gagal: edge beralih",
+    "text": "Indonesia Central berhenti menjawab health probe, jadi edge berhenti mengirim request ke sana dan meneruskannya ke Southeast Asia, yang melayani katalog dalam mode browse-only. Pembeli nyaris tidak merasakan apa-apa: ia tetap berbicara dengan edge Jakarta yang sama, jadi tidak ada jawaban DNS yang perlu berubah dan tidak ada cache yang perlu kedaluwarsa. Saat Indonesia Central pulih, prioritas 1 mengambil kembali lalu lintasnya.",
+    "set": {
+     "t-o1": "probe gagal ✗ · dilewati",
+     "t-o2": "sehat ✓ · kini melayani"
+    }
+   },
+   {
+    "title": "Di dalam region: jebakan nama host",
+    "text": "Kita perbesar satu region. Listener Application Gateway menerima request, dan rule-nya memilih sebuah aplikasi App Service. Tetapi App Service menemukan aplikasi berdasarkan nama host, sedangkan default probe gateway meminta 127.0.0.1. Kedua aplikasi tidak mengenali nama itu, jadi kedua probe gagal. Tanpa backend yang sehat, pembeli mendapat 502 Bad Gateway.",
+    "set": {
+     "t-store": "host tak dikenal · probe ✗",
+     "t-img": "host tak dikenal · probe ✗"
+    }
+   },
+   {
+    "title": "Perbaiki nama host, lalu rutekan per path",
+    "text": "Dua pengaturan memperbaikinya: backend settings mengambil nama host dari target backend, dan sebuah custom probe mengambil nama host dari pengaturan itu. Kedua aplikasi menjadi sehat. Sekarang path map pada rule bisa bekerja: /images/* menuju aplikasi gambar dan semua yang lain ke aplikasi toko online — satu alamat, dua aplikasi, masing-masing menerima namanya sendiri.",
+    "set": {
+     "t-set": "nama host dari backend ✓",
+     "t-probe": "custom probe · nama aplikasi sendiri",
+     "t-store": "sehat ✓ · melayani /",
+     "t-img": "sehat ✓ · melayani /images/*"
+    }
+   },
+   {
+    "title": "WAF memblokir SQL injection",
+    "text": "Seorang penyerang mengirim ?id=1' OR 1=1-- dengan harapan database menyerahkan data semua pelanggan. WAF policy, yang kini dalam mode Prevention, memeriksa request itu dengan Default Rule Set dari Microsoft. Rule SQL injection berkategori critical dan menambah 5 poin; pada total 5, request diblokir. Penyerang mendapat 403 Forbidden, dan toko online tidak pernah melihat request-nya. Pembeli tetap berbelanja seperti biasa.",
+    "set": {
+     "t-waf": "WAF policy · Prevention"
+    }
+   },
+   {
+    "title": "Traffic Manager menjawab lewat DNS",
+    "text": "Sinkronisasi point-of-sale dari toko memakai TCP biasa, jadi ia memakai Traffic Manager. Sebuah terminal di Makassar mencari nama layanan itu. DNS resolver-nya bertanya ke Traffic Manager, yang mengembalikan endpoint sehat dengan prioritas terbaik: Indonesia Central. Resolver boleh menyimpan jawaban itu di cache selama TTL 30 detik. Terminal lalu tersambung langsung ke endpoint; Traffic Manager tidak pernah melihat lalu lintasnya.",
+    "set": {
+     "t-cache": "cache: Indonesia Central · 30 s"
+    }
+   },
+   {
+    "title": "Prioritas 1 gagal, jawabannya berubah",
+    "text": "Indonesia Central berhenti merespons. Health probe Traffic Manager gagal beberapa kali berturut-turut, endpoint berubah menjadi Degraded, dan mulai saat itu Traffic Manager menjawab dengan Southeast Asia, prioritas 2. Tetapi resolver milik terminal ini masih menyimpan jawaban lama, jadi terminal terus mencoba region yang gagal sampai jawaban di cache kedaluwarsa. Failover DNS hanya secepat yang diizinkan cache.",
+    "set": {
+     "t-ep1": "Degraded ✗ · probe gagal",
+     "t-tm": "jawaban: Southeast Asia"
+    }
+   },
+   {
+    "title": "Setelah TTL habis, terminal ikut pindah",
+    "text": "Tiga puluh detik kemudian, jawaban di cache kedaluwarsa. Pencarian berikutnya sampai ke Traffic Manager, yang kini mengembalikan Southeast Asia, dan terminal tersambung ulang ke sana. Total waktu failover kira-kira sama dengan waktu deteksi ditambah TTL ditambah caching tambahan di klien. TTL yang lebih rendah mempercepat failover, tetapi melipatgandakan kueri DNS. Saat Indonesia Central pulih, jawaban baru kembali ke prioritas 1.",
+    "set": {
+     "t-cache": "cache: Southeast Asia · 30 s",
+     "t-ep2": "Online ✓ · kini melayani"
+    }
+   },
+   {
+    "title": "Rangkuman: global di depan, regional di belakang",
+    "text": "Dua pertanyaan — HTTP atau bukan, satu region atau beberapa — menentukan layanannya. Front Door menangani edge global, caching, dan failover origin yang cepat. Application Gateway merutekan per path di dalam region dan membawa WAF policy. Traffic Manager mengarahkan protokol apa pun lewat DNS tetapi menunggu cache, dan cross-region load balancer memberi TCP dan UDP satu alamat anycast.",
+    "tip": "Lab 27: bangun Application Gateway WAF_v2 dengan routing per path, saksikan ia memblokir SQL injection, lalu lakukan failover Traffic Manager sambil memantau jawaban DNS dengan dig."
+   }
+  ],
+  "svg": {
+   "No": "Tidak",
+   "Yes": "Ya",
+   "one region": "satu region",
+   "several": "beberapa",
+   "Is it HTTP or HTTPS?": "Apakah HTTP atau HTTPS?",
+   "web requests, or any other TCP / UDP traffic": "request web, atau lalu lintas TCP / UDP lainnya",
+   "One region or several?": "Satu region atau beberapa?",
+   "for TCP, UDP or any protocol": "untuk TCP, UDP, atau protokol apa pun",
+   "for web apps and APIs": "untuk aplikasi web dan API",
+   "any TCP or UDP port": "port TCP atau UDP apa pun",
+   "global · one anycast IP": "global · satu IP anycast",
+   "or Traffic Manager (DNS)": "atau Traffic Manager (DNS)",
+   "path routing · WAF": "routing path · WAF",
+   "global · Microsoft's edge": "global · edge Microsoft",
+   "Three requests for the storefront — which service goes in front?": "Tiga permintaan untuk toko online — layanan mana yang di depan?",
+   "Dewi: serve /images/* from the new images app, under the shop's own address": "Dewi: layani /images/* dari aplikasi gambar yang baru, tetap di bawah alamat toko",
+   "Rizky: thousands of ' OR 1=1-- attempts a day in the web server logs": "Rizky: ribuan percobaan ' OR 1=1-- per hari di log web server",
+   "Ibu Sari: if Jakarta goes down during 12.12, do shoppers just see an error?": "Ibu Sari: kalau Jakarta down saat 12.12, apakah pembeli cuma melihat error?",
+   "Layer 7 proxies are built for HTTP and HTTPS": "Proxy layer 7 dibuat untuk HTTP dan HTTPS",
+   "Front Door and Application Gateway read each request: host name, path, headers": "Front Door dan Application Gateway membaca setiap request: nama host, path, header",
+   "so they can route by path, end TLS and run a web application firewall": "sehingga bisa merutekan per path, mengakhiri TLS, dan menjalankan web application firewall",
+   "other protocols: Load Balancer (layer 4) or Traffic Manager (DNS)": "protokol lain: Load Balancer (layer 4) atau Traffic Manager (DNS)",
+   "Regional or global?": "Regional atau global?",
+   "One region: Application Gateway (web) or Azure Load Balancer (anything else)": "Satu region: Application Gateway (web) atau Azure Load Balancer (selain web)",
+   "Several regions: Front Door (web), cross-region LB or Traffic Manager (any protocol)": "Beberapa region: Front Door (web), cross-region LB, atau Traffic Manager (protokol apa pun)",
+   "Traffic Manager only answers DNS, so its failover waits for DNS caches": "Traffic Manager hanya menjawab DNS, jadi failover-nya menunggu cache DNS",
+   "Nusantara Retail: two services, stacked": "Nusantara Retail: dua layanan, bertumpuk",
+   "Storefront (HTTPS, shoppers across Indonesia): Front Door → Application Gateway per region": "Toko online (HTTPS, pembeli di seluruh Indonesia): Front Door → Application Gateway per region",
+   "Point-of-sale sync (plain TCP, two regions): Traffic Manager with priority routing": "Sinkronisasi kasir (TCP biasa, dua region): Traffic Manager dengan routing priority",
+   "Next: follow a shopper in Surabaya through the storefront design": "Berikutnya: ikuti seorang pembeli di Surabaya melewati desain toko online",
+   "Global in front, regional behind": "Global di depan, regional di belakang",
+   "Front Door: edge TLS, caching, WAF, origin failover without DNS changes": "Front Door: TLS di edge, caching, WAF, failover origin tanpa perubahan DNS",
+   "Application Gateway: path and host routing, WAF policy, one region across zones": "Application Gateway: routing path dan host, WAF policy, satu region lintas zona",
+   "Traffic Manager: DNS for any protocol · cross-region LB: one anycast IP for TCP/UDP": "Traffic Manager: DNS untuk protokol apa pun · cross-region LB: satu IP anycast untuk TCP/UDP",
+   "Azure Front Door · edge locations": "Azure Front Door · lokasi edge",
+   "Southeast Asia (Singapore)": "Southeast Asia (Singapura)",
+   "Shopper": "Pembeli",
+   "Surabaya, East Java": "Surabaya, Jawa Timur",
+   "phone browser · HTTPS": "browser ponsel · HTTPS",
+   "nearest to the shopper": "terdekat dari pembeli",
+   "Edge · Singapore": "Edge · Singapura",
+   "another edge location": "edge location lain",
+   "Origin 1 · priority 1": "Origin 1 · prioritas 1",
+   "Application Gateway → storefront": "Application Gateway → toko online",
+   "healthy · answering probes": "sehat · menjawab probe",
+   "Origin 2 · priority 2": "Origin 2 · prioritas 2",
+   "healthy · on standby": "sehat · standby",
+   "Nearest edge: Jakarta": "Edge terdekat: Jakarta",
+   "TLS ends at the edge · the WAF checks requests there": "TLS berakhir di edge · WAF memeriksa request di sana",
+   "product photos are cached there: no trip to the origin": "foto produk di-cache di sana: tak perlu ke origin",
+   "Origin group: two App Gateways": "Origin group: dua App Gateway",
+   "priority 1: Indonesia Central · priority 2: Southeast Asia": "prioritas 1: Indonesia Central · prioritas 2: Southeast Asia",
+   "health probes run all the time · healthy origins only": "health probe berjalan terus · hanya origin yang sehat",
+   "Same edge, new origin": "Edge sama, origin baru",
+   "no DNS change and no cache to wait for": "tanpa perubahan DNS dan tanpa menunggu cache",
+   "the standby serves the catalogue in browse-only mode": "standby melayani katalog dalam mode browse-only",
+   "Indonesia Central · virtual network · dedicated subnet": "Indonesia Central · virtual network · subnet khusus",
+   "GET / and /images/": "GET / dan /images/",
+   "one address": "satu alamat",
+   "Attacker": "Penyerang",
+   "rule · /images/* → images app": "rule · /images/* → aplikasi gambar",
+   "anomaly score 5 → 403": "skor anomali 5 → 403",
+   "Storefront app": "Aplikasi toko",
+   "waiting for traffic": "menunggu lalu lintas",
+   "Images app": "Aplikasi gambar",
+   "App Service picks the app by host name": "App Service memilih aplikasi berdasarkan nama host",
+   "the default probe asks for 127.0.0.1 → unknown host → unhealthy → shoppers get 502 Bad Gateway": "default probe meminta 127.0.0.1 → host tak dikenal → tidak sehat → pembeli mendapat 502 Bad Gateway",
+   "Pick the host name from the backend target": "Ambil nama host dari target backend",
+   "a custom probe uses the same name · path map: /images/* → images app, everything else → storefront": "custom probe memakai nama yang sama · path map: /images/* → aplikasi gambar, selain itu → toko online",
+   "Prevention mode: blocked with 403 Forbidden": "Mode Prevention: diblokir dengan 403 Forbidden",
+   "SQL-injection rule = critical = 5 points · threshold 5 · the storefront never sees the request": "rule SQL injection = critical = 5 poin · ambang 5 · toko online tak pernah melihat request-nya",
+   "POS terminal": "Terminal POS",
+   "store in Makassar": "toko di Makassar",
+   "sync over TCP": "sinkronisasi lewat TCP",
+   "DNS resolver": "Resolver DNS",
+   "caches answers for the TTL": "menyimpan jawaban selama TTL",
+   "cache: empty": "cache: kosong",
+   "priority routing · TTL 30 s": "routing priority · TTL 30 s",
+   "answers: Indonesia Central": "jawaban: Indonesia Central",
+   "Priority 1 · Indonesia Central": "Prioritas 1 · Indonesia Central",
+   "public load balancer · sync service": "public load balancer · layanan sinkronisasi",
+   "Priority 2 · Southeast Asia": "Prioritas 2 · Southeast Asia",
+   "DNS answer, then a direct connection": "Jawaban DNS, lalu koneksi langsung",
+   "Traffic Manager only answers the lookup": "Traffic Manager hanya menjawab pencarian nama",
+   "it never sees the TCP or HTTPS traffic itself": "ia tak pernah melihat lalu lintas TCP atau HTTPS-nya",
+   "so it works for any protocol": "jadi bisa dipakai untuk protokol apa pun",
+   "New answers move — cached ones don't": "Jawaban baru pindah — yang tersimpan di cache tidak",
+   "the endpoint turns Degraded after repeated probe failures": "endpoint menjadi Degraded setelah probe berulang kali gagal",
+   "this resolver keeps the old answer until the TTL ends": "resolver ini menyimpan jawaban lama sampai TTL habis",
+   "meanwhile the terminal keeps trying the failed region": "sementara itu terminal terus mencoba region yang gagal",
+   "Failover ≈ detection + TTL + client caching": "Failover ≈ deteksi + TTL + caching di klien",
+   "after 30 seconds the next lookup returns priority 2": "setelah 30 detik, pencarian berikutnya mengembalikan prioritas 2",
+   "a lower TTL fails over faster, with more DNS queries": "TTL lebih rendah: failover lebih cepat, kueri DNS lebih banyak",
+   "when priority 1 recovers, new answers move back": "saat prioritas 1 pulih, jawaban baru kembali ke sana"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -912,6 +1116,119 @@ svg .wire.probe{stroke-dasharray:5 5}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -1031,7 +1348,7 @@ svg .wire.probe{stroke-dasharray:5 5}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -1066,7 +1383,7 @@ svg .wire.probe{stroke-dasharray:5 5}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -1079,7 +1396,7 @@ svg .wire.probe{stroke-dasharray:5 5}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -1100,7 +1417,7 @@ svg .wire.probe{stroke-dasharray:5 5}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -1108,7 +1425,7 @@ svg .wire.probe{stroke-dasharray:5 5}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

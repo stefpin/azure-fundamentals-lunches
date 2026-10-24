@@ -8,6 +8,8 @@ Checks, per demo:
   * every id a step references exists (show/hide targets must carry data-el,
     packet targets must be <path> elements)
   * camera "view" values have four numbers
+  * the optional translations (<script type="application/json" id="demo-i18n">) match the steps:
+    same number of steps, title and text in each, only existing "set" ids, SVG labels that exist
   * required player controls exist, <html lang> is set, the file is self-contained
     (no external scripts/styles/images, no inline on* handlers, no javascript: URLs)
 
@@ -23,12 +25,13 @@ import hashlib
 import json
 import re
 import sys
+from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 TEMPLATE = REPO / "templates" / "demo-template.html"
-ENGINE_MARKER = "LUNCH DEMO PLAYER · v1.0 · engine"
+ENGINE_MARKER = "LUNCH DEMO PLAYER · v1.1 · engine"
 REQUIRED_IDS = ["stage", "packets", "stepCount", "stepTitle", "stepText", "stepTip",
                 "prev", "play", "next", "restart", "speed", "bar", "stepsList", "demo-steps"]
 LIST_KEYS = ["show", "hide", "highlight", "ok", "bad", "flow", "dim"]
@@ -188,7 +191,60 @@ def validate(path: Path, tmpl_hash: str | None) -> tuple[list[str], list[str], d
                 errors.append(f"{where}: view must be 'x y width height'")
         if len(str(s.get("text", "")).split()) > 90:
             warnings.append(f"{where}: narration is long ({len(str(s['text']).split())} words) — keep steps short")
+    check_translations(html, p, steps, errors, warnings)
     return errors, warnings, info
+
+
+def svg_labels(html: str) -> set[str]:
+    m = re.search(r'<svg id="stage".*?</svg>', html, re.S)
+    body = re.sub(r"<(title|desc)\b.*?</\1>", "", m.group(0) if m else "", flags=re.S)
+    out: set[str] = set()
+    for tm in re.finditer(r"<text\b[^>]*>(.*?)</text>", body, re.S):
+        inner = tm.group(1)
+        parts = re.findall(r"<tspan\b[^>]*>(.*?)</tspan>", inner, re.S) if "<tspan" in inner else [inner]
+        for part in parts:
+            out.add(re.sub(r"\s+", " ", unescape(re.sub(r"<[^>]+>", "", part))).strip())
+    return out
+
+
+def check_translations(html: str, p: "DemoParser", steps: list, errors: list[str], warnings: list[str]) -> None:
+    raw = next((s["text"] for s in p.scripts if s["id"] == "demo-i18n"), None)
+    if raw is None:
+        warnings.append("no translations embedded (run: python3 tools/i18n/demo_text.py inject)")
+        return
+    try:
+        data = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        errors.append(f"demo-i18n JSON does not parse: {exc}")
+        return
+    if not isinstance(data, dict) or not data:
+        errors.append("demo-i18n must be an object such as {\"id\": {page, steps, svg}}")
+        return
+    labels = svg_labels(html)
+    for lang, tr in data.items():
+        where = f"translation '{lang}'"
+        if not re.fullmatch(r"[a-z]{2}", str(lang)) or not isinstance(tr, dict):
+            errors.append(f"{where}: key must be a two-letter language code with an object value")
+            continue
+        page = tr.get("page") or {}
+        for k in ("doc_title", "kicker", "title", "lede", "svgTitle", "svgDesc"):
+            if not str(page.get(k, "")).strip():
+                warnings.append(f"{where}: page.{k} is empty")
+        ts = tr.get("steps") or []
+        if len(ts) != len(steps):
+            errors.append(f"{where}: {len(ts)} steps, but the demo has {len(steps)}")
+        for n, (s, t) in enumerate(zip(steps, ts), 1):
+            if not isinstance(t, dict) or not str(t.get("title", "")).strip() or not str(t.get("text", "")).strip():
+                errors.append(f"{where}: step {n} needs a title and text")
+                continue
+            extra = set(t.get("set") or {}) - set((s.get("set") or {}) if isinstance(s, dict) else {})
+            if extra:
+                errors.append(f"{where}: step {n} sets unknown ids {sorted(extra)}")
+            if len(str(t.get("text", "")).split()) > 100:
+                warnings.append(f"{where}: step {n} narration is long ({len(str(t['text']).split())} words)")
+        for key in (tr.get("svg") or {}):
+            if key not in labels:
+                warnings.append(f"{where}: SVG label not found in the drawing: {key!r}")
 
 
 def main(argv: list[str]) -> int:

@@ -294,7 +294,7 @@ svg .node > rect.fdbox{fill:var(--surface);stroke-dasharray:4 3}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/23-virtual-machines-advanced.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/23-virtual-machines-advanced.html" data-href-id="../id/lunches/23-virtual-machines-advanced.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -680,10 +680,169 @@ svg .node > rect.fdbox{fill:var(--surface);stroke-dasharray:4 3}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 23 · Virtual Machines (Lanjutan) — Demo interaktif",
+   "kicker": "Makan Siang 23 · Virtual Machines (Lanjutan) · Demo interaktif",
+   "title": "Siap menghadapi 12.12: scale set yang membesar, bertahan, dan menyusut",
+   "lede": "Saksikan scale set Flexible membesar menyambut malam belanja online terbesar di Indonesia, menjaga toko tetap buka saat satu zona gagal, menyusut lagi setelah cool-down — dan lihat sebuah Spot VM di-evict. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Scale set Flexible yang melakukan autoscale di tiga availability zone untuk promo 12.12",
+   "svgDesc": "Pembeli menjangkau Standard load balancer di Indonesia Central. Di belakangnya, sebuah virtual machine scale set Flexible punya satu instance di masing-masing dari tiga availability zone. Azure Monitor mengirim Percentage CPU ke pengaturan autoscale, yang membesarkan set dari tiga menjadi enam instance selama lonjakan 12.12, menjaga toko tetap buka saat zona 2 gagal, lalu menyusutkannya lagi setelah cool-down. Sebuah panel membandingkan availability set dengan zona, dan Spot VM yang menjalankan batch job di-evict dengan pemberitahuan 30 detik."
+  },
+  "steps": [
+   {
+    "title": "Hitung mundur menuju 12.12",
+    "text": "Setiap tanggal 12 Desember, Hari Belanja Online Nasional, kunjungan ke toko Nusantara Retail melonjak selama beberapa jam. Tahun ini toko online berjalan di scale set Flexible di Indonesia Central: tiga instance, satu di setiap availability zone, di belakang Standard load balancer. Sanggupkah ia membesar menyambut lonjakan, lalu menyusut lagi sebelum sarapan?"
+   },
+   {
+    "title": "Kenali bagian-bagiannya",
+    "text": "Model scale set menyimpan resepnya — image, ukuran, cloud-init, dan pengaturan jaringan — sehingga setiap instance baru identik. Azure Monitor mengumpulkan Percentage CPU tiap instance, dan pengaturan autoscale mengubah angka-angka itu menjadi keputusan, antara minimum 3 dan maksimum 9 instance. NAT gateway memberi instance akses keluar yang eksplisit untuk update."
+   },
+   {
+    "title": "Malam yang biasa",
+    "text": "Pukul 21.00 tanggal 11 Desember, semuanya tenang. Load balancer membagi koneksi baru ke tiga instance, dan health probe-nya menanyakan /health ke setiap instance setiap beberapa detik. Rata-rata CPU berkisar 30 persen — di antara ambang scale-in dan scale-out — sehingga autoscale tidak melakukan apa pun."
+   },
+   {
+    "title": "Tengah malam: lonjakan datang",
+    "text": "Pukul 00.00 flash sale dibuka dan lalu lintas melonjak sekitar delapan kali lipat. Semua instance sibuk dan rata-rata CPU naik melewati 85 persen. Satu menit CPU tinggi belum membuktikan apa-apa, jadi aturan scale-out melihat rata-rata lima menit: lonjakan singkat tidak akan menambah server yang sebenarnya tidak Anda perlukan.",
+    "set": {
+     "t-clock": "12 Des · 00.00",
+     "t-traffic": "lalu lintas ~8×",
+     "t-cpu": "rata-rata 85%",
+     "t-vm-1a": "vm 1 · CPU 85%",
+     "t-vm-2a": "vm 2 · CPU 85%",
+     "t-vm-3a": "vm 3 · CPU 85%"
+    }
+   },
+   {
+    "title": "Aturan scale-out terpicu",
+    "text": "Setelah lima menit di atas 70 persen, aturan scale-out terpicu. Autoscale memeriksa batasnya — tiga instance sekarang, paling banyak sembilan — lalu meminta scale set menambah tiga lagi. Kemudian cool-down lima menit milik aturan itu dimulai, memberi waktu bagi instance baru untuk booting dan bagi metrik untuk stabil sebelum keputusan berikutnya.",
+    "set": {
+     "t-count": "instance: 3 → 6"
+    }
+   },
+   {
+    "title": "Instance baru di setiap zona",
+    "text": "Scale set membuat tiga VM dari modelnya dan menyebarnya merata, satu per zona. Masing-masing menyalakan image yang sama, menjalankan cloud-init yang sama, dan bergabung ke backend pool load balancer. Mereka belum melayani pelanggan: health probe harus melihat /health menjawab dulu sebelum ada request yang dikirim ke mereka.",
+    "set": {
+     "t-vm-1b": "vm 4 · booting",
+     "t-vm-2b": "vm 5 · booting",
+     "t-vm-3b": "vm 6 · booting"
+    }
+   },
+   {
+    "title": "Enam instance sehat berbagi beban",
+    "text": "Semenit kemudian ketiga instance baru lolos health probe. Load balancer kini membagi kerumunan 12.12 ke enam VM di tiga zona, dan rata-rata CPU turun ke sekitar 45 persen. Halaman checkout kembali cepat, dan tidak ada yang perlu bangun tengah malam untuk menambah server secara manual.",
+    "set": {
+     "t-vm-1b": "vm 4 · sehat",
+     "t-vm-2b": "vm 5 · sehat",
+     "t-vm-3b": "vm 6 · sehat",
+     "t-vm-1a": "vm 1 · CPU 45%",
+     "t-vm-2a": "vm 2 · CPU 45%",
+     "t-vm-3a": "vm 3 · CPU 45%",
+     "t-cpu": "rata-rata 45%",
+     "t-count": "instance: 6"
+    }
+   },
+   {
+    "title": "Satu zona padam",
+    "text": "Pukul 00.40 masalah listrik membuat availability zone 2 offline. Dua instance di sana berhenti menjawab /health, jadi load balancer mengirim semua request ke zona 1 dan 3, dan frontend zone-redundant-nya tetap memakai alamat IP yang sama. CPU naik di instance yang tersisa, dan autoscale bisa menambah instance di zona yang sehat — karena itulah batas maksimum menyisakan ruang cadangan.",
+    "set": {
+     "t-clock": "12 Des · 00.40",
+     "t-vm-2a": "vm 2 · zona mati",
+     "t-vm-2b": "vm 5 · zona mati",
+     "t-vm-1a": "vm 1 · CPU 65%",
+     "t-vm-3a": "vm 3 · CPU 65%",
+     "t-cpu": "rata-rata 65%"
+    }
+   },
+   {
+    "title": "Fault domain versus zona",
+    "text": "Mengapa zona, bukan availability set? Availability set menaruh VM-nya di satu pusat data, tersebar di maksimal tiga fault domain — rak dengan listrik dan switch jaringannya sendiri — dan maksimal 20 update domain untuk pemeliharaan terencana. Hasilnya 99,95 persen. Zona adalah pusat data yang terpisah, sehingga dua instance atau lebih di beberapa zona mendapat 99,99 persen."
+   },
+   {
+    "title": "Lonjakan berlalu, set menyusut",
+    "text": "Pukul 02.00 zona 2 sudah pulih dan rata-rata CPU turun di bawah 30 persen. Autoscale baru melakukan scale-in jika semua aturan scale-in sepakat, dan ia membuang satu instance per cool-down, setelah memastikan set yang lebih kecil tidak perlu langsung scale-out lagi. Sebelum sarapan set kembali ke tiga instance, dan tagihan ikut menyusut.",
+    "set": {
+     "t-clock": "12 Des · 02.00",
+     "t-traffic": "kembali normal",
+     "t-cpu": "rata-rata 20%",
+     "t-count": "instance: 6 → 3",
+     "t-vm-1a": "vm 1 · sehat",
+     "t-vm-2a": "vm 2 · sehat",
+     "t-vm-3a": "vm 3 · sehat"
+    }
+   },
+   {
+    "title": "Spot VM untuk sif malam",
+    "text": "Sepanjang malam, sebuah batch job membuat thumbnail untuk ribuan foto produk baru. Job ini berjalan di Spot VM: kapasitas sisa Azure dengan diskon besar, tanpa SLA. Eviction policy-nya Deallocate dan harga maksimumnya -1, jadi Azure tidak pernah meng-evict-nya karena harga — hanya ketika Azure membutuhkan kapasitasnya kembali."
+   },
+   {
+    "title": "Di-evict dengan pemberitahuan 30 detik",
+    "text": "Pukul 03.10 Azure membutuhkan kapasitasnya kembali. Scheduled Events memperingatkan VM sekitar 30 detik sebelumnya, job menyimpan checkpoint, dan VM di-deallocate. Disknya tetap ada, sehingga job bisa dilanjutkan saat kapasitas tersedia lagi. Toko online sama sekali tidak terganggu, karena tidak ada layanan yang diandalkan pelanggan berjalan di Spot.",
+    "set": {
+     "t-spot": "di-evict · deallocated",
+     "t-clock": "12 Des · 03.10"
+    }
+   },
+   {
+    "title": "Rangkuman: siap menghadapi 12.12",
+    "text": "Satu model scale set, tiga zona, aturan CPU dengan ambang dan cool-down yang masuk akal, dan kapasitas mengikuti permintaan ke dua arah. Kehilangan satu zona, toko tetap buka; serahkan pekerjaan yang boleh terputus kepada Spot. Di Lab 23 Anda membangun scale set, memasang autoscale, membangkitkan beban CPU, dan menyaksikannya membesar.",
+    "tip": "Lab 23 · Siap menghadapi promo 12.12 (sekitar 60 menit): scale set Flexible di zona 1–3 di belakang Standard load balancer, aturan autoscale, uji beban CPU, Spot VM opsional, dan patch assessment dengan Azure Update Manager.",
+    "set": {
+     "t-spot": "job dilanjutkan nanti",
+     "t-clock": "12 Des · 08.00"
+    }
+   }
+  ],
+  "svg": {
+   "Azure region · Indonesia Central": "Region Azure · Indonesia Central",
+   "Zone 1": "Zona 1",
+   "Zone 2": "Zona 2",
+   "Zone 3": "Zona 3",
+   "Shoppers": "Pembeli",
+   "11 Dec · 21:00": "11 Des · 21.00",
+   "normal evening": "malam biasa",
+   "average 30%": "rata-rata 30%",
+   "min 3 · max 9": "min 3 · maks 9",
+   "instances: 3": "instance: 3",
+   "zone-redundant IP": "IP zone-redundant",
+   "Flexible mode": "mode Flexible",
+   "zones 1 · 2 · 3": "zona 1 · 2 · 3",
+   "explicit outbound": "outbound eksplisit",
+   "vm 1 · healthy": "vm 1 · sehat",
+   "vm 4 · healthy": "vm 4 · sehat",
+   "vm 2 · healthy": "vm 2 · sehat",
+   "vm 5 · healthy": "vm 5 · sehat",
+   "vm 3 · healthy": "vm 3 · sehat",
+   "vm 6 · healthy": "vm 6 · sehat",
+   "Availability set · one datacenter": "Availability set · satu pusat data",
+   "rack A": "rak A",
+   "rack B": "rak B",
+   "rack C": "rak C",
+   "Fault domain: rack, power, switch": "Fault domain: rak, listrik, switch",
+   "Update domain: one reboot group": "Update domain: satu grup reboot",
+   "2+ VMs in a set: 99.95%": "2+ VM dalam set: 99,95%",
+   "2+ VMs across zones: 99.99%": "2+ VM lintas zona: 99,99%",
+   "Spot VMs · batch jobs": "Spot VM · batch job",
+   "product-photo thumbnails": "thumbnail foto produk",
+   "running at Spot price": "berjalan dengan harga Spot",
+   "about 30 s warning in the VM": "peringatan ~30 dtk di VM",
+   "job saves a checkpoint": "job menyimpan checkpoint",
+   "no Spot for checkout": "checkout tanpa Spot"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -699,6 +858,119 @@ svg .node > rect.fdbox{fill:var(--surface);stroke-dasharray:4 3}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -818,7 +1090,7 @@ svg .node > rect.fdbox{fill:var(--surface);stroke-dasharray:4 3}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -853,7 +1125,7 @@ svg .node > rect.fdbox{fill:var(--surface);stroke-dasharray:4 3}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -866,7 +1138,7 @@ svg .node > rect.fdbox{fill:var(--surface);stroke-dasharray:4 3}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -887,7 +1159,7 @@ svg .node > rect.fdbox{fill:var(--surface);stroke-dasharray:4 3}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -895,7 +1167,7 @@ svg .node > rect.fdbox{fill:var(--surface);stroke-dasharray:4 3}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

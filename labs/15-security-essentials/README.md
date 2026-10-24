@@ -1,8 +1,11 @@
 # Lab 15 · Get the password out of the config file
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 15 · Security Essentials: Defense in Depth, Key Vault and Defender for Cloud](../../lunches/15-security-essentials/README.md)
 > **Time:** about 45 minutes · **Cost:** 💲💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by `setup.sh`.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

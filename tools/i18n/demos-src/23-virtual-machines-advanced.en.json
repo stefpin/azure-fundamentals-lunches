@@ -1,0 +1,171 @@
+{
+  "page": {
+    "doc_title": "Lunch 23 · Virtual Machines (Advanced) — Interactive demo",
+    "kicker": "Lunch 23 · Virtual Machines (Advanced) · Interactive demo",
+    "title": "Ready for 12.12: a scale set that grows, survives and shrinks",
+    "lede": "Watch a Flexible scale set grow for Indonesia's biggest online shopping night, keep the shop open when a zone fails, shrink after the cool-down — and see a Spot VM evicted. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "A Flexible scale set autoscaling across three availability zones for the 12.12 sale",
+    "svgDesc": "Shoppers reach a Standard load balancer in Indonesia Central. Behind it, a Flexible virtual machine scale set has one instance in each of three availability zones. Azure Monitor feeds Percentage CPU to an autoscale setting, which grows the set from three to six instances during the 12.12 spike, keeps the shop open when zone 2 fails, and shrinks it again after the cool-down. A panel compares availability sets with zones, and a Spot VM running a batch job is evicted with 30 seconds' notice."
+  },
+  "steps": [
+    {
+      "title": "Countdown to 12.12",
+      "text": "Every year on 12 December, Indonesia's national online shopping day, Nusantara Retail's traffic jumps for a few hours. This year the storefront runs on a Flexible virtual machine scale set in Indonesia Central: three instances, one in each availability zone, behind a Standard load balancer. Can it grow for the spike and shrink again by breakfast?"
+    },
+    {
+      "title": "Meet the moving parts",
+      "text": "The scale set model holds the recipe — image, size, cloud-init and network settings — so every new instance is identical. Azure Monitor collects each instance's Percentage CPU, and an autoscale setting turns those numbers into decisions between a minimum of 3 and a maximum of 9. A NAT gateway gives the instances explicit outbound access for updates."
+    },
+    {
+      "title": "A normal evening",
+      "text": "At 21:00 on 11 December everything is calm. The load balancer spreads new connections across the three instances, and its health probe asks each one for /health every few seconds. Average CPU sits around 30 percent — between the scale-in and scale-out thresholds — so autoscale does nothing at all."
+    },
+    {
+      "title": "Midnight: the spike hits",
+      "text": "At 00:00 the flash sale opens and traffic jumps about eightfold. Every instance is busy and average CPU climbs past 85 percent. One minute of high CPU proves nothing, so the scale-out rule looks at the average over five minutes: a short burst will not add servers you don't need.",
+      "set": {
+        "t-clock": "12 Dec · 00:00",
+        "t-traffic": "about 8× traffic",
+        "t-cpu": "average 85%",
+        "t-vm-1a": "vm 1 · CPU 85%",
+        "t-vm-2a": "vm 2 · CPU 85%",
+        "t-vm-3a": "vm 3 · CPU 85%"
+      }
+    },
+    {
+      "title": "The scale-out rule fires",
+      "text": "After five minutes above 70 percent, the scale-out rule triggers. Autoscale checks its limits — three instances now, nine at most — and asks the scale set for three more. Then the rule's five-minute cool-down starts, giving the new instances time to boot and the metric time to settle before the next decision.",
+      "set": {
+        "t-count": "instances: 3 → 6"
+      }
+    },
+    {
+      "title": "New instances in every zone",
+      "text": "The scale set creates three VMs from its model and spreads them evenly, one per zone. Each boots the same image, runs the same cloud-init and joins the load balancer's backend pool. They get no customer traffic yet: the health probe must see /health answer before any request is sent their way.",
+      "set": {
+        "t-vm-1b": "vm 4 · booting",
+        "t-vm-2b": "vm 5 · booting",
+        "t-vm-3b": "vm 6 · booting"
+      }
+    },
+    {
+      "title": "Six healthy instances share the load",
+      "text": "A minute later all three new instances pass the health probe. The load balancer now spreads the 12.12 crowd across six VMs in three zones, and average CPU falls to about 45 percent. Checkout pages load quickly again, and nobody had to wake up at midnight to add servers by hand.",
+      "set": {
+        "t-vm-1b": "vm 4 · healthy",
+        "t-vm-2b": "vm 5 · healthy",
+        "t-vm-3b": "vm 6 · healthy",
+        "t-vm-1a": "vm 1 · CPU 45%",
+        "t-vm-2a": "vm 2 · CPU 45%",
+        "t-vm-3a": "vm 3 · CPU 45%",
+        "t-cpu": "average 45%",
+        "t-count": "instances: 6"
+      }
+    },
+    {
+      "title": "A zone goes dark",
+      "text": "At 00:40 a power problem takes availability zone 2 offline. Its two instances stop answering /health, so the load balancer sends every request to zones 1 and 3, and its zone-redundant frontend keeps the same IP address. CPU rises on the survivors, and autoscale may add instances in the healthy zones — which is why the maximum leaves headroom.",
+      "set": {
+        "t-clock": "12 Dec · 00:40",
+        "t-vm-2a": "vm 2 · zone down",
+        "t-vm-2b": "vm 5 · zone down",
+        "t-vm-1a": "vm 1 · CPU 65%",
+        "t-vm-3a": "vm 3 · CPU 65%",
+        "t-cpu": "average 65%"
+      }
+    },
+    {
+      "title": "Fault domains versus zones",
+      "text": "Why zones and not an availability set? An availability set keeps its VMs in one datacenter, spread over up to three fault domains — racks with their own power and network switch — and up to 20 update domains for planned maintenance. That earns 99.95 percent. Zones are separate datacenters, so two or more instances across zones earn 99.99 percent."
+    },
+    {
+      "title": "The spike passes, the set shrinks",
+      "text": "By 02:00 zone 2 is back and average CPU drops below 30 percent. Autoscale scales in only when every scale-in rule agrees, and it removes one instance per cool-down, first checking that the smaller set won't need to scale straight back out. By breakfast the set is back to three instances, and the bill shrinks with it.",
+      "set": {
+        "t-clock": "12 Dec · 02:00",
+        "t-traffic": "back to normal",
+        "t-cpu": "average 20%",
+        "t-count": "instances: 6 → 3",
+        "t-vm-1a": "vm 1 · healthy",
+        "t-vm-2a": "vm 2 · healthy",
+        "t-vm-3a": "vm 3 · healthy"
+      }
+    },
+    {
+      "title": "Spot VMs for the night shift",
+      "text": "Overnight, a batch job creates thumbnails for thousands of new product photos. It runs on Spot VMs: spare Azure capacity at a deep discount, with no SLA. The eviction policy is Deallocate and the maximum price is -1, so Azure never evicts them because of price — only when it needs the capacity back."
+    },
+    {
+      "title": "Evicted with 30 seconds' notice",
+      "text": "At 03:10 Azure needs the capacity back. Scheduled Events warn the VMs about 30 seconds ahead, the job saves a checkpoint, and the VMs are deallocated. Their disks remain, so the job can resume when capacity returns. The storefront never notices, because nothing customers depend on runs on Spot.",
+      "set": {
+        "t-spot": "evicted · deallocated",
+        "t-clock": "12 Dec · 03:10"
+      }
+    },
+    {
+      "title": "Recap: ready for 12.12",
+      "text": "One scale set model, three zones, CPU rules with sensible thresholds and cool-downs, and capacity that follows demand in both directions. Lose a zone and the shop stays open; give interruptible work to Spot. In Lab 23 you build the scale set, attach autoscale, generate CPU load and watch it grow.",
+      "tip": "Lab 23 · Ready for the 12.12 sale (about 60 minutes): a Flexible scale set across zones 1–3 behind a Standard load balancer, autoscale rules, a CPU load test, an optional Spot VM and patch assessment with Azure Update Manager.",
+      "set": {
+        "t-spot": "job resumes later",
+        "t-clock": "12 Dec · 08:00"
+      }
+    }
+  ],
+  "svg": [
+    "Azure region · Indonesia Central",
+    "Zone 1",
+    "Zone 2",
+    "Zone 3",
+    "Shoppers",
+    "11 Dec · 21:00",
+    "normal evening",
+    "Azure Monitor",
+    "Percentage CPU",
+    "average 30%",
+    "Autoscale",
+    "out: CPU > 70% → +3",
+    "in: CPU < 30% → −1",
+    "min 3 · max 9",
+    "instances: 3",
+    "Load balancer",
+    "Standard SKU",
+    "zone-redundant IP",
+    "probe: /health",
+    "vmss-web",
+    "Flexible mode",
+    "image + cloud-init",
+    "zones 1 · 2 · 3",
+    "NAT gateway",
+    "explicit outbound",
+    "vm 1 · healthy",
+    "vm 4 · healthy",
+    "vm 2 · healthy",
+    "vm 5 · healthy",
+    "vm 3 · healthy",
+    "vm 6 · healthy",
+    "Availability set · one datacenter",
+    "FD 0",
+    "UD 0, 3",
+    "rack A",
+    "FD 1",
+    "UD 1, 4",
+    "rack B",
+    "FD 2",
+    "UD 2",
+    "rack C",
+    "Fault domain: rack, power, switch",
+    "Update domain: one reboot group",
+    "2+ VMs in a set: 99.95%",
+    "2+ VMs across zones: 99.99%",
+    "Spot VMs · batch jobs",
+    "product-photo thumbnails",
+    "eviction policy: Deallocate",
+    "running at Spot price",
+    "Scheduled Events",
+    "about 30 s warning in the VM",
+    "job saves a checkpoint",
+    "no Spot for checkout"
+  ]
+}

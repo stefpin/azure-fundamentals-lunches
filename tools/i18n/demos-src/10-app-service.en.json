@@ -1,0 +1,164 @@
+{
+  "page": {
+    "doc_title": "Lunch 10 · Web Apps with Azure App Service — Interactive demo",
+    "kicker": "Lunch 10 · Web Apps with Azure App Service · Interactive demo",
+    "title": "Front ends, scale-out and a zero-downtime slot swap",
+    "lede": "Follow a shopper's request through App Service, watch autoscale add instances for the 12.12 sale, and see a staging slot warm up and swap into production. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Requests flowing through App Service front ends to the instances of an App Service plan, autoscale, and a staging slot swap",
+    "svgDesc": "Customers on the left send requests to the App Service front ends, which route them to up to three instances of a Standard S1 plan on the right. Each instance runs the production slot and, later, a staging slot. Dewi, bottom left, deploys and tests version 2 in staging before it is swapped into production."
+  },
+  "steps": [
+    {
+      "title": "Patching on Friday nights",
+      "text": "Nusantara Retail's storefront runs on two VMs that Dewi patches every Friday night: the operating system, Python, the certificate and nginx, one VM at a time. Harbolnas, the 12.12 sale, is eight weeks away and needs extra capacity for a single evening. In this demo you move the shop to Azure App Service, where Microsoft runs the servers and Dewi only ships code."
+    },
+    {
+      "title": "Front ends and workers",
+      "text": "Every request for the shop's address first reaches the App Service front ends. They terminate HTTPS, pick a healthy instance and forward the request. The instances are the workers of your App Service plan: here one Standard S1 virtual machine running Linux. Your code runs in the production slot on that instance, and nobody signs in to patch it."
+    },
+    {
+      "title": "A request takes the path",
+      "text": "A shopper opens the storefront. The front end checks the host name, chooses an instance and passes the request on over Azure's internal network. The Python app reads its settings, which App Service hands over as environment variables, and returns the page. Notice what's missing: no VM to patch and no web server to configure. That's Microsoft's job now."
+    },
+    {
+      "title": "Harbolnas traffic arrives",
+      "text": "Twelve December, eight in the evening. Traffic triples within minutes, and the single instance runs at 94 percent CPU. Pages slow down and some requests time out. Scaling up to a bigger size would help for a while, but it restarts the app and still has a ceiling. Scaling out adds more instances of the same size, and the front ends share the load between them.",
+      "set": {
+        "t-p1c": "CPU 94% · slow"
+      }
+    },
+    {
+      "title": "Autoscale adds instances",
+      "text": "An autoscale rule watches the plan's average CPU. Above 70 percent for ten minutes, it adds an instance, up to three. Each new instance starts the same deployed code, and the front ends send it traffic straight away. CPU settles around 40 percent everywhere. When the rush is over, a scale-in rule removes the extra instances again, so you stop paying for them.",
+      "set": {
+        "t-p1c": "CPU 41% · serving",
+        "t-p2c": "CPU 38% · serving",
+        "t-p3c": "CPU 40% · serving",
+        "t-plan": "3 instances"
+      }
+    },
+    {
+      "title": "Shipping v2 the risky way",
+      "text": "Dewi has a new checkout page, version 2. Suppose she deploys it straight into the production slot during the sale. Every instance must restart and load the new code, so the first shoppers wait or get errors. Worse, if version 2 has a bug, every customer meets it at once, and the only undo is another deployment and another round of restarts.",
+      "set": {
+        "t-p1": "v2",
+        "t-p2": "v2",
+        "t-p3": "v2",
+        "t-fe": "prod → v2",
+        "t-dewi": "deploys to prod",
+        "t-p1c": "restarting…",
+        "t-p2c": "restarting…",
+        "t-p3c": "restarting…"
+      }
+    },
+    {
+      "title": "Rewind: add a staging slot",
+      "text": "Let's rewind. Standard and higher tiers include deployment slots: live apps with their own host names that run on the same instances as production. Dewi creates a slot called staging and copies production's settings into it. The slot costs nothing extra because it shares the plan's instances, but it does use some of their CPU and memory.",
+      "set": {
+        "t-p1c": "CPU 41% · serving",
+        "t-p2c": "CPU 38% · serving",
+        "t-p3c": "CPU 40% · serving",
+        "t-p1": "v1",
+        "t-p2": "v1",
+        "t-p3": "v1",
+        "t-fe": "prod → v1",
+        "t-dewi": "creates a slot"
+      }
+    },
+    {
+      "title": "Deploy and test in staging",
+      "text": "Dewi deploys version 2 to the staging slot and opens its own address, which ends in -staging.azurewebsites.net. Customers never see it: the production host name still routes every shopper to version 1. She tests the checkout, reads the log stream and fixes a typo, all while the sale keeps running on version 1.",
+      "set": {
+        "t-s1": "v2",
+        "t-s2": "v2",
+        "t-s3": "v2",
+        "t-dewi": "tests staging",
+        "t-s1c": "testing",
+        "t-s2c": "testing",
+        "t-s3c": "testing"
+      }
+    },
+    {
+      "title": "Warm-up before the swap",
+      "text": "Dewi starts a swap with production as the target. App Service first applies production's sticky settings to the staging instances and restarts them. Then it sends a request to every staging instance and waits until each one answers. Production keeps serving version 1 the whole time, so shoppers notice nothing of the preparation.",
+      "set": {
+        "t-s1c": "warmed up ✓",
+        "t-s2c": "warmed up ✓",
+        "t-s3c": "warmed up ✓",
+        "t-dewi": "starts the swap"
+      }
+    },
+    {
+      "title": "The swap: routing flips",
+      "text": "With every instance warm, App Service switches the routing rules. The production host name now points to the warmed-up version 2, and the staging slot holds version 1. Requests in flight finish normally and none are dropped. For shoppers, the new checkout simply appears; production itself never had to restart for the new code.",
+      "set": {
+        "t-p1": "v2",
+        "t-p2": "v2",
+        "t-p3": "v2",
+        "t-fe": "prod → v2",
+        "t-s1": "v1",
+        "t-s2": "v1",
+        "t-s3": "v1",
+        "t-s1c": "previous version",
+        "t-s2c": "previous version",
+        "t-s3c": "previous version"
+      }
+    },
+    {
+      "title": "Something wrong? Swap back",
+      "text": "Half an hour later, finance spots a rounding error in version 2's vouchers. Dewi doesn't redeploy anything. She swaps again: App Service warms version 1 up in its slot and switches the routing back, so production returns to version 1 within a minute or two, still without downtime. She fixes version 2 in staging at her own pace.",
+      "set": {
+        "t-p1": "v1",
+        "t-p2": "v1",
+        "t-p3": "v1",
+        "t-fe": "prod → v1",
+        "t-s1": "v2",
+        "t-s2": "v2",
+        "t-s3": "v2",
+        "t-s1c": "fixing the bug",
+        "t-s2c": "fixing the bug",
+        "t-s3c": "fixing the bug",
+        "t-dewi": "swaps back"
+      }
+    },
+    {
+      "title": "Recap",
+      "text": "Front ends terminate HTTPS and route requests to the instances in your App Service plan. The plan's tier, size and instance count decide the features and the price. Autoscale adds instances when load grows and removes them afterwards. Deployment slots let Dewi test a release on production hardware, swap it in without downtime and swap back when something goes wrong.",
+      "tip": "In Lab 10 you deploy this storefront to a Free F1 plan with az webapp up, set the STORE_NAME app setting, force HTTPS and read the log stream. The stretch goal repeats today's staging-slot swap on a Standard S1 plan."
+    }
+  ],
+  "svg": [
+    "App Service plan · Standard S1 · Linux",
+    "1 instance",
+    "Instance 1 · VM",
+    "Instance 2 · VM",
+    "Instance 3 · VM",
+    "Customers",
+    "shoppers on 12.12",
+    "App Service",
+    "front ends",
+    "TLS termination",
+    "+ routing",
+    "prod → v1",
+    "Dewi",
+    "developer",
+    "production slot",
+    "v1",
+    "CPU 35% · serving",
+    "staging slot",
+    "empty",
+    "settings copied",
+    "Autoscale rule",
+    "CPU > 70% for 10 min",
+    "→ add 1 instance",
+    "max 3, scale in later",
+    "Risky deploy",
+    "all instances restart",
+    "slow first requests",
+    "undo = redeploy",
+    "Slot swap",
+    "1. warm up staging",
+    "2. switch routing",
+    "no dropped requests"
+  ]
+}

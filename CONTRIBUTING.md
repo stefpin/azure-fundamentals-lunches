@@ -25,13 +25,16 @@ Please do **not** paste subscription IDs, tenant names, keys, passwords or conne
    python3 tools/validate_demo.py          # interactive demos
    python3 tools/check_links.py            # relative links
    find labs -name '*.sh' -exec bash -n {} \;   # shell syntax
+   python3 tools/i18n/check_parity.py      # the Indonesian twins still match the English files
    python3 tools/build_index.py            # if you added or renamed a lunch or lab
    python3 tools/build_site.py             # rebuild the website (needs markdown-it-py)
    ```
 
 4. If you changed a lab, run it end to end in your own subscription (`setup.sh`, the tasks or `solution.sh`,
    `verify.sh`, `cleanup.sh`) and say so in the pull request.
-5. Open a pull request that explains what changed and why.
+5. Changing a reading or lab? Update its Indonesian twin (`*.id.md`) too, or say in the pull request that the
+   translation still needs updating. Translations follow [TRANSLATION-GUIDE.md](TRANSLATION-GUIDE.md).
+6. Open a pull request that explains what changed and why.
 
 ## Ground rules
 

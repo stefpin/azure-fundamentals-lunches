@@ -74,9 +74,11 @@ GitHub directly.
 The README tables and the website are generated from the lunches and labs:
 
 ```bash
-python3 tools/build_index.py                       # tables in README.md and labs/README.md
-pip install -r tools/requirements-site.txt         # once: markdown-it-py (Pillow is optional, for the social card)
-python3 tools/build_site.py                        # the website in docs/
+python3 tools/build_index.py                       # tables in README.md, labs/README.md and their .id.md twins
+python3 tools/i18n/check_parity.py --strict        # every Indonesian twin still matches its English original
+python3 tools/i18n/demo_text.py check              # Indonesian demo narration matches the demos
+pip install -r tools/requirements-site.txt         # once: markdown-it-py (Pillow is optional, for the social cards)
+python3 tools/build_site.py                        # the website in docs/en and docs/id (also embeds the demo translations)
 python3 -m http.server --directory docs 8000       # preview at http://localhost:8000
 python3 tools/validate_demo.py
 python3 tools/check_links.py
@@ -89,15 +91,45 @@ What the site generator reads:
 
 | Source | Becomes |
 |---|---|
-| `lunches/NN-slug/README.md` | the episode page `docs/lunches/NN-slug.html`: menu, story, scenes, demo theatre, quiz, takeaways, lab ticket |
-| `labs/NN-slug/README.md` | the lab page `docs/labs/NN-slug.html`: guided or challenge mode, task check-offs, clean-up reminder |
-| `labs/README.md` | the lab hub `docs/labs/index.html` |
-| `docs/demos/NN-slug.html` | the demo gallery `docs/demos/index.html` |
-| `tools/site/series.json` | the story layer: episode titles, hooks, badges, cast, XP levels and the director's question |
+| `lunches/NN-slug/README.md` · `README.id.md` | the episode pages `docs/en/lunches/NN-slug.html` · `docs/id/lunches/NN-slug.html`: menu, story, scenes, demo theatre, quiz, takeaways, field notes, lab ticket |
+| `labs/NN-slug/README.md` · `README.id.md` | the lab pages `docs/en/labs/NN-slug.html` · `docs/id/labs/NN-slug.html` |
+| `labs/README.md` · `README.id.md` | the lab hubs `docs/en/labs/index.html` · `docs/id/labs/index.html` |
+| `docs/demos/NN-slug.html` + `tools/i18n/demos/NN-slug.id.json` | one bilingual demo (`?lang=id` shows Indonesian) and the galleries `docs/<lang>/demos/index.html` |
+| `tools/site/series.json` · `series.id.json` | the story layer: episode titles, hooks, badges, cast, XP levels and the director's question |
+| `tools/site/strings.py` | all interface text in both languages, and the author details (name, email, LinkedIn, optional photo) |
+| `tools/site/site-config.json` | optional settings: `{"goatcounter": "<code>"}` turns on the visitor counter |
 | `docs/assets/site.css`, `docs/assets/site.js` | the hand-written design system and behaviour (not generated) |
 
-Learners' progress, XP, badges and notes are stored only in their own browser (`localStorage`); the site collects
-nothing.
+The build also writes the language chooser `docs/index.html` (it remembers the reader's choice and otherwise follows
+the browser language), small redirect pages at the old addresses (`docs/lunches/…`, `docs/labs/…`), the bilingual
+`docs/404.html`, the LinkedIn share pages `docs/<lang>/share/…` and the social cards `docs/assets/social-card*.png`.
+
+Learners' progress, XP, badges and notes are stored only in their own browser (`localStorage`) and are shared by both
+languages. If you set a GoatCounter code, page views are counted without cookies or personal data, and the footer shows
+the total; turn on *Settings → Allow adding visitor counts on your website* in GoatCounter for the total to appear.
+
+### Turn on the visitor counter (about 5 minutes, once)
+
+[GoatCounter](https://www.goatcounter.com/) is free for non-commercial sites, uses no cookies and stores no personal
+data, so the site needs no cookie banner. Until a code is set, the site simply shows no counter.
+
+1. Sign up at <https://www.goatcounter.com/signup>. The **code** you choose becomes your dashboard address
+   (`<code>.goatcounter.com`), for example `azure-lunches`.
+2. In the GoatCounter dashboard open **Settings**, tick **Allow adding visitor counts on your website** and save.
+3. On GitHub, open `tools/site/site-config.json`, select the pencil (*Edit this file*), set
+   `"goatcounter": "<code>"` and commit to `main`. The *Publish the course site* workflow rebuilds and redeploys the
+   site; the footer of every page then shows the total number of visitors in the reader's language.
+
+Only put a code you own into this file: the site sends its page views to that GoatCounter account.
+
+### Updating a lesson in both languages
+
+1. Edit the English file, then the same place in its `.id.md` twin (see [TRANSLATION-GUIDE.md](TRANSLATION-GUIDE.md)).
+2. Run `python3 tools/i18n/check_parity.py lunches/NN-slug labs/NN-slug` until it reports no errors.
+3. If you changed a demo's narration, re-run `python3 tools/i18n/demo_text.py extract NN-slug`, update
+   `tools/i18n/demos/NN-slug.id.json`, and run `python3 tools/i18n/demo_text.py check NN-slug`.
+4. Rebuild the site. A missing translation never breaks the build: the Indonesian page falls back to English and
+   the build prints a warning.
 
 ## 4. Record the optional walkthrough videos
 

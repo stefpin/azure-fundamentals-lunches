@@ -1,5 +1,7 @@
 # Lunch 06 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — creating a Linux VM in the portal, connecting to it from
 > Cloud Shell, opening port 80, and seeing the difference between *Stopped* and *Stopped (deallocated)* — the parts an
 > animation cannot show.

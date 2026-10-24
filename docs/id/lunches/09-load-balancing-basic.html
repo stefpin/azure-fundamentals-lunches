@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 09 · Dua Server, Satu Alamat — Makan Siang 09: Load Balancing (Dasar): Azure Load Balancer · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 09 · Load Balancing (Dasar): Azure Load Balancer. Server kembar yang sehat walafiat cuma menganggur, sementara pembeli hanya bisa menemukan satu server. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/09-load-balancing-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 09 · Dua Server, Satu Alamat — Makan Siang 09: Load Balancing (Dasar): Azure Load Balancer">
+<meta property="og:description" content="Makan Siang 09 · Load Balancing (Dasar): Azure Load Balancer. Server kembar yang sehat walafiat cuma menganggur, sementara pembeli hanya bisa menemukan satu server. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/09-load-balancing-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="09" style="--c:#e2482f">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/09-load-balancing-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 09</span> Season 1 · 🏗️ Bagian 2 · Infrastruktur inti</div>
+      <h1>Dua Server, Satu Alamat</h1>
+      <div class="lunch-title">Makan Siang 09 · Load Balancing (Dasar): Azure Load Balancer</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 50 menit · 💲💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="03-global-infrastructure.html" title="Toko Kita Tinggal di Mana?">↩ 03</a><a class="chip" href="06-virtual-machines-basic.html" title="Kabur dari Pantry">↩ 06</a><a class="chip" href="08-networking-basic.html" title="Jangan Tabrak Jaringan Saya">↩ 08</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 08 · Jangan Tabrak Jaringan Saya, address space sudah Anda rencanakan, dan trafik dikunci rapat dengan NSG serta akses outbound yang eksplisit.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, lebih tenang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 35% siap</b>Setelah episode ini Anda bisa menjawab: “Kalau satu server mati, pelanggan bahkan tidak sadar.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-satu-alamat-banyak-server-mengapa-perlu-load-balancing">Satu alamat, banyak server: mengapa perlu load balancing</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-anatomi-standard-load-balancer">Anatomi Standard load balancer</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-health-probe-dan-cara-lalu-lintas-dibagi">Health probe dan cara lalu lintas dibagi</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-masuk-dan-keluar-inbound-nat-rule-outbound-rule-dan-snat">Masuk dan keluar: inbound NAT rule, outbound rule, dan SNAT</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-zona-dan-varian-khusus-ha-ports-gateway-dan-load-balancer-global">Zona dan varian khusus: HA ports, gateway, dan load balancer global</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-memilih-load-balancer--dan-pintu-depan-baru-nusantara-retail">Memilih load balancer — dan pintu depan baru Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/09-load-balancing-basic.html">🔬 Buka Lab 09</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> mengapa load balancer adalah langkah pertama dari &quot;satu server&quot; menuju &quot;selalu buka&quot;, dan apa arti <em>layer 4</em>.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menguraikan</strong> bagian-bagian Azure Standard Load Balancer: frontend, backend pool, health probe, load-balancing rule, inbound NAT rule, dan outbound rule.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> antara load balancer publik dan internal, serta di antara mode-mode distribusinya.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> dengan bahasa sederhana cara kerja koneksi keluar (outbound) dan SNAT, serta mengapa jaringan baru membutuhkan metode outbound yang eksplisit.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Mengenali</strong> kapan Application Gateway, Front Door, atau Traffic Manager menjadi alat yang lebih tepat.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 09</span>
+        <div class="story-body"><p>Dewi sudah mengerjakan PR-nya. Toko online kini berjalan di dua virtual machine (<em>komputer virtual</em>) Ubuntu: <code>vm-web-1</code>
+di availability zone (<em>zona ketersediaan</em>) 1 dan <code>vm-web-2</code> di zona 2, di dalam subnet privat yang dirancang Pak Budi
+pada Makan Siang 08. Masalahnya tinggal satu: pembeli hanya mengenal satu alamat, dan saat ini alamat itu mengarah ke
+<code>vm-web-1</code>. Kalau VM itu di-restart untuk patching, toko pun tutup, padahal kembarannya yang sehat walafiat sedang
+menganggur di zona sebelah.</p>
+<p>Dalam rapat hari Senin, Ibu Sari bicara blak-blakan. &quot;Dua server tidak ada gunanya kalau pelanggan hanya bisa menemukan
+satu. Lagi pula, kata Pak Budi, sekarang dia bahkan tidak bisa login ke server-server itu karena keduanya tidak punya
+alamat publik lagi.&quot; Rizky, sang kontraktor, menambahkan bahwa sejak perubahan jaringan, server-server itu juga gagal
+mengunduh update keamanan. Tiga keluhan, satu akar masalah: server-server itu tidak punya pintu depan bersama.</p>
+<p>Pertanyaan hari ini: <strong>bagaimana memberi dua server satu alamat, mengirim pembeli hanya ke server yang sehat, dan tetap
+membiarkan administrator serta update keluar-masuk dengan aman?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-satu-alamat-banyak-server-mengapa-perlu-load-balancing" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Satu alamat, banyak server: mengapa perlu load balancing</h3><div class="prose"><p>Server tunggal adalah <strong>titik kegagalan tunggal</strong> (<em>single point of failure</em>): begitu server itu berhenti, layanannya
+ikut berhenti. Di Makan Siang 02 Anda sudah berkenalan dengan dua cara untuk tumbuh. <strong>Scale up</strong> (memakai VM yang lebih
+besar) punya batas atas dan tetap menyisakan satu mesin saja. <strong>Scale out</strong> (menambah jumlah VM) tidak punya batas
+seperti itu, tetapi memunculkan pertanyaan baru: setiap pelanggan harus berbicara dengan server yang mana?</p>
+<p><strong>Load balancer</strong> (<em>penyeimbang beban</em>) menjawab pertanyaan itu. Ia memegang satu alamat, menerima lalu lintas untuk
+seluruh kelompok server, lalu meneruskan setiap koneksi baru ke salah satu dari beberapa server. Ia juga terus memeriksa
+server mana yang sehat, sehingga server yang rusak diam-diam berhenti menerima pelanggan.</p>
+<p>Bayangkan kantor cabang bank dengan beberapa teller. Nasabah cukup tahu satu pintu masuk, lalu mesin antrean memanggil
+nomor mereka ke loket yang sedang buka. Kalau seorang teller istirahat, lampu loketnya dipadamkan dan tidak ada nomor
+yang dipanggil ke sana, sementara nasabah tetap masuk lewat pintu yang sama. Load balancer adalah mesin antrean itu, dan
+health probe—yang akan kita bahas sebentar lagi—adalah cara mesin itu tahu loket mana yang lampunya menyala.</p>
+<p>Satu komponen ini memberi Nusantara Retail empat hal sekaligus:</p>
+<ul>
+<li><strong>Ketersediaan.</strong> VM yang gagal, layanan web yang crash, atau bahkan satu availability zone yang lumpuh tidak lagi
+membuat toko tutup.</li>
+<li><strong>Skala.</strong> Saat promo 12.12 tiba, Dewi cukup menambahkan VM ketiga ke kelompok itu, bukan mengganti servernya.</li>
+<li><strong>Pemeliharaan tanpa downtime.</strong> Pak Budi bisa mem-patch <code>vm-web-1</code> sementara <code>vm-web-2</code> menanggung semua lalu lintas,
+jadi toko tetap buka tanpa <em>downtime</em> (waktu henti).</li>
+<li><strong>Alamat yang stabil.</strong> Pembeli, record DNS (entri &quot;buku telepon&quot; internet yang menerjemahkan nama domain menjadi
+alamat IP), dan daftar izin (allow list) milik penyedia pembayaran tetap memakai satu alamat IP, sementara server di
+belakangnya datang dan pergi.</li>
+</ul>
+<p>Load balancer berbeda-beda dalam hal <em>seberapa banyak isi percakapan yang mereka pahami</em>. Orang jaringan
+menggambarkannya dengan lapisan (layer) model OSI, yaitu cara baku membagi komunikasi jaringan menjadi tujuh lapisan.
+Anda hanya perlu dua di antaranya. Ibaratnya pengiriman paket: load balancer layer 4 seperti kurir yang hanya membaca
+label alamat di luar paket lalu mengantarnya tanpa pernah membukanya, sedangkan load balancer layer 7 seperti
+resepsionis kantor yang membuka amplop, membaca isi suratnya, lalu memutuskan surat itu harus diantar ke bagian mana.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Layer 4 (transport)</th>
+<th>Layer 7 (aplikasi)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Apa yang dilihatnya</td>
+<td>alamat IP, port, dan protokol (TCP atau UDP)</td>
+<td>request HTTP itu sendiri: host name, path URL, header, cookie</td>
+</tr>
+<tr>
+<td>Apa yang dilakukannya dengan koneksi</td>
+<td>meneruskan paket langsung ke satu server</td>
+<td>mengakhiri koneksi dari klien dan membuka koneksi baru ke server (sebagai <em>proxy</em>, alias perantara)</td>
+</tr>
+<tr>
+<td>Bisakah mengarahkan <code>/images</code> ke server lain?</td>
+<td>tidak — ia tidak pernah membaca URL</td>
+<td>ya</td>
+</tr>
+<tr>
+<td>Bisakah mendekripsi HTTPS atau menjalankan web application firewall (WAF, penyaring serangan terhadap aplikasi web)?</td>
+<td>tidak</td>
+<td>ya</td>
+</tr>
+<tr>
+<td>Siapa yang dilihat server sebagai klien</td>
+<td>alamat IP klien yang sebenarnya</td>
+<td>alamat proxy (IP klien disimpan di sebuah header)</td>
+</tr>
+<tr>
+<td>Contoh di Azure</td>
+<td><strong>Azure Load Balancer</strong></td>
+<td>Application Gateway, Front Door</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Azure Load Balancer</strong> adalah load balancer layer 4 milik Azure. Ia menangani lalu lintas TCP atau UDP apa pun, bukan
+hanya lalu lintas web; hampir tidak menambah jeda karena tidak pernah membuka atau membaca data Anda; dan sanggup
+menampung jutaan aliran koneksi (<em>flow</em>). Ini layanan <em>regional</em>: satu load balancer melayani resource (<em>sumber daya</em>)
+di satu region (<em>wilayah</em>); ada juga tier global, lihat bagian 5. Karena tidak membaca isi request, load balancer ini
+juga paling mudah dinalar cara kerjanya, sehingga tepat dijadikan titik awal.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Azure Load Balancer tersedia dalam SKU (varian produk) <strong>Standard</strong> dan <strong>Gateway</strong>. SKU <strong>Basic</strong> — beserta alamat IP
+publik Basic — sudah <strong>dipensiunkan pada 30 September 2025</strong>. Tutorial lama yang memakai <code>--sku Basic</code> tidak berlaku
+lagi. Seluruh kursus ini memakai Standard, yang menambahkan dukungan availability zone, jaringan yang <em>secure by
+default</em> (aman sejak awal), outbound rule, dan SLA (<em>service level agreement</em>, janji ketersediaan dari Microsoft)
+sebesar 99,99% (periksa halaman SLA untuk syarat-syaratnya).</p>
+</aside>
+</div></article><article class="scene-card" id="2-anatomi-standard-load-balancer" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Anatomi Standard load balancer</h3><div class="prose"><p>Load balancer adalah sekumpulan kecil bagian bernama yang saling merujuk. Begitu Anda mengenal bagian-bagiannya, wizard
+di portal, CLI, dan file Bicep akan terlihat sama saja.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  client([Pembeli]) --&gt;|TCP 80| fe[&quot;IP frontend&lt;br/&gt;pip-lb-nusa-web&lt;br/&gt;zone-redundant&quot;]
+  admin([Admin]) --&gt;|TCP 50001| fe
+  fe --&gt; rule[&quot;Load-balancing rule&lt;br/&gt;TCP 80 → 80&quot;]
+  fe --&gt; nat[&quot;Inbound NAT rule&lt;br/&gt;50001 → vm-web-1:22&quot;]
+  rule --&gt; pool
+  probe[&quot;Health probe&lt;br/&gt;HTTP GET /health&quot;] -.memeriksa.-&gt; pool
+  subgraph pool[&quot;Backend pool be-web&quot;]
+    vm1[&quot;vm-web-1 · zona 1&quot;]
+    vm2[&quot;vm-web-2 · zona 2&quot;]
+  end
+  nat --&gt; vm1
+  pool --&gt;|&quot;Outbound rule (SNAT)&quot;| out([Internet])
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Komponen</th>
+<th>Apa itu</th>
+<th>Contoh di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Frontend IP configuration</strong></td>
+<td>alamat yang dihubungi klien; bisa publik (sebuah Standard public IP) atau privat (IP dari sebuah subnet)</td>
+<td><code>fe-web</code> yang memakai IP publik <code>pip-lb-nusa-web</code></td>
+</tr>
+<tr>
+<td><strong>Backend pool</strong></td>
+<td>kelompok server yang bisa menerima lalu lintas, didefinisikan lewat NIC (kartu jaringan virtual) atau alamat IP-nya</td>
+<td><code>be-web</code> yang berisi NIC milik <code>vm-web-1</code> dan <code>vm-web-2</code></td>
+</tr>
+<tr>
+<td><strong>Health probe</strong></td>
+<td>pemeriksaan kesehatan berulang terhadap setiap anggota pool; hanya anggota yang sehat yang mendapat koneksi baru</td>
+<td><code>probe-http</code>: HTTP GET <code>/health</code> di port 80 setiap 5 detik</td>
+</tr>
+<tr>
+<td><strong>Load-balancing rule</strong></td>
+<td>memetakan IP dan port frontend ke backend pool dan port-nya, dengan memakai sebuah probe</td>
+<td><code>rule-http</code>: TCP 80 di frontend → port 80 di pool</td>
+</tr>
+<tr>
+<td><strong>Inbound NAT rule</strong></td>
+<td>meneruskan satu port frontend ke satu VM tertentu (port forwarding alias penerusan port, bukan pembagian beban)</td>
+<td><code>nat-ssh-vm1</code>: port frontend 50001 → port 22 di <code>vm-web-1</code></td>
+</tr>
+<tr>
+<td><strong>Outbound rule</strong></td>
+<td>membiarkan anggota pool menjangkau internet melalui IP frontend, dengan jumlah port yang Anda alokasikan</td>
+<td><code>rule-outbound</code>: 10.000 port sumber per VM</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Publik atau internal?</strong> Frontend-lah yang menentukan jenis load balancer Anda:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Load balancer publik</th>
+<th>Load balancer internal</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend</td>
+<td>sebuah alamat IP publik Standard</td>
+<td>sebuah alamat IP privat dari salah satu subnet Anda</td>
+</tr>
+<tr>
+<td>Siapa yang bisa menjangkaunya</td>
+<td>siapa pun di internet (disaring oleh NSG)</td>
+<td>klien di dalam virtual network (<em>jaringan virtual</em>), jaringan yang di-peering (disambungkan langsung), dan jaringan on-premises (milik kantor sendiri) yang terhubung lewat VPN atau ExpressRoute (sambungan privat ke Azure)</td>
+</tr>
+<tr>
+<td>Penggunaan umum</td>
+<td>tier web toko online</td>
+<td>API pesanan di belakang tier web, klaster database, appliance firewall (perangkat firewall khusus)</td>
+</tr>
+<tr>
+<td>Memberi backend akses internet?</td>
+<td>bisa, melalui outbound rule</td>
+<td>tidak; gunakan NAT gateway atau load balancer publik terpisah</td>
+</tr>
+</tbody>
+</table></div>
+<p>Nusantara Retail kelak akan memakai keduanya: load balancer publik di depan server web, dan load balancer internal di
+depan subnet aplikasi dari Makan Siang 08, sehingga API pesanan—layanan yang dipanggil situs web untuk mencatat
+pesanan—tidak pernah terekspos ke internet.</p>
+<p>Dua perilaku Standard sering mengejutkan pendatang baru. Pertama, Standard load balancer bersifat <strong>secure by default</strong>:
+lalu lintas masuk diblokir sampai sebuah network security group (NSG)—daftar aturan firewall yang dipasang pada subnet
+atau NIC—mengizinkannya. NSG melihat alamat IP asli pembeli, karena load balancer layer 4 tidak mengganti alamat sumber.
+Kedua, <strong>backend pool</strong> bisa didefinisikan berdasarkan NIC atau alamat IP. Pool yang dibangun dari NIC adalah pilihan
+yang direkomendasikan untuk virtual machine dan menghasilkan perilaku outbound yang paling bisa diprediksi.</p>
+</div></article><article class="scene-card" id="3-health-probe-dan-cara-lalu-lintas-dibagi" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Health probe dan cara lalu lintas dibagi</h3><div class="prose"><p>Load balancer hanya secerdas <strong>health probe</strong>-nya, yaitu pemeriksaan kesehatan yang ia jalankan terus-menerus. Setiap
+beberapa detik, platform mengirim probe ke setiap anggota pool dan mencatat jawabannya. Standard load balancer
+mendukung tiga jenis probe:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Jenis probe</th>
+<th>Dianggap sehat jika…</th>
+<th>Cocok untuk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TCP</strong></td>
+<td>server menyelesaikan jabat tangan (handshake) TCP di port tersebut</td>
+<td>layanan TCP apa pun; probe ini hanya membuktikan ada sesuatu yang mendengarkan</td>
+</tr>
+<tr>
+<td><strong>HTTP</strong></td>
+<td>HTTP GET ke path Anda menghasilkan <code>200 OK</code></td>
+<td>server web; biarkan aplikasi sendiri yang memutuskan apakah ia sehat</td>
+</tr>
+<tr>
+<td><strong>HTTPS</strong></td>
+<td>seperti HTTP, tetapi lewat TLS (protokol enkripsi di balik HTTPS)</td>
+<td>server web yang hanya mendengarkan di HTTPS (tanpa sertifikat klien)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Beberapa detail patut diingat:</p>
+<ul>
+<li><strong>Probe datang dari <code>168.63.129.16</code>.</strong> Dalam aturan NSG, sumber ini diwakili oleh <strong>service tag</strong> (label nama untuk
+sekelompok alamat milik layanan Azure) <strong>AzureLoadBalancer</strong>. Aturan NSG bawaan mengizinkannya, tetapi aturan buatan
+sendiri yang &quot;menolak semuanya&quot; dengan prioritas lebih tinggi (angka prioritas lebih kecil) akan diam-diam memblokir
+probe—dan semua server pun terlihat mati.</li>
+<li><strong>Interval</strong> probe bisa diatur, minimal 5 detik. Portal menyarankan 5 detik; CLI dan template memakai default 15
+detik. Untuk probe HTTP, jawaban apa pun selain <code>200</code> langsung menandai server sebagai <em>down</em>; probe yang sama sekali
+tidak mendapat balasan akan timeout paling lama setelah 30 detik.</li>
+<li><strong>Probe yang gagal hanya memengaruhi koneksi baru.</strong> Pembeli yang sudah terhubung ke server yang bermasalah tetap
+memegang koneksi TCP-nya sampai koneksi itu ditutup atau timeout; koneksi baru dikirim ke anggota yang sehat. Jika
+<em>semua</em> anggota down, Standard load balancer tidak mengirim koneksi baru ke mana pun.</li>
+<li><strong>Periksa sesuatu yang bermakna.</strong> Probe TCP di port 80 tetap hijau walaupun aplikasi web mengembalikan error. Probe
+HTTP ke halaman <code>/health</code> yang dikendalikan aplikasi bisa berkata &quot;keluarkan saya dari giliran&quot; sebelum pemeliharaan.</li>
+</ul>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Beri setiap aplikasi halaman <code>/health</code> yang ringan, lalu periksa lewat HTTP. Biarkan halaman itu memeriksa apa yang
+dibutuhkan server itu sendiri (ruang disk, konfigurasinya sendiri), tetapi berhati-hatilah memeriksa dependensi
+bersama: kalau <code>/health</code> gagal setiap kali database bersama sedang lambat, semua server gagal bersamaan dan load
+balancer tidak punya tujuan untuk mengirim siapa pun.</p>
+</aside>
+<p>Bagaimana load balancer memilih server untuk setiap koneksi baru? Secara default, ia menghitung <em>hash</em>—semacam rumus
+yang selalu mengubah masukan yang sama menjadi angka yang sama—dari lima nilai yang disebut <strong>5-tuple</strong>: IP sumber, port
+sumber, IP tujuan, port tujuan, dan protokol. Koneksi yang sama selalu menghasilkan hash yang sama dan jatuh ke server
+yang sama, sehingga paket-paket dari satu percakapan tetap bersama. Koneksi baru dari browser yang sama memakai port
+sumber baru, jadi bisa saja mendarat di server yang lain. Di antara ribuan pembeli, cara ini membagi beban secara
+merata; tetapi jika hanya ada segelintir klien di balik satu proxy kantor, pembagiannya bisa berat sebelah.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode distribusi</th>
+<th>Hash dari</th>
+<th>Perilaku</th>
+<th>Gunakan saat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>None</strong> (default, <em>berbasis hash</em>)</td>
+<td>5-tuple</td>
+<td>setiap koneksi baru bisa menuju server sehat mana pun</td>
+<td>aplikasi tidak menyimpan data sesi di server</td>
+</tr>
+<tr>
+<td><strong>Client IP</strong></td>
+<td>IP sumber + IP tujuan</td>
+<td>satu IP klien selalu menuju server yang sama</td>
+<td>aplikasi lama menyimpan keranjang belanja di memori server</td>
+</tr>
+<tr>
+<td><strong>Client IP and protocol</strong></td>
+<td>IP sumber + IP tujuan + protokol</td>
+<td>sama, tetapi per protokol</td>
+<td>aplikasi membuka sesi TCP dan UDP yang saling terkait dan harus bertemu di satu server</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Session persistence</em> (dua mode &quot;Client IP&quot; di atas) adalah solusi tambal sulam, bukan desain. Jika sebuah server
+gagal, sesinya tetap hilang; banyak pembeli di balik satu operator seluler atau proxy kantor terlihat seperti satu IP
+klien; dan menambah server akan mengocok ulang semua orang. Solusi yang tahan lama adalah menyimpan status sesi
+(<em>session state</em>) di luar VM, misalnya di database atau cache (penyimpanan data sementara yang sangat cepat).
+Ibaratnya warung makan dengan beberapa pelayan: kalau setiap pelayan hanya mengingat pesanan di kepalanya sendiri,
+pelanggan harus selalu dilayani pelayan yang sama—dan begitu pelayan itu pulang, pesanannya ikut hilang. Warung yang
+rapi menulis pesanan di nota yang ditempel di dapur, sehingga pelayan mana pun bisa melanjutkan. Database atau cache
+adalah nota bersama itu.</p>
+<p>Dua pengaturan rule lagi penting dalam praktik. <strong>Idle timeout</strong> (secara default 4 menit) menutup koneksi TCP yang tidak
+mengirim apa-apa; Anda bisa menaikkannya dalam batas tertentu, dan sebaiknya aktifkan <strong>TCP reset</strong> agar kedua ujung
+koneksi diberi tahu tentang penutupan itu, alih-alih baru mengetahuinya belakangan. <strong>HA ports</strong>, pengaturan rule
+lainnya, dibahas di bagian 5.</p>
+</div></article><article class="scene-card" id="4-masuk-dan-keluar-inbound-nat-rule-outbound-rule-dan-snat" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Masuk dan keluar: inbound NAT rule, outbound rule, dan SNAT</h3><div class="prose"><p><strong>Masuk ke satu server tertentu.</strong> Load-balancing rule membagi lalu lintas, tetapi administrator yang ingin SSH (login
+jarak jauh lewat baris perintah) ke <code>vm-web-1</code> perlu menjangkau <em>VM itu</em> secara spesifik. <strong>Inbound NAT rule</strong> (NAT
+singkatan dari <em>network address translation</em>, penerjemahan alamat jaringan) meneruskan satu port frontend ke port milik
+satu VM: hubungi IP frontend di port 50001, dan Anda tiba di <code>vm-web-1</code> pada port 22. NSG mengevaluasi paket yang sudah
+diterjemahkan, jadi NSG harus mengizinkan port 22, idealnya hanya dari satu alamat admin. Bentuk rule yang lebih baru
+menargetkan seluruh backend pool dengan sebuah rentang port dan memberi setiap anggota port frontend-nya sendiri;
+<em>inbound NAT pool</em> versi lama berbasis pool yang dipakai scale set (<em>Kumpulan Skala Komputer Virtual</em>) akan pensiun pada
+30 September 2027. Untuk administrasi sehari-hari, Azure Bastion (Makan Siang 06) adalah kebiasaan yang lebih aman —
+tidak ada port manajemen yang terekspos ke internet sama sekali.</p>
+<p><strong>Keluar.</strong> Server juga memulai percakapan: mengunduh update, memanggil penyedia pembayaran, mengirim e-mail lewat
+layanan e-mail. Di Makan Siang 08 Anda telah belajar bahwa virtual network yang dibuat dengan versi API yang dirilis
+setelah 31 Maret 2026 secara default mendapat <strong>subnet privat</strong>, sehingga VM tidak punya akses internet implisit, dan
+bahwa Standard load balancer tidak menambahkan akses itu dengan sendirinya. Harus ada sesuatu yang menyediakan akses
+keluar secara eksplisit.</p>
+<p>Sesuatu itu memakai <strong>SNAT</strong> — <em>source network address translation</em>, penerjemahan alamat sumber. Bayangkan operator
+telepon (PABX) di kantor pusat. Dua ratus karyawan berbagi satu nomor telepon publik. Saat seorang karyawan menelepon ke
+luar, operator mencatat saluran mana yang dipakai panggilan itu, sehingga ketika pihak seberang menjawab, panggilan
+disambungkan ke meja yang benar. Nomor publik itu adalah IP frontend; setiap &quot;saluran&quot; adalah sebuah <strong>SNAT port</strong>.
+Satu IP publik menyediakan sekitar 64.000 port seperti itu untuk koneksi keluar, dipakai bersama oleh semua VM yang
+menggunakannya.</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant VM as vm-web-1 (10.9.1.4)
+  participant LB as Load balancer · frontend (IP publik)
+  participant API as Penyedia pembayaran · API (internet)
+  VM-&gt;&gt;LB: dari 10.9.1.4:40123 ke API:443
+  Note over LB: SNAT: ganti alamat sumber dengan&lt;br/&gt;IP publik : SNAT port 1032&lt;br/&gt;dan ingat pemetaannya
+  LB-&gt;&gt;API: dari IP publik:1032 ke API:443
+  API--&gt;&gt;LB: balasan ke IP publik:1032
+  Note over LB: cari port 1032 → 10.9.1.4:40123
+  LB--&gt;&gt;VM: balasan diteruskan
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Setiap koneksi simultan ke IP dan port tujuan yang <em>sama</em> membutuhkan SNAT port-nya sendiri. Server yang membuka ribuan
+koneksi singkat ke satu API tanpa memakainya ulang bisa kehabisan jatahnya — <strong>SNAT port exhaustion</strong> — dan panggilan
+keluar yang baru pun gagal, sementara bagian lain VM tampak baik-baik saja. Ibaratnya semua saluran PABX sedang sibuk:
+telepon kantor tetap hidup, tetapi tak seorang pun bisa menelepon ke luar.</p>
+<p><strong>Outbound rule</strong> adalah cara Anda mengambil kendali. Anda memilih IP frontend mana yang dipakai, backend pool mana yang
+boleh keluar, protokolnya, idle timeout (4–120 menit), dan—yang terpenting—berapa banyak SNAT port yang didapat setiap
+VM, dalam kelipatan 8. Dua VM bisa menerima masing-masing hingga 32.000 port dari satu IP; menambah IP frontend berarti
+menambah port. Tanpa outbound rule, load-balancing rule masih bisa memberi akses keluar secara implisit, tetapi dengan
+alokasi default yang kecil (maksimal 1.024 port per VM, lebih sedikit lagi pada pool yang besar). Microsoft menyarankan
+agar Anda tidak mengandalkannya.</p>
+<p>Pilihan akses keluar, diurutkan dari yang terbaik:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Metode</th>
+<th>Catatan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NAT gateway</strong> pada subnet</td>
+<td>pilihan yang direkomendasikan: layanan khusus untuk lalu lintas keluar, dengan alokasi port dinamis, mudah diskalakan, dan diutamakan di atas metode lain</td>
+</tr>
+<tr>
+<td><strong>IP publik pada VM</strong></td>
+<td>cocok untuk satu server khusus; setiap VM mendapat alamatnya sendiri yang terekspos</td>
+</tr>
+<tr>
+<td><strong>Outbound rule load balancer</strong></td>
+<td>baik bila VM sudah berada di belakang load balancer publik; Anda yang menentukan jumlah port</td>
+</tr>
+<tr>
+<td>Load-balancing rule tanpa outbound rule</td>
+<td>implisit, alokasinya kecil dan tetap — hindari untuk production</td>
+</tr>
+<tr>
+<td>Default outbound access</td>
+<td>implisit dan bisa berubah; tidak tersedia di subnet privat — hindari</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Saat Anda menambahkan outbound rule yang memakai IP frontend yang sama dengan sebuah load-balancing rule, rule itu
+harus menonaktifkan outbound SNAT (<code>--disable-outbound-snat true</code>); jika tidak, pembuatan outbound rule akan gagal.
+Kesalahan sebaliknya lebih menyakitkan: SNAT di rule dinonaktifkan tetapi outbound rule lupa dibuat, maka VM
+kehilangan akses internet — update dan panggilan pembayaran gagal, sementara situs webnya sendiri tampak sehat.</p>
+</aside>
+</div></article><article class="scene-card" id="5-zona-dan-varian-khusus-ha-ports-gateway-dan-load-balancer-global" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Zona dan varian khusus: HA ports, gateway, dan load balancer global</h3><div class="prose"><p><strong>Zona.</strong> Di Makan Siang 03 Anda sudah mengenal resource zone-redundant dan zonal. Frontend load balancer bisa salah
+satu dari keduanya. Frontend <strong>zone-redundant</strong> dilayani dari semua zona di region tersebut, sehingga tetap hidup jika
+salah satu zona hilang; frontend <strong>zonal</strong> terikat pada satu zona dan ikut gagal bersama zona itu. IP publik Standard
+yang dibuat dengan zona 1, 2, dan 3 bersifat zone-redundant, dan Microsoft kini memperlakukan IP publik Standard yang
+dibuat tanpa zona sebagai zone-redundant di region yang memiliki zona. Sebarkan juga VM backend ke beberapa zona,
+seperti yang dilakukan Dewi. Frontend yang selamat dari kegagalan zona tidak menolong apa-apa jika kedua server justru
+berada di zona yang gagal itu.</p>
+<p><strong>HA ports</strong> (HA = <em>high availability</em>). Pada Standard load balancer <em>internal</em>, sebuah rule dengan protokol <em>All</em> dan
+port 0 membagi setiap aliran TCP dan UDP di semua port. Begitulah appliance firewall di jaringan hub (jaringan pusat yang
+menjadi simpul bagi jaringan lain) dibuat memiliki ketersediaan tinggi (Makan Siang 25): satu rule, semua lalu lintas,
+dan sebuah probe yang mencerminkan kesehatan seluruh appliance.</p>
+<p><strong>Gateway Load Balancer.</strong> SKU tersendiri untuk menyisipkan network virtual appliance (perangkat jaringan virtual) dari
+pihak ketiga — firewall, sistem deteksi intrusi, penganalisis paket — secara transparan ke jalur lalu lintas. Anda
+<em>merangkainya</em> (chain) ke frontend load balancer publik atau ke IP publik sebuah VM, dan lalu lintas akan mampir ke
+appliance tersebut sebelum mencapai aplikasi Anda, tanpa route table (tabel rute yang menentukan ke mana paket dikirim)
+yang perlu dipelihara.</p>
+<p><strong>Load balancer global (lintas region).</strong> Standard load balancer juga bisa dibuat pada tier <em>global</em>. Ia menawarkan satu
+IP publik statis <strong>anycast</strong>—satu alamat yang sama diumumkan dari banyak region Azure sekaligus—dan backend pool-nya
+berisi load balancer publik regional. Pembeli masuk ke jaringan Microsoft di region terdekat yang ikut serta, lalu
+dikirim ke deployment regional terdekat yang sehat; jika sebuah region gagal, lalu lintas berpindah (failover) dalam
+hitungan detik karena tidak ada caching DNS yang terlibat—alamatnya tidak pernah berubah, jadi tidak perlu menunggu
+catatan DNS lama kedaluwarsa. Load balancer ini tetap bekerja di layer 4, hanya mendukung frontend publik, dan harus
+dibuat di salah satu <em>home region</em> (region &quot;rumah&quot;) yang terdaftar (Southeast Asia dan East Asia termasuk di dalamnya;
+periksa dokumentasi untuk yang lain). Makan Siang 27 membandingkannya dengan pilihan global layer 7.</p>
+</div></article><article class="scene-card" id="6-memilih-load-balancer--dan-pintu-depan-baru-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Memilih load balancer — dan pintu depan baru Nusantara Retail</h3><div class="prose"><p>Azure punya empat layanan load balancing utama, dan memilih di antaranya adalah topik favorit di ujian maupun wawancara
+kerja. Dua pertanyaan menyelesaikan sebagian besar pekerjaan: <em>apakah ini lalu lintas web yang membutuhkan fitur
+layer 7?</em> dan <em>apakah cakupannya regional atau global?</em></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Azure Load Balancer</th>
+<th>Application Gateway</th>
+<th>Azure Front Door</th>
+<th>Traffic Manager</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Layer</td>
+<td>4 (TCP/UDP)</td>
+<td>7 (HTTP/HTTPS)</td>
+<td>7 (HTTP/HTTPS)</td>
+<td>DNS</td>
+</tr>
+<tr>
+<td>Cakupan</td>
+<td>regional (tier global untuk lintas region)</td>
+<td>regional</td>
+<td>global, di edge Microsoft (titik jaringan Microsoft yang dekat dengan pengguna)</td>
+<td>global</td>
+</tr>
+<tr>
+<td>Melihat lalu lintas Anda?</td>
+<td>meneruskannya begitu saja</td>
+<td>ya, sebagai proxy di jaringan Anda</td>
+<td>ya, sebagai proxy di edge</td>
+<td>tidak — ia hanya menjawab query DNS</td>
+</tr>
+<tr>
+<td>Fitur khas</td>
+<td>protokol apa pun, latensi sangat rendah, outbound rule, HA ports</td>
+<td>routing berdasarkan path dan host, terminasi TLS, WAF, autoscale</td>
+<td>caching, failover global yang cepat, WAF, TLS di edge</td>
+<td>routing priority, weighted, performance, dan geographic</td>
+</tr>
+<tr>
+<td>Contoh di Nusantara Retail</td>
+<td>VM web hari ini; API pesanan internal</td>
+<td><code>/images/*</code> ke aplikasi gambar, dengan WAF</td>
+<td>pembeli dari Medan sampai Makassar</td>
+<td>failover DNS antara dua region</td>
+</tr>
+</tbody>
+</table></div>
+<p>Makan siang ini membangun kolom pertama. Makan Siang 27 membahas tiga lainnya secara mendalam, termasuk cara
+menggabungkannya — misalnya Front Door di depan Application Gateway.</p>
+<p>Inilah desain Nusantara Retail setelah hari ini. Sebuah Standard load balancer publik, <code>lb-nusa-web</code>, memegang IP
+frontend yang zone-redundant. Backend pool-nya berisi NIC milik <code>vm-web-1</code> (zona 1) dan <code>vm-web-2</code> (zona 2). Sebuah
+probe HTTP menanyakan <code>/health</code> kepada setiap server setiap 5 detik, dan sebuah rule mengirim TCP 80 hanya ke server
+yang sehat. Sebuah inbound NAT rule memberi Pak Budi akses SSH darurat ke <code>vm-web-1</code> dari IP kantor sampai Bastion hadir,
+dan sebuah outbound rule membiarkan kedua server menjangkau mirror update (server penyedia salinan paket update) dan
+penyedia pembayaran melalui IP publik yang sama — alamat yang bisa dimasukkan penyedia pembayaran ke daftar izinnya.
+Jawaban atas pertanyaan Ibu Sari, <em>&quot;Kalau server itu mati, berapa lama kita tidak bisa jualan?&quot;</em>, kini berubah: jika
+satu server mati, pembeli tidak merasakan apa-apa selain halaman yang dimuat ulang; jika satu zona gagal, toko tetap
+buka; jika seluruh region gagal, itu cerita untuk Makan Siang 17 dan 27.</p>
+<p>Untuk production, desain yang sama akan berjalan di <strong>Indonesia Central</strong> (Jakarta), yang memiliki tiga availability
+zone dan menyimpan data pelanggan di Indonesia. Lab memakai Southeast Asia karena ketersediaan layanannya paling luas;
+desainnya identik.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Penyedia pembayaran Nusantara Retail hanya menerima panggilan dari alamat IP yang dikenal.
+Alamat mana yang akan dilihat penyedia itu ketika <code>vm-web-2</code> memanggilnya hari ini — dan apa yang berubah jika Dewi
+mengganti outbound rule dengan NAT gateway yang memiliki IP publiknya sendiri?</p>
+</aside>
+<p>Pasangan lanjutan: <a href="27-load-balancing-advanced.html">Makan Siang 27 · Load Balancing (Lanjutan): Application Gateway, Front Door, dan Traffic Manager</a> membahas
+Application Gateway, Front Door, dan Traffic Manager.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Toko tetap buka: Azure Load Balancer</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/09-load-balancing-basic.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/09-load-balancing-basic.html?lang=id" title="Demo interaktif: Toko tetap buka: Azure Load Balancer" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/09-load-balancing-basic/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Koneksi baru tersebar ke kedua zona; probe yang gagal mengeluarkan sebuah server dari giliran, dan probe yang kembali
+berhasil memasukkannya lagi.</li>
+<li>Inbound NAT rule selalu mendarat di VM yang sama — ini port forwarding, bukan pembagian beban.</li>
+<li>Tanpa metode outbound, server terkurung di dalam; outbound rule menerjemahkan alamat mereka menjadi IP frontend.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Kode toko online lama milik Dewi menyimpan setiap keranjang belanja di memori server web. Sejak load balancer aktif,
+sebagian pelanggan kehilangan keranjangnya di tengah proses checkout. Apa yang bisa Anda ubah pada load balancer
+hari ini, dan apa solusi jangka panjang yang lebih baik?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Ubah rule ke session persistence <strong>Client IP</strong>; untuk jangka panjang, simpan status sesi di luar VM (di database atau
+cache) — <em>alasannya:</em> hash 5-tuple bawaan bisa mengirim setiap koneksi baru ke server yang berbeda.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Rizky menambahkan aturan <em>Deny-All-Inbound</em> (prioritas 200) ke <code>nsg-web</code> untuk &quot;memperketat keamanan&quot;. Aturan
+<em>Allow-HTTP-Internet</em> (prioritas 100) masih ada, tetapi dalam hitungan detik toko online berhenti menjawab lewat load
+balancer. Kedua VM masih menyajikan halaman jika diakses secara lokal. Apa yang terjadi?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Aturan deny itu memblokir <strong>health probe</strong> dari <code>168.63.129.16</code> (service tag <em>AzureLoadBalancer</em>), sehingga semua
+anggota ditandai down. Izinkan <em>AzureLoadBalancer</em> dengan angka prioritas di bawah 200 — <em>alasannya:</em> aturan bawaan
+yang mengizinkan probe berprioritas 65001 dan kalah dari aturan deny buatan sendiri mana pun.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Pak Budi membuat inbound NAT rule dari port frontend 50001 ke port 22 di <code>vm-web-1</code>, serta aturan NSG yang
+mengizinkan TCP <strong>50001</strong> dari IP kantornya. SSH tetap timeout. Apa yang salah?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>NSG harus mengizinkan port tujuan <strong>22</strong> — <em>alasannya:</em> NSG mengevaluasi paket setelah load balancer menerjemahkan
+port-nya.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Setelah desain ulang jaringan, server web berada di subnet privat di belakang load balancer, dan rule-nya
+menonaktifkan outbound SNAT. Kini update keamanan gagal. Sebutkan dua cara memperbaikinya.</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Tambahkan <strong>outbound rule</strong> untuk backend pool, atau pasang <strong>NAT gateway</strong> pada subnet (direkomendasikan) —
+<em>alasannya:</em> subnet privat tidak punya akses keluar default, dan Standard load balancer tidak memberikannya kecuali
+Anda mengonfigurasinya.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Nusantara Retail ingin <code>shop.nusantararetail.co.id/images/*</code> dilayani oleh pool server gambar tersendiri, dan ingin
+ada web application firewall di depan semuanya. Apakah Azure Load Balancer alat yang tepat?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Bukan — gunakan <strong>Application Gateway</strong> (regional) atau <strong>Azure Front Door</strong> (global), yang dibahas di Makan Siang 27;
+<em>alasannya:</em> load balancer layer 4 tidak pernah membaca path URL, sehingga tidak bisa merutekan berdasarkan path
+maupun memeriksa isi request.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Load balancer memberi sekelompok server <strong>satu alamat</strong> dan mengirim koneksi baru hanya ke anggota yang <strong>sehat</strong>; Azure Load Balancer melakukannya di <strong>layer 4</strong>, untuk lalu lintas TCP atau UDP apa pun.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Gunakan SKU <strong>Standard</strong> (Basic sudah pensiun pada 30 September 2025). SKU ini secure by default: NSG harus mengizinkan lalu lintas klien dan probe AzureLoadBalancer.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Bagian-bagiannya selalu sama: <strong>IP frontend, backend pool, health probe, load-balancing rule</strong>, ditambah <strong>inbound NAT rule</strong> untuk menjangkau satu VM dan <strong>outbound rule</strong> untuk membiarkan pool keluar.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p><strong>Hash 5-tuple</strong> membagi koneksi; <strong>session persistence</strong> menempelkan sebuah IP klien ke satu server, tetapi tidak menggantikan kebiasaan menyimpan status di luar VM.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Akses keluar harus <strong>eksplisit</strong>: tentukan jumlah SNAT port dengan <strong>outbound rule</strong>, atau lebih baik gunakan <strong>NAT gateway</strong>. Frontend zone-redundant ditambah VM di beberapa zona akan selamat dari kegagalan satu zona.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Failover yang belum pernah diuji baru sebatas janji.</strong> Setiap kali meninjau desain yang memakai load balancer,
+pertanyaan pertama saya selalu sama: <em>kapan terakhir kali Anda sengaja mematikan salah satu servernya?</em> Kalau
+jawabannya &quot;belum pernah&quot;, saya belum berani menyebut sistem itu memiliki ketersediaan tinggi. Kebiasaan saya sebelum
+go-live: matikan layanan web di tiap backend secara bergiliran, pada jam kerja, sambil seluruh tim ikut menonton.
+Probe harus mengeluarkan server itu dalam hitungan detik, dan toko harus tetap melayani. Lalu uji juga jalan
+keluarnya, karena kegagalan di sisi ini tidak berisik: dari dalam setiap VM, panggil API pembayaran atau mirror
+update, dan periksa alamat publik mana yang terlihat di sisi mereka. Satu lagi: kalau semua backend mendadak &quot;sakit&quot;
+bersamaan, periksa probe dan NSG dulu sebelum menyentuh server mana pun.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>09</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Menjaga toko tetap buka saat server gagal</h3>
+          <div class="prose"><p><code>setup.sh</code> menyiapkan dua VM web di zona 1 dan 2, tanpa IP publik. Anda membangun Standard load balancer publik dengan
+frontend zone-redundant, probe, dan rule; menyaksikan request tersebar ke kedua zona; menghentikan satu server web; lalu
+melihat toko tetap buka. Setelah itu Anda menambahkan inbound NAT rule untuk SSH dan outbound rule agar kedua server
+bisa menjangkau internet — inti desain yang nanti dikembangkan oleh capstone Makan Siang 21.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 50 menit</span><span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/09-load-balancing-basic.html">Mulai Lab 09 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/load-balancer/load-balancer-custom-probe-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Health probe Azure Load Balancer</b><span>Jenis probe, interval, dan apa yang terjadi pada koneksi ketika probe gagal.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/load-balancer/load-balancer-outbound-connections" target="_blank" rel="noopener"><b>Microsoft Learn: Source Network Address Translation (SNAT) untuk koneksi keluar</b><span>Pilihan outbound yang diurutkan, SNAT port, dan cara menghindari kehabisan port.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/load-balancer/skus" target="_blank" rel="noopener"><b>Microsoft Learn: SKU Azure Load Balancer</b><span>Apa yang ditawarkan Standard dan pemberitahuan pensiunnya Basic.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/architecture/guide/technology-choices/load-balancing-overview" target="_blank" rel="noopener"><b>Azure Architecture Center: Pilihan load balancing</b><span>Panduan resmi untuk memilih di antara load balancer Azure; cuplikan awal Makan Siang 27.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">⚖️</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Buka Terus</h2>
+        <p class="muted">Tetap jualan saat sebuah server gagal.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Kalau satu server mati, pelanggan bahkan tidak sadar.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 10</b><h4>Jumat Malam Dewi</h4><p>Developer tidak direkrut untuk mem-patch server setiap Jumat malam.</p><p style="margin-top:10px"><a href="10-app-service.html">Tonton Episode 10 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="08-networking-basic.html"><small>← Episode sebelumnya</small>08 · Jangan Tabrak Jaringan Saya</a><a class="next" href="10-app-service.html"><small>Episode berikutnya →</small>10 · Jumat Malam Dewi</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/09-load-balancing-basic/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

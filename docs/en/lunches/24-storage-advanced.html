@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 24 · Encrypted by Friday — Lunch 24: Storage (Advanced) · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 24 · Storage (Advanced). A supplier&#x27;s files were held to ransom overnight. Could ours be next? A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/24-storage-advanced.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/24-storage-advanced.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/24-storage-advanced.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/24-storage-advanced.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 24 · Encrypted by Friday — Lunch 24: Storage (Advanced)">
+<meta property="og:description" content="Lunch 24 · Storage (Advanced). A supplier&#x27;s files were held to ransom overnight. Could ours be next? A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/24-storage-advanced.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lunch" data-lunch="24" style="--c:#7b4ff0">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/lunches/24-storage-advanced.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 24</span> Season 2 · 🌊 Part 5 · Deep dives</div>
+      <h1>Encrypted by Friday</h1>
+      <div class="lunch-title">Lunch 24 · Storage (Advanced)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+      <div class="chips">
+        <span class="chip advanced">Advanced</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 Beyond AZ-900</span>
+        <span class="chip cost">🔬 Lab · about 60 minutes · 💲💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="07-storage-basic.html" title="The USB Drive Goes Home on Fridays">↩ 07</a><a class="chip" href="08-networking-basic.html" title="Don&#x27;t Overlap My Network">↩ 08</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 23 · Midnight on 12.12, a zone-spanning scale set grows for the sale and shrinks afterwards — with nobody awake at midnight.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, happy"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director&#x27;s question · 81% ready</b>After this episode you can say: “We keep selling, and our invoices can&#x27;t be altered or encrypted — not even by an insider.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#field-notes">🗒️ Notes</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today&#x27;s menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-layers-of-data-protection">Layers of data protection</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-lifecycle-management-let-rules-do-the-tiering">Lifecycle management: let rules do the tiering</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-locking-the-doors-network-keys-and-encryption">Locking the doors: network, keys and encryption</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-special-purpose-storage-and-scale">Special-purpose storage and scale</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-moving-data-at-scale-and-surviving-a-region">Moving data at scale and surviving a region</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-how-it-fits-together-for-nusantara-retail">How it fits together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Field notes</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/24-storage-advanced.html">🔬 Open Lab 24</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today&#x27;s menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Layer</strong> soft delete, versioning, point-in-time restore, immutability, replication and backup so that overwritten or deleted blobs can be recovered — or can't be destroyed at all.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Automate</strong> a blob's journey through the access tiers, and its deletion, with lifecycle management rules.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Lock down</strong> a storage account with firewall rules, private endpoints and private DNS, no shared keys, SAS expiration policies and customer-managed keys.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Recognize</strong> when Data Lake Storage, SFTP, NFS or a static website fits, and what scalability targets mean for a design.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Plan</strong> large data moves, redundancy changes and a storage account failover.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 24</span>
+        <div class="story-body"><p>Monday, 7:40 a.m. Pak Budi forwards a message from a supplier in Surabaya: overnight, ransomware encrypted every file on
+their server, including the invoices they exchange with Nusantara Retail. The attackers want payment by Friday.</p>
+<p>Ibu Sari stays calm but asks pointed questions. <em>&quot;Our invoices moved to Azure Storage last quarter. If someone steals a
+password, can they encrypt ours too? Could we get yesterday's versions back?&quot;</em> Finance adds a requirement of its own: the
+tax office can audit any invoice from the last ten years, and the auditor wants proof that nobody — not even IT — can
+quietly change one. Dewi, meanwhile, notices two more problems: the storage account answers requests from anywhere on
+the internet, and the bill shows seven-year-old invoices still sitting in the hot tier.</p>
+<p>Today's question: <strong>how do you make Nusantara Retail's invoices recoverable, tamper-proof, cheap to keep for ten years
+and reachable only from its own network?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-layers-of-data-protection" data-spy><span class="scene-no">Scene 1 of 6</span><h3>Layers of data protection</h3><div class="prose"><p>Lunch 07 showed how redundancy keeps copies of your data on other disks, in other zones or in another region. But
+redundancy copies <em>everything</em>, mistakes included. When ransomware overwrites an invoice, every copy is overwritten
+within seconds. Protection against people, scripts and malware needs different features, and they work best in layers.</p>
+<p><strong>Blob soft delete</strong> keeps deleted blobs for a retention period you choose (1–365 days); until it ends you can
+<strong>undelete</strong> them. <strong>Container soft delete</strong> does the same for whole containers — useful when someone deletes the wrong
+one with a single click. <strong>Blob versioning</strong> goes further: every write keeps the old content as a read-only <strong>previous
+version</strong> with its own version ID. Overwrite an invoice ten times and you have ten older versions to choose from. To
+restore one, you <em>copy</em> that version over the blob, and its content becomes current again.</p>
+<p>Versioning and soft delete reinforce each other. With versioning on, deleting a blob destroys nothing: the current
+version simply becomes a previous version. Deleting a <em>previous</em> version needs the stronger <strong>Storage Blob Data Owner</strong>
+role, and even then the version only moves into soft delete until the retention period ends. An attacker has to get
+through several layers, and wait, before your data is really gone.</p>
+<figure class="diagram"><pre class="mermaid">stateDiagram-v2
+    direction LR
+    state &quot;Current version&quot; as Current
+    state &quot;Previous version&quot; as Previous
+    state &quot;Soft-deleted version&quot; as Deleted
+    [*] --&gt; Current: upload
+    Current --&gt; Previous: overwrite or delete
+    Previous --&gt; Current: copy the version over the blob
+    Previous --&gt; Deleted: delete the version (Data Owner)
+    Deleted --&gt; Previous: undelete within retention
+    Deleted --&gt; [*]: retention period ends
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p><strong>Point-in-time restore</strong> answers &quot;undo everything since 2 a.m.&quot;: it rolls block blobs in a container, a set of
+prefixes or the whole account back to an earlier moment. It needs versioning, change feed and blob soft delete, and its
+restore window must be at least one day shorter than the soft delete retention. It can't bring back deleted containers
+(container soft delete does that) or blobs in the archive tier, and it isn't available in accounts with a hierarchical
+namespace or alongside immutability policies. The <strong>change feed</strong> it relies on is an ordered, read-only log of every
+create, update and delete, kept in the <code>$blobchangefeed</code> container. Read it yourself when you need to know which blobs
+an incident touched.</p>
+<p><strong>Immutable storage</strong> prevents changes instead of undoing them. It keeps data in a <strong>write once, read many (WORM)</strong>
+state: new blobs can be created and read, but protected data can't be modified or deleted while a <strong>time-based
+retention policy</strong> (1 to 146,000 days) is active or a <strong>legal hold</strong> is in place. A policy can cover a whole container
+(<strong>container-level</strong>) or individual blob versions (<strong>version-level</strong>, which needs versioning; an overwrite then creates
+a new version and the protected one stays untouched). A new policy starts <strong>unlocked</strong>, which is meant for short tests:
+it already blocks deletes, but you can still shorten or delete the policy itself. Once you <strong>lock</strong> it, you can only
+lengthen the period, and not even a subscription Owner can delete the protected blobs — or the account that holds
+them — before it ends. Test unlocked, lock deliberately.</p>
+<p><strong>Object replication</strong> asynchronously copies block blobs from a container in one account to a container in another,
+often in another region. It needs versioning on both sides and change feed on the source. Unlike geo-redundancy, the copy
+is a separate account you can read at any time, with its own tier, rules and permissions. New accounts block
+replication to other Microsoft Entra tenants by default.</p>
+<p>Two safety nets sit outside the account. <strong>Azure Backup</strong> offers operational backup for blobs and a <strong>vaulted backup</strong>
+that copies data into a Backup vault, which survives even the deletion of the storage account (Lunch 17). A
+<strong>CanNotDelete</strong> resource lock (Lunch 18) stops the account from being deleted by accident — and if it happens anyway,
+a deleted account can often be recovered within 14 days, as long as nobody has reused its name.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Protects against</th>
+<th>How you recover</th>
+<th>Good to know</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Blob soft delete</td>
+<td>Deleted blobs and versions</td>
+<td>Undelete within 1–365 days</td>
+<td>Deleted data is billed until the period ends</td>
+</tr>
+<tr>
+<td>Container soft delete</td>
+<td>A deleted container</td>
+<td>Restore the container</td>
+<td>Doesn't cover single blobs</td>
+</tr>
+<tr>
+<td>Versioning</td>
+<td>Overwrites and deletes</td>
+<td>Copy a previous version over the blob</td>
+<td>Every version is billed; tidy up with lifecycle rules</td>
+</tr>
+<tr>
+<td>Point-in-time restore</td>
+<td>Mass changes (&quot;undo last night&quot;)</td>
+<td>Restore block blobs to a moment</td>
+<td>Needs versioning, change feed and soft delete</td>
+</tr>
+<tr>
+<td>Change feed</td>
+<td>Nothing by itself — it's the audit trail</td>
+<td>Read which blobs changed, and when</td>
+<td>Log blobs are billed as storage</td>
+</tr>
+<tr>
+<td>Immutability (WORM)</td>
+<td>Anyone changing or deleting data</td>
+<td>Nothing to recover — the change is refused</td>
+<td>Locked policies can't be shortened or removed</td>
+</tr>
+<tr>
+<td>Object replication</td>
+<td>Losing an account or region</td>
+<td>Read the copy in the other account</td>
+<td>Asynchronous; block blobs only</td>
+</tr>
+<tr>
+<td>Vaulted backup</td>
+<td>Account deletion, ransomware, rogue admins</td>
+<td>Restore from the Backup vault</td>
+<td>Covered in Lunch 17</td>
+</tr>
+</tbody>
+</table></div>
+</div></article><article class="scene-card" id="2-lifecycle-management-let-rules-do-the-tiering" data-spy><span class="scene-no">Scene 2 of 6</span><h3>Lifecycle management: let rules do the tiering</h3><div class="prose"><p>Invoices follow a predictable life: busy for a month, checked now and then for a quarter, rarely opened after the first
+year, deleted after ten. Moving millions of them by hand would be a full-time job. A <strong>lifecycle management policy</strong>
+does it for you: a JSON document of up to 100 <strong>rules</strong> that the platform runs once a day.</p>
+<p>Each rule has <strong>filters</strong> — blob types, up to ten name prefixes that start with the container name, or blob index tags —
+and <strong>actions</strong> for the current version (<code>baseBlob</code>), previous versions (<code>version</code>) and snapshots. The actions are
+<code>tierToCool</code>, <code>tierToCold</code>, <code>tierToArchive</code> and <code>delete</code>, each triggered by a condition such as
+<code>daysAfterModificationGreaterThan</code>, <code>daysAfterCreationGreaterThan</code> or <code>daysAfterLastAccessTimeGreaterThan</code> (which needs
+last access time tracking). This is the heart of the rule you deploy in the lab:</p>
+<div class="code" data-lang="json"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>json</span><button class="copy-btn" type="button">Copy</button></div><pre><code>&quot;filters&quot;: { &quot;blobTypes&quot;: [ &quot;blockBlob&quot; ], &quot;prefixMatch&quot;: [ &quot;invoices/&quot; ] },
+&quot;actions&quot;: {
+  &quot;baseBlob&quot;: {
+    &quot;tierToCool&quot;:    { &quot;daysAfterModificationGreaterThan&quot;: 30 },
+    &quot;tierToCold&quot;:    { &quot;daysAfterModificationGreaterThan&quot;: 90 },
+    &quot;tierToArchive&quot;: { &quot;daysAfterModificationGreaterThan&quot;: 365, &quot;daysAfterLastTierChangeGreaterThan&quot;: 7 },
+    &quot;delete&quot;:        { &quot;daysAfterModificationGreaterThan&quot;: 3650 }
+  },
+  &quot;version&quot;: {
+    &quot;tierToCold&quot;: { &quot;daysAfterCreationGreaterThan&quot;: 30 },
+    &quot;delete&quot;:     { &quot;daysAfterCreationGreaterThan&quot;: 365 }
+  }
+}
+</code></pre></div>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    U([Day 0&lt;br/&gt;invoice uploaded]) --&gt; H[Hot&lt;br/&gt;opened often]
+    H --&gt;|after 30 days| C[Cool]
+    C --&gt;|after 90 days| D[Cold]
+    D --&gt;|after 1 year| A[Archive&lt;br/&gt;offline]
+    A --&gt;|after 10 years| X([Deleted])
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>A few details decide whether such a rule saves money or causes surprises:</p>
+<ul>
+<li><strong>Respect the minimum storage durations.</strong> Space the steps at least 30 days apart after cool, 90 after cold and 180
+after archive, or you pay early deletion charges. The rule above keeps each invoice in every tier long enough.</li>
+<li><strong>Include previous versions.</strong> Lifecycle management doesn't delete a current version while it still has previous
+versions or snapshots, so a delete rule for old invoices needs a matching <code>version</code> action.</li>
+<li><strong>Mind the redundancy.</strong> The archive tier isn't available on ZRS, GZRS or RA-GZRS accounts, so <code>tierToArchive</code>
+can't apply there.</li>
+<li><strong>Avoid ping-pong.</strong> <code>daysAfterLastTierChangeGreaterThan</code> stops a freshly rehydrated invoice from being archived again
+the next morning. With last access time tracking, <code>enableAutoTierToHotFromCool</code> moves a cool blob back to hot when
+someone reads it.</li>
+<li><strong>Be patient.</strong> A new or changed policy can take up to 24 hours to act, and immutable blobs are never deleted while
+their retention is active.</li>
+</ul>
+<p>If you'd rather not write rules at all, the smart tier from Lunch 07 moves blobs between hot, cool and cold for you.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Lifecycle rules are free to run, but every tier change is billed as a write operation. For millions of tiny files,
+those operations can cost more than the storage they save — model it in the pricing calculator first, or bundle small
+files into larger archives before they age.</p>
+</aside>
+</div></article><article class="scene-card" id="3-locking-the-doors-network-keys-and-encryption" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Locking the doors: network, keys and encryption</h3><div class="prose"><p>By default a storage account's <strong>public endpoint</strong> accepts connections from any network; your data is safe only because
+every request must be authorized. Advanced designs add network controls on top.</p>
+<p>The <strong>storage firewall</strong> has three settings for public network access: enabled from all networks, enabled from selected
+virtual networks and IP addresses, or <strong>Disabled</strong>. With selected networks you add <strong>IP rules</strong> for public addresses (up
+to 400), <strong>virtual network rules</strong> for subnets that use a service endpoint, <strong>resource instance rules</strong> for specific
+Azure resources, and the <strong>trusted Microsoft services</strong> exception for services such as Azure Backup. IP rules don't
+work for clients in the same Azure region as the account, because those use private Azure addresses — use virtual
+network rules or private endpoints for them. A request blocked by the firewall gets <code>403 AuthorizationFailure</code>, even
+with valid credentials.</p>
+<p>There are two ways to bring a virtual network closer to storage:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Service endpoint</th>
+<th>Private endpoint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What it does</td>
+<td>Lets a subnet reach the account's <em>public</em> endpoint over the Azure backbone, identified as that subnet</td>
+<td>Gives the account a private IP address on a network interface in your subnet</td>
+</tr>
+<tr>
+<td>DNS changes</td>
+<td>None</td>
+<td>A private DNS zone such as <code>privatelink.blob.core.windows.net</code></td>
+</tr>
+<tr>
+<td>Reachable from peered networks and on-premises</td>
+<td>No, only from enabled subnets</td>
+<td>Yes, over peering, VPN or ExpressRoute — once DNS is right</td>
+</tr>
+<tr>
+<td>Works when public network access is Disabled</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Granularity</td>
+<td>Per subnet and service (<code>Microsoft.Storage</code>)</td>
+<td>Per account and sub-resource (<code>blob</code>, <code>dfs</code>, <code>file</code>, <code>queue</code>, <code>table</code>, <code>web</code>)</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>Free</td>
+<td>Hourly charge plus per-GB data processing</td>
+</tr>
+</tbody>
+</table></div>
+<p>A private endpoint only helps if clients <em>find</em> it. Applications keep using the normal name, such as
+<code>stnusa24abcde.blob.core.windows.net</code>. Public DNS answers with a CNAME to
+<code>stnusa24abcde.privatelink.blob.core.windows.net</code>. Inside a virtual network that is linked to a <strong>private DNS zone</strong> with
+that name, the zone answers with the endpoint's private IP address; everywhere else, the name resolves to the public IP
+address as before. A <strong>DNS zone group</strong> on the private endpoint keeps that A record up to date for you.</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+    participant VM as VM in vnet-nusa-lab24
+    participant AzDNS as Azure DNS (168.63.129.16)
+    participant Zone as Private DNS zone privatelink.blob
+    VM-&gt;&gt;AzDNS: stnusa24abcde.blob.core.windows.net?
+    AzDNS--&gt;&gt;AzDNS: public answer is a CNAME to the privatelink name
+    AzDNS-&gt;&gt;Zone: zone linked to this VNet - look up stnusa24abcde
+    Zone--&gt;&gt;AzDNS: A record 10.24.2.4
+    AzDNS--&gt;&gt;VM: 10.24.2.4 (traffic stays private)
+    Note over VM,Zone: From Cloud Shell or the internet the same name resolves to a public IP
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>The most common private endpoint mistake is forgetting DNS. Without a private DNS zone linked to the client's virtual
+network (or a matching record on your own DNS servers), clients still resolve the public IP address — and once public
+access is disabled, they fail with <code>403 AuthorizationFailure</code>. Check with <code>nslookup</code> from inside the network before you
+switch public access off.</p>
+</aside>
+<p>Identity controls tighten things further. <strong>Disallowing Shared Key authorization</strong> (<code>--allow-shared-key-access false</code>)
+stops anyone using the account keys, and with them every service SAS and account SAS; Microsoft Entra ID requests and
+user delegation SAS keep working. Check your tools first — some older tools and a few Azure Files scenarios still depend
+on keys. A <strong>SAS expiration policy</strong> (<code>--sas-expiration-period</code>) sets a recommended maximum lifetime for new SAS tokens,
+and either logs or blocks tokens that exceed it.</p>
+<p>Everything in Azure Storage is <strong>encrypted at rest</strong> with 256-bit AES, using Microsoft-managed keys by default. With
+<strong>customer-managed keys</strong> you keep the key in Azure Key Vault or Managed HSM (soft delete and purge protection
+required); the account reads it through a managed identity and can follow new key versions automatically. Disable or
+delete that key and every read and write fails — a deliberate kill switch, and a reason to protect the key vault as
+carefully as the data. <strong>Infrastructure encryption</strong> adds a second layer, but only if you enable it when you create the
+account.</p>
+<p><strong>Microsoft Defender for Storage</strong> (Lunch 15) watches the data plane: unusual access patterns, suspicious uploads and
+signs of data exfiltration. Its optional <strong>malware scanning</strong> checks new blobs as they arrive and is billed per gigabyte
+scanned, while <strong>sensitive data threat detection</strong> focuses alerts on accounts holding personal or financial data.</p>
+</div></article><article class="scene-card" id="4-special-purpose-storage-and-scale" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Special-purpose storage and scale</h3><div class="prose"><p><strong>Data Lake Storage</strong> is a storage account with a <strong>hierarchical namespace</strong> (HNS). Folders become real directories, so
+renaming or deleting one is a single atomic operation instead of millions of blob copies, and you can set POSIX-like
+<strong>access control lists</strong> per directory and file through the <code>dfs</code> endpoint. Analytics engines such as Microsoft Fabric
+and Azure Databricks expect it. Some blob features, including point-in-time restore and object replication, aren't
+available with HNS, and switching an existing account to HNS is a one-way upgrade — check the feature support table
+first.</p>
+<p>Two protocols ride on top of HNS. <strong>SFTP</strong> lets suppliers upload files with a normal SFTP client, using <strong>local users</strong>
+with an SSH key or password that are separate from Entra ID; it's billed per hour while enabled, so switch it off when
+unused. <strong>NFS 3.0</strong> for blobs lets Linux and HPC workloads mount a container. NFS requests can't be authorized with keys
+or Entra ID, so the account must accept traffic only from virtual networks, through service endpoints or private
+endpoints. (Azure Files offers NFS 4.1 on its SSD tier.)</p>
+<p>A <strong>static website</strong> serves HTML, CSS and images straight from a special <code>$web</code> container on its own <code>web</code> endpoint,
+with an index document and a custom 404 page — no web server needed. Content in <code>$web</code> is always readable anonymously,
+even when anonymous access is disallowed elsewhere in the account. For a custom domain with HTTPS, put Azure Front Door
+in front of it.</p>
+<p>Finally, <strong>scalability targets</strong> describe how much one account handles before throttling: by default up to 5 PiB, and
+up to 40,000 requests per second in larger regions such as Southeast Asia (20,000 in others), with similar limits on
+throughput. When an account or one of its partitions is pushed too hard, Azure Storage returns <code>503 Server Busy</code> or
+<code>500 Operation Timeout</code>; clients should retry with exponential back-off. Very busy workloads spread data across several
+accounts — by default you can create 250 per region per subscription, and up to 1,000 on request.</p>
+</div></article><article class="scene-card" id="5-moving-data-at-scale-and-surviving-a-region" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Moving data at scale and surviving a region</h3><div class="prose"><p>Lunch 07 introduced AzCopy and Data Box for one-off copies. At scale, the question becomes <em>how to keep moving</em> data and
+how to fail over safely.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Moves data</th>
+<th>Best for</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>azcopy sync</code></td>
+<td>Online, scripted, incremental</td>
+<td>Mirroring a folder or container on a schedule</td>
+<td><code>--delete-destination true</code> deletes extra files at the target</td>
+</tr>
+<tr>
+<td>Azure Storage Mover</td>
+<td>Online, managed from Azure</td>
+<td>Migrating SMB or NFS shares, project by project</td>
+<td>Needs an agent near on-premises sources</td>
+</tr>
+<tr>
+<td>Azure Data Box</td>
+<td>Offline, shipped device</td>
+<td>Tens to hundreds of terabytes over a slow line</td>
+<td>Shipping takes days; order early</td>
+</tr>
+<tr>
+<td>Azure File Sync</td>
+<td>Online, continuous, two-way</td>
+<td>Branch file servers with a local cache (cloud tiering)</td>
+<td>Not supported with customer-managed failover</td>
+</tr>
+<tr>
+<td>Object replication</td>
+<td>Online, continuous, one-way</td>
+<td>Readable copies of block blobs in another region</td>
+<td>Asynchronous: the copy lags behind</td>
+</tr>
+</tbody>
+</table></div>
+<p>Redundancy can change later. Switching between LRS and GRS (or RA-GRS) is a simple update, although adding
+geo-redundancy costs a one-time copy to the secondary region. Adding zones — LRS to ZRS, or GRS to GZRS — needs a
+<strong>conversion</strong> that Microsoft runs in the background without a completion SLA, or a manual copy to a new account.
+Archived blobs get in the way of both: move or rehydrate them first.</p>
+<p>For geo-redundant accounts you can start a <strong>failover</strong> yourself:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Failover type</th>
+<th>When to use it</th>
+<th>Data loss</th>
+<th>Afterwards</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Customer-managed <strong>planned</strong> failover</td>
+<td>Both regions are healthy: disaster recovery drills, or problems with a service in the primary</td>
+<td>None — it waits for replication to catch up</td>
+<td>The regions swap roles and geo-redundancy keeps working</td>
+</tr>
+<tr>
+<td>Customer-managed (<strong>unplanned</strong>) failover</td>
+<td>The primary endpoint is unavailable</td>
+<td>Writes after the <strong>Last Sync Time</strong></td>
+<td>The account is LRS in the new primary; re-enable geo-redundancy, which copies everything again</td>
+</tr>
+<tr>
+<td>Microsoft-managed failover</td>
+<td>A whole region is lost</td>
+<td>Possible</td>
+<td>Microsoft decides when; don't build your plan around it</td>
+</tr>
+</tbody>
+</table></div>
+<p>A failover usually completes within an hour, and clients keep the same endpoint names. Before an unplanned failover,
+check how much you might lose with
+<code>az storage account show --name &lt;account&gt; --expand geoReplicationStats --query geoReplicationStats.lastSyncTime</code>. Not
+every account can fail over — Azure File Sync, for example, isn't supported — so check the documentation's
+list of unsupported features before you depend on it.</p>
+</div></article><article class="scene-card" id="6-how-it-fits-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>How it fits together for Nusantara Retail</h3><div class="prose"><p>Back to Ibu Sari's questions. This is the design Dewi presents for the invoices, which stay in Indonesia Central:</p>
+<ul>
+<li><strong>Recoverable:</strong> the working account for current invoices (general-purpose v2, ZRS) gets versioning, 14 days of blob
+and container soft delete, change feed and seven days of point-in-time restore. Monday's ransomware scenario becomes
+&quot;restore to 2 a.m.&quot; instead of &quot;pay by Friday&quot;.</li>
+<li><strong>Tamper-proof:</strong> when a tax year closes, its invoices are copied to a second ZRS account, into a container with a
+<strong>locked</strong> ten-year time-based retention policy — tested unlocked first, with finance signing off on the period. A
+separate account is needed anyway, because immutability and point-in-time restore can't share one.</li>
+<li><strong>Cheap for ten years:</strong> lifecycle rules move invoices to cool after 30 days and cold after 90. Because ZRS can't
+archive, object replication sends finished invoices to an LRS account in Southeast Asia, where a rule archives them —
+once the compliance team confirms that a copy may leave Indonesia.</li>
+<li><strong>Private:</strong> blob private endpoints in the hub network from Lunch 25, a linked <code>privatelink.blob.core.windows.net</code>
+zone, public network access Disabled, Shared Key disallowed, and the storefront reading data with a managed identity.</li>
+<li><strong>Watched:</strong> Defender for Storage with malware scanning on the separate SFTP-enabled account where suppliers drop their
+files, and a vaulted backup of the invoice containers.</li>
+</ul>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>An attacker steals Dewi's account, which holds the Owner role on the subscription. Which of these
+protections can they simply switch off or delete — soft delete, versioning, an unlocked policy, a locked policy, the
+vaulted backup — and which ones still save the 2025 invoices?</p>
+</aside>
+<p>In the lab you build the protection layers on a small scale, rescue invoices from a simulated attack and then close the
+public door. Next, Lunch 25 builds the hub-and-spoke network where private endpoints like this one live.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Ten years, one ransomware attack and two roads in</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/24-storage-advanced.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/24-storage-advanced.html" title="Interactive demo: Ten years, one ransomware attack and two roads in" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/24-storage-advanced/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>How a lifecycle rule walks an invoice from hot to cool, cold and archive, and deletes it after ten years.</li>
+<li>What happens to the current version when ransomware overwrites a blob, and how a previous version is promoted back.</li>
+<li>Why a delete in a versioned account leaves a recoverable version, and why a WORM container refuses the delete.</li>
+<li>How the same blob name resolves to a private IP inside the virtual network and to a public IP outside it.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Overnight, a compromised script overwrote 2,000 invoices in a container that has versioning, change feed, soft delete
+and point-in-time restore enabled. What is the fastest way back?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Run a <strong>point-in-time restore</strong> of that container (or prefix) to a moment before the script started. It uses the
+versions and the change feed to roll every affected block blob back in one operation, instead of you promoting 2,000
+previous versions one by one.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Finance wants the 2025 invoices undeletable for ten years, even by administrators, but isn't sure the period is
+right. How do you proceed?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Create a time-based retention policy and test it <strong>unlocked</strong>, where it can still be shortened or deleted. Lock it
+only after finance confirms the period, because a locked policy can only be extended — and it then blocks deleting
+the protected blobs and the account until the period ends.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Dewi created a private endpoint for blob storage, but <code>nslookup</code> from a VM in the same virtual network still returns
+a public IP address. What's missing?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The <strong>private DNS zone</strong> <code>privatelink.blob.core.windows.net</code> isn't linked to that virtual network (or has no A record
+for the account, for example because the DNS zone group is missing). Without it, the CNAME to the privatelink name
+falls through to public DNS.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>A colleague's lifecycle rule moves invoices to cool after 10 days and to archive after 20 days. What's wrong with it?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>It ignores the <strong>minimum storage durations</strong>. Each blob leaves cool after only 10 of its 30 days, so you pay an early
+deletion charge on every one. Space the steps at least as far apart as each tier's minimum (30 days for cool, 90 for
+cold, 180 for archive).</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>The primary region of a GRS account becomes unavailable and you start a customer-managed failover. What should you
+tell the business to expect?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Writes made after the <strong>Last Sync Time</strong> may be lost, because replication to the secondary is asynchronous. After
+failover the account is LRS in the new primary region until you re-enable geo-redundancy, which copies all data
+again.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Redundancy copies mistakes; versioning, soft delete, point-in-time restore and backup let you undo them, and a locked immutability policy stops them from happening at all.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Lifecycle rules tier and delete data automatically — design them around minimum storage durations, and include previous versions.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>A private endpoint gives the account a private IP address, but only DNS makes clients use it: link the <code>privatelink.blob.core.windows.net</code> zone, test, then disable public network access.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Disallow Shared Key, cap SAS lifetimes, and use customer-managed keys and Defender for Storage when the data is sensitive.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Plan for scale and disasters: pick the right bulk-transfer tool, know which redundancy changes need a conversion, and check Last Sync Time before an unplanned failover.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Field notes from Stefanus</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Ask who can switch it off.</strong> For every protection layer on a storage account, I ask one question in design reviews:
+<em>who can turn this off, and how fast?</em> Soft delete, versioning and an unlocked retention policy all rescue you from
+accidents, but anyone with the Owner role can disable them in a few clicks — so I treat them as undo buttons, not as
+protection against a stolen admin account. Only a locked policy or a backup held under separate permissions answers
+that threat, and I want someone outside IT to sign off before anything gets locked. Then I book a restore drill:
+overwrite a test file, delete a test container and time how long it takes to get both back. Protection you have never
+restored from is a hope, not a plan.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">More about the author →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>24</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Ransomware-proof invoices</h3>
+          <div class="prose"><p>On your own time you will switch on versioning, soft delete and change feed, then play the attacker: overwrite one
+invoice, delete another, even delete the whole container — and bring everything back. You will deploy a ten-year
+lifecycle policy from a JSON file and protect a container with an unlocked time-based retention policy that refuses
+deletes. Finally you add a private endpoint and a private DNS zone, compare <code>nslookup</code> answers from a VM inside the
+network and from Cloud Shell, and disable public network access.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 60 minutes</span><span class="chip cost">💲💲 small charges while running</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/24-storage-advanced.html">Start Lab 24 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/storage/blobs/data-protection-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Data protection overview</b><span>Which protection options to combine for each scenario, with a handy comparison table.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/storage/blobs/immutable-storage-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Store business-critical blob data with immutable storage</b><span>Container-level vs version-level policies, locking and legal holds.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/storage/common/storage-private-endpoints" target="_blank" rel="noopener"><b>Microsoft Learn: Use private endpoints for Azure Storage</b><span>DNS zones per sub-resource and how name resolution changes.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/storage/common/storage-disaster-recovery-guidance" target="_blank" rel="noopener"><b>Microsoft Learn: Azure storage disaster recovery planning and failover</b><span>Failover types, Last Sync Time and unsupported features.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🧊</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Immutable</h2>
+        <p class="muted">Protect data against deletion and ransomware.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“We keep selling, and our invoices can&#x27;t be altered or encrypted — not even by an insider.”</b></p>
+        <div class="teaser"><b>Next episode · 25</b><h4>Prove the Traffic Is Inspected</h4><p>Finance wants its own network, and the auditor wants proof of what can talk to it.</p><p style="margin-top:10px"><a href="25-networking-advanced.html">Watch Episode 25 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="23-virtual-machines-advanced.html"><small>← Previous episode</small>23 · Midnight on 12.12</a><a class="next" href="25-networking-advanced.html"><small>Next episode →</small>25 · Prove the Traffic Is Inspected</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/24-storage-advanced/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

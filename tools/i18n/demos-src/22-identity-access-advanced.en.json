@@ -1,0 +1,134 @@
+{
+  "page": {
+    "doc_title": "Lunch 22 · No stored secrets, no standing admins — Interactive demo",
+    "kicker": "Lunch 22 · Identity and Access (Advanced) · Interactive demo",
+    "title": "No stored secrets, no standing admins",
+    "lede": "Watch a GitHub Actions workflow trade a short-lived OpenID Connect token for an Azure access token through a federated credential, then follow a Privileged Identity Management activation from eligible to expired. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "Workload identity federation from GitHub Actions to Azure, and a PIM activation timeline",
+    "svgDesc": "Top left, a GitHub Actions job and GitHub's OpenID Connect provider. Below them, Microsoft Entra ID with an app registration and its federated credential. Top right, Azure Resource Manager and the resource group rg-storefront with an App Service web app and an Azure SQL database. Along the bottom, first the token's claims and later a timeline in which Pak Budi activates an eligible Owner role for two hours until it expires."
+  },
+  "steps": [
+    {
+      "title": "Release night, expired secret",
+      "text": "Friday, 23:00, and Nusantara Retail's release pipeline fails. The deployment job signs in to Azure with a client secret stored in GitHub, and that secret expired yesterday. Secrets like this expire, leak into logs and screenshots, and someone has to remember to rotate them. Can the pipeline reach Azure without storing any secret at all?"
+    },
+    {
+      "title": "Replace the secret with trust",
+      "text": "You register an app in Microsoft Entra ID, and its service principal gets Contributor on rg-storefront and nothing else. Instead of a secret, you add a federated credential: trust tokens whose issuer is GitHub Actions, whose subject is this repository's main branch, and whose audience is api://AzureADTokenExchange. Then you delete the old secret."
+    },
+    {
+      "title": "The job asks GitHub for a token",
+      "text": "On the next push to main the workflow runs. Its YAML grants permissions: id-token: write, which lets the job request an identity token. The azure/login action asks GitHub's OpenID Connect provider for a token meant for Microsoft Entra ID. Nothing secret is stored in the repository or its settings.",
+      "set": {
+        "t-ghperm": "permissions: id-token: write"
+      }
+    },
+    {
+      "title": "A short-lived, signed token",
+      "text": "GitHub's provider signs a JSON Web Token that lives for minutes, not months. Its claims describe the job: the issuer is token.actions.githubusercontent.com, the subject names the repository and the branch, and the audience says the token is meant for Azure's token exchange. Anyone can read these claims; only GitHub can sign them."
+    },
+    {
+      "title": "Exchange it at Microsoft Entra ID",
+      "text": "azure/login sends the GitHub token to Microsoft Entra ID as a client assertion, together with the app's client ID and the tenant ID. Those two IDs aren't secrets; they only name the app the job wants to become. The signed GitHub token is the proof that it's allowed to."
+    },
+    {
+      "title": "Entra ID checks the trust",
+      "text": "Entra ID fetches GitHub's public signing keys through OpenID Connect discovery and verifies the signature. Then it compares the claims with the federated credential: issuer, subject and audience must match exactly, and wildcards aren't allowed, so main means main. Everything matches, so the check turns green.",
+      "set": {
+        "t-chk": "signature ✓ issuer ✓ subject ✓"
+      }
+    },
+    {
+      "title": "An Azure access token comes back",
+      "text": "Entra ID issues an access token for the app's service principal and returns it to the job, which now acts as that workload identity. The token expires on its own, there's no password to steal, and Azure's mandatory MFA doesn't apply to workload identities, so unattended automation keeps working."
+    },
+    {
+      "title": "Deploy with least privilege",
+      "text": "The job calls Azure Resource Manager with the access token. Azure RBAC checks the service principal's role: Contributor, but only on rg-storefront. The new storefront build deploys and version 1.5 goes live. Even if this pipeline were compromised, the attacker would reach one resource group, not the whole subscription.",
+      "set": {
+        "t-web": "running version 1.5 ✓"
+      }
+    },
+    {
+      "title": "An untrusted branch is refused",
+      "text": "Someone runs the workflow from a branch called feature/discount. GitHub issues a valid token, but its subject ends in refs/heads/feature/discount. No federated credential matches that subject, so Entra ID refuses the exchange with error AADSTS700213 and issues nothing. The deployment never starts, shown in red.",
+      "set": {
+        "t-tsub": "sub: repo:nusantara-retail/storefront:ref:refs/heads/feature/discount",
+        "t-chk": "subject ✗ no match"
+      }
+    },
+    {
+      "title": "People need just-in-time access too",
+      "text": "Pipelines are covered. What about people? Pak Budi sometimes needs Owner on rg-storefront-prod. With Privileged Identity Management he is only eligible: no standing access, nothing an attacker could use while he sleeps. Eligible assignments, activation and expiry need Microsoft Entra ID P2 or ID Governance licences.",
+      "set": {
+        "t-tsub": "sub: repo:nusantara-retail/storefront:ref:refs/heads/main",
+        "t-chk": "waiting for a token"
+      }
+    },
+    {
+      "title": "Activate: MFA, reason, approval",
+      "text": "At 09:00 an incident needs his help. Pak Budi opens PIM and requests the Owner role for two hours, within the maximum his administrator allows. He completes MFA and types the justification INC-2041. Because this role requires approval, Ibu Sari approves the request, shown above the timeline.",
+      "set": {
+        "t-budi": "PIM: activation requested"
+      }
+    },
+    {
+      "title": "Active for two hours",
+      "text": "The Owner assignment is now active, and Azure RBAC treats it like any other role assignment. PIM notifies the right people and records who activated what, when and why, so audits and access reviews have evidence. If the work finishes early, Pak Budi can deactivate the role himself.",
+      "set": {
+        "t-budi": "PIM: Owner is active"
+      }
+    },
+    {
+      "title": "Expired: back to eligible",
+      "text": "At 11:00 the activation expires and the Owner assignment disappears on its own. Pak Budi is eligible again, with no standing access. Combine both ideas: pipelines that use federated credentials instead of secrets, and people who use just-in-time roles instead of permanent Owner.",
+      "tip": "Lab 22 builds the federated credential, the Nusantara VM Operator custom role and a managed identity with a data role. Conditional Access and PIM are a guided portal tour, because they need P1 or P2 licences.",
+      "set": {
+        "t-budi": "PIM: eligible again"
+      }
+    }
+  ],
+  "svg": [
+    "GitHub · nusantara-retail/storefront",
+    "Azure · Southeast Asia",
+    "rg-storefront",
+    "GitHub Actions job",
+    "deploy.yml · push to main",
+    "needs to deploy to Azure",
+    "GitHub OIDC provider",
+    "signs short-lived tokens",
+    "valid for minutes only",
+    "Microsoft Entra ID",
+    "App registration",
+    "+ service principal · no secret",
+    "Federated credential",
+    "issuer: GitHub Actions OIDC",
+    "subject: …/storefront · main",
+    "audience: AzureADTokenExchange",
+    "waiting for a token",
+    "Azure access token",
+    "short-lived · for the app",
+    "Azure Resource Manager",
+    "RBAC: Contributor on rg-storefront only",
+    "App Service · storefront",
+    "running version 1.4",
+    "Azure SQL · orders",
+    "untouched by this deployment",
+    "The old way: a client secret in GitHub",
+    "expires · can leak · someone must rotate it",
+    "OIDC token signed by GitHub · iss: token.actions.githubusercontent.com · aud: api://AzureADTokenExchange",
+    "sub: repo:nusantara-retail/storefront:ref:refs/heads/main",
+    "Pak Budi",
+    "head-office IT",
+    "PIM: eligible for Owner",
+    "on rg-storefront-prod",
+    "eligible",
+    "no access",
+    "09:00 activate",
+    "MFA + reason",
+    "active · 2 hours",
+    "11:00 expires",
+    "back to eligible",
+    "approved by Ibu Sari ✓"
+  ]
+}

@@ -1,0 +1,146 @@
+{
+  "page": {
+    "doc_title": "Lunch 30 · Why was checkout slow on Friday? — Interactive demo",
+    "kicker": "Lunch 30 · Monitoring (Advanced) · Interactive demo",
+    "title": "Why was checkout slow on Friday? One workspace, three pipes, one query",
+    "lede": "Telemetry from a VM (agent and data collection rule), Blob storage (diagnostic setting) and a web app (Application Insights) flows into one Log Analytics workspace, and a KQL pipeline turns rows into a chart and an alert. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Nusantara Retail's telemetry pipes into the log-nusa workspace, and a KQL query that becomes a chart and an alert",
+    "svgDesc": "On the left, the sources: shoppers, the storefront web app, the order-jobs VM and Blob storage. In the second column, the collectors: an availability test, Application Insights, the Azure Monitor Agent with a data collection rule, and a diagnostic setting. They feed tables in the Log Analytics workspace log-nusa. Along the bottom, a KQL pipeline filters and summarizes AppRequests; on the right, the resulting chart, a log search alert and the on-call engineer."
+  },
+  "steps": [
+    {
+      "title": "Friday 19:05: slow, and nobody knows why",
+      "text": "It's the Friday flash sale. Checkout suddenly takes four seconds and shoppers abandon their carts, yet the CPU alert from Lunch 16 stays quiet: no server is above 50%. Dewi suspects the product images in Blob storage, Pak Budi the order-jobs VM, and Rizky the payment provider. Each of them has a hunch and a different screen. Nobody has evidence.",
+      "set": {
+        "t-app": "checkout: 4 seconds",
+        "t-shop": "carts abandoned"
+      }
+    },
+    {
+      "title": "One evidence room",
+      "text": "On Monday, Pak Budi creates one Log Analytics workspace, log-nusa, in Southeast Asia. Every source will write into its own tables there, on the Analytics plan with 30 days of retention. One workspace instead of three screens means one query can line up the web app, the VM and storage side by side. Now the evidence needs a way in.",
+      "set": {
+        "t-app": "checkout: 0.3 seconds",
+        "t-shop": "browsing, Monday"
+      }
+    },
+    {
+      "title": "Pipe 1: the agent and a data collection rule",
+      "text": "On the order-jobs VM, the Azure Monitor Agent signs in with the VM's managed identity. On its own it collects nothing. A data collection rule, associated with the VM, tells it what to collect and where to send it: Syslog at Warning and above, and CPU, memory, disk and network counters every 60 seconds. They land in the Syslog, Perf and Heartbeat tables."
+    },
+    {
+      "title": "Rizky's cheaper rule drops the clues",
+      "text": "To cut the log bill, Rizky edits the rule to collect only Error and above. The agent now discards every warning on the VM before it's sent, including the order job's \"payment API slow, retry 3 of 5\" messages. Filtering at the source is the cheapest way to save money, but data that was never collected can't be queried later.",
+      "set": {
+        "t-dcr": "Syslog Error+ only ✗",
+        "t-tvm": "no warnings arriving"
+      }
+    },
+    {
+      "title": "Fixed, then wait a few minutes",
+      "text": "Pak Budi restores Warning to the rule. The agent picks up the change within minutes, and new warnings flow again; the ones dropped in between are gone for good. Remember the clock: a brand-new agent, rule or diagnostic setting usually needs five to fifteen minutes before its first rows appear in the workspace.",
+      "set": {
+        "t-dcr": "Syslog Warning+ · Perf 60 s",
+        "t-tvm": "warnings and counters"
+      }
+    },
+    {
+      "title": "Pipe 2: a diagnostic setting for platform logs",
+      "text": "Blob storage records every read, write and failed request, but keeps nothing until you route it. A diagnostic setting on the blob service sends the allLogs category group to log-nusa, into the StorageBlobLogs table. Now Dewi's product images are on the record. Diagnostic settings outlive their resource, so delete them when you delete it, and use Azure Policy at scale."
+    },
+    {
+      "title": "Pipe 3: Application Insights",
+      "text": "The storefront gets Application Insights without code changes: App Service autoinstrumentation, built on OpenTelemetry, collects requests, dependencies, exceptions and logs into AppRequests, AppTraces and their sibling tables in the same workspace. A standard availability test calls the shop from five locations every five minutes, so you know it's reachable from outside even when nobody is shopping."
+    },
+    {
+      "title": "A query starts with a table",
+      "text": "Time for questions. A KQL query starts with a table and pipes its rows through operators, left to right, like a production line. AppRequests holds every request the storefront served today: 48,210 rows. Nobody can read that many rows, so each of the next operators keeps only what answers Ibu Sari's question."
+    },
+    {
+      "title": "where: filter early",
+      "text": "The first where keeps Friday from 18:00 to 21:00 and only requests whose name has the term checkout: 1,420 rows. Filter on time first; it's the cheapest, fastest cut. The has operator matches whole terms using the index, while contains searches every substring and is slower."
+    },
+    {
+      "title": "summarize: buckets and percentiles",
+      "text": "Summarize groups the rows into five-minute bins and calculates the median and the 95th percentile of the duration: 36 rows, one per bin. Percentiles, not averages: an average of 620 milliseconds can hide one shopper in twenty waiting almost three seconds. That slow tail is exactly what customers complained about."
+    },
+    {
+      "title": "render: the chart that answered Ibu Sari",
+      "text": "Render draws the 36 rows as a time chart. The 95th percentile jumps from about 400 milliseconds to 2.8 seconds at 19:05, while the median stays fast. AppDependencies shows why: calls to the payment provider took 2.4 seconds. Perf and StorageBlobLogs stayed flat, so the VM and the images are cleared. Rizky was right."
+    },
+    {
+      "title": "The same query becomes an alert",
+      "text": "The query that found the problem now guards against it. A log search alert runs every five minutes over the last ten, counts checkouts slower than one second, and fires above three. The window is longer than the frequency, so rows that arrive late still count. The action group emails the on-call engineer before customers notice.",
+      "set": {
+        "t-alert-state": "Fired · Sev 3",
+        "t-inbox": "1 alert: slow checkouts"
+      }
+    },
+    {
+      "title": "Recap: evidence, not hunches",
+      "text": "One workspace, three pipes: the agent with a data collection rule for the VM, a diagnostic setting for storage, and Application Insights for the app. A KQL pipeline filters early, summarizes with percentiles and renders a chart, and the same query becomes an alert. Before 12.12, Nusantara Retail argues with data instead of hunches.",
+      "tip": "In Lab 30 you build all three pipes, answer ten graded KQL questions, create the log search alert and repair Rizky's data collection rule.",
+      "set": {
+        "t-alert-state": "Status: OK",
+        "t-inbox": "Inbox: quiet"
+      }
+    }
+  ],
+  "svg": [
+    "log-nusa",
+    "Log Analytics workspace",
+    "Analytics plan · 30 days",
+    "KQL in Log Analytics",
+    "Shoppers",
+    "flash sale, Friday 19:00",
+    "Storefront web app",
+    "App Service · Python",
+    "checkout: 0.3 seconds",
+    "vm-nusa-app",
+    "order jobs · Linux",
+    "CPU 45%",
+    "Blob storage",
+    "product images",
+    "Availability test",
+    "5 locations · every 5 min",
+    "Application Insights",
+    "autoinstrumentation",
+    "built on OpenTelemetry",
+    "Agent + DCR",
+    "Syslog Warning+ · Perf 60 s",
+    "managed identity",
+    "Diagnostic setting",
+    "blob service · allLogs",
+    "AppRequests",
+    "AppTraces, AppExceptions",
+    "requests, logs, errors",
+    "Syslog · Perf",
+    "Heartbeat",
+    "warnings and counters",
+    "StorageBlobLogs",
+    "reads, writes, 404s",
+    "every request",
+    "of the day",
+    "48,210 rows",
+    "| where",
+    "Fri 18:00–21:00",
+    "Name has checkout",
+    "1,420 rows",
+    "| summarize",
+    "p50, p95 of duration",
+    "by 5-minute bin",
+    "36 rows",
+    "| render",
+    "timechart",
+    "1 chart",
+    "Checkout p95 (ms)",
+    "1,000 ms",
+    "p50 ≈ 250 ms · p95 ≈ 2,800 ms",
+    "Log search alert",
+    "every 5 min · last 10 min",
+    "slow checkouts > 3",
+    "Status: OK",
+    "On-call engineer",
+    "Inbox: quiet"
+  ]
+}

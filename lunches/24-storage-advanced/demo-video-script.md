@@ -1,5 +1,7 @@
 # Lunch 24 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the part an animation cannot show.
 > **Length target:** 4–6 minutes (short videos keep attention; split anything longer).
 > **Record in:** a personal or dedicated demo subscription — never a company subscription.
@@ -8,8 +10,9 @@
 
 ## Setup before you press record
 
-Run this in Cloud Shell (Bash) about 15 minutes before recording. It creates an account, a container with two invoices,
-a virtual network and a private endpoint with its private DNS zone. Pick your own account name and check it is free
+Run this in Cloud Shell (Bash) about 15 minutes before recording. It creates an account,
+a virtual network and a private endpoint with its private DNS zone; you add the container and its two invoices in
+the portal afterwards (see the list below). Pick your own account name and check it is free
 with `az storage account check-name --name <name> --query nameAvailable`.
 
 ```bash

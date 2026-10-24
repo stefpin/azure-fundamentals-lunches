@@ -1,5 +1,7 @@
 # Lunch 28 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — a failover group in the portal, its listeners, a
 > planned failover, the point-in-time restore page and the masking and auditing settings. The animation explains the
 > mechanism; this video shows where everything lives.

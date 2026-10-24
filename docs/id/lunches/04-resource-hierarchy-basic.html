@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 04 · Siapa yang Bikin server-baru-final2? — Makan Siang 04: Hierarki Resource dan Azure Resource Manager (Dasar) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 04 · Hierarki Resource dan Azure Resource Manager (Dasar). Tiga minggu eksperimen tanpa aturan penamaan, dan tidak ada yang tahu mana saja yang milik toko. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/04-resource-hierarchy-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/04-resource-hierarchy-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/04-resource-hierarchy-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/04-resource-hierarchy-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 04 · Siapa yang Bikin server-baru-final2? — Makan Siang 04: Hierarki Resource dan Azure Resource Manager (Dasar)">
+<meta property="og:description" content="Makan Siang 04 · Hierarki Resource dan Azure Resource Manager (Dasar). Tiga minggu eksperimen tanpa aturan penamaan, dan tidak ada yang tahu mana saja yang milik toko. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/04-resource-hierarchy-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="04" style="--c:#1665d8">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/04-resource-hierarchy-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 04</span> Season 1 · 🧱 Bagian 1 · Fondasi</div>
+      <h1>Siapa yang Bikin server-baru-final2?</h1>
+      <div class="lunch-title">Makan Siang 04 · Hierarki Resource dan Azure Resource Manager (Dasar)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 40 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="01-before-you-begin.html" title="Ruang Sebelah Pantry">↩ 01</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 03 · Toko Kita Tinggal di Mana?, region utama untuk toko sudah Anda pilih, dan Anda melihat bagaimana availability zone tetap bertahan saat satu pusat data gagal.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-1"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, cemas"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 10% siap</b>Setelah episode ini Anda bisa menjawab: “Masih berhari-hari — tetapi sekarang kita tahu persis apa saja milik kita di Azure.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-enam-tingkat-dari-tenant-sampai-resource">Enam tingkat, dari tenant sampai resource</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-azure-resource-manager-satu-pintu-depan-untuk-semua-alat">Azure Resource Manager: satu pintu depan untuk semua alat</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-scope-pewarisan-dan-resource-id">Scope, pewarisan, dan resource ID</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-resource-group-pemindahan-nama-dan-tag">Resource group, pemindahan, nama, dan tag</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-lock-dan-azure-resource-graph">Lock dan Azure Resource Graph</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-bagaimana-semuanya-menyatu-untuk-nusantara-retail">Bagaimana semuanya menyatu untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/04-resource-hierarchy-basic.html">🔬 Buka Lab 04</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> tingkatan dalam hierarki resource Azure, mulai dari tenant Microsoft Entra hingga satu resource (<em>sumber daya</em>), beserta kegunaan setiap tingkat.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Mendeskripsikan</strong> bagaimana Azure Resource Manager menangani setiap permintaan pengelolaan, serta membedakan operasi control plane dari operasi data plane.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membaca</strong> sebuah resource ID dan <strong>memprediksi</strong> role, policy, lock (<em>kunci sumber daya</em>), anggaran (budget), dan tag mana yang berlaku pada sebuah resource melalui scope-nya.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menata</strong> resource dengan resource group (<em>grup sumber daya</em>), konvensi penamaan, tag, dan lock, lalu menemukannya kembali dengan Azure Resource Graph.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 04</span>
+        <div class="story-body"><p>Tiga minggu eksperimen sudah meninggalkan jejaknya. Subscription (<em>langganan</em>) lab kini berisi sebuah resource group
+bernama <code>test</code>, dua lagi bernama <code>rg1</code> dan <code>rg-new</code>, sebuah virtual machine (<em>komputer virtual</em>) bernama
+<code>server-baru-final2</code> (namanya saja sudah bercerita banyak), dan sebuah storage account (<em>akun penyimpanan</em>) bernama
+<code>dewitest123</code>. Tidak ada yang ingat mana di antaranya yang milik toko online.</p>
+<p>Permintaan mulai menumpuk di meja Anda. Tim keuangan ingin melihat berapa biaya toko online, terpisah dari proyek baru
+sinkronisasi stok. Rizky, sang kontraktor, perlu mengelola toko online dan tidak boleh menyentuh yang lain. Pak Budi
+menginginkan jaminan bahwa tidak seorang pun, bahkan administrator yang sedang terburu-buru, bisa menghapus storage
+account yang nantinya menyimpan semua foto produk. Dan Ibu Sari ingin aturan seperti &quot;data pelanggan tetap di Jakarta&quot;
+cukup ditetapkan sekali lalu berlaku di mana-mana.</p>
+<p>Tidak satu pun permintaan ini menyangkut layanan tertentu. Semuanya tentang <strong>struktur</strong>. Pertanyaan hari ini:
+<strong>bagaimana Nusantara Retail sebaiknya menata seluruh aset Azure-nya agar akses, aturan, dan biaya otomatis mengikuti
+struktur itu?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-enam-tingkat-dari-tenant-sampai-resource" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Enam tingkat, dari tenant sampai resource</h3><div class="prose"><p>Setiap resource Azure berada di dasar sebuah hierarki, dan setiap tingkat di atasnya adalah tempat Anda bisa memasang
+aturan yang mengalir ke bawah. Mari kita baca dari atas:</p>
+<ul>
+<li><strong>Tenant Microsoft Entra</strong> adalah direktori identitas organisasi: berisi pengguna, grup, dan aplikasi. Setiap
+subscription memercayai tepat satu tenant. Proses masuk (sign-in) terjadi di sini; Makan Siang 05 membahasnya secara
+mendalam.</li>
+<li><strong>Root management group</strong> berada tepat di bawah tenant. Setiap tenant punya tepat satu, yang tampil di portal sebagai
+<em>Tenant root group</em>, dan ID-nya sama dengan ID tenant. Setiap management group dan subscription bermuara ke sana,
+subscription baru otomatis masuk ke dalamnya, dan grup ini tidak bisa dipindahkan atau dihapus. Secara bawaan tidak
+ada yang punya akses ke grup ini: seorang Global Administrator harus terlebih dahulu menaikkan (elevate) aksesnya
+sendiri.</li>
+<li><strong>Management group</strong> (<em>grup manajemen</em>) adalah wadah untuk subscription dan untuk management group lainnya. Sebuah
+pohon bisa sedalam hingga enam tingkat di bawah root (tingkat root dan tingkat subscription tidak dihitung), satu
+tenant bisa menampung hingga 10.000 management group, dan setiap management group atau subscription punya tepat satu
+induk (parent).</li>
+<li><strong>Subscription</strong> menampung resource group dan merupakan satuan penagihan serta skala (penjelasannya ada di bawah).</li>
+<li><strong>Resource group</strong> adalah wadah untuk resource yang berbagi siklus hidup (lifecycle) yang sama.</li>
+<li><strong>Resource</strong> adalah hal yang benar-benar Anda pakai dan bayar: virtual machine, storage account, web app (<em>aplikasi
+web</em>), dan database.</li>
+</ul>
+<p>Ibaratnya susunan wilayah administratif di Indonesia: negara, provinsi, kabupaten atau kota, kecamatan, kelurahan, lalu
+rumah. Setiap kelurahan masuk ke tepat satu kecamatan. Undang-undang yang ditetapkan di tingkat nasional berlaku sampai
+ke rumah terakhir, sementara peraturan daerah satu provinsi tidak berlaku di provinsi sebelah. Hierarki Azure bekerja
+dengan cara yang mirip, seperti yang akan Anda lihat di bagian 3.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  T[&quot;Tenant Microsoft Entra&lt;br/&gt;direktori Nusantara Retail&quot;] --&gt; R[&quot;Tenant root group&lt;br/&gt;(root management group)&quot;]
+  R --&gt; MG[&quot;mg-nusa&lt;br/&gt;Nusantara Retail&quot;]
+  MG --&gt; MP[&quot;mg-nusa-prod&quot;]
+  MG --&gt; MN[&quot;mg-nusa-nonprod&quot;]
+  MP --&gt; SP[&quot;sub-nusa-prod&lt;br/&gt;(subscription)&quot;]
+  MN --&gt; SD[&quot;sub-nusa-dev&lt;br/&gt;(subscription)&quot;]
+  SP --&gt; RG1[&quot;rg-storefront-prod&quot;]
+  SP --&gt; RG2[&quot;rg-shared-prod&quot;]
+  SD --&gt; RG3[&quot;rg-storefront-dev&quot;]
+  RG1 --&gt; A1[&quot;app-nusa-shop&quot;]
+  RG2 --&gt; A2[&quot;stnusaimg01&quot;]
+  RG3 --&gt; A3[&quot;app-nusa-dev&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tingkat</th>
+<th>Fungsi utama</th>
+<th>Aturan yang perlu diingat</th>
+<th>Contoh di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tenant Microsoft Entra</td>
+<td>Identitas dan sign-in</td>
+<td>Setiap subscription memercayai tepat satu tenant</td>
+<td>Direktori perusahaan</td>
+</tr>
+<tr>
+<td>Root management group</td>
+<td>Puncak pohon tata kelola</td>
+<td>ID-nya sama dengan ID tenant; tidak bisa dipindahkan atau dihapus; tanpa akses secara bawaan</td>
+<td>Tenant root group</td>
+</tr>
+<tr>
+<td>Management group</td>
+<td>Mengelompokkan subscription agar aturan bisa diterapkan dalam skala besar</td>
+<td>Hingga enam tingkat di bawah root; masing-masing punya satu induk</td>
+<td>mg-nusa, mg-nusa-prod, mg-nusa-nonprod</td>
+</tr>
+<tr>
+<td>Subscription</td>
+<td>Batas penagihan, kuota, dan akses</td>
+<td>Satu induk management group; memercayai satu tenant</td>
+<td>sub-nusa-prod, sub-nusa-dev</td>
+</tr>
+<tr>
+<td>Resource group</td>
+<td>Wadah siklus hidup</td>
+<td>Setiap resource berada di tepat satu grup; tidak bisa bersarang</td>
+<td>rg-storefront-prod, rg-shared-prod</td>
+</tr>
+<tr>
+<td>Resource</td>
+<td>Layanan yang Anda pakai</td>
+<td>Tipenya berasal dari resource provider; sebagian besar nama bersifat permanen</td>
+<td>app-nusa-shop, stnusaimg01</td>
+</tr>
+</tbody>
+</table></div>
+<p>Subscription layak dilihat lebih dekat, karena ia sekaligus menjadi tiga jenis batas. Pertama, <strong>batas penagihan</strong>:
+pemakaian dicatat per subscription lalu digabungkan ke billing account (akun penagihan) di atasnya, sehingga subscription yang terpisah
+memberi Anda pemisahan biaya yang bersih tanpa perlu disiplin memasang tag. Kedua, <strong>batas skala</strong>: kuota dan batasan,
+misalnya berapa banyak vCPU (prosesor virtual) yang boleh Anda jalankan di sebuah region, berlaku per subscription,
+sehingga eksperimen di lingkungan development tidak bisa menghabiskan kuota produksi. Ketiga, <strong>batas akses dan
+policy</strong> yang alami. Itulah sebabnya langkah pertama yang paling umum cukup sederhana: dua subscription, satu untuk
+produksi dan satu untuk semua hal lainnya.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Management group berlaku di tingkat tenant. Saat seseorang pertama kali memakainya, Azure membuat root management
+group dan menempatkan setiap subscription yang sudah ada di bawahnya, dan kecuali administrator sudah menyalakan
+hierarchy protection, pengguna mana pun di tenant itu bisa membuat management group. Berlatihlah hanya di tenant lab
+milik Anda sendiri, jangan pernah di tenant perusahaan, dan jangan pernah memindah-mindahkan subscription kantor
+hanya untuk &quot;melihat apa yang terjadi&quot;.</p>
+</aside>
+</div></article><article class="scene-card" id="2-azure-resource-manager-satu-pintu-depan-untuk-semua-alat" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Azure Resource Manager: satu pintu depan untuk semua alat</h3><div class="prose"><p>Di Makan Siang 01 Anda sudah melihat bahwa portal, Azure CLI, Azure PowerShell, dan setiap SDK (pustaka pemrograman
+untuk developer) mengirim permintaannya ke <strong>Azure Resource Manager (ARM)</strong>. Ada baiknya Anda tahu apa yang dilakukan ARM terhadap setiap permintaan, karena
+semua aturan dalam makan siang ini ditegakkan di sana. ARM mengautentikasi pemanggil dengan token Microsoft Entra,
+memeriksa role assignment (penetapan peran) Azure RBAC (<em>kontrol akses berbasis peran</em>) di scope tujuan dan di setiap
+scope di atasnya, mengevaluasi Azure Policy, memeriksa resource lock, mencatat operasinya di activity log, dan baru
+setelah itu menyerahkan permintaan ke <strong>resource provider</strong> yang tepat. Karena semua alat melewati API (antarmuka pemrograman) yang sama,
+semuanya mendapat jawaban yang sama: portal tidak punya kekuatan rahasia yang tidak dimiliki CLI.</p>
+<p>Bayangkan meja resepsionis di lobi sebuah gedung perkantoran. Entah Anda datang lewat pintu depan, lift dari parkiran,
+atau pintu samping, semua tamu harus melapor di meja yang sama: menunjukkan kartu identitas (autentikasi), dicek apakah
+boleh naik ke lantai tujuan (RBAC), dicek terhadap tata tertib gedung (Policy dan lock), lalu dicatat di buku tamu
+(activity log). Baru setelah itu Anda diantar ke kantor yang dituju (resource provider).</p>
+<p>Resource provider adalah layanan di balik sekelompok tipe resource, dan namanya berupa <strong>namespace</strong> seperti
+<code>Microsoft.Compute</code>, <code>Microsoft.Network</code>, <code>Microsoft.Storage</code>, atau <code>Microsoft.Web</code>. Setiap provider menawarkan
+<strong>resource type</strong> (tipe resource), sehingga tipe lengkap sebuah storage account adalah
+<code>Microsoft.Storage/storageAccounts</code>. Sebagian tipe merupakan anak dari tipe lain: blob container bertipe
+<code>Microsoft.Storage/storageAccounts/blobServices/containers</code>. Setiap tipe juga menerbitkan <strong>versi API</strong>-nya (berupa
+tanggal, misalnya <code>2024-01-01</code>) dan region tempat tipe itu tersedia, persis seperti yang Anda periksa di Lab 03.</p>
+<p>Semua yang ditangani ARM disebut <strong>control plane</strong> (jalur pengelolaan): membuat, mengonfigurasi, dan menghapus resource
+melalui <code>https://management.azure.com</code>. Memakai resource disebut <strong>data plane</strong> (jalur pemakaian): membaca blob dari
+<code>https://stnusaimg01.blob.core.windows.net</code>, menjalankan query ke database, atau terhubung ke VM lewat SSH. Permintaan
+data plane langsung menuju endpoint (alamat layanan) milik layanan itu dan diatur oleh otorisasi layanan itu sendiri:
+data role Microsoft Entra, access key (kunci akses), shared access signature (token akses terbatas), atau login
+database. Ada dua konsekuensinya. Data plane tetap
+bekerja walaupun control plane sesaat tidak tersedia, sehingga toko Anda tetap buka. Selain itu, aturan yang
+ditegakkan ARM, seperti lock, tidak otomatis melindungi apa yang terjadi di data plane. Kembali ke gedung perkantoran
+tadi: karyawan yang sudah memegang kartu akses ruangannya sendiri tidak perlu melapor ke resepsionis setiap kali
+mengambil berkas dari lemari. Itulah data plane.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph tools[&quot;Alat&quot;]
+    P[&quot;Azure portal&quot;]
+    C[&quot;Azure CLI dan PowerShell&quot;]
+    B[&quot;Bicep dan templat ARM&quot;]
+  end
+  tools --&gt; ARM[&quot;Azure Resource Manager&lt;br/&gt;management.azure.com&lt;br/&gt;autentikasi · RBAC · Policy · lock · activity log&quot;]
+  ARM --&gt; RP1[&quot;Microsoft.Storage&quot;]
+  ARM --&gt; RP2[&quot;Microsoft.Web&quot;]
+  ARM --&gt; RP3[&quot;Microsoft.Compute&quot;]
+  RP1 --&gt; ST[(&quot;stnusaimg01&quot;)]
+  APP[&quot;Aplikasi toko online&quot;] -- &quot;data plane: membaca dan menulis blob&lt;br/&gt;stnusaimg01.blob.core.windows.net&quot; --&gt; ST
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Karena setiap operasi tulis di control plane melewati ARM, <strong>activity log</strong> menjadi catatan yang andal tentang siapa
+membuat, mengubah, atau menghapus apa, dan kapan, di setiap scope. Saat seseorang bertanya &quot;siapa yang menghapus VM test
+hari Jumat?&quot;, di sanalah Anda mencarinya (Makan Siang 16).</p>
+<p>ARM juga memahami <em>desired state</em> (kondisi yang diinginkan). Saat Anda mengirim sebuah template (<em>templat ARM</em>) yang
+mendeskripsikan resource, ARM menghitung apa yang perlu dibuat dan apa yang sudah ada, sehingga men-deploy file yang
+sama dua kali memberikan hasil yang sama. Gagasan inilah yang menggerakkan infrastructure as code (<em>infrastruktur
+sebagai kode</em>) dengan Bicep di Makan Siang 20.</p>
+</div></article><article class="scene-card" id="3-scope-pewarisan-dan-resource-id" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Scope, pewarisan, dan resource ID</h3><div class="prose"><p><strong>Scope</strong> (cakupan) adalah tempat Anda memasang sebuah pengaturan: management group, subscription, resource group, atau
+satu resource. Aturan yang membuat hierarki ini berguna adalah pewarisan (inheritance): pengaturan mengalir ke semua
+yang ada di bawahnya, termasuk hal-hal yang dibuat belakangan. Beri tim keuangan role reader di <code>mg-nusa-prod</code>, maka
+mereka bisa membaca setiap subscription, resource group, dan resource di bawahnya, bahkan yang baru dibuat tahun depan.
+Pasang lock di <code>rg-shared-prod</code>, maka setiap resource yang ditambahkan ke grup itu belakangan juga ikut terlindungi.
+Persis seperti undang-undang tadi yang berlaku sampai ke rumah terakhir. Namun, tidak semuanya mengalir ke bawah:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Pengaturan</th>
+<th>Bisa dipasang di</th>
+<th>Mengalir ke bawah?</th>
+<th>Yang perlu diwaspadai</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Role assignment Azure RBAC</td>
+<td>Management group, subscription, resource group, resource</td>
+<td>Ya</td>
+<td>Izin dari semua scope terakumulasi; tetapkan di tingkat serendah yang masuk akal (Makan Siang 05)</td>
+</tr>
+<tr>
+<td>Assignment Azure Policy</td>
+<td>Management group, subscription, resource group</td>
+<td>Ya, dengan kemungkinan pengecualian (exemption)</td>
+<td>Penolakan terjadi di ARM, sebelum apa pun dibangun (Makan Siang 18)</td>
+</tr>
+<tr>
+<td>Resource lock</td>
+<td>Subscription, resource group, resource (bukan management group)</td>
+<td>Ya; lock yang paling ketat yang berlaku</td>
+<td>Memblokir semua orang, termasuk Owner</td>
+</tr>
+<tr>
+<td>Anggaran (budget)</td>
+<td>Management group (tidak untuk setiap jenis perjanjian), subscription, resource group</td>
+<td>Mencakup biaya semua yang ada di dalamnya</td>
+<td>Mengirim alert (<em>pemberitahuan</em>); tidak menghentikan pengeluaran (Makan Siang 19)</td>
+</tr>
+<tr>
+<td>Tag</td>
+<td>Subscription, resource group, resource (bukan management group)</td>
+<td><strong>Tidak</strong></td>
+<td>Salin atau wajibkan tag dengan Azure Policy</td>
+</tr>
+</tbody>
+</table></div>
+<p>Setiap scope, dan setiap resource, punya alamat yang disebut <strong>resource ID</strong>. Resource ID adalah jalur dari subscription
+turun sampai ke resource, dan itulah yang dipakai script, template, role assignment, lock, dan alert untuk menunjuk
+sesuatu:</p>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Salin</button></div><pre><code>/subscriptions/8f2a…41c7/resourceGroups/rg-shared-prod/providers/Microsoft.Storage/storageAccounts/stnusaimg01
+</code></pre></div>
+<p>Bacalah resource ID seperti alamat lengkap pada paket kiriman: provinsi, kota, kecamatan, jalan, lalu nomor rumah.
+Kurir tidak perlu bertanya-tanya, karena setiap bagian alamat mempersempit lokasinya.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Segmen</th>
+<th>Contoh</th>
+<th>Yang diceritakannya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/subscriptions/{id}</code></td>
+<td><code>/subscriptions/8f2a…41c7</code></td>
+<td>Subscription yang mana, dan karena itu tenant serta tagihan yang mana</td>
+</tr>
+<tr>
+<td><code>/resourceGroups/{name}</code></td>
+<td><code>/resourceGroups/rg-shared-prod</code></td>
+<td>Resource group yang mana: siklus hidupnya sekaligus sebuah scope</td>
+</tr>
+<tr>
+<td><code>/providers/{namespace}</code></td>
+<td><code>/providers/Microsoft.Storage</code></td>
+<td>Resource provider mana yang melayaninya</td>
+</tr>
+<tr>
+<td><code>/{type}</code></td>
+<td><code>/storageAccounts</code></td>
+<td>Tipe resource di dalam provider tersebut</td>
+</tr>
+<tr>
+<td><code>/{name}</code></td>
+<td><code>/stnusaimg01</code></td>
+<td>Nama resource</td>
+</tr>
+</tbody>
+</table></div>
+<p>Scope yang lebih tinggi memakai pola yang sama. Subscription ditulis <code>/subscriptions/{id}</code>, resource group ditulis
+<code>/subscriptions/{id}/resourceGroups/{name}</code>, dan management group ditulis
+<code>/providers/Microsoft.Management/managementGroups/{id}</code>. Resource anak (child resource) menambahkan pasangan
+tipe-dan-nama ke ID induknya, misalnya <code>…/storageAccounts/stnusaimg01/blobServices/default/containers/images</code>. Lock dan
+role assignment adalah <em>extension resource</em> yang menggantung pada ID lain: lock pada account tadi berada di
+<code>…/stnusaimg01/providers/Microsoft.Authorization/locks/{lock name}</code>. Nama segmen tidak peka huruf besar-kecil, jadi di
+output sungguhan Anda akan melihat <code>resourceGroups</code> maupun <code>resourcegroups</code>; bandingkan ID tanpa memedulikan huruf
+besar-kecilnya.</p>
+</div></article><article class="scene-card" id="4-resource-group-pemindahan-nama-dan-tag" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Resource group, pemindahan, nama, dan tag</h3><div class="prose"><p><strong>Resource group</strong> sebaiknya berisi resource yang berbagi siklus hidup: Anda men-deploy, memperbarui, dan menghapusnya
+bersama-sama. Anggap saja resource group sebagai satu rantang makan siang: semua lauk di dalamnya dibawa bersama,
+disantap bersama, lalu dicuci bersama. Kalau sambal kesayangan Anda masih mau disimpan untuk besok, jangan taruh
+di rantang yang malam ini akan dicuci. Dari rancangan itu lahir beberapa aturan:</p>
+<ul>
+<li>Setiap resource tinggal di tepat satu resource group. Resource group tidak bisa bersarang (dimasukkan ke dalam
+resource group lain), dan tidak bisa diganti namanya.</li>
+<li>Resource group punya lokasi, yaitu tempat Azure menyimpan metadata-nya. Resource di dalamnya boleh tinggal di region
+lain, tetapi menyimpannya di region yang sama lebih sederhana; jika region milik grup itu tidak tersedia, Resource
+Manager mengalihkan permintaan control plane ke region cadangan.</li>
+<li>Menghapus resource group berarti menghapus semua isinya. Itulah kekuatan super untuk bersih-bersih yang diandalkan
+lab-lab di kursus ini, dan justru karena itulah grup produksi layak diberi lock.</li>
+<li>Sebuah resource tetap bisa berkomunikasi dengan resource di grup lain. Toko online di <code>rg-storefront-prod</code> membaca
+foto dari storage account di <code>rg-shared-prod</code>, karena keduanya punya pemilik dan siklus hidup yang berbeda.</li>
+</ul>
+<p>Kesalahan umum pemula adalah mengelompokkan berdasarkan tipe resource: semua VM di <code>rg-vms</code>, semua database di
+<code>rg-databases</code>. Kelihatannya rapi, sampai suatu hari Anda perlu menghapus satu aplikasi, memberi satu tim akses hanya
+ke bagiannya sendiri, atau melihat berapa biaya satu workload (beban kerja). Sebaiknya kelompokkan berdasarkan workload
+dan lingkungan (environment), ditambah satu grup untuk layanan yang memang dipakai bersama, lalu biarkan nama resource
+dan tag yang menjelaskan apa setiap item itu.</p>
+<p><strong>Memindahkan</strong> resource antar-resource group atau antar-subscription (di dalam tenant yang sama) bisa dilakukan untuk
+banyak tipe resource, dan perubahannya lebih sedikit daripada yang mungkin Anda khawatirkan. Resource itu tetap di
+region-nya dan terus berjalan; yang berubah hanya resource group atau subscription-nya, dan karena itu juga resource
+ID-nya, jadi perbarui setiap script, dashboard, atau alert yang memakai ID lama. Mirip paket yang dialamatkan ulang:
+isinya sama, tetapi label alamatnya baru. Selama pemindahan berjalan, kedua resource group dikunci dari operasi create,
+update, dan delete: biasanya beberapa menit, paling lama empat jam. Tidak semua tipe bisa dipindahkan (NAT gateway dan
+cluster AKS adalah contohnya saat tulisan ini dibuat), resource anak selalu ikut pindah bersama induknya, dan Azure
+memvalidasi permintaannya terlebih dahulu. Role assignment yang dibuat langsung pada resource yang dipindahkan tidak
+ikut terbawa, sedangkan tag milik resource itu sendiri ikut. Lock read-only di salah satu resource group akan
+memblokir pemindahan sepenuhnya.</p>
+<p><strong>Nama</strong> perlu direncanakan, karena sebagian besar nama tidak bisa diubah setelah resource dibuat. Cloud Adoption
+Framework (CAF) menyarankan menyusun nama dari beberapa komponen: singkatan pendek tipe resource, workload, lingkungan,
+kadang region, dan nomor instans. Hasilnya nama seperti <code>rg-storefront-prod</code>, <code>vm-web-prod-001</code>, dan
+<code>vnet-shared-idc-001</code>. Singkatan yang umum adalah <code>rg</code>, <code>vm</code>, <code>vnet</code>, <code>snet</code>, <code>nsg</code>, <code>pip</code>, <code>st</code> (storage account),
+<code>kv</code> (key vault), dan <code>mg</code> (management group). Sebagian nama harus unik di seluruh Azure karena nama itu menjadi nama
+DNS (bagian dari alamat internet resource itu): nama storage account, misalnya, terdiri atas 3 sampai 24 huruf kecil dan angka, tanpa tanda hubung. Jangan
+masukkan hal yang mungkin berubah, seperti pemilik atau pusat biaya (cost centre), ke dalam nama; simpan di tag.</p>
+<p><strong>Tag</strong> adalah label berupa pasangan nama dan nilai pada resource, resource group, dan subscription (tetapi tidak pada
+management group), hingga 50 tag per item. Tag menjadi dasar laporan biaya, otomatisasi, dan pencarian. Nama tag tidak
+peka huruf besar-kecil, tetapi nilainya peka, sehingga <code>ecommerce</code> dan <code>Ecommerce</code> muncul sebagai dua pusat biaya yang
+berbeda. Tag disimpan sebagai teks biasa dan muncul di ekspor biaya serta log, jadi jangan pernah menaruh rahasia atau
+data pribadi di dalamnya. Lalu aturan yang mengejutkan semua orang: <strong>tag tidak diwariskan</strong>. Tag pada resource group
+tidak muncul pada resource di dalamnya, sama seperti stiker nama di tutup rantang yang tidak ikut menempel di setiap
+lauk. Jika setiap resource wajib membawa pusat biaya milik grupnya, gunakan Azure Policy untuk menyalin atau
+mewajibkannya (Makan Siang 18).</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Sepakati daftar pendek tag wajib, misalnya <code>costCenter</code>, <code>env</code>, <code>owner</code>, dan <code>app</code>, lengkap dengan ejaan baku dan
+nilai yang diizinkan, sebelum deployment produksi pertama. Memasang ulang tag pada ratusan resource belakangan itu
+lambat dan rawan salah, dan laporan biaya untuk bulan-bulan di antaranya akan tetap berantakan selamanya.</p>
+</aside>
+</div></article><article class="scene-card" id="5-lock-dan-azure-resource-graph" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Lock dan Azure Resource Graph</h3><div class="prose"><p><strong>Resource lock</strong> melindungi resource dari kecelakaan, tidak peduli siapa yang sedang sign-in. Ada dua jenis:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lock (nama di CLI)</th>
+<th>Nama di portal</th>
+<th>Memblokir</th>
+<th>Masih diizinkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CanNotDelete</code></td>
+<td>Delete</td>
+<td>Menghapus resource yang dikunci, atau apa pun di bawah scope yang dikunci</td>
+<td>Membaca dan mengubah pengaturan</td>
+</tr>
+<tr>
+<td><code>ReadOnly</code></td>
+<td>Read-only</td>
+<td>Menghapus dan setiap perubahan, termasuk beberapa aksi yang terasa seperti membaca</td>
+<td>Membaca (permintaan GET)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Lock bisa dipasang pada subscription, resource group, atau resource, dan diwariskan ke semua yang ada di bawahnya; jika
+lock di beberapa tingkat berlaku bersamaan, yang paling ketat yang menang. Lock mengalahkan izin, sehingga bahkan
+seorang Owner harus melepas lock-nya dulu sebelum bisa menghapus. Hanya role yang mencakup aksi
+<code>Microsoft.Authorization/locks/*</code>, seperti Owner dan User Access Administrator, yang bisa membuat atau melepas lock;
+Contributor tidak bisa. Selain itu, lock <code>CanNotDelete</code> pada satu resource saja sudah mencegah seluruh resource
+group-nya dihapus: Azure tidak melakukan penghapusan sebagian.</p>
+<p><strong>Kejutan ReadOnly.</strong> ARM menegakkan lock di control plane dengan melihat jenis permintaannya. Permintaan baca (GET)
+diloloskan. Create, update, dan delete diblokir, begitu pula aksi <strong>POST</strong>, karena ARM tidak bisa tahu apakah sebuah
+POST mengubah sesuatu. Banyak operasi yang terasa seperti membaca ternyata aksi POST: menampilkan daftar access key
+sebuah storage account sengaja dibuat sebagai POST, karena key itu memberi akses penuh ke data dan tidak semestinya
+keluar dari permintaan baca biasa. Ibaratnya lemari arsip yang disegel: Anda boleh membaca label di pintunya, tetapi
+meminta kunci lemarinya pun sudah dianggap membuka segel. Menyalakan atau me-restart VM, men-scale App Service plan,
+dan memindahkan resource masuk ke atau keluar dari grup yang dikunci juga diblokir. Karena itu, lock ReadOnly pada
+resource group produksi bisa merusak deployment, otomatisasi, bahkan aplikasi yang mengambil storage key-nya saat
+dinyalakan. Gunakan <code>CanNotDelete</code> untuk &quot;jangan hapus ini&quot; dan role assignment untuk &quot;jangan ubah ini&quot;.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Lock melindungi resource, bukan data di dalamnya. Lock <code>CanNotDelete</code> atau <code>ReadOnly</code> pada storage account tidak
+menghentikan orang yang punya akses data untuk menghapus blob lewat data plane. Lindungi data dengan data role yang
+menerapkan prinsip hak akses minimum (least privilege), soft delete, versioning, dan immutability (data dikunci
+agar tidak bisa diubah); semuanya dibahas di Makan Siang 24.</p>
+</aside>
+<p><strong>Azure Resource Graph</strong> menjawab pertanyaan &quot;apa saja yang kita punya, dan di mana?&quot; di seluruh subscription dan
+management group yang bisa Anda baca, dalam hitungan detik. Query-nya ditulis dengan sebagian fitur Kusto Query
+Language (KQL). Tabel <code>Resources</code> berisi resource, sedangkan <code>ResourceContainers</code> berisi subscription, resource group, dan
+management group:</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Resources
+| where tags.costCenter == &#x27;ecommerce&#x27;
+| project name, type, resourceGroup, location
+</code></pre></div>
+<p>Anda bisa menjalankan query di Resource Graph Explorer pada portal, dengan <code>az graph query</code> di Azure CLI (extension-nya
+terpasang sendiri saat pertama kali dipakai), atau dari PowerShell. Resource Graph bersifat hanya-baca, hanya
+menampilkan apa yang boleh Anda lihat sesuai role Anda, dan secara bawaan mengembalikan hingga 1.000 record per query,
+dengan paging untuk selebihnya.</p>
+</div></article><article class="scene-card" id="6-bagaimana-semuanya-menyatu-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Bagaimana semuanya menyatu untuk Nusantara Retail</h3><div class="prose"><p>Sekarang Anda bisa mengubah tumpukan permintaan tadi menjadi sebuah struktur. Di bawah Tenant root group, buat
+<code>mg-nusa</code> untuk perusahaan dan dua anaknya, <code>mg-nusa-prod</code> dan <code>mg-nusa-nonprod</code>. Produksi berjalan di <code>sub-nusa-prod</code>;
+development, testing, dan pekerjaan Rizky berjalan di <code>sub-nusa-dev</code>. Di dalam produksi, web app tinggal di
+<code>rg-storefront-prod</code> dan storage account foto produk di <code>rg-shared-prod</code>, karena aplikasi lain, misalnya tablet di
+toko-toko, juga akan memakainya.</p>
+<p>Lalu aturan-aturannya menempel di scope yang tepat. Tim keuangan mendapat role reader di <code>mg-nusa-prod</code>. Assignment
+Azure Policy di sana hanya mengizinkan Indonesia Central, region yang Anda pilih di Makan Siang 03. Lock <code>CanNotDelete</code>
+di <code>rg-shared-prod</code> menjawab permintaan Pak Budi. Rizky mendapat role contributor di <code>rg-storefront-dev</code> dan tidak ada
+yang lain (Makan Siang 05). Setiap resource membawa tag <code>costCenter</code>, <code>env</code>, <code>owner</code>, dan <code>app</code>, sebuah anggaran
+mengawasi setiap subscription (Makan Siang 19), dan sebuah query Resource Graph yang tersimpan menampilkan apa pun yang
+belum punya tag <code>costCenter</code>. Di lab, Anda akan membangun sepotong kecil dari desain ini sendiri.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Tahun depan Dewi membuat subscription baru untuk aplikasi kartu loyalitas. Apakah role reader
+milik tim keuangan dan policy lokasi di <code>mg-nusa-prod</code> otomatis berlaku untuknya? Apa yang harus terjadi lebih dulu?</p>
+</aside>
+<p>Ingin lebih dalam? Makan Siang 31 · Hierarki Resource dan Tata Kelola (Lanjutan) merancang hierarki management group
+yang lengkap untuk sebuah landing zone (fondasi standar bagi lingkungan Azure perusahaan) dan menerapkan tata kelola
+dalam skala besar.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Dari tenant ke resource: bagaimana aturan mengalir ke bawah</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/04-resource-hierarchy-basic.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/04-resource-hierarchy-basic.html?lang=id" title="Demo interaktif: Dari tenant ke resource: bagaimana aturan mengalir ke bawah" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/04-resource-hierarchy-basic/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Hierarki yang tersusun tingkat demi tingkat, dari tenant sampai ke resource satu per satu.</li>
+<li>Setiap permintaan yang melewati Azure Resource Manager sebelum resource provider mengerjakan apa pun.</li>
+<li>Role di management group, policy di subscription, dan lock di resource group yang mengalir ke semua yang ada di
+bawahnya, sementara tag tetap tinggal di tempat Anda memasangnya.</li>
+<li>Resource ID milik storage account yang dibongkar segmen demi segmen.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Tim keuangan harus bisa membaca setiap resource produksi, termasuk subscription yang nanti ditambahkan ke produksi.
+Di mana Anda menetapkan role mereka?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Di management group <code>mg-nusa-prod</code>. <em>alasannya:</em> role assignment diwariskan ke setiap subscription, resource group,
+dan resource di bawah scope itu, termasuk yang dibuat atau dipindahkan ke sana belakangan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Pak Budi memasang lock <code>ReadOnly</code> di <code>rg-shared-prod</code>. Keesokan paginya toko online tidak bisa mengambil key storage
+account, dan seorang operator tidak bisa me-restart VM di grup itu. Apa yang terjadi?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Kedua operasi itu adalah aksi POST, dan lock ReadOnly memblokir setiap permintaan control plane kecuali permintaan
+baca. <em>alasannya:</em> ARM tidak bisa membedakan apakah sebuah POST mengubah sesuatu, jadi semuanya diblokir; lock
+<code>CanNotDelete</code> akan melindungi grup itu tanpa merusak kedua operasi tersebut.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Dewi memberi tag <code>costCenter=ecommerce</code> pada <code>rg-storefront-prod</code>, tetapi laporan biaya yang dikelompokkan
+berdasarkan <code>costCenter</code> tidak menampilkan apa pun untuk web app di dalamnya. Mengapa?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Tag tidak diwariskan: web app itu sendiri tidak punya tag <code>costCenter</code>. <em>alasannya:</em> tag tetap tinggal di item tempat
+Anda memasangnya; pasang tag langsung pada resource-nya atau gunakan Azure Policy untuk menyalin tag dari resource
+group.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Sebuah script menyimpan resource ID storage account. Setelah Anda memindahkan account itu dari <code>rg-storefront-prod</code>
+ke <code>rg-shared-prod</code>, script gagal dengan pesan &quot;resource not found&quot;. Account itu tetap berfungsi bagi pelanggan.
+Jelaskan.</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Resource ID memuat nama resource group, jadi pemindahan itu memberi account tersebut ID baru; region, data, dan
+endpoint-nya tidak berubah. <em>alasannya:</em> pemindahan hanya mengubah segmen resource group atau subscription pada ID,
+jadi perbarui semua yang merujuk ke ID lama.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Dengan lock <code>CanNotDelete</code> pada storage account, apakah pengguna yang memegang data role masih bisa menghapus blob di
+dalamnya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Ya. <em>alasannya:</em> lock berlaku untuk operasi control plane melalui Azure Resource Manager; menghapus blob adalah
+operasi data plane, jadi lindungi data dengan data role berprinsip hak akses minimum, soft delete, dan versioning.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Hierarkinya berurutan <strong>tenant → root management group → management group (hingga enam tingkat) → subscription → resource group → resource</strong>, dan setiap item punya tepat satu induk.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p><strong>Azure Resource Manager</strong> adalah satu-satunya pintu depan untuk pengelolaan: ia mengautentikasi, menerapkan RBAC, Policy, dan lock, mencatat permintaan, lalu memanggil resource provider. Memakai resource terjadi di <strong>data plane</strong> yang terpisah.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Role, policy, dan lock <strong>mengalir ke bawah</strong> dari scope tempat Anda memasangnya, dan anggaran mencakup semua yang ada di bawah scope-nya; <strong>tag tidak diwariskan</strong>.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p><strong>Resource ID</strong> menyebutkan subscription, resource group, provider, tipe, dan nama, sehingga memindahkan resource mengubah ID-nya tetapi tidak pernah mengubah region-nya.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Jaga keteraturan dengan <strong>nama bergaya CAF</strong>, daftar pendek <strong>tag wajib</strong>, <strong>lock</strong> yang tepat (waspadai ReadOnly), dan query <strong>Azure Resource Graph</strong>.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Uji hapus.</strong> Untuk setiap resource group dalam sebuah desain, saya mengajukan satu pertanyaan: <em>kalau grup ini
+saya hapus malam ini, apakah semua isinya memang boleh ikut hilang?</em> Kalau jawabannya &quot;boleh, kecuali database-nya&quot;
+atau &quot;boleh, asal foto produknya jangan&quot;, berarti pengecualian itu harus pindah ke grup lain. Pertanyaan sederhana
+ini menangkap sebagian besar kesalahan pengelompokan selagi masih murah diperbaiki, sebelum script, dashboard, dan
+alert telanjur bergantung pada nama dan resource ID-nya. Kebiasaan kedua saya: setiap kali pesan error memuat
+resource ID, saya membacanya dari kiri ke kanan seperti alamat di paket kiriman, lalu memeriksa setiap scope yang
+dilewatinya. Lock atau policy yang menghadang Anda sering kali diwarisi dari tingkat yang tidak sedang Anda
+perhatikan. Satu lagi: nama hanya memuat hal yang tidak akan berubah. Pemilik, pusat biaya, dan kode proyek bisa
+berganti, jadi tempatnya di tag.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>04</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Menata Nusantara Retail</h3>
+          <div class="prose"><p>Pada waktu luang Anda sendiri, Anda akan membuat dua resource group bertag dan sebuah storage account, membongkar
+resource ID-nya, dan membuktikan sendiri bahwa tag resource group tidak sampai ke resource di dalamnya. Anda akan
+melihat lock <code>CanNotDelete</code> menghentikan penghapusan dan lock <code>ReadOnly</code> menghentikan sesuatu yang tampak seperti
+operasi baca biasa, memindahkan account itu ke resource group lain, lalu menemukan semuanya kembali dengan Azure
+Resource Graph. Membuat management group adalah tambahan opsional bagi peserta yang punya tenant sendiri.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 40 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/04-resource-hierarchy-basic.html">Mulai Lab 04 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/azure-resource-manager/management/overview" target="_blank" rel="noopener"><b>Apa itu Azure Resource Manager?</b><span>Scope, resource group, lokasi resource group, dan cara Resource Manager tetap tangguh.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/governance/management-groups/overview" target="_blank" rel="noopener"><b>Apa itu management group Azure?</b><span>Root management group, batasannya, dan izin yang dibutuhkan untuk membangun serta mengubah hierarki.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-resource-manager/management/lock-resources" target="_blank" rel="noopener"><b>Mengunci resource Azure untuk melindungi infrastruktur Anda</b><span>Daftar lengkap operasi yang diblokir lock, termasuk kejutan-kejutan ReadOnly.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/cloud-adoption-framework/ready/azure-best-practices/resource-naming" target="_blank" rel="noopener"><b>Menentukan konvensi penamaan Anda</b><span>Komponen penamaan dari Cloud Adoption Framework, dengan tautan ke daftar singkatan.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🗂️</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Arsitek Rapi</h2>
+        <p class="muted">Tata Azure dengan scope, tag, dan lock.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Masih berhari-hari — tetapi sekarang kita tahu persis apa saja milik kita di Azure.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 05</b><h4>Kasih Saja Password Saya</h4><p>Seorang kontraktor mulai bekerja hari Senin, dan jalan pintasnya adalah berbagi satu login.</p><p style="margin-top:10px"><a href="05-identity-access-basic.html">Tonton Episode 05 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="03-global-infrastructure.html"><small>← Episode sebelumnya</small>03 · Toko Kita Tinggal di Mana?</a><a class="next" href="05-identity-access-basic.html"><small>Episode berikutnya →</small>05 · Kasih Saja Password Saya</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/04-resource-hierarchy-basic/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

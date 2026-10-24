@@ -1,0 +1,161 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 12 · NoSQL dengan Azure Cosmos DB — Demo interaktif",
+    "kicker": "Makan Siang 12 · NoSQL dengan Azure Cosmos DB · Demo interaktif",
+    "title": "Partition key dan consistency level di Azure Cosmos DB",
+    "lede": "Saksikan item katalog Nusantara Retail menemukan partisinya masing-masing, lihat hot partition terbentuk di hari promo, lalu ikuti satu perubahan harga di dua region dengan consistency level yang berbeda-beda. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Partisi dan konsistensi Azure Cosmos DB untuk katalog Nusantara Retail",
+    "svgDesc": "Adegan pertama: aplikasi toko online menulis item ke sebuah container Cosmos DB yang empat logical partition-nya berada di dua physical partition; partition key yang buruk menciptakan hot partition, sedangkan kunci yang lebih baik menyebarkan beban. Adegan kedua: perubahan harga yang ditulis di Indonesia Central direplikasi ke Southeast Asia dan dibaca dengan eventual, session, dan strong consistency."
+  },
+  "steps": [
+    {
+      "title": "Katalog yang terus berubah bentuk",
+      "text": "Nusantara Retail memindahkan katalog produknya dari tabel SQL 140 kolom ke Azure Cosmos DB for NoSQL. Setiap produk menjadi item JSON, sehingga kopi bisa membawa tingkat sangrai sementara kemeja batik membawa tabel ukuran. Toko online di sebelah kiri membaca dan menulis item di satu container, products, yang partition key-nya /category."
+    },
+    {
+      "title": "Logical partition dan physical partition",
+      "text": "Semua item dengan nilai category yang sama membentuk satu logical partition: semua kopi bersama, semua kemeja batik bersama. Satu logical partition menampung hingga 20 GB. Cosmos DB menghitung hash setiap nilai kunci dan menempatkan logical partition di physical partition, yaitu replica set yang mengerjakan tugasnya. Satu physical partition melayani hingga 10.000 RU/s dan 50 GB, dan Cosmos DB memecahnya untuk Anda saat container tumbuh."
+    },
+    {
+      "title": "Item mendarat sesuai kuncinya",
+      "text": "Sekarang toko online memuat katalog. Untuk setiap item, Cosmos DB menghitung hash dari category dan menyimpan item di logical partition kategori itu: lima kopi, lima kemeja batik, lima camilan, lima rempah. Karena nilai-nilainya tersebar ke kedua physical partition, dua kelompok mesin berbagi beban penulisan, bukan hanya satu.",
+      "set": {
+        "t-l1c": "5 item",
+        "t-l2c": "5 item",
+        "t-l3c": "5 item",
+        "t-l4c": "5 item"
+      }
+    },
+    {
+      "title": "Query yang menyebut kuncinya",
+      "text": "Halaman kategori meminta semua kopi. Query-nya memfilter berdasarkan partition key, jadi Cosmos DB mengirimnya ke tepat satu partisi dan hanya membaca item kopi. Biayanya tetap beberapa request unit, sebesar apa pun katalognya tumbuh. Membaca satu produk berdasarkan id dan category-nya, yaitu point read, lebih murah lagi: sekitar 1 RU.",
+      "set": {
+        "t-query": "SELECT * FROM c WHERE c.category = 'coffee'",
+        "t-qres": "Query satu partisi · hanya satu partisi yang disentuh · beberapa RU"
+      }
+    },
+    {
+      "title": "Query yang bertanya ke semua partisi",
+      "text": "Kotak pencarian Dewi mencari 'kopi' di mana saja dalam nama produk. Query itu tidak menyebut category, sehingga menjadi cross-partition query: ia menyebar ke setiap physical partition dan memindai item yang ditemukannya di sana. Setiap physical partition tambahan menambah kira-kira 2 sampai 3 RU. Dengan tiga puluh item, tak ada yang sadar; dengan jutaan item dan lima puluh partisi, setiap ketikan jadi mahal.",
+      "set": {
+        "t-query": "SELECT * FROM c WHERE CONTAINS(LOWER(c.name), 'kopi')",
+        "t-qres": "Query lintas partisi · semua partisi disentuh · biaya tumbuh seiring data"
+      }
+    },
+    {
+      "title": "Hari promo: hot partition",
+      "text": "Container kedua, orders, dipartisi berdasarkan /storeId. Pada 12.12 hampir semua pesanan datang dari toko online, sehingga satu logical partition menerima hampir semua penulisan. Physical partition-nya menyentuh batas 10.000 RU/s dan menjawab HTTP 429, request rate too large, sementara partisi B nyaris menganggur. Membeli RU/s tambahan tidak membantu, karena batas itu berlaku per partisi.",
+      "set": {
+        "t-ctr": "Container: orders · partition key /storeId",
+        "t-l1": "ONLINE",
+        "t-l2": "JKT-01",
+        "t-l3": "SBY-01",
+        "t-l4": "BDG-01",
+        "t-l1c": "9.800 dari 10.000 RU/s",
+        "t-l2c": "150 RU/s",
+        "t-l3c": "120 RU/s",
+        "t-l4c": "90 RU/s",
+        "t-l1x": "dibatasi: HTTP 429",
+        "t-l2x": "sepi",
+        "t-l3x": "nyaris menganggur",
+        "t-l4x": "nyaris menganggur",
+        "t-query": "Hari promo: sebagian besar pesanan membawa storeId = ONLINE",
+        "t-qres": "Partisi A di batas atasnya (HTTP 429) · partisi B nyaris menganggur"
+      }
+    },
+    {
+      "title": "Kunci yang menyebarkan beban",
+      "text": "Solusinya: container baru yang dipartisi berdasarkan /customerId, lalu pesanan disalin ke sana, karena partition key tidak bisa diubah di tempat. Ribuan pelanggan berarti ribuan logical partition, yang di-hash merata ke seluruh physical partition. Penulisan hari promo kini mendarat di mana-mana, setiap partisi memikul bagiannya, dan throttling pun hilang.",
+      "set": {
+        "t-ctr": "Container: orders · partition key /customerId",
+        "t-l1": "cust-0042",
+        "t-l2": "cust-1187",
+        "t-l3": "cust-5530",
+        "t-l4": "cust-9071",
+        "t-query": "Partition key /customerId: ribuan nilai, disebar dengan hash",
+        "t-qres": "Kedua physical partition memikul beban merata · tanpa throttling",
+        "t-l1c": "beberapa RU/s",
+        "t-l2c": "beberapa RU/s",
+        "t-l3c": "beberapa RU/s",
+        "t-l4c": "beberapa RU/s",
+        "t-l1x": "satu dari ribuan kunci",
+        "t-l2x": "satu dari ribuan kunci",
+        "t-l3x": "satu dari ribuan kunci",
+        "t-l4x": "satu dari ribuan kunci"
+      }
+    },
+    {
+      "title": "Tambahkan region kedua",
+      "text": "Kembali ke katalog. Nusantara Retail menambahkan Southeast Asia sebagai region baca di samping Indonesia Central (account serverless harus tetap di satu region). Setiap region menyimpan salinan lengkap data, dan pembeli membaca dari region terdekat. RU/s provisioned berlaku, dan ditagih, di setiap region. Penulisan tetap menuju Indonesia Central dan direplikasi secara asinkron.",
+      "set": {
+        "t-kc1": "1.000 RU/s provisioned di 2 region = 2.000 RU/s di tagihan",
+        "t-kc2": "Penulisan menuju Indonesia Central · pembacaan dilayani region terdekat"
+      }
+    },
+    {
+      "title": "Dewi mengubah harga",
+      "text": "Tengah malam, Dewi menurunkan harga Kopi Gayo dari Rp 99.000 menjadi Rp 89.000. Penulisan di-commit lebih dulu di Indonesia Central. Replikasi ke Southeast Asia berjalan asinkron, sehingga untuk sesaat kedua region berbeda pendapat. Apa yang dilihat pembeli di Singapura pada saat itu bergantung pada consistency level.",
+      "set": {
+        "t-price-j": "kopi: Rp 89.000",
+        "t-dewi": "Dewi melihat: Rp 89.000",
+        "t-kc1": "Penulisan sudah di-commit di Indonesia Central",
+        "t-kc2": "Replikasi ke Southeast Asia masih dalam perjalanan"
+      }
+    },
+    {
+      "title": "Eventual: pembacaan yang basi",
+      "text": "Dengan eventual consistency, pembacaan menuju salah satu replika di Southeast Asia, dan replika itu belum menerima perubahannya, sehingga pembeli melihat harga lama. Eventual adalah level termurah dan tercepat, dan cocok untuk penghitung tayangan atau jumlah suka. Namun, harga basi di halaman pembayaran akan membuat pelanggan marah.",
+      "set": {
+        "t-shop": "Pembeli melihat: Rp 99.000 (basi)",
+        "t-kc1": "Eventual: baca dari satu replika · termurah · tanpa jaminan urutan",
+        "t-kc2": "Cocok untuk penghitung tayangan, suka, dan nilai lain yang boleh tertinggal"
+      }
+    },
+    {
+      "title": "Session: membaca tulisan sendiri",
+      "text": "Session adalah level bawaan. Di dalam satu sesi, pembacaan selalu menyertakan penulisan milik sesi itu sendiri, sesuai urutannya. Aplikasi admin Dewi langsung membaca kembali Rp 89.000, dan biaya pembacaannya tetap sama dengan eventual. Sesi lain, seperti milik pembeli, menyusul saat replikasi selesai, yang biasanya hanya butuh sesaat.",
+      "set": {
+        "t-price-s": "kopi: Rp 89.000",
+        "t-dewi": "Dewi melihat: Rp 89.000 (tulisannya sendiri)",
+        "t-shop": "Pembeli melihat: Rp 89.000 (setelah replikasi)",
+        "t-kc1": "Session (bawaan): read-your-own-writes dalam satu sesi · baca dari satu replika",
+        "t-kc2": "Cocok untuk sebagian besar aplikasi: keranjang, profil, edit oleh admin"
+      }
+    },
+    {
+      "title": "Strong: selalu segar, tak pernah murah",
+      "text": "Dengan strong consistency, pembacaan tidak pernah mengembalikan harga lama. Untuk menjanjikan itu antar-region, setiap penulisan menunggu sampai kedua region mengonfirmasinya, sehingga waktu bolak-balik Jakarta–Singapura ditambahkan ke setiap penulisan. Pembacaan memakai dua replika dan berbiaya sekitar dua kali lipat RU, dan strong tidak bisa digabung dengan multi-region writes. Pakai hanya jika nilai basi benar-benar merugikan.",
+      "set": {
+        "t-kc1": "Strong: baca dari dua replika (sekitar 2× RU) · setiap penulisan menunggu semua region",
+        "t-kc2": "Tidak tersedia dengan multi-region writes · pakai jika data basi benar-benar merugikan"
+      }
+    },
+    {
+      "title": "Rangkuman dan lab Anda",
+      "text": "Dua keputusan membentuk setiap desain Cosmos DB. Partition key, yang tidak bisa diubah kemudian, harus cocok dengan query tersibuk Anda dan menyebarkan beban. Consistency level menukar kesegaran data dengan latensi dan biaya; mulailah dengan session. Lalu ukur semuanya dalam request unit, karena setiap respons memberi tahu persis berapa biayanya.",
+      "tip": "Di Lab 12 Anda akan memuat katalog, membandingkan point read dengan query satu partisi dan lintas partisi, melihat biaya RU sebuah pembacaan berlipat dua di bawah strong consistency, dan memperbaiki query pencarian yang mahal.",
+      "set": {
+        "t-kc1": "Partition key: cocokkan dengan query tersibuk dan sebarkan bebannya",
+        "t-kc2": "Konsistensi: mulai dengan session · ukur setiap operasi dalam RU"
+      }
+    }
+  ],
+  "svg": {
+    "Storefront app": "Toko online",
+    "writes and queries": "tulis dan query",
+    "0 items": "0 item",
+    "logical partition · up to 20 GB": "logical partition · hingga 20 GB",
+    "single-partition query": "query satu partisi",
+    "Indonesia Central · write region": "Indonesia Central · region tulis",
+    "Southeast Asia · read region": "Southeast Asia · region baca",
+    "replicate": "replikasi",
+    "Dewi · admin app": "Dewi · aplikasi admin",
+    "4 replicas in this region": "4 replika di region ini",
+    "Shopper · Singapore": "Pembeli · Singapura",
+    "Dewi sees: Rp 99.000": "Dewi melihat: Rp 99.000",
+    "Shopper sees: Rp 99.000": "Pembeli melihat: Rp 99.000",
+    "Consistency level for reads (the account default is Session)": "Consistency level untuk pembacaan (bawaan account adalah Session)",
+    "Every region holds a full copy of the data": "Setiap region menyimpan salinan lengkap data",
+    "Replication between regions is asynchronous": "Replikasi antar-region berjalan asinkron"
+  }
+}

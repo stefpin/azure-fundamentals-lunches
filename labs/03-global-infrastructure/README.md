@@ -1,8 +1,11 @@
 # Lab 03 · Explore regions and zones
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 03 · Azure Global Infrastructure: Regions, Availability Zones and Region Pairs](../../lunches/03-global-infrastructure/README.md)
 > **Time:** about 35 minutes · **Cost:** 💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★☆☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its own steps.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

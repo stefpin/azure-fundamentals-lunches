@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 26 · Jalur Privat yang Layak — Makan Siang 26: Hybrid Connectivity: VPN Gateway, ExpressRoute, dan Virtual WAN (Lanjutan) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 26 · Hybrid Connectivity: VPN Gateway, ExpressRoute, dan Virtual WAN (Lanjutan). Empat puluh toko mengunggah data penjualan lewat internet — dan satu unggahan gagal tiga malam berturut-turut. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/26-hybrid-connectivity.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/26-hybrid-connectivity.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/26-hybrid-connectivity.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/26-hybrid-connectivity.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 26 · Jalur Privat yang Layak — Makan Siang 26: Hybrid Connectivity: VPN Gateway, ExpressRoute, dan Virtual WAN (Lanjutan)">
+<meta property="og:description" content="Makan Siang 26 · Hybrid Connectivity: VPN Gateway, ExpressRoute, dan Virtual WAN (Lanjutan). Empat puluh toko mengunggah data penjualan lewat internet — dan satu unggahan gagal tiga malam berturut-turut. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/26-hybrid-connectivity.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="26" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/26-hybrid-connectivity.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 26</span> Season 2 · 🌊 Bagian 5 · Pendalaman</div>
+      <h1>Jalur Privat yang Layak</h1>
+      <div class="lunch-title">Makan Siang 26 · Hybrid Connectivity: VPN Gateway, ExpressRoute, dan Virtual WAN (Lanjutan)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip advanced">Lanjutan</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 Di luar cakupan AZ-900</span>
+        <span class="chip cost">🔬 Lab · sekitar 90 menit · 💲💲💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="08-networking-basic.html" title="Jangan Tabrak Jaringan Saya">↩ 08</a><a class="chip" href="25-networking-advanced.html" title="Buktikan Trafiknya Diperiksa">↩ 25</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 25 · Buktikan Trafiknya Diperiksa, jaringan hub-and-spoke kini mengalirkan trafik antar-spoke lewat titik inspeksi yang Anda kendalikan.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, senang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 86% siap</b>Setelah episode ini Anda bisa menjawab: “Kita tetap jualan, dan kantor pusat terhubung ke Azure secara privat — lengkap dengan rencana B.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-mengapa-hibrida-dan-tiga-keluarga-koneksi">Mengapa hibrida, dan tiga keluarga koneksi</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-vpn-gateway-tunnel-terenkripsi-lewat-internet">VPN Gateway: tunnel terenkripsi lewat internet</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-sku-vpn-gateway-di-2026">SKU VPN Gateway di 2026</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-expressroute-jalur-privat-ke-jaringan-microsoft">ExpressRoute: jalur privat ke jaringan Microsoft</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-virtual-wan-hub-untuk-banyak-lokasi">Virtual WAN: hub untuk banyak lokasi</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-bagaimana-semuanya-menyatu-untuk-nusantara-retail">Bagaimana semuanya menyatu untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/26-hybrid-connectivity.html">🔬 Buka Lab 26</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> antara site-to-site VPN, point-to-site VPN, VNet-to-VNet, ExpressRoute, dan Virtual WAN untuk suatu kebutuhan.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> bagaimana VPN gateway berbasis rute (route-based) dibangun: GatewaySubnet, IP publik, local network gateway, connection, IPsec/IKE, BGP, dan active-active.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menentukan</strong> SKU VPN Gateway yang berlaku saat ini, serta SKU circuit ExpressRoute, model penagihan, dan tingkat ketahanannya.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Merencanakan</strong> ruang alamat yang tidak tumpang-tindih untuk kantor pusat, empat puluh toko, pengguna jarak jauh, dan Azure.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 26</span>
+        <div class="story-body"><p>Orders API yang baru — API pesanan — berjalan di Azure pada 10.40.0.0/16, tetapi sistem gudang dan database keuangan
+masih tinggal di ruang server Pak Budi di kantor pusat Jakarta, pada 10.0.0.0/16. Saat ini keduanya berkomunikasi lewat
+public endpoint yang dilindungi daftar IP yang diizinkan (allow list) — dan daftar itu diedit Pak Budi dengan tangan.
+Keempat puluh toko mengunggah data penjualan harian setiap malam melalui internet. Saat promo 12.12 yang lalu, unggahan
+dari satu toko gagal tiga malam berturut-turut, dan tidak ada yang sadar sampai tim keuangan mencoba tutup buku akhir
+bulan.</p>
+<p>Pak Budi menginginkan &quot;jalur privat yang layak, bukan tambal sulam&quot;. Ibu Sari ingin tahu tiga hal: apakah jalurnya
+privat, apa yang terjadi kalau jalurnya putus, dan berapa biayanya setiap bulan?</p>
+<p>Pertanyaan hari ini: <strong>jalur privat mana yang sebaiknya menghubungkan kantor pusat dan toko-toko ke Azure — dan
+bagaimana menjaganya tetap hidup ketika satu link gagal?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-mengapa-hibrida-dan-tiga-keluarga-koneksi" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Mengapa hibrida, dan tiga keluarga koneksi</h3><div class="prose"><p><strong>Hybrid networking</strong> (jaringan hibrida) menyambungkan jaringan yang Anda kelola sendiri — kantor pusat, toko, sebuah
+pusat data — dengan virtual network (<em>jaringan virtual</em>) di Azure, sehingga mesin-mesin bisa saling menjangkau lewat
+alamat IP privat seolah-olah berada dalam satu jaringan. Inilah wujud nyata dari hybrid cloud (<em>cloud hibrid</em>).
+Nusantara Retail membutuhkannya karena migrasi berjalan bertahap: sistem gudang tetap di kantor pusat setidaknya satu
+tahun lagi, sementara setiap layanan baru mendarat di Azure.</p>
+<p>Azure menawarkan tiga keluarga konektivitas hibrida:</p>
+<ul>
+<li><strong>VPN Gateway</strong> membangun tunnel (terowongan) terenkripsi melintasi internet publik — VPN adalah singkatan dari
+virtual private network. Cepat disiapkan, murah untuk memulai, dan bekerja di mana pun ada koneksi internet.</li>
+<li><strong>ExpressRoute</strong> adalah koneksi privat ke jaringan Microsoft melalui penyedia konektivitas (connectivity provider).
+Koneksi ini tidak pernah melintasi internet publik dan kinerjanya dapat diprediksi, tetapi pemesanannya memakan
+waktu berminggu-minggu.</li>
+<li><strong>Virtual WAN</strong> adalah hub yang dikelola Microsoft, yang menggabungkan koneksi VPN, ExpressRoute, dan virtual network
+dalam skala besar, untuk organisasi dengan banyak lokasi.</li>
+</ul>
+<p>Ibaratnya mengirim dokumen penting dari kantor pusat ke gudang. VPN adalah koper bergembok yang dibawa lewat jalan umum:
+isinya aman, tetapi waktu tempuhnya bergantung pada macet. ExpressRoute adalah jalur khusus seperti jalur busway: tidak
+bercampur dengan kendaraan umum sehingga waktu tempuhnya bisa ditebak — tetapi kopernya tidak otomatis bergembok.
+Ingat poin terakhir ini; kita akan kembali kepadanya di bagian 4.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph HQ[&quot;Kantor pusat, Jakarta · 10.0.0.0/16&quot;]
+    fw[&quot;Firewall Pak Budi&lt;br/&gt;(perangkat VPN dan router)&quot;]
+  end
+  laptop[&quot;Laptop admin jarak jauh&lt;br/&gt;(Azure VPN Client)&quot;]
+  stores[&quot;40 toko&lt;br/&gt;10.100.0.0/16&quot;]
+  subgraph AZ[&quot;Azure · VNet hub 10.40.0.0/16&quot;]
+    vpngw[&quot;VPN gateway&quot;]
+    ergw[&quot;ExpressRoute gateway&quot;]
+  end
+  fw == &quot;site-to-site VPN&lt;br/&gt;(IPsec lewat internet)&quot; ==&gt; vpngw
+  fw == &quot;circuit ExpressRoute&lt;br/&gt;(privat, lewat provider)&quot; ==&gt; ergw
+  laptop -. &quot;point-to-site VPN&quot; .-&gt; vpngw
+  stores -- &quot;site-to-site VPN atau SD-WAN&lt;br/&gt;(nanti: hub Virtual WAN)&quot; --&gt; vpngw
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p><strong>Rencanakan alamat lebih dulu.</strong> Setiap desain hibrida akan rusak jika dua jaringan yang terhubung memakai alamat yang
+sama: tidak ada router yang bisa menebak 10.0.1.10 mana yang Anda maksud. Bayangkan dua rumah di satu kota dengan
+alamat persis sama, &quot;Jl. Melati No. 10&quot;: kurir paket mana pun akan bingung harus mengantar ke rumah yang mana. Seperti
+di Makan Siang 08, pilih rentang yang tidak akan pernah bertabrakan dan catat sebelum siapa pun membangun apa pun.
+Rencana Nusantara Retail:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Jaringan</th>
+<th>Ruang alamat</th>
+<th>Catatan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kantor pusat (Jakarta)</td>
+<td>10.0.0.0/16</td>
+<td>Jaringan Pak Budi yang sudah ada; tidak bisa diubah</td>
+</tr>
+<tr>
+<td>Hub dan workload Azure</td>
+<td>10.40.0.0/16</td>
+<td>Subnet gateway berada di sini</td>
+</tr>
+<tr>
+<td>Toko</td>
+<td>10.100.0.0/16</td>
+<td>Satu /24 per toko (10.100.1.0/24 sampai 10.100.40.0/24), dengan ruang untuk tumbuh</td>
+</tr>
+<tr>
+<td>Klien point-to-site</td>
+<td>172.16.200.0/24</td>
+<td>Alamat yang dibagikan ke laptop pengguna VPN</td>
+</tr>
+</tbody>
+</table></div>
+<p>Jika tumpang-tindih tidak bisa dihindari — misalnya Nusantara Retail membeli perusahaan yang jaringannya juga memakai
+10.0.0.0/16 — VPN Gateway dapat menerjemahkan alamat salah satu sisi dengan aturan NAT (network address translation).
+Anggap itu jalan terakhir: troubleshooting dan DNS jadi lebih sulit.</p>
+<p><strong>Rencanakan juga resolusi nama.</strong> Tunnel yang berfungsi baru separuh pekerjaan; nama juga harus bisa di-resolve di
+kedua sisi. DNS bawaan Azure di 168.63.129.16 hanya menjawab dari dalam virtual network Azure, sehingga server kantor
+pusat tidak bisa mengirim kueri ke sana melalui VPN. Jawaban yang umum adalah <strong>Azure DNS Private Resolver</strong> di hub
+(Makan Siang 25): inbound endpoint-nya memungkinkan server DNS Pak Budi meneruskan pencarian untuk private zone Azure ke
+dalam Azure, sedangkan outbound endpoint-nya, bersama sebuah forwarding ruleset, mengirim pencarian untuk domain
+internal kantor pusat kembali ke server DNS miliknya.</p>
+</div></article><article class="scene-card" id="2-vpn-gateway-tunnel-terenkripsi-lewat-internet" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>VPN Gateway: tunnel terenkripsi lewat internet</h3><div class="prose"><p><strong>VPN gateway</strong> adalah sekumpulan instance yang dikelola Microsoft, yang di-deploy Azure ke dalam subnet khusus di
+virtual network Anda, yaitu <strong>GatewaySubnet</strong>. Namanya harus persis <code>GatewaySubnet</code>, tidak boleh ada apa pun lagi di
+dalamnya, dan Anda tidak boleh memasang network security group padanya. Microsoft merekomendasikan /27 atau lebih
+besar, supaya ada ruang untuk tambahan di kemudian hari, misalnya ExpressRoute gateway di sampingnya. Gateway mendapat
+<strong>IP publik Standard</strong> (Standard public IP address): alamat yang dihubungi perangkat on-premises — perangkat di lokasi
+Anda sendiri.</p>
+<p>Dua resource (<em>sumber daya</em>) lagi melengkapi setup site-to-site:</p>
+<ul>
+<li><strong>Local network gateway</strong> menggambarkan sisi seberang: IP publik perangkat VPN milik Pak Budi dan rentang alamat di
+belakangnya (10.0.0.0/16), atau setelan BGP-nya.</li>
+<li><strong>Connection</strong> menghubungkan virtual network gateway dengan local network gateway dan menyimpan autentikasinya —
+biasanya berupa <strong>pre-shared key</strong> (kunci rahasia bersama) yang harus diketahui kedua sisi; autentikasi berbasis
+sertifikat juga tersedia.</li>
+</ul>
+<p>Di dalam tunnel, <strong>IKE</strong> (Internet Key Exchange) menegosiasikan kunci dan <strong>IPsec</strong> mengenkripsi setiap paket. Kebijakan
+IPsec/IKE default dari Azure cocok untuk sebagian besar perangkat, dan Anda bisa menetapkan kebijakan kustom jika tim
+keamanan mensyaratkan algoritma tertentu.</p>
+<p><strong>Bagaimana tunnel terbentuk.</strong> Pertama, kedua ujung memakai IKE untuk membuktikan bahwa mereka memegang kunci yang sama
+(atau saling memercayai sertifikat masing-masing) dan untuk menyepakati algoritma; hasilnya adalah <em>IKE security
+association</em> — semacam surat kesepakatan berisi kunci dan algoritma yang disetujui kedua pihak. Melalui kanal yang
+terlindungi itu, mereka menegosiasikan <em>IPsec security association</em>, yang membawa lalu lintas sebenarnya, dan mereka
+memperbarui kunci secara terjadwal. Hanya jika kedua fase berhasil, status koneksi berubah dari <strong>Connecting</strong> menjadi
+<strong>Connected</strong>. Sebagian besar tunnel yang gagal disebabkan ketidakcocokan: pre-shared key yang berbeda, algoritma yang
+tidak diterima perangkat, atau rentang alamat yang tidak sejalan. Langkah diagnosis pertama Anda adalah status koneksi
+serta penghitung byte ingress dan egress-nya; untuk kasus yang lebih sulit, VPN troubleshoot di Network Watcher dan
+packet capture di gateway menunjukkan apa yang diusulkan masing-masing sisi.</p>
+<p>Ibaratnya satpam kompleks dan kurir langganan yang punya kata sandi rahasia. Sebelum gerbang dibuka, keduanya memastikan
+mereka tahu kata sandi yang sama — tanpa pernah meneriakkannya di jalan. Kalau satpam yang baru bertugas diberi kata
+sandi yang berbeda, gerbang tetap tertutup, semulus apa pun jalan menuju kompleks itu.</p>
+<p><strong>Route-based atau policy-based?</strong> Gateway <strong>route-based</strong> mengirim lalu lintas apa pun yang cocok dengan rutenya ke
+dalam tunnel; gateway <strong>policy-based</strong> hanya mengenkripsi lalu lintas di antara pasangan alamat yang sudah ditetapkan.
+Pilih route-based: point-to-site, BGP, active-active, dan VNet-to-VNet semuanya membutuhkannya, dan policy-based hanya
+ditawarkan pada SKU Basic. Firewall lama yang hanya mengenal VPN policy-based tetap bisa terhubung ke gateway
+route-based dengan <em>policy-based traffic selectors</em>.</p>
+<p><strong>Active-active dan BGP.</strong> Secara default, gateway berjalan dalam mode <strong>active-standby</strong>: satu instance membawa tunnel
+dan instance lainnya mengambil alih saat pemeliharaan atau kegagalan, dengan gangguan singkat. Dalam mode
+<strong>active-active</strong>, setiap instance punya IP publik sendiri dan membawa tunnel sendiri, sehingga failover (perpindahan ke
+instance lain saat terjadi masalah) jauh lebih mulus; inilah setup produksi yang direkomendasikan. <strong>BGP</strong> (Border
+Gateway Protocol) memungkinkan gateway dan router Pak Budi bertukar rute secara otomatis alih-alih Anda mengetik prefix
+satu per satu di local network gateway, dan BGP membuat banyak tunnel serta transit routing (meneruskan lalu lintas dari
+satu jaringan ke jaringan lain) bisa berjalan. VPN gateway Azure memakai nomor AS (autonomous system, semacam nomor
+identitas jaringan dalam BGP) privat 65515 kecuali Anda memilih yang lain.</p>
+<p><strong>Satu gateway untuk banyak VNet.</strong> Dalam jaringan hub-and-spoke (Makan Siang 25), hanya hub yang membutuhkan gateway.
+Aktifkan <em>Allow gateway transit</em> di sisi hub pada setiap peering dan <em>Use remote gateways</em> di sisi spoke, maka setiap
+spoke menjangkau kantor pusat melalui gateway VPN atau ExpressRoute milik hub — cukup satu gateway yang perlu dibayar
+dan dipantau. Azure menambahkan prefix on-premises ke rute setiap subnet secara otomatis, dengan <strong>virtual network
+gateway</strong> sebagai next hop; Anda akan melihat rute persis seperti itu di lab.</p>
+<p>Tiga jenis koneksi VPN berbagi gateway yang sama:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Jenis</th>
+<th>Menghubungkan</th>
+<th>Penggunaan di Nusantara Retail</th>
+<th>Autentikasi</th>
+<th>Yang perlu diwaspadai</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Site-to-site (S2S)</strong></td>
+<td>Jaringan on-premises ke sebuah VNet, melalui perangkat VPN dengan IP publik</td>
+<td>Kantor pusat sekarang, toko-toko nanti</td>
+<td>Pre-shared key atau sertifikat</td>
+<td>Perangkat harus kompatibel; kualitas internet membatasi kinerja</td>
+</tr>
+<tr>
+<td><strong>Point-to-site (P2S)</strong></td>
+<td>Satu komputer ke sebuah VNet, melalui VPN client</td>
+<td>Pak Budi bekerja dari rumah; Rizky menjangkau VM privat</td>
+<td>Microsoft Entra ID, sertifikat, atau RADIUS</td>
+<td>Entra ID membutuhkan OpenVPN dan Azure VPN Client, serta tidak tersedia di SKU Basic; pool alamat klien tidak boleh tumpang-tindih</td>
+</tr>
+<tr>
+<td><strong>VNet-to-VNet</strong></td>
+<td>Dua virtual network, melalui gateway di masing-masing</td>
+<td>Link terenkripsi antar-region; lab makan siang ini</td>
+<td>Pre-shared key</td>
+<td>Untuk lalu lintas Azure-ke-Azure, VNet peering (Makan Siang 25) biasanya lebih murah dan lebih cepat</td>
+</tr>
+</tbody>
+</table></div>
+<p>Point-to-site dengan <strong>autentikasi Microsoft Entra ID</strong> (<em>ID Microsoft Entra</em>) adalah pilihan modern untuk staf: orang
+masuk dengan akun yang biasa mereka pakai, sehingga MFA (<em>autentikasi multifaktor</em>) dan Conditional Access (<em>Akses
+Bersyarat</em>) ikut berlaku, dan tidak ada sertifikat klien yang harus diterbitkan lalu dicabut. Azure VPN Client berjalan
+di Windows dan macOS.</p>
+<p>Kesabaran adalah bagian dari desain. Membuat VPN gateway sering memakan waktu <strong>45 menit atau lebih</strong>, dan beberapa
+perubahan, seperti beralih ke active-active, juga butuh waktu cukup lama. Rencanakan perubahan gateway jauh-jauh hari;
+jangan klik lalu menunggu sambil berharap.</p>
+</div></article><article class="scene-card" id="3-sku-vpn-gateway-di-2026" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>SKU VPN Gateway di 2026</h3><div class="prose"><p><strong>SKU</strong> (tingkatan produk) gateway menentukan throughput (berapa banyak data yang bisa lewat per detik), jumlah tunnel
+dan koneksi, serta fitur yang Anda dapat. Susunannya baru saja berubah, jadi tutorial lama bisa menyesatkan:</p>
+<ul>
+<li>Sejak 1 November 2025, Anda tidak bisa lagi membuat SKU non-zonal lama <strong>VpnGw1–5</strong>. Gateway yang sudah ada
+dipindahkan ke padanan zonalnya, dan SKU lama itu berstatus deprecated mulai 30 September 2026. SKU legacy Standard
+dan HighPerformance bahkan sudah lebih dulu pensiun, pada 30 September 2025.</li>
+<li><strong>SKU AZ</strong>, yaitu <strong>VpnGw1AZ sampai VpnGw5AZ</strong>, adalah yang dipakai untuk setiap gateway baru. Di region (<em>wilayah</em>)
+yang punya availability zone (<em>zona ketersediaan</em>), gateway bersifat zone-redundant; di region tanpa zona, gateway
+di-deploy secara regional.</li>
+<li><strong>Basic</strong> masih ada dan tidak akan pensiun, tetapi hanya untuk dev/test: tanpa BGP, tanpa IKEv2 atau OpenVPN untuk
+point-to-site, tanpa RADIUS, dan tanpa IPv6. SKU ini membutuhkan IP publik Standard dan hanya bisa dibuat dengan
+PowerShell atau CLI.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>SKU</th>
+<th>Generasi</th>
+<th>Tunnel site-to-site (maks.)</th>
+<th>Gunakan untuk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Basic</td>
+<td>1</td>
+<td>10</td>
+<td>Hanya dev/test dan proof of concept</td>
+</tr>
+<tr>
+<td>VpnGw1AZ</td>
+<td>1</td>
+<td>30</td>
+<td>Produksi kecil: satu kantor pusat dan beberapa cabang</td>
+</tr>
+<tr>
+<td>VpnGw2AZ, VpnGw3AZ</td>
+<td>1 atau 2</td>
+<td>30</td>
+<td>Throughput lebih besar dan lebih banyak pengguna point-to-site</td>
+</tr>
+<tr>
+<td>VpnGw4AZ, VpnGw5AZ</td>
+<td>2</td>
+<td>100</td>
+<td>Lingkungan besar; di atas 100 tunnel, gunakan Virtual WAN</td>
+</tr>
+</tbody>
+</table></div>
+<p>Saat tulisan ini dibuat, benchmark throughput agregat dari Microsoft berkisar dari sekitar 650 Mbps untuk VpnGw1AZ
+hingga 10 Gbps untuk VpnGw5AZ. Angka itu adalah benchmark, bukan jaminan, dan satu tunnel saja mendapat lebih sedikit,
+jadi periksa halaman SKU dan uji dengan lalu lintas Anda sendiri. Gateway ditagih untuk setiap jam keberadaannya, sejak
+pembuatan dimulai, ada atau tidak ada lalu lintas, dan data yang keluar dari Azure dikenai biaya tambahan. Tidak ada
+tombol jeda: untuk berhenti membayar, Anda harus menghapus gateway.</p>
+<p>Ibaratnya parkir di mal: argo berjalan selama mobil ada di dalam gedung, entah mobil itu dipakai atau hanya diam di
+tempat, dan satu-satunya cara menghentikan argo adalah keluar dari area parkir.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span><strong>SKU default CLI adalah Basic.</strong> <code>az network vnet-gateway create</code> tanpa <code>--sku</code> diam-diam membuat gateway Basic —
+tanpa BGP, tanpa Entra ID untuk point-to-site, dan hanya didukung untuk dev/test. Selalu sertakan <code>--sku</code> (misalnya
+<code>VpnGw1AZ</code>). Dua kesalahan klasik lainnya: memasang network security group atau rute 0.0.0.0/0 di GatewaySubnet, dan
+menghubungkan jaringan yang ruang alamatnya tumpang-tindih.</p>
+</aside>
+</div></article><article class="scene-card" id="4-expressroute-jalur-privat-ke-jaringan-microsoft" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>ExpressRoute: jalur privat ke jaringan Microsoft</h3><div class="prose"><p><strong>ExpressRoute</strong> menghubungkan jaringan Anda ke Microsoft melalui <strong>penyedia konektivitas</strong> (connectivity provider),
+seperti perusahaan telekomunikasi atau exchange, di sebuah <strong>lokasi ExpressRoute</strong> (disebut juga peering location):
+sebuah fasilitas kolokasi, yaitu gedung tempat banyak perusahaan menaruh perangkat jaringannya berdampingan, termasuk
+router edge milik Microsoft. Saat tulisan ini dibuat, Jakarta punya beberapa lokasi, termasuk opsi Jakarta Metro. Lalu
+lintas berjalan dari router Pak Budi melintasi jaringan penyedia menuju edge Microsoft, tanpa menyentuh internet publik.</p>
+<ul>
+<li><strong>Circuit</strong> adalah koneksi logisnya, yang dikenali lewat <strong>service key</strong> — sebuah GUID (pengenal unik) yang Anda
+serahkan ke penyedia, bukan sebuah rahasia. Setiap circuit punya dua koneksi ke dua router edge Microsoft sebagai
+redundansi bawaan, dan rute dipertukarkan dengan BGP. Bandwidth melalui penyedia berkisar dari 50 Mbps hingga 10 Gbps.</li>
+<li><strong>Azure private peering</strong> menjangkau virtual network Anda pada alamat privat melalui <strong>ExpressRoute gateway</strong> di VNet
+(ErGw1Az, ErGw2Az, ErGw3Az, atau ErGwScale yang bisa diskalakan). <strong>Microsoft peering</strong> menjangkau layanan publik
+Microsoft, seperti endpoint layanan PaaS (<em>platform sebagai layanan</em>) Azure dan, dalam skenario tertentu, Microsoft
+365, melalui alamat publik milik Anda.</li>
+<li><strong>SKU circuit:</strong> <strong>Local</strong> (hanya region Azure di dekat peering location, transfer data sudah termasuk dalam harga
+port), <strong>Standard</strong> (semua region di area geopolitik yang sama), dan <strong>Premium</strong> (seluruh dunia, dengan lebih banyak
+rute dan lebih banyak link VNet). Penagihannya <strong>metered</strong> (bayar per GB yang keluar) atau <strong>unlimited</strong> (biaya
+tetap); Anda bisa beralih dari metered ke unlimited, tetapi tidak sebaliknya.</li>
+<li><strong>ExpressRoute Direct</strong> melewati penyedia: port ganda 10, 100, atau 400 Gbps langsung ke jaringan Microsoft.</li>
+<li><strong>Global Reach</strong> menghubungkan lokasi-lokasi Anda sendiri satu sama lain melalui circuit masing-masing, lewat backbone
+Microsoft. <strong>FastPath</strong> mengirim lalu lintas langsung ke VM (<em>komputer virtual</em>), melewati gateway (membutuhkan
+ErGw3Az atau ErGwScale).</li>
+</ul>
+<p><strong>Memesan circuit</strong> mengikuti urutan yang tetap. Anda membuat circuit di Azure — penyedia, peering location, bandwidth,
+SKU, dan model penagihan — lalu menerima service key-nya. Penyedia memakai key itu untuk menyiapkan sisinya, dan provider
+status circuit berubah menjadi <em>Provisioned</em>. Kemudian Anda (atau penyedia) mengonfigurasi Azure private peering dengan
+BGP, membuat ExpressRoute gateway di GatewaySubnet milik hub, dan menautkan virtual network ke circuit dengan sebuah
+connection. Virtual network di subscription (<em>langganan</em>) lain juga bisa ditautkan, menggunakan authorization yang
+dibuat oleh pemilik circuit.</p>
+<p><strong>Ketahanan</strong> (resiliency) hadir dalam tiga tingkat. Ketahanan <strong>Standard</strong> adalah satu circuit di satu lokasi: dua
+koneksi, tetapi satu gedung. Ketahanan <strong>High</strong>, yaitu <strong>ExpressRoute Metro</strong>, membagi satu circuit ke dua lokasi di
+kota yang sama. Ketahanan <strong>Maximum</strong> memakai dua circuit di dua peering location yang berbeda — rekomendasi Microsoft
+untuk workload kritis. Banyak organisasi juga mempertahankan <strong>site-to-site VPN sebagai jalur cadangan</strong>, karena VPN
+gateway dan ExpressRoute gateway bisa berdampingan di virtual network yang sama.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  router[&quot;Router kantor pusat&lt;br/&gt;10.0.0.0/16&quot;]
+  router -- &quot;tunnel IPsec&quot; --&gt; isp[&quot;ISP lokal&quot;]
+  isp --&gt; inet((&quot;Internet publik&quot;))
+  inet --&gt; vpngw[&quot;VPN gateway&quot;]
+  router -- &quot;BGP lewat circuit&quot; --&gt; prov[&quot;Penyedia konektivitas&lt;br/&gt;(jalur privat)&quot;]
+  prov --&gt; edge[&quot;Router edge Microsoft&lt;br/&gt;peering location Jakarta&quot;]
+  edge --&gt; ergw[&quot;ExpressRoute gateway&quot;]
+  vpngw --&gt; vnet[&quot;VNet Azure 10.40.0.0/16&quot;]
+  ergw --&gt; vnet
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span><strong>Privat tidak sama dengan terenkripsi.</strong> ExpressRoute menjauhkan lalu lintas dari internet, tetapi tidak
+mengenkripsinya secara default — seperti jalur busway tadi: jalannya khusus, tetapi kopernya tidak otomatis bergembok.
+Ketika data harus terenkripsi selama transit, gunakan TLS (enkripsi yang juga dipakai HTTPS) di aplikasi, MACsec
+(enkripsi pada sambungan fisik) di ExpressRoute Direct, atau VPN IPsec di atas private peering.</p>
+</aside>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Site-to-site VPN</th>
+<th>ExpressRoute</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Jalur</td>
+<td>Tunnel terenkripsi melintasi internet publik</td>
+<td>Koneksi privat melalui penyedia; tidak pernah lewat internet</td>
+</tr>
+<tr>
+<td>Enkripsi</td>
+<td>IPsec, selalu</td>
+<td>Tidak secara default (tambahkan TLS, MACsec, atau IPsec)</td>
+</tr>
+<tr>
+<td>Bandwidth</td>
+<td>Hingga throughput SKU gateway, dibagi oleh semua tunnel</td>
+<td>50 Mbps hingga 10 Gbps per circuit; port hingga 400 Gbps dengan Direct</td>
+</tr>
+<tr>
+<td>Latensi dan jitter (naik-turunnya jeda)</td>
+<td>Berubah-ubah mengikuti kondisi internet</td>
+<td>Dapat diprediksi</td>
+</tr>
+<tr>
+<td>Waktu penyiapan</td>
+<td>Hitungan jam, ditambah 45 menit atau lebih untuk gateway</td>
+<td>Berminggu-minggu, selama penyedia menyiapkan circuit</td>
+</tr>
+<tr>
+<td>Model biaya</td>
+<td>Gateway per jam, ditambah data keluar</td>
+<td>Circuit per bulan (plus data jika metered), gateway per jam, biaya penyedia</td>
+</tr>
+<tr>
+<td>Redundansi</td>
+<td>Gateway active-active, dua perangkat on-premises</td>
+<td>Dua koneksi per circuit; Metro atau lokasi kedua untuk ketahanan lebih tinggi</td>
+</tr>
+<tr>
+<td>Paling cocok untuk</td>
+<td>Memulai, lokasi kecil, jalur cadangan</td>
+<td>Lalu lintas yang besar, stabil, dan kritis bagi bisnis</td>
+</tr>
+</tbody>
+</table></div>
+</div></article><article class="scene-card" id="5-virtual-wan-hub-untuk-banyak-lokasi" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Virtual WAN: hub untuk banyak lokasi</h3><div class="prose"><p>Empat puluh toko, satu kantor pusat, staf jarak jauh, dan virtual network yang terus bertambah di dua region: dengan
+VPN gateway biasa, Anda harus mengelola puluhan koneksi, local network gateway, dan peering, serta membangun transit
+routing sendiri. <strong>Azure Virtual WAN</strong> — WAN adalah wide area network, jaringan yang membentang antar-lokasi berjauhan —
+mengubah semua itu menjadi layanan terkelola. Anda membuat sebuah <strong>virtual WAN</strong> dan sebuah <strong>virtual hub</strong> di setiap
+region yang Anda pakai. Hub adalah virtual network yang dikelola Microsoft, berisi gateway untuk site-to-site VPN,
+point-to-site (disebut <em>User VPN</em>), dan ExpressRoute, ditambah router yang menyediakan <strong>transit any-to-any</strong>: toko ke
+kantor pusat, toko ke VNet, VNet ke VNet. Hub-hub dalam virtual WAN yang sama saling terhubung dalam full mesh lewat
+backbone Microsoft. <strong>Secured virtual hub</strong> menambahkan Azure Firewall untuk inspeksi terpusat, dan partner SD-WAN
+(software-defined WAN) dapat mengotomatiskan koneksi toko, sehingga router toko baru membangun tunnel-nya sendiri.</p>
+<p>Ibaratnya terminal bus terpadu: daripada setiap toko membuka trayek sendiri ke setiap tujuan, semua cukup masuk ke
+terminal, dan pengelola terminal yang mengatur perpindahannya.</p>
+<p>Virtual WAN hadir dalam dua jenis. <strong>Basic</strong> hanya mendukung site-to-site VPN. <strong>Standard</strong> menambahkan ExpressRoute,
+User VPN, transit antar-VNet dan antar-hub, Azure Firewall, dan network virtual appliance. Anda bisa meng-upgrade dari
+Basic ke Standard, tetapi tidak sebaliknya.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  subgraph vwan[&quot;Virtual WAN (Standard)&quot;]
+    hubid[&quot;Hub · Indonesia Central&lt;br/&gt;gateway VPN, User VPN, dan ExpressRoute&lt;br/&gt;hub router dan Azure Firewall&quot;]
+    hubsea[&quot;Hub · Southeast Asia&quot;]
+    hubid &lt;== &quot;hub-ke-hub lewat backbone Microsoft&quot; ==&gt; hubsea
+  end
+  s1[&quot;Toko 1&quot;] --&gt; hubid
+  s2[&quot;Toko 2&quot;] --&gt; hubid
+  s40[&quot;Toko 40&quot;] --&gt; hubid
+  hq[&quot;Kantor pusat&lt;br/&gt;ExpressRoute plus VPN cadangan&quot;] --&gt; hubid
+  staff[&quot;Staf jarak jauh&lt;br/&gt;User VPN&quot;] --&gt; hubid
+  hubid --&gt; app[&quot;VNet · toko online dan orders API&quot;]
+  hubsea --&gt; dr[&quot;VNet · salinan pemulihan bencana&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Jangan buru-buru memakai gateway ketika dua virtual network Azure hanya perlu saling bicara: <strong>VNet peering</strong> (Makan
+Siang 25) lebih murah, lebih cepat, dan tidak memerlukan gateway. Gunakan VPN VNet-to-VNet hanya jika Anda memang
+menginginkan IPsec di antara keduanya — atau, seperti di lab makan siang ini, untuk melatih koneksi site-to-site tanpa
+perangkat keras sungguhan.</p>
+</aside>
+</div></article><article class="scene-card" id="6-bagaimana-semuanya-menyatu-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Bagaimana semuanya menyatu untuk Nusantara Retail</h3><div class="prose"><p>Rekomendasi Anda untuk Ibu Sari terbagi dalam tiga fase:</p>
+<ol>
+<li><strong>Sekarang — site-to-site VPN.</strong> Gateway VpnGw1AZ dalam mode active-active di VNet hub (10.40.0.0/16, Indonesia
+Central), BGP dengan firewall Pak Budi, dan point-to-site dengan Microsoft Entra ID untuk tim TI. Bisa aktif dalam
+hitungan hari, dan biayanya berupa jam gateway ditambah data keluar.</li>
+<li><strong>Kuartal depan — ExpressRoute untuk kantor pusat.</strong> Circuit Standard dengan data unlimited, dari peering location
+Jakarta ke Indonesia Central, untuk sinkronisasi gudang setiap malam. VPN tetap menjadi jalur cadangan. Jika kelak
+bisnis membutuhkan lebih, ExpressRoute Metro atau circuit kedua di lokasi lain akan menaikkan tingkat ketahanan.</li>
+<li><strong>Saat toko-toko bergabung — Virtual WAN Standard.</strong> Perangkat SD-WAN di setiap toko terhubung ke hub Indonesia
+Central, secured hub menginspeksi lalu lintas toko, dan rencana alamat dari bagian 1 menjaga setiap toko tidak
+bertabrakan dengan kantor pusat maupun Azure.</li>
+</ol>
+<p>Tiga pertanyaan Ibu Sari kini punya jawaban. Privat: VPN mengenkripsi lalu lintas yang melintasi internet, dan
+ExpressRoute tidak lewat internet sama sekali (dengan enkripsi ditambahkan di mana data membutuhkannya). Tangguh:
+gateway active-active, dua koneksi per circuit, dan VPN cadangan. Biaya: sebagian besar berupa biaya tetap per jam dan
+per bulan yang bisa Anda perkirakan di pricing calculator (<em>kalkulator harga</em>) sebelum menandatangani apa pun.</p>
+<p>Apa pun yang Anda bangun, pantau terus. VPN gateway memublikasikan metrik seperti bandwidth tunnel dan status BGP peer
+ke Azure Monitor, sehingga Anda bisa memunculkan alert (<em>pemberitahuan</em>) begitu sebuah tunnel putus (Makan Siang 16).
+Circuit ExpressRoute melaporkan ketersediaan dan throughput, dan Connection Monitor bisa menguji jalurnya dari ujung ke
+ujung, dari VM di Azure sampai ke server di kantor pusat. Toko yang unggahannya gagal tiga malam berturut-turut itu akan
+memicu alert sejak malam pertama.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Saat promo 12.12 berikutnya, jalur internet kantor pusat putus selama 30 menit. Jika hanya
+ada site-to-site VPN, apa yang berhenti berfungsi? Bagaimana jika ada ExpressRoute plus VPN cadangan? Dan apa yang
+tetap gagal jika seluruh gedung kantor pusat kehilangan listrik?</p>
+</aside>
+<p>Di Makan Siang 27, Anda beralih dari tepi jaringan ke toko online itu sendiri, dengan Application Gateway, Front Door,
+dan Traffic Manager.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Tunnel ke kantor pusat, jalur privat, dan satu hub untuk setiap toko</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/26-hybrid-connectivity.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/26-hybrid-connectivity.html?lang=id" title="Demo interaktif: Tunnel ke kantor pusat, jalur privat, dan satu hub untuk setiap toko" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/26-hybrid-connectivity/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Tidak ada yang menyeberang sebelum kedua sisi sepakat: IKE bernegosiasi lebih dulu, baru kemudian IPsec membawa lalu
+lintasnya.</li>
+<li>Paket yang sama menempuh dua rute yang sangat berbeda: melintasi internet publik, atau melalui jalur privat
+ExpressRoute.</li>
+<li>Dengan hub Virtual WAN, sebuah toko menjangkau kantor pusat dan Azure melalui satu router terkelola, bukan lewat
+jaring-jaring tunnel.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Pak Budi membutuhkan server gudang di kantor pusat bisa menjangkau Azure secara privat paling lambat minggu depan,
+dengan anggaran yang terbatas. VPN atau ExpressRoute?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Site-to-site VPN ke gateway route-based dengan SKU AZ (misalnya VpnGw1AZ). Ini hanya membutuhkan koneksi internet dan
+perangkat yang kompatibel, sedangkan ExpressRoute membutuhkan penyedia untuk menyiapkan circuit, yang memakan waktu
+berminggu-minggu. <em>Alasannya:</em> VPN adalah cara cepat dengan komitmen rendah untuk memulai; ExpressRoute bisa menyusul
+kemudian.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Rizky harus menjangkau alamat IP privat sebuah VM dari rumah, dengan masuk memakai akun Entra ID dan MFA. Apa yang
+Anda siapkan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Point-to-site VPN dengan autentikasi Microsoft Entra ID (OpenVPN dan Azure VPN Client) di gateway route-based yang
+bukan Basic, dengan pool alamat klien yang tidak tumpang-tindih dengan apa pun. <em>Alasannya:</em> autentikasi Entra ID
+membawa MFA dan Conditional Access ke VPN, tanpa sertifikat klien yang harus dikelola.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Skrip milik seorang rekan menjalankan <code>az network vnet-gateway create --gateway-type Vpn --vpn-type RouteBased …</code>
+tanpa <code>--sku</code>. Seminggu kemudian, upaya mengaktifkan BGP gagal. Mengapa?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Tanpa <code>--sku</code>, CLI membuat gateway <strong>Basic</strong>, dan Basic tidak mendukung BGP. Buat gateway dengan SKU AZ seperti
+<code>--sku VpnGw1AZ</code>. <em>Alasannya:</em> SKU default CLI adalah Basic, yang hanya ditujukan untuk dev/test.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Tim keuangan bertanya apakah lalu lintas di circuit ExpressRoute yang direncanakan akan terenkripsi. Apa jawaban
+Anda?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Tidak secara default. ExpressRoute adalah jalur privat yang tidak pernah melintasi internet, tetapi tidak
+terenkripsi. Gunakan TLS di aplikasi, MACsec di ExpressRoute Direct, atau VPN IPsec di atas private peering.
+<em>Alasannya:</em> privat dan terenkripsi adalah dua sifat yang berbeda.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Empat puluh toko, kantor pusat, staf jarak jauh, dan VNet di dua region membutuhkan konektivitas any-to-any, dengan
+firewall yang menginspeksi lalu lintas toko secara terpusat. Virtual WAN Basic atau Standard?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Standard. Basic hanya mendukung site-to-site VPN; Standard menambahkan User VPN, ExpressRoute, transit antar-VNet dan
+antar-hub, serta Azure Firewall di secured hub. <em>Alasannya:</em> transit any-to-any dan inspeksi terpusat adalah fitur
+Standard.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Rencanakan ruang alamat yang tidak tumpang-tindih sebelum Anda membangun link hibrida apa pun — jaringan yang tumpang-tindih tidak bisa dirutekan.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>VPN Gateway membangun tunnel IPsec melalui internet: site-to-site untuk lokasi, point-to-site (idealnya dengan Entra ID) untuk orang, VNet-to-VNet di antara VNet. Di produksi, gunakan route-based, SKU AZ, active-active, dan BGP.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Gateway butuh 45 menit atau lebih untuk dibuat dan ditagih setiap jam keberadaannya; Basic hanya untuk dev/test dan merupakan SKU default CLI.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>ExpressRoute adalah koneksi privat yang dapat diprediksi melalui penyedia — tidak terenkripsi secara default. Pilih Local, Standard, atau Premium, metered atau unlimited, dan rancang ketahanan dengan Metro, lokasi kedua, dan VPN cadangan.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Virtual WAN Standard memberi Anda hub terkelola dengan transit any-to-any untuk banyak cabang; Basic hanya melayani site-to-site.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Jalur cadangan yang belum pernah dicoba hanyalah kabar burung.</strong> Setiap kali sebuah desain menulis &quot;VPN sebagai
+cadangan ExpressRoute&quot;, saya mengajukan dua pertanyaan. Pertama: kapan terakhir kali kita sengaja pindah ke jalur
+cadangan? Saya ingin uji terjadwal di jam sepi — circuit dinonaktifkan sementara, lalu kita lihat lalu lintas
+berpindah ke tunnel, pastikan sinkronisasi malam tetap selesai, kemudian kembalikan. Kedua: dari mana kita tahu bahwa
+kita sedang berjalan di jalur cadangan? Tunnel yang diam-diam memikul semua beban selama berminggu-minggu tetap tampak
+sehat di setiap dashboard, jadi saya minta alert untuk circuit-nya sendiri, bukan hanya untuk tunnel. Terakhir, saya
+selalu bertanya di mana kedua jalur itu bertemu secara fisik. Kalau keduanya keluar dari kantor pusat lewat router yang
+sama, listrik yang sama, atau galian kabel yang sama, itu bukan dua jalur — itu satu jalur dengan dua tagihan.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>26</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Menghubungkan kantor pusat</h3>
+          <div class="prose"><p><code>setup.sh</code> membangun dua virtual network — jaringan Azure milik Nusantara Retail (10.40.0.0/16) dan kantor pusat
+simulasi (10.0.0.0/16) — masing-masing dengan GatewaySubnet dan sebuah VM kecil, lalu mulai membuat dua gateway
+route-based <strong>VpnGw1AZ</strong>. Selagi gateway dibangun (30–45 menit, dengan daftar bacaan untuk mengisi waktu), Anda
+memeriksa bahwa kedua jaringan belum bisa saling menjangkau. Kemudian Anda membuat koneksi VNet-to-VNet di kedua arah
+dengan shared key yang dibuat saat runtime, menyaksikan statusnya mencapai <strong>Connected</strong>, mengirim lalu lintas ping dan
+HTTP melalui tunnel, dan memeriksa effective routes. Tugas opsional membandingkan hasilnya dengan VNet peering. Gateway
+menimbulkan biaya setiap jam, jadi lab diakhiri dengan pembersihan segera.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 90 menit</span><span class="chip cost">💲💲💲 biaya yang terasa selama berjalan</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/26-hybrid-connectivity.html">Mulai Lab 26 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/vpn-gateway/about-gateway-skus" target="_blank" rel="noopener"><b>Microsoft Learn: Tentang SKU gateway</b><span>SKU VPN Gateway saat ini, jumlah tunnel, benchmark throughput, dan fiturnya.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/vpn-gateway/gateway-sku-consolidation" target="_blank" rel="noopener"><b>Microsoft Learn: Konsolidasi dan migrasi SKU VPN Gateway</b><span>Perpindahan dari SKU non-zonal ke SKU AZ, lengkap dengan tanggal dan FAQ.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/expressroute/expressroute-introduction" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Azure ExpressRoute?</b><span>Circuit, peering, SKU, model penagihan, Direct, dan Global Reach.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/virtual-wan/virtual-wan-about" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Azure Virtual WAN?</b><span>Hub, Basic versus Standard, dan konektivitas transit.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🔗</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Pembangun Jembatan</h2>
+        <p class="muted">Hubungkan jaringan on-premises ke Azure.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Kita tetap jualan, dan kantor pusat terhubung ke Azure secara privat — lengkap dengan rencana B.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 27</b><h4>&#x27; OR 1=1--</h4><p>Log penuh string serangan, sementara pembeli di Makassar harus menunggu server di Jakarta.</p><p style="margin-top:10px"><a href="27-load-balancing-advanced.html">Tonton Episode 27 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="25-networking-advanced.html"><small>← Episode sebelumnya</small>25 · Buktikan Trafiknya Diperiksa</a><a class="next" href="27-load-balancing-advanced.html"><small>Episode berikutnya →</small>27 · &#x27; OR 1=1--</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/26-hybrid-connectivity/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

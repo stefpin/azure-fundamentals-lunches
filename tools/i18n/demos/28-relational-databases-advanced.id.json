@@ -1,0 +1,123 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 28 · Database Relasional (Lanjutan) — Demo interaktif",
+    "kicker": "Makan Siang 28 · Database Relasional (Lanjutan) · Demo interaktif",
+    "title": "Failover group: replication lag, listener, dan tombol undo",
+    "lede": "Saksikan pesanan Nusantara Retail direplikasi secara asinkron ke region kedua, bertahan dari gangguan regional lewat listener milik failover group, kembali ke region asal tanpa kehilangan data, dan pulih dari DELETE yang keliru dengan point-in-time restore. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Failover group untuk database pesanan Nusantara Retail di Southeast Asia dan East Asia",
+    "svgDesc": "Aplikasi toko online dan aplikasi pelaporan tersambung lewat read-write listener dan read-only listener. Database pesanan memiliki primary di Southeast Asia dan geo-secondary di East Asia, yang terhubung lewat replikasi asinkron. Ceritanya menunjukkan replication lag sebagai recovery point objective, gangguan regional dengan forced failover, listener yang mengikuti primary baru, failback terencana, dan point-in-time restore setelah penghapusan yang keliru."
+  },
+  "steps": [
+    {
+      "title": "Semua pesanan di satu region",
+      "text": "Database pesanan Nusantara Retail berjalan di Southeast Asia. Di dalam region itu, ketersediaannya sudah tinggi: replika mengambil alih saat sebuah server gagal, dan dengan zone redundancy bahkan saat satu availability zone penuh gagal. Tetapi setiap salinan tinggal di region yang sama. Ibu Sari ingin tahu apa yang terjadi pada hari langka ketika seluruh region tidak tersedia."
+    },
+    {
+      "title": "Tambahkan secondary di region lain",
+      "text": "Failover group menambahkan logical server di East Asia dan membuat salinan geo-secondary dari database di sana. Pertama, seeding menyalin semua data yang sudah ada. Sejak itu, primary terus-menerus mengalirkan transaction log-nya ke secondary. Secondary bisa dibaca. Kedua server membutuhkan firewall rule dan admin yang sama, karena pengaturan level server tidak ikut direplikasi."
+    },
+    {
+      "title": "Commit dulu, replikasi kemudian",
+      "text": "Ikuti satu pesanan. Toko online menulis ke primary, yang meng-commit-nya dan langsung menjawab, jadi checkout tidak pernah menunggu Hong Kong. Sesaat kemudian, perubahan itu menyusul ke secondary. Inilah replikasi asinkron: operasi tulis tetap cepat sejauh apa pun letak secondary, tetapi secondary selalu sedikit tertinggal dari primary."
+    },
+    {
+      "title": "Sambungkan ke listener, bukan ke server",
+      "text": "Failover group memberi Anda dua nama DNS yang tidak pernah berubah. Toko online tersambung ke read-write listener, yang selalu mengarah ke primary. Dasbor toko tersambung ke read-only listener, yang mengarah ke secondary dan menjauhkan beban pelaporan dari checkout. Setelah failover, hanya targetnya yang berubah, jadi connection string tetap sama."
+    },
+    {
+      "title": "RPO sama dengan replication lag",
+      "text": "Karena replikasinya asinkron, selalu ada beberapa transaksi yang masih dalam perjalanan. Selisih itulah recovery point objective Anda: data yang bisa ikut hilang jika region tiba-tiba gagal. Biasanya hanya hitungan detik, dan Anda bisa memantaunya di kolom replication_lag_sec pada primary. Secondary yang ukurannya sama dengan primary menjaga lag tetap kecil.",
+      "set": {
+        "t-lag": "lag 3 s = RPO"
+      }
+    },
+    {
+      "title": "Bencana: Southeast Asia lumpuh",
+      "text": "Sekarang kejadian langka itu datang: Southeast Asia tidak tersedia. Request checkout sampai ke read-write listener, tetapi targetnya tidak menjawab. Dengan policy customer-managed, tim Anda yang memutuskan kapan failover. Dengan policy Microsoft-managed, Microsoft yang memutuskan, hanya untuk gangguan yang meluas dan baru setelah masa tenggang minimal satu jam, sehingga pemulihan bisa memakan waktu berjam-jam.",
+      "set": {
+        "t-roleA": "TAK TERJANGKAU"
+      }
+    },
+    {
+      "title": "Forced failover: terima lag-nya",
+      "text": "Anda menjalankan set-primary terhadap server East Asia dengan opsi allow-data-loss. Secondary langsung menjadi primary, tanpa menunggu primary yang tidak terjangkau. Beberapa transaksi yang masih dalam perjalanan hilang: itulah recovery point objective dalam praktik. Semua yang di-commit sebelumnya aman di East Asia, dan read-write listener kini mengarah ke sana.",
+      "set": {
+        "t-roleB": "PRIMARY · read-write",
+        "t-rw-target": "→ East Asia",
+        "t-lag": "hilang di perjalanan"
+      }
+    },
+    {
+      "title": "Listener mengikuti primary",
+      "text": "Alias DNS milik read-write listener kini mengarah ke East Asia, dengan time-to-live 30 detik. Toko online mencoba lagi, menanyakan nama yang sama ke DNS, dan mendarat di primary baru; tidak ada yang perlu mengedit connection string. Pelanggan bisa berbelanja lagi dalam hitungan menit setelah Anda memutuskan. Laporan berhenti dulu sampai secondary tersedia lagi, kecuali Anda mengarahkannya ke primary untuk sementara.",
+      "set": {
+        "t-ro-target": "→ belum ada secondary",
+        "t-lag": "tanpa secondary"
+      }
+    },
+    {
+      "title": "Primary lama bergabung kembali",
+      "text": "Belakangan, Southeast Asia pulih. Failover group menyambungkan kembali primary lama sebagai secondary baru, dan replikasi kini berjalan dari East Asia ke Southeast Asia sampai ia selesai menyusul. Read-only listener ikut berpindah, jadi laporan berjalan lagi. Pesanan yang hilang saat forced failover tidak digabungkan kembali secara otomatis — itulah sebabnya RPO penting.",
+      "set": {
+        "t-roleA": "SECONDARY · menyusul",
+        "t-ro-target": "→ Southeast Asia",
+        "t-lag": "sedang menyusul"
+      }
+    },
+    {
+      "title": "Fail back dengan planned failover",
+      "text": "Saat Anda siap, pindahkan primary kembali dengan planned failover: set-primary tanpa opsi allow-data-loss. Azure lebih dulu menyinkronkan secondary sepenuhnya, lalu menukar perannya, sehingga tidak ada yang hilang. Listener ikut berpindah lagi. Gunakan perintah yang sama untuk drill rutin: tim yang sudah berlatih failover dan kembali lagi akan mengambil keputusan sungguhan dengan cepat.",
+      "set": {
+        "t-roleA": "PRIMARY · read-write",
+        "t-roleB": "SECONDARY · read-only",
+        "t-rw-target": "→ Southeast Asia",
+        "t-ro-target": "→ East Asia",
+        "t-lag": "asinkron · lag ≈ 1 s"
+      }
+    },
+    {
+      "title": "Replikasi juga menyalin kesalahan",
+      "text": "Satu ancaman terakhir: manusia. Dewi menjalankan DELETE tanpa klausa WHERE. Primary menurut, dan replikasi dengan setia menyalin penghapusan itu ke East Asia dalam hitungan detik, jadi failover tidak akan menolong. Tombol undo-nya adalah point-in-time restore: Azure membangun ulang database dari backup otomatisnya, seperti keadaannya tepat sebelum kesalahan, ke database baru di samping yang asli."
+    },
+    {
+      "title": "Rangkuman: zona, region, dan kesalahan",
+      "text": "Zone redundancy menangani zona yang gagal tanpa kehilangan data. Failover group menangani region yang gagal: replikasi asinkron, nama listener yang mengikuti primary, recovery point objective yang sama dengan replication lag, dan waktu pemulihan yang dimulai saat Anda memutuskan. Point-in-time restore menangani kesalahan manusia. Anda membutuhkan ketiganya, dan Anda perlu melatihnya.",
+      "tip": "Di Lab 28 Anda membangunnya sendiri: dua server Entra-only, failover group dengan listener, e-mail pelanggan yang disamarkan, point-in-time restore setelah penghapusan yang disengaja, dan drill planned failover."
+    }
+  ],
+  "svg": {
+    "async · lag ≈ 1 s": "asinkron · lag ≈ 1 s",
+    "Southeast Asia (Singapore)": "Southeast Asia (Singapura)",
+    "uses the server name directly": "memakai nama server langsung",
+    "Storefront app": "Aplikasi toko",
+    "checkout, orders": "checkout, pesanan",
+    "Reports": "Laporan",
+    "store dashboards": "dasbor toko",
+    "Restored": "Hasil restore",
+    "copy (PITR)": "salinan (PITR)",
+    "new database": "database baru",
+    "Two names that never change": "Dua nama yang tak pernah berubah",
+    "read-write → whichever server is primary": "read-write → server mana pun yang jadi primary",
+    "read-only → the secondary": "read-only → secondary",
+    "DNS aliases with a 30-second time-to-live": "alias DNS dengan time-to-live 30 detik",
+    "A commit returns before the change reaches": "Commit selesai sebelum perubahannya sampai",
+    "East Asia. If the region failed right now,": "di East Asia. Jika region gagal saat ini juga,",
+    "the changes still in flight would be lost.": "perubahan yang masih di jalan akan hilang.",
+    "column replication_lag_sec, on the primary": "kolom replication_lag_sec, di primary",
+    "Forced failover: you decide": "Forced failover: Anda yang memutuskan",
+    "East Asia becomes primary at once.": "East Asia langsung menjadi primary.",
+    "Orders still in flight are lost: that is": "Pesanan yang masih di jalan hilang: itulah",
+    "the recovery point objective in action.": "recovery point objective dalam praktik.",
+    "Planned failover: no data loss": "Planned failover: tanpa kehilangan data",
+    "Full synchronisation first, then the roles": "Sinkronisasi penuh lebih dulu, baru peran",
+    "swap. Use it for failback and for regular": "ditukar. Pakai untuk failback dan untuk drill",
+    "drills, so the real decision is quick.": "rutin, agar keputusan sungguhan cepat.",
+    "Replication is not a backup": "Replikasi bukan backup",
+    "A mistaken DELETE reaches East Asia within": "DELETE yang keliru sampai ke East Asia dalam",
+    "seconds. Point-in-time restore rebuilds the": "hitungan detik. Point-in-time restore membangun",
+    "database from automatic backups, as it was": "ulang database dari backup otomatis, seperti",
+    "just before the mistake, into a new database": "keadaannya tepat sebelum kesalahan, ke database",
+    "next to the original.": "baru di samping yang asli.",
+    "Region unavailable": "Region tidak tersedia"
+  }
+}

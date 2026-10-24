@@ -266,7 +266,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/12-cosmos-db.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/12-cosmos-db.html" data-href-id="../id/lunches/12-cosmos-db.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -659,10 +659,178 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 12 · NoSQL dengan Azure Cosmos DB — Demo interaktif",
+   "kicker": "Makan Siang 12 · NoSQL dengan Azure Cosmos DB · Demo interaktif",
+   "title": "Partition key dan consistency level di Azure Cosmos DB",
+   "lede": "Saksikan item katalog Nusantara Retail menemukan partisinya masing-masing, lihat hot partition terbentuk di hari promo, lalu ikuti satu perubahan harga di dua region dengan consistency level yang berbeda-beda. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Partisi dan konsistensi Azure Cosmos DB untuk katalog Nusantara Retail",
+   "svgDesc": "Adegan pertama: aplikasi toko online menulis item ke sebuah container Cosmos DB yang empat logical partition-nya berada di dua physical partition; partition key yang buruk menciptakan hot partition, sedangkan kunci yang lebih baik menyebarkan beban. Adegan kedua: perubahan harga yang ditulis di Indonesia Central direplikasi ke Southeast Asia dan dibaca dengan eventual, session, dan strong consistency."
+  },
+  "steps": [
+   {
+    "title": "Katalog yang terus berubah bentuk",
+    "text": "Nusantara Retail memindahkan katalog produknya dari tabel SQL 140 kolom ke Azure Cosmos DB for NoSQL. Setiap produk menjadi item JSON, sehingga kopi bisa membawa tingkat sangrai sementara kemeja batik membawa tabel ukuran. Toko online di sebelah kiri membaca dan menulis item di satu container, products, yang partition key-nya /category."
+   },
+   {
+    "title": "Logical partition dan physical partition",
+    "text": "Semua item dengan nilai category yang sama membentuk satu logical partition: semua kopi bersama, semua kemeja batik bersama. Satu logical partition menampung hingga 20 GB. Cosmos DB menghitung hash setiap nilai kunci dan menempatkan logical partition di physical partition, yaitu replica set yang mengerjakan tugasnya. Satu physical partition melayani hingga 10.000 RU/s dan 50 GB, dan Cosmos DB memecahnya untuk Anda saat container tumbuh."
+   },
+   {
+    "title": "Item mendarat sesuai kuncinya",
+    "text": "Sekarang toko online memuat katalog. Untuk setiap item, Cosmos DB menghitung hash dari category dan menyimpan item di logical partition kategori itu: lima kopi, lima kemeja batik, lima camilan, lima rempah. Karena nilai-nilainya tersebar ke kedua physical partition, dua kelompok mesin berbagi beban penulisan, bukan hanya satu.",
+    "set": {
+     "t-l1c": "5 item",
+     "t-l2c": "5 item",
+     "t-l3c": "5 item",
+     "t-l4c": "5 item"
+    }
+   },
+   {
+    "title": "Query yang menyebut kuncinya",
+    "text": "Halaman kategori meminta semua kopi. Query-nya memfilter berdasarkan partition key, jadi Cosmos DB mengirimnya ke tepat satu partisi dan hanya membaca item kopi. Biayanya tetap beberapa request unit, sebesar apa pun katalognya tumbuh. Membaca satu produk berdasarkan id dan category-nya, yaitu point read, lebih murah lagi: sekitar 1 RU.",
+    "set": {
+     "t-query": "SELECT * FROM c WHERE c.category = 'coffee'",
+     "t-qres": "Query satu partisi · hanya satu partisi yang disentuh · beberapa RU"
+    }
+   },
+   {
+    "title": "Query yang bertanya ke semua partisi",
+    "text": "Kotak pencarian Dewi mencari 'kopi' di mana saja dalam nama produk. Query itu tidak menyebut category, sehingga menjadi cross-partition query: ia menyebar ke setiap physical partition dan memindai item yang ditemukannya di sana. Setiap physical partition tambahan menambah kira-kira 2 sampai 3 RU. Dengan tiga puluh item, tak ada yang sadar; dengan jutaan item dan lima puluh partisi, setiap ketikan jadi mahal.",
+    "set": {
+     "t-query": "SELECT * FROM c WHERE CONTAINS(LOWER(c.name), 'kopi')",
+     "t-qres": "Query lintas partisi · semua partisi disentuh · biaya tumbuh seiring data"
+    }
+   },
+   {
+    "title": "Hari promo: hot partition",
+    "text": "Container kedua, orders, dipartisi berdasarkan /storeId. Pada 12.12 hampir semua pesanan datang dari toko online, sehingga satu logical partition menerima hampir semua penulisan. Physical partition-nya menyentuh batas 10.000 RU/s dan menjawab HTTP 429, request rate too large, sementara partisi B nyaris menganggur. Membeli RU/s tambahan tidak membantu, karena batas itu berlaku per partisi.",
+    "set": {
+     "t-ctr": "Container: orders · partition key /storeId",
+     "t-l1": "ONLINE",
+     "t-l2": "JKT-01",
+     "t-l3": "SBY-01",
+     "t-l4": "BDG-01",
+     "t-l1c": "9.800 dari 10.000 RU/s",
+     "t-l2c": "150 RU/s",
+     "t-l3c": "120 RU/s",
+     "t-l4c": "90 RU/s",
+     "t-l1x": "dibatasi: HTTP 429",
+     "t-l2x": "sepi",
+     "t-l3x": "nyaris menganggur",
+     "t-l4x": "nyaris menganggur",
+     "t-query": "Hari promo: sebagian besar pesanan membawa storeId = ONLINE",
+     "t-qres": "Partisi A di batas atasnya (HTTP 429) · partisi B nyaris menganggur"
+    }
+   },
+   {
+    "title": "Kunci yang menyebarkan beban",
+    "text": "Solusinya: container baru yang dipartisi berdasarkan /customerId, lalu pesanan disalin ke sana, karena partition key tidak bisa diubah di tempat. Ribuan pelanggan berarti ribuan logical partition, yang di-hash merata ke seluruh physical partition. Penulisan hari promo kini mendarat di mana-mana, setiap partisi memikul bagiannya, dan throttling pun hilang.",
+    "set": {
+     "t-ctr": "Container: orders · partition key /customerId",
+     "t-l1": "cust-0042",
+     "t-l2": "cust-1187",
+     "t-l3": "cust-5530",
+     "t-l4": "cust-9071",
+     "t-query": "Partition key /customerId: ribuan nilai, disebar dengan hash",
+     "t-qres": "Kedua physical partition memikul beban merata · tanpa throttling",
+     "t-l1c": "beberapa RU/s",
+     "t-l2c": "beberapa RU/s",
+     "t-l3c": "beberapa RU/s",
+     "t-l4c": "beberapa RU/s",
+     "t-l1x": "satu dari ribuan kunci",
+     "t-l2x": "satu dari ribuan kunci",
+     "t-l3x": "satu dari ribuan kunci",
+     "t-l4x": "satu dari ribuan kunci"
+    }
+   },
+   {
+    "title": "Tambahkan region kedua",
+    "text": "Kembali ke katalog. Nusantara Retail menambahkan Southeast Asia sebagai region baca di samping Indonesia Central (account serverless harus tetap di satu region). Setiap region menyimpan salinan lengkap data, dan pembeli membaca dari region terdekat. RU/s provisioned berlaku, dan ditagih, di setiap region. Penulisan tetap menuju Indonesia Central dan direplikasi secara asinkron.",
+    "set": {
+     "t-kc1": "1.000 RU/s provisioned di 2 region = 2.000 RU/s di tagihan",
+     "t-kc2": "Penulisan menuju Indonesia Central · pembacaan dilayani region terdekat"
+    }
+   },
+   {
+    "title": "Dewi mengubah harga",
+    "text": "Tengah malam, Dewi menurunkan harga Kopi Gayo dari Rp 99.000 menjadi Rp 89.000. Penulisan di-commit lebih dulu di Indonesia Central. Replikasi ke Southeast Asia berjalan asinkron, sehingga untuk sesaat kedua region berbeda pendapat. Apa yang dilihat pembeli di Singapura pada saat itu bergantung pada consistency level.",
+    "set": {
+     "t-price-j": "kopi: Rp 89.000",
+     "t-dewi": "Dewi melihat: Rp 89.000",
+     "t-kc1": "Penulisan sudah di-commit di Indonesia Central",
+     "t-kc2": "Replikasi ke Southeast Asia masih dalam perjalanan"
+    }
+   },
+   {
+    "title": "Eventual: pembacaan yang basi",
+    "text": "Dengan eventual consistency, pembacaan menuju salah satu replika di Southeast Asia, dan replika itu belum menerima perubahannya, sehingga pembeli melihat harga lama. Eventual adalah level termurah dan tercepat, dan cocok untuk penghitung tayangan atau jumlah suka. Namun, harga basi di halaman pembayaran akan membuat pelanggan marah.",
+    "set": {
+     "t-shop": "Pembeli melihat: Rp 99.000 (basi)",
+     "t-kc1": "Eventual: baca dari satu replika · termurah · tanpa jaminan urutan",
+     "t-kc2": "Cocok untuk penghitung tayangan, suka, dan nilai lain yang boleh tertinggal"
+    }
+   },
+   {
+    "title": "Session: membaca tulisan sendiri",
+    "text": "Session adalah level bawaan. Di dalam satu sesi, pembacaan selalu menyertakan penulisan milik sesi itu sendiri, sesuai urutannya. Aplikasi admin Dewi langsung membaca kembali Rp 89.000, dan biaya pembacaannya tetap sama dengan eventual. Sesi lain, seperti milik pembeli, menyusul saat replikasi selesai, yang biasanya hanya butuh sesaat.",
+    "set": {
+     "t-price-s": "kopi: Rp 89.000",
+     "t-dewi": "Dewi melihat: Rp 89.000 (tulisannya sendiri)",
+     "t-shop": "Pembeli melihat: Rp 89.000 (setelah replikasi)",
+     "t-kc1": "Session (bawaan): read-your-own-writes dalam satu sesi · baca dari satu replika",
+     "t-kc2": "Cocok untuk sebagian besar aplikasi: keranjang, profil, edit oleh admin"
+    }
+   },
+   {
+    "title": "Strong: selalu segar, tak pernah murah",
+    "text": "Dengan strong consistency, pembacaan tidak pernah mengembalikan harga lama. Untuk menjanjikan itu antar-region, setiap penulisan menunggu sampai kedua region mengonfirmasinya, sehingga waktu bolak-balik Jakarta–Singapura ditambahkan ke setiap penulisan. Pembacaan memakai dua replika dan berbiaya sekitar dua kali lipat RU, dan strong tidak bisa digabung dengan multi-region writes. Pakai hanya jika nilai basi benar-benar merugikan.",
+    "set": {
+     "t-kc1": "Strong: baca dari dua replika (sekitar 2× RU) · setiap penulisan menunggu semua region",
+     "t-kc2": "Tidak tersedia dengan multi-region writes · pakai jika data basi benar-benar merugikan"
+    }
+   },
+   {
+    "title": "Rangkuman dan lab Anda",
+    "text": "Dua keputusan membentuk setiap desain Cosmos DB. Partition key, yang tidak bisa diubah kemudian, harus cocok dengan query tersibuk Anda dan menyebarkan beban. Consistency level menukar kesegaran data dengan latensi dan biaya; mulailah dengan session. Lalu ukur semuanya dalam request unit, karena setiap respons memberi tahu persis berapa biayanya.",
+    "tip": "Di Lab 12 Anda akan memuat katalog, membandingkan point read dengan query satu partisi dan lintas partisi, melihat biaya RU sebuah pembacaan berlipat dua di bawah strong consistency, dan memperbaiki query pencarian yang mahal.",
+    "set": {
+     "t-kc1": "Partition key: cocokkan dengan query tersibuk dan sebarkan bebannya",
+     "t-kc2": "Konsistensi: mulai dengan session · ukur setiap operasi dalam RU"
+    }
+   }
+  ],
+  "svg": {
+   "Storefront app": "Toko online",
+   "writes and queries": "tulis dan query",
+   "0 items": "0 item",
+   "logical partition · up to 20 GB": "logical partition · hingga 20 GB",
+   "single-partition query": "query satu partisi",
+   "Indonesia Central · write region": "Indonesia Central · region tulis",
+   "Southeast Asia · read region": "Southeast Asia · region baca",
+   "replicate": "replikasi",
+   "Dewi · admin app": "Dewi · aplikasi admin",
+   "4 replicas in this region": "4 replika di region ini",
+   "Shopper · Singapore": "Pembeli · Singapura",
+   "Dewi sees: Rp 99.000": "Dewi melihat: Rp 99.000",
+   "Shopper sees: Rp 99.000": "Pembeli melihat: Rp 99.000",
+   "Consistency level for reads (the account default is Session)": "Consistency level untuk pembacaan (bawaan account adalah Session)",
+   "Every region holds a full copy of the data": "Setiap region menyimpan salinan lengkap data",
+   "Replication between regions is asynchronous": "Replikasi antar-region berjalan asinkron"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -678,6 +846,119 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -797,7 +1078,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -832,7 +1113,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -845,7 +1126,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -866,7 +1147,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -874,7 +1155,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

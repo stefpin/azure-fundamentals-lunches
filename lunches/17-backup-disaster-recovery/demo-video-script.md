@@ -1,5 +1,7 @@
 # Lunch 17 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch, which the animation can't show: a Recovery Services
 > vault and its security settings, turning on backup for a VM, an on-demand backup job, and getting one lost file back
 > with **File Recovery**.

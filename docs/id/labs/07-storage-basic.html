@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 07 · Menyimpan gambar produk dan faktur · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 07: Menyimpan gambar produk dan faktur. sekitar 45 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/07-storage-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/07-storage-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/07-storage-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/07-storage-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 07 · Menyimpan gambar produk dan faktur">
+<meta property="og:description" content="Lab Azure praktik 07: Menyimpan gambar produk dan faktur. sekitar 45 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/07-storage-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="07" style="--c:#e2482f">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/07-storage-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#e2482f">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 07</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>07</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Menyimpan gambar produk dan faktur</h1>
+        <p class="lab-story">🏪 <b>Episode 07 · Flashdisk yang Pulang Tiap Jumat</b> — Empat puluh ribu foto dan faktur sepuluh tahun tersimpan di satu disk di sebelah pantry. <a href="../lunches/07-storage-basic.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 45 menit</span>
+          <span class="chip cost">💲 gratis atau hampir gratis</span>
+          <span class="chip">Tingkat kesulitan ★☆☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 9 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--membuat-storage-account-yang-aman">Tugas 1 · Membuat storage account yang aman</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--memberi-diri-anda-sebuah-data-role">Tugas 2 · Memberi diri Anda sebuah data role</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--membuat-container-dan-mengunggah-faktur-dengan-azure-cli">Tugas 3 · Membuat container dan mengunggah faktur dengan Azure CLI</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--mengunggah-gambar-produk-dengan-azcopy">Tugas 4 · Mengunggah gambar produk dengan AzCopy</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--memindahkan-blob-ke-tier-yang-lebih-dingin--dan-berkenalan-dengan-rehidrasi">Tugas 5 · Memindahkan blob ke tier yang lebih dingin — dan berkenalan dengan rehidrasi</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--membagikan-satu-gambar-dengan-user-delegation-sas">Tugas 6 · Membagikan satu gambar dengan user delegation SAS</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--membuat-share-azure-files-untuk-toko-toko">Tugas 7 · Membuat share Azure Files untuk toko-toko</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/.gitignore" target="_blank" rel="noopener"><span>.gitignore</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/invoices/INV-2026-0001.txt" target="_blank" rel="noopener"><span>sample-files/invoices/INV-2026-0001.txt</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/invoices/INV-2026-0002.txt" target="_blank" rel="noopener"><span>sample-files/invoices/INV-2026-0002.txt</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/products/batik-shirt.svg" target="_blank" rel="noopener"><span>sample-files/products/batik-shirt.svg</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/products/kebaya-blue.svg" target="_blank" rel="noopener"><span>sample-files/products/kebaya-blue.svg</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/products/songket-scarf.svg" target="_blank" rel="noopener"><span>sample-files/products/songket-scarf.svg</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/sample-files/store-docs/price-list-2026-10.csv" target="_blank" rel="noopener"><span>sample-files/store-docs/price-list-2026-10.csv</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>3 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/07-storage-basic" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Nusantara Retail sedang memindahkan file-filenya dari server di sebelah pantry. Anda membuat storage account (<em>akun
+penyimpanan</em>) general-purpose v2 yang aman, memberi diri Anda sendiri sebuah data role, mengunggah faktur dengan Azure
+CLI dan gambar produk dengan AzCopy, memindahkan data lama ke access tier yang lebih murah, membagikan satu gambar
+produk kepada Rizky si kontraktor lewat tautan yang kedaluwarsa setelah satu jam, dan membuat share Azure Files untuk
+daftar harga toko.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  you([&quot;Anda · Storage Blob Data Contributor&quot;])
+  rizky([&quot;Rizky · SAS hanya-baca 1 jam&quot;])
+  subgraph rg[&quot;rg-lunch07-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph st[&quot;stnusa07&amp;lt;suffix&amp;gt; · StorageV2 · LRS · TLS 1.2 · tanpa akses anonim&quot;]
+      P[&quot;Container: products&lt;br/&gt;3 gambar · 1 di Cool&quot;]
+      I[&quot;Container: invoices&lt;br/&gt;2 faktur · 1 di Archive&quot;]
+      F[&quot;File share: store-docs&lt;br/&gt;daftar harga&quot;]
+    end
+  end
+  you -- &quot;az CLI + AzCopy (Entra ID)&quot; --&gt; P
+  you --&gt; I
+  you -- &quot;account key (diambil oleh CLI)&quot; --&gt; F
+  rizky -. &quot;HTTPS GET dengan SAS&quot; .-&gt; P
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda bisa membuat resource dan menetapkan role (Owner, atau Contributor ditambah User
+Access Administrator) — lihat <a href="01-before-you-begin.html">Lab 01</a>.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang: Azure
+CLI, AzCopy, dan <code>curl</code> sudah tersedia.</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/07-storage-basic
+source ../common/config.sh
+RG=$(rg_name 07)
+ACCOUNT=&quot;stnusa07${SUFFIX}&quot;
+mkdir -p work
+echo &quot;Resource group: $RG   Storage account: $ACCOUNT&quot;
+</code></pre></div>
+<ul>
+<li>Lab ini tidak punya <code>setup.sh</code>: membuat account adalah bagian dari lab.</li>
+</ul>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab memakan biaya selama masih ada. Di sini biayanya sangat kecil (hanya beberapa kilobyte data), tetapi
+tetap akhiri dengan bagian <strong>Bersihkan</strong>, bahkan kalau Anda berhenti di tengah jalan. Kalau Cloud Shell dimulai ulang,
+jalankan lagi blok di atas untuk memulihkan variabel Anda.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–7 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--membuat-storage-account-yang-aman" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Membuat storage account yang aman</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--membuat-storage-account-yang-aman" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Storage account adalah namespace untuk semua data Anda, jadi pengaturan keamanannya didahulukan. Anda menyetelnya
+secara eksplisit, karena secara default Azure CLI memakai read-access geo-redundant storage (<code>Standard_RAGRS</code>) dan
+membiarkan minimum TLS version kosong kecuali Anda memintanya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ensure_rg &quot;$RG&quot; 07
+
+az storage account create \
+  --name &quot;$ACCOUNT&quot; \
+  --resource-group &quot;$RG&quot; \
+  --location &quot;$LOCATION&quot; \
+  --kind StorageV2 \
+  --sku Standard_LRS \
+  --access-tier Hot \
+  --min-tls-version TLS1_2 \
+  --allow-blob-public-access false \
+  --https-only true \
+  --output none
+</code></pre></div>
+<p>Arti setiap pilihan: <strong>StorageV2</strong> adalah jenis account general-purpose v2; <strong>Standard_LRS</strong> menyimpan tiga salinan
+di satu pusat data (termurah — cukup untuk lab); <strong>Hot</strong> adalah tier default untuk blob baru; <strong>TLS 1.2</strong> menolak
+protokol enkripsi yang lebih lama; akses blob anonim <strong>dilarang</strong> untuk seluruh account; dan hanya <strong>HTTPS</strong> yang
+diterima.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Storage accounts › Create</em>. Di tab <strong>Basics</strong>, pilih resource group, nama, region Anda,
+performa <em>Standard</em>, dan <em>LRS</em>. Di tab <strong>Advanced</strong>, biarkan <em>Require secure transfer</em> tercentang, hapus centang
+<em>Allow enabling anonymous access on individual containers</em>, dan setel <em>Minimum TLS version</em> ke 1.2. Setelah itu
+kembali ke sini untuk Tugas 2.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> perintah ini menampilkan <code>StorageV2</code>, <code>Standard_LRS</code>, <code>TLS1_2</code>, <code>False</code> (akses anonim), dan
+<code>True</code> (hanya HTTPS), beserta blob endpoint Anda:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage account show --name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;{kind:kind, sku:sku.name, tls:minimumTlsVersion, anonymous:allowBlobPublicAccess, httpsOnly:enableHttpsTrafficOnly, blob:primaryEndpoints.blob}&quot; \
+  --output table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-2--memberi-diri-anda-sebuah-data-role" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Memberi diri Anda sebuah data role</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--memberi-diri-anda-sebuah-data-role" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Anda memang yang membuat account itu, tetapi mengelola account (control plane) dan membaca datanya (data plane) adalah
+dua izin yang berbeda. Pertama, lihat apa yang terjadi tanpa data role:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage container list --account-name &quot;$ACCOUNT&quot; --auth-mode login --output table
+</code></pre></div>
+<p>Kecuali Anda sudah memegang blob data role di cakupan yang lebih tinggi, perintah itu gagal dengan pesan <em>&quot;You do not
+have the required permissions needed to perform this operation…&quot;</em> — bahkan kalau Anda Owner dari subscription
+tersebut. <code>--auth-mode login</code> berarti &quot;gunakan identitas Microsoft Entra saya&quot;, dan identitas itu membutuhkan <strong>data
+role</strong>. Tetapkan <strong>Storage Blob Data Contributor</strong> untuk diri Anda sendiri, dengan cakupan hanya account ini (prinsip
+hak akses minimum/least privilege), lalu tunggu sampai berlaku:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ACCOUNT_ID=$(az storage account show --name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; --query id --output tsv)
+
+az role assignment create \
+  --assignee-object-id &quot;$(my_object_id)&quot; \
+  --assignee-principal-type User \
+  --role &quot;Storage Blob Data Contributor&quot; \
+  --scope &quot;$ACCOUNT_ID&quot; \
+  --output none
+
+wait_until &quot;your data role to take effect&quot; 600 \
+  az storage container list --account-name &quot;$ACCOUNT&quot; --auth-mode login \
+  &amp;&amp; echo &quot;Data role is active.&quot;
+</code></pre></div>
+<p>Penetapan role baru biasanya sudah berfungsi dalam satu-dua menit, tetapi bisa juga butuh beberapa menit;
+<code>wait_until</code> mencoba ulang setiap 10 detik.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Storage account › <em>Access control (IAM)</em> › <em>Add role assignment</em> › <em>Storage Blob Data
+Contributor</em> › <em>Members: User, group, or service principal</em> › pilih diri Anda › <em>Review + assign</em>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>az storage container list --account-name &quot;$ACCOUNT&quot; --auth-mode login --output table</code> kini
+mengembalikan daftar kosong tanpa error, dan
+<code>az role assignment list --assignee &quot;$(my_object_id)&quot; --scope &quot;$ACCOUNT_ID&quot; --query &quot;[].roleDefinitionName&quot; --output tsv</code>
+mencetak <code>Storage Blob Data Contributor</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--membuat-container-dan-mengunggah-faktur-dengan-azure-cli" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Membuat container dan mengunggah faktur dengan Azure CLI</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--membuat-container-dan-mengunggah-faktur-dengan-azure-cli" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Container mengelompokkan blob. Buat satu untuk gambar produk dan satu untuk faktur, lalu unggah dua contoh faktur
+dengan identitas Entra Anda:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for c in products invoices; do
+  az storage container create --account-name &quot;$ACCOUNT&quot; --name &quot;$c&quot; --auth-mode login --output none
+done
+
+for f in sample-files/invoices/*.txt; do
+  az storage blob upload \
+    --account-name &quot;$ACCOUNT&quot; \
+    --container-name invoices \
+    --name &quot;$(basename &quot;$f&quot;)&quot; \
+    --file &quot;$f&quot; \
+    --overwrite \
+    --auth-mode login \
+    --output none
+done
+</code></pre></div>
+<p><code>--overwrite</code> memungkinkan Anda menjalankan ulang perulangan itu dengan aman; tanpanya, mengunggah blob yang sudah ada
+akan gagal.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> dua faktur di tier hot:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name invoices --auth-mode login \
+  --query &quot;[].{name:name, bytes:properties.contentLength, tier:properties.blobTier}&quot; --output table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-4--mengunggah-gambar-produk-dengan-azcopy" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Mengunggah gambar produk dengan AzCopy</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--mengunggah-gambar-produk-dengan-azcopy" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>AzCopy dibuat untuk transfer massal: ia menyalin banyak file secara paralel dan bisa melanjutkan pekerjaan yang
+terputus. AzCopy sudah terpasang di Cloud Shell, tetapi <strong>tidak</strong> otomatis memakai sesi masuk Cloud Shell Anda. Ada
+tiga cara untuk mengotorisasinya: menempelkan SAS di URL, menjalankan <code>azcopy login</code> (masuk dengan device code yang
+membutuhkan penyimpanan rahasia seperti Linux keyring), atau menyuruh AzCopy meminjam token milik Azure CLI. Cara
+terakhir paling sederhana di Cloud Shell:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>export AZCOPY_AUTO_LOGIN_TYPE=AZCLI
+export AZCOPY_TENANT_ID=&quot;$(az account show --query tenantId --output tsv)&quot;
+azcopy --version
+
+azcopy copy &quot;sample-files/products/*&quot; &quot;https://${ACCOUNT}.blob.core.windows.net/products/&quot;
+azcopy list &quot;https://${ACCOUNT}.blob.core.windows.net/products&quot;
+</code></pre></div>
+<p>AzCopy tetap memakai <strong>data role</strong> Anda — ia hanya mengambil tokennya dari Azure CLI. Ringkasan pekerjaannya
+seharusnya diakhiri dengan <code>Final Job Status: Completed</code> dan tiga transfer file yang selesai. AzCopy juga menebak
+content type setiap file dari ekstensinya, sehingga gambar disimpan sebagai <code>image/svg+xml</code> dan tampil dengan benar di
+browser.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tiga gambar di <code>products</code>, masing-masing dengan content type <code>image/svg+xml</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name products --auth-mode login \
+  --query &quot;[].{name:name, type:properties.contentSettings.contentType, tier:properties.blobTier}&quot; --output table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-5--memindahkan-blob-ke-tier-yang-lebih-dingin--dan-berkenalan-dengan-rehidrasi" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Memindahkan blob ke tier yang lebih dingin — dan berkenalan dengan rehidrasi</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--memindahkan-blob-ke-tier-yang-lebih-dingin--dan-berkenalan-dengan-rehidrasi" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Foto selendang songket musim lalu jarang dilihat, jadi dipindahkan ke <strong>Cool</strong>. Faktur INV-2026-0001 sudah lunas dan
+ditutup, jadi dipindahkan ke <strong>Archive</strong>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage blob set-tier --account-name &quot;$ACCOUNT&quot; --container-name products \
+  --name songket-scarf.svg --tier Cool --auth-mode login
+az storage blob set-tier --account-name &quot;$ACCOUNT&quot; --container-name invoices \
+  --name INV-2026-0001.txt --tier Archive --auth-mode login
+
+for c in products invoices; do
+  az storage blob list --account-name &quot;$ACCOUNT&quot; --container-name &quot;$c&quot; --auth-mode login \
+    --query &quot;[].{name:name, tier:properties.blobTier, inferred:properties.blobTierInferred}&quot; --output table
+done
+</code></pre></div>
+<p>Blob yang tidak pernah Anda sentuh menampilkan tier default account (<code>Hot</code>) sebagai tier <em>inferred</em> (hasil simpulan,
+bukan disetel langsung). Sekarang coba baca faktur yang sudah diarsipkan:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage blob download --account-name &quot;$ACCOUNT&quot; --container-name invoices \
+  --name INV-2026-0001.txt --file work/INV-2026-0001.txt --auth-mode login --output none
+</code></pre></div>
+<p>Perintah itu gagal dengan pesan <em>&quot;This operation is not permitted on an archived blob&quot;</em> (<code>BlobArchived</code>). Blob di
+archive bersifat offline. Untuk membacanya, Anda harus melakukan <strong>rehydrate</strong>. Menyalinnya ke blob baru di tier online
+membuat blob asli di archive tetap utuh, sehingga menghindari biaya early deletion (archive mengharapkan masa simpan
+180 hari):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage blob copy start \
+  --account-name &quot;$ACCOUNT&quot; \
+  --source-container invoices --source-blob INV-2026-0001.txt \
+  --destination-container invoices --destination-blob INV-2026-0001-rehydrated.txt \
+  --tier Hot --rehydrate-priority Standard \
+  --auth-mode login --output none
+
+az storage blob show --account-name &quot;$ACCOUNT&quot; --container-name invoices \
+  --name INV-2026-0001-rehydrated.txt --auth-mode login \
+  --query &quot;{tier:properties.blobTier, status:properties.rehydrationStatus, priority:rehydratePriority}&quot; \
+  --output table
+</code></pre></div>
+<p>Salinannya menampilkan tier <code>Archive</code> dan status <code>rehydrate-pending-to-hot</code>. Prioritas Standard bisa makan waktu
+hingga 15 jam, jadi <strong>tidak usah ditunggu</strong> — pelajarannya justru ada pada penundaan itu sendiri. (Prioritas High
+lebih cepat dan lebih mahal, dan ditujukan untuk keadaan darurat.)</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Storage browser › Blob containers › invoices</em> › pilih sebuah blob › <em>Change tier</em>. Saat Anda
+mengubah blob archive kembali ke tier online, dialog yang sama akan meminta <em>Rehydrate priority</em>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>songket-scarf.svg</code> menampilkan tier <code>Cool</code>, <code>INV-2026-0001.txt</code> menampilkan <code>Archive</code>, dan
+salinan hasil rehidrasi melaporkan <code>rehydrate-pending-to-hot</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--membagikan-satu-gambar-dengan-user-delegation-sas" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Membagikan satu gambar dengan user delegation SAS</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--membagikan-satu-gambar-dengan-user-delegation-sas" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Rizky perlu mengunduh satu gambar produk sore ini. Anda tidak akan memberinya account key (key itu membuka segalanya)
+dan tidak akan menyalakan akses anonim. Sebagai gantinya, Anda membuat <strong>user delegation SAS</strong>: token URL yang
+ditandatangani dengan key yang Anda peroleh lewat identitas Entra Anda, dibatasi hanya untuk <strong>read</strong> pada <strong>satu
+blob</strong> selama <strong>satu jam</strong>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>EXPIRY=$(date -u -d &quot;+1 hour&quot; &#x27;+%Y-%m-%dT%H:%MZ&#x27;)
+
+SAS_URL=$(az storage blob generate-sas \
+  --account-name &quot;$ACCOUNT&quot; \
+  --container-name products \
+  --name batik-shirt.svg \
+  --permissions r \
+  --expiry &quot;$EXPIRY&quot; \
+  --https-only \
+  --auth-mode login \
+  --as-user \
+  --full-uri \
+  --output tsv)
+
+echo &quot;${SAS_URL%%sig=*}sig=&lt;hidden&gt;&quot;
+</code></pre></div>
+<p>URL yang dicetak menyembunyikan tanda tangannya, tetapi perhatikan parameter query lainnya: <code>sp=r</code> (hanya baca), <code>se=</code>
+(waktu kedaluwarsa), <code>spr=https</code> (hanya HTTPS), dan <code>skoid</code>/<code>sktid</code> — object ID dan tenant milik pengguna yang
+menandatanganinya. Kolom-kolom <code>sk…</code> itulah yang menjadikannya <em>user delegation</em> SAS. Sekarang uji seperti yang akan
+dilakukan Rizky, tanpa masuk ke Azure sama sekali:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>curl -s -o work/batik-shirt.svg -w &quot;With the SAS:    HTTP %{http_code}\n&quot; &quot;$SAS_URL&quot;
+curl -s -o /dev/null -w &quot;Without the SAS: HTTP %{http_code}\n&quot; \
+  &quot;https://${ACCOUNT}.blob.core.windows.net/products/batik-shirt.svg&quot;
+curl -s &quot;https://${ACCOUNT}.blob.core.windows.net/products/batik-shirt.svg&quot; | grep -o &#x27;&lt;Code&gt;[^&lt;]*&lt;/Code&gt;&#x27;
+head -c 100 work/batik-shirt.svg; echo
+</code></pre></div>
+<p>Dengan SAS, Anda mendapat <code>200</code> dan file SVG-nya mendarat di <code>work/</code>. Tanpa SAS, Anda mendapat error, biasanya <code>409</code>
+dengan <code>PublicAccessNotPermitted</code> — akses anonim mati untuk seluruh account. Selalu apit URL SAS dengan tanda kutip
+ganda: kalau tidak, karakter <code>&amp;</code> akan memecah perintahnya.</p>
+<p>Kalau sebuah tautan sampai bocor, Anda bisa membatalkan <strong>semua</strong> user delegation SAS untuk account itu sekaligus (bisa
+butuh beberapa menit, karena key-nya di-cache):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code># Only when you need it — this breaks all user delegation SAS links for the account:
+# az storage account revoke-delegation-keys --name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot;
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Storage browser › products</em> › pilih <code>batik-shirt.svg</code> › <em>Generate SAS</em>. Pilih <em>Signing
+method: User delegation key</em>, <em>Permissions: Read</em>, waktu kedaluwarsa satu jam dari sekarang, dan <em>HTTPS only</em>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>curl</code> pertama mencetak <code>HTTP 200</code>, yang kedua mencetak kode error, dan
+<code>work/batik-shirt.svg</code> diawali dengan <code>&lt;svg</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--membuat-share-azure-files-untuk-toko-toko" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Membuat share Azure Files untuk toko-toko</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--membuat-share-azure-files-untuk-toko-toko" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Para kepala toko menginginkan drive bersama untuk daftar harga. Azure Files memberi Anda SMB share yang terkelola. Buat
+share berukuran 1 GiB (share standard di account general-purpose v2 ditagih berdasarkan data yang benar-benar Anda
+simpan) lalu unggah daftar harga bulan ini:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage share-rm create \
+  --resource-group &quot;$RG&quot; \
+  --storage-account &quot;$ACCOUNT&quot; \
+  --name store-docs \
+  --quota 1 \
+  --enabled-protocols SMB \
+  --output none
+
+az storage file upload \
+  --account-name &quot;$ACCOUNT&quot; \
+  --share-name store-docs \
+  --source sample-files/store-docs/price-list-2026-10.csv \
+  --auth-mode key \
+  --output none
+
+az storage file list --account-name &quot;$ACCOUNT&quot; --share-name store-docs --auth-mode key --output table
+</code></pre></div>
+<p>Perhatikan <code>--auth-mode key</code>. Tanpa kredensial lain, CLI memakai izin Owner atau Contributor Anda untuk <strong>mengambil
+account key</strong> lalu menandatangani permintaan dengannya — itulah otorisasi Shared Key yang sedang bekerja, dan itulah
+sebabnya izin list-keys begitu berkuasa. Untuk data file, akses berbasis Entra membutuhkan role dan flag tambahan
+(lihat tantangan tambahan), dan klien SMB biasanya me-mount share dengan autentikasi berbasis identitas atau dengan
+account key. Makan Siang 24 menunjukkan cara mematikan Shared Key setelah tidak ada lagi yang bergantung padanya.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Storage account › <em>Data storage › File shares</em> (portal mungkin menyebutnya <em>Classic file
+shares</em>) › <em>+ File share</em>. Buka share-nya dan pilih <strong>Connect</strong> untuk melihat skrip mount siap pakai untuk Windows,
+Linux, atau macOS. Proses mount membutuhkan port TCP 445 keluar, yang diblokir oleh banyak jaringan rumah dan kantor.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong>
+<code>az storage share-rm list --resource-group &quot;$RG&quot; --storage-account &quot;$ACCOUNT&quot; --query &quot;[].name&quot; --output tsv</code> mencetak
+<code>store-docs</code>, dan daftar file menampilkan <code>price-list-2026-10.csv</code>.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>SAS hanya bisa melakukan apa yang tertulis di dalamnya, selama waktu yang tertulis di dalamnya. Rusak dua kali.</p>
+<p><strong>A — SAS hanya-baca tidak bisa dipakai mengunggah.</strong> Rizky juga ingin mengunggah foto produk baru, jadi Anda
+mengiriminya… SAS hanya-baca:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>RO_URL=$(az storage blob generate-sas --account-name &quot;$ACCOUNT&quot; --container-name products \
+  --name new-arrival.svg --permissions r --expiry &quot;$EXPIRY&quot; --https-only \
+  --auth-mode login --as-user --full-uri --output tsv)
+
+curl -s -o work/put-result.xml -w &quot;Upload with a read-only SAS: HTTP %{http_code}\n&quot; \
+  -X PUT -H &quot;x-ms-blob-type: BlockBlob&quot; \
+  --data-binary @sample-files/products/kebaya-blue.svg &quot;$RO_URL&quot;
+grep -o &#x27;&lt;Code&gt;[^&lt;]*&lt;/Code&gt;&#x27; work/put-result.xml
+</code></pre></div>
+<p>Anda mendapat <code>403</code> dengan <code>AuthorizationPermissionMismatch</code>: tanda tangannya sah, tetapi SAS itu tidak memberi izin
+menulis.</p>
+<details class="plain"><summary>Petunjuk: perbaikan A</summary>
+<p>Buat SAS baru untuk nama blob itu dengan izin <strong>create</strong> dan <strong>write</strong>, tetap dengan masa berlaku singkat:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>RW_URL=$(az storage blob generate-sas --account-name &quot;$ACCOUNT&quot; --container-name products \
+  --name new-arrival.svg --permissions cw --expiry &quot;$EXPIRY&quot; --https-only \
+  --auth-mode login --as-user --full-uri --output tsv)
+curl -s -o /dev/null -w &quot;Upload with a create/write SAS: HTTP %{http_code}\n&quot; \
+  -X PUT -H &quot;x-ms-blob-type: BlockBlob&quot; -H &quot;Content-Type: image/svg+xml&quot; \
+  --data-binary @sample-files/products/kebaya-blue.svg &quot;$RW_URL&quot;
+</code></pre></div>
+<p><code>201</code> berarti blob berhasil dibuat. Berikan kumpulan izin terkecil yang cukup untuk menyelesaikan tugas — dan tidak
+lebih.</p>
+</details>
+<p><strong>B — SAS yang kedaluwarsa berhenti berfungsi.</strong> Buat tautan yang hidup sekitar dua menit, buktikan bahwa ia berfungsi,
+lalu tunggu:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>SHORT_EXPIRY=$(date -u -d &quot;+2 minutes&quot; &#x27;+%Y-%m-%dT%H:%MZ&#x27;)
+SHORT_URL=$(az storage blob generate-sas --account-name &quot;$ACCOUNT&quot; --container-name products \
+  --name batik-shirt.svg --permissions r --expiry &quot;$SHORT_EXPIRY&quot; --https-only \
+  --auth-mode login --as-user --full-uri --output tsv)
+
+curl -s -o /dev/null -w &quot;Before expiry: HTTP %{http_code}\n&quot; &quot;$SHORT_URL&quot;
+echo &quot;Waiting 3 minutes for the SAS to expire…&quot;; sleep 180
+curl -s -o work/expired.xml -w &quot;After expiry:  HTTP %{http_code}\n&quot; &quot;$SHORT_URL&quot;
+grep -o &#x27;&lt;Code&gt;[^&lt;]*&lt;/Code&gt;&#x27; work/expired.xml
+</code></pre></div>
+<p>Setelah menunggu, Anda mendapat <code>403</code> dengan <code>AuthenticationFailed</code>; detail error-nya menyebutkan bahwa tanda tangan
+tidak berlaku pada rentang waktu saat ini.</p>
+<details class="plain"><summary>Petunjuk: perbaikan B</summary>
+<p>SAS tidak bisa diperpanjang — waktu kedaluwarsanya adalah bagian dari tanda tangan. Buat yang baru dengan masa berlaku
+yang wajar (seperti di Tugas 6) lalu kirim tautan barunya. Sengajalah membuat masa berlaku singkat: tautan yang sudah
+kedaluwarsa tidak berguna bagi siapa pun yang menemukannya belakangan.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Kalau ada yang gagal, pesannya memberi tahu tugas mana yang perlu
+Anda ulangi. Pemeriksaan data plane memakai data role Anda dari Tugas 2.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+unset AZCOPY_AUTO_LOGIN_TYPE AZCOPY_TENANT_ID SAS_URL RO_URL RW_URL SHORT_URL
+</code></pre></div>
+<p>Perintah ini menghapus resource group <code>rg-lunch07-&lt;suffix&gt;</code> (beserta storage account dan penetapan role-nya) dan folder
+lokal <code>work/</code>. Penghapusan berlanjut di latar belakang selama beberapa menit. Menghapus faktur archive lebih awal
+memicu biaya early deletion prorata untuk beberapa kilobyte — hanya sepersekian sen dolar.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>The storage account named stnusa07… is already taken.</code></td>
+<td>Nama storage account bersifat global; ada pihak lain yang memakai nama yang sama</td>
+<td>Setel nama lain, misalnya <code>ACCOUNT=&quot;stnusa07${SUFFIX}x&quot;</code>, dan gunakan di setiap perintah</td>
+</tr>
+<tr>
+<td><code>You do not have the required permissions needed to perform this operation…</code></td>
+<td>Belum ada data role, atau role-nya belum tersebar ke seluruh sistem</td>
+<td>Selesaikan Tugas 2; tunggu beberapa menit lalu coba lagi</td>
+</tr>
+<tr>
+<td><code>az role assignment create</code> gagal dengan <code>AuthorizationFailed</code></td>
+<td>Anda tidak bisa menetapkan role (Contributor saja tidak bisa)</td>
+<td>Gunakan subscription tempat Anda menjadi Owner atau User Access Administrator</td>
+</tr>
+<tr>
+<td>AzCopy melaporkan error autentikasi atau 403</td>
+<td>Variabel <code>AZCOPY_*</code> hilang (sesi Cloud Shell baru) atau data role belum aktif</td>
+<td>Jalankan lagi dua baris <code>export</code> di Tugas 4; atau coba <code>export AZCOPY_AUTO_LOGIN_TYPE=DEVICE</code> dan ikuti petunjuk device code</td>
+</tr>
+<tr>
+<td><code>This operation is not permitted on an archived blob.</code></td>
+<td>Blob berada di tier archive</td>
+<td>Memang diharapkan di Tugas 5 — lakukan rehydrate dulu</td>
+</tr>
+<tr>
+<td><code>curl</code> mengembalikan <code>403</code> dengan <code>AuthenticationFailed</code></td>
+<td>SAS sudah kedaluwarsa, atau URL terpotong di sebuah <code>&amp;</code></td>
+<td>Buat SAS baru; apit URL dengan tanda kutip ganda</td>
+</tr>
+<tr>
+<td><code>curl</code> mengembalikan <code>403</code> dengan <code>AuthorizationPermissionMismatch</code></td>
+<td>SAS tidak punya izin untuk operasi itu</td>
+<td>Buat SAS dengan izin yang tepat (Rusak lalu perbaiki, bagian A)</td>
+</tr>
+<tr>
+<td><code>az storage file upload</code> gagal dengan <code>KeyBasedAuthenticationNotPermitted</code></td>
+<td>Shared Key dinonaktifkan di account (misalnya oleh sebuah policy)</td>
+<td>Gunakan jalur Entra dari tantangan tambahan</td>
+</tr>
+<tr>
+<td><code>date: invalid date '+1 hour'</code></td>
+<td>Anda memakai macOS, bukan Cloud Shell</td>
+<td>Gunakan Cloud Shell, atau <code>date -u -v+1H '+%Y-%m-%dT%H:%MZ'</code> di macOS</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>Unggah ke file share dengan Entra ID alih-alih key: tetapkan <strong>Storage File Data Privileged Contributor</strong> untuk diri
+Anda di account itu, lalu gunakan <code>--auth-mode login --enable-file-backup-request-intent</code> dengan
+<code>az storage file upload</code>. Apa yang dilewati (bypass) oleh &quot;backup intent&quot;, dan mengapa role itu disebut <em>privileged</em>?</li>
+<li>Buka halaman <strong>Redundancy</strong> account itu di portal. Opsi mana yang bisa langsung Anda pilih, dan mana yang membutuhkan
+konversi? Mengapa faktur yang diarsipkan akan menghalangi perpindahan ke ZRS?</li>
+<li>Ubah access tier default account ke <strong>Cool</strong> (<code>az storage account update --access-tier Cool</code>) lalu tampilkan daftar
+blob lagi. Blob mana yang berubah tier, dan mana yang mempertahankan tier yang disetel secara eksplisit?</li>
+<li>Gunakan <strong>Azure Storage Explorer</strong> di PC Anda untuk menjelajahi account itu dengan sesi masuk Entra Anda.</li>
+<li>Mount share <code>store-docs</code> dari laptop Anda dengan skrip <em>Connect</em> dari portal (kalau jaringan Anda mengizinkan port
+445).</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep):</p>
+<ol>
+<li>Resource group bernama <code>rg-lunch07-&lt;suffix&gt;</code> (gunakan <code>ensure_rg &quot;$RG&quot; 07</code> agar skrip pembersihan bisa
+menemukannya).</li>
+<li>Storage account bernama <code>stnusa07&lt;suffix&gt;</code>: general-purpose v2 (<code>StorageV2</code>), <code>Standard_LRS</code>, minimum TLS 1.2,
+akses blob anonim dilarang, hanya HTTPS.</li>
+<li>Anda memegang <strong>Storage Blob Data Contributor</strong> (atau Owner) di account tersebut.</li>
+<li>Sebuah container dengan minimal dua blob, dan minimal satu blob di tier <strong>Cool</strong>. (Jalur terpandu juga mengarsipkan
+sebuah faktur — verify.sh melaporkan blob yang diarsipkan sebagai catatan.)</li>
+<li>Sebuah <strong>user delegation SAS</strong> hanya-baca berdurasi satu jam untuk satu gambar, yang mengembalikan HTTP 200 dengan
+<code>curl</code> — verify.sh tidak bisa memeriksa yang satu ini, jadi buktikan sendiri.</li>
+<li>Share Azure Files bernama <code>store-docs</code> yang berisi minimal satu file.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="06-virtual-machines-basic.html"><small>← Lab sebelumnya</small>06 · VM web server pertama Anda</a><a class="next" href="08-networking-basic.html"><small>Lab berikutnya →</small>08 · Membangun jaringan Nusantara Retail</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/07-storage-basic/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

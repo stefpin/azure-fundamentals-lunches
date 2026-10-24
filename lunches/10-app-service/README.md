@@ -1,9 +1,12 @@
 # Lunch 10 · Web Apps with Azure App Service
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 3:** Platform services and data
 > **Time:** 60 minutes · **Prerequisite lunches:** 02, 06 (09 helps)
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 10 · Move the storefront to PaaS](../../labs/10-app-service/README.md) — about 45 minutes · cost 💲 (💲💲 for the slot stretch)
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -358,6 +361,16 @@ What to watch for:
   should be sticky slot settings.
 - Deployment slots let you test on production hardware and swap with no downtime, and swapping back is a quick
   rollback that needs no redeployment.
+
+## 🗒️ Field notes from Stefanus
+
+> **Rehearse the undo button before you need it.** The first swap I run on a new production app is a rehearsal, not a
+> release: I put a harmless change in staging, swap it into production, swap it straight back and time both moves.
+> That proves to the team that rollback really works, and it flushes out the settings that should have been sticky
+> while the stakes are still low. Two habits make the rehearsal easy. Every app I deploy shows its version and the
+> instance that served the request on a small page, so after a swap or a scale-out I see facts instead of guessing.
+> And before a big sale I write down who may press *Swap* and what makes them press it, because a rollback that waits
+> for a meeting is no longer quick.
 
 ## 🔬 Your lab: Move the storefront to PaaS
 

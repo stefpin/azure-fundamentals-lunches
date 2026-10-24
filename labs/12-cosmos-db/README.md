@@ -1,8 +1,11 @@
 # Lab 12 · A product catalogue that scales
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 12 · NoSQL with Azure Cosmos DB (Basic)](../../lunches/12-cosmos-db/README.md)
 > **Time:** about 45 minutes · **Cost:** 💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 
@@ -122,7 +125,7 @@ property Cosmos DB hashes to decide where every item lives. Nusantara Retail bro
 shop page is one category) and each category holds at most a few thousand products, far below the 20 GB a logical
 partition can hold. So `/category` is a good fit for the *catalogue*. It would be a poor key for the order history,
 where one category would collect millions of writes during the 12.12 sale; that container would use something like
-`/storeId` or `/customerId` instead.
+`/customerId` instead.
 
 ```bash
 az cosmosdb sql database create \

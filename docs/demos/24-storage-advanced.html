@@ -293,7 +293,7 @@ svg .tick{fill:var(--node-stroke)}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/24-storage-advanced.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/24-storage-advanced.html" data-href-id="../id/lunches/24-storage-advanced.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -686,10 +686,164 @@ svg .tick{fill:var(--node-stroke)}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 24 · Penyimpanan (Lanjutan) — Demo interaktif",
+   "kicker": "Makan Siang 24 · Penyimpanan (Lanjutan) · Demo interaktif",
+   "title": "Sepuluh tahun, satu serangan ransomware, dan dua jalan masuk",
+   "lede": "Ikuti satu faktur Nusantara Retail melewati siklus hidup sepuluh tahun, saksikan versioning, soft delete, dan retention policy mengalahkan ransomware, lalu pindahkan lalu lintas dari public endpoint ke private endpoint. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Siklus hidup sepuluh tahun sebuah blob, versioning dan soft delete melawan ransomware, serta lalu lintas private endpoint versus public endpoint",
+   "svgDesc": "Adegan pertama menunjukkan sebuah faktur bergerak di sepanjang garis waktu dari hot tier ke cool, cold, dan archive, lalu akhirnya dihapus oleh aturan lifecycle. Adegan kedua menunjukkan container dengan versi saat ini dan previous version: ransomware menimpa dan menghapus faktur, previous version dipromosikan kembali, versi yang terhapus menunggu di tempat sampah soft delete, dan container dengan time-based retention policy menolak penghapusan. Adegan ketiga menunjukkan Cloud Shell di internet dan sebuah VM di virtual network menjangkau storage account, mula-mula lewat public endpoint, lalu lewat private endpoint dengan private DNS zone, dan akhirnya dengan public network access dinonaktifkan."
+  },
+  "steps": [
+   {
+    "title": "Sepuluh tahun hidup sebuah faktur",
+    "text": "Ransomware baru saja menyerang seorang pemasok di Surabaya. Faktur Nusantara Retail harus selamat dari serangan semacam itu, tetap utuh untuk kantor pajak, murah selama sepuluh tahun, dan hanya bisa dijangkau dari jaringan perusahaan sendiri. Ikuti satu faktur, INV-2026-0042, sejak hari ia mendarat di hot tier."
+   },
+   {
+    "title": "Sebuah aturan mendinginkannya",
+    "text": "Tidak ada yang memindahkan tier jutaan faktur secara manual. Aturan lifecycle, yang dijalankan platform sekali sehari, memindahkan setiap faktur ke cool setelah 30 hari dan ke cold setelah 90 hari. Penyimpanan makin murah seiring faktur makin jarang disentuh, dan faktur itu tinggal 60 hari di cool, lebih lama dari minimum 30 hari tier tersebut.",
+    "set": {
+     "t-day": "Hari 90 · kini di Cold"
+    }
+   },
+   {
+    "title": "Archive, lalu perpisahan yang terencana",
+    "text": "Setelah setahun, aturan itu mengarsipkan fakturnya: tier termurah, tetapi offline sampai ada yang me-rehydrate-nya. Setelah 3.650 hari, aturan menghapusnya. Versi lama butuh aturannya sendiri, karena lifecycle management tidak pernah menghapus versi saat ini selama previous version-nya masih ada.",
+    "set": {
+     "t-day": "Hari 3.650 · dihapus sesuai jadwal"
+    }
+   },
+   {
+    "title": "Tiga jaring pengaman diaktifkan",
+    "text": "Sekarang bagian yang berbahaya. Dewi mengaktifkan versioning, sehingga setiap penulisan menyimpan isi lama; soft delete, yang menyimpan blob, versi, dan container yang terhapus selama 14 hari; dan change feed, log berisi setiap perubahan. Aplikasi keuangan menulis INV-2026-0042 sebagai versi 1, yang asli."
+   },
+   {
+    "title": "Ransomware menimpa faktur",
+    "text": "Pukul 02.14, ransomware berbekal kredensial curian menimpa faktur itu dengan sampah terenkripsi. Tanpa versioning, aslinya pasti hilang. Dengan versioning, versi 1 sekadar menjadi previous version yang hanya-baca, dan isi terenkripsi menjadi versi 2. Change feed mencatat blob mana yang berubah, dan kapan.",
+    "set": {
+     "t-cur-sub": "v2 · ENCRYPTED BY RANSOMWARE",
+     "t-feed": "change feed · 02.14 timpa INV-2026-0042.txt"
+    }
+   },
+   {
+    "title": "Promosikan versi yang bersih",
+    "text": "Pagi harinya Dewi menyalin versi 1 ke atas blob. Salinan itu menjadi versi 3, versi saat ini, dan faktur aslinya kembali. Versi 2 yang terenkripsi tertinggal sebagai previous version sampai aturan lifecycle membuangnya. Untuk ribuan blob, point-in-time restore melakukan hal ini dalam satu operasi.",
+    "set": {
+     "t-cur-sub": "v3 · salinan v1 — yang asli kembali",
+     "t-feed": "change feed · 08.05 salin v1 ke atas INV-2026-0042.txt"
+    }
+   },
+   {
+    "title": "Penghapusan menyisakan versi",
+    "text": "Penyerang mencoba lagi dan menghapus faktur itu. Daftar isi container kini tampak kosong, tetapi tidak ada yang hancur: dengan versioning aktif, penghapusan hanya mengubah versi saat ini menjadi previous version 3. Seandainya penyerang menghapus seluruh container, container soft delete akan menyimpannya, beserta seluruh isinya, selama 14 hari.",
+    "set": {
+     "t-cur": "INV-2026-0042.txt · tanpa versi saat ini",
+     "t-cur-sub": "daftar container tampak kosong",
+     "t-feed": "change feed · 09.30 hapus INV-2026-0042.txt"
+    }
+   },
+   {
+    "title": "Versi-versi melawan balik",
+    "text": "Dewi mempromosikan versi 3 dan faktur itu kembali sekali lagi. Penyerang yang lebih cerdik akan ikut menghapus previous version, tetapi itu butuh role Storage Blob Data Owner, dan bahkan setelah itu setiap versi yang dihapus menunggu di tempat sampah soft delete selama 14 hari. Lapisan-lapisan ini mengulur waktu; mereka tidak bisa menghentikan orang yang menguasai account.",
+    "set": {
+     "t-cur": "INV-2026-0042.txt · versi saat ini",
+     "t-cur-sub": "v4 · salinan v3 — dipulihkan lagi",
+     "t-bin": "v1, v2 · versi terhapus",
+     "t-feed": "change feed · 09.41 hapus versi v1, v2"
+    }
+   },
+   {
+    "title": "WORM berkata tidak",
+    "text": "Tahun pajak yang sudah ditutup tinggal di invoices-2025, dilindungi time-based retention policy. Penghapusan oleh penyerang ditolak dengan error 409, BlobImmutableDueToPolicy, apa pun role-nya. Kebijakan baru dimulai dalam keadaan unlocked untuk pengujian. Begitu dikunci, ia hanya bisa diperpanjang, dan tidak ada yang bisa menghapus faktur ini, atau account yang menampungnya, sampai sepuluh tahun berlalu."
+   },
+   {
+    "title": "Jalan publik",
+    "text": "Pertanyaan terakhir: siapa yang bahkan bisa menjangkau account ini? Secara default, public endpoint-nya menerima koneksi dari mana saja, dan setiap request dinilai hanya dari kredensialnya. Cloud Shell di internet terhubung lewat jalan ini. Begitu pula vm-dns-1 di dalam virtual network, karena DNS juga memberinya alamat IP publik."
+   },
+   {
+    "title": "Private endpoint plus DNS",
+    "text": "Private endpoint memberi layanan blob milik account sebuah alamat IP privat, 10.24.2.4, di snet-pe. Private DNS zone bernama privatelink.blob.core.windows.net, yang tertaut ke virtual network, menjawab nama account yang sama dengan alamat itu. Connection string VM tidak berubah, tetapi lalu lintasnya kini tetap di dalam jaringan.",
+    "set": {
+     "t-dns": "DNS di VNet: stnusa24….blob.core.windows.net → 10.24.2.4"
+    }
+   },
+   {
+    "title": "Tutup pintu publik",
+    "text": "Setelah semua tugas data plane selesai, Dewi menyetel public network access ke Disabled. Request dari Cloud Shell kini mendapat 403 AuthorizationFailure, walaupun SAS-nya sah, sedangkan VM tetap membaca faktur lewat private endpoint. Jika seseorang menghapus tautan DNS zone, VM kembali mendapat IP publik dan menerima 403 yang sama.",
+    "set": {
+     "t-pna": "Akses publik: Disabled"
+    }
+   },
+   {
+    "title": "Rangkuman dan lab Anda",
+    "text": "Aturan lifecycle membuat faktur sepuluh tahun tetap murah. Versioning dan soft delete membatalkan penimpaan dan penghapusan, dan retention policy yang terkunci langsung menolaknya. Private endpoint dengan private DNS zone yang tertaut menjaga lalu lintas tetap di dalam jaringan, dan menonaktifkan public access menutup jalan lainnya. Bersama-sama, semuanya menjawab pertanyaan Ibu Sari.",
+    "tip": "Di Lab 24 Anda menimpa dan menghapus faktur lalu mengembalikannya, menambahkan retention policy yang unlocked, lalu membandingkan jawaban nslookup dari VM dan dari Cloud Shell sebelum menonaktifkan public access."
+   }
+  ],
+  "svg": {
+   "One invoice, ten years: a lifecycle rule at work": "Satu faktur, sepuluh tahun: aturan lifecycle bekerja",
+   "Day 0 · uploaded to Hot": "Hari 0 · diunggah ke Hot",
+   "opened often in its first month": "sering dibuka di bulan pertama",
+   "Lifecycle rule · invoices-ten-years": "Aturan lifecycle · invoices-ten-years",
+   "prefix invoices/ · runs once a day": "prefix invoices/ · berjalan sekali sehari",
+   "cool after 30 days · cold after 90 days": "cool setelah 30 hari · cold setelah 90 hari",
+   "archive after 1 year · delete after 10 years": "archive setelah 1 tahun · hapus setelah 10 tahun",
+   "timeline not to scale": "garis waktu tidak berskala",
+   "day 0": "hari 0",
+   "online · read often": "online · sering dibaca",
+   "after 30 days": "setelah 30 hari",
+   "minimum stay 30 days": "tinggal minimal 30 hari",
+   "after 90 days": "setelah 90 hari",
+   "minimum stay 90 days": "tinggal minimal 90 hari",
+   "after 1 year": "setelah 1 tahun",
+   "offline · 180-day min": "offline · min. 180 hari",
+   "Deleted": "Dihapus",
+   "after 10 years": "setelah 10 tahun",
+   "retention ends": "retensi berakhir",
+   "Each step waits out the tier's minimum stay, so there are no early deletion fees.": "Setiap langkah menunggu masa tinggal minimum tier-nya, jadi tidak ada biaya penghapusan dini.",
+   "Old versions have their own rule: cold after 30 days, deleted after a year.": "Versi lama punya aturan sendiri: cold setelah 30 hari, dihapus setelah setahun.",
+   "Storage price falls at every step; reading gets slower and dearer.": "Harga penyimpanan turun di setiap langkah; membaca makin lambat dan mahal.",
+   "Ransomware meets versioning, soft delete and WORM": "Ransomware berhadapan dengan versioning, soft delete, dan WORM",
+   "Versioning: on": "Versioning: aktif",
+   "Soft delete: 14 days": "Soft delete: 14 hari",
+   "Change feed: on": "Change feed: aktif",
+   "Finance app": "Aplikasi keuangan",
+   "writes invoices": "menulis faktur",
+   "stolen credentials": "kredensial curian",
+   "INV-2026-0042.txt · current version": "INV-2026-0042.txt · versi saat ini",
+   "v1 · the original invoice": "v1 · faktur asli",
+   "Previous versions (read-only)": "Previous version (hanya-baca)",
+   "v1 · original invoice": "v1 · faktur asli",
+   "v3 · original content (was current)": "v3 · isi asli (tadinya current)",
+   "change feed · no events yet": "change feed · belum ada event",
+   "Soft-delete bin": "Tempat sampah soft delete",
+   "kept 14 days, then gone": "disimpan 14 hari, lalu hilang",
+   "empty": "kosong",
+   "locked · 10 years": "terkunci · 10 tahun",
+   "no changes, no deletes": "tak bisa diubah atau dihapus",
+   "Refused: 409 BlobImmutableDueToPolicy": "Ditolak: 409 BlobImmutableDueToPolicy",
+   "Two roads to the same storage account": "Dua jalan menuju storage account yang sama",
+   "on the internet": "di internet",
+   "public IP address": "alamat IP publik",
+   "blob service": "layanan blob",
+   "Public access: Enabled": "Akses publik: Enabled",
+   "10.24.1.4 · no public IP": "10.24.1.4 · tanpa IP publik",
+   "DNS in the VNet: stnusa24….blob.core.windows.net → public IP": "DNS di VNet: stnusa24….blob.core.windows.net → IP publik",
+   "link": "tautan"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -705,6 +859,119 @@ svg .tick{fill:var(--node-stroke)}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -824,7 +1091,7 @@ svg .tick{fill:var(--node-stroke)}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -859,7 +1126,7 @@ svg .tick{fill:var(--node-stroke)}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -872,7 +1139,7 @@ svg .tick{fill:var(--node-stroke)}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -893,7 +1160,7 @@ svg .tick{fill:var(--node-stroke)}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -901,7 +1168,7 @@ svg .tick{fill:var(--node-stroke)}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

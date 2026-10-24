@@ -1,9 +1,12 @@
 # Lunch 23 · Virtual Machines (Advanced)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Deep-dive month · **Level:** Advanced · **Part 5:** Deep dives
 > **Time:** 60 minutes · **Prerequisite lunches:** 06 (Virtual Machines, Basic), 03, 09
 > **AZ-900 skill area:** Beyond AZ-900
 > **Lab:** [Lab 23 · Ready for the 12.12 sale](../../labs/23-virtual-machines-advanced/README.md) — about 60 minutes · cost 💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -376,6 +379,16 @@ What to watch for:
   automatic repairs keep them current and healthy.
 - Spot is for interruptible work; dedicated hosts and proximity placement groups solve niche isolation and latency
   needs; Update Manager and Trusted Launch keep the fleet patched and its boot chain protected.
+
+## 🗒️ Field notes from Stefanus
+
+> **Lose a zone on paper before you trust autoscale.** Before I sign off on any autoscale setting, I do one sum out
+> loud: take the busiest hour, write off every instance in one zone, and check that the instances the maximum still
+> allows can carry the whole load below the scale-out threshold. If they can't, the cap is a budget decision dressed up
+> as a capacity plan, and I want that written down. Next, I run a package update from inside one instance — not just a
+> page request through the load balancer — because a fleet that serves customers but can't reach its update sources
+> looks perfectly healthy until patch day. And I ask to see the scale-in, not just the scale-out: a set that grows on cue
+> but never shrinks is the most expensive way to pass a load test.
 
 ## 🔬 Your lab: Ready for the 12.12 sale
 

@@ -1,5 +1,7 @@
 # Lunch 15 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the part an animation cannot show: a key vault with the
 > RBAC permission model, a VM's managed identity being refused and then allowed, and the secure score in Defender for Cloud.
 > **Length target:** 5–6 minutes (short videos keep attention; split anything longer).

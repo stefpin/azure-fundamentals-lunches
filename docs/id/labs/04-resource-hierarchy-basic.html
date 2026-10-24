@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 04 · Menata Nusantara Retail · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 04: Menata Nusantara Retail. sekitar 40 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/04-resource-hierarchy-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/04-resource-hierarchy-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/04-resource-hierarchy-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/04-resource-hierarchy-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 04 · Menata Nusantara Retail">
+<meta property="og:description" content="Lab Azure praktik 04: Menata Nusantara Retail. sekitar 40 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/04-resource-hierarchy-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="04" style="--c:#1665d8">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/04-resource-hierarchy-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#1665d8">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 04</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>04</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Menata Nusantara Retail</h1>
+        <p class="lab-story">🏪 <b>Episode 04 · Siapa yang Bikin server-baru-final2?</b> — Tiga minggu eksperimen tanpa aturan penamaan, dan tidak ada yang tahu mana saja yang milik toko. <a href="../lunches/04-resource-hierarchy-basic.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 40 menit</span>
+          <span class="chip cost">💲 gratis atau hampir gratis</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 10 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--dua-resource-group-bertag">Tugas 1 · Dua resource group bertag</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--storage-account-dan-tag-yang-tidak-mengalir-ke-bawah">Tugas 2 · Storage account, dan tag yang tidak mengalir ke bawah</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--membongkar-resource-id">Tugas 3 · Membongkar resource ID</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--lock-cannotdelete-memblokir-penghapusan">Tugas 4 · Lock CanNotDelete memblokir penghapusan</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--lock-readonly-memblokir-lebih-banyak-dari-dugaan-anda">Tugas 5 · Lock ReadOnly memblokir lebih banyak dari dugaan Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--memindahkan-account-ke-resource-group-bersama">Tugas 6 · Memindahkan account ke resource group bersama</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--menemukan-semuanya-dengan-azure-resource-graph">Tugas 7 · Menemukan semuanya dengan Azure Resource Graph</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-8-opsional--management-group-di-tenant-anda-sendiri">Tugas 8 (opsional) · Management group di tenant Anda sendiri</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/04-resource-hierarchy-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/04-resource-hierarchy-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/04-resource-hierarchy-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>3 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/04-resource-hierarchy-basic" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Nusantara Retail sedang mengganti tumpukan eksperimennya dengan sebuah struktur. Anda membuat dua resource group
+bertag, satu untuk toko online dan satu untuk layanan bersama, serta sebuah storage account untuk foto produk. Anda
+membongkar resource ID account itu, membuktikan bahwa tag resource group tidak sampai ke resource di dalamnya, dan
+melihat dua jenis lock menghentikan Anda: lock <code>CanNotDelete</code> memblokir penghapusan, dan lock <code>ReadOnly</code> memblokir
+sesuatu yang tampak seperti operasi baca biasa. Setelah itu, Anda memindahkan account itu ke resource group bersama,
+tempat yang semestinya, lalu menemukan semuanya kembali dengan Azure Resource Graph. Sebagai opsi, Anda bisa membuat
+management group di tenant Anda sendiri.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph sub[&quot;Subscription Anda&quot;]
+    subgraph shop[&quot;rg-lunch04-shop-&amp;lt;suffix&amp;gt;&lt;br/&gt;project=storefront · costCenter=ecommerce&quot;]
+      st1[&quot;stnusaimg&amp;lt;suffix&amp;gt;&lt;br/&gt;dibuat di sini, dikunci, lalu dibuka lagi&quot;]
+    end
+    subgraph shared[&quot;rg-lunch04-shared-&amp;lt;suffix&amp;gt;&lt;br/&gt;project=shared-services · costCenter=it&quot;]
+      st2[&quot;stnusaimg&amp;lt;suffix&amp;gt;&lt;br/&gt;setelah dipindahkan&quot;]
+    end
+  end
+  st1 -- &quot;az resource move&quot; --&gt; st2
+  graph[&quot;Azure Resource Graph&lt;br/&gt;query berdasarkan tag&quot;] -.-&gt; shop
+  graph -.-&gt; shared
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda berperan sebagai <strong>Owner</strong> (lihat <a href="01-before-you-begin.html">Lab 01</a>).
+Membuat dan melepas lock membutuhkan Owner atau User Access Administrator; Contributor tidak cukup.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang.</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/04-resource-hierarchy-basic
+source ../common/config.sh
+RG_SHOP=$(rg_name 04 shop)
+RG_SHARED=$(rg_name 04 shared)
+ST=&quot;stnusaimg${SUFFIX}&quot;
+ST_TYPE=&quot;Microsoft.Storage/storageAccounts&quot;
+</code></pre></div>
+<ul>
+<li>Lab ini tidak punya <code>setup.sh</code>: Anda membuat semuanya sendiri.</li>
+<li>Jika Cloud Shell kehabisan waktu (timeout) lalu dimulai ulang, <code>cd</code> kembali ke folder lab dan jalankan lagi lima
+baris setelah <code>cd</code>. Tugas 3 menunjukkan cara mengembalikan ID storage account ke dalam <code>ST_ID</code>.</li>
+</ul>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab dikenai biaya selama masih ada (storage account yang kosong nyaris tidak berbiaya, tetapi tetap
+bersihkan). Jika Anda berhenti di tengah jalan, jalankan <strong>Bersihkan</strong>: langkah itu melepas lock yang masih tertinggal
+sebelum menghapus resource group.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–8 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--dua-resource-group-bertag" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Dua resource group bertag</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--dua-resource-group-bertag" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Toko online dan layanan bersama punya pemilik dan siklus hidup yang berbeda, jadi keduanya mendapat resource group
+terpisah. <code>ensure_rg</code> membuat setiap grup dengan tag <code>course</code> dan <code>lunch</code> milik kursus (script pembersihan menemukan grup
+berdasarkan tag itu); lalu Anda <strong>menggabungkan</strong> (merge) tag milik Anda sendiri.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ensure_rg &quot;$RG_SHOP&quot; 04
+ensure_rg &quot;$RG_SHARED&quot; 04
+
+az tag update --resource-id &quot;$(az group show --name &quot;$RG_SHOP&quot; --query id --output tsv)&quot; \
+  --operation Merge --tags project=storefront env=lab costCenter=ecommerce --output none
+az tag update --resource-id &quot;$(az group show --name &quot;$RG_SHARED&quot; --query id --output tsv)&quot; \
+  --operation Merge --tags project=shared-services env=lab costCenter=it --output none
+
+az group list --query &quot;[?tags.lunch==&#x27;04&#x27;].{name:name, location:location, project:tags.project, costCenter:tags.costCenter}&quot; \
+  --output table
+</code></pre></div>
+<p><code>Merge</code> menambahkan tag dan memperbarui tag yang sudah ada. <code>Replace</code> akan membuang setiap tag yang tidak ada di daftar
+Anda, termasuk tag <code>course</code> dan <code>lunch</code> yang diandalkan proses pembersihan, jadi berhati-hatilah saat memilih.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Resource groups › rg-lunch04-shop-… › Tags</em>: tambahkan ketiga tag lalu pilih <strong>Apply</strong>.
+Portal mengedit kumpulan tag yang sama dengan yang diedit CLI.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tabel menampilkan kedua grup di <code>LOCATION</code> Anda, dengan <code>storefront</code>/<code>ecommerce</code> dan
+<code>shared-services</code>/<code>it</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--storage-account-dan-tag-yang-tidak-mengalir-ke-bawah" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Storage account, dan tag yang tidak mengalir ke bawah</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--storage-account-dan-tag-yang-tidak-mengalir-ke-bawah" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Buat storage account untuk foto produk di resource group toko online, lalu lihat tag-nya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage account create --name &quot;$ST&quot; --resource-group &quot;$RG_SHOP&quot; --location &quot;$LOCATION&quot; \
+  --sku Standard_LRS --kind StorageV2 --min-tls-version TLS1_2 --allow-blob-public-access false \
+  --output none
+
+az storage account show --name &quot;$ST&quot; --resource-group &quot;$RG_SHOP&quot; --query tags
+</code></pre></div>
+<p>Jawabannya <code>{}</code> (atau tidak ada apa-apa sama sekali): tag <code>project</code>, <code>env</code>, dan <code>costCenter</code> milik grup <strong>tidak</strong>
+mengalir ke account itu. Pasang tag pada resource-nya sendiri:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ST_ID=$(az storage account show --name &quot;$ST&quot; --resource-group &quot;$RG_SHOP&quot; --query id --output tsv)
+az tag update --resource-id &quot;$ST_ID&quot; --operation Merge --tags app=product-images env=lab --output none
+az tag list --resource-id &quot;$ST_ID&quot; --query properties.tags
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> account itu ada di grup shop dan membawa persis tag yang Anda berikan, <code>app</code> dan <code>env</code>, tanpa satu
+pun tag milik grup.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--membongkar-resource-id" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Membongkar resource ID</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--membongkar-resource-id" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Resource ID adalah alamat yang dipakai Azure Resource Manager untuk segala hal. Cetak ID-nya, lalu pecah berdasarkan
+garis miring.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>echo &quot;$ST_ID&quot;
+IFS=&#x27;/&#x27; read -r -a parts &lt;&lt;&lt; &quot;$ST_ID&quot;
+for i in &quot;${!parts[@]}&quot;; do printf &#x27;%2d  %s\n&#x27; &quot;$i&quot; &quot;${parts[$i]}&quot;; done
+</code></pre></div>
+<p>Baca output bernomor itu: <code>1</code>–<code>2</code> adalah subscription (simpan ID itu untuk diri sendiri), <code>3</code>–<code>4</code> resource group,
+<code>5</code>–<code>6</code> namespace resource provider, <code>7</code> tipe resource, dan <code>8</code> namanya. ID saja sudah cukup untuk menemukan
+resource-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az resource show --ids &quot;$ST_ID&quot; --query &quot;{name:name, type:type, location:location, group:resourceGroup}&quot; --output table
+</code></pre></div>
+<p>Sekarang lihat resource provider di baliknya, tipe-tipe resource yang ditawarkannya, dan versi API terbaru untuk tipe
+storage account:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az provider show --namespace Microsoft.Storage --query &quot;{namespace:namespace, state:registrationState}&quot; --output table
+az provider show --namespace Microsoft.Storage --query &quot;resourceTypes[].resourceType&quot; --output tsv | head -n 12
+az provider show --namespace Microsoft.Storage \
+  --query &quot;resourceTypes[?resourceType==&#x27;storageAccounts&#x27;].apiVersions | [0][:3]&quot; --output tsv
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><code>ST_ID</code> hilang setelah Cloud Shell dimulai ulang? Ambil kembali dengan
+<code>ST_ID=$(az storage account list --query &quot;[?name=='${ST}'].id | [0]&quot; --output tsv)</code>, yang menemukan account itu di
+resource group mana pun ia berada sekarang.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Anda bisa menyebutkan bagian mana dari ID itu yang merupakan subscription, resource group,
+namespace provider (<code>Microsoft.Storage</code>), tipe (<code>storageAccounts</code>), dan nama. Provider menampilkan <code>Registered</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--lock-cannotdelete-memblokir-penghapusan" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Lock CanNotDelete memblokir penghapusan</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--lock-cannotdelete-memblokir-penghapusan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Pak Budi ingin tempat penyimpanan foto terlindungi dari penghapusan yang tidak disengaja. Lock <code>CanNotDelete</code> (disebut
+<strong>Delete</strong> di portal) melakukannya untuk semua orang, termasuk Owner.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az lock create --name lock-nodelete --lock-type CanNotDelete \
+  --resource-group &quot;$RG_SHOP&quot; --resource &quot;$ST&quot; --resource-type &quot;$ST_TYPE&quot; \
+  --notes &quot;Product photos - do not delete&quot; --output none
+
+az lock list --resource-group &quot;$RG_SHOP&quot; --resource &quot;$ST&quot; --resource-type &quot;$ST_TYPE&quot; \
+  --query &quot;[].{name:name, level:level}&quot; --output table
+</code></pre></div>
+<p>Beri lock itu waktu beberapa detik, lalu coba hapus account-nya. Bagian <code>az lock show … &amp;&amp;</code> adalah jaring pengaman:
+perintah hapus hanya berjalan jika lock-nya benar-benar ada.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>sleep 15
+az lock show --name lock-nodelete --resource-group &quot;$RG_SHOP&quot; \
+  --resource &quot;$ST&quot; --resource-type &quot;$ST_TYPE&quot; --output none \
+  &amp;&amp; az storage account delete --name &quot;$ST&quot; --resource-group &quot;$RG_SHOP&quot; --yes
+</code></pre></div>
+<p>Penghapusan gagal dengan kode error <strong>ScopeLocked</strong> dan pesan yang menyatakan bahwa scope itu tidak bisa menjalankan
+operasi delete karena ada scope yang dikunci. Perubahan tetap diizinkan, karena lock ini hanya memblokir penghapusan:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az tag update --resource-id &quot;$ST_ID&quot; --operation Merge --tags owner=dewi --output none \
+  &amp;&amp; echo &quot;Tag added: a CanNotDelete lock still allows changes.&quot;
+</code></pre></div>
+<p>Lepas lock itu sebelum tugas berikutnya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az lock delete --name lock-nodelete --resource-group &quot;$RG_SHOP&quot; --resource &quot;$ST&quot; --resource-type &quot;$ST_TYPE&quot;
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Storage account › Settings › Locks › Add</em>, lock type <strong>Delete</strong>. Lalu coba <strong>Delete</strong> di
+halaman Overview account itu dan baca notifikasinya.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> penghapusan ditolak dengan <code>ScopeLocked</code>, pembaruan tag berhasil, dan daftar lock kembali kosong.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--lock-readonly-memblokir-lebih-banyak-dari-dugaan-anda" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Lock ReadOnly memblokir lebih banyak dari dugaan Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--lock-readonly-memblokir-lebih-banyak-dari-dugaan-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Lock <code>ReadOnly</code> (<strong>Read-only</strong> di portal) membiarkan semua orang membaca dan tidak membiarkan siapa pun mengubah apa
+pun. &quot;Membaca&quot; di sini berarti hanya permintaan GET, dan dari situlah kejutannya datang.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az lock create --name lock-readonly --lock-type ReadOnly \
+  --resource-group &quot;$RG_SHOP&quot; --resource &quot;$ST&quot; --resource-type &quot;$ST_TYPE&quot; --output none
+sleep 15
+
+# 1) Reading the account&#x27;s properties is a GET: allowed
+az storage account show --name &quot;$ST&quot; --resource-group &quot;$RG_SHOP&quot; --query &quot;{name:name, sku:sku.name}&quot; --output table
+
+# 2) Listing the access keys is a POST: blocked (the query prints only how many keys, never the keys themselves)
+az storage account keys list --account-name &quot;$ST&quot; --resource-group &quot;$RG_SHOP&quot; --query &quot;length(@)&quot; --output tsv
+
+# 3) Changing a tag is a write: blocked
+az tag update --resource-id &quot;$ST_ID&quot; --operation Merge --tags reviewed=yes --output none
+</code></pre></div>
+<p>Perintah 2 dan 3 gagal dengan <strong>ScopeLocked</strong>. Menampilkan key terasa seperti membaca, tetapi sengaja dibuat sebagai
+aksi POST: key itu memberi akses penuh ke setiap blob di account tersebut, jadi Azure tidak membagikannya lewat GET
+biasa. Lock ReadOnly memblokir setiap POST, karena Resource Manager tidak bisa tahu aksi POST mana yang mengubah
+sesuatu. Aplikasi yang mengambil storage key saat dinyalakan akan langsung rusak begitu seseorang memasang lock ini.</p>
+<p>Lepas lock itu dan pastikan key bisa ditampilkan lagi (tetap hanya jumlahnya):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az lock delete --name lock-readonly --resource-group &quot;$RG_SHOP&quot; --resource &quot;$ST&quot; --resource-type &quot;$ST_TYPE&quot;
+sleep 15
+az storage account keys list --account-name &quot;$ST&quot; --resource-group &quot;$RG_SHOP&quot; --query &quot;length(@)&quot; --output tsv
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> dengan lock ReadOnly terpasang, <code>show</code> berhasil sementara <code>keys list</code> dan <code>tag update</code> ditolak.
+Setelah lock dilepas, <code>keys list</code> mencetak <code>2</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--memindahkan-account-ke-resource-group-bersama" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Memindahkan account ke resource group bersama</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--memindahkan-account-ke-resource-group-bersama" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Aplikasi lain, misalnya tablet di toko-toko, juga akan memakai foto produk, jadi account itu semestinya berada di grup
+bersama. Memindahkannya mengubah resource group-nya, dan karena itu juga ID-nya, tetapi tidak mengubah region maupun
+datanya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>OLD_ID=&quot;$ST_ID&quot;
+az resource move --destination-group &quot;$RG_SHARED&quot; --ids &quot;$OLD_ID&quot;
+</code></pre></div>
+<p>Pemindahan memakan waktu satu atau dua menit. Selama berlangsung, kedua resource group dikunci dari perubahan, tetapi
+storage account tetap melayani data. Setelah prompt muncul kembali, bandingkan ID-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ST_ID=$(az storage account show --name &quot;$ST&quot; --resource-group &quot;$RG_SHARED&quot; --query id --output tsv)
+echo &quot;old: $OLD_ID&quot;
+echo &quot;new: $ST_ID&quot;
+az resource show --ids &quot;$OLD_ID&quot; --output none      # fails with ResourceNotFound: the old address is gone
+az storage account show --name &quot;$ST&quot; --resource-group &quot;$RG_SHARED&quot; \
+  --query &quot;{group:resourceGroup, location:primaryLocation, tags:tags}&quot; --output json
+</code></pre></div>
+<p>Lokasinya tidak berubah dan tag milik account itu sendiri (<code>app</code>, <code>env</code>, <code>owner</code>) ikut terbawa, tetapi account itu tidak
+mendapat <code>costCenter=it</code> milik grup bersama: tag tetap tidak diwariskan.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Di halaman <em>Overview</em> account itu, pilih <strong>move</strong> di samping <em>Resource group</em>, lalu
+<strong>Move to another resource group</strong>. Portal memvalidasi pemindahan sebelum memulainya.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> ID baru memuat <code>rg-lunch04-shared-&lt;suffix&gt;</code>, ID lama menghasilkan <code>ResourceNotFound</code>, dan lokasi
+account masih <code>LOCATION</code> Anda.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--menemukan-semuanya-dengan-azure-resource-graph" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Menemukan semuanya dengan Azure Resource Graph</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--menemukan-semuanya-dengan-azure-resource-graph" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Resource Graph menelusuri setiap subscription yang bisa Anda baca, dalam hitungan detik. Perintah CLI-nya ada di
+extension <code>resource-graph</code>; pengaturan berikut membuat Azure CLI memasang extension secara otomatis, tanpa bertanya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az config set extension.use_dynamic_install=yes_without_prompt --only-show-errors
+</code></pre></div>
+<p>Resource group berada di tabel <code>ResourceContainers</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az graph query -q &quot;ResourceContainers
+  | where type =~ &#x27;microsoft.resources/subscriptions/resourcegroups&#x27;
+  | where tags.lunch == &#x27;04&#x27;
+  | project name, location, project=tostring(tags.project), costCenter=tostring(tags.costCenter)&quot; \
+  --query &quot;data[]&quot; --output table
+</code></pre></div>
+<p>Resource berada di tabel <code>Resources</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az graph query -q &quot;Resources | where tags.app == &#x27;product-images&#x27; | project name, type, resourceGroup, location&quot; \
+  --query &quot;data[]&quot; --output table
+
+# Proof that tags don&#x27;t inherit: no resource carries the shared group&#x27;s costCenter=it
+az graph query -q &quot;Resources | where tags.costCenter == &#x27;it&#x27; | project name, resourceGroup&quot; \
+  --query &quot;data[]&quot; --output table
+</code></pre></div>
+<p>Resource Graph adalah indeks dari resource Anda, jadi perubahan yang baru Anda buat beberapa detik lalu mungkin butuh
+sedikit waktu untuk muncul. Jika hasilnya tampak usang, tunggu satu menit lalu jalankan query-nya lagi.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Cari <strong>Resource Graph Explorer</strong>, tempel sebuah query tanpa bagian <code>az graph query -q</code>, lalu
+pilih <strong>Run query</strong>. Anda bisa menyimpan query dan menyematkan hasilnya ke dashboard.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> query pertama menampilkan kedua resource group beserta project dan pusat biayanya, query kedua
+menampilkan storage account di grup bersama, dan query ketiga tidak mengembalikan baris apa pun.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-8-opsional--management-group-di-tenant-anda-sendiri" data-kind="task"><h2><span class="task-tag">Tugas 8 (opsional)</span><span class="title">Management group di tenant Anda sendiri</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-8-opsional--management-group-di-tenant-anda-sendiri" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Lakukan ini hanya di tenant <strong>milik Anda sendiri</strong>, misalnya tenant yang dibuat bersama akun gratis Anda, tempat Anda
+menjadi Global Administrator. Management group berlaku di tingkat tenant: di tenant perusahaan, Anda bisa memengaruhi
+tata kelola milik orang lain, atau administrator Anda mungkin sudah memblokirnya. Jangan pernah memindahkan
+subscription kantor. Management group pertama di sebuah tenant bisa butuh waktu hingga 15 menit untuk muncul, karena
+Azure terlebih dahulu menyiapkan root management group.</p>
+</aside>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>MG=&quot;mg-nusa-lab-${SUFFIX}&quot;
+az account management-group create --name &quot;$MG&quot; --display-name &quot;Nusantara Retail (lab)&quot; --output none
+az account management-group show --name &quot;$MG&quot; \
+  --query &quot;{name:name, displayName:displayName, parent:details.parent.displayName}&quot; --output table
+</code></pre></div>
+<p>Induk grup baru itu adalah Tenant root group. Di portal (<em>Management groups</em>), Anda bisa melihat subscription Anda di
+bawah Tenant root group, bersebelahan dengan management group baru yang masih kosong. Biarkan subscription tetap di
+tempatnya; Makan Siang 31 membahas cara merancang dan mengisi sebuah hierarki. <code>cleanup.sh</code> akan menghapus management
+group ini untuk Anda.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>az account management-group show</code> mencetak grup Anda dengan <em>Tenant Root Group</em> sebagai induknya.
+Jika Anda mendapat error otorisasi, tenant Anda mewajibkan izin untuk membuat management group; lewati tugas ini.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Pak Budi memutuskan untuk &quot;melindungi&quot; seluruh resource group bersama dengan lock ReadOnly, tanpa memberi tahu siapa
+pun:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az lock create --name lock-protect-shared --lock-type ReadOnly --resource-group &quot;$RG_SHARED&quot; \
+  --notes &quot;Added by Pak Budi&quot; --output none
+sleep 15
+</code></pre></div>
+<p>Sekarang coba perubahan kecil yang tidak berbahaya pada storage account:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az tag update --resource-id &quot;$ST_ID&quot; --operation Merge --tags reviewed=yes --output none
+</code></pre></div>
+<p><strong>Gejala:</strong> pembaruan gagal dengan <strong>ScopeLocked</strong>, padahal Anda tidak pernah memasang lock pada storage account. Cari
+tahu di mana lock itu berada, lalu perbaiki.</p>
+<details class="plain"><summary>Petunjuk dan perbaikan</summary>
+<p>Lock itu diwariskan. Daftar lock yang berlaku untuk sebuah resource juga mencakup lock di resource group dan
+subscription-nya, dan ID setiap lock menunjukkan scope tempat lock itu dipasang:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az lock list --resource-group &quot;$RG_SHARED&quot; --resource &quot;$ST&quot; --resource-type &quot;$ST_TYPE&quot; \
+  --query &quot;[].{name:name, level:level, scope:id}&quot; --output table
+</code></pre></div>
+<p>ID <code>lock-protect-shared</code> berakhir di resource group, bukan di storage account. Lepas lock itu lalu coba lagi:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az lock delete --name lock-protect-shared --resource-group &quot;$RG_SHARED&quot;
+sleep 15
+az tag update --resource-id &quot;$ST_ID&quot; --operation Merge --tags reviewed=yes --output none &amp;&amp; echo &quot;Fixed.&quot;
+</code></pre></div>
+<p>Apa yang seharusnya dipakai Pak Budi? Lock <code>CanNotDelete</code> melindungi grup dari penghapusan tanpa memblokir perubahan
+sehari-hari, sedangkan role assignment menentukan siapa yang boleh mengubah sesuatu.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan semestinya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu
+Anda ulangi.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Script ini melepas lock yang masih tertinggal di resource group Lab 04, menghapus management group opsional
+<code>mg-nusa-lab-&lt;suffix&gt;</code> jika ada, lalu menghapus kedua resource group beserta storage account-nya. Penghapusan berlanjut
+di latar belakang selama beberapa menit. Jika Anda ingin Azure CLI kembali bertanya sebelum memasang extension,
+jalankan <code>az config unset extension.use_dynamic_install</code>.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>(AuthorizationFailed) ... does not have authorization to perform action 'Microsoft.Authorization/locks/write'</code></td>
+<td>Anda berperan sebagai Contributor, bukan Owner atau User Access Administrator</td>
+<td>Gunakan subscription tempat Anda menjadi Owner, misalnya akun gratis milik Anda sendiri</td>
+</tr>
+<tr>
+<td><code>(ScopeLocked) The scope '...' cannot perform delete operation because following scope(s) are locked</code></td>
+<td>Ada lock pada resource atau pada salah satu induknya</td>
+<td><code>az lock list --resource-group ... --resource ... --resource-type ...</code> menampilkan setiap lock yang berlaku; lepas lock yang tepat</td>
+</tr>
+<tr>
+<td><code>az resource move</code> gagal dengan <code>ScopeLocked</code></td>
+<td>Ada lock ReadOnly pada resource group sumber atau tujuan (atau pada subscription)</td>
+<td>Lepas lock-nya, lalu pindahkan lagi</td>
+</tr>
+<tr>
+<td><code>az resource show --ids &quot;$OLD_ID&quot;</code> menyatakan <code>ResourceNotFound</code></td>
+<td>Memang begitu seharusnya setelah pemindahan: ID-nya berubah</td>
+<td>Gunakan ID baru dari Tugas 6</td>
+</tr>
+<tr>
+<td><code>az graph query</code> meminta pemasangan extension atau menyatakan perintahnya tidak ditemukan</td>
+<td>Extension <code>resource-graph</code> belum terpasang</td>
+<td>Jalankan baris <code>az config set extension.use_dynamic_install=yes_without_prompt</code> dari Tugas 7, atau <code>az extension add --name resource-graph</code></td>
+</tr>
+<tr>
+<td>Query Resource Graph tidak menampilkan perubahan yang baru Anda buat</td>
+<td>Indeksnya masih menyusul</td>
+<td>Tunggu satu menit lalu jalankan query-nya lagi</td>
+</tr>
+<tr>
+<td><code>(StorageAccountAlreadyTaken) The storage account named ... is already taken.</code></td>
+<td>Nama storage account bersifat global</td>
+<td>Jalankan <code>bash cleanup.sh</code>, lalu <code>rm ~/.azlunches-suffix</code>, <code>source ../common/config.sh</code> lagi, dan mulai ulang dari Tugas 1</td>
+</tr>
+<tr>
+<td><code>ensure_rg</code> gagal dengan <code>ScopeLocked</code> saat Anda menjalankan ulang Tugas 1</td>
+<td>Lock dari Tugas 4, Tugas 5, atau latihan rusak-lalu-perbaiki masih terpasang</td>
+<td>Lepas lock itu (lihat petunjuk di latihan rusak-lalu-perbaiki), lalu jalankan ulang</td>
+</tr>
+<tr>
+<td>Pembuatan management group gagal dengan <code>AuthorizationFailed</code></td>
+<td>Hierarchy protection di tenant Anda mewajibkan izin untuk membuat management group</td>
+<td>Lewati Tugas 8; tugas itu opsional</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>Validasi pemindahan tanpa benar-benar menjalankannya: <code>az resource invoke-action --action validateMoveResources</code>
+dengan ID grup sumber dan request body yang menyebutkan resource serta grup tujuannya (lihat
+<a href="https://learn.microsoft.com/azure/azure-resource-manager/management/move-resource-group-and-subscription" target="_blank" rel="noopener">dokumentasi pemindahan</a>).</li>
+<li>Pilih tiga tipe resource yang Anda perkirakan akan dipakai di makan siang berikutnya, lalu cari di
+<a href="https://learn.microsoft.com/azure/azure-resource-manager/management/move-support-resources" target="_blank" rel="noopener">daftar tipe resource yang mendukung pemindahan</a>.</li>
+<li>Buat blob container melalui control plane (<code>az storage container-rm create</code>), cetak resource ID-nya, dan temukan
+segmen resource anak yang mengikuti nama account.</li>
+<li>Tulis query Resource Graph yang menampilkan setiap resource di subscription Anda yang <strong>tidak</strong> punya tag
+<code>costCenter</code>, lalu simpan di Resource Graph Explorer.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep):</p>
+<ol>
+<li>Dua resource group di <code>LOCATION</code> Anda: <code>rg-lunch04-shop-&lt;suffix&gt;</code> dengan tag <code>project=storefront</code>, <code>env=lab</code>, dan
+<code>costCenter=ecommerce</code>, serta <code>rg-lunch04-shared-&lt;suffix&gt;</code> dengan <code>project=shared-services</code>, <code>env=lab</code>, dan
+<code>costCenter=it</code>. Keduanya juga tetap membawa <code>course=azure-fundamentals-lunches</code> dan <code>lunch=04</code> (<code>ensure_rg</code>
+menambahkannya).</li>
+<li>Account StorageV2 <code>stnusaimg&lt;suffix&gt;</code> (<code>Standard_LRS</code>, minimum TLS 1.2, akses blob anonim dinonaktifkan), dengan tag
+<code>app=product-images</code> dan <code>env=lab</code>, yang dibuat di grup shop lalu <strong>dipindahkan</strong> ke grup shared.</li>
+<li>Tidak diperiksa oleh script: buktikan bahwa lock <code>CanNotDelete</code> memblokir penghapusan account dan bahwa lock
+<code>ReadOnly</code> memblokir penampilan daftar key-nya.</li>
+<li>Tidak ada resource lock yang tersisa di kedua resource group maupun di account.</li>
+<li>Tidak diperiksa oleh script: query Resource Graph yang menampilkan kedua resource group berdasarkan tag <code>lunch</code>-nya.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="03-global-infrastructure.html"><small>← Lab sebelumnya</small>03 · Menjelajahi region dan zona</a><a class="next" href="05-identity-access-basic.html"><small>Lab berikutnya →</small>05 · Beri kontraktor akses secukupnya</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/04-resource-hierarchy-basic/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

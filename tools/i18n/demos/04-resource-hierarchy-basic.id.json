@@ -1,0 +1,98 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 04 · Hierarki resource dan Azure Resource Manager — Demo interaktif",
+    "kicker": "Makan Siang 04 · Hierarki resource · Demo interaktif",
+    "title": "Dari tenant ke resource: bagaimana aturan mengalir ke bawah",
+    "lede": "Bangun hierarki Nusantara Retail tingkat demi tingkat, saksikan sebuah role, policy, dan lock mengalir ke bawah sementara tag tetap di tempatnya, lalu bongkar sebuah resource ID. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Hierarki Azure milik Nusantara Retail, dari tenant Microsoft Entra sampai ke resource satu per satu",
+    "svgDesc": "Sebuah pohon menampilkan tenant Microsoft Entra, Tenant root group, management group mg-nusa dengan anak produksi dan nonproduksi, satu subscription di bawah masing-masing anak, tiga resource group, dan tiga resource. Di sebelah kanan, berbagai alat mengirim permintaan melalui Azure Resource Manager ke resource provider. Langkah-langkahnya menunjukkan role assignment, policy, dan lock yang mengalir ke bawah pohon sementara tag tidak diwariskan, dan sebuah panel di bagian bawah membongkar resource ID milik storage account."
+  },
+  "steps": [
+    {
+      "title": "Semuanya dalam satu tumpukan besar",
+      "text": "Eksperimen Azure pertama Nusantara Retail mendarat di satu subscription dengan resource group bernama test, rg1, dan rg-new. Tidak ada yang tahu resource mana milik toko online, siapa yang boleh mengubahnya, atau berapa biaya masing-masing. Sebelum workload sungguhan datang, Anda butuh struktur: hierarki yang mengelompokkan resource secara masuk akal dan membiarkan aturan mengalir dari atas ke bawah."
+    },
+    {
+      "title": "Tenant ada di puncak",
+      "text": "Semuanya berawal dari tenant Microsoft Entra: direktori identitas Nusantara Retail beserta pengguna, grup, dan aplikasinya. Setiap subscription memercayai tepat satu tenant. Tenant menjawab pertanyaan 'siapa yang sedang masuk?'. Semua yang kita bangun di bawahnya menjawab dua pertanyaan lain: di mana resource tinggal, dan aturan apa yang berlaku untuknya?"
+    },
+    {
+      "title": "Root management group",
+      "text": "Setiap tenant punya tepat satu root management group, yang tampil sebagai Tenant root group. ID-nya sama dengan ID tenant, dan grup ini tidak bisa dipindahkan atau dihapus. Setiap management group dan subscription bermuara ke sana, dan subscription baru otomatis masuk ke sana. Secara bawaan tidak ada yang punya akses ke grup ini; seorang Global Administrator harus menaikkan aksesnya terlebih dahulu."
+    },
+    {
+      "title": "Management group menata subscription",
+      "text": "Di bawah root, Anda membangun management group: mg-nusa untuk perusahaan, lalu mg-nusa-prod dan mg-nusa-nonprod. Sebuah management group bisa menampung subscription dan management group lain, dan setiap item punya tepat satu induk. Pohonnya bisa sedalam hingga enam tingkat di bawah root. Merancang pohon landing zone yang lengkap adalah tugas Makan Siang 31."
+    },
+    {
+      "title": "Subscription: penagihan dan skala",
+      "text": "Subscription menggantung di bawah management group. Subscription adalah batas penagihan, karena pemakaian dicatat per subscription, sekaligus batas skala, karena kuota seperti jumlah vCPU per region berlaku per subscription. Produksi dan development mendapat subscription terpisah, sehingga sebuah uji coba tidak akan pernah menghabiskan kuota produksi atau bersembunyi di dalam tagihannya."
+    },
+    {
+      "title": "Resource group menampung resource",
+      "text": "Di dalam setiap subscription, resource group menampung resource yang berbagi siklus hidup: Anda membuat, memperbarui, dan menghapusnya bersama-sama. rg-storefront-prod menampung web app; rg-shared-prod menampung storage account untuk foto produk yang akan dipakai beberapa aplikasi. Setiap resource tinggal di tepat satu resource group, dan resource group tidak bisa bersarang."
+    },
+    {
+      "title": "Setiap permintaan melewati ARM",
+      "text": "Entah Anda mengeklik di portal, mengetik perintah Azure CLI, atau men-deploy file Bicep, permintaannya menuju Azure Resource Manager. ARM memeriksa siapa Anda dan apa yang boleh Anda lakukan, menerapkan Azure Policy dan lock, menulis activity log, dan baru kemudian menyerahkan pekerjaannya ke resource provider seperti Microsoft.Storage. Inilah control plane.",
+      "set": {
+        "t-arm": "permintaan diizinkan ✓"
+      }
+    },
+    {
+      "title": "Role di management group",
+      "text": "Sekarang perhatikan pewarisan. Tim keuangan mendapat role Reader di mg-nusa-prod. Satu assignment itu mengalir ke setiap subscription, resource group, dan resource di bawahnya, termasuk yang ditambahkan tahun depan. Cabang nonproduksi tidak tersentuh. Tetapkan role setinggi yang dibutuhkan pekerjaan dan serendah yang diizinkan prinsip hak akses minimum; Makan Siang 05 membahas kontrol akses berbasis peran."
+    },
+    {
+      "title": "Policy di subscription",
+      "text": "Berikutnya, assignment Azure Policy di sub-nusa-prod hanya mengizinkan Indonesia Central. Seseorang mencoba membuat storage account di Southeast Asia. ARM mengevaluasi policy itu sebelum apa pun dibangun, dan permintaannya ditolak. Policy ini mencakup setiap resource group dan resource di subscription tersebut, tetapi tidak berlaku untuk subscription development di sebelahnya.",
+      "set": {
+        "t-arm": "policy: lokasi ditolak ✗"
+      }
+    },
+    {
+      "title": "Lock di resource group",
+      "text": "Pak Budi memasang lock CanNotDelete di rg-shared-prod. Storage account di dalamnya mewarisi lock itu, jadi saat seseorang mencoba menghapus account tersebut, ARM menolak, bahkan untuk seorang Owner. Lock ReadOnly bertindak lebih jauh dan memblokir setiap perubahan, termasuk aksi POST seperti menampilkan storage key. Lock menjaga control plane, bukan data di dalamnya.",
+      "set": {
+        "t-arm": "lock: hapus diblokir ✗"
+      }
+    },
+    {
+      "title": "Tag tidak mengalir ke bawah",
+      "text": "Ada satu hal yang tidak diwariskan: tag. rg-storefront-prod membawa costCenter=ecommerce, tetapi web app di dalamnya tidak punya tag sampai Anda menambahkannya, atau sampai Azure Policy menyalinnya. Tag menjadi dasar laporan biaya dan query Resource Graph, jadi pasang tag pada resource-nya sendiri. Role, policy, dan lock mengalir ke bawah; tag tetap persis di tempat Anda memasangnya.",
+      "set": {
+        "t-arm": "siap"
+      }
+    },
+    {
+      "title": "Resource ID adalah alamat",
+      "text": "Setiap resource punya resource ID, sebuah jalur yang menyebutkan persis di mana ia tinggal. Inilah ID storage account di rg-shared-prod. Script, template, role assignment, dan lock semuanya menunjuk resource melalui ID. Karena resource group menjadi bagian dari jalurnya, memindahkan resource ke grup lain akan mengubah ID-nya, jadi perbarui apa pun yang merujuk kepadanya."
+    },
+    {
+      "title": "Baca ID dari kiri ke kanan",
+      "text": "Baca segmen demi segmen: subscription, lalu resource group, lalu namespace resource provider, tipe resource, dan akhirnya nama resource. Resource anak cukup menambahkan pasangan tipe-dan-nama. Legenda di samping merangkum pewarisan. Dengan pola ini, Anda bisa membaca ID apa pun di pesan error dan langsung tahu scope mana yang harus diperiksa.",
+      "tip": "Di Lab 04, Anda membedah resource ID sungguhan, melihat lock CanNotDelete dan ReadOnly menghadang Anda, memindahkan storage account antar-resource group, lalu menemukannya kembali berdasarkan tag dengan Resource Graph."
+    }
+  ],
+  "svg": {
+    "Today's lab subscription": "Subscription lab saat ini",
+    "Resource groups: test, rg1, rg-new": "Resource group: test, rg1, rg-new",
+    "No owner, no tags, no rules, no budget": "Tanpa pemilik, tag, aturan, atau anggaran",
+    "Microsoft Entra tenant": "Tenant Microsoft Entra",
+    "auth · RBAC · Policy · locks": "auth · RBAC · Policy · lock",
+    "ready": "siap",
+    "Resource providers": "Resource provider",
+    "What flows down?": "Apa yang diwariskan?",
+    "✓ Role assignments (RBAC)": "✓ Role assignment (RBAC)",
+    "✓ Policy assignments": "✓ Policy assignment",
+    "✓ Locks (strictest wins)": "✓ Lock (terketat menang)",
+    "✗ Tags: not inherited": "✗ Tag: tidak diwariskan",
+    "Reader: Finance": "Reader: Keuangan",
+    "Policy: IDC only": "Policy: hanya IDC",
+    "no tags": "tanpa tag",
+    "Resource ID of stnusaimg01": "Resource ID milik stnusaimg01",
+    "provider namespace": "namespace provider",
+    "resource type": "tipe resource",
+    "resource name": "nama resource"
+  }
+}

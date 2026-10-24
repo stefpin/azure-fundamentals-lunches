@@ -1,9 +1,12 @@
 # Lunch 20 · Infrastructure as Code with Bicep (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 4:** Secure, operate and govern
 > **Time:** 60 minutes · **Prerequisite lunches:** 04 recommended (08 and 18 help)
 > **AZ-900 skill area:** Describe Azure management and governance
 > **Lab:** [Lab 20 · Nineteen lunches of clicks in one file](../../labs/20-infrastructure-as-code-bicep/README.md) — about 50 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -448,6 +451,16 @@ What to watch for:
   state of each resource.
 - **Deployment stacks** manage a group of resources as a unit, delete what leaves the file and protect resources with
   **deny settings**; together with template specs and Azure Policy they replace Azure Blueprints.
+
+## 🗒️ Field notes from Stefanus
+
+> **A template you have never rebuilt from is only a hope.** When someone tells me an environment is "all in Bicep", I
+> ask one question: when did you last delete the test copy and rebuild it from the pipeline alone? The rebuild is the
+> real test, because it finds what the file forgot — a role assignment granted by hand, a secret typed into the portal, a
+> DNS record somebody added late at night. So I schedule that drill, time it, and turn every gap into a pull request. My
+> second habit is smaller: when I review a change, I read the what-if output before the Bicep. The code shows what
+> someone meant; the diff shows what will actually happen, and I look hardest at every `-` and at any `~` on a resource
+> nobody planned to touch.
 
 ## 🔬 Your lab: Nineteen lunches of clicks in one file
 

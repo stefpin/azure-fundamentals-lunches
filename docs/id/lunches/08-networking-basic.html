@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 08 · Jangan Tabrak Jaringan Saya — Makan Siang 08: Virtual Networking (Dasar) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 08 · Virtual Networking (Dasar). Jaringan 10.0.0.0/16 milik Pak Budi tidak boleh bentrok — dan Rizky ingin SSH dibuka untuk seluruh internet. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/08-networking-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/08-networking-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/08-networking-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/08-networking-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 08 · Jangan Tabrak Jaringan Saya — Makan Siang 08: Virtual Networking (Dasar)">
+<meta property="og:description" content="Makan Siang 08 · Virtual Networking (Dasar). Jaringan 10.0.0.0/16 milik Pak Budi tidak boleh bentrok — dan Rizky ingin SSH dibuka untuk seluruh internet. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/08-networking-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="08" style="--c:#e2482f">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/08-networking-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 08</span> Season 1 · 🏗️ Bagian 2 · Infrastruktur inti</div>
+      <h1>Jangan Tabrak Jaringan Saya</h1>
+      <div class="lunch-title">Makan Siang 08 · Virtual Networking (Dasar)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 50 menit · 💲💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="01-before-you-begin.html" title="Ruang Sebelah Pantry">↩ 01</a><a class="chip" href="06-virtual-machines-basic.html" title="Kabur dari Pantry">↩ 06</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 07 · Flashdisk yang Pulang Tiap Jumat, seluruh foto, faktur, dan daftar harga kini tersimpan di penyimpanan yang redundan, pada access tier yang tepat.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-1"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, cemas"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 27% siap</b>Setelah episode ini Anda bisa menjawab: “Hitungan menit untuk membangun ulang — dan app tier bahkan tidak terlihat dari internet.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-virtual-network-dan-rencana-alamat">Virtual network dan rencana alamat</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-subnet-network-interface-dan-alamat-ip">Subnet, network interface, dan alamat IP</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-network-security-group-prioritas-aturan-default-dan-yang-pertama-cocok-menang">Network security group: prioritas, aturan default, dan yang pertama cocok menang</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-akses-keluar-private-subnet-dan-jalan-keluar-yang-eksplisit">Akses keluar: private subnet dan jalan keluar yang eksplisit</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-nama-dan-diagnostik-azure-dns-dan-network-watcher">Nama dan diagnostik: Azure DNS dan Network Watcher</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-bagaimana-semuanya-menyatu-untuk-nusantara-retail">Bagaimana semuanya menyatu untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/08-networking-basic.html">🔬 Buka Lab 08</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> bagaimana sebuah virtual network (<em>jaringan virtual</em>), address space-nya, dan subnet-subnetnya saling terkait, serta membaca notasi CIDR tanpa kalkulator.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Merencanakan</strong> skema alamat IP untuk Nusantara Retail yang tidak akan pernah bertabrakan dengan jaringan kantor pusat.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memprediksi</strong> apakah sebuah paket diizinkan oleh network security group, dengan memakai prioritas, aturan default, service tag, dan application security group.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> metode outbound (jalan keluar) yang eksplisit untuk subnet privat, dan menjelaskan mengapa virtual network baru tidak lagi bisa menjangkau internet secara default.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menggunakan</strong> Azure DNS dan Network Watcher untuk menerbitkan nama dan memecahkan masalah lalu lintas berdasarkan bukti, bukan tebakan.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 08</span>
+        <div class="story-body"><p>Selasa, pukul 12.05. VM (<em>komputer virtual</em>) toko online dari Makan Siang 06 sudah berjalan, dan Dewi sudah
+menginginkan lebih. &quot;Website dan logika pesanan seharusnya tidak tinggal di satu mesin yang terbuka ke mana-mana. Beri saya web tier
+yang bisa dijangkau pembeli, dan app tier yang bahkan tidak bisa <em>dilihat</em> siapa pun dari internet.&quot;</p>
+<p>Pak Budi datang membawa diagram cetak yang kertasnya sudah agak menguning. &quot;Kantor pusat sudah memakai 10.0.0.0/16
+selama dua belas tahun. Suatu hari nanti kita akan tersambung ke Azure. Kalau alamatnya sama, tidak ada yang bisa
+dirutekan — dan saya tidak mau jadi orang yang mengganti penomoran empat puluh toko.&quot; Sebelum ia pergi, Rizky si
+kontraktor mengirim pesan chat: bisakah SSH dibuka &quot;dari mana saja, seminggu saja&quot;? Ibu Sari hanya ingin tahu satu
+hal: apakah semua ini akan lebih aman daripada server di sebelah pantry?</p>
+<p>Hari ini Anda merancang jaringan tempat toko online akan tinggal. Bagaimana memberinya alamat privat yang terencana
+dengan baik, di mana hanya lalu lintas yang Anda kehendaki yang bisa mengalir — masuk maupun keluar?</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-virtual-network-dan-rencana-alamat" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Virtual network dan rencana alamat</h3><div class="prose"><p><strong>Virtual network (VNet)</strong> adalah jaringan privat yang Anda definisikan di dalam satu region (<em>wilayah</em>) Azure. Semua
+yang Anda tempatkan di dalamnya — VM, internal load balancer, private endpoint (<em>titik akhir privat</em>) — mendapat
+alamat IP privat dari rentang yang Anda pilih, dan tidak ada apa pun dari luar yang bisa masuk kecuali Anda
+mengizinkannya. Sebuah VNet membentang di semua availability zone (<em>zona ketersediaan</em>) di region-nya, jadi web
+server di zone 1 bisa berbicara dengan app server di zone 3 tanpa pengaturan tambahan. VNet-nya sendiri gratis; Anda
+membayar untuk apa yang berjalan di dalamnya dan untuk beberapa jenis lalu lintas.</p>
+<p>Bayangkan VNet sebagai kompleks perumahan berpagar dengan satpam di gerbangnya. Rumah-rumah di dalamnya punya nomor
+sendiri, warga bebas saling berkunjung, dan orang luar baru bisa masuk kalau diizinkan. Subnet, yang akan kita bahas
+sebentar lagi, adalah blok-blok di dalam kompleks itu: Blok A untuk web server, Blok B untuk app server.</p>
+<p>Rentang alamat yang boleh dipakai sebuah VNet disebut <strong>address space</strong>, ditulis dalam <strong>notasi CIDR</strong> (Classless
+Inter-Domain Routing). CIDR tampak lebih seram daripada aslinya. Sebuah alamat IPv4 terdiri dari 32 bit. Angka setelah
+garis miring menyatakan berapa banyak bit yang dikunci — itulah bagian jaringan. Sisa bitnya bebas Anda bagikan. Jadi
+<code>10.20.0.0/16</code> mengunci 16 bit pertama (<code>10.20</code>) dan menyisakan 16 bit bebas: 2¹⁶ = 65.536 alamat, dari <code>10.20.0.0</code>
+sampai <code>10.20.255.255</code>. Setiap kali angka setelah garis miring bertambah satu, ukuran bloknya terbelah dua. Ibaratnya
+nomor telepon rumah: kode area 021 sudah pasti milik Jakarta, sedangkan digit sesudahnya bebas dibagikan ke
+pelanggan. Makin panjang bagian yang dikunci, makin sedikit nomor yang tersisa untuk dibagikan.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Blok CIDR</th>
+<th style="text-align:right">Jumlah alamat</th>
+<th style="text-align:right">Bisa dipakai di subnet Azure</th>
+<th>Penggunaan umum di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/16</td>
+<td style="text-align:right">65.536</td>
+<td style="text-align:right">(dibagi menjadi subnet)</td>
+<td>Satu VNet per lingkungan (produksi, uji coba…)</td>
+</tr>
+<tr>
+<td>/24</td>
+<td style="text-align:right">256</td>
+<td style="text-align:right">251</td>
+<td>Satu tier, misalnya web server</td>
+</tr>
+<tr>
+<td>/26</td>
+<td style="text-align:right">64</td>
+<td style="text-align:right">59</td>
+<td>Subnet khusus untuk Azure Bastion atau firewall</td>
+</tr>
+<tr>
+<td>/27</td>
+<td style="text-align:right">32</td>
+<td style="text-align:right">27</td>
+<td>Tier kecil dengan beberapa VM</td>
+</tr>
+<tr>
+<td>/29</td>
+<td style="text-align:right">8</td>
+<td style="text-align:right">3</td>
+<td>Subnet terkecil yang diizinkan Azure</td>
+</tr>
+</tbody>
+</table></div>
+<p>Pilih address space dari rentang privat yang didefinisikan dalam RFC 1918 — dokumen standar internet yang menyisihkan
+rentang khusus untuk jaringan internal: <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, dan <code>192.168.0.0/16</code>. Azure juga memperlakukan
+rentang bersama <code>100.64.0.0/10</code> sebagai privat. Beberapa rentang terlarang, misalnya <code>127.0.0.0/8</code> (loopback),
+<code>169.254.0.0/16</code> (link-local), <code>224.0.0.0/4</code> (multicast), dan alamat platform <code>168.63.129.16</code>.</p>
+<p>Aturan perencanaan terpenting adalah <strong>tidak boleh tumpang tindih</strong> (no overlap). Dua jaringan dengan rentang yang
+tumpang tindih tidak bisa di-peering (Makan Siang 25) atau disambungkan dengan VPN — virtual private network,
+sambungan privat terenkripsi (Makan Siang 26) — dan mengganti penomoran jaringan yang sedang berjalan biasanya berarti
+membangunnya ulang. Bayangkan dua kompleks perumahan yang sama-sama punya &quot;Jalan Melati No. 10&quot;, lalu pagar pemisahnya
+dibongkar: kurir paket tidak akan tahu harus mengantar ke rumah yang mana. Kantor pusat Pak Budi sudah memakai
+<code>10.0.0.0/16</code>, jadi toko online harus tinggal di tempat lain. Rencana yang masuk akal menyisihkan satu blok untuk
+setiap keperluan, lengkap dengan ruang untuk tumbuh:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  corp[&quot;Rencana alamat Nusantara Retail · 10.0.0.0/8&quot;]
+  corp --&gt; ho[&quot;10.0.0.0/16 · Kantor pusat · head office (Pak Budi)&quot;]
+  corp --&gt; st[&quot;10.1.0.0/16 · 40 toko, masing-masing satu /24&quot;]
+  corp --&gt; shop[&quot;10.20.0.0/16 · Toko online · VNet (makan siang ini)&quot;]
+  corp --&gt; hub[&quot;10.30.0.0/16 sampai 10.32.0.0/16 · Hub and spokes (Makan Siang 25)&quot;]
+  corp --&gt; dr[&quot;10.40.0.0/16 · Dicadangkan untuk region kedua&quot;]
+  shop --&gt; web[&quot;10.20.1.0/24 · snet-web&quot;]
+  shop --&gt; app[&quot;10.20.2.0/24 · snet-app&quot;]
+  shop --&gt; spare[&quot;10.20.3.0 dan seterusnya · bebas untuk tier berikutnya&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Satu /16 untuk toko online yang hari ini hanya butuh dua subnet kecil memang terlihat boros, tetapi alamat privat itu
+gratis, sedangkan kehabisan alamat bisa menghabiskan satu akhir pekan Anda. Tuliskan rencananya — spreadsheet bersama
+pun cukup — sebelum ada yang membuat VNet.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Lingkungan produksi Nusantara Retail akan berjalan di Indonesia Central demi residensi data, sedangkan lab memakai
+Southeast Asia. Sebuah VNet tinggal di tepat satu region, jadi rencanakan blok alamat untuk seluruh perusahaan, bukan
+per region. Dengan begitu, region kedua bisa disambungkan belakangan tanpa bentrok.</p>
+</aside>
+</div></article><article class="scene-card" id="2-subnet-network-interface-dan-alamat-ip" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Subnet, network interface, dan alamat IP</h3><div class="prose"><p><strong>Subnet</strong> adalah sepotong dari address space VNet, misalnya <code>10.20.1.0/24</code> untuk web tier. Di subnet-lah Anda
+memasang aturan keamanan, route table, dan NAT gateway, jadi subnet adalah alat utama Anda untuk memisahkan tier.
+Rencanakan satu subnet per peran, bukan satu per VM.</p>
+<p>Azure menyimpan <strong>lima alamat di setiap subnet</strong> untuk dirinya sendiri. Di <code>10.20.1.0/24</code>:</p>
+<ul>
+<li><code>10.20.1.0</code> — alamat jaringan;</li>
+<li><code>10.20.1.1</code> — default gateway yang disediakan Azure;</li>
+<li><code>10.20.1.2</code> dan <code>10.20.1.3</code> — dipakai untuk memetakan Azure DNS ke dalam virtual network;</li>
+<li><code>10.20.1.255</code> — alamat broadcast (Azure tidak mendukung broadcast, tetapi alamatnya tetap dicadangkan).</li>
+</ul>
+<p>Jadi VM pertama di subnet itu mendapat <code>10.20.1.4</code>, dan sebuah /24 menampung 251 resource (<em>sumber daya</em>), bukan 256.
+Beberapa layanan membutuhkan <strong>subnet khusus</strong> (dedicated subnet) dengan nama yang sudah ditentukan, misalnya
+<code>GatewaySubnet</code> untuk VPN gateway, <code>AzureBastionSubnet</code>, dan <code>AzureFirewallSubnet</code>. Sisakan ruang untuk mereka sejak
+sekarang: ukuran subnet hanya bisa diubah selama belum ada apa pun yang di-deploy di dalamnya.</p>
+<p>VM tersambung ke subnet melalui <strong>network interface (NIC)</strong> — semacam kartu jaringan virtual — yang merupakan
+resource Azure tersendiri. NIC menyimpan <strong>alamat IP privat</strong> VM, yang diberikan dari subnet secara dinamis (Azure
+memilih alamat kosong berikutnya) atau statis (Anda yang memilih). Apa pun caranya, alamat itu tetap melekat pada NIC
+sampai NIC dihapus, jadi &quot;dinamis&quot; tidak berarti alamatnya berganti saat VM di-restart. Di NIC jugalah public IP,
+network security group tingkat NIC, dan keanggotaan application security group dipasang.</p>
+<p><strong>Alamat public IP</strong> juga merupakan resource tersendiri. Saat ini hanya <strong>SKU</strong> (varian produk) <strong>Standard</strong> yang
+relevan: public IP SKU Basic sudah dipensiunkan pada 30 September 2025. Public IP Standard memakai alokasi statis dan
+<strong>aman secara default</strong> (secure by default) — tidak menerima lalu lintas masuk apa pun sampai sebuah network security
+group mengizinkannya. Ini kabar baik ketika Rizky meminta &quot;SSH dari mana saja&quot;. Public IP ditagih selama resource-nya
+ada, bahkan ketika tidak dipakai apa pun, jadi hapus yang sudah tidak Anda butuhkan.</p>
+<p>Di dalam VNet, nama langsung bisa dipakai. <strong>Azure-provided DNS</strong>, yang dijangkau di <code>168.63.129.16</code>, memungkinkan
+<code>vm-web</code> mencari <code>vm-app</code> berdasarkan nama host tanpa pengaturan apa pun. DNS (Domain Name System) adalah &quot;buku
+telepon&quot; jaringan yang menerjemahkan nama menjadi alamat IP. Anda akan bertemu public DNS zone di bagian 5 dan private
+DNS zone di Makan Siang 25.</p>
+</div></article><article class="scene-card" id="3-network-security-group-prioritas-aturan-default-dan-yang-pertama-cocok-menang" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Network security group: prioritas, aturan default, dan yang pertama cocok menang</h3><div class="prose"><p><strong>Network security group (NSG)</strong> adalah daftar aturan allow (izinkan) dan deny (tolak) untuk lalu lintas yang masuk ke
+atau keluar dari sebuah subnet atau NIC. Setiap aturan punya <strong>prioritas</strong> antara 100 dan 4096, sumber dan tujuan
+(alamat IP, blok CIDR, service tag, atau application security group), port — nomor &quot;pintu&quot; layanan, misalnya 80 untuk
+web dan 22 untuk SSH — protokol, dan tindakan (action). NSG bersifat <strong>stateful</strong>: kalau sebuah aturan mengizinkan
+permintaan masuk, balasannya otomatis boleh keluar, begitu pula sebaliknya.</p>
+<p>Setiap NSG juga berisi enam <strong>aturan default</strong>. Aturan ini tidak bisa dihapus, hanya bisa dikalahkan oleh aturan
+dengan nomor yang lebih kecil:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:right">Prioritas</th>
+<th>Nama</th>
+<th>Arah</th>
+<th>Efek</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">65000</td>
+<td>AllowVnetInBound</td>
+<td>Inbound</td>
+<td>Izinkan dari VirtualNetwork ke VirtualNetwork</td>
+</tr>
+<tr>
+<td style="text-align:right">65001</td>
+<td>AllowAzureLoadBalancerInBound</td>
+<td>Inbound</td>
+<td>Izinkan health probe dari AzureLoadBalancer</td>
+</tr>
+<tr>
+<td style="text-align:right">65500</td>
+<td>DenyAllInBound</td>
+<td>Inbound</td>
+<td>Tolak semua yang lain</td>
+</tr>
+<tr>
+<td style="text-align:right">65000</td>
+<td>AllowVnetOutBound</td>
+<td>Outbound</td>
+<td>Izinkan dari VirtualNetwork ke VirtualNetwork</td>
+</tr>
+<tr>
+<td style="text-align:right">65001</td>
+<td>AllowInternetOutBound</td>
+<td>Outbound</td>
+<td>Izinkan ke Internet</td>
+</tr>
+<tr>
+<td style="text-align:right">65500</td>
+<td>DenyAllOutBound</td>
+<td>Outbound</td>
+<td>Tolak semua yang lain</td>
+</tr>
+</tbody>
+</table></div>
+<p>Baca tabel itu dua kali. Secara default, VM di dalam VNet bisa saling berbicara dengan bebas, boleh memulai koneksi ke
+internet (kalau jalurnya ada — lihat bagian 4), dan tidak menerima apa pun dari internet.</p>
+<p><strong>Cara evaluasinya sederhana dan tegas.</strong> Azure mengurutkan aturan berdasarkan prioritas, nomor terkecil lebih dulu,
+lalu memeriksanya satu per satu. <strong>Aturan pertama yang cocok</strong> dengan paket itulah yang memutuskan, dan evaluasi
+berhenti. Deny di prioritas 200 mengalahkan allow di 300, sekalipun allow itu lebih spesifik. Karena itu, &quot;izinkan
+8080 dari web tier, tolak sisa VNet&quot; membutuhkan allow dengan nomor yang lebih kecil daripada deny-nya.</p>
+<p>Ibaratnya satpam kompleks yang memegang buku aturan bernomor. Ia membaca dari nomor terkecil, dan begitu menemukan
+aturan yang cocok dengan tamu di depannya, ia langsung bertindak tanpa membuka halaman berikutnya. Tamu yang sudah
+dipersilakan masuk boleh keluar lagi tanpa diperiksa ulang — itulah arti stateful.</p>
+<p>Anda bisa memasang NSG di <strong>subnet</strong>, di <strong>NIC</strong>, atau di keduanya. Kalau keduanya ada, sebuah paket harus lolos dari
+keduanya:</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  inet[&quot;Paket dari internet&quot;] --&gt; s1{&quot;NSG subnet&lt;br/&gt;aturan inbound&quot;}
+  s1 -- &quot;ditolak&quot; --&gt; x1[&quot;Dibuang&quot;]
+  s1 -- &quot;diizinkan&quot; --&gt; n1{&quot;NSG NIC&lt;br/&gt;aturan inbound&quot;}
+  n1 -- &quot;ditolak&quot; --&gt; x2[&quot;Dibuang&quot;]
+  n1 -- &quot;diizinkan&quot; --&gt; vm[&quot;vm-web&quot;]
+  vm --&gt; n2{&quot;NSG NIC&lt;br/&gt;outbound&quot;} --&gt; s2{&quot;NSG subnet&lt;br/&gt;outbound&quot;} --&gt; out[&quot;Keluar dari subnet&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Untuk lalu lintas masuk (inbound), NSG subnet diperiksa lebih dulu, baru NSG NIC; untuk lalu lintas keluar
+(outbound), urutannya terbalik. Tidak adanya allow di salah satu tingkat sudah cukup untuk memblokir lalu lintas —
+lolos dari satpam gerbang belum tentu dibukakan pintu oleh pemilik rumah. Kebanyakan tim memilih NSG di subnet saja:
+satu tempat untuk dibaca, satu tempat untuk diaudit. Ingat bahwa <code>az vm create</code> yang serba cepat atau wizard di portal
+bisa diam-diam menambahkan NSG tingkat NIC untuk Anda — sumber klasik keluhan &quot;port-nya sudah saya buka, kok masih
+tertutup&quot;.</p>
+<p>Dua fitur membuat kumpulan aturan tetap ringkas dan mudah dibaca. <strong>Service tag</strong> adalah nama yang dikelola Microsoft
+untuk sekelompok alamat: <code>Internet</code>, <code>VirtualNetwork</code>, <code>AzureLoadBalancer</code>, <code>Storage</code>, <code>Sql</code>, <code>AzureCloud</code>, serta
+varian regional seperti <code>Storage.SoutheastAsia</code>. Anda cukup menulis <code>Internet</code> alih-alih ribuan prefiks alamat, dan
+Microsoft menjaga daftarnya tetap mutakhir. <strong>Application security group (ASG)</strong> memungkinkan Anda memberi nama pada
+sebuah peran: masukkan NIC semua web server ke <code>asg-web</code>, lalu tulis &quot;izinkan <code>asg-web</code> ke subnet app di port 8080&quot;.
+Ketika Dewi menambah web server ketiga, ia cukup memasukkan NIC-nya ke grup itu, tanpa mengubah satu aturan pun. Semua
+NIC dalam satu ASG harus berada di VNet yang sama.</p>
+<p>Terakhir, Azure bisa menampilkan <strong>effective security rules</strong> sebuah NIC — gabungan aturan subnet dan NIC, dengan
+service tag dan ASG yang sudah dijabarkan menjadi alamat sungguhan. Kalau ragu, baca tampilan itu, bukan catatan Anda
+sendiri.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Tiga kesalahan NSG yang paling sering kami jumpai: membuka SSH (Secure Shell) atau RDP (Remote Desktop Protocol) ke
+<code>Any</code> &quot;untuk sementara&quot; (gunakan Azure Bastion atau Run Command sebagai gantinya), menaruh aturan deny di nomor yang
+lebih kecil daripada allow yang seharusnya dilengkapinya, dan melupakan NSG tingkat NIC yang diam-diam memblokir apa
+yang diizinkan NSG subnet. IP flow verify (bagian 5) menyebutkan dengan tepat aturan mana yang memutuskan.</p>
+</aside>
+</div></article><article class="scene-card" id="4-akses-keluar-private-subnet-dan-jalan-keluar-yang-eksplisit" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Akses keluar: private subnet dan jalan keluar yang eksplisit</h3><div class="prose"><p>Selama bertahun-tahun, VM tanpa public IP tetap bisa menjangkau internet. Azure diam-diam memberinya alamat <strong>default
+outbound access</strong> yang dimiliki Microsoft dan bisa berubah sewaktu-waktu. Praktis, tetapi implisit, tidak bisa
+diprediksi, dan bertentangan dengan prinsip Zero Trust (jangan percaya begitu saja, selalu verifikasi).</p>
+<p>Perilaku default itu sedang dihapus untuk jaringan baru. Virtual network yang dibuat dengan versi API yang dirilis
+setelah <strong>31 Maret 2026</strong> secara default memakai <strong>private subnet</strong> (subnet privat) — subnet tanpa akses internet
+keluar default — dan Azure portal sudah membuat subnet dengan cara itu. VNet yang sudah ada tidak diubah. Di private
+subnet, VM tetap bisa menjangkau resource lain di VNet dan memakai Azure DNS, tetapi tidak bisa menjangkau public
+endpoint (<em>titik akhir publik</em>) sampai Anda memberinya <strong>metode outbound yang eksplisit</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Metode</th>
+<th>Gunakan ketika</th>
+<th>Waspadai</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NAT gateway</strong> di subnet</td>
+<td>Sebagian besar kasus: setiap VM di subnet berbagi satu atau beberapa public IP statis milik Anda</td>
+<td>Ditagih per jam dan per GB yang diproses; satu NAT gateway per subnet; tidak pernah menerima koneksi masuk</td>
+</tr>
+<tr>
+<td><strong>Public IP di NIC VM</strong></td>
+<td>Satu VM yang juga harus bisa dijangkau dari internet</td>
+<td>Membuka jalan masuk sekaligus jalan keluar; kunci dengan NSG</td>
+</tr>
+<tr>
+<td><strong>Outbound rule di load balancer</strong></td>
+<td>VM sudah berada di backend pool sebuah Standard public load balancer (Makan Siang 09)</td>
+<td>Lebih banyak pengaturan yang harus dikelola, misalnya alokasi port SNAT (source NAT)</td>
+</tr>
+<tr>
+<td><strong>Firewall atau appliance lewat route</strong></td>
+<td>Semua lalu lintas keluar harus diinspeksi dan dicatat secara terpusat (Makan Siang 25)</td>
+<td>Anda membayar appliance-nya dan harus merutekan lalu lintas melewatinya</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>NAT gateway</strong> (NAT = Network Address Translation, penerjemahan alamat jaringan) adalah metode yang direkomendasikan
+Microsoft untuk sebagian besar kasus. Anda memasangnya di sebuah subnet dan memberinya satu atau beberapa public IP
+Standard (hingga 16) atau sebuah public IP prefix. Setelah itu, setiap VM di subnet tersebut memakai alamat-alamat itu
+untuk koneksi keluar — tanpa perlu route table. Balasan bisa kembali masuk; koneksi masuk yang tidak diminta tidak akan
+pernah bisa. Ibaratnya sambungan telepon kantor lewat operator: semua karyawan menelepon keluar dengan nomor kantor yang
+sama, tetapi orang luar tidak bisa langsung menelepon ke meja karyawan tertentu. Karena alamat keluarnya statis,
+penyedia pembayaran Nusantara Retail bisa memasukkannya ke allow list (daftar alamat yang diizinkan). NAT gateway
+<strong>Standard</strong> berjalan di satu zone saja; SKU <strong>StandardV2</strong> bersifat zone-redundant dan membutuhkan public IP
+StandardV2. NAT gateway juga lebih diutamakan: koneksi keluar baru dari subnet-nya akan melewatinya, bahkan dari VM
+yang punya public IP sendiri.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Aturan NSG yang <em>mengizinkan</em> lalu lintas keluar tidak menciptakan <em>jalur</em>. <code>AllowInternetOutBound</code> ada di setiap
+NSG, tetapi VM di private subnet tanpa NAT gateway atau public IP tetap tidak bisa menjangkau internet. Ibaratnya
+punya SIM tetapi jalannya belum dibangun: izin mengemudi Anda sah, namun tetap tidak ada jalan untuk dilalui. Ketika
+akses keluar gagal, periksa jalurnya, bukan hanya aturannya. Kalau Anda mengubah subnet yang sudah ada dari private
+menjadi non-private atau sebaliknya, hentikan (stop/deallocate) lalu nyalakan lagi VM-VM di dalamnya agar
+perubahannya berlaku.</p>
+</aside>
+</div></article><article class="scene-card" id="5-nama-dan-diagnostik-azure-dns-dan-network-watcher" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Nama dan diagnostik: Azure DNS dan Network Watcher</h3><div class="prose"><p><strong>Azure DNS</strong> meng-host DNS zone di name server global milik Microsoft. <strong>Public DNS zone</strong> menyimpan record untuk
+domain milik Anda, misalnya <code>nusantararetail.co.id</code>. Saat zone dibuat, Azure memberinya empat name server dengan nama
+seperti <code>ns1-01.azure-dns.com</code> dan <code>ns2-01.azure-dns.net</code>. Zone itu baru terlihat di internet setelah Anda
+<strong>mendelegasikan</strong> domainnya: Anda memperbarui record NS domain tersebut di registrar domain (tempat Anda membeli
+domain) agar menunjuk ke keempat server itu. Sebelum itu, Anda tetap bisa menguji dengan bertanya langsung ke name
+server Azure memakai <code>nslookup</code> — persis seperti yang dilakukan di lab.</p>
+<p>Di dalam zone, Anda membuat <strong>record set</strong>: <code>A</code> memetakan nama ke alamat IPv4, <code>AAAA</code> ke IPv6, <code>CNAME</code> menjadikan satu
+nama sebagai alias dari nama lain, <code>MX</code> mengurus email, dan <code>TXT</code> menyimpan teks verifikasi. Setiap record punya
+<strong>time to live (TTL)</strong> yang memberi tahu resolver berapa lama jawaban boleh disimpan di cache: buat singkat, misalnya
+300 detik, selama konfigurasi masih sering berubah. <strong>Alias record</strong> bisa menunjuk langsung ke sebuah resource Azure
+seperti public IP, dan ikut berubah kalau alamatnya berubah.</p>
+<p>Resolusi nama <em>di dalam</em> VNet adalah pengaturan yang terpisah. Secara default, VNet memakai <strong>Azure-provided name
+resolution</strong>: VM mengirim pertanyaan ke <code>168.63.129.16</code>, yang menjawab untuk nama host VM di VNet yang sama dan juga
+menerjemahkan nama-nama di internet publik. Anda bisa mengganti VNet agar memakai <strong>custom DNS server</strong> — misalnya
+domain controller di kantor pusat Pak Budi setelah VPN tersedia. VM baru mengambil perubahan itu saat memperbarui DHCP
+lease-nya (DHCP adalah layanan yang membagikan alamat IP), jadi rencanakan restart. Perhatikan bahwa resolusi bawaan
+Azure tidak menembus batas VNet: nama di VNet yang di-peering membutuhkan private DNS zone atau server DNS Anda sendiri.</p>
+<p>Dua gagasan terkait akan muncul lagi nanti dalam kursus ini. <strong>Private DNS zone</strong> menyimpan nama yang hanya bisa
+di-resolve oleh VNet Anda. Lalu, layanan PaaS (<em>platform sebagai layanan</em>) seperti Azure Storage secara default punya
+<strong>public endpoint</strong> di internet; <strong>private endpoint</strong> memberi layanan tersebut alamat IP privat di dalam VNet Anda
+sebagai gantinya. Makan Siang 24 dan 25 mempraktikkan keduanya.</p>
+<p>Ketika lalu lintas berulah, andalkan <strong>Azure Network Watcher</strong>. Azure mengaktifkannya secara otomatis di setiap region
+tempat Anda membuat VNet, dan alat-alatnya menjawab pertanyaan yang presisi:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Alat</th>
+<th>Pertanyaan yang dijawabnya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>IP flow verify</strong></td>
+<td>Apakah paket ini boleh masuk ke atau keluar dari VM saya, dan aturan NSG mana yang memutuskan?</td>
+</tr>
+<tr>
+<td><strong>NSG diagnostics</strong></td>
+<td>Pertanyaan yang sama untuk VM, scale set, dan application gateway, dengan service tag sebagai sumber</td>
+</tr>
+<tr>
+<td><strong>Effective security rules</strong></td>
+<td>Seperti apa gabungan aturan di NIC ini saat ini?</td>
+</tr>
+<tr>
+<td><strong>Next hop</strong></td>
+<td>Ke mana Azure akan mengirim paket untuk tujuan ini?</td>
+</tr>
+<tr>
+<td><strong>Connection troubleshoot</strong></td>
+<td>Bisakah VM ini membuka koneksi ke VM, alamat, atau URL itu, dan di mana gagalnya?</td>
+</tr>
+<tr>
+<td><strong>Packet capture</strong></td>
+<td>Apa persisnya yang lewat di kabel?</td>
+</tr>
+<tr>
+<td><strong>Flow logs</strong></td>
+<td>Aliran mana saja yang diizinkan atau ditolak dari waktu ke waktu? Gunakan <strong>VNet flow logs</strong>: NSG flow logs sudah tidak bisa dibuat lagi dan pensiun pada 30 September 2027.</td>
+</tr>
+</tbody>
+</table></div>
+</div></article><article class="scene-card" id="6-bagaimana-semuanya-menyatu-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Bagaimana semuanya menyatu untuk Nusantara Retail</h3><div class="prose"><p>Inilah jaringan yang akan Anda bangun di lab, sekaligus jaringan tempat Dewi akan men-deploy toko online:</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shopper[&quot;Browser pembeli&quot;] --&gt;|&quot;HTTP 80&quot;| pip[&quot;Standard public IP&lt;br/&gt;record www di Azure DNS&quot;]
+  subgraph vnet[&quot;vnet-nusa-shop · 10.20.0.0/16&quot;]
+    subgraph web[&quot;snet-web · 10.20.1.0/24 · nsg-web&quot;]
+      vmweb[&quot;vm-web&lt;br/&gt;anggota asg-web&quot;]
+    end
+    subgraph app[&quot;snet-app · 10.20.2.0/24 · nsg-app · privat&quot;]
+      vmapp[&quot;vm-app&lt;br/&gt;tanpa public IP&quot;]
+    end
+  end
+  pip --&gt; vmweb
+  vmweb --&gt;|&quot;hanya TCP 8080&quot;| vmapp
+  vmapp --&gt;|&quot;keluar&quot;| nat[&quot;NAT gateway&lt;br/&gt;public IP statis&quot;]
+  nat --&gt; ext[&quot;Penyedia pembayaran dan pembaruan&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Mari kita telusuri beberapa paket. Permintaan HTTP dari seorang pembeli sampai ke <code>vm-web</code> karena <code>nsg-web</code> mengizinkan
+TCP 80 dari service tag <code>Internet</code> ke <code>asg-web</code>. Percobaan SSH Rizky dari sebuah kafe menabrak NSG yang sama, tidak
+cocok dengan aturan apa pun sebelum <code>DenyAllInBound</code>, lalu dibuang; untuk perbaikan sesekali, ia memakai Run Command
+saja. <code>vm-web</code> memanggil app tier di port 8080 dan lolos lewat aturan <code>nsg-app</code> di prioritas 100. Port lain dari dalam
+VNet menabrak deny di prioritas 4000, jauh sebelum aturan default <code>AllowVnetInBound</code> di 65000 sempat tercapai.
+<code>vm-app</code> tidak punya public IP dan berada di private subnet, jadi satu-satunya jalan keluarnya adalah NAT gateway,
+dengan satu alamat yang bisa diprediksi. Pembeli menemukan situsnya lewat record <code>www</code> dan <code>shop</code> di Azure DNS. Dan
+ketika ada yang rusak, IP flow verify memberi tahu aturan mana yang patut disalahkan.</p>
+<p>Pertanyaan Ibu Sari adalah apakah ini lebih aman daripada server di sebelah pantry. Jawaban jujurnya: kini internet
+hanya melihat satu port di satu mesin, app tier tidak terlihat dari luar, dan setiap pengecualian adalah aturan
+tertulis yang punya nama dan prioritas.</p>
+<p>Tim keuangan pasti akan bertanya berapa biayanya. VNet, subnet, NSG, dan ASG gratis. Anda membayar untuk VM, untuk
+setiap public IP selama resource-nya ada, untuk NAT gateway (per jam ditambah per GB yang diprosesnya), untuk DNS zone
+(per zone per bulan ditambah jumlah query), dan untuk data yang keluar dari Azure. Jangan menulis angka-angka ini di
+slide hanya berdasarkan ingatan — masukkan desainnya ke pricing calculator (<em>kalkulator harga</em>), dan hapus resource lab
+begitu Anda selesai.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Misalkan Dewi membangun VNet toko online di <code>10.0.0.0/16</code> karena alamat itu terasa akrab. Hari
+ini semuanya berjalan lancar. Apa yang rusak pada hari Pak Budi menyambungkan kantor pusat ke Azure, dan berapa
+ongkos perbaikannya?</p>
+</aside>
+<p>Di makan siang berikutnya, Anda menempatkan dua web server di belakang sebuah Standard load balancer agar toko tetap
+hidup saat satu server gagal. Siap untuk peering, routing, dan private endpoint? Lanjutkan dengan
+<a href="25-networking-advanced.html">Makan Siang 25 · Virtual Networking (Lanjutan)</a>.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Siapa boleh masuk, siapa boleh keluar: pemeriksa aturan NSG</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/08-networking-basic.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/08-networking-basic.html?lang=id" title="Demo interaktif: Siapa boleh masuk, siapa boleh keluar: pemeriksa aturan NSG" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/08-networking-basic/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Urutan gerbangnya: saat masuk, NSG subnet diperiksa sebelum NSG NIC, dan keduanya harus mengizinkan.</li>
+<li>Pemeriksa aturan (rule evaluator): nomor terkecil diperiksa lebih dulu, dan kecocokan pertama mengakhiri evaluasi.</li>
+<li>App tier yang privat: NSG-nya mengizinkan lalu lintas keluar ke internet, tetapi tidak ada yang bisa keluar sampai
+NAT gateway muncul.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi butuh subnet untuk sekitar 20 VM dan ingin sedikit ruang cadangan. Apakah /27 cukup besar?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Ya. Sebuah /27 punya 32 alamat; Azure mencadangkan 5, sehingga tersisa 27 untuk VM. <em>Alasannya:</em> Azure selalu
+menyimpan empat alamat pertama dan alamat terakhir di setiap subnet.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Rizky berkata: &quot;NSG NIC di <code>vm-web</code> sudah mengizinkan SSH dari IP saya, tetapi saya tetap tidak bisa tersambung.&quot;
+NSG subnet hanya punya satu aturan allow untuk HTTP ditambah aturan-aturan default. Apa yang terjadi?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Untuk lalu lintas masuk, NSG subnet dievaluasi lebih dulu. Tidak ada aturan di sana yang mengizinkan TCP 22, jadi
+<code>DenyAllInBound</code> (65500) membuang paketnya sebelum NSG NIC sempat diperiksa. <em>Alasannya:</em> sebuah paket harus
+diizinkan di setiap tingkat yang dilewatinya. (Perbaikan yang lebih baik adalah tidak membuka SSH sama sekali —
+gunakan Run Command atau Azure Bastion.)</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p><code>nsg-app</code> berisi <em>200 Deny-VNet-Inbound</em> (sumber VirtualNetwork, port apa saja) dan <em>300 Allow-Web-8080</em> (sumber
+<code>asg-web</code>, port 8080). Web server tidak bisa menjangkau aplikasi di port 8080. Apa yang Anda ubah?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Beri allow nomor yang lebih kecil daripada deny — misalnya 100 untuk allow dan 4000 untuk deny. <em>Alasannya:</em> aturan
+diperiksa mulai dari nomor terkecil, dan kecocokan pertama yang menang, jadi saat ini deny-lah yang cocok lebih dulu.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Pada Oktober 2026 Anda membuat VNet baru dengan Azure CLI. <code>vm-app</code> tidak punya public IP dan NSG-nya hanya berisi
+aturan default, tetapi VM itu tidak bisa mengunduh pembaruan. Apa perbaikan yang direkomendasikan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Pasang NAT gateway dengan public IP Standard di subnet app. <em>Alasannya:</em> VNet baru memakai private subnet tanpa
+default outbound access, dan <code>AllowInternetOutBound</code> hanya mengizinkan lalu lintas — aturan itu tidak menciptakan
+jalur ke internet.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Anda membuat zone <code>nusantararetail.co.id</code> di Azure DNS dengan record <code>www</code>. Perintah
+<code>nslookup www.nusantararetail.co.id ns1-03.azure-dns.com</code> berhasil, tetapi pelanggan mendapat pesan &quot;can't find&quot;.
+Apa yang kurang?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Delegasi: di registrar domain, atur record NS domain itu ke empat name server Azure DNS milik zone tersebut.
+<em>Alasannya:</em> resolver di internet hanya bertanya ke name server yang ditunjuk oleh zone induknya.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Rencanakan alamat untuk seluruh perusahaan lebih dulu: rentang privat RFC 1918 yang tidak tumpang tindih dengan kantor pusat (<code>10.0.0.0/16</code>) maupun jaringan masa depan, karena mengganti penomoran belakangan berarti membangun ulang.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Setiap subnet menyerahkan lima alamat kepada Azure, jadi VM pertama mendapat <code>.4</code>; sisakan ruang untuk subnet khusus seperti <code>AzureBastionSubnet</code>.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Aturan NSG berprioritas 100 sampai 4096 dan kecocokan pertama yang menang; aturan default berada di 65000 ke atas. Untuk inbound, NSG subnet diperiksa sebelum NSG NIC, dan keduanya harus mengizinkan. Service tag dan ASG membuat aturan tetap ringkas.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Public IP Standard tertutup sampai sebuah NSG membukanya, dan VNet baru mendapat private subnet: beri mereka jalan keluar yang eksplisit, biasanya NAT gateway. Allow di NSG adalah izin, bukan jalur.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Azure DNS meng-host public zone (delegasikan di registrar Anda), dan Network Watcher — IP flow verify, effective security rules, next hop, VNet flow logs — mengubah tebakan menjadi bukti.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Aturan &quot;sementara&quot; wajib punya pemilik dan tanggal berakhir.</strong> Saat meninjau jaringan, saya membaca aturan NSG dari
+nomor terkecil ke atas, persis seperti Azure membacanya. Untuk setiap aturan allow, saya bertanya: <em>siapa yang
+memintanya, dan kapan aturan ini boleh dihapus?</em> Kalau tidak ada yang tahu, aturan itu kandidat kuat untuk dibuang.
+Aturan sementara ibarat kunci rumah yang dipinjamkan ke tukang renovasi: kalau tidak dicatat kapan harus kembali, ia
+akan beredar selamanya. Kebiasaan saya: beri nama aturan sesuai tujuannya, misalnya <code>Allow-Web-To-App-8080</code>, lalu
+tulis nama peminta dan tanggal tinjauan di kolom description. Dan ketika ada yang tidak tersambung, saya tidak
+menyentuh satu aturan pun sebelum IP flow verify atau effective security rules menunjukkan aturan mana yang
+memutuskan. Mengubah aturan berdasarkan firasat adalah cara tercepat melahirkan deny &quot;siluman&quot; berikutnya.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>08</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Membangun jaringan Nusantara Retail</h3>
+          <div class="prose"><p>Anda membangun jaringan toko online dari ujung ke ujung: sebuah VNet dengan subnet web dan subnet app yang privat, NSG
+dan sebuah application security group, VM web yang publik dan VM app yang privat, serta NAT gateway yang memberi app
+tier jalan keluar yang bisa diprediksi. Anda membuktikan setiap aturan dengan lalu lintas sungguhan dan dengan IP flow
+verify, menerbitkan nama <code>www</code> dan <code>shop</code> di sebuah public DNS zone, lalu merusak app tier dengan aturan deny
+&quot;siluman&quot; berprioritas lebih tinggi (nomornya lebih kecil) — dan menemukannya.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 50 menit</span><span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/08-networking-basic.html">Mulai Lab 08 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Ikhtisar network security group Azure</b><span>Properti aturan, aturan default, dan pertimbangan platform dalam satu halaman.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/nat-gateway/nat-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Azure NAT Gateway?</b><span>SKU, batasan, timer, dan bagaimana NAT gateway dibandingkan dengan metode outbound lainnya.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/network-watcher/network-watcher-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Azure Network Watcher?</b><span>Setiap alat diagnostik, lengkap dengan tautan ke quickstart.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/dns/dns-getstarted-cli" target="_blank" rel="noopener"><b>Microsoft Learn: Quickstart — membuat Azure DNS zone dan record dengan Azure CLI</b><span>Alur zone-dan-nslookup yang sama dengan lab.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🛡️</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Perencana Jaringan</h2>
+        <p class="muted">Rencanakan address space dan saring trafik.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Hitungan menit untuk membangun ulang — dan app tier bahkan tidak terlihat dari internet.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 09</b><h4>Dua Server, Satu Alamat</h4><p>Server kembar yang sehat walafiat cuma menganggur, sementara pembeli hanya bisa menemukan satu server.</p><p style="margin-top:10px"><a href="09-load-balancing-basic.html">Tonton Episode 09 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="07-storage-basic.html"><small>← Episode sebelumnya</small>07 · Flashdisk yang Pulang Tiap Jumat</a><a class="next" href="09-load-balancing-basic.html"><small>Episode berikutnya →</small>09 · Dua Server, Satu Alamat</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/08-networking-basic/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

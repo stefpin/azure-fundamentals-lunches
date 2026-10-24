@@ -1,9 +1,12 @@
 # Lunch 29 · Containers (Advanced): Azure Kubernetes Service
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Deep-dive month · **Level:** Advanced · **Part 5:** Deep dives
 > **Time:** 60 minutes · **Prerequisite lunches:** 13, 08
 > **AZ-900 skill area:** Beyond AZ-900
 > **Lab:** [Lab 29 · Kubernetes for the microservices team](../../labs/29-containers-advanced-aks/README.md) — about 60 minutes · cost 💲💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -379,6 +382,16 @@ What to watch for:
 - Day 2 is the real work: upgrade within the N-2 window, protect upgrades with replicas, probes and
   PodDisruptionBudgets, monitor with Container insights and Prometheus, and pick Container Apps whenever you don't need
   the Kubernetes API.
+
+## 🗒️ Field notes from Stefanus
+
+> **Drain a node on purpose before the cluster goes live.** Before I sign off on any AKS cluster for production, I
+> cordon and drain one node during working hours and watch the shop. It is the cheapest rehearsal of an upgrade I know.
+> One drain exposes the single replica nobody noticed, the pod without a readiness probe that takes traffic too early,
+> and the PodDisruptionBudget so strict that it blocks every drain, and with it every future upgrade. I also check where
+> the replicas landed: three pods on one node are one pod as far as a failure is concerned. If the drain is boring, I
+> trust the cluster. If it is exciting, I would much rather find out on a quiet Tuesday afternoon than in the middle of
+> the 12.12 sale.
 
 ## 🔬 Your lab: Kubernetes for the microservices team
 

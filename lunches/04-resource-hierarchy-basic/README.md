@@ -1,9 +1,12 @@
 # Lunch 04 · Resource Hierarchy and Azure Resource Manager (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 1:** Foundations
 > **Time:** 60 minutes · **Prerequisite lunches:** 01
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 04 · Organise Nusantara Retail](../../labs/04-resource-hierarchy-basic/README.md) — about 40 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -372,6 +375,16 @@ What to watch for:
   ID but never its region.
 - Keep order with **CAF-style names**, a short list of **mandatory tags**, the right **lock** (beware ReadOnly) and
   **Azure Resource Graph** queries.
+
+## 🗒️ Field notes from Stefanus
+
+> **The delete test.** For every resource group in a design, I ask one question: *if I delete this group tonight,
+> should everything inside it disappear too?* If the answer is "yes, except the database" or "yes, but not the
+> photos", the exception belongs in another group. That single question catches most lifecycle mistakes while they are
+> still cheap to fix, before scripts, dashboards and alerts depend on the names and resource IDs. My second habit:
+> when an error message contains a resource ID, I read it left to right like a postal address and check each scope on
+> the way down, because the lock or policy that blocks you is often inherited from a level you weren't looking at. And
+> names carry only what never changes; owners, cost centres and project codes change, so they go in tags.
 
 ## 🔬 Your lab: Organise Nusantara Retail
 

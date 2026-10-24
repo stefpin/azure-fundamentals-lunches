@@ -1,0 +1,141 @@
+{
+  "page": {
+    "doc_title": "Lunch 28 · Relational Databases (Advanced) — Interactive demo",
+    "kicker": "Lunch 28 · Relational Databases (Advanced) · Interactive demo",
+    "title": "A failover group: replication lag, listeners and the undo button",
+    "lede": "Watch Nusantara Retail's orders replicate asynchronously to a second region, survive a regional outage through the failover group's listeners, fail back without loss, and recover from a mistaken DELETE with point-in-time restore. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "A failover group for Nusantara Retail's orders database across Southeast Asia and East Asia",
+    "svgDesc": "A storefront app and a reporting app connect through a read-write and a read-only listener. The orders database has a primary in Southeast Asia and a geo-secondary in East Asia, linked by asynchronous replication. The story shows replication lag as the recovery point objective, a regional outage with a forced failover, the listener following the new primary, a planned failback, and point-in-time restore after a mistaken delete."
+  },
+  "steps": [
+    {
+      "title": "All orders in one region",
+      "text": "Nusantara Retail's orders database runs in Southeast Asia. Inside the region it is already highly available: replicas take over when a server fails, and with zone redundancy even when a whole availability zone fails. But every copy lives in the same region. Ibu Sari wants to know what happens on the rare day the entire region is unavailable."
+    },
+    {
+      "title": "Add a secondary in another region",
+      "text": "A failover group adds a logical server in East Asia and creates a geo-secondary copy of the database there. First, seeding copies all existing data. From then on, the primary streams its transaction log to the secondary continuously. The secondary is readable. Both servers need the same firewall rules and admin, because server-level settings are not replicated."
+    },
+    {
+      "title": "Commit first, replicate after",
+      "text": "Follow one order. The storefront writes to the primary, which commits it and answers straight away, so checkout never waits for Hong Kong. Moments later the change travels to the secondary. This is asynchronous replication: writes stay fast however far away the secondary is, but the secondary is always slightly behind the primary."
+    },
+    {
+      "title": "Connect to listeners, not servers",
+      "text": "The failover group gives you two DNS names that never change. The storefront connects to the read-write listener, which always points at the primary. Store dashboards connect to the read-only listener, which points at the secondary and keeps reporting load away from checkout. After a failover only the targets change, so connection strings stay the same."
+    },
+    {
+      "title": "RPO equals the replication lag",
+      "text": "Because replication is asynchronous, a few transactions are always in flight. That gap is your recovery point objective: the data a sudden regional failure could take with it. It is usually seconds, and you can watch it in the replication_lag_sec column on the primary. A secondary sized like the primary keeps the lag small.",
+      "set": {
+        "t-lag": "lag 3 s = RPO"
+      }
+    },
+    {
+      "title": "Disaster: Southeast Asia is down",
+      "text": "Now the rare event: Southeast Asia becomes unavailable. Checkout requests reach the read-write listener, but its target does not answer. With the customer-managed policy, your team decides when to fail over. With the Microsoft-managed policy, Microsoft decides, only for widespread outages and only after a grace period of at least one hour, so recovery could take hours.",
+      "set": {
+        "t-roleA": "UNREACHABLE"
+      }
+    },
+    {
+      "title": "Forced failover: accept the lag",
+      "text": "You run set-primary against the East Asia server with the allow-data-loss option. The secondary becomes the primary immediately, without waiting for the unreachable one. The few transactions that were still in flight are lost: that is the recovery point objective in action. Everything committed before them is safe in East Asia, and the read-write listener now points there.",
+      "set": {
+        "t-roleB": "PRIMARY · read-write",
+        "t-rw-target": "→ East Asia",
+        "t-lag": "lost in flight"
+      }
+    },
+    {
+      "title": "The listener follows the primary",
+      "text": "The read-write listener's DNS alias now points to East Asia, with a 30-second time-to-live. The storefront retries, resolves the same name again and lands on the new primary; nobody edits a connection string. Customers can buy again within minutes of your decision. Reports pause until a secondary exists again, unless you point them at the primary for a while.",
+      "set": {
+        "t-ro-target": "→ no secondary yet",
+        "t-lag": "no secondary"
+      }
+    },
+    {
+      "title": "The old primary rejoins",
+      "text": "Later, Southeast Asia recovers. The failover group reconnects the old primary as the new secondary, and replication now runs from East Asia to Southeast Asia until it has caught up. The read-only listener follows too, so reports work again. The orders lost in the forced failover are not merged back automatically, which is why the RPO matters.",
+      "set": {
+        "t-roleA": "SECONDARY · catching up",
+        "t-ro-target": "→ Southeast Asia",
+        "t-lag": "catching up"
+      }
+    },
+    {
+      "title": "Fail back with a planned failover",
+      "text": "When you are ready, move the primary back with a planned failover: set-primary without the allow-data-loss option. Azure first synchronises the secondary completely, then swaps the roles, so nothing is lost. The listeners follow again. Use the same command for regular drills: a team that has practised failing over and back makes the real decision quickly.",
+      "set": {
+        "t-roleA": "PRIMARY · read-write",
+        "t-roleB": "SECONDARY · read-only",
+        "t-rw-target": "→ Southeast Asia",
+        "t-ro-target": "→ East Asia",
+        "t-lag": "async · lag ≈ 1 s"
+      }
+    },
+    {
+      "title": "Replication copies mistakes too",
+      "text": "One last threat: people. Dewi runs a DELETE without a WHERE clause. The primary obeys, and replication faithfully copies the delete to East Asia within seconds, so a failover would not help. The undo button is point-in-time restore: Azure rebuilds the database from its automatic backups, as it was just before the mistake, into a new database next to the original."
+    },
+    {
+      "title": "Recap: zone, region and mistakes",
+      "text": "Zone redundancy handles a failed zone with no data loss. A failover group handles a failed region: asynchronous replication, listener names that follow the primary, a recovery point objective equal to the replication lag, and a recovery time that starts when you decide. Point-in-time restore handles human mistakes. You need all three, and you should rehearse them.",
+      "tip": "In Lab 28 you build this yourself: two Entra-only servers, a failover group with listeners, masked customer e-mails, a point-in-time restore after a deliberate delete, and a planned failover drill."
+    }
+  ],
+  "svg": [
+    "failover group fog-nusa",
+    "async · lag ≈ 1 s",
+    "Southeast Asia (Singapore)",
+    "East Asia (Hong Kong)",
+    "uses the server name directly",
+    "Storefront app",
+    "checkout, orders",
+    "Reports",
+    "store dashboards",
+    "Read-write listener",
+    "→ Southeast Asia",
+    "Read-only listener",
+    "→ East Asia",
+    "sql-nusa-main",
+    "sqldb-orders",
+    "PRIMARY · read-write",
+    "sql-nusa-dr",
+    "SECONDARY · read-only",
+    "Restored",
+    "copy (PITR)",
+    "new database",
+    "Two names that never change",
+    "fog-nusa.database.windows.net",
+    "read-write → whichever server is primary",
+    "fog-nusa.secondary.database.windows.net",
+    "read-only → the secondary",
+    "DNS aliases with a 30-second time-to-live",
+    "RPO = replication lag",
+    "A commit returns before the change reaches",
+    "East Asia. If the region failed right now,",
+    "the changes still in flight would be lost.",
+    "sys.dm_geo_replication_link_status",
+    "column replication_lag_sec, on the primary",
+    "Forced failover: you decide",
+    "az sql failover-group set-primary",
+    "--server sql-nusa-dr --allow-data-loss",
+    "East Asia becomes primary at once.",
+    "Orders still in flight are lost: that is",
+    "the recovery point objective in action.",
+    "Planned failover: no data loss",
+    "--server sql-nusa-main",
+    "Full synchronisation first, then the roles",
+    "swap. Use it for failback and for regular",
+    "drills, so the real decision is quick.",
+    "Replication is not a backup",
+    "A mistaken DELETE reaches East Asia within",
+    "seconds. Point-in-time restore rebuilds the",
+    "database from automatic backups, as it was",
+    "just before the mistake, into a new database",
+    "next to the original.",
+    "Region unavailable"
+  ]
+}

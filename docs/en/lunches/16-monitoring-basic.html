@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 16 · Customers Knew First — Lunch 16: Monitoring (Basic): Azure Monitor, Alerts, Service Health and Advisor · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 16 · Monitoring (Basic): Azure Monitor, Alerts, Service Health and Advisor. Instagram noticed the slowdown forty minutes before you did. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/16-monitoring-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/16-monitoring-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/16-monitoring-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/16-monitoring-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 16 · Customers Knew First — Lunch 16: Monitoring (Basic): Azure Monitor, Alerts, Service Health and Advisor">
+<meta property="og:description" content="Lunch 16 · Monitoring (Basic): Azure Monitor, Alerts, Service Health and Advisor. Instagram noticed the slowdown forty minutes before you did. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/16-monitoring-basic.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lunch" data-lunch="16" style="--c:#d98a00">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/lunches/16-monitoring-basic.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 16</span> Season 1 · 🛡️ Part 4 · Secure, operate &amp; govern</div>
+      <h1>Customers Knew First</h1>
+      <div class="lunch-title">Lunch 16 · Monitoring (Basic): Azure Monitor, Alerts, Service Health and Advisor</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure management and governance</span>
+        <span class="chip cost">🔬 Lab · about 45 minutes · 💲💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Who Made server-baru-final2?">↩ 04</a><a class="chip" href="06-virtual-machines-basic.html" title="Escape from the Pantry">↩ 06</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 15 · The Password in the Zip File, secrets live in Key Vault, apps sign in with managed identities, and defence comes in layers.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, calmer"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director&#x27;s question · 58% ready</b>After this episode you can say: “We know within minutes when something breaks — usually before customers do.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#field-notes">🗒️ Notes</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today&#x27;s menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-azure-monitor-one-platform-four-questions">Azure Monitor: one platform, four questions</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-metrics-and-logs-two-kinds-of-evidence">Metrics and logs: two kinds of evidence</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-alerts-from-a-signal-to-someones-phone">Alerts: from a signal to someone&#x27;s phone</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-is-it-azure-or-is-it-us-service-health-resource-health-and-advisor">Is it Azure or is it us? Service Health, Resource Health and Advisor</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-see-it-then-bring-it-together-for-nusantara-retail">See it, then bring it together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Field notes</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/16-monitoring-basic.html">🔬 Open Lab 16</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today&#x27;s menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> what Azure Monitor collects on its own (platform metrics and the activity log) and what you must switch on (resource logs, guest data and application telemetry).</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Compare</strong> metrics and logs, and pick the right one for questions such as &quot;Is the CPU busy?&quot; and &quot;Who stopped this VM?&quot;.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> between metric, log search and activity log alerts, and <strong>design</strong> an action group that reaches the right people.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Distinguish</strong> the Azure status page, Service Health and Resource Health, and <strong>use</strong> Azure Advisor's five recommendation categories.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 16</span>
+        <div class="story-body"><p>Friday, 19:40. A flash sale on batik shirts is in full swing, and the storefront's checkout service still runs on one
+Azure VM. At 19:52 a customer posts on Instagram: <em>&quot;Website super lambat, checkout gagal terus&quot;</em> — super slow, checkout
+keeps failing. Forty comments later, at 20:30, someone in marketing forwards you a screenshot. You open the portal: the
+VM's CPU has been pinned near 100% for forty minutes.</p>
+<p>On Saturday morning checkout is down again. This time the VM is simply stopped, and in the team chat everyone,
+Rizky the contractor included, says <em>&quot;bukan saya&quot;</em> — not me. Pak Budi wonders whether Azure itself had an outage.</p>
+<p>On Monday, Ibu Sari has two questions for you: &quot;Why did our customers know before we did? And next time, how quickly can
+you tell me <em>what</em> happened and <em>who</em> did it?&quot;</p>
+<p>Today you design Nusantara Retail's early-warning system — and learn where Azure keeps the evidence.</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 5 scenes</span></div>
+      
+      <article class="scene-card" id="1-azure-monitor-one-platform-four-questions" data-spy><span class="scene-no">Scene 1 of 5</span><h3>Azure Monitor: one platform, four questions</h3><div class="prose"><p>When something goes wrong in production, you need fast answers to four questions:</p>
+<ul>
+<li><strong>Is it working?</strong> Availability: can customers reach the shop at all?</li>
+<li><strong>Is it working well?</strong> Performance: CPU, memory, response times, error rates.</li>
+<li><strong>What changed, and who changed it?</strong> Audit: a resize, a stop, a deleted rule.</li>
+<li><strong>Is the problem ours or Azure's?</strong> Platform health: an incident in the region, or planned maintenance.</li>
+</ul>
+<p><strong>Azure Monitor</strong> is the Azure service that collects, stores, analyses and acts on monitoring data. It gathers data from
+Azure resources, from the operating systems inside your VMs, from your applications and from the subscription itself.
+There is nothing to deploy for the platform part: every subscription already has it. Alerts, Application Insights,
+Service Health alerts and many &quot;insights&quot; pages in the portal are all features built on this one platform.</p>
+<p>In the portal, everything lives under <strong>Monitor</strong>: Metrics, Logs, Alerts, the Activity log, Service Health, Workbooks
+and the insights pages. Most resources also show a slice of the same data in their own menu — a VM's <strong>Metrics</strong>,
+<strong>Alerts</strong> and <strong>Activity log</strong> pages are simply the Monitor views filtered to that one VM.</p>
+<p>The most useful beginner lesson is that some monitoring data is <strong>collected automatically and free</strong>, while other data
+must be <strong>switched on</strong> — and usually costs money once it lands in a workspace.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Collected automatically?</th>
+<th>Kept for</th>
+<th>Cost to collect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Platform metrics (CPU, network, disk)</td>
+<td>Yes, typically every minute</td>
+<td>93 days</td>
+<td>No charge</td>
+</tr>
+<tr>
+<td>Activity log (control-plane operations)</td>
+<td>Yes</td>
+<td>90 days</td>
+<td>No charge</td>
+</tr>
+<tr>
+<td>Resource logs (operations inside a resource)</td>
+<td>No: needs a diagnostic setting</td>
+<td>depends on the destination</td>
+<td>charged at the destination</td>
+</tr>
+<tr>
+<td>Guest OS logs and performance counters</td>
+<td>No: needs the Azure Monitor Agent (Lunch 30)</td>
+<td>workspace retention</td>
+<td>charged per GB ingested</td>
+</tr>
+<tr>
+<td>Application telemetry (requests, errors)</td>
+<td>No: needs Application Insights</td>
+<td>workspace retention</td>
+<td>charged per GB ingested</td>
+</tr>
+</tbody>
+</table></div>
+<p>The diagram shows the big picture. Data comes in on the left, lands in one of three stores, and is used on the right.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph Sources
+    R[Azure resources&lt;br/&gt;VMs, storage, SQL]
+    G[Guest OS&lt;br/&gt;inside the VM]
+    A[Your application]
+    S[Subscription&lt;br/&gt;Azure Resource Manager]
+  end
+  subgraph Stores[&quot;Azure Monitor stores&quot;]
+    M[(Metrics&lt;br/&gt;time series)]
+    L[(Log Analytics&lt;br/&gt;workspace)]
+    AL[(Activity log)]
+  end
+  subgraph Use
+    E[Metrics explorer]
+    Q[Log Analytics · KQL]
+    V[Workbooks · dashboards · Grafana]
+    AR[Alert rules] --&gt; AG[Action groups&lt;br/&gt;email · SMS · webhook]
+  end
+  R -- automatic --&gt; M
+  R -- diagnostic setting --&gt; L
+  G -- agent + rule --&gt; L
+  A -- Application Insights --&gt; L
+  S -- automatic --&gt; AL
+  M --&gt; E
+  M --&gt; AR
+  L --&gt; Q
+  L --&gt; V
+  L --&gt; AR
+  AL --&gt; AR
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Start every investigation with the free data. Open the VM in the portal and look at its <strong>Monitoring</strong> tab or
+<strong>Metrics</strong>: weeks of CPU, disk and network history are already there, without a single setting changed.</p>
+</aside>
+</div></article><article class="scene-card" id="2-metrics-and-logs-two-kinds-of-evidence" data-spy><span class="scene-no">Scene 2 of 5</span><h3>Metrics and logs: two kinds of evidence</h3><div class="prose"><p><strong>Metrics</strong> are numbers measured at regular intervals. Each value has a timestamp and belongs to one resource, and some
+metrics have <strong>dimensions</strong> — extra labels such as a disk name or an API name — so you can split a chart. Metrics live in a
+time-series database built for speed, which makes them ideal for charts and for alerts that must fire within minutes.</p>
+<p>Whenever you read a metric you also choose an <strong>aggregation</strong> over a time grain: <strong>Average</strong>, <strong>Minimum</strong>, <strong>Maximum</strong>,
+<strong>Sum</strong> (the portal calls it Total) or <strong>Count</strong>. The aggregation changes the story. Imagine the storefront VM spikes to
+100% CPU for ten seconds every minute and idles in between. Over each minute, the maximum is 100%, the average is about
+20% and the minimum is close to zero. All three numbers are correct; they answer different questions.</p>
+<p>For a VM, platform metrics such as <em>Percentage CPU</em>, <em>Network In Total</em> and <em>Disk Read Bytes</em> are measured by the Azure
+host, outside the operating system, so they work even when nothing is installed inside the VM. What the host can't see —
+free space inside the file system, per-process usage, the system log — needs the Azure Monitor Agent, which you'll meet
+in Lunch 30. Metrics explorer charts up to 30 days at a time; pan the chart to reach older data within the 93 days.</p>
+<p><strong>Logs</strong> are records — rows with many columns. A log row might say &quot;GET /checkout returned 500 in 2.3 seconds&quot; or &quot;user
+dewi@nusantara read the secret db-password&quot;. Logs are stored in tables in a <strong>Log Analytics workspace</strong> and queried with
+<strong>Kusto Query Language (KQL)</strong>. They are richer than metrics and can answer <em>which</em>, <em>who</em> and <em>why</em>, but you pay for every
+gigabyte you send and keep, and they usually arrive seconds to minutes after the event.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Metrics</th>
+<th>Logs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shape</td>
+<td>numbers over time</td>
+<td>rows with many columns</td>
+</tr>
+<tr>
+<td>Example</td>
+<td>Percentage CPU = 87 at 19:41</td>
+<td>&quot;GET /checkout returned 500 at 19:41:07&quot;</td>
+</tr>
+<tr>
+<td>Freshness</td>
+<td>near real time</td>
+<td>usually seconds to minutes</td>
+</tr>
+<tr>
+<td>Explore with</td>
+<td>Metrics explorer</td>
+<td>Log Analytics (KQL)</td>
+</tr>
+<tr>
+<td>Good question</td>
+<td>&quot;Is the CPU high right now?&quot;</td>
+<td>&quot;Which requests failed, and why?&quot;</td>
+</tr>
+<tr>
+<td>Alert type</td>
+<td>metric alert</td>
+<td>log search alert</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>platform metrics are free</td>
+<td>pay per GB ingested and retained</td>
+</tr>
+</tbody>
+</table></div>
+<p>Two special data sources deserve a closer look.</p>
+<p>The <strong>activity log</strong> records every <strong>control-plane</strong> operation in a subscription: creating, updating, deleting,
+starting, stopping and resizing resources, assigning roles, and so on. Each entry has a time, an operation, a status,
+the resource and the <strong>caller</strong> — the user or service principal that made the request. It also collects Service Health
+and Resource Health events, alert activations, autoscale actions, Advisor recommendations, Defender for Cloud alerts and
+Azure Policy actions. The activity log is on by default, free, and kept for 90 days, and its entries can't be edited or
+deleted, which is exactly why auditors trust it. Read-only operations, such as opening a VM's page, usually aren't
+recorded. If you need more than 90 days, or want to query it with KQL, export it to a workspace with a diagnostic setting.</p>
+<p><strong>Resource logs</strong> describe what happens <em>inside</em> a resource — the <strong>data plane</strong>. Reading a secret from Key Vault,
+downloading a blob, or running a query in a database are data-plane operations; they never appear in the activity log.
+Resource logs aren't collected until you create a <strong>diagnostic setting</strong> on the resource. A diagnostic setting picks
+the log categories (or a category group such as <em>audit</em> or <em>allLogs</em>) and the destinations: a Log Analytics workspace
+for querying and alerting, a storage account for cheap long-term archive, Event Hubs for streaming to another tool such
+as a SIEM, or a supported partner solution. The same setting can also send platform metrics to the workspace, for
+example to keep them beyond 93 days.</p>
+<p>Here is a taste of KQL against the exported activity log. You'll learn the language properly in Lunch 30.</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Copy</button></div><pre><code>AzureActivity
+| where OperationNameValue has &quot;deallocate&quot;
+| project TimeGenerated, Caller, ResourceGroup, ActivityStatusValue
+</code></pre></div>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>Resource logs are <strong>off</strong> by default. Teams usually discover this during an incident: the auditor asks who read the
+database password from Key Vault last Tuesday, and there is nothing to show. Remember the split — the activity log
+tells you who <em>changed the vault</em>; only resource logs tell you who <em>read the secret</em>. Create diagnostic settings when
+you create the resource, or let Azure Policy enforce them (Lunches 18 and 31).</p>
+</aside>
+</div></article><article class="scene-card" id="3-alerts-from-a-signal-to-someones-phone" data-spy><span class="scene-no">Scene 3 of 5</span><h3>Alerts: from a signal to someone's phone</h3><div class="prose"><p>An <strong>alert rule</strong> has four parts:</p>
+<ol>
+<li><strong>Scope</strong> — what to watch: one resource, several resources, a resource group or a subscription.</li>
+<li><strong>Condition</strong> — the signal and the logic, for example &quot;average Percentage CPU greater than 70&quot;.</li>
+<li><strong>Actions</strong> — one or more <strong>action groups</strong> to run when the rule fires.</li>
+<li><strong>Details</strong> — a name, a description and a <strong>severity</strong> from Sev0 (critical) to Sev4 (verbose).</li>
+</ol>
+<p>When the condition is met, Azure Monitor creates an <strong>alert</strong> — an instance you can see, acknowledge and close on the
+Alerts page — and runs the attached action groups. Alerts are kept for 30 days. Each alert carries two status fields:
+the <em>monitor condition</em> (Fired or Resolved), which Azure sets, and the <em>alert state</em> (New, Acknowledged or Closed),
+which your team sets while it works on the problem.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Alert type</th>
+<th>Watches</th>
+<th>Typical Nusantara rule</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Metric alert</td>
+<td>a metric, evaluated every 1–60 minutes</td>
+<td>&quot;Average CPU above 70% for 5 minutes&quot;</td>
+<td>stateful by default: fires once, resolves itself when the condition clears</td>
+</tr>
+<tr>
+<td>Log search alert</td>
+<td>the result of a KQL query on a schedule</td>
+<td>&quot;More than 5 failed checkouts in 10 minutes&quot;</td>
+<td>stateful by default; can be stateless</td>
+</tr>
+<tr>
+<td>Activity log alert</td>
+<td>new activity log events that match conditions</td>
+<td>&quot;A VM in the production group was deallocated&quot;</td>
+<td>stateless: fires for every matching event</td>
+</tr>
+</tbody>
+</table></div>
+<p>Service Health and Resource Health alerts are activity log alerts too. You'll also meet smart detection in Application
+Insights and Prometheus alerts for containers later in the course.</p>
+<p>Look closely at a metric alert condition, because most broken alerts are broken here. &quot;Average Percentage CPU greater
+than 70, window 5 minutes, frequency 1 minute&quot; means: every minute, take the last five minutes of samples, average them,
+and compare the result with 70. Change one word and the meaning changes:</p>
+<ul>
+<li><strong>Maximum</strong> over 5 minutes: &quot;at any moment&quot; — sensitive, and noisy if CPU spikes briefly.</li>
+<li><strong>Average</strong> over 5 minutes: &quot;on average&quot; — a sensible default for CPU.</li>
+<li><strong>Minimum</strong> over 1 hour: &quot;the <em>whole</em> hour&quot; — so strict that a 15-minute crisis never triggers it.</li>
+</ul>
+<p>Longer windows smooth out spikes but react slowly; shorter windows react fast but can flap. If your load has a daily
+rhythm, <strong>dynamic thresholds</strong> learn what normal looks like for each hour and alert on unusual values instead of a fixed
+number.</p>
+<p>An <strong>action group</strong> is a named, reusable list of <em>who to tell</em> and <em>what to run</em>. Notifications include email, SMS,
+voice calls, push notifications to the Azure mobile app, and email to everyone who holds an Azure Resource Manager role
+(such as Owner) on the subscription. Actions include webhooks, Azure Functions, Logic Apps, Automation runbooks, Event
+Hubs and IT service management connectors. One action group can serve many rules. Built-in rate limits protect people
+from floods: at the time of writing, an email address receives no more than 100 alert emails per hour from a region,
+and a phone number no more than one SMS every five minutes. Turn on the <strong>common alert schema</strong> so that every automation
+receives the same payload shape, whatever the alert type.</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant VM as vm-nusa-web
+  participant MS as Metrics store
+  participant AR as Alert rule (avg CPU above 70, 5 min)
+  participant AG as Action group
+  participant OC as On-call engineer
+  VM-&gt;&gt;MS: Percentage CPU every minute
+  loop every minute
+    AR-&gt;&gt;MS: average of the last 5 minutes?
+  end
+  Note over AR: 84 is above 70, so the alert is Fired (Sev 2)
+  AR-&gt;&gt;AG: run actions
+  AG-&gt;&gt;OC: email and SMS
+  Note over AR: later, 31 is below 70, so the alert is Resolved
+  AR-&gt;&gt;AG: run actions again
+  AG-&gt;&gt;OC: Resolved email
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Two more tools keep alerting humane. <strong>Alert processing rules</strong> (once called action rules) change what happens after an
+alert fires: they can suppress notifications during a planned maintenance window — say, Saturday 01:00–03:00 while
+Rizky patches the VMs — or add an action group to every alert in a subscription. They don't affect Service Health
+alerts. And good <strong>severity</strong> discipline matters: if everything is Sev0, nothing is.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>An alert rule without an action group only appears on the Alerts page in the portal — nobody gets an email. Always
+attach an action group, and point it at a shared mailbox or an on-call rota, not one person who might be on leave.</p>
+</aside>
+<p>Good alert rules share four habits. Each one is <strong>actionable</strong> (whoever receives it knows what to do), carries the
+<strong>right severity</strong>, reaches the <strong>right audience</strong>, and has been <strong>tested</strong>. The portal's <em>Test action group</em> button
+sends a sample notification, so you find out that the email lands in a spam folder on a quiet Tuesday, not during an
+incident.</p>
+<p>Platform metrics cost nothing, but alert rules are not all free: metric and log search alert rules carry a small monthly
+charge per monitored time series or rule, and a subscription can hold at most 100 activity log alert rules. Check the
+Azure Monitor pricing page before you create hundreds of rules.</p>
+</div></article><article class="scene-card" id="4-is-it-azure-or-is-it-us-service-health-resource-health-and-advisor" data-spy><span class="scene-no">Scene 4 of 5</span><h3>Is it Azure or is it us? Service Health, Resource Health and Advisor</h3><div class="prose"><p>Azure gives you three views of its own health, from the widest to the narrowest:</p>
+<ul>
+<li>The <strong>Azure status page</strong> is a public, global view of incidents with widespread impact. It knows nothing about your
+subscription.</li>
+<li><strong>Service Health</strong> is personalised: it reports on the services and regions <em>you</em> use. It shows <strong>service issues</strong>
+(incidents happening now), <strong>planned maintenance</strong>, <strong>health advisories</strong> (changes that need your action, such as a
+feature retirement) and <strong>security advisories</strong>, with updates during an incident and root-cause analyses afterwards.</li>
+<li><strong>Resource Health</strong> looks at one resource — this VM, this database — and reports <strong>Available</strong>, <strong>Unavailable</strong>,
+<strong>Degraded</strong> or <strong>Unknown</strong>, with a reason (for example <em>platform initiated</em> versus <em>user initiated</em>) and a history.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Azure status page</th>
+<th>Service Health</th>
+<th>Resource Health</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scope</td>
+<td>all of Azure, all regions</td>
+<td>your subscription's services and regions</td>
+<td>one resource</td>
+</tr>
+<tr>
+<td>Answers</td>
+<td>&quot;Is there a big outage?&quot;</td>
+<td>&quot;Is an Azure incident or maintenance affecting the services I use?&quot;</td>
+<td>&quot;Is <em>this</em> resource healthy, and if not, why?&quot;</td>
+</tr>
+<tr>
+<td>Personalised</td>
+<td>no</td>
+<td>yes</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Alerts</td>
+<td>no</td>
+<td>Service Health alerts</td>
+<td>Resource Health alerts</td>
+</tr>
+<tr>
+<td>Nusantara example</td>
+<td>checking during a famous outage</td>
+<td>&quot;Virtual Machines in Southeast Asia: service issue&quot;</td>
+<td>&quot;vm-nusa-web: Unavailable, user initiated&quot;</td>
+</tr>
+</tbody>
+</table></div>
+<p>Use them together, from narrow to wide. Start with Resource Health on the broken resource: a <em>user-initiated</em>
+unavailability points you to the activity log; a <em>platform-initiated</em> one points you to Service Health. Every
+subscription deserves a <strong>Service Health alert</strong> — an activity log alert scoped to the subscription, filtered to the
+regions and services you care about (Southeast Asia and Indonesia Central for Nusantara Retail) and wired to an action
+group. Add <strong>Resource Health alerts</strong> for critical resources such as the storefront VM and the orders database.</p>
+<p><strong>Azure Advisor</strong> is the free consultant in the portal. It analyses your configuration and usage and makes
+personalised recommendations in five categories:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Category</th>
+<th>What it looks for</th>
+<th>Nusantara example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reliability</td>
+<td>resilience and continuity risks</td>
+<td>&quot;Use availability zones for the storefront VMs&quot;; &quot;enable backup&quot;</td>
+</tr>
+<tr>
+<td>Security</td>
+<td>weaknesses, surfaced from Microsoft Defender for Cloud</td>
+<td>&quot;Close management ports on internet-facing VMs&quot;</td>
+</tr>
+<tr>
+<td>Performance</td>
+<td>resources that limit speed</td>
+<td>a disk or database tier too small for the load</td>
+</tr>
+<tr>
+<td>Cost</td>
+<td>waste and savings</td>
+<td>&quot;Right-size or shut down underused VMs&quot;; reservations for steady workloads</td>
+</tr>
+<tr>
+<td>Operational excellence</td>
+<td>process and deployment hygiene</td>
+<td>&quot;Create Azure Service Health alerts&quot;</td>
+</tr>
+</tbody>
+</table></div>
+<p>You can postpone or dismiss a recommendation with a reason, track progress with the <strong>Advisor score</strong>, and get alerts
+when new recommendations appear. Advisor's cost advice feeds Lunch 19, and its security advice is the same list you saw
+in Defender for Cloud in Lunch 15. One quirk for scripters: the Azure CLI and API still call the reliability category
+<em>HighAvailability</em>.</p>
+</div></article><article class="scene-card" id="5-see-it-then-bring-it-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 5 of 5</span><h3>See it, then bring it together for Nusantara Retail</h3><div class="prose"><p>Data you can't see doesn't help at 20:00 on a Friday. Azure offers several ways to look at it:</p>
+<ul>
+<li><strong>Metrics explorer</strong> for quick charts of one or more metrics, which you can pin to an <strong>Azure dashboard</strong>.</li>
+<li><strong>Workbooks</strong> — interactive reports that mix text, metric charts and log queries, with parameters such as &quot;pick a VM&quot;.</li>
+<li><strong>Azure Monitor dashboards with Grafana</strong>, built into the portal at no extra cost, and <strong>Azure Managed Grafana</strong>, a paid
+service for teams that also need non-Azure data sources, Grafana alerting or scheduled reports.</li>
+<li><strong>Insights</strong> — ready-made experiences such as VM insights and Application Insights.</li>
+</ul>
+<p><strong>Application Insights</strong> deserves a first look today, because the Friday problem was really an application problem.
+It is Azure Monitor's application performance monitoring feature: it records every request to the storefront, how long
+it took, whether it failed, which dependencies (the database, the payment API) it called, and which exceptions were
+thrown. It can also run <strong>availability tests</strong> that call your site from several locations around the world. New
+Application Insights resources store their data in a Log Analytics workspace, and you add them with autoinstrumentation
+or the OpenTelemetry libraries. Lunch 30 goes deep.</p>
+<p>Here is the starter kit you'll propose to Ibu Sari:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  subgraph rg[&quot;Production resource group&quot;]
+    VM[&quot;vm-nusa-web&quot;]
+  end
+  MA[&quot;Metric alert&lt;br/&gt;avg CPU above 70% · 5 min · Sev 2&quot;] --&gt; AG
+  AA[&quot;Activity log alert&lt;br/&gt;VM deallocated or deleted · Sev 1&quot;] --&gt; AG
+  SH[&quot;Service Health alert&lt;br/&gt;Southeast Asia and Indonesia Central&quot;] --&gt; AG
+  RH[&quot;Resource Health alert&lt;br/&gt;storefront VM unavailable&quot;] --&gt; AG
+  AG[&quot;Action group ag-nusa-oncall&lt;br/&gt;on-call mailbox and duty phone&quot;]
+  VM -.-&gt; MA
+  VM -.-&gt; AA
+  VM -.-&gt; RH
+  ADV[&quot;Advisor review&lt;br/&gt;every Monday&quot;] -.-&gt; rg
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<ol>
+<li>An action group, <code>ag-nusa-oncall</code>, that emails the IT on-call mailbox and texts the duty phone.</li>
+<li>A metric alert on the storefront VM: average CPU above 70% for five minutes, Sev 2.</li>
+<li>An activity log alert: any VM in the production resource group deallocated or deleted, Sev 1.</li>
+<li>A Service Health alert for incidents and maintenance in the regions Nusantara Retail uses.</li>
+<li>A Resource Health alert for the storefront VM.</li>
+<li>Diagnostic settings on Key Vault and the orders database, so &quot;who read what&quot; is answerable.</li>
+<li>Ten minutes every Monday with Advisor.</li>
+</ol>
+<p>With this in place, the next Friday story changes. The duty phone buzzes about five minutes after CPU starts to climb,
+long before Instagram notices. On Saturday, the activity log names the person who stopped the VM, Resource Health
+labels it <em>user initiated</em>, and Service Health confirms that Azure was fine. That's the answer to Ibu Sari's two questions:
+you'll know first, and you'll know why.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>At 02:10 Resource Health shows the storefront VM as <em>Unavailable — user initiated</em>, and Service
+Health shows no incident in Southeast Asia. Where do you look next to find out who did it, and which alert type would
+have woken you at 02:01 instead of 08:00?</p>
+</aside>
+<p><strong>Going deeper:</strong> <a href="30-monitoring-advanced.html">Lunch 30 · Monitoring (Advanced)</a> covers Log Analytics workspace
+design, the Azure Monitor Agent, KQL and Application Insights in depth.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Know before customers do: alerts, the activity log and health</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/16-monitoring-basic.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/16-monitoring-basic.html" title="Interactive demo: Know before customers do: alerts, the activity log and health" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/16-monitoring-basic/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>How a metric becomes an alert: the rule averages five minutes of CPU, fires once, emails the on-call engineer and later
+sends a &quot;Resolved&quot; message.</li>
+<li>Why Rizky's rule never fires — the aggregation and window change what &quot;high CPU&quot; means.</li>
+<li>How the activity log names the caller who deallocated the VM, and how an activity log alert reports it within minutes.</li>
+<li>The difference in scope between Service Health (your services and regions) and Resource Health (one resource).</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi wants an email within a few minutes whenever the storefront VM's CPU stays above 80% for five minutes. Which
+alert type should she create, and with which aggregation?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>A <strong>metric alert</strong> on <em>Percentage CPU</em> with the <strong>Average</strong> aggregation over a 5-minute window. <em>Why:</em> platform metrics
+arrive automatically every minute, so a metric alert reacts quickly without any agent or workspace.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>On Saturday the storefront VM was stopped and deallocated. Ibu Sari wants the name of the person who did it before
+lunch. Where do you look?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>In the <strong>activity log</strong> (Administrative category): filter on the operation <em>Deallocate Virtual Machine</em> and read the
+<strong>Caller</strong> field. <em>Why:</em> every control-plane operation is recorded automatically, with its caller, for 90 days.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>An auditor asks which users downloaded invoice PDFs from Blob storage last week. The storage account has existed for a
+year with default settings. Can you answer?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>No.</strong> Downloads are data-plane operations, recorded only in <strong>resource logs</strong>, and resource logs are collected only
+after you create a <strong>diagnostic setting</strong>. Create one now so the question can be answered next time. <em>Why:</em> the
+activity log covers control-plane changes, not reads of the data.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Rizky created an alert: &quot;Minimum Percentage CPU greater than 70 over 1 hour&quot;. During a 15-minute flash-sale spike the
+CPU sat at 100%, yet the alert never fired. Why, and what is a better condition?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Minimum over one hour</strong> only triggers if CPU stays above 70% for the <em>entire</em> hour, so a 15-minute spike can never
+satisfy it. Use <strong>Average over 5 minutes</strong> (evaluated every minute). <em>Why:</em> the aggregation and window define what
+&quot;high&quot; means.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>The storefront VM is unreachable. Resource Health says <em>Unavailable — platform initiated</em>, and Service Health shows
+an active service issue for Virtual Machines in Southeast Asia. Whose problem is it, and what should you do?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>It's an <strong>Azure platform problem</strong>, not a change your team made. Follow the incident updates in <strong>Service Health</strong>,
+apply your recovery plan (Lunch 17), and make sure a <strong>Service Health alert</strong> exists so you hear about the next one
+first. <em>Why:</em> platform-initiated unavailability plus an active regional issue points to Azure, not to your
+configuration.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Platform metrics and the activity log are collected automatically and free; resource logs, guest OS data and application telemetry must be switched on and are charged where they land.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Metrics answer &quot;how much, right now?&quot; quickly and cheaply; logs answer &quot;what, which, who and why?&quot; with KQL.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>An alert rule is scope + condition + action group + severity — the aggregation and window decide whether it ever fires, and the action group decides whether anyone hears it.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>The activity log tells you who changed what; Resource Health tells you whether one resource is healthy and why; Service Health tells you about Azure incidents and maintenance in your services and regions.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Azure Advisor gives free, personalised recommendations in five categories — reliability, security, performance, cost and operational excellence — so make reviewing them a habit.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Field notes from Stefanus</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>An alert is a promise that someone will act.</strong> Before I create an alert rule, I write its description as an
+instruction to the person who will read it at night: what it means, the first thing to check, and when to escalate.
+If I can't write that sentence, the rule isn't ready, or it belongs on a dashboard instead of in someone's inbox.
+Once a month, before they age out of the Alerts page, I go through every alert that fired: each one that nobody
+acted on is retuned, given a lower severity, or deleted. An inbox full of ignored alerts is worse than an empty one,
+because it teaches the team to stop reading. And I never trust an action group until I have tested it end to end, on
+the phone of whoever is actually on call.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">More about the author →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>16</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Know before customers do</h3>
+          <div class="prose"><p>You'll build Nusantara Retail's first early-warning system around a small storefront VM: an action group that emails
+you, a CPU metric alert that you trigger yourself with Run Command, an activity log alert that catches a deallocated VM,
+and a Service Health alert for your subscription. Then you'll answer &quot;who did it?&quot; from the activity log, review Advisor's
+recommendations, and repair a broken alert rule that never fires. It's the setup every production subscription needs on
+day one.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 45 minutes</span><span class="chip cost">💲💲 small charges while running</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/16-monitoring-basic.html">Start Lab 16 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/azure-monitor/alerts/alerts-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Overview of Azure Monitor alerts</b><span>Alert types, stateful versus stateless alerts, and how rules, processing rules and action groups fit together.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-monitor/fundamentals/activity-log" target="_blank" rel="noopener"><b>Microsoft Learn: Activity log in Azure Monitor</b><span>What is recorded, how long it's kept, and how to export it to a workspace.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/service-health/overview" target="_blank" rel="noopener"><b>Microsoft Learn: What is Azure Service Health?</b><span>Azure status, Service Health and Resource Health side by side.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/advisor/advisor-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Introduction to Azure Advisor</b><span>The five recommendation categories and how to act on them.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">📈</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Early Warning</h2>
+        <p class="muted">Alert on trouble before customers notice.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“We know within minutes when something breaks — usually before customers do.”</b></p>
+        <div class="teaser"><b>Next episode · 17</b><h4>Ransomware in Surabaya</h4><p>A neighbour lost everything because the attackers deleted the backups first. Have we ever tested a restore?</p><p style="margin-top:10px"><a href="17-backup-disaster-recovery.html">Watch Episode 17 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="15-security-essentials.html"><small>← Previous episode</small>15 · The Password in the Zip File</a><a class="next" href="17-backup-disaster-recovery.html"><small>Next episode →</small>17 · Ransomware in Surabaya</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/16-monitoring-basic/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

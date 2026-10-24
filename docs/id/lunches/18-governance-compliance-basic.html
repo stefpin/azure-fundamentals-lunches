@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 18 · Storage Account di West Europe — Makan Siang 18: Tata Kelola dan Kepatuhan (Dasar): Azure Policy, Lock, Tag, dan Microsoft Purview · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 18 · Tata Kelola dan Kepatuhan (Dasar): Azure Policy, Lock, Tag, dan Microsoft Purview. Resource tanpa tag, data di region yang salah, dan tidak ada yang menghentikan siapa pun. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/18-governance-compliance-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/18-governance-compliance-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/18-governance-compliance-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/18-governance-compliance-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 18 · Storage Account di West Europe — Makan Siang 18: Tata Kelola dan Kepatuhan (Dasar): Azure Policy, Lock, Tag, dan Microsoft Purview">
+<meta property="og:description" content="Makan Siang 18 · Tata Kelola dan Kepatuhan (Dasar): Azure Policy, Lock, Tag, dan Microsoft Purview. Resource tanpa tag, data di region yang salah, dan tidak ada yang menghentikan siapa pun. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/18-governance-compliance-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="18" style="--c:#d98a00">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/18-governance-compliance-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 18</span> Season 1 · 🛡️ Bagian 4 · Keamanan, operasional, dan tata kelola</div>
+      <h1>Storage Account di West Europe</h1>
+      <div class="lunch-title">Makan Siang 18 · Tata Kelola dan Kepatuhan (Dasar): Azure Policy, Lock, Tag, dan Microsoft Purview</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan manajemen dan tata kelola Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 45 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Siapa yang Bikin server-baru-final2?">↩ 04</a><a class="chip" href="05-identity-access-basic.html" title="Kasih Saja Password Saya">↩ 05</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 17 · Ransomware di Surabaya, latihan pemulihan sungguhan sudah Anda jalankan, dan cadangan kini terlindungi oleh soft delete.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, senang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 64% siap</b>Setelah episode ini Anda bisa menjawab: “Kita bisa pulih dari penghapusan, dan pagar pengaman mencegah kesalahan yang menyebabkannya.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-tata-kelola-berarti-pagar-pengaman-bukan-gerbang">Tata kelola berarti pagar pengaman, bukan gerbang</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-azure-policy-definisi-inisiatif-dan-assignment">Azure Policy: definisi, inisiatif, dan assignment</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-effect-apa-yang-terjadi-ketika-sebuah-aturan-cocok">Effect: apa yang terjadi ketika sebuah aturan cocok</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-tag-dan-lock-beri-label-pada-semuanya-lindungi-yang-penting">Tag dan lock: beri label pada semuanya, lindungi yang penting</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-di-luar-pengaturan-resource-microsoft-purview-service-trust-portal-dan-pernyataan-privasi">Di luar pengaturan resource: Microsoft Purview, Service Trust Portal, dan pernyataan privasi</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-bagaimana-semuanya-menyatu-untuk-nusantara-retail">Bagaimana semuanya menyatu untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/18-governance-compliance-basic.html">🔬 Buka Lab 18</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Menjelaskan arti tata kelola cloud dan memutuskan alat mana yang menjawab pertanyaan mana: Azure RBAC (<em>kontrol akses berbasis peran</em>), Azure Policy, atau resource lock (<em>kunci sumber daya</em>).</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Menguraikan komponen dasar Azure Policy — definisi, inisiatif, assignment, scope, parameter, kepatuhan, dan exemption.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Memilih effect policy (Deny, Audit, Modify, Append, DeployIfNotExists, AuditIfNotExists, Disabled) untuk sebuah kebutuhan, dan memperkirakan kapan effect itu berjalan.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Merancang strategi tag yang ringkas dan menegakkannya dengan policy, bukan sekadar dengan niat baik.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Menguraikan kegunaan Microsoft Purview, Service Trust Portal, dan Microsoft Privacy Statement, serta apa yang menggantikan Azure Blueprints.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 18</span>
+        <div class="story-body"><p>Senin pagi, Ibu Sari meneruskan dua e-mail kepada Anda. Yang pertama dari bagian keuangan: tagihan Azure bulan lalu
+memuat satu baris biaya storage di West Europe yang tidak bisa dijelaskan siapa pun, dan separuh resource (<em>sumber
+daya</em>) tidak punya tag, sehingga tidak ada yang tahu departemen mana yang harus membayarnya. Yang kedua dari penasihat
+hukum Nusantara Retail, yang mengingatkan semua orang bahwa data pelanggan harus tetap berada di region (<em>wilayah</em>)
+yang disetujui, dekat dengan rumah.</p>
+<p>Anda pun menelusurinya. Dewi pernah membuat storage account (<em>akun penyimpanan</em>) uji coba di West Europe karena region
+itu muncul di urutan atas sebuah daftar drop-down, lalu melupakannya. Rizky, sang kontraktor, nyaris menghapus resource
+group (<em>grup sumber daya</em>) yang berisi database pesanan saat sedang &quot;beres-beres&quot; — ia punya izinnya, jadi tidak ada
+yang menghentikannya. Tidak ada yang berniat jahat. Hanya saja, tidak ada pagar pengamannya.</p>
+<p>Pertanyaan Ibu Sari singkat saja: <em>&quot;Bisakah Azure mencegah kesalahan seperti ini sebelum terjadi — dan membuktikannya
+kepada auditor?&quot;</em> Hari ini Anda menjawabnya dengan Azure Policy, tag, lock, dan perkenalan pertama dengan Microsoft
+Purview.</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-tata-kelola-berarti-pagar-pengaman-bukan-gerbang" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Tata kelola berarti pagar pengaman, bukan gerbang</h3><div class="prose"><p>Sebelum era cloud, tata kelola di Nusantara Retail berupa ruang server yang terkunci dan tanda tangan Pak Budi di
+setiap pesanan pembelian. Tidak ada yang masuk ke produksi tanpa melewati mejanya. Di Azure, siapa pun yang punya role
+yang tepat bisa membuat database dalam tiga puluh detik, dari laptop, tengah malam. Kecepatan itulah alasan Anda pindah
+ke cloud, jadi Anda tidak ingin tanda tangan itu kembali. Yang Anda inginkan adalah <strong>pagar pengaman</strong> (guardrail):
+aturan yang ditegakkan platform secara otomatis, sehingga jalan yang aman sekaligus menjadi jalan yang mudah.</p>
+<p>Bayangkan jalan tol. Tidak ada petugas yang memeriksa setiap mobil sebelum boleh melaju; yang ada hanyalah pagar
+pembatas di kiri-kanan jalan dan marka yang jelas. Anda bebas melaju sesuai batas kecepatan, dan pagar itu baru
+&quot;bekerja&quot; ketika ada mobil yang hendak keluar jalur. Gerbang tol justru sebaliknya: semua orang harus berhenti dan
+antre. Tata kelola cloud yang baik terasa seperti pagar pembatas, bukan seperti gerbang tol.</p>
+<p><strong>Tata kelola cloud</strong> (cloud governance) adalah sekumpulan aturan, proses, dan alat yang menjaga pemakaian Azure Anda
+tetap selaras dengan kebutuhan bisnis: biaya tetap bisa diperkirakan, data tetap berada di tempat yang dikehendaki
+hukum, dan pengaturan keamanan tidak bergeser diam-diam. <strong>Kepatuhan</strong> (compliance) adalah bagian ketika Anda bisa
+<em>membuktikannya</em> — kepada auditor, regulator, atau direktur Anda sendiri — dengan bukti, bukan janji.</p>
+<p>Setiap pertanyaan tata kelola terhubung ke alat tertentu:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Pertanyaan</th>
+<th>Alat</th>
+<th>Apa yang diperiksanya</th>
+<th>Contoh di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Siapa yang boleh melakukan ini?</td>
+<td><strong>Azure role-based access control (RBAC)</strong> — Makan Siang 05</td>
+<td>identitas yang mengajukan permintaan dan role-nya di scope (cakupan) tersebut</td>
+<td>Rizky mendapat role Contributor hanya di resource group uji coba</td>
+</tr>
+<tr>
+<td>Bolehkah hasilnya ada?</td>
+<td><strong>Azure Policy</strong></td>
+<td>properti resource yang sedang dibuat atau diubah, tidak peduli siapa yang meminta</td>
+<td>storage account hanya di Southeast Asia atau Indonesia Central</td>
+</tr>
+<tr>
+<td>Apakah ini tidak boleh terhapus atau berubah karena kecelakaan?</td>
+<td><strong>Resource lock</strong></td>
+<td>operasi hapus (atau semua operasi tulis) pada scope yang dikunci, untuk semua orang</td>
+<td>tidak ada yang bisa menghapus database pesanan, bahkan seorang Owner</td>
+</tr>
+<tr>
+<td>Ini apa, dan siapa yang membayarnya?</td>
+<td><strong>Tag</strong></td>
+<td>label nama/nilai pada resource</td>
+<td><code>costCenter=CC-1001</code> pada semua yang dipakai toko online</td>
+</tr>
+<tr>
+<td>Di mana data sensitif kita, dan siapa yang menyentuhnya?</td>
+<td><strong>Microsoft Purview</strong></td>
+<td>datanya sendiri, di Azure, Microsoft 365, dan di luar itu</td>
+<td>menemukan setiap file yang berisi nomor telepon pelanggan</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ketiga alat pertama bekerja bersama pada setiap permintaan. Ketika Dewi menjalankan <code>az storage account create</code>, Azure
+Resource Manager (Makan Siang 04) mengautentikasi Dewi dengan Microsoft Entra ID (<em>ID Microsoft Entra</em>), memeriksa izin
+RBAC-nya, lalu mengevaluasi policy assignment dan lock sebelum apa pun sampai ke resource provider (penyedia resource)
+storage. Sebuah role mengatakan <em>Dewi</em> boleh membuat storage account; sebuah policy tetap bisa mengatakan <em>storage
+account yang ini</em>, di West Europe, tidak boleh ada. Setiap pemeriksaan harus menjawab ya.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  D[&quot;Dewi: membuat storage account&lt;br/&gt;di West Europe&quot;] --&gt; ARM[&quot;Azure Resource Manager&quot;]
+  ARM --&gt; ID{&quot;Microsoft Entra ID&lt;br/&gt;siapa Anda?&quot;}
+  ID -- &quot;sudah masuk&quot; --&gt; RBAC{&quot;Azure RBAC&lt;br/&gt;bolehkah Anda melakukannya di sini?&quot;}
+  RBAC -- &quot;tidak punya role&quot; --&gt; E1[&quot;AuthorizationFailed&quot;]
+  RBAC -- &quot;role mengizinkan&quot; --&gt; POL{&quot;Azure Policy dan lock&lt;br/&gt;bolehkah hasilnya ada?&quot;}
+  POL -- &quot;aturan Deny cocok&quot; --&gt; E2[&quot;RequestDisallowedByPolicy&quot;]
+  POL -- &quot;scope-nya dikunci&quot; --&gt; E3[&quot;ScopeLocked&quot;]
+  POL -- &quot;semua pemeriksaan lolos&quot; --&gt; RP[&quot;Resource provider storage&lt;br/&gt;membuat akunnya&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Saat sebuah deployment gagal, kode error-nya memberi tahu pagar pengaman mana yang menghentikannya:
+<code>AuthorizationFailed</code> menunjuk ke RBAC, <code>RequestDisallowedByPolicy</code> ke Azure Policy (pesannya menyebut assignment
+yang memblokir Anda), dan <code>ScopeLocked</code> ke sebuah lock. Baca kodenya sebelum Anda meminta izin tambahan kepada siapa
+pun.</p>
+</aside>
+</div></article><article class="scene-card" id="2-azure-policy-definisi-inisiatif-dan-assignment" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Azure Policy: definisi, inisiatif, dan assignment</h3><div class="prose"><p>Azure Policy punya tiga objek yang akan Anda temui di mana-mana.</p>
+<p>Sebuah <strong>policy definition</strong> (definisi policy) adalah aturan yang ditulis dalam JSON. Bagian <code>if</code>-nya berisi kondisi
+pada properti resource, misalnya &quot;lokasinya tidak ada di daftar ini&quot;, dan bagian <code>then</code>-nya berisi <strong>effect</strong>, yaitu
+apa yang terjadi ketika kondisi itu benar. Azure menyediakan ribuan <strong>definisi bawaan</strong> (built-in) yang dikelola
+Microsoft, seperti <em>Allowed locations</em> dan <em>Require a tag on resources</em>. Jika tidak ada yang cocok, Anda menulis
+<strong>definisi kustom</strong>. <strong>Parameter</strong> membuat sebuah definisi bisa dipakai ulang: <em>Allowed locations</em> tidak menuliskan
+region secara permanen di dalamnya; ia meminta daftar region saat Anda memakainya.</p>
+<p>Sebuah <strong>initiative</strong> (inisiatif; CLI dan API menyebutnya <em>policy set</em>) mengelompokkan beberapa definisi yang melayani
+satu tujuan, sehingga Anda mengelolanya sebagai satu item. Microsoft menerbitkan inisiatif regulasi yang memetakan
+kontrol-kontrol sebuah standar ke policy — misalnya ISO/IEC 27001, PCI DSS, dan <strong>Microsoft cloud security benchmark</strong>
+yang di-assign secara default oleh Defender for Cloud (<em>Microsoft Defender untuk Cloud</em>, Makan Siang 15). Peritel yang
+menerima pembayaran kartu, seperti Nusantara Retail, sangat memperhatikan inisiatif PCI DSS.</p>
+<p>Sebuah <strong>assignment</strong> (penetapan) adalah titik ketika sebuah definisi atau inisiatif mulai bekerja. Assignment
+menghubungkan aturan ke sebuah <strong>scope</strong> — management group (<em>grup manajemen</em>), subscription (<em>langganan</em>), resource
+group, atau satu resource saja — dan mengisi nilai parameternya: &quot;Allowed locations, pada subscription produksi, dengan
+Indonesia Central dan Southeast Asia.&quot; Semua yang berada di bawah scope itu mewarisi assignment tersebut, sama seperti
+role assignment diwariskan (Makan Siang 04). Sebuah assignment juga bisa membawa <strong>exclusion</strong> (scope anak yang
+dilewati), <strong>non-compliance message</strong> kustom yang muncul di pesan error, dan <strong>enforcement mode</strong>: <em>Default</em> menegakkan
+effect-nya, sedangkan <em>DoNotEnforce</em> hanya melaporkan, dan itulah cara Anda menguji aturan baru tanpa merusak deployment
+siapa pun.</p>
+<p>Ibaratnya rambu lalu lintas. Definisi adalah <em>jenis</em> rambunya, misalnya &quot;dilarang parkir pada jam ___&quot;. Assignment
+adalah tindakan memasang rambu itu di jalan tertentu dengan jam yang sudah diisi, misalnya pukul 07.00–19.00. Scope
+adalah ruas jalan tempat rambu itu berlaku, dan semua kendaraan di ruas itu wajib mematuhinya, siapa pun pengemudinya.
+Inisiatif? Itu satu paket rambu untuk kawasan sekolah: batas kecepatan, larangan parkir, dan zebra cross, dipasang
+sekaligus.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  D1[&quot;Definisi&lt;br/&gt;Allowed locations&quot;] --&gt; I[&quot;Inisiatif&lt;br/&gt;baseline Nusantara&quot;]
+  D2[&quot;Definisi&lt;br/&gt;Require a tag on resources&quot;] --&gt; I
+  D3[&quot;Definisi&lt;br/&gt;Inherit a tag from the&lt;br/&gt;resource group if missing&quot;] --&gt; I
+  I --&gt; A[&quot;Assignment di subscription&lt;br/&gt;locations = indonesiacentral, southeastasia&lt;br/&gt;tagName = costCenter&quot;]
+  A --&gt; RG1[&quot;rg-storefront-prod&quot;]
+  A --&gt; RG2[&quot;rg-storefront-test&quot;]
+  RG1 --&gt; R1[&quot;setiap resource di dalamnya&lt;br/&gt;mewarisi aturan ini&quot;]
+  RG2 --&gt; R2[&quot;setiap resource di dalamnya&lt;br/&gt;mewarisi aturan ini&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Ada tiga detail yang menjebak hampir semua orang. Pertama, <strong>mode</strong> sebuah definisi menentukan apa yang dievaluasinya.
+Aturan tag dan lokasi biasanya memakai mode <em>Indexed</em>, yang hanya memeriksa jenis resource yang mendukung tag dan
+lokasi — dan melewati resource group. Itulah sebabnya <em>Allowed locations</em> tidak mencegah siapa pun membuat resource
+group di West Europe; ada definisi bawaan terpisah, <em>Allowed locations for resource groups</em>, yang melakukannya. Kedua,
+lokasi sebuah resource group hanyalah tempat metadatanya disimpan. Resource di dalamnya bisa berada di region mana pun,
+jadi membatasi group-nya saja tidak melindungi apa-apa. Ketiga, assignment itu bertumpuk. Ketika beberapa assignment
+berlaku untuk satu resource, masing-masing dievaluasi sendiri-sendiri dan hasilnya adalah kombinasi yang paling ketat.
+Sebuah tim tidak bisa &quot;keluar&quot; dari Deny di level subscription dengan meng-assign policy yang lebih longgar ke resource
+group miliknya; hanya exclusion atau exemption pada assignment aslinya yang bisa melakukannya.</p>
+<p>Untuk menemukan definisi bawaan, buka <strong>Policy › Definitions</strong> di portal dan filter berdasarkan kategori (<em>Tags</em>,
+<em>General</em>, <em>Storage</em>…), atau cari dari Cloud Shell dengan <code>az policy definition list</code>. Baca deskripsi dan parameternya
+sebelum Anda meng-assign apa pun — nama tampilannya jarang menceritakan keseluruhan isinya.</p>
+</div></article><article class="scene-card" id="3-effect-apa-yang-terjadi-ketika-sebuah-aturan-cocok" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Effect: apa yang terjadi ketika sebuah aturan cocok</h3><div class="prose"><p>Effect adalah jawaban sebuah aturan. Memilih effect yang tepat adalah sebagian besar keahliannya.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Effect</th>
+<th>Apa yang dilakukannya</th>
+<th>Kapan bertindak</th>
+<th>Gunakan ketika…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deny</strong></td>
+<td>Memblokir permintaan create atau update; resource yang sudah ada hanya dilaporkan</td>
+<td>sebelum permintaan sampai ke resource provider</td>
+<td>aturannya tidak bisa ditawar, misalnya residensi data</td>
+</tr>
+<tr>
+<td><strong>Audit</strong></td>
+<td>Meloloskan permintaan dan menandai resource sebagai non-compliant</td>
+<td>setelah Deny, sebelum resource provider</td>
+<td>Anda ingin melihat situasinya dulu, atau aturannya bersifat saran</td>
+</tr>
+<tr>
+<td><strong>Modify</strong></td>
+<td>Menambah, mengganti, atau menghapus tag dan sebagian properti di dalam permintaan; memperbaiki resource yang sudah ada lewat remediation</td>
+<td>sebelum Deny</td>
+<td>perbaikannya bisa otomatis, misalnya menyalin sebuah tag</td>
+</tr>
+<tr>
+<td><strong>Append</strong></td>
+<td>Menambahkan field ke permintaan, tetapi tidak bisa memperbaiki resource yang sudah ada</td>
+<td>sebelum Deny</td>
+<td>masih dipakai oleh definisi bawaan tertentu; untuk tag, pilih Modify</td>
+</tr>
+<tr>
+<td><strong>AuditIfNotExists</strong></td>
+<td>Setelah deployment, memeriksa apakah resource terkait ada, dan melaporkan bila tidak ada</td>
+<td>setelah resource provider berhasil</td>
+<td>VM seharusnya punya Azure Monitor Agent, tetapi Anda hanya ingin tahu</td>
+</tr>
+<tr>
+<td><strong>DeployIfNotExists</strong></td>
+<td>Setelah deployment, men-deploy resource terkait yang belum ada dengan sebuah template; memperbaiki resource yang sudah ada lewat remediation</td>
+<td>setelah resource provider berhasil</td>
+<td>setiap database harus mengirim log-nya ke workspace pusat</td>
+</tr>
+<tr>
+<td><strong>Disabled</strong></td>
+<td>Mematikan aturan tanpa menghapus assignment-nya</td>
+<td>diperiksa paling awal</td>
+<td>Anda perlu menjeda aturan yang effect-nya berupa parameter</td>
+</tr>
+</tbody>
+</table></div>
+<p>Urutannya penting. Azure Policy memeriksa <strong>Disabled</strong> lebih dulu, lalu membiarkan <strong>Append</strong> dan <strong>Modify</strong> mengubah
+permintaan, lalu mengevaluasi <strong>Deny</strong>, lalu <strong>Audit</strong>. <strong>AuditIfNotExists</strong> dan <strong>DeployIfNotExists</strong> baru berjalan
+setelah resource provider melaporkan keberhasilan. Karena Modify berjalan sebelum Deny, aturan Modify yang menambahkan
+tag yang hilang bisa mengubah permintaan yang tadinya akan diblokir aturan Deny menjadi permintaan yang lolos. Anda
+akan melihat hal ini persis di lab.</p>
+<p>Bayangkan loket pengurusan dokumen yang punya dua petugas. Petugas pertama melengkapi kolom yang lupa Anda isi,
+misalnya menyalin alamat dari kartu keluarga yang Anda lampirkan; baru setelah itu petugas kedua memeriksa
+kelengkapannya. Karena urutannya begitu, formulir yang tadinya pasti ditolak justru lolos. Modify adalah petugas
+pertama, Deny petugas kedua. Tetapi kalau kartu keluarganya tidak dilampirkan, petugas pertama tidak punya apa pun
+untuk disalin, dan formulir Anda tetap ditolak.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  REQ[&quot;Permintaan create atau update&quot;] --&gt; DIS{&quot;Disabled?&quot;}
+  DIS -- &quot;tidak&quot; --&gt; MOD[&quot;Append dan Modify&lt;br/&gt;boleh mengubah permintaan&quot;]
+  MOD --&gt; DENY{&quot;Deny cocok?&quot;}
+  DENY -- &quot;ya&quot; --&gt; BLK[&quot;Diblokir&lt;br/&gt;RequestDisallowedByPolicy&quot;]
+  DENY -- &quot;tidak&quot; --&gt; AUD[&quot;Audit mencatat&lt;br/&gt;ketidakpatuhan&quot;]
+  AUD --&gt; RP[&quot;Resource provider&lt;br/&gt;membuat resource-nya&quot;]
+  RP --&gt; AFTER[&quot;AuditIfNotExists dan&lt;br/&gt;DeployIfNotExists memeriksa&lt;br/&gt;resource terkait&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Ada beberapa effect yang lebih baru untuk kasus khusus: <strong>DenyAction</strong> memblokir permintaan hapus pada resource yang
+cocok, <strong>Manual</strong> memungkinkan Anda menyatakan (attest) kontrol yang tidak bisa diperiksa secara otomatis, sedangkan
+<strong>Mutate</strong> dan <strong>addToNetworkGroup</strong> melayani AKS dan Azure Virtual Network Manager.</p>
+<p>Modify dan DeployIfNotExists mengubah sesuatu atas nama Anda, jadi assignment-nya membutuhkan sebuah <strong>managed
+identity</strong> (identitas terkelola, Makan Siang 15) yang memegang role-role yang tercantum di definisi. Resource baru dan
+resource yang diperbarui ditangani begitu datang. Resource yang sudah ada sebelum assignment hanya <em>dilaporkan</em> sampai
+Anda menjalankan <strong>remediation task</strong> (tugas perbaikan), yang memakai identitas tersebut untuk memperbaikinya secara
+massal.</p>
+<p><strong>Kepatuhan</strong> adalah rapornya. Setiap resource mendapat <strong>compliance state</strong> (status kepatuhan) per assignment —
+<em>Compliant</em> (patuh), <em>Non-compliant</em> (tidak patuh), <em>Exempt</em> (dikecualikan), <em>Not started</em> (belum dimulai), dan
+beberapa status lain yang lebih jarang. Evaluasi terjadi saat resource dibuat atau diperbarui (hasilnya muncul sekitar
+15 menit kemudian), saat assignment dibuat atau diubah (butuh sekitar lima menit untuk berlaku, lalu pemindaian
+dimulai), sekali setiap 24 jam untuk semuanya, dan sesuai permintaan dengan <code>az policy state trigger-scan</code>. Ketika
+sebuah resource memang sah tidak bisa patuh — misalnya uji coba pemasaran selama dua minggu yang membutuhkan region
+lain — Anda memberikan <strong>exemption</strong> (dispensasi), bukan melemahkan aturannya. <em>Waiver</em> berarti &quot;kami menerima ini untuk
+sementara&quot;; <em>Mitigated</em> berarti &quot;kami memenuhi maksud aturannya dengan cara lain&quot;; tanggal kedaluwarsa memastikan tidak
+ada yang lupa. Makan Siang 31 membahasnya lebih dalam.</p>
+</div></article><article class="scene-card" id="4-tag-dan-lock-beri-label-pada-semuanya-lindungi-yang-penting" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Tag dan lock: beri label pada semuanya, lindungi yang penting</h3><div class="prose"><p>Sebuah <strong>tag</strong> adalah pasangan nama/nilai — <code>costCenter=CC-1001</code> — yang Anda tempelkan pada subscription, resource
+group, atau resource (tetapi tidak pada management group). Tag tidak memakan biaya dan bisa menggerakkan banyak hal:
+laporan biaya yang dikelompokkan per departemen (Makan Siang 19), otomatisasi yang mematikan mesin <code>environment=dev</code> di
+malam hari, dan query yang menjawab &quot;apa saja milik toko online?&quot;. Empat aturan yang perlu diingat:</p>
+<ul>
+<li>Resource <strong>tidak</strong> mewarisi tag milik resource group-nya. Jika Anda ingin pewarisan, sebuah policy yang harus
+melakukannya.</li>
+<li>Setiap resource, resource group, atau subscription bisa menampung hingga 50 tag. Nama tag tidak peka huruf
+besar-kecil (case-insensitive), tetapi nilainya peka (case-sensitive), sehingga <code>Finance</code> dan <code>finance</code> menjadi dua
+baris berbeda di laporan biaya.</li>
+<li>Tag adalah teks biasa yang muncul di ekspor, log, dan tagihan. Jangan pernah menaruh rahasia di dalam tag.</li>
+<li>Tidak semua jenis resource mendukung tag. Periksa dokumentasinya sebelum Anda membangun aturan berdasarkan tag.</li>
+</ul>
+<p>Ibaratnya kulkas bersama di pantry kantor. Kotak bekal yang ditempeli stiker nama dan divisi aman sampai jam makan
+siang; kotak tanpa label membuat semua orang bingung, dan akhirnya ikut dibuang saat kulkas dibersihkan hari Jumat. Tag
+adalah stiker itu, tetapi untuk resource Azure.</p>
+<p>Sebuah <strong>strategi tag</strong> sengaja dibuat singkat. Nusantara Retail memulai dengan empat tag wajib:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tag</th>
+<th>Contoh nilai</th>
+<th>Mengapa tag ini ada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>costCenter</code></td>
+<td><code>CC-1001</code> (e-commerce)</td>
+<td>bagian keuangan membebankan biaya ke departemen yang tepat</td>
+</tr>
+<tr>
+<td><code>environment</code></td>
+<td><code>prod</code>, <code>test</code>, atau <code>dev</code></td>
+<td>otomatisasi dan alert memperlakukannya secara berbeda</td>
+</tr>
+<tr>
+<td><code>owner</code></td>
+<td><code>team-storefront</code></td>
+<td>ada yang menjawab ketika resource-nya bermasalah</td>
+</tr>
+<tr>
+<td><code>dataClassification</code></td>
+<td><code>confidential</code></td>
+<td>apa pun yang menyimpan data pelanggan mendapat pengawasan ekstra</td>
+</tr>
+</tbody>
+</table></div>
+<p>Policy mengubah strategi itu menjadi kenyataan. <em>Require a tag on resources</em> (Deny) menolak resource tanpa tag. <em>Add a
+tag to resources</em> dan <em>Inherit a tag from the resource group if missing</em> (keduanya Modify) mengisi kekosongan secara
+otomatis, sehingga orang cukup memberi tag pada resource group. Gabungkan aturan inherit dengan aturan require, dan
+Anda mendapatkan kenyamanan sekaligus jaring pengaman.</p>
+<p>Sebuah <strong>resource lock</strong> melindungi apa yang tidak boleh berubah karena kecelakaan. <strong>CanNotDelete</strong> (<em>Delete</em> di
+portal) mengizinkan baca dan ubah tetapi memblokir penghapusan; <strong>ReadOnly</strong> (<em>Read-only</em>) memblokir semua operasi
+tulis. Lock berlaku untuk subscription, resource group, dan resource, diwarisi oleh semua yang ada di bawahnya, dan
+mengalahkan RBAC — bahkan seorang Owner harus melepas lock-nya lebih dulu. Hanya role yang memiliki izin
+<code>Microsoft.Authorization/locks/*</code>, seperti Owner dan User Access Administrator, yang bisa membuat atau menghapusnya.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Lock lebih &quot;tumpul&quot; daripada kelihatannya. Lock ReadOnly memblokir operasi yang memakai POST, sehingga Anda tidak
+bisa menampilkan daftar key storage account, menyalakan atau me-restart VM di resource group yang dikunci, atau
+mengubah skala App Service plan. Lock CanNotDelete pada satu resource memblokir penghapusan seluruh resource
+group-nya. Dan lock hanya melindungi control plane (lapisan pengelolaan resource): seseorang yang punya akses data
+tetap bisa menghapus blob di dalam storage account yang &quot;terkunci&quot;. Lock mencegah kecelakaan; backup (Makan Siang 17)
+memulihkan Anda dari kecelakaan itu.</p>
+</aside>
+</div></article><article class="scene-card" id="5-di-luar-pengaturan-resource-microsoft-purview-service-trust-portal-dan-pernyataan-privasi" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Di luar pengaturan resource: Microsoft Purview, Service Trust Portal, dan pernyataan privasi</h3><div class="prose"><p>Azure Policy mengatur bagaimana resource <em>dikonfigurasi</em>. Azure Policy tidak bisa memberi tahu Anda bahwa sebuah file
+CSV di storage account berisi 40.000 nomor telepon pelanggan, atau bahwa seseorang mengirimkannya lewat e-mail ke luar
+perusahaan. Itulah tugas <strong>Microsoft Purview</strong>, keluarga solusi Microsoft untuk tata kelola data, keamanan data, dan
+kepatuhan data. Purview bekerja di Azure, Microsoft 365, sumber data on-premises, dan cloud lain, dan Anda
+mengelolanya di portal Microsoft Purview.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Area</th>
+<th>Kemampuan</th>
+<th>Apa yang dilakukannya</th>
+<th>Contoh di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tata kelola data</td>
+<td><strong>Data Map</strong></td>
+<td>memindai sumber data dan mengklasifikasikan temuannya</td>
+<td>menemukan database dan storage account mana yang menyimpan data pelanggan</td>
+</tr>
+<tr>
+<td>Tata kelola data</td>
+<td><strong>Unified Catalog</strong></td>
+<td>katalog yang bisa dicari, lengkap dengan pemilik, istilah glosarium, dan kualitas data</td>
+<td>Dewi menemukan dataset pesanan yang tepercaya alih-alih menyalin versi yang sudah basi</td>
+</tr>
+<tr>
+<td>Keamanan data</td>
+<td><strong>Information Protection</strong> (sensitivity label)</td>
+<td>memberi label dan melindungi dokumen serta data sesuai tingkat sensitivitasnya</td>
+<td>ekspor data anggota loyalti diberi label <em>Confidential</em></td>
+</tr>
+<tr>
+<td>Keamanan data</td>
+<td><strong>Data Loss Prevention</strong></td>
+<td>mendeteksi dan memblokir pembagian informasi sensitif yang berisiko</td>
+<td>nomor kartu tidak bisa keluar lewat e-mail</td>
+</tr>
+<tr>
+<td>Keamanan data</td>
+<td><strong>Insider Risk Management</strong></td>
+<td>mendeteksi aktivitas pengguna yang berisiko</td>
+<td>karyawan yang akan keluar mengunduh daftar pelanggan</td>
+</tr>
+<tr>
+<td>Kepatuhan data</td>
+<td><strong>Compliance Manager</strong></td>
+<td>melacak kontrol Anda terhadap regulasi dan memberi skor kemajuan</td>
+<td>bersiap menghadapi audit pelindungan data pribadi</td>
+</tr>
+<tr>
+<td>Kepatuhan data</td>
+<td><strong>Audit</strong>, <strong>eDiscovery</strong>, <strong>Data Lifecycle Management</strong></td>
+<td>mencatat aktivitas, menemukan konten untuk kasus hukum, menyimpan atau menghapus data sesuai jadwal</td>
+<td>menyimpan faktur selama jangka waktu yang diwajibkan, lalu menghapusnya</td>
+</tr>
+</tbody>
+</table></div>
+<p>Di level AZ-900, ingat pembagiannya: Azure Policy untuk konfigurasi resource, Purview untuk datanya sendiri.</p>
+<p>Dua sumber dari Microsoft menjawab pertanyaan &quot;bagaimana kita tahu bahwa <em>Microsoft</em> patuh?&quot;. <strong>Service Trust Portal</strong>
+(servicetrust.microsoft.com) menerbitkan laporan audit independen dan sertifikasi untuk layanan cloud Microsoft —
+ISO/IEC 27001, SOC 1, 2, dan 3, PCI DSS, CSA STAR, dan banyak sertifikasi regional — ditambah whitepaper. Sebagian
+dokumen mengharuskan Anda masuk dengan akun kerja. Ketika auditor Nusantara Retail meminta bukti bahwa pusat data Azure
+memenuhi PCI DSS, ke sanalah Anda mengarahkannya. <strong>Microsoft Privacy Statement</strong> (Pernyataan Privasi Microsoft,
+privacy.microsoft.com) menjelaskan data pribadi apa yang dikumpulkan Microsoft melalui produk-produknya, bagaimana data
+itu digunakan, dan pilihan apa yang dimiliki setiap orang. Bersama-sama, keduanya mencakup bagian Microsoft dalam
+<em>model tanggung jawab bersama</em> (shared responsibility model); Azure Policy dan Purview membantu Anda dengan bagian Anda.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span><strong>Azure Blueprints sudah pensiun — jangan memulai apa pun yang baru dengannya.</strong> Blueprints, layanan pratinjau
+(preview) yang mengemas policy, role assignment, dan template, sudah memblokir definisi baru sejak 31 Juli 2026,
+memblokir assignment baru mulai 31 Oktober 2026, dan pensiun sepenuhnya pada 31 Januari 2027. Gunakan Azure Policy
+untuk aturannya dan <strong>deployment stack</strong>, dengan <strong>template spec</strong> atau Git untuk pengelolaan versi, untuk men-deploy
+dan melindungi resource sebagai satu kesatuan. Makan Siang 20 menunjukkan stack beraksi, dan Makan Siang 31 membahas
+migrasinya.</p>
+</aside>
+</div></article><article class="scene-card" id="6-bagaimana-semuanya-menyatu-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Bagaimana semuanya menyatu untuk Nusantara Retail</h3><div class="prose"><p>Kembali ke pertanyaan Ibu Sari. Inilah baseline tata kelola pertama yang Anda usulkan, beserta alat yang membawa setiap
+aturannya:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kebutuhan</th>
+<th>Alat dan pengaturannya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Data pelanggan tetap dekat dengan rumah</td>
+<td><em>Allowed locations</em> (Deny) pada subscription: Indonesia Central untuk produksi, Southeast Asia untuk lab</td>
+</tr>
+<tr>
+<td>Setiap biaya bisa dilacak</td>
+<td><em>Inherit a tag from the resource group if missing</em> (Modify) ditambah <em>Require a tag on resources</em> (Deny) untuk <code>costCenter</code></td>
+</tr>
+<tr>
+<td>Database pesanan selamat dari aksi beres-beres</td>
+<td>lock CanNotDelete pada resource group-nya</td>
+</tr>
+<tr>
+<td>Kontraktor hanya melakukan apa yang perlu</td>
+<td>RBAC: Rizky mendapat Contributor hanya di resource group uji coba</td>
+</tr>
+<tr>
+<td>Auditor mendapatkan bukti</td>
+<td>tampilan kepatuhan Azure Policy, regulatory compliance di Defender for Cloud, Service Trust Portal</td>
+</tr>
+<tr>
+<td>Data sensitif diketahui dan dilindungi</td>
+<td>pemindaian Microsoft Purview, direncanakan untuk kuartal depan</td>
+</tr>
+</tbody>
+</table></div>
+<p>Terapkan secara bertahap. Assign aturan baru dalam mode Audit atau DoNotEnforce terlebih dahulu, baca laporan
+kepatuhannya selama seminggu, ajak bicara tim yang resource-nya muncul di laporan, dan baru setelah itu beralih ke
+Deny. Perbaiki resource yang sudah ada dengan remediation task, bukan dengan skrip sekali pakai, agar perbaikannya bisa
+diulang. Ketika seseorang membutuhkan pengecualian, tuliskan exemption dengan tanggal kedaluwarsa, alih-alih diam-diam
+menghapus aturannya.</p>
+<p>Baseline ini akan terbayar di makan siang berikutnya: tag <code>costCenter</code> menggerakkan laporan biaya di Makan Siang 19,
+dan di Makan Siang 20 Anda men-deploy aturan dan resource dengan Bicep lalu melindunginya dengan deployment stack.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Pipeline Dewi membuat storage account tanpa tag di <code>rg-storefront-test</code>, yang memiliki tag
+<code>costCenter=CC-1001</code>. Baik <em>Require a tag on resources</em> maupun <em>Inherit a tag from the resource group if missing</em>
+sudah di-assign untuk <code>costCenter</code>. Apakah deployment-nya berhasil? Apa yang berubah jika seseorang menghapus tag dari
+resource group tersebut?</p>
+</aside>
+<p>Siap untuk lebih jauh? <strong>Makan Siang 31 · Tata Kelola Skala Besar</strong> membawa gagasan-gagasan ini ke management group,
+inisiatif yang mencakup banyak subscription, dan policy as code.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Sebuah deployment bertemu mesin policy</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/18-governance-compliance-basic.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/18-governance-compliance-basic.html?lang=id" title="Demo interaktif: Sebuah deployment bertemu mesin policy" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/18-governance-compliance-basic/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Permintaan untuk West Europe dihentikan oleh mesin policy meskipun role Dewi mengizinkannya membuat storage account
+— dan pesan error-nya menyebut assignment yang memblokirnya.</li>
+<li>Resource yang sudah ada tidak pernah dihapus oleh aturan Deny; resource itu muncul sebagai non-compliant di tampilan
+kepatuhan.</li>
+<li>Permintaan tanpa tag yang sama gagal sebelum resource group punya tag <code>costCenter</code> dan berhasil sesudahnya, karena
+Modify berjalan sebelum Deny.</li>
+<li>Sebuah remediation task, yang bertindak melalui managed identity milik assignment, memperbaiki resource yang sudah
+ada sebelum aturan dibuat.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Rizky memegang role Contributor pada resource group yang berisi database pesanan. Anda harus memastikan tidak ada
+seorang pun — bahkan seorang Owner — yang menghapusnya karena kecelakaan, sementara operasi update tetap berjalan.
+Apa yang Anda gunakan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Lock <strong>CanNotDelete</strong> pada database tersebut (atau pada resource group-nya) — <em>alasannya:</em> lock berlaku untuk semua
+orang apa pun role-nya, dan CanNotDelete tetap mengizinkan baca dan ubah; mencabut role Rizky justru akan ikut
+memblokir pekerjaannya yang sah.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Bagian keuangan ingin setiap resource baru membawa <code>costCenter</code>. Developer sering lupa memberi tag, tetapi setiap
+resource group selalu diberi tag saat dibuat. Policy bawaan mana yang paling sedikit menimbulkan hambatan, dan
+bagaimana dengan resource yang sudah ada?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Assign <strong>Inherit a tag from the resource group if missing</strong> (Modify), bila perlu didukung <strong>Require a tag on
+resources</strong> (Deny), dan jalankan <strong>remediation task</strong> untuk resource yang sudah ada — <em>alasannya:</em> Modify berjalan
+sebelum Deny, sehingga permintaan tanpa tag di group yang sudah bertag diperbaiki alih-alih ditolak, dan remediation
+menangani apa yang sudah ada sebelum assignment.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Anda meng-assign <em>Allowed locations</em> (hanya Southeast Asia) ke subscription. Keesokan paginya, sebuah storage
+account lama di West Europe tampil sebagai <em>Non-compliant</em>, tetapi masih berfungsi. Mengapa storage account itu
+tidak dihapus, dan apa saja pilihan Anda?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Deny hanya memblokir permintaan create dan update</strong> — <em>alasannya:</em> resource yang sudah ada dievaluasi dan
+dilaporkan, tetapi tidak pernah dihapus. Anda bisa memindahkan atau membuat ulang datanya di region yang diizinkan
+lalu menghapus akun lama, atau memberikan <strong>exemption</strong> berbatas waktu (Waiver) jika ada alasan bisnis untuk
+mempertahankannya untuk sementara.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Seorang auditor meminta laporan independen yang menunjukkan bahwa layanan cloud Microsoft memenuhi ISO/IEC 27001.
+Ke mana Anda mengarahkannya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Ke <strong>Service Trust Portal</strong> — <em>alasannya:</em> portal itu menerbitkan laporan audit pihak ketiga dan sertifikasi untuk
+layanan cloud Microsoft, sedangkan Microsoft Purview dan Azure Policy mengurusi data <em>Anda</em> dan resource <em>Anda</em>.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Seorang rekan mengusulkan Azure Blueprints untuk mencetak susunan standar bagi subscription baru aplikasi loyalti.
+Apa rekomendasi Anda?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Jangan: <strong>Azure Blueprints sudah pensiun</strong> (tidak ada assignment baru mulai 31 Oktober 2026; pensiun sepenuhnya 31
+Januari 2027). Gunakan Azure Policy untuk aturannya dan <strong>deployment stack</strong> dengan template spec atau Git untuk
+resource-nya — <em>alasannya:</em> itulah pengganti yang direkomendasikan Microsoft.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Azure RBAC memutuskan <em>siapa</em> yang boleh bertindak, Azure Policy memutuskan <em>apa</em> yang boleh ada, dan resource lock melindungi apa yang tidak boleh terhapus atau berubah karena kecelakaan — gunakan ketiganya bersama-sama.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Policy definition adalah aturan jika/maka, inisiatif membundel beberapa definisi, dan assignment menerapkannya ke sebuah scope dengan parameter; semua yang ada di bawah scope itu mewarisi assignment-nya.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Effect menentukan tanggapannya: Deny memblokir, Audit melaporkan, Modify dan Append mengubah permintaan lebih dulu, sedangkan DeployIfNotExists dan AuditIfNotExists memeriksa resource terkait setelah deployment. Modify dan DeployIfNotExists membutuhkan managed identity, ditambah remediation task untuk resource yang sudah ada.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Tag menggerakkan laporan biaya dan otomatisasi, tetapi tidak diwariskan — pertahankan daftar tag wajib yang singkat dan tegakkan dengan policy.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Microsoft Purview mengatur dan melindungi datanya sendiri; Service Trust Portal dan Microsoft Privacy Statement menjawab auditor dan pengacara; Azure Blueprints sudah pensiun, jadi gunakan policy ditambah deployment stack.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Setiap Deny butuh pintu.</strong> Saat meninjau desain tata kelola, saya menanyakan hal ini untuk tiap aturan Deny:
+<em>siapa pemiliknya, dan apa yang harus dilakukan developer pada Jumat pukul lima sore ketika aturan itu memblokir
+sesuatu yang sah?</em> Kalau jawabannya &quot;buka tiket, lalu tunggu&quot;, orang akan mencari jalan memutar, biasanya lewat izin
+yang lebih luas atau subscription uji coba yang luput dari pengawasan. Jadi setiap assignment Deny saya lengkapi
+dengan non-compliance message yang menjelaskan apa yang harus dilakukan, pemilik yang jelas, dan jalur exemption
+bertanggal kedaluwarsa. Tag pun saya buat ramping: empat tag yang benar-benar dipakai untuk mengambil keputusan lebih
+berguna daripada dua puluh tag yang akhirnya diisi &quot;nanti&quot;. Untuk lock, aturan saya sederhana: CanNotDelete untuk apa
+pun yang tidak bisa dibangun ulang dari kode, seperti database dan storage account berisi data, dan ReadOnly nyaris
+tidak pernah.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>18</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Menjaga data tetap di tempat yang benar</h3>
+          <div class="prose"><p>Anda akan memasang pagar pengaman pertama Ibu Sari pada sebuah resource group lab: resource hanya di region lab Anda,
+tag <code>costCenter</code> yang wajib, dan pewarisan tag otomatis dari resource group. Setelah itu Anda akan membuktikan bahwa
+deployment di region lain ditolak, menyaksikan aturan Modify menyelamatkan deployment tanpa tag, memperbaiki dua
+resource &quot;lawas&quot; dengan remediation task, dan membaca laporan kepatuhan — bukti yang sama yang akan diminta seorang
+auditor.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 45 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/18-governance-compliance-basic.html">Mulai Lab 18 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/governance/policy/overview" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Azure Policy?</b><span>Gambaran umum resmi, termasuk perbedaan policy dan RBAC serta batasan per scope.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/governance/policy/concepts/effect-basics" target="_blank" rel="noopener"><b>Microsoft Learn: Dasar-dasar effect definisi Azure Policy</b><span>Setiap effect, urutan evaluasinya, dan bagaimana assignment yang bertumpuk digabungkan.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-resource-manager/management/lock-resources" target="_blank" rel="noopener"><b>Microsoft Learn: Mengunci resource Azure untuk melindungi infrastruktur Anda</b><span>Daftar lengkap hal-hal mengejutkan yang diblokir oleh sebuah lock.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/purview/purview" target="_blank" rel="noopener"><b>Microsoft Learn: Mengenal Microsoft Purview</b><span>Tur singkat solusi keamanan data, tata kelola, dan kepatuhan.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">📜</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Pembuat Aturan</h2>
+        <p class="muted">Tegakkan aturan dengan Azure Policy.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Kita bisa pulih dari penghapusan, dan pagar pengaman mencegah kesalahan yang menyebabkannya.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 19</b><h4>Tagihan yang Tak Bisa Dibaca</h4><p>Tagihan Azure sungguhan yang pertama tiba, dan angkanya lebih besar daripada di spreadsheet.</p><p style="margin-top:10px"><a href="19-cost-management.html">Tonton Episode 19 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="17-backup-disaster-recovery.html"><small>← Episode sebelumnya</small>17 · Ransomware di Surabaya</a><a class="next" href="19-cost-management.html"><small>Episode berikutnya →</small>19 · Tagihan yang Tak Bisa Dibaca</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/18-governance-compliance-basic/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 29 · Containers (Lanjutan): Azure Kubernetes Service — Demo interaktif",
+    "kicker": "Makan Siang 29 · Containers (Lanjutan) · Demo interaktif",
+    "title": "Katakan apa yang Anda inginkan, dan Kubernetes menjaganya tetap nyata",
+    "lede": "Ikuti Deployment storefront milik Nusantara Retail di sebuah cluster AKS: tiga replica yang tersebar di tiga availability zone, node gagal yang dipulihkan cluster dengan sendirinya, Horizontal Pod Autoscaler saat promo 12.12, serta rolling update lengkap dengan rollback. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Cluster AKS dengan satu node di setiap availability zone dari tiga zona menjalankan Deployment storefront",
+    "svgDesc": "Di sebelah kiri, kubectl milik Rizky berbicara dengan control plane AKS, sebuah papan membandingkan desired state dan kondisi sebenarnya dari Deployment, dan Horizontal Pod Autoscaler mengawasi CPU. Di dalam region Azure, Service LoadBalancer di bagian atas mengirim request pembeli ke pod storefront di tiga node, satu per availability zone, dan setiap node punya ruang untuk dua pod. Keterangan di bawah menjelaskan setiap kejadian."
+  },
+  "steps": [
+    {
+      "title": "Banyak layanan, satu cluster",
+      "text": "Tim Dewi telah memecah toko menjadi beberapa layanan, dan vendor program loyalitas mengirim Helm chart yang membutuhkan Kubernetes sungguhan. Rizky membangun cluster AKS di Southeast Asia dengan satu node di setiap availability zone, tiga zona sekaligus. Syarat Ibu Sari: toko harus bertahan saat ada server yang rusak dan saat serbuan pembeli 12.12, dan tidak boleh ada yang harus terus mengasuh cluster itu."
+    },
+    {
+      "title": "Azure menjalankan control plane",
+      "text": "AKS membagi pekerjaan. Azure menjalankan dan mem-patch control plane: API server yang menjadi tujuan setiap perintah kubectl, database etcd, scheduler, dan para controller. Di tier Free, bagian ini gratis, tetapi tanpa SLA yang dijamin secara finansial. Node adalah virtual machine di subscription Anda yang menjalankan kubelet dan containerd, dan Anda membayarnya per jam."
+    },
+    {
+      "title": "Nyatakan desired state",
+      "text": "Rizky menerapkan sebuah manifest: Deployment bernama storefront dengan tiga replica image v1, masing-masing meminta 50 millicore CPU dan 64 MiB memori. Ia tidak pernah menyebut node mana yang dipakai. API server menyimpan desired state ini di etcd. Sebuah controller membandingkannya dengan kenyataan, menemukan nol pod padahal yang diinginkan tiga, lalu membuat tiga objek pod."
+    },
+    {
+      "title": "Scheduler menyebar pod ke berbagai zona",
+      "text": "Scheduler memilih node untuk setiap pod baru. Node mana pun punya ruang untuk request sekecil itu, dan topology spread constraint di pod template meminta sebaran yang merata antarzona, sehingga setiap zona mendapat satu pod. Kubelet di setiap node menarik image dan menyalakan container. Pod baru dihitung siap hanya ketika readiness probe-nya menjawab.",
+      "set": {
+        "t-actual": "siap: 3 dari 3"
+      }
+    },
+    {
+      "title": "Satu alamat di depan pod yang berpindah-pindah",
+      "text": "Service bertipe LoadBalancer memberi pod-pod itu satu alamat yang stabil. AKS menambahkan rule dan alamat IP publik ke Azure load balancer milik cluster di node resource group, dan Service membagi request ke pod-pod yang siap di ketiga zona. Pod datang dan pergi dengan alamat IP baru, tetapi Service selalu melacaknya, sehingga pembeli tidak pernah menyadarinya."
+    },
+    {
+      "title": "Sebuah node gagal di zona 3",
+      "text": "Pukul 14.05, virtual machine di zona 3 berhenti merespons. Dalam sekitar satu menit, Kubernetes menandai node itu NotReady dan pod-nya tidak siap, sehingga Service berhenti mengirim request ke sana. Toko tetap buka dengan dua pod lainnya, meski cadangan kapasitasnya berkurang. Lihat papan: desired state tetap tiga. Hanya kondisi sebenarnya yang berubah.",
+      "set": {
+        "t-n3": "NotReady ✗",
+        "t-p3s": "mati ✗",
+        "t-actual": "siap: 2 dari 3"
+      }
+    },
+    {
+      "title": "Controller mengganti pod yang hilang",
+      "text": "Pod di node yang tidak terjangkau diberi waktu lima menit untuk pulih. Setelah itu Kubernetes mengusirnya, dan controller menghitung dua pod berjalan padahal yang diinginkan tiga. Ia membuat satu lagi, scheduler menempatkannya di node sehat di zona 1, dan begitu readiness probe-nya lolos, kondisi sebenarnya kembali sama dengan desired state. Tidak ada petugas jaga yang perlu dipanggil.",
+      "set": {
+        "t-actual": "siap: 3 dari 3"
+      }
+    },
+    {
+      "title": "Serbuan pembeli 12.12 datang",
+      "text": "Auto-repair sudah me-reboot node 3, dan node itu kembali Ready, tetapi kosong: Kubernetes tidak memindahkan pod yang sedang berjalan kembali ke sana dengan sendirinya. Lalu promo 12.12 dimulai, dan rata-rata pemakaian ketiga pod mencapai 100% dari CPU request-nya. Horizontal Pod Autoscaler memeriksa setiap 15 detik, membandingkannya dengan target 50%, lalu menghitung ceil(3 × 100 ÷ 50) = 6 pod.",
+      "set": {
+        "t-n3": "Ready · diperbaiki",
+        "t-shop": "promo 12.12: traffic 10×",
+        "t-hpa": "CPU 100% · target 50%"
+      }
+    },
+    {
+      "title": "HPA menambah tiga pod",
+      "text": "HPA tidak menyalakan pod sendiri. Ia menaikkan jumlah replica yang diinginkan Deployment dari tiga menjadi enam, lalu para controller membuat tiga pod baru. Scheduler menempatkannya di tempat yang sebarannya paling tipis: dua di node yang sudah diperbaiki di zona 3 dan satu di zona 2. Pod-pod itu menyala dalam hitungan detik karena node masih punya ruang, dan rata-rata CPU turun kembali mendekati target.",
+      "set": {
+        "t-desired": "diinginkan: 6 × v1 (HPA)",
+        "t-actual": "siap: 6 dari 6",
+        "t-hpa": "CPU 50% · 6 pod"
+      }
+    },
+    {
+      "title": "Rolling update: satu pod setiap kali",
+      "text": "Setelah promo, HPA menunggu stabilization window lima menitnya habis, lalu kembali ke tiga pod. Sekarang tim merilis v2. Dengan maxSurge 1 dan maxUnavailable 0, Deployment lebih dulu menambah satu pod v2. Pod itu tidak menerima request sampai readiness probe-nya lolos; baru setelah itu satu pod v1 dibuang, dan siklusnya berulang untuk pod berikutnya.",
+      "set": {
+        "t-desired": "diinginkan: 3 × v2",
+        "t-actual": "siap: 3 v1 + 0 v2",
+        "t-hpa": "CPU 15% · 3 pod",
+        "t-shop": "promo usai: hari biasa"
+      }
+    },
+    {
+      "title": "Rollout selesai, toko tidak pernah tutup",
+      "text": "Tiga siklus kemudian, semua pod menjalankan v2, dan toko tidak pernah tutup: minimal tiga pod siap tetap berada di belakang Service sepanjang waktu. Kubernetes menyimpan ReplicaSet lama dengan nol pod, dan itulah yang membuat rollback cepat. Pola yang sama melindungi Anda saat AKS men-drain node selama upgrade, asalkan Anda menjalankan beberapa replica dan sebuah PodDisruptionBudget.",
+      "set": {
+        "t-pv2s": "siap",
+        "t-p2": "v2",
+        "t-p5": "v2",
+        "t-actual": "siap: 3 dari 3 (v2)"
+      }
+    },
+    {
+      "title": "Salah ketik pada tag image",
+      "text": "Berikutnya, Rizky memasang tag yang tidak ada: v99. Pod baru tidak bisa menarik image-nya; statusnya berganti-ganti antara ErrImagePull dan ImagePullBackOff, dan kubectl describe menunjukkan alasannya di bagian events. Karena maxUnavailable bernilai 0, tidak ada pod v2 yang dibuang selama pod baru belum siap, jadi rollout hanya tertahan dan pembeli tidak merasakan apa-apa.",
+      "set": {
+        "t-dev": "kubectl set image …:v99",
+        "t-desired": "diinginkan: 3 × v99",
+        "t-actual": "siap: 3 v2 + 0 v99",
+        "t-pbad": "v99 ✗",
+        "t-pbads": "tanpa image"
+      }
+    },
+    {
+      "title": "Rollback, lalu giliran Anda",
+      "text": "kubectl rollout undo mengembalikan Deployment ke ReplicaSet sebelumnya, pod yang rusak dihapus, dan desired state kembali menjadi tiga pod v2. Rangkumannya: Anda menyatakan keinginan, Kubernetes terus menyelaraskan, zona dan replica meredam kegagalan, HPA mengubah beban menjadi replica, readiness probe membuat pembaruan aman, dan Azure menjalankan control plane untuk Anda.",
+      "tip": "Di Lab 29 Anda membangun cluster AKS kecil dengan Azure CNI Overlay, men-deploy storefront dengan probe, request, dan limit, menghapus pod lalu melihatnya kembali, melakukan scaling dengan HPA, meluncurkan perubahan, dan memperbaiki ImagePullBackOff dengan kubectl describe.",
+      "set": {
+        "t-dev": "kubectl rollout undo",
+        "t-desired": "diinginkan: 3 × v2",
+        "t-actual": "siap: 3 dari 3 (v2)"
+      }
+    }
+  ],
+  "svg": {
+    "Azure region · Southeast Asia": "Region Azure · Southeast Asia",
+    "Zone 1": "Zona 1",
+    "Zone 2": "Zona 2",
+    "Zone 3": "Zona 3",
+    "AKS control plane": "Control plane AKS",
+    "managed by Azure · Free tier": "dikelola Azure · tier Free",
+    "desired: 3 × v1": "diinginkan: 3 × v1",
+    "ready: 0 of 3": "siap: 0 dari 3",
+    "target: 50% of CPU request": "target: 50% dari CPU request",
+    "CPU 20% · 3 pods": "CPU 20% · 3 pod",
+    "Shoppers": "Pembeli",
+    "normal afternoon": "siang yang biasa",
+    "public IP · only ready pods get requests": "IP publik · request hanya ke pod yang siap",
+    "ready": "siap",
+    "starting": "memulai",
+    "deployment.yaml · the desired state": "deployment.yaml · kondisi diinginkan",
+    "The new version and how to roll it out": "Versi baru dan cara meluncurkannya",
+    "One wrong character": "Satu karakter yang salah",
+    "That tag does not exist in the registry.": "Tag itu tidak ada di registry.",
+    "Node 3 is NotReady, so its pod is marked not ready and the Service skips it.": "Node 3 NotReady: pod-nya ditandai tidak siap, dan Service melewatinya.",
+    "Kubernetes waits five minutes before evicting the pod, in case the node returns.": "Kubernetes menunggu lima menit sebelum mengusir pod, siapa tahu node-nya kembali.",
+    "Node auto-repair: AKS reboots a node that stays NotReady for five minutes,": "Node auto-repair: AKS me-reboot node yang tetap NotReady selama lima menit,",
+    "then reimages or redeploys it if needed. That can take up to an hour.": "lalu me-reimage atau me-redeploy-nya bila perlu; bisa sampai satu jam.",
+    "No room on any node? The new pods wait in Pending, and the cluster autoscaler": "Semua node penuh? Pod baru menunggu di Pending, dan cluster autoscaler",
+    "adds a node in a few minutes. Honest CPU and memory requests make this work.": "menambah node dalam beberapa menit, asalkan request CPU dan memorinya jujur.",
+    "Readiness gate: the Service sends requests to the v2 pod only after its readiness": "Gerbang readiness: Service mengirim request ke pod v2 hanya setelah readiness",
+    "probe passes. Then one v1 pod stops, and the next v2 pod starts.": "probe-nya lolos. Lalu satu pod v1 berhenti, dan pod v2 berikutnya mulai.",
+    "AKS upgrades drain one node at a time. A PodDisruptionBudget with minAvailable: 2": "Upgrade AKS men-drain node satu per satu. PodDisruptionBudget dengan minAvailable: 2",
+    "stops a drain from evicting more storefront pods than the shop can spare.": "mencegah drain mengusir pod storefront melebihi yang sanggup dilepas toko.",
+    "Back to the previous ReplicaSet: three v2 pods, and the broken pod is gone.": "Kembali ke ReplicaSet sebelumnya: tiga pod v2, dan pod yang rusak sudah hilang."
+  }
+}

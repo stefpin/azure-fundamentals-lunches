@@ -1,0 +1,139 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 16 · Tahu lebih dulu daripada pelanggan — Demo interaktif",
+    "kicker": "Makan Siang 16 · Pemantauan (Dasar) · Demo interaktif",
+    "title": "Tahu lebih dulu daripada pelanggan: alert, activity log, dan kesehatan layanan",
+    "lede": "Lonjakan CPU berubah menjadi email, activity log menyebut siapa yang menghentikan VM, serta Service Health dan Resource Health membedakan “kita” dari “Azure”. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Alerting Azure Monitor untuk VM toko online Nusantara Retail",
+    "svgDesc": "Pelanggan memakai VM toko online di Southeast Asia. Metrik platform milik VM dan activity log mengalir ke Azure Monitor, tempat sebuah metric alert rule dan sebuah activity log alert memberi tahu engineer piket melalui action group. Service Health, Resource Health, dan Azure Advisor tampil di kolom kanan."
+  },
+  "steps": [
+    {
+      "title": "Jumat malam, tak ada yang mengawasi",
+      "text": "Pukul 19.40, Jumat malam saat flash sale. Pelanggan berjubel di VM toko online Nusantara Retail, CPU-nya nyaris 100%, dan halaman bergerak selambat siput. Tak seorang pun di kantor pusat tahu, karena tidak ada yang mengawasi VM itu. Dua belas menit lagi pelanggan akan mengeluh di Instagram. Data yang bisa memperingatkan tim sebenarnya sudah ada di Azure; hanya saja belum ada yang bertanya kepadanya.",
+      "set": {
+        "t-cpu": "CPU 96%",
+        "t-vm-state": "Kewalahan",
+        "t-cust": "situs lambat, checkout gagal"
+      }
+    },
+    {
+      "title": "Dua sinyal gratis, tanpa setup",
+      "text": "Hari Senin Anda membuka Azure Monitor dan menemukan dua jenis data yang sebenarnya sudah ada sejak awal. Metrik platform seperti Percentage CPU masuk setiap menit dan disimpan selama 93 hari. Activity log mencatat setiap operasi control plane: siapa membuat, mengubah, atau menghentikan apa. Keduanya dikumpulkan otomatis dan gratis. Resource log dan data guest harus diaktifkan sendiri.",
+      "set": {
+        "t-cpu": "CPU 35%",
+        "t-vm-state": "Running",
+        "t-cust": "belanja seperti biasa"
+      }
+    },
+    {
+      "title": "Tulis rule-nya sekali",
+      "text": "Anda membuat metric alert rule pada VM: setiap menit, rata-ratakan Percentage CPU selama lima menit terakhir lalu bandingkan dengan 70. Rule ini menunjuk ke action group ag-nusa-oncall, daftar \"siapa yang perlu diberi tahu\" yang bisa dipakai ulang: kotak surat on-call dan ponsel piket. Tanpa action group, alert hanya akan muncul di halaman Alerts di portal."
+    },
+    {
+      "title": "CPU naik, rule menyadarinya",
+      "text": "Jumat lagi, pukul 19.40. Flash sale dimulai dan CPU naik ke 92%. Setiap menit, rule menghitung ulang rata-rata lima menit: 48, lalu 67, lalu 84. Begitu rata-ratanya melewati 70, kondisinya terpenuhi. Rata-rata selama lima menit berarti lonjakan sepuluh detik tidak membangunkan siapa pun, sedangkan beban berlebih yang berlangsung terus akan membangunkan tim.",
+      "set": {
+        "t-cpu": "CPU 92%",
+        "t-vm-state": "Sibuk",
+        "t-rule-state": "rata-rata 5 menit: 84%"
+      }
+    },
+    {
+      "title": "Fired: email pun tiba",
+      "text": "Rule memicu alert Sev 2 dan menjalankan action group. Dalam satu menit, ponsel engineer piket bergetar karena email yang menyebutkan rule, VM, dan nilai yang melewati batas. Saat itu pukul 19.46: enam menit setelah lonjakan dimulai, dan jauh sebelum ada pelanggan yang menulis keluhan. Sekarang tim bisa bertindak.",
+      "set": {
+        "t-rule-state": "Fired · Sev 2",
+        "t-inbox": "1 alert: alert-cpu-high"
+      }
+    },
+    {
+      "title": "Diperbaiki, lalu resolved",
+      "text": "Dewi menaikkan ukuran VM (scale up) dan CPU turun ke 30%. Metric alert bersifat stateful: rule hanya terpicu sekali, bukan setiap menit, dan kini setelah rata-rata lima menit kembali di bawah 70, rule itu resolved dengan sendirinya dan mengirim email Resolved. Alert tetap ada di halaman Alerts selama 30 hari, dan di sana tim menandainya Closed.",
+      "set": {
+        "t-cpu": "CPU 30%",
+        "t-vm-state": "Running",
+        "t-rule-state": "Resolved",
+        "t-inbox": "2 email: Fired, Resolved"
+      }
+    },
+    {
+      "title": "Rule Rizky tak pernah terpicu",
+      "text": "Rizky menyalin rule itu untuk mengurangi alarm palsu: CPU minimum di atas 70 selama satu jam. Minimum berarti nilai terendah dalam window, jadi CPU harus bertahan di atas 70% selama satu jam penuh. Lonjakan flash sale ini hanya lima belas menit, sehingga kondisinya tidak pernah terpenuhi. Sinyal sampai ke rule dan berhenti di situ. Tak ada yang diberi tahu.",
+      "set": {
+        "t-rule": "min CPU > 70% · window 1 jam",
+        "t-rule-state": "Tak pernah terpicu ✗",
+        "t-cpu": "CPU 97%",
+        "t-vm-state": "Sibuk",
+        "t-inbox": "Kotak masuk: tak ada alert baru"
+      }
+    },
+    {
+      "title": "Solusinya: rata-rata selama lima menit",
+      "text": "Solusinya: katakan persis apa yang Anda maksud. Rata-rata selama lima menit, diperiksa setiap menit, menangkap beban berlebih yang berkepanjangan tanpa bereaksi pada lonjakan sesaat. Agregasi dan window adalah dua pengaturan di balik kebanyakan alert yang tak pernah terpicu, atau yang terpicu terus-menerus. Di lab, Anda sendiri merusak rule Rizky dan membuktikan perbedaannya dengan riwayat metrik.",
+      "set": {
+        "t-rule": "avg CPU > 70% · window 5 menit",
+        "t-rule-state": "Fired · Sev 2",
+        "t-inbox": "1 alert: alert-cpu-high"
+      }
+    },
+    {
+      "title": "02.00: siapa yang menghentikan toko?",
+      "text": "Sabtu, pukul 02.00. Rizky men-deallocate VM toko online supaya hemat biaya selama akhir pekan. Permintaannya lewat Azure Resource Manager, dan activity log mencatatnya secara otomatis: operasinya, waktunya, statusnya, dan pemanggilnya (caller). Tanpa agent, tanpa pengaturan, tanpa biaya. Entri tidak bisa diubah atau dihapus, karena itulah activity log menjadi tempat pertama untuk dicek.",
+      "set": {
+        "t-vm-state": "Deallocated",
+        "t-cpu": "CPU —",
+        "t-rule-state": "Resolved",
+        "t-actlog": "Deallocate VM · rizky@… · Succeeded",
+        "t-cust": "situs tidak bisa diakses"
+      }
+    },
+    {
+      "title": "Activity log alert langsung memberi tahu Anda",
+      "text": "Activity log alert mengawasi entri baru yang cocok dengan sebuah kondisi: di sini, VM mana pun di resource group produksi yang di-deallocate. Alert ini terpicu untuk setiap event yang cocok dan memakai action group yang sama, sehingga engineer piket tahu tentang penghentian itu dalam hitungan menit, bukan saat pelanggan pertama menelepon Sabtu pagi. Perkirakan ada jeda beberapa menit.",
+      "set": {
+        "t-inbox": "Alert: VM di-deallocate"
+      }
+    },
+    {
+      "title": "Masalah Azure atau masalah kita?",
+      "text": "Pak Budi bertanya apakah Azure sedang mengalami gangguan. Service Health menjawab untuk layanan dan region yang Anda pakai: tidak ada insiden di Southeast Asia. Resource Health menjawab untuk satu resource: vm-nusa-web unavailable, user initiated. Dari sempit ke luas, Resource Health dulu lalu Service Health, terlihat bahwa kali ini penyebabnya kita sendiri. Pada hari yang buruk, Anda akan melihat platform initiated dan service issue yang sedang aktif.",
+      "set": {
+        "t-sh": "Tak ada masalah di Southeast Asia",
+        "t-rh": "vm-nusa-web: Unavailable (user)"
+      }
+    },
+    {
+      "title": "Advisor: pendapat kedua yang gratis",
+      "text": "Senin pagi: kopi dan Azure Advisor. Advisor meninjau konfigurasi dan pemakaian secara gratis, lalu memilah sarannya ke dalam lima kategori: keandalan, keamanan, performa, biaya, dan keunggulan operasional. Hari ini ia menyarankan membuat Service Health alert dan menyesuaikan ukuran VM toko online yang menganggur sepanjang minggu. Saran keamanannya berasal dari Defender for Cloud; saran biayanya menjadi bahan Makan Siang 19.",
+      "set": {
+        "t-adv": "Cost: sesuaikan ukuran vm-nusa-web",
+        "t-vm-state": "Running",
+        "t-cpu": "CPU 28%",
+        "t-cust": "belanja seperti biasa"
+      }
+    },
+    {
+      "title": "Rangkuman: tahu lebih dulu, tahu sebabnya",
+      "text": "Metrik gratis dan activity log selalu tersedia. Metric alert dengan agregasi dan window yang tepat, tersambung ke action group, memberi tahu tim lebih dulu. Activity log dan activity log alert memberi tahu siapa mengubah apa. Resource Health dan Service Health membedakan kita dari Azure, dan Advisor terus menyempurnakan pengaturannya. Pertanyaan Ibu Sari akhirnya terjawab.",
+      "tip": "Di Lab 16 Anda membangunnya sendiri: action group, alert CPU yang Anda picu dengan Run Command, activity log alert dan Service Health alert, serta rule Rizky yang rusak untuk diperbaiki."
+    }
+  ],
+  "svg": {
+    "Customers": "Pelanggan",
+    "shopping the flash sale": "belanja saat flash sale",
+    "contractor · 02:00": "kontraktor · 02.00",
+    "Platform metrics": "Metrik platform",
+    "every minute · kept 93 days · free": "tiap menit · disimpan 93 hari · gratis",
+    "avg CPU > 70% · 5 min window": "avg CPU > 70% · window 5 menit",
+    "who did what, when · kept 90 days": "siapa, apa, kapan · disimpan 90 hari",
+    "on by default · free": "aktif secara default · gratis",
+    "VM deallocated in rg-nusa-prod": "VM di-deallocate di rg-nusa-prod",
+    "On-call engineer": "Engineer piket",
+    "Inbox: no alerts yet": "Kotak masuk: belum ada alert",
+    "email and SMS": "email dan SMS",
+    "your services and regions": "layanan dan region Anda",
+    "one resource at a time": "satu resource dalam satu waktu",
+    "5 categories of free advice": "5 kategori saran gratis"
+  }
+}

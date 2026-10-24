@@ -1,0 +1,177 @@
+{
+  "page": {
+    "doc_title": "Lunch 08 · Virtual Networking (Basic) — Interactive demo",
+    "kicker": "Lunch 08 · Virtual Networking (Basic) · Interactive demo",
+    "title": "Who gets in, who gets out: the NSG rule evaluator",
+    "lede": "Follow packets through subnet and NIC network security groups, watch rules being checked in priority order, and see why a private subnet needs a NAT gateway. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Network security groups deciding which packets reach Nusantara Retail's web and app servers",
+    "svgDesc": "On the left, the internet and, later, a NAT gateway. In the middle, the virtual network vnet-nusa-shop: a web subnet where packets pass the subnet NSG nsg-web and a NIC NSG before reaching vm-web, and a private app subnet where nsg-app guards vm-app. On the right, a rule evaluator lists the rules of the NSG being checked, lowest priority number first, and shows which rule matched."
+  },
+  "steps": [
+    {
+      "title": "A storefront with two tiers",
+      "text": "Nusantara Retail's storefront now lives in vnet-nusa-shop, 10.20.0.0/16, well clear of head office's 10.0.0.0/16. Shoppers must reach vm-web in the web subnet. vm-app in the private app subnet runs the order logic and must stay invisible from the internet. Network security groups stand between every packet and every VM, and the panel on the right shows each rule check as it happens."
+    },
+    {
+      "title": "Two gates on the way in",
+      "text": "A network security group, or NSG, can sit on a subnet, on a network interface, or on both. Inbound traffic meets the subnet NSG first and the NIC NSG second; outbound traffic meets them in the opposite order. A packet must be allowed at every gate it meets. Here snet-web has nsg-web, and vm-web's network interface still carries an old NSG from a quick test."
+    },
+    {
+      "title": "The lowest number is checked first",
+      "text": "Every NSG is an ordered list. Your own rules use priorities from 100 to 4096; Azure's default rules sit at 65000 and above and can't be deleted. Azure checks the list from the lowest number up, and the first rule that matches the packet decides. Nothing after it is read. nsg-web has one custom rule, Allow-HTTP-Internet at 100, then three inbound defaults."
+    },
+    {
+      "title": "SSH from the internet",
+      "text": "A bot tries SSH, TCP port 22, against vm-web's Standard public IP, which stays closed until an NSG allows traffic. At nsg-web, rule 100 only covers port 80, and the two allow defaults only match traffic from the virtual network or Azure's health probes. DenyAllInBound at 65500 matches, so the packet is dropped at the subnet. The NIC NSG never even sees it.",
+      "set": {
+        "t-pkt": "TCP 22 · internet → 10.20.1.4",
+        "t-res": "Result: dropped at nsg-web",
+        "t-res2": "first match: 65500 DenyAllInBound"
+      }
+    },
+    {
+      "title": "HTTP passes one gate only",
+      "text": "Now a shopper asks for the home page on TCP 80. At nsg-web, rule 100 matches: allowed. But the packet must also pass the NIC NSG, whose only custom rule allows SSH at priority 1000. Nothing else matches before DenyAllInBound, so the request dies one step from vm-web. Both levels must allow a packet; one forgotten NSG is enough to take the shop offline.",
+      "set": {
+        "t-nsg": "NIC NSG on vm-web · inbound",
+        "t-r1p": "1000",
+        "t-r1n": "Allow-SSH",
+        "t-r1d": "Allow · TCP 22 · any → any",
+        "t-pkt": "TCP 80 · internet → 10.20.1.4",
+        "t-res": "Result: dropped at NIC NSG",
+        "t-res2": "nsg-web allowed it · NIC NSG: 65500"
+      }
+    },
+    {
+      "title": "One place for the rules",
+      "text": "Dewi deletes the leftover NIC NSG, so nsg-web becomes the single place to read and audit the web tier's rules. The next request matches rule 100 at the subnet and reaches vm-web. The reply needs no rule of its own, because NSGs are stateful. Most teams keep NSGs on subnets only; if you use both levels, always review them together.",
+      "set": {
+        "t-r1p": "100",
+        "t-r1n": "Allow-HTTP-Internet",
+        "t-r1d": "Allow · TCP 80 · Internet → asg-web",
+        "t-nsg": "nsg-web · subnet NSG · inbound",
+        "t-pkt": "TCP 80 · internet → 10.20.1.4",
+        "t-res": "Result: delivered to vm-web",
+        "t-res2": "first match: 100 Allow-HTTP-Internet"
+      }
+    },
+    {
+      "title": "Groups instead of IP addresses",
+      "text": "vm-web's network interface belongs to the application security group asg-web. Rules can name the group instead of IP addresses, so a third web server joins the rules simply by joining the group. The app subnet's NSG, nsg-app, uses it as a source: allow asg-web to port 8080 at priority 100, then deny the rest of the virtual network at 4000.",
+      "set": {
+        "t-nsg": "nsg-app · subnet NSG · inbound",
+        "t-pkt": "rules of the app subnet",
+        "t-r1p": "100",
+        "t-r1n": "Allow-Web-To-App-8080",
+        "t-r1d": "Allow · TCP 8080 · asg-web → snet-app",
+        "t-r2p": "4000",
+        "t-r2n": "Deny-VNet-Inbound",
+        "t-r2d": "Deny · VirtualNetwork → any",
+        "t-r3p": "65000",
+        "t-r3n": "AllowVnetInBound",
+        "t-r3d": "Allow · VirtualNetwork → VirtualNetwork",
+        "t-r4p": "65001",
+        "t-r4n": "AllowAzureLoadBalancerInBound",
+        "t-r4d": "Allow · AzureLoadBalancer → any",
+        "t-r5p": "65500",
+        "t-r5n": "DenyAllInBound",
+        "t-r5d": "Deny · any → any",
+        "t-res": "Result: —",
+        "t-res2": "Lowest number first · first match wins"
+      }
+    },
+    {
+      "title": "Web calls the app tier",
+      "text": "vm-web calls vm-app on TCP 8080. Leaving the web subnet, the default AllowVnetOutBound lets it out. Arriving at nsg-app, rule 100 matches at once: the source is a member of asg-web and the port is 8080. The packet is delivered. The deny at 4000 and the default rules are never read for this packet.",
+      "set": {
+        "t-pkt": "TCP 8080 · 10.20.1.4 → 10.20.2.4",
+        "t-res": "Result: delivered to vm-app",
+        "t-res2": "first match: 100 Allow-Web-To-App-8080"
+      }
+    },
+    {
+      "title": "Same network, wrong port",
+      "text": "Someone on vm-web now tries SSH to vm-app. Rule 100 doesn't match, because the port is 22. Rule 4000 does: the source is inside the VirtualNetwork service tag, so the packet is denied. Without that rule, the default AllowVnetInBound at 65000 would have let it through. That's why the allow sits at a lower number than the deny it relies on.",
+      "set": {
+        "t-pkt": "TCP 22 · 10.20.1.4 → 10.20.2.4",
+        "t-res": "Result: dropped at nsg-app",
+        "t-res2": "first match: 4000 Deny-VNet-Inbound"
+      }
+    },
+    {
+      "title": "Calling out from a private subnet",
+      "text": "vm-app needs the payment provider on the internet. nsg-app's outbound defaults agree: AllowInternetOutBound at 65001 matches. Yet the packet goes nowhere. snet-app is a private subnet, the default in new virtual networks, and vm-app has no public IP, so there is no outbound path. An NSG allow is permission, not a path. The connection simply times out.",
+      "set": {
+        "t-nsg": "nsg-app · subnet NSG · outbound",
+        "t-pkt": "TCP 443 · 10.20.2.4 → internet",
+        "t-r1p": "65000",
+        "t-r1n": "AllowVnetOutBound",
+        "t-r1d": "Allow · VirtualNetwork → VirtualNetwork",
+        "t-r2p": "65001",
+        "t-r2n": "AllowInternetOutBound",
+        "t-r2d": "Allow · any → Internet",
+        "t-r3p": "65500",
+        "t-r3n": "DenyAllOutBound",
+        "t-r3d": "Deny · any → any",
+        "t-r4p": "",
+        "t-r4n": "",
+        "t-r4d": "",
+        "t-r5p": "",
+        "t-r5n": "",
+        "t-r5d": "",
+        "t-res": "Result: no path out",
+        "t-res2": "the NSG allows it, but nothing routes it"
+      }
+    },
+    {
+      "title": "A NAT gateway opens the way",
+      "text": "Attach a NAT gateway with a Standard public IP to snet-app. No route tables and no changes on the VM: new outbound connections from the subnet now leave through the NAT gateway's static address, which the payment provider can add to its allow list. Replies come back, but nobody on the internet can open a connection inward through it.",
+      "set": {
+        "t-res": "Result: out via NAT gateway",
+        "t-res2": "source becomes the NAT gateway's public IP"
+      }
+    },
+    {
+      "title": "What to remember",
+      "text": "Four habits from this demo. Plan addresses that never overlap head office. Keep rules in one place, with each allow numbered below the deny it depends on. Use service tags and application security groups instead of long IP lists. And give private subnets an explicit way out. When traffic misbehaves, IP flow verify names the rule that decided.",
+      "tip": "Try it in Lab 08: build this network, break it with a higher-priority deny rule, and find the culprit with IP flow verify."
+    }
+  ],
+  "svg": [
+    "vnet-nusa-shop · 10.20.0.0/16",
+    "snet-web · 10.20.1.0/24",
+    "snet-app · 10.20.2.0/24 · private subnet",
+    "Rule evaluator",
+    "nsg-web · subnet NSG · inbound",
+    "no packet yet",
+    "Allow-HTTP-Internet",
+    "Allow · TCP 80 · Internet → asg-web",
+    "AllowVnetInBound",
+    "Allow · VirtualNetwork → VirtualNetwork",
+    "AllowAzureLoadBalancerInBound",
+    "Allow · AzureLoadBalancer → any",
+    "DenyAllInBound",
+    "Deny · any → any",
+    "Result: —",
+    "Lowest number first · first match wins",
+    "Inbound: subnet NSG first, then NIC NSG",
+    "Outbound: NIC NSG first, then subnet NSG",
+    "Internet",
+    "shoppers and bots",
+    "nsg-web",
+    "subnet NSG",
+    "NIC NSG",
+    "on vm-web",
+    "vm-web",
+    "asg-web",
+    "nsg-app",
+    "vm-app",
+    "no public IP",
+    "NAT gateway",
+    "static public IP",
+    "NIC NSG removed",
+    "rules on the subnet",
+    "No path out",
+    "no default outbound"
+  ]
+}

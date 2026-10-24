@@ -1,5 +1,7 @@
 # Lunch 26 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the part an animation cannot show: a zone-redundant VPN
 > gateway, a VNet-to-VNet connection reaching *Connected*, traffic crossing the tunnel, the route Azure adds, and where
 > ExpressRoute and Virtual WAN choices live in the portal.

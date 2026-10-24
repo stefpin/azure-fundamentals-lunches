@@ -1,8 +1,11 @@
 # Lab 13 · Package the storefront
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 13 · Containers (Basic): Container Registry, Container Instances and Container Apps](../../lunches/13-containers-basic/README.md)
 > **Time:** about 45 minutes · **Cost:** 💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

@@ -1,9 +1,12 @@
 # Lunch 12 · NoSQL with Azure Cosmos DB (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 3:** Platform services and data
 > **Time:** 60 minutes · **Prerequisite lunches:** 04, 05, 11
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 12 · A product catalogue that scales](../../labs/12-cosmos-db/README.md) — about 45 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -243,7 +246,7 @@ Three more features make Cosmos DB pleasant to work with:
   Function (Lunch 14) can react to it: refresh the search index, or tell waiting shoppers that a sold-out batik is back
   in stock. By default deletes don't appear; a mode that captures them requires continuous backup.
 - **Built-in backups.** Every account is backed up automatically. The default periodic mode takes a full backup every
-  four hours and keeps the latest two; continuous mode adds point-in-time restore for the last 7, 30 or 35 days. Lunch
+  four hours and keeps the latest two; continuous mode adds point-in-time restore for the last 7 or 30 days. Lunch
   17 puts these into a disaster recovery plan.
 
 So which database should Nusantara Retail use? Both, each for what it does best:
@@ -347,6 +350,16 @@ What to watch for:
   answer for most apps.
 - Use Cosmos DB for flexible, fast, globally distributed data such as catalogues and carts, and keep relational,
   transaction-heavy data like orders and payments in **Azure SQL**.
+
+## 🗒️ Field notes from Stefanus
+
+> **Read the receipt on every request.** Cosmos DB reports the price of every operation in its response, and I treat
+> that number like a receipt. From the first sprint I ask teams to log the request charge next to the name of each
+> query, and in design reviews I ask one question: which of your five busiest queries gets more expensive as the data
+> grows? A point read costs the same with thirty items or thirty million, and a single-partition query grows only with
+> its own partition. A cross-partition search grows with everything, and in a small test account with one physical
+> partition it hides perfectly. So I test with data shaped like sale day, not like the demo, and I compare documents
+> loaded with documents returned. When those two numbers drift apart, the bill is about to follow.
 
 ## 🔬 Your lab: A product catalogue that scales
 

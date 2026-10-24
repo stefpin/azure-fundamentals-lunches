@@ -1,5 +1,7 @@
 # Lab 02 worksheet · Make the business case
 
+🇮🇩 [Baca dalam Bahasa Indonesia](worksheet.id.md)
+
 Use this worksheet with [Lab 02](README.md). Copy it into your own notes (or print it) and fill in the **Your answer**
 column. Answer each part *before* you open its answer block, then mark your work. Parts 1–5 have 40 questions in total.
 
@@ -97,7 +99,7 @@ column. Answer each part *before* you open its answer block, then mark your work
 | 7 | Shared | In PaaS, Microsoft provides and secures the platform's network features; you decide who can reach the app. |
 | 8 | Microsoft | Physical security of datacenters always transfers to the provider. |
 | 9 | Nusantara Retail | Applications are shared in PaaS, but the code you write, and its libraries, are your part. |
-| 10 | Nusantara Retail | Devices are the customer's in on-premises, IaaS and PaaS (and shared at most in SaaS). |
+| 10 | Nusantara Retail | Devices (laptops and phones) are always the customer's, in every service type, even in SaaS. |
 
 </details>
 

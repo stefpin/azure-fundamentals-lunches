@@ -1,9 +1,12 @@
 # Lunch 14 · Serverless: Azure Functions, Logic Apps and Event Grid
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 3:** Platform services and data
 > **Time:** 60 minutes · **Prerequisite lunches:** 02, 07, 10 (13 helps)
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 14 · React to new orders automatically](../../labs/14-serverless/README.md) — about 50 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -355,6 +358,16 @@ What to watch for:
   with many workflows per resource). Functions handle custom code, and the two combine well.
 - Events tell (Event Grid), messages ask (Storage queues, Service Bus) and streams flow (Event Hubs). Choose by ordering,
   delivery and volume needs, and design consumers for at-least-once delivery.
+
+## 🗒️ Field notes from Stefanus
+
+> **Every dead letter needs a reader.** Retries, poison queues and dead-letter containers are the safety net of a
+> serverless design, and the trap I see most often is a net that nobody checks. So in design reviews I ask the same
+> thing about every trigger: where does a message go after its last failed attempt, who finds out, and how? If the
+> honest answer is "it sits in a poison queue until someone happens to look", I add an alert before I add another
+> function. A dead letter that nobody reads is just a slower way of losing an order. Two more questions follow: what
+> happens if this message arrives twice, and what stops this function from scaling out forever? I want an order ID
+> check and a maximum instance count, written down rather than assumed.
 
 ## 🔬 Your lab: React to new orders automatically
 

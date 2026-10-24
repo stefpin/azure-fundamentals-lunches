@@ -1,8 +1,11 @@
 # Lab 27 · Protect and route the storefront
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 27 · Load Balancing (Advanced): Application Gateway, Front Door and Traffic Manager](../../lunches/27-load-balancing-advanced/README.md)
 > **Time:** about 75 minutes (including 5–15 minutes waiting for the gateway) · **Cost:** 💲💲💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★★
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by `setup.sh`.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

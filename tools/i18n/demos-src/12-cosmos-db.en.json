@@ -1,0 +1,176 @@
+{
+  "page": {
+    "doc_title": "Lunch 12 · NoSQL with Azure Cosmos DB — Interactive demo",
+    "kicker": "Lunch 12 · NoSQL with Azure Cosmos DB · Interactive demo",
+    "title": "Partition keys and consistency levels in Azure Cosmos DB",
+    "lede": "Watch Nusantara Retail&#x27;s catalogue items find their partitions, see a hot partition form on sale day, then follow one price change across two regions under different consistency levels. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Azure Cosmos DB partitioning and consistency for Nusantara Retail's catalogue",
+    "svgDesc": "Scene one: a storefront app writes items into a Cosmos DB container whose four logical partitions sit on two physical partitions; a poor partition key creates a hot partition and a better key spreads the load. Scene two: a price change written in Indonesia Central replicates to Southeast Asia and is read under eventual, session and strong consistency."
+  },
+  "steps": [
+    {
+      "title": "A catalogue that changes shape",
+      "text": "Nusantara Retail is moving its product catalogue from a 140-column SQL table into Azure Cosmos DB for NoSQL. Every product becomes a JSON item, so a coffee can carry a roast level while a batik shirt carries a size chart. The storefront on the left reads and writes items in one container, products, whose partition key is /category."
+    },
+    {
+      "title": "Logical and physical partitions",
+      "text": "All items that share a category value form one logical partition: every coffee together, every batik shirt together. A logical partition holds up to 20 GB. Cosmos DB hashes each key value and places logical partitions on physical partitions, the replica sets that do the work. One physical partition serves up to 10,000 RU/s and 50 GB, and Cosmos DB splits them for you as the container grows."
+    },
+    {
+      "title": "Items land by their key",
+      "text": "Now the storefront loads the catalogue. For each item, Cosmos DB hashes the category and stores the item in that category's logical partition: five coffees, five batik shirts, five snacks, five spices. Because the values hash onto both physical partitions, two sets of machines share the writes instead of one.",
+      "set": {
+        "t-l1c": "5 items",
+        "t-l2c": "5 items",
+        "t-l3c": "5 items",
+        "t-l4c": "5 items"
+      }
+    },
+    {
+      "title": "A query that names its key",
+      "text": "A category page asks for every coffee. The query filters on the partition key, so Cosmos DB sends it to exactly one partition and reads only the coffee items. That keeps the cost at a few request units, however big the catalogue grows. Reading a single product by its id and category, a point read, is cheaper still: about 1 RU.",
+      "set": {
+        "t-query": "SELECT * FROM c WHERE c.category = 'coffee'",
+        "t-qres": "Single-partition query · one partition is touched · a few RU"
+      }
+    },
+    {
+      "title": "A query that asks everyone",
+      "text": "Dewi's search box looks for 'kopi' anywhere in a product name. That query doesn't mention the category, so it becomes a cross-partition query: it fans out to every physical partition and scans the items it finds there. Each extra physical partition adds roughly 2 to 3 RU. With thirty items nobody notices; with millions of items and fifty partitions, every keystroke gets expensive.",
+      "set": {
+        "t-query": "SELECT * FROM c WHERE CONTAINS(LOWER(c.name), 'kopi')",
+        "t-qres": "Cross-partition query · every partition is touched · the cost grows with the data"
+      }
+    },
+    {
+      "title": "Sale day: a hot partition",
+      "text": "A second container, orders, was partitioned by /storeId. On 12.12 nearly every order comes from the online store, so one logical partition receives almost all the writes. Its physical partition reaches the 10,000 RU/s ceiling and answers HTTP 429, request rate too large, while partition B sits almost idle. Buying more RU/s doesn't help, because the ceiling is per partition.",
+      "set": {
+        "t-ctr": "Container: orders · partition key /storeId",
+        "t-l1": "ONLINE",
+        "t-l2": "JKT-01",
+        "t-l3": "SBY-01",
+        "t-l4": "BDG-01",
+        "t-l1c": "9,800 of 10,000 RU/s",
+        "t-l2c": "150 RU/s",
+        "t-l3c": "120 RU/s",
+        "t-l4c": "90 RU/s",
+        "t-l1x": "throttled: HTTP 429",
+        "t-l2x": "quiet",
+        "t-l3x": "almost idle",
+        "t-l4x": "almost idle",
+        "t-query": "Sale day: most orders carry storeId = ONLINE",
+        "t-qres": "Partition A is at its ceiling (HTTP 429) · partition B is mostly idle"
+      }
+    },
+    {
+      "title": "A key that spreads the load",
+      "text": "The fix is a new container partitioned by /customerId, with the orders copied across, because a partition key can't be changed in place. Thousands of customers mean thousands of logical partitions, hashed evenly across the physical partitions. Sale-day writes now land everywhere, every partition carries its share, and the throttling disappears.",
+      "set": {
+        "t-ctr": "Container: orders · partition key /customerId",
+        "t-l1": "cust-0042",
+        "t-l2": "cust-1187",
+        "t-l3": "cust-5530",
+        "t-l4": "cust-9071",
+        "t-l1c": "a few RU/s",
+        "t-l2c": "a few RU/s",
+        "t-l3c": "a few RU/s",
+        "t-l4c": "a few RU/s",
+        "t-l1x": "one of thousands of keys",
+        "t-l2x": "one of thousands of keys",
+        "t-l3x": "one of thousands of keys",
+        "t-l4x": "one of thousands of keys",
+        "t-query": "Partition key /customerId: thousands of values, spread by hash",
+        "t-qres": "Both physical partitions carry an even share · no throttling"
+      }
+    },
+    {
+      "title": "Add a second region",
+      "text": "Back to the catalogue. Nusantara Retail adds Southeast Asia as a read region next to Indonesia Central (a serverless account would have to stay in one region). Each region holds a full copy of the data, and shoppers read from the nearest one. Provisioned RU/s apply, and are billed, in every region. Writes still go to Indonesia Central and replicate asynchronously.",
+      "set": {
+        "t-kc1": "1,000 RU/s provisioned in 2 regions = 2,000 RU/s on the bill",
+        "t-kc2": "Writes go to Indonesia Central · reads are served by the nearest region"
+      }
+    },
+    {
+      "title": "Dewi changes a price",
+      "text": "At midnight Dewi drops the price of Kopi Gayo from Rp 99.000 to Rp 89.000. The write commits in Indonesia Central first. Replication to Southeast Asia is asynchronous, so for a brief moment the two regions disagree. What the shopper in Singapore sees during that moment depends on the consistency level.",
+      "set": {
+        "t-price-j": "kopi: Rp 89.000",
+        "t-dewi": "Dewi sees: Rp 89.000",
+        "t-kc1": "The write is committed in Indonesia Central",
+        "t-kc2": "Replication to Southeast Asia is still on its way"
+      }
+    },
+    {
+      "title": "Eventual: a stale read",
+      "text": "With eventual consistency the read goes to any one replica in Southeast Asia, and that replica hasn't received the change yet, so the shopper sees the old price. Eventual is the cheapest and fastest level and is fine for view counters or likes. A stale price at checkout, though, would make customers angry.",
+      "set": {
+        "t-shop": "Shopper sees: Rp 99.000 (stale)",
+        "t-kc1": "Eventual: one-replica reads · cheapest · no ordering promise",
+        "t-kc2": "Good for view counters, likes and other values that may lag"
+      }
+    },
+    {
+      "title": "Session: read your own writes",
+      "text": "Session is the default level. Within one session, reads always include that session's own writes, in order. Dewi's admin app reads back Rp 89.000 straight away, and reads still cost the same as eventual. Other sessions, like the shopper's, catch up when replication completes, which usually takes a moment.",
+      "set": {
+        "t-price-s": "kopi: Rp 89.000",
+        "t-dewi": "Dewi sees: Rp 89.000 (her own write)",
+        "t-shop": "Shopper sees: Rp 89.000 (after replication)",
+        "t-kc1": "Session (default): read-your-own-writes within a session · one-replica reads",
+        "t-kc2": "Good for most apps: carts, profiles, admin edits"
+      }
+    },
+    {
+      "title": "Strong: always fresh, never cheap",
+      "text": "With strong consistency a read never returns an old price. To promise that across regions, every write waits until both regions confirm it, adding the round trip between Jakarta and Singapore to each write. Reads use two replicas and cost about twice the RUs, and strong can't be combined with multi-region writes. Use it only where a stale value would really hurt.",
+      "set": {
+        "t-kc1": "Strong: two-replica reads (about 2× RU) · each write waits for every region",
+        "t-kc2": "Not available with multi-region writes · use it where stale data would really hurt"
+      }
+    },
+    {
+      "title": "Recap and your lab",
+      "text": "Two decisions shape every Cosmos DB design. The partition key, which you can't change later, should match your busiest queries and spread the load. The consistency level trades freshness against latency and cost; start with session. Then measure everything in request units, because every response tells you exactly what it cost.",
+      "tip": "In Lab 12 you'll load the catalogue, compare a point read with single- and cross-partition queries, watch a read's RU cost double under strong consistency, and fix an expensive search query.",
+      "set": {
+        "t-kc1": "Partition key: match your busiest queries and spread the load",
+        "t-kc2": "Consistency: start with session · measure every operation in RUs"
+      }
+    }
+  ],
+  "svg": [
+    "Container: products · partition key /category",
+    "Physical partition A",
+    "Physical partition B",
+    "Storefront app",
+    "writes and queries",
+    "coffee",
+    "0 items",
+    "logical partition · up to 20 GB",
+    "batik",
+    "snacks",
+    "spices",
+    "SELECT * FROM c WHERE c.category = 'coffee'",
+    "single-partition query",
+    "Indonesia Central · write region",
+    "Southeast Asia · read region",
+    "replicate",
+    "Dewi · admin app",
+    "Replica set",
+    "kopi: Rp 99.000",
+    "4 replicas in this region",
+    "Shopper · Singapore",
+    "Dewi sees: Rp 99.000",
+    "Shopper sees: Rp 99.000",
+    "Consistency level for reads (the account default is Session)",
+    "Strong",
+    "Bounded staleness",
+    "Session",
+    "Consistent prefix",
+    "Eventual",
+    "Every region holds a full copy of the data",
+    "Replication between regions is asynchronous"
+  ]
+}

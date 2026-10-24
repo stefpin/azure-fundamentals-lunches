@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 05 · Kasih Saja Password Saya — Makan Siang 05: Identitas dan Akses (Dasar) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 05 · Identitas dan Akses (Dasar). Seorang kontraktor mulai bekerja hari Senin, dan jalan pintasnya adalah berbagi satu login. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/05-identity-access-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/05-identity-access-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/05-identity-access-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/05-identity-access-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 05 · Kasih Saja Password Saya — Makan Siang 05: Identitas dan Akses (Dasar)">
+<meta property="og:description" content="Makan Siang 05 · Identitas dan Akses (Dasar). Seorang kontraktor mulai bekerja hari Senin, dan jalan pintasnya adalah berbagi satu login. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/05-identity-access-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="05" style="--c:#1665d8">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/05-identity-access-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 05</span> Season 1 · 🧱 Bagian 1 · Fondasi</div>
+      <h1>Kasih Saja Password Saya</h1>
+      <div class="lunch-title">Makan Siang 05 · Identitas dan Akses (Dasar)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 40 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Siapa yang Bikin server-baru-final2?">↩ 04</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 04 · Siapa yang Bikin server-baru-final2?, kini subscription, resource group, tag, dan lock sudah Anda tata sehingga setiap rupiah punya pemilik.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-1"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, cemas"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 13% siap</b>Setelah episode ini Anda bisa menjawab: “Masih berhari-hari — tetapi hanya orang yang tepat yang bisa menyentuh sistem baru.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-dua-pertanyaan-siapa-anda-dan-apa-yang-boleh-anda-lakukan">Dua pertanyaan: siapa Anda, dan apa yang boleh Anda lakukan?</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-microsoft-entra-id-direktori-di-balik-setiap-sign-in">Microsoft Entra ID: direktori di balik setiap sign-in</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-membuktikan-siapa-anda-mfa-passwordless-sso-dan-conditional-access">Membuktikan siapa Anda: MFA, passwordless, SSO, dan Conditional Access</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-azure-rbac-siapa-boleh-melakukan-apa-dan-di-mana">Azure RBAC: siapa boleh melakukan apa, dan di mana</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-dua-jenis-role-dan-kebiasaan-least-privilege">Dua jenis role, dan kebiasaan least privilege</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-bagaimana-semuanya-menyatu-untuk-nusantara-retail">Bagaimana semuanya menyatu untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/05-identity-access-basic.html">🔬 Buka Lab 05</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> perbedaan antara autentikasi dan otorisasi, serta menyebutkan layanan Azure yang menangani masing-masing.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menggambarkan</strong> Microsoft Entra ID (<em>ID Microsoft Entra</em>) — tenant, pengguna, grup, tamu, dan app registration — lalu membandingkannya dengan Active Directory Domain Services yang berjalan on-premises (di server milik perusahaan sendiri, bukan di cloud).</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membandingkan</strong> MFA (<em>autentikasi multifaktor</em>), sign-in passwordless (<em>tanpa kata sandi</em>), single sign-on (<em>sistem masuk tunggal</em>), dan Conditional Access (<em>Akses Bersyarat</em>), serta menyebutkan risiko yang dikurangi oleh masing-masing.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memperkirakan</strong> apa yang bisa dilakukan seseorang di Azure berdasarkan role assignment-nya, dengan memakai tiga konsep: security principal, role definition, dan scope.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> antara role Microsoft Entra dan role Azure RBAC (<em>kontrol akses berbasis peran</em>), lalu menerapkan prinsip hak akses minimum (least privilege).</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 05</span>
+        <div class="story-body"><p>Rizky, seorang kontraktor dari perusahaan outsourcing, mulai bekerja hari Senin. Tugasnya: membantu Dewi memindahkan lingkungan uji (test environment) toko online ke Azure. Jumat sore, Dewi punya usul: &quot;Paling gampang, kasih saja login saya ke dia. Atau jadikan dia Owner subscription (<em>langganan</em>) — dijamin dia tidak bakal mentok.&quot;</p>
+<p>Ibu Sari tidak sengaja mendengar dan langsung mengajukan dua pertanyaan. &quot;Kalau Rizky memakai akun Dewi, bagaimana kita tahu siapa yang mengubah apa?&quot; Lalu: &quot;Kalau kontraknya habis tiga bulan lagi, bagaimana kita memastikan aksesnya juga ikut berakhir?&quot;</p>
+<p>Pak Budi menambahkan pertanyaan ketiga. Kantor pusat sudah punya akun pengguna di Active Directory on-premises, yang berjalan di server sebelah pantry. Apakah akun-akun itu juga berlaku di Azure?</p>
+<p>Anda menyadari bahwa sebenarnya ini satu pertanyaan yang sama, hanya ditanyakan dengan tiga cara. Sebelum ada yang membangun apa pun lagi di Azure, Anda butuh gambaran yang jelas: <strong>siapa</strong> yang boleh masuk, <strong>bagaimana</strong> mereka membuktikan identitasnya, dan <strong>apa</strong> yang boleh mereka lakukan setelah berada di dalam.</p>
+<p>Pertanyaan hari ini: <em>Bagaimana cara mempersilakan orang masuk ke Azure — dan memberi setiap orang tepat akses yang mereka butuhkan, tidak lebih?</em></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-dua-pertanyaan-siapa-anda-dan-apa-yang-boleh-anda-lakukan" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Dua pertanyaan: siapa Anda, dan apa yang boleh Anda lakukan?</h3><div class="prose"><p>Setiap kali seseorang menyentuh Azure, ada dua pemeriksaan terpisah yang terjadi.</p>
+<p><strong>Autentikasi</strong> (authentication, sering disingkat <em>authN</em>) menjawab pertanyaan <em>&quot;Siapa Anda, dan bisakah Anda membuktikannya?&quot;</em> Inilah momen saat Anda mengetik kata sandi, menyetujui sign-in (proses masuk ke akun) di ponsel, atau menyentuh security key — kunci keamanan fisik yang bentuknya mirip flashdisk.</p>
+<p><strong>Otorisasi</strong> (authorization, <em>authZ</em>) menjawab <em>&quot;Sekarang kami sudah tahu siapa Anda — apa yang boleh Anda lakukan di sini?&quot;</em> Pemeriksaan ini diulang untuk setiap permintaan, bahkan lama setelah Anda selesai sign-in.</p>
+<p>Bayangkan kantor pusat Nusantara Retail di Jakarta. Petugas di meja keamanan lobi mencocokkan kartu identitas dengan wajah Anda — itulah autentikasi. Kartu akses yang kemudian Anda terima hanya membuka sebagian pintu: ruang keuangan, ya; ruang server, tidak. Itulah otorisasi. Membuktikan siapa diri Anda tidak otomatis membuka semua pintu.</p>
+<p>Di Azure, kedua tugas itu dipegang oleh dua layanan yang berbeda:</p>
+<ul>
+<li><strong>Microsoft Entra ID</strong> melakukan autentikasi. Layanan ini memeriksa kredensial (bukti identitas, misalnya kata sandi), menerapkan kebijakan sign-in, lalu menerbitkan <strong>token</strong> — pernyataan yang ditandatangani secara digital dan hanya berlaku untuk waktu terbatas, misalnya &quot;ini Dewi, dia sudah menyelesaikan autentikasi multifaktor, dan dia anggota grup-grup berikut&quot;.</li>
+<li><strong>Azure Resource Manager</strong> (ARM), satu-satunya control plane (lapisan kendali tempat semua permintaan pengelolaan masuk) yang sudah Anda kenal di Makan Siang 04, melakukan otorisasi. Setiap permintaan — dari portal, Azure CLI (alat baris perintah), PowerShell, atau deployment Bicep — tiba di ARM dengan token terlampir. ARM lalu memakai <strong>Azure role-based access control (Azure RBAC)</strong> untuk memutuskan apakah identitas tersebut boleh melakukan tindakan itu pada resource (<em>sumber daya</em>) itu.</li>
+</ul>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  autonumber
+  actor D as Dewi
+  participant E as Microsoft Entra ID
+  participant A as Azure Resource Manager
+  participant P as Resource provider (Microsoft.Compute)
+  D-&gt;&gt;E: Sign in (kata sandi + MFA)
+  E--&gt;&gt;D: Token: &quot;Dewi · MFA selesai · grp-developers&quot;
+  D-&gt;&gt;A: Restart vm-storefront-test (token terlampir)
+  A-&gt;&gt;A: Azure RBAC: bolehkah restart di scope ini?
+  alt diizinkan
+    A-&gt;&gt;P: Teruskan permintaan
+    P--&gt;&gt;D: 202 Accepted — VM sedang restart
+  else tidak diizinkan
+    A--&gt;&gt;D: 403 AuthorizationFailed
+  end
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Ada dua konsekuensi penting. Pertama, sign-in saja tidak memberi akses ke apa pun — autentikasi hanya menghasilkan token, dan token tidak membuka pintu mana pun tanpa role assignment (penetapan role) di belakangnya. Kedua, karena setiap permintaan diotorisasi satu per satu, perubahan akses seseorang berlaku pada permintaan berikutnya (biasanya dalam hitungan menit) tanpa ada yang perlu menyentuh server. Tidak ada jaringan kantor yang bisa diakali lewat pintu belakang: di cloud, <strong>identitas adalah perimeter</strong> — garis pertahanan utamanya.</p>
+</div></article><article class="scene-card" id="2-microsoft-entra-id-direktori-di-balik-setiap-sign-in" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Microsoft Entra ID: direktori di balik setiap sign-in</h3><div class="prose"><p>Microsoft Entra ID (dulu bernama Azure Active Directory) adalah layanan identitas cloud milik Microsoft. Direktori yang sama dipakai oleh Microsoft 365, portal Azure, dan ribuan aplikasi SaaS (software as a service, <em>perangkat lunak sebagai layanan</em>) untuk memproses sign-in.</p>
+<p><strong>Tenant</strong> adalah instans Entra ID yang khusus dan terisolasi milik organisasi Anda. Ibaratnya satu gedung kantor dengan daftar penghuni, kartu akses, dan satpamnya sendiri: penghuni gedung sebelah tidak tercantum di sana. Tenant datang dengan domain awal seperti <code>nusantararetail.onmicrosoft.com</code>, dan nanti Anda bisa menambahkan domain sendiri yang sudah diverifikasi (misalnya <code>nusantararetail.co.id</code>). Seperti yang Anda lihat di Makan Siang 04, tenant berada di puncak hierarki resource: setiap subscription Azure memercayai tepat satu tenant untuk urusan identitas, sedangkan satu tenant bisa menaungi banyak subscription. Jika Anda mendaftar akun gratis dengan akun Microsoft pribadi, Azure otomatis membuatkan tenant untuk Anda dan menjadikan Anda <strong>Global Administrator</strong> (role tertinggi di direktori) — itulah sebabnya Lab 05 dijalankan di tenant pribadi tersebut, tidak pernah di tenant perusahaan.</p>
+<p>Di dalam sebuah tenant, Anda akan menemukan beberapa jenis objek:</p>
+<ul>
+<li><strong>Pengguna (users)</strong> — orang yang punya akun di direktori Anda, seperti Dewi dan Ibu Sari.</li>
+<li><strong>Grup (groups)</strong> — kumpulan pengguna dan objek lain. <strong>Security group</strong> adalah jenis grup yang Anda pakai untuk memberi akses; grup Microsoft 365 menambahkan kotak surat dan file bersama. Keanggotaannya diatur secara manual atau dihitung otomatis dari aturan (dynamic membership, yang membutuhkan lisensi Microsoft Entra ID P1).</li>
+<li><strong>Tamu (guests)</strong> — orang dari luar organisasi yang masuk dengan akun <em>milik mereka sendiri</em>: Entra ID perusahaan mereka, akun Microsoft, atau penyedia identitas lain. Mereka muncul di direktori Anda dengan tipe pengguna <em>Guest</em>.</li>
+<li><strong>App registration dan service principal</strong> — identitas untuk perangkat lunak, bukan untuk manusia. Pipeline yang men-deploy toko online juga butuh identitas; Anda akan berkenalan dengan managed identity di Makan Siang 15 dan pipeline tanpa kata sandi di Makan Siang 22.</li>
+</ul>
+<p><strong>Active Directory Domain Services (AD DS)</strong> on-premises milik Pak Budi memang punya nama keluarga yang sama dengan Entra ID, tetapi keduanya dibangun untuk dunia yang berbeda:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Active Directory Domain Services (on-premises)</th>
+<th>Microsoft Entra ID (cloud)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dibangun untuk</td>
+<td>Komputer dan server di jaringan perusahaan</td>
+<td>Aplikasi web, SaaS, dan layanan cloud melalui internet</td>
+</tr>
+<tr>
+<td>Protokol</td>
+<td>Kerberos, NTLM, LDAP</td>
+<td>HTTPS dengan OpenID Connect, OAuth 2.0, dan SAML</td>
+</tr>
+<tr>
+<td>Struktur</td>
+<td>Forest, domain, dan organisational unit (OU)</td>
+<td>Tenant datar berisi pengguna, grup, dan aplikasi; administrative unit untuk pendelegasian</td>
+</tr>
+<tr>
+<td>Perangkat</td>
+<td>Domain join dan Group Policy</td>
+<td>Entra join atau registrasi perangkat; pengaturan lewat Microsoft Intune</td>
+</tr>
+<tr>
+<td>Siapa yang mengoperasikan</td>
+<td>Anda: domain controller, patching, backup</td>
+<td>Microsoft menjalankan layanannya; Anda mengelola isinya</td>
+</tr>
+</tbody>
+</table></div>
+<p>Deretan singkatan di baris protokol hanyalah nama &quot;bahasa&quot; untuk sign-in: Kerberos, NTLM (NT LAN Manager), dan LDAP (Lightweight Directory Access Protocol) adalah bahasa jaringan kantor, sedangkan OpenID Connect, OAuth 2.0, dan SAML (Security Assertion Markup Language) adalah bahasa sign-in di web.</p>
+<p>Kebanyakan perusahaan tidak memilih salah satu; mereka menghubungkan keduanya. <strong>Microsoft Entra Connect</strong> (Sync) dan <strong>Microsoft Entra Cloud Sync</strong> yang lebih ringan menyalin pengguna dan grup dari AD DS ke Entra ID, sehingga staf kantor pusat bisa masuk ke Azure dan Microsoft 365 dengan akun yang sudah mereka pakai sehari-hari di kantor. Inilah yang disebut <strong>hybrid identity</strong> (identitas hibrid). Untuk aplikasi lama yang masih membutuhkan Kerberos, LDAP, atau server yang di-join ke domain di Azure, <strong>Microsoft Entra Domain Services</strong> menyediakan domain terkelola (managed domain), sehingga Anda tidak perlu membangun dan mem-patch sendiri VM (<em>komputer virtual</em>) untuk domain controller.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Entra ID tersedia dalam beberapa edisi. <strong>Free</strong> (sudah termasuk di setiap subscription Azure) mencakup pengguna, grup, single sign-on, dan standar MFA gratis yang disebut <em>security defaults</em>. <strong>Microsoft Entra ID P1</strong> menambahkan Conditional Access dan dynamic group; <strong>P2</strong> menambahkan perlindungan berbasis risiko dan Privileged Identity Management. Semua yang ada di lab hari ini bisa dikerjakan dengan edisi Free.</p>
+</aside>
+</div></article><article class="scene-card" id="3-membuktikan-siapa-anda-mfa-passwordless-sso-dan-conditional-access" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Membuktikan siapa Anda: MFA, passwordless, SSO, dan Conditional Access</h3><div class="prose"><p>Kata sandi saja itu lemah: orang memakai ulang kata sandi yang sama di banyak tempat, penyerang mencoba kata sandi pasaran ke ribuan akun sekaligus (<em>password spray</em>), dan halaman sign-in palsu yang meyakinkan berhasil mengumpulkan kata sandi hingga jutaan.</p>
+<p><strong>Multifactor authentication (MFA)</strong> mewajibkan bukti kedua dari jenis yang berbeda: sesuatu yang Anda <strong>ketahui</strong> (kata sandi atau PIN), sesuatu yang Anda <strong>miliki</strong> (ponsel atau security key), atau sesuatu yang <strong>melekat pada diri</strong> Anda (sidik jari atau wajah). Sebenarnya Anda sudah akrab dengan konsep ini di ATM: kartu adalah sesuatu yang Anda miliki, PIN adalah sesuatu yang Anda ketahui. Orang yang hanya mengintip PIN Anda tetap tidak bisa menarik uang tanpa kartunya. Dengan aplikasi Microsoft Authenticator, layar sign-in menampilkan sebuah angka yang harus Anda ketik di aplikasi. <em>Number matching</em> (pencocokan angka) ini menggagalkan penyerang yang membombardir Anda dengan permintaan persetujuan, berharap Anda akhirnya menekan &quot;approve&quot; hanya supaya notifikasinya berhenti.</p>
+<p>Dua fakta membuat MFA kini tidak bisa dihindari di Azure:</p>
+<ul>
+<li><strong>Security defaults</strong> otomatis aktif di tenant baru. Fitur ini mewajibkan setiap pengguna mendaftar MFA (sejak Juli 2024 tidak ada lagi masa tenggang 14 hari), mewajibkan MFA untuk administrator, memblokir protokol lama (legacy) yang tidak mendukung MFA, dan melindungi sign-in ke portal Azure, Azure CLI, dan Azure PowerShell.</li>
+<li><strong>Mandatory MFA untuk Azure</strong> (MFA wajib) diberlakukan Microsoft dalam dua fase: sejak Oktober 2024 untuk sign-in ke portal Azure, Microsoft Entra admin center, dan Intune admin center; lalu — diluncurkan bertahap mulai 1 Oktober 2025 — untuk operasi create, update, dan delete melalui Azure CLI, PowerShell, alat infrastructure as code (<em>infrastruktur sebagai kode</em>), dan REST API (antarmuka pemrograman Azure). Workload identity (identitas untuk aplikasi dan otomasi) — managed identity dan service principal — tidak terkena aturan ini. Itu satu alasan lagi untuk tidak pernah menjalankan otomasi dengan akun milik seseorang.</li>
+</ul>
+<p>Sign-in <strong>passwordless</strong> melangkah lebih jauh dan menghilangkan kata sandi sama sekali:</p>
+<ul>
+<li><strong>Windows Hello for Business</strong> — PIN atau biometrik yang terikat pada perangkat Windows Anda.</li>
+<li><strong>Passkey (FIDO2)</strong> — kredensial yang tersimpan di security key fisik, di aplikasi Microsoft Authenticator, atau disinkronkan oleh penyedia seperti Apple iCloud Keychain atau Google Password Manager. FIDO2 adalah standar terbuka untuk sign-in tanpa kata sandi. Passkey hanya berfungsi untuk situs tempat ia dibuat, sehingga halaman sign-in palsu tidak bisa memakainya: passkey bersifat <em>phishing-resistant</em> (tahan phishing).</li>
+<li><strong>Certificate-based authentication</strong> (autentikasi berbasis sertifikat), untuk organisasi yang sudah menjalankan public key infrastructure (PKI, sistem pengelolaan sertifikat digital).</li>
+</ul>
+<p><strong>Single sign-on (SSO)</strong> berarti satu kali sign-in ke Entra ID membuka semua aplikasi yang terhubung — portal Azure, Microsoft 365, dan aplikasi SaaS seperti sistem penggajian atau back office mesin kasir (point of sale, POS). Mirip satu kartu uang elektronik yang bisa dipakai di gerbang tol, KRL, dan parkir: Anda tidak perlu membawa kartu berbeda untuk setiap gerbang. Lebih sedikit kata sandi berarti lebih sedikit yang bisa dicuri. SSO juga menjawab pertanyaan Ibu Sari: nonaktifkan satu akun, dan akses ke semua yang terhubung dengannya langsung berhenti.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Metode</th>
+<th>Melindungi dari</th>
+<th>Lisensi</th>
+<th>Contoh di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Security defaults</td>
+<td>Password spray, serangan lewat protokol lama, admin tanpa MFA</td>
+<td>Free</td>
+<td>Standar dasar untuk seluruh tenant sejak hari pertama</td>
+</tr>
+<tr>
+<td>MFA dengan number matching</td>
+<td>Kata sandi yang dicuri atau ditebak, &quot;MFA fatigue&quot; (kelelahan menerima notifikasi MFA)</td>
+<td>Free</td>
+<td>Setiap staf dan kontraktor</td>
+</tr>
+<tr>
+<td>Passkey, Windows Hello</td>
+<td>Phishing, termasuk halaman sign-in palsu</td>
+<td>Free (security key fisik berbayar)</td>
+<td>Akun Pak Budi dan administrator lainnya</td>
+</tr>
+<tr>
+<td>Single sign-on</td>
+<td>Pemakaian ulang kata sandi, offboarding yang terlupa</td>
+<td>Free</td>
+<td>Satu akun untuk Azure, Microsoft 365, dan back office POS</td>
+</tr>
+<tr>
+<td>Conditional Access</td>
+<td>Sign-in berisiko sesuai konteks: perangkat, lokasi, aplikasi</td>
+<td>P1 (kebijakan berbasis risiko: P2)</td>
+<td>Kontraktor wajib MFA; aplikasi lama diblokir</td>
+</tr>
+</tbody>
+</table></div>
+<p>Security defaults itu ibarat baju <em>all size</em>: satu ukuran untuk semua orang. <strong>Conditional Access</strong> adalah mesin kebijakan Entra ID untuk saat Anda butuh aturan yang lebih bernuansa. Setiap kebijakan berbentuk pernyataan jika-maka (if-then) yang dievaluasi saat sign-in, <em>setelah</em> faktor pertama (biasanya kata sandi) diperiksa:</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph S[&quot;Sinyal&quot;]
+    U[Pengguna atau grup]
+    L[Lokasi IP]
+    D[Status perangkat]
+    A[Aplikasi tujuan]
+    R[Risiko sign-in]
+  end
+  S --&gt; P{{&quot;Kebijakan Conditional Access&quot;}}
+  P --&gt;|&quot;tidak ada yang khusus&quot;| G[Izinkan akses]
+  P --&gt;|&quot;syarat terpenuhi&quot;| M[&quot;Izinkan, tetapi wajibkan MFA&lt;br/&gt;atau perangkat yang patuh&quot;]
+  P --&gt;|&quot;terlalu berisiko&quot;| B[Blokir akses]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p><strong>Sinyal</strong> (signals) mencakup pengguna beserta grupnya, asal permintaan, status perangkat, aplikasi yang dibuka, dan — dengan P2 — skor risiko yang dihitung otomatis. <strong>Keputusan</strong> (decision) bisa berupa blokir, izinkan, atau izinkan hanya jika syarat tambahan terpenuhi, misalnya MFA atau perangkat yang dikelola perusahaan. <strong>Penegakan</strong> (enforcement) terjadi saat sign-in dan selama sesi yang berjalan sesudahnya. Conditional Access membutuhkan Microsoft Entra ID P1, dan Anda mematikan security defaults ketika kebijakan buatan Anda sendiri menggantikannya. Makan Siang 22 membangun kebijakan-kebijakan ini langkah demi langkah.</p>
+<p>Rizky bekerja untuk perusahaan outsourcing yang punya tenant Entra sendiri. Daripada membuatkan kata sandi baru untuknya di direktori Anda, Anda bisa mengundangnya sebagai tamu <strong>B2B collaboration</strong> (kolaborasi business-to-business): dia masuk dengan akun perusahaannya, Anda yang menentukan apa saja yang boleh dia jangkau, dan ketika perusahaannya menonaktifkan akunnya, aksesnya ke Nusantara Retail ikut berakhir. Ibaratnya tamu kantor yang menitipkan KTP-nya sendiri di lobi untuk mendapat kartu tamu, bukan meminjam kartu karyawan. Untuk para pembeli di toko online — pelanggan, bukan staf — <strong>Microsoft Entra External ID</strong> menyediakan fitur pendaftaran dan sign-in pelanggan di tenant eksternal yang terpisah. (Azure AD B2C, layanan identitas pelanggan versi lama, tidak lagi dijual ke pelanggan baru sejak 1 Mei 2025.)</p>
+</div></article><article class="scene-card" id="4-azure-rbac-siapa-boleh-melakukan-apa-dan-di-mana" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Azure RBAC: siapa boleh melakukan apa, dan di mana</h3><div class="prose"><p>Setelah Rizky berhasil sign in, Azure RBAC yang menentukan apa yang boleh dia lakukan. Setiap <strong>role assignment</strong> menghubungkan tiga hal:</p>
+<ol>
+<li><strong>Security principal</strong> — <em>siapa</em>: pengguna, grup, service principal, atau managed identity.</li>
+<li><strong>Role definition</strong> — <em>apa</em>: daftar operasi yang diizinkan, lengkap dengan namanya. <strong>Actions</strong> adalah operasi manajemen seperti <code>Microsoft.Compute/virtualMachines/restart/action</code>; <strong>NotActions</strong> dikurangkan dari Actions; <strong>DataActions</strong> mencakup data di dalam sebuah resource, misalnya membaca blob.</li>
+<li><strong>Scope</strong> — <em>di mana</em>: management group (<em>grup manajemen</em>), subscription, resource group (<em>grup sumber daya</em>), atau satu resource tertentu.</li>
+</ol>
+<p>Assignment <strong>diwariskan ke bawah</strong>, persis seperti hierarki di Makan Siang 04. Reader di level subscription berarti akses baca ke setiap resource group dan resource di dalamnya. Contributor di <code>rg-storefront-test</code> berarti kendali penuh atas resource di grup itu — dan tidak ada akses sama sekali di tempat lain.</p>
+<p>Begini cara ARM memutuskan, setiap kali sebuah permintaan tiba:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  R[&quot;Permintaan: restart vm-storefront-test&lt;br/&gt;dengan token Dewi&quot;] --&gt; DA{&quot;Adakah deny assignment yang&lt;br/&gt;memblokir action ini di sini?&quot;}
+  DA --&gt;|ya| X1[&quot;Ditolak&quot;]
+  DA --&gt;|tidak| C[&quot;Kumpulkan role assignment untuk Dewi&lt;br/&gt;dan semua grupnya, di scope ini&lt;br/&gt;dan di setiap scope induknya&quot;]
+  C --&gt; U[&quot;Gabungan semua action yang diizinkan&lt;br/&gt;(Actions dikurangi NotActions)&quot;]
+  U --&gt; Q{&quot;Apakah restart/action&lt;br/&gt;ada dalam gabungan itu?&quot;}
+  Q --&gt;|tidak| X2[&quot;Ditolak: 403 AuthorizationFailed&quot;]
+  Q --&gt;|ya| OK[&quot;Diizinkan, setelah semua syarat&lt;br/&gt;role assignment terpenuhi&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Ada tiga aturan yang bisa ditarik dari gambar itu:</p>
+<ul>
+<li><strong>Izin bersifat aditif.</strong> Akses efektif Anda adalah <strong>gabungan</strong> (union) dari semua role yang diberikan kepada Anda dan kepada grup-grup Anda, di resource itu dan di setiap scope di atasnya. Reader di sebuah resource group tidak &quot;membatasi&quot; role Contributor yang Anda pegang di subscription; Anda memegang keduanya, sehingga secara efektif Anda tetap Contributor di sana. Bayangkan setiap role sebagai satu anak kunci di gantungan kunci Anda: menambah kunci &quot;hanya boleh melihat&quot; tidak membuat kunci &quot;boleh mengubah&quot; hilang.</li>
+<li><strong>Deny assignment selalu menang.</strong> <strong>Deny assignment</strong> memblokir action tertentu meskipun ada role yang mengizinkannya — ibarat segel dari pengelola gedung yang tetap menutup sebuah pintu, berapa pun kunci yang Anda bawa. Anda tidak bisa membuat deny assignment sendiri; Azure yang membuatnya, misalnya saat sebuah <strong>deployment stack</strong> (Makan Siang 20) memakai deny settings untuk melindungi resource yang dikelolanya.</li>
+<li><strong>Tanpa role, tanpa akses.</strong> Jika tidak ada assignment yang mencakup action tersebut, jawabannya 403, apa pun jabatan orang itu.</li>
+</ul>
+<p>Azure punya ratusan built-in role (role bawaan yang siap pakai). Lima di antaranya bersifat umum dan layak Anda hafal di luar kepala; sisanya masing-masing khusus untuk satu layanan:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Built-in role</th>
+<th>Bisa mengelola resource?</th>
+<th>Bisa memberi akses ke orang lain?</th>
+<th>Penggunaan umum di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Owner</strong></td>
+<td>Ya, semuanya</td>
+<td>Ya, role apa pun</td>
+<td>Dua orang yang ditunjuk per subscription — tidak lebih</td>
+</tr>
+<tr>
+<td><strong>Contributor</strong></td>
+<td>Ya, semuanya</td>
+<td>Tidak</td>
+<td>Tim Dewi, di resource group development miliknya sendiri</td>
+</tr>
+<tr>
+<td><strong>Reader</strong></td>
+<td>Tidak, hanya melihat</td>
+<td>Tidak</td>
+<td>Auditor dan tim keuangan</td>
+</tr>
+<tr>
+<td><strong>User Access Administrator</strong></td>
+<td>Tidak</td>
+<td>Ya, role apa pun</td>
+<td>Jarang: tugas khusus pengelolaan akses</td>
+</tr>
+<tr>
+<td><strong>Role Based Access Control Administrator</strong></td>
+<td>Tidak</td>
+<td>Ya, hanya role assignment Azure</td>
+<td>Ketua tim yang mengelola akses ke resource group timnya sendiri</td>
+</tr>
+<tr>
+<td>Virtual Machine Contributor</td>
+<td>Hanya VM, bukan jaringan atau penyimpanannya</td>
+<td>Tidak</td>
+<td>Operator shift malam yang me-restart VM</td>
+</tr>
+<tr>
+<td>Network Contributor</td>
+<td>Hanya jaringan</td>
+<td>Tidak</td>
+<td>Pak Budi, yang mengelola virtual network (<em>jaringan virtual</em>) dan NSG (network security group)</td>
+</tr>
+<tr>
+<td>Storage Blob Data Reader</td>
+<td>Membaca <em>data</em> blob (sebuah role data)</td>
+<td>Tidak</td>
+<td>Aplikasi pelaporan yang membaca ekspor data penjualan</td>
+</tr>
+</tbody>
+</table></div>
+<p>Perhatikan baris terakhir. Owner dan Contributor mengelola storage <em>account</em> (<em>akun penyimpanan</em>)-nya, tetapi membaca blob di dalamnya dengan sign-in Entra ID membutuhkan role data — Anda akan memakainya di Makan Siang 07.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span><strong>Kesalahan umum:</strong> memberi Owner atau Contributor di scope subscription &quot;biar cepat mulai dulu&quot; (dan tidak pernah dibereskan); memberi role ke perorangan, bukan ke grup (mustahil ditinjau belakangan); memakai satu akun beramai-ramai (tidak ada jejak audit, dan MFA-nya pun tidak jelas milik siapa); dan menghapus pengguna sebelum mencabut role assignment-nya, sehingga tersisa entri yatim berlabel &quot;Identity not found&quot;. Ingat juga bahwa perubahan role bisa butuh waktu hingga 10 menit untuk berlaku — sign out lalu sign in lagi sebelum Anda menyimpulkan ada yang rusak.</p>
+</aside>
+</div></article><article class="scene-card" id="5-dua-jenis-role-dan-kebiasaan-least-privilege" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Dua jenis role, dan kebiasaan least privilege</h3><div class="prose"><p>Ada satu set role lain yang hampir selalu membingungkan orang di awal. Role Azure RBAC mengendalikan <em>resource</em> Azure; <strong>role Microsoft Entra</strong> mengendalikan <em>direktori</em> itu sendiri.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Role Microsoft Entra</th>
+<th>Role Azure RBAC</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Mengendalikan akses ke</td>
+<td>Objek direktori: pengguna, grup, aplikasi, domain, lisensi, pengaturan tenant</td>
+<td>Resource Azure: VM, jaringan, penyimpanan, database, dan seterusnya</td>
+</tr>
+<tr>
+<td>Contoh</td>
+<td>Global Administrator, User Administrator, Application Administrator, Billing Administrator</td>
+<td>Owner, Contributor, Reader, Virtual Machine Contributor</td>
+</tr>
+<tr>
+<td>Scope</td>
+<td>Seluruh tenant, satu administrative unit, atau satu objek (misalnya satu aplikasi)</td>
+<td>Management group, subscription, resource group, atau resource</td>
+</tr>
+<tr>
+<td>Tempat menetapkannya</td>
+<td>Microsoft Entra admin center (<em>Roles and administrators</em>), Microsoft Graph</td>
+<td><em>Access control (IAM)</em> di portal Azure, Azure CLI, PowerShell, ARM template (<em>templat ARM</em>), dan Bicep</td>
+</tr>
+<tr>
+<td>Pemegang yang lazim</td>
+<td>Tim identitas dan helpdesk Anda</td>
+<td>Siapa pun yang membangun atau mengoperasikan workload</td>
+</tr>
+<tr>
+<td>Custom role</td>
+<td>Didukung</td>
+<td>Didukung (Makan Siang 22)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Secara default, kedua set role ini tidak saling tumpang tindih. Seorang Global Administrator bisa me-reset kata sandi siapa pun, tetapi tidak punya akses ke resource Azure. Dalam keadaan darurat, Global Administrator bisa melakukan <strong>elevate access</strong>, yang memberinya role User Access Administrator di root scope (<code>/</code>) — mencakup setiap management group dan subscription di tenant — sehingga dia bisa memulihkan subscription yang tidak bisa lagi dikelola orang lain. Pakai, bereskan masalahnya, lalu matikan lagi. Role administrator subscription klasik (Service Administrator dan Co-Administrator) sudah sepenuhnya dipensiunkan; kini Azure RBAC adalah satu-satunya model.</p>
+<p>Dengan begitu banyak role yang tersedia, aturan pemandunya adalah <strong>least privilege</strong> (prinsip hak akses minimum): berikan role terkecil, di scope tersempit, untuk waktu tersingkat yang masih memungkinkan seseorang menyelesaikan pekerjaannya. Ibaratnya saat rumah Anda direnovasi: tukang mendapat kunci pintu samping dan dapur selama proyek berjalan, bukan kunci kamar tidur dan brankas — dan kuncinya dikembalikan begitu proyek selesai. Dalam praktiknya:</p>
+<ul>
+<li>Berikan role kepada <strong>grup</strong>, bukan perorangan; orang masuk atau keluar tim cukup dengan satu perubahan keanggotaan.</li>
+<li>Utamakan <strong>role khusus layanan</strong> (Virtual Machine Contributor) daripada role umum (Contributor).</li>
+<li>Utamakan scope <strong>resource group</strong> daripada scope subscription.</li>
+<li>Batasi pemegang <strong>Owner</strong> sesedikit mungkin, dan tinjau secara rutin siapa saja yang memegangnya.</li>
+<li>Cabut role assignment <strong>sebelum</strong> Anda menghapus principal-nya.</li>
+</ul>
+<p>Least privilege adalah salah satu dari tiga prinsip <strong>Zero Trust</strong>, bersama <em>verify explicitly</em> (verifikasi secara eksplisit: autentikasi dan otorisasi setiap permintaan dengan memakai semua sinyal yang tersedia) dan <em>assume breach</em> (anggap pembobolan sudah terjadi: batasi radius kerusakan dan awasi penyalahgunaan). Anda baru saja bertemu ketiganya: MFA dan Conditional Access melakukan verifikasi eksplisit, scope RBAC yang sempit menegakkan least privilege, dan pemeriksaan per permintaan berarti token yang dicuri hanya bisa menjangkau apa yang bisa dijangkau pemiliknya. Makan Siang 15 menerapkan Zero Trust pada defense in depth (<em>pertahanan mendalam</em>), dan Makan Siang 22 menambahkan akses just-in-time (akses yang diberikan hanya saat dibutuhkan).</p>
+</div></article><article class="scene-card" id="6-bagaimana-semuanya-menyatu-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Bagaimana semuanya menyatu untuk Nusantara Retail</h3><div class="prose"><p>Kembali ke Jumat sore itu. Alih-alih membagikan kata sandi Dewi atau mengobral role Owner, Anda membuat sketsa rencana:</p>
+<ul>
+<li><strong>Rizky</strong> mendapat identitasnya sendiri — tamu B2B jika perusahaannya memakai Entra ID, atau akun member di tenant Anda jika tidak. Di lab, Anda akan menyimulasikan Rizky dengan pengguna uji.</li>
+<li>Rizky bergabung ke security group <strong>grp-nusa-contractors</strong>, dan grup itulah — bukan Rizky — yang mendapat role: pertama <strong>Reader</strong> di <code>rg-storefront-test</code> supaya dia bisa mempelajari lingkungannya, lalu <strong>Contributor</strong> di resource group yang sama saat migrasi dimulai. Dia tidak bisa menyentuh production, tidak bisa melihat bagian lain subscription, dan tidak bisa memberi akses kepada siapa pun.</li>
+<li><strong>Security defaults</strong> (atau, setelah Nusantara Retail membeli P1, sebuah kebijakan Conditional Access) memastikan dia sign in dengan MFA.</li>
+<li><strong>Dewi</strong> berhenti meminjamkan akunnya. Aksesnya sendiri datang melalui <strong>grp-developers</strong>.</li>
+<li><strong>Pak Budi</strong> menghubungkan AD DS on-premises dengan Entra Connect Sync, sehingga staf kantor pusat memakai satu akun di mana-mana.</li>
+</ul>
+<p>Pertanyaan Ibu Sari — &quot;kalau kontraknya selesai, bagaimana aksesnya ikut selesai?&quot; — kini punya jawaban satu kalimat: keluarkan Rizky dari grup (atau biarkan perusahaannya menonaktifkan akunnya), dan setiap izin yang datang lewat grup itu langsung hilang sekaligus. Sementara itu, activity log mencatat bahwa Rizky-lah, bukan Dewi, yang melakukan setiap perubahan.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Dewi adalah anggota <em>grp-developers</em> (Reader di subscription) dan <em>grp-storefront-ops</em> (Virtual Machine Contributor di <code>rg-storefront-test</code>). Bisakah dia me-restart VM di <code>rg-storefront-prod</code>? Bagaimana dengan VM di <code>rg-storefront-test</code>? Bisakah dia menghapus resource group <code>rg-storefront-test</code> itu sendiri?</p>
+</aside>
+<p>Hari ini kita sudah meletakkan fondasinya. <strong>Makan Siang 22 · Identitas dan Akses (Lanjutan)</strong> melanjutkan dengan managed identity secara mendalam, pipeline tanpa kata sandi, kebijakan Conditional Access, Privileged Identity Management, dan custom role.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Bolehkah Dewi me-restart VM?</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/05-identity-access-basic.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/05-identity-access-basic.html?lang=id" title="Demo interaktif: Bolehkah Dewi me-restart VM?" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/05-identity-access-basic/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Autentikasi terjadi sekali, saat sign-in; otorisasi terjadi pada setiap permintaan.</li>
+<li>Azure Resource Manager memeriksa deny assignment lebih dulu, lalu mengumpulkan role assignment dari setiap scope dan menjumlahkannya.</li>
+<li>Solusi pertama yang diusulkan (Owner di subscription) memang akan berhasil — dan tetap merupakan jawaban yang salah.</li>
+<li>Deny assignment mengalahkan role apa pun, bahkan role yang mencakup action tersebut.</li>
+<li>Conditional Access menentukan <em>bagaimana</em> Rizky boleh sign in, sebelum RBAC sempat melihat satu pun permintaannya.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Rizky berhasil sign in dengan MFA, tetapi ketika mencoba menambahkan aturan ke sebuah network security group di <code>rg-storefront-test</code>, dia mendapat <code>AuthorizationFailed</code>. Pemeriksaan mana yang gagal — autentikasi atau otorisasi — dan layanan mana yang mengambil keputusan itu?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Otorisasi, yang diputuskan oleh Azure Resource Manager dengan Azure RBAC. <em>alasannya:</em> sign-in-nya (autentikasi oleh Microsoft Entra ID) berhasil; kode 403 berarti tidak ada role yang diberikan kepadanya atau kepada grupnya, di scope itu maupun di atasnya, yang mencakup action write tersebut.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Dewi memegang Contributor di subscription dan Reader di <code>rg-storefront-prod</code>. Apa yang bisa dia lakukan di <code>rg-storefront-prod</code>?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Semua yang bisa dilakukan Contributor di sana: membuat, mengubah, dan menghapus resource. <em>alasannya:</em> Azure RBAC bersifat aditif — akses efektif adalah gabungan semua assignment di resource itu dan di atasnya, sehingga assignment Reader tidak menambah maupun mengurangi apa pun; hanya deny assignment yang bisa mencabut action yang sudah diizinkan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Ketua tim Anda minta dijadikan Global Administrator &quot;supaya saya bisa membuat VM di Azure&quot;. Apa yang Anda jelaskan, dan apa yang Anda tawarkan sebagai gantinya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Global Administrator adalah role Microsoft Entra untuk mengelola direktori; secara default role ini tidak memberi akses ke resource Azure. Tawarkan role Azure seperti Virtual Machine Contributor, yang diberikan ke grup tim tersebut di resource group yang tepat. <em>alasannya:</em> role Entra dan role Azure RBAC adalah dua sistem yang terpisah, dan elevate access hanya dimaksudkan untuk keadaan darurat.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Nusantara Retail ingin kontraktor menyelesaikan MFA setiap kali mereka sign in dari perangkat yang tidak dikelola perusahaan, sementara staf yang memakai laptop kantor lebih jarang diminta MFA. Security defaults atau Conditional Access — dan lisensi apa yang dibutuhkan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Conditional Access, yang membutuhkan Microsoft Entra ID P1. <em>alasannya:</em> security defaults hanya bisa aktif atau nonaktif untuk semua orang; Conditional Access menggabungkan sinyal seperti keanggotaan grup dan status perangkat menjadi keputusan yang disesuaikan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Kontrak Rizky berakhir dan seorang rekan langsung menghapus akun penggunanya. Dua minggu kemudian, halaman <em>Access control (IAM)</em> di resource group menampilkan assignment Contributor untuk &quot;Identity not found&quot;. Apa yang salah, dan urutan apa yang lebih baik?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Role assignment-nya tertinggal. Keluarkan Rizky dari grup yang memegang role tersebut (atau cabut assignment langsungnya) terlebih dahulu, baru hapus atau nonaktifkan akunnya. <em>alasannya:</em> menghapus sebuah principal tidak ikut menghapus role assignment-nya; assignment itu menjadi entri yatim yang mengotori access review.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Autentikasi membuktikan siapa Anda (Microsoft Entra ID menerbitkan token); otorisasi memutuskan apa yang boleh Anda lakukan (Azure Resource Manager memeriksa Azure RBAC pada setiap permintaan).</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Tenant adalah instans Entra ID milik organisasi Anda — berisi pengguna, grup, tamu, dan identitas aplikasi — dan setiap subscription memercayai tepat satu tenant.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>MFA tidak lagi opsional di Azure: security defaults dan mandatory MFA mewajibkannya, passkey dan Windows Hello membuat sign-in tahan phishing, dan Conditional Access (P1) menambahkan kendali jika-maka.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Role assignment = security principal + role definition + scope; assignment diwariskan ke bawah dan saling menjumlah, sedangkan deny assignment mengalahkan semuanya.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Role Entra mengelola direktori dan role Azure mengelola resource; terapkan least privilege dengan grup, scope yang sempit, role yang spesifik, dan Owner yang sangat sedikit.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Setiap permintaan akses punya pertanyaan keempat.</strong> Role assignment mencatat tiga hal: siapa, role apa, dan di scope mana. Saya selalu menambahkan pertanyaan keempat: <em>sampai kapan?</em> Soalnya, role assignment biasa tidak pernah kedaluwarsa dengan sendirinya. Jadi, setiap kali memberi akses, saya menuliskan alasan dan tanggal berakhirnya di kolom deskripsi assignment, memastikan grupnya punya pemilik yang jelas, lalu memasang tanggal itu di kalender sang pemilik grup. Kontraktor adalah kasus yang paling penting: proyek sering selesai diam-diam, dan jarang ada yang repot membuka tiket untuk mencabut akses. Sebelum bilang &quot;sudah siap&quot;, saya membuka <em>Check access</em> dan membaca akses apa yang benar-benar dimiliki orang itu. Akses yang tidak ada pemiliknya tidak akan kedaluwarsa — ia hanya makin tua, seperti kunci serep yang lupa ditarik kembali.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>05</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Beri kontraktor akses secukupnya</h3>
+          <div class="prose"><p>Di tenant Microsoft Entra milik Anda sendiri, Anda akan membuat pengguna uji yang berperan sebagai Rizky, memasukkannya ke grup kontraktor, lalu memberi grup itu role Reader dan kemudian Contributor di satu resource group saja. Anda akan sign in sebagai Rizky di jendela browser privat untuk merasakan bedanya, menampilkan akses efektifnya dengan Azure CLI, dan sengaja menaruh role di scope yang salah supaya Anda terlatih menemukan dan memperbaikinya. Inilah langkah-langkah persis yang akan Anda lakukan untuk setiap rekan kerja, kontraktor, dan pipeline baru mulai sekarang.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 40 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/05-identity-access-basic.html">Mulai Lab 05 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/role-based-access-control/overview" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Azure role-based access control (Azure RBAC)?</b><span>Langkah-langkah evaluasi dan model aditifnya, lengkap dengan diagram resmi dari Microsoft.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/role-based-access-control/rbac-and-directory-admin-roles" target="_blank" rel="noopener"><b>Microsoft Learn: Role Azure, role Microsoft Entra, dan role administrator subscription klasik</b><span>Perbandingan paling lengkap, termasuk elevate access.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/entra/fundamentals/security-defaults" target="_blank" rel="noopener"><b>Microsoft Learn: Security defaults di Microsoft Entra ID</b><span>Persis apa saja yang diwajibkan standar dasar gratis ini di tenant Anda.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/entra/identity/conditional-access/overview" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Conditional Access?</b><span>Sinyal, keputusan, dan kebijakan yang umum dipakai.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🔑</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Penjaga Gerbang</h2>
+        <p class="muted">Beri akses seperlunya dengan Azure RBAC.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Masih berhari-hari — tetapi hanya orang yang tepat yang bisa menyentuh sistem baru.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 06</b><h4>Kabur dari Pantry</h4><p>Kipas angin meja di depan server bukanlah strategi — saatnya memindahkan toko dari mesin itu.</p><p style="margin-top:10px"><a href="06-virtual-machines-basic.html">Tonton Episode 06 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="04-resource-hierarchy-basic.html"><small>← Episode sebelumnya</small>04 · Siapa yang Bikin server-baru-final2?</a><a class="next" href="06-virtual-machines-basic.html"><small>Episode berikutnya →</small>06 · Kabur dari Pantry</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/05-identity-access-basic/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

@@ -1,9 +1,12 @@
 # Lunch 24 · Storage (Advanced)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Deep-dive month · **Level:** Advanced · **Part 5:** Deep dives
 > **Time:** 60 minutes · **Prerequisite lunches:** 07, 08
 > **AZ-900 skill area:** Beyond AZ-900
 > **Lab:** [Lab 24 · Ransomware-proof invoices](../../labs/24-storage-advanced/README.md) — about 60 minutes · cost 💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -396,6 +399,16 @@ What to watch for:
   sensitive.
 - Plan for scale and disasters: pick the right bulk-transfer tool, know which redundancy changes need a conversion, and
   check Last Sync Time before an unplanned failover.
+
+## 🗒️ Field notes from Stefanus
+
+> **Ask who can switch it off.** For every protection layer on a storage account, I ask one question in design reviews:
+> *who can turn this off, and how fast?* Soft delete, versioning and an unlocked retention policy all rescue you from
+> accidents, but anyone with the Owner role can disable them in a few clicks — so I treat them as undo buttons, not as
+> protection against a stolen admin account. Only a locked policy or a backup held under separate permissions answers
+> that threat, and I want someone outside IT to sign off before anything gets locked. Then I book a restore drill:
+> overwrite a test file, delete a test container and time how long it takes to get both back. Protection you have never
+> restored from is a hope, not a plan.
 
 ## 🔬 Your lab: Ransomware-proof invoices
 

@@ -1,5 +1,7 @@
 # Lunch 20 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real authoring and deployment experience — Bicep IntelliSense in VS Code, a compile error, what-if
 > output, the Deployments page, a redeploy, and a deployment stack refusing a delete — which the animation can only simulate.
 > **Length target:** about 5 minutes 50 seconds.

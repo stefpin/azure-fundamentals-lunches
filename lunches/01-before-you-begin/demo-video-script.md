@@ -1,5 +1,7 @@
 # Lunch 01 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the part an animation cannot show: a quick portal tour,
 > opening Cloud Shell, cloning the course repository, and creating the course budget.
 > **Length target:** 5½ minutes (short videos keep attention; split anything longer).

@@ -1,0 +1,109 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 25 · Virtual Networking (Lanjutan) — Demo interaktif",
+    "kicker": "Makan Siang 25 · Virtual Networking (Lanjutan) · Demo interaktif",
+    "title": "Lewat hub: rute, router, dan nama privat",
+    "lede": "Saksikan lalu lintas antar-spoke gagal karena peering tidak transitif, perbaiki dengan user-defined route dan sebuah router di hub, lalu ikuti nama sebuah private endpoint sampai ke IP privatnya. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Jaringan hub-and-spoke Nusantara Retail: merutekan lalu lintas antar-spoke melalui router di hub, dan me-resolve nama sebuah private endpoint",
+    "svgDesc": "Di tengah atas, virtual network hub vnet-nusa-hub dengan VM router vm-hub-nva di 10.30.1.4 dan, belakangan, sebuah private endpoint serta DNS Private Resolver. Kiri bawah, spoke1 (toko online) dengan vm-spoke1; kanan bawah, spoke2 (back office) dengan vm-spoke2. Panel kiri atas menampilkan effective routes dari network interface vm-spoke1. Panel kanan atas menampilkan peering, hasil next hop dari Network Watcher, dan, belakangan, langkah-langkah resolusi nama. Di antara kedua spoke, Azure DNS dan sebuah private DNS zone muncul di paruh kedua."
+  },
+  "steps": [
+    {
+      "title": "Satu hub dan dua spoke",
+      "text": "Nusantara Retail kini menjalankan tiga virtual network di satu region. Hub, 10.30.0.0/16, menampung layanan bersama seperti VM router vm-hub-nva. Toko online tinggal di spoke1, 10.31.0.0/16, dan back office keuangan di spoke2, 10.32.0.0/16. Belum ada yang di-peering. Panel kiri menampilkan effective routes dari network interface milik vm-spoke1."
+    },
+    {
+      "title": "Peering setiap spoke dengan hub",
+      "text": "Setiap peering terdiri dari dua link, satu dibuat dari masing-masing sisi; setelah keduanya ada, statusnya menjadi Connected. Link milik spoke juga mengizinkan forwarded traffic, yang nanti penting. Sebuah peering hanya menambahkan rute untuk tetangga langsungnya: vm-spoke1 kini punya 10.30.0.0/16 dengan next hop VNet peering. Perhatikan yang tidak ia dapat: rute apa pun ke spoke2."
+    },
+    {
+      "title": "Spoke bisa menjangkau hub",
+      "text": "vm-spoke1 melakukan ping ke VM hub di 10.30.1.4. Azure melihat setiap rute yang cocok dengan tujuan itu: 10.30.0.0/16 lewat peering, 10.0.0.0/8 ke None, dan 0.0.0.0/0 ke internet. Prefix terpanjang yang menang, jadi paket menyeberangi peering dan balasannya langsung kembali. vm-spoke2 menjangkau hub dengan cara yang sama."
+    },
+    {
+      "title": "Antar-spoke: tidak ada rute",
+      "text": "Sekarang vm-spoke1 mencoba menjangkau vm-spoke2 di 10.32.1.4. Peering tidak transitif: spoke1 mengenal rentang hub, tetapi tidak mengenal rentang spoke2. Rute yang cocok hanyalah 10.0.0.0/8 ke None dan 0.0.0.0/0, dan /8 lebih panjang, jadi paket dibuang diam-diam. Next hop di Network Watcher mengonfirmasinya: None, diputuskan oleh system route default."
+    },
+    {
+      "title": "Route table mengarah ke hub",
+      "text": "Dua route table memperbaiki perutean. rt-spoke1 mengirim 10.32.0.0/16 ke next hop type VirtualAppliance di 10.30.1.4, yaitu VM hub. rt-spoke2 mengirim 10.31.0.0/16 dengan cara yang sama, sehingga balasan juga kembali lewat hub. /16 lebih panjang daripada /8, jadi user-defined route yang menang, dan next hop kini menyebutkan appliance tersebut.",
+      "set": {
+        "t-nha": "VirtualAppliance · 10.30.1.4",
+        "t-nhb": "rute 10.32.0.0/16 · User · rt-spoke1"
+      }
+    },
+    {
+      "title": "VM hub membuangnya",
+      "text": "Rutenya bekerja: paket diserahkan ke network interface vm-hub-nva. Tetapi paket itu dialamatkan ke 10.32.1.4, bukan ke VM hub, dan secara default Azure hanya mengantarkan paket yang dialamatkan ke IP milik NIC itu sendiri. Selebihnya dibuang. Merutekan lewat appliance butuh lebih dari sekadar rute: appliance itu harus diizinkan meneruskan paket."
+    },
+    {
+      "title": "Dua sakelar membuat router",
+      "text": "Sakelar pertama: aktifkan IP forwarding di network interface vm-hub-nva, sebuah setelan Azure. Sakelar kedua: di dalam Linux, atur net.ipv4.ip_forward menjadi 1 dan simpan di /etc/sysctl.d agar tetap berlaku setelah reboot. Kini VM hub meneruskan paket, peering hub-ke-spoke2 membawanya, dan link milik spoke2 menerimanya karena forwarded traffic diizinkan.",
+      "set": {
+        "t-fwd": "IP forwarding: aktif"
+      }
+    },
+    {
+      "title": "Membuktikan jalur di kedua arah",
+      "text": "Balasan dari vm-spoke2 mengikuti rt-spoke2 kembali lewat hub, sehingga kedua arah memakai appliance yang sama — syarat wajib bagi firewall stateful. Bukti mengalahkan diagram: next hop menjawab VirtualAppliance di kedua arah, dan penghitung paket terusan di hub naik setiap kali ada ping. Di produksi, Azure Firewall menggantikan router ini dan mencatat setiap keputusannya.",
+      "set": {
+        "t-nhq": "vm-spoke2 → 10.31.1.4",
+        "t-nhb": "rute 10.31.0.0/16 · User · rt-spoke2",
+        "t-cnt": "diteruskan: 14"
+      }
+    },
+    {
+      "title": "Private endpoint di hub",
+      "text": "Cerita kedua: storage account untuk faktur, stnusa. Public network access-nya dimatikan, dan sebuah private endpoint memberinya network interface di hub pada 10.30.3.4. Aplikasi tetap memakai nama yang biasa, stnusa.blob.core.windows.net, sehingga connection string dan sertifikat TLS-nya tidak berubah. Pertanyaannya: bagaimana nama itu berubah menjadi 10.30.3.4?"
+    },
+    {
+      "title": "Nama berubah menjadi alias",
+      "text": "vm-spoke1 mengirim pertanyaannya ke Azure DNS di 168.63.129.16, resolver yang dipakai setiap virtual network secara default. Jawaban DNS publik bukan alamat, melainkan sebuah CNAME: stnusa.privatelink.blob.core.windows.net. Alias itu publik, jadi siapa pun bisa mencarinya. Tanpa bantuan lain, alias itu tetap berakhir di public endpoint, tempat permintaan akan ditolak."
+    },
+    {
+      "title": "Zona yang ter-link menjawab secara privat",
+      "text": "Sebelum menjawab, Azure DNS memeriksa private DNS zone yang di-link ke jaringan si penanya. privatelink.blob.core.windows.net di-link ke spoke1 dan menyimpan A record stnusa → 10.30.3.4, yang dijaga tetap mutakhir oleh DNS zone group milik endpoint. Jadi vm-spoke1 menerima IP privat. Jaringan tanpa link itu mendapat IP publik dan error access denied."
+    },
+    {
+      "title": "Terhubung tanpa internet",
+      "text": "vm-spoke1 membuka koneksi HTTPS ke 10.30.3.4. Lalu lintasnya menyeberangi peering spoke1-ke-hub menuju private endpoint dan tidak pernah menyentuh internet. Satu detail untuk auditor: secara default, NSG dan user-defined route tidak berlaku untuk lalu lintas yang dikirim ke private endpoint. Aktifkan network policies di subnet milik endpoint jika firewall harus menginspeksinya."
+    },
+    {
+      "title": "Kantor pusat butuh resolver",
+      "text": "Server DNS kantor pusat milik Pak Budi tidak bisa menjangkau 168.63.129.16, yang hanya menjawab dari dalam Azure. Azure DNS Private Resolver menyelesaikannya tanpa VM DNS. Kantor pusat meneruskan zona publik, blob.core.windows.net, ke inbound endpoint di hub melalui VPN dari Makan Siang 26, jadi private zone juga harus di-link ke hub. Outbound endpoint dan sebuah ruleset menangani arah sebaliknya.",
+      "set": {
+        "t-link": "ter-link ke spoke1 dan hub"
+      }
+    },
+    {
+      "title": "Yang perlu diingat",
+      "text": "Empat kebiasaan dari demo ini. Peering itu privat, cepat, dan tidak transitif, jadi lalu lintas antar-spoke butuh rute lewat hub. Appliance butuh user-defined route, IP forwarding di NIC dan di OS-nya, serta rute balik yang sepadan. Private endpoint hanya bekerja jika private DNS zone-nya di-link. Dan next hop membuktikan apa yang benar-benar terjadi.",
+      "tip": "Coba di Lab 25: buat peering untuk satu hub dan dua spoke, ubah VM hub menjadi router, lalu buktikan lalu lintas antar-spoke dengan next hop dan penghitung paket terusan."
+    }
+  ],
+  "svg": {
+    "10.31.0.0/16 · storefront": "10.31.0.0/16 · toko online",
+    "vm-spoke1's network interface": "network interface vm-spoke1",
+    "→ Virtual network (own range)": "→ Virtual network (rentang sendiri)",
+    "→ None: packet dropped": "→ None: paket dibuang",
+    "→ VNet peering (the hub)": "→ VNet peering (ke hub)",
+    "None (packet dropped)": "None (paket dibuang)",
+    "route 10.0.0.0/8 · Default": "rute 10.0.0.0/8 · Default",
+    "spoke1 ↔ spoke2 · not peered": "spoke1 ↔ spoke2 · tanpa peering",
+    "spoke links allow forwarded traffic": "link spoke menerima forwarded traffic",
+    "Name resolution": "Resolusi nama",
+    "1 · vm-spoke1 asks Azure DNS for": "1 · vm-spoke1 bertanya ke Azure DNS soal",
+    "2 · public DNS answers with a CNAME": "2 · DNS publik menjawab dengan CNAME",
+    "3 · the linked private zone answers": "3 · private zone yang ter-link menjawab",
+    "A record: stnusa → 10.30.3.4 (private)": "A record: stnusa → 10.30.3.4 (privat)",
+    "4 · vm-spoke1 connects to": "4 · vm-spoke1 terhubung ke",
+    "10.30.3.4, across the peering to the hub": "10.30.3.4, lewat peering ke hub",
+    "IP forwarding: off": "IP forwarding: nonaktif",
+    "forwarded: 0": "diteruskan: 0",
+    "linked to vnet-nusa-spoke1": "ter-link ke vnet-nusa-spoke1",
+    "Head office DNS": "DNS kantor pusat",
+    "Pak Budi's servers, over the VPN": "server Pak Budi, lewat VPN",
+    "No route: dropped": "Tidak ada rute: dibuang",
+    "10.32.1.4 matches 10.0.0.0/8 → None": "10.32.1.4 cocok dengan 10.0.0.0/8 → None"
+  }
+}

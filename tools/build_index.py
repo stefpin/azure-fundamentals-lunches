@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Rebuild the course tables in README.md and labs/README.md.
+"""Rebuild the course tables in README.md and labs/README.md, and their Indonesian twins README.id.md and
+labs/README.id.md (when they exist).
 
 (The GitHub Pages site — landing page, episode and lab pages, demo gallery — is built by
 tools/build_site.py, which also imports the LUNCHES list from this file.)
@@ -90,6 +91,73 @@ def exists(rel: str) -> bool:
     return (REPO / rel).exists()
 
 
+ID_PARTS = {
+    1: "Bagian 1 · Fondasi",
+    2: "Bagian 2 · Infrastruktur inti",
+    3: "Bagian 3 · Layanan platform dan data",
+    4: "Bagian 4 · Keamanan, operasional, dan tata kelola",
+    5: "Bagian 5 · Pendalaman",
+}
+
+
+def id_text(rel: str) -> str:
+    p = REPO / rel
+    return p.read_text(encoding="utf-8", errors="replace") if p.exists() else ""
+
+
+def lunch_title_id(slug: str, default: str) -> str:
+    m = re.search(r"^#\s*Makan Siang\s*\d+\s*·\s*(.+?)\s*$", id_text(f"lunches/{slug}/README.id.md"), re.MULTILINE)
+    return m.group(1).strip() if m else default
+
+
+def lab_info_id(slug: str, default_title: str, default_time: str, default_cost: str) -> tuple[str, str, str]:
+    title, time, cost = lab_info(slug, default_title, default_time, default_cost)
+    text = id_text(f"labs/{slug}/README.id.md")
+    if text:
+        m = re.search(r"^#\s*Lab\s*\d+\s*·\s*(.+?)\s*$", text, re.MULTILINE)
+        if m:
+            title = m.group(1).strip()
+        m = re.search(r"\*\*Waktu:\*\*\s*([^·\n|]+)", text)
+        if m:
+            time = re.split(r"\s\(|,|;|\stermasuk\b", m.group(1).strip())[0].strip().rstrip(".")
+    return title, time, cost
+
+
+def course_tables_id() -> str:
+    out: list[str] = []
+    for part_no, part_name in ID_PARTS.items():
+        rows = [l for l in LUNCHES if l[4] == part_no]
+        month = "Bulan inti" if part_no < 5 else "Bulan pendalaman"
+        out.append(f"### {month} — {part_name}\n")
+        out.append("| # | Makan siang (bacaan) | Level | Online | Lab | Waktu lab | Biaya |")
+        out.append("|---:|---|---|---|---|---|---|")
+        for n, slug, title, level, _p, lt, ltime, lcost in rows:
+            ltitle, ltime, lcost = lab_info_id(slug, lt, ltime, lcost)
+            # the level has its own column, as in the English table
+            short = re.sub(r"\s*\((?:Dasar|Lanjutan)\)", "", lunch_title_id(slug, title))
+            reading = f"[{short}](lunches/{slug}/README.id.md)"
+            demo = (f"[🌐 Episode]({PAGES}/id/lunches/{slug}.html) · [▶ Demo]({PAGES}/demos/{slug}.html?lang=id)"
+                    if exists(f"docs/demos/{slug}.html") else f"[🌐 Episode]({PAGES}/id/lunches/{slug}.html)")
+            lab = f"[{ltitle}](labs/{slug}/README.id.md)"
+            out.append(f"| {n:02d} | {reading} | {'Dasar' if level == 'Basic' else 'Lanjutan'} | {demo} | {lab} | {ltime} | {lcost} |")
+        out.append("")
+    slug, _title, _time, cost = CAPSTONE
+    out.append(f"**Lalu:** [Tantangan capstone lanjutan](labs/{slug}/README.id.md) — proyek beberapa sesi, {cost}. "
+               "Hanya berisi persyaratan: rancang, bangun, buktikan.\n")
+    return "\n".join(out)
+
+
+def lab_table_id() -> str:
+    out = ["| Lab | Pasangan dari | Waktu | Biaya |", "|---|---|---|---|"]
+    for n, slug, title, level, _p, lt, ltime, lcost in LUNCHES:
+        ltitle, ltime, lcost = lab_info_id(slug, lt, ltime, lcost)
+        out.append(f"| [Lab {n:02d} · {ltitle}]({slug}/README.id.md) | [Makan Siang {n:02d} · {lunch_title_id(slug, title)}]"
+                   f"(../lunches/{slug}/README.id.md) | {ltime} | {lcost} |")
+    slug, _title, _time, cost = CAPSTONE
+    out.append(f"| [Tantangan capstone lanjutan]({slug}/README.id.md) | Makan Siang 22–31 | proyek beberapa sesi | {cost} |")
+    return "\n".join(out) + "\n"
+
+
 def course_tables() -> str:
     out: list[str] = []
     for part_no, part_name in PARTS.items():
@@ -101,8 +169,8 @@ def course_tables() -> str:
         for n, slug, title, level, _p, lt, ltime, lcost in rows:
             ltitle, ltime, lcost = lab_info(slug, lt, ltime, lcost)
             reading = f"[{title}](lunches/{slug}/README.md)"
-            demo = (f"[🌐 Episode]({PAGES}/lunches/{slug}.html) · [▶ Demo]({PAGES}/demos/{slug}.html)"
-                    if exists(f"docs/demos/{slug}.html") else f"[🌐 Episode]({PAGES}/lunches/{slug}.html)")
+            demo = (f"[🌐 Episode]({PAGES}/en/lunches/{slug}.html) · [▶ Demo]({PAGES}/demos/{slug}.html)"
+                    if exists(f"docs/demos/{slug}.html") else f"[🌐 Episode]({PAGES}/en/lunches/{slug}.html)")
             lab = f"[{ltitle}](labs/{slug}/README.md)"
             out.append(f"| {n:02d} | {reading} | {level} | {demo} | {lab} | {ltime} | {lcost} |")
         out.append("")
@@ -142,6 +210,10 @@ def main() -> int:
     ok = True
     ok &= replace_between(REPO / "README.md", "COURSE-TABLE", course_tables())
     ok &= replace_between(REPO / "labs" / "README.md", "LAB-TABLE", lab_table())
+    if exists("README.id.md"):
+        ok &= replace_between(REPO / "README.id.md", "COURSE-TABLE", course_tables_id())
+    if exists("labs/README.id.md"):
+        ok &= replace_between(REPO / "labs" / "README.id.md", "LAB-TABLE", lab_table_id())
     missing = [s for _n, s, *_ in LUNCHES if not exists(f"lunches/{s}/README.md")]
     if missing:
         print(f"! readings not found yet: {', '.join(missing)}")

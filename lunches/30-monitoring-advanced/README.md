@@ -1,9 +1,12 @@
 # Lunch 30 · Monitoring (Advanced): Log Analytics, KQL and Application Insights
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Deep-dive month · **Level:** Advanced · **Part 5:** Deep dives
 > **Time:** 60 minutes · **Prerequisite lunches:** 16 (Monitoring, Basic), 06, 10
 > **AZ-900 skill area:** Beyond AZ-900
 > **Lab:** [Lab 30 · Why was checkout slow on Friday?](../../labs/30-monitoring-advanced/README.md) — about 60 minutes · cost 💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -256,8 +259,8 @@ the web app to the payment API and back. The portal turns this into views you'll
   isn't available with every instrumentation (for example, App Service autoinstrumentation for Python).
 - **Availability tests** call a URL from Microsoft's test locations around the world. A **standard test** checks the
   status code, response time, content and TLS certificate validity; at least five locations are recommended, alerts
-  fire when several locations fail, and standard tests are billed per run. The older URL ping tests are deprecated and
-  scheduled for retirement on September 30, 2028.
+  fire when several locations fail, and standard tests are billed per run. The older URL ping tests were retired on
+  September 30, 2026: create standard tests only.
 
 ```mermaid
 sequenceDiagram
@@ -394,8 +397,8 @@ What to watch for:
    <details><summary>Show answer</summary>
 
    An Application Insights **availability test** of the **standard** kind, running from several locations (five or more
-   is recommended), with an alert when multiple locations fail. *Why:* URL ping tests are deprecated, and standard
-   tests also check TLS certificates, verbs and headers.
+   is recommended), with an alert when multiple locations fail. *Why:* URL ping tests were retired in September 2026, and
+   standard tests also check TLS certificates, verbs and headers.
 
    </details>
 
@@ -411,6 +414,16 @@ What to watch for:
   an operation ID, and standard availability tests watch from outside.
 - Turn good queries into log search alerts and workbooks — and control cost by collecting less, choosing table plans
   wisely and watching the `Usage` table.
+
+## 🗒️ Field notes from Stefanus
+
+> **Silence is not the same as health.** A query that returns nothing looks exactly like a system with no problems. So
+> after every change to an agent, a data collection rule or a diagnostic setting, I send a known test message with a
+> unique marker, such as a `logger` line or a test request, and I don't move on until a query finds it. For every source
+> that matters, I also keep one alert that watches for silence: a computer whose last `Heartbeat` is more than ten
+> minutes old, or a table that has received no rows in the last hour. A threshold alert on data that has stopped arriving
+> can never fire, and nothing on your screen tells you so. The trap I see most often is a rule that everyone trusts,
+> faithfully evaluating a table that stopped filling long ago.
 
 ## 🔬 Your lab: Why was checkout slow on Friday?
 

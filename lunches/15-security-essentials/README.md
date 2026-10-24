@@ -1,9 +1,12 @@
 # Lunch 15 · Security Essentials: Defense in Depth, Key Vault and Defender for Cloud (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 4:** Secure, operate and govern
 > **Time:** 60 minutes · **Prerequisite lunches:** 04, 05, 06 (08 helps)
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 15 · Get the password out of the config file](../../labs/15-security-essentials/README.md) — about 45 minutes · cost 💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -380,6 +383,16 @@ What to watch for:
   Secrets Officer**.
 - Managed identities get tokens from IMDS, so code holds no credentials — and with Entra authentication to services such
   as Azure SQL, many secrets disappear completely.
+
+## 🗒️ Field notes from Stefanus
+
+> **Every secret needs a fire drill.** In design reviews I ask one question about each credential: *if it appeared in
+> a public chat tonight, how long would it take us to make it worthless, and who would do it?* If the honest answer is
+> "several redeployments, and nobody knows where it is used", the design is not finished. So before go-live I rotate
+> every secret once, on purpose, on a quiet afternoon: change it at the source, add the new value as a new version in
+> Key Vault, and check that the apps pick it up without a code change. A rotation you have never practised is one you
+> cannot trust in an incident. And when the drill hurts, I take that as a hint to replace the secret with a managed
+> identity: nothing to leak, nothing for us to rotate.
 
 ## 🔬 Your lab: Get the password out of the config file
 

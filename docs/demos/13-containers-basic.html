@@ -291,7 +291,7 @@ svg .node > rect.layer{fill:var(--surface)}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/13-containers-basic.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/13-containers-basic.html" data-href-id="../id/lunches/13-containers-basic.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -673,10 +673,150 @@ svg .node > rect.layer{fill:var(--surface)}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 13 · Containers (Dasar) — Demo interaktif",
+   "kicker": "Makan Siang 13 · Containers (Dasar) · Demo interaktif",
+   "title": "Build sekali, jalankan di mana saja, menyusut hingga nol",
+   "lede": "Ikuti perjalanan image toko online Nusantara Retail dari laptop Dewi ke registry privat, Container Instances, dan Container Apps. Saksikan replica bergerak 0 → 1 → 5 → 0 dan sebuah revision baru mengambil 20% trafik. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Sebuah container image berpindah dari laptop ke Azure Container Registry, lalu berjalan di Container Instances dan Container Apps",
+   "svgDesc": "Di sebelah kiri, laptop Dewi membangun image berlapis, meteran compute menunjukkan apa yang sedang ditagih, dan para pembeli mengirim request. Di region Azure, sebuah container registry menyimpan image, Container Instances menjalankan satu container group, dan environment Container Apps berisi ingress serta dua revision yang jumlah replica-nya naik turun antara nol dan lima."
+  },
+  "steps": [
+   {
+    "title": "Cuma jalan di laptop saya",
+    "text": "Halaman toko online baru buatan Dewi berjalan mulus di laptopnya, tetapi crash di server uji yang runtime-nya lebih lama. Ibu Sari punya kekhawatiran kedua: promo 12.12 butuh kapasitas sepuluh kali lipat selama beberapa jam, padahal pukul 3 pagi hampir tidak ada yang berbelanja. Container menjawab keduanya: satu kemasan yang berjalan sama di mana pun, dan layanan yang membesar serta mengecil mengikuti jumlah pembeli."
+   },
+   {
+    "title": "Build image dari Dockerfile",
+    "text": "Dewi menulis Dockerfile: mulai dari base image, tambahkan dependensi, salin kodenya, lalu tentukan perintah start. Build menghasilkan image yang tersusun dari layer read-only, dengan kodenya sebagai layer teratas yang tipis. Semua yang dibutuhkan aplikasi kini ada dalam satu kemasan bertag storefront:v1, jadi runtime lama di server uji tidak lagi jadi masalah."
+   },
+   {
+    "title": "Push ke registry privat",
+    "text": "Image dikirim ke Azure Container Registry, registry privat Nusantara Retail yang berada di region yang sama dengan aplikasinya. Tag seperti v1 adalah label yang bisa dipindah; digest mengenali isi yang persis. Layanan yang menarik image dari registry melakukan sign-in dengan managed identity yang memegang role AcrPull, jadi tidak ada kata sandi yang bisa bocor.",
+    "set": {
+     "t-acr-tag": "storefront:v1"
+    }
+   },
+   {
+    "title": "Jalankan sekarang dengan Container Instances",
+    "text": "Container Instances menarik image dan menyalakan sebuah container group dalam hitungan detik: tanpa VM dan tanpa cluster yang perlu diurus. Ia menjawab di sebuah nama DNS dan ditagih per detik untuk CPU dan memori yang dipakainya. Cocok untuk impor harga malam hari atau uji cepat, tetapi ia tidak bisa scale out atau membagi beban dengan sendirinya.",
+    "set": {
+     "t-meter": "ACI: ditagih per detik",
+     "t-aci": "berjalan · tagihan per detik"
+    }
+   },
+   {
+    "title": "Container Apps: environment, revision, dan ingress",
+    "text": "Untuk toko online itu sendiri, Nusantara Retail memilih Container Apps. Environment adalah batas amannya. Ingress menerbitkan alamat HTTPS publik dan meneruskan request ke target port 80. Revision v1 adalah snapshot image, pengaturan, dan scale rule yang tidak bisa diubah. Dengan minimum nol dan tanpa pembeli di malam hari, tidak ada yang berjalan, dan tidak ada biaya compute.",
+    "set": {
+     "t-meter": "aplikasi: 0 replica, Rp0",
+     "t-rev1": "Revision v1 · 100%"
+    }
+   },
+   {
+    "title": "Pembeli pertama: dari nol ke satu",
+    "text": "Pukul 07.00 pembeli pertama datang. Ingress menahan request-nya sementara platform menyalakan sebuah replica dari image: cold start selama beberapa detik. Setelah itu, request berjalan cepat. Jika detik-detik di jam buka itu membuat penjualan hilang, production mengatur minimum satu replica dan menerima biaya idle yang kecil sebagai gantinya.",
+    "set": {
+     "t-shop": "07.00 · pembeli pertama",
+     "t-rep1": "replica: 1 (min 0 · maks 5)",
+     "t-meter": "1 replica: per detik"
+    }
+   },
+   {
+    "title": "Trafik promo: scale out ke lima",
+    "text": "Promo 12.12 dimulai. HTTP scale rule menargetkan 10 request bersamaan per replica, jadi 45 request bersamaan meminta ceil(45 ÷ 10) = 5 replica. KEDA menambah replica dalam hitungan detik, dan batas maksimum lima juga mengunci tagihan jika kerumunan terus bertambah. Pembeli tidak pernah melihat proses penskalaan; mereka hanya merasakan toko yang cepat.",
+    "set": {
+     "t-shop": "promo 12.12: 45 sekaligus",
+     "t-rep1": "replica: 5 (maksimum tercapai)",
+     "t-meter": "5 replica: per detik"
+    }
+   },
+   {
+    "title": "Sepi lagi: kembali ke nol",
+    "text": "Promo berakhir dan request mereda. Platform menunggu masa tenang, secara default 300 detik sebelum replica terakhir dihapus, lalu menyusutkan revision kembali ke nol. Image tetap aman di registry dan meteran compute berhenti. Kemampuan menyusut hingga nol inilah yang membuat lab, juga environment uji yang sepi, hampir tidak memakan biaya.",
+    "set": {
+     "t-shop": "malam yang sepi lagi",
+     "t-rep1": "replica: 0 (min 0 · maks 5)",
+     "t-meter": "aplikasi: 0 replica, Rp0"
+    }
+   },
+   {
+    "title": "Kirim v2 dengan trafik nol",
+    "text": "Dewi mengubah sebuah environment variable, yang membuat revision v2. Sebelumnya ia sudah mengalihkan aplikasi ke multiple revision mode dan mengunci 100% trafik ke v1; kalau tidak, revision terbaru akan langsung mengambil semua pembeli. Kini v2 aktif tetapi belum menerima pembeli, dan Dewi mengujinya di alamat revision-nya sendiri.",
+    "set": {
+     "t-rev2": "Revision v2 · 0% (diuji)",
+     "t-shop": "hari biasa: trafik stabil",
+     "t-rep1": "replica: 2",
+     "t-meter": "2 replica: per detik"
+    }
+   },
+   {
+    "title": "Canary release: pembagian 80/20",
+    "text": "Ingress kini mengirim kira-kira empat dari lima request ke v1 dan satu dari lima ke v2, dan setiap revision diskalakan berdasarkan porsi trafiknya sendiri. Jika tingkat error v2 naik, Dewi mengembalikan bobotnya ke 0% dalam hitungan detik. Jika v2 terlihat sehat, ia menaikkannya ke 100% dan kemudian menonaktifkan v1.",
+    "set": {
+     "t-rev1": "Revision v1 · 80%",
+     "t-rev2": "Revision v2 · 20%",
+     "t-rep1": "replica: 4",
+     "t-rep2": "replica: 1",
+     "t-meter": "5 replica: per detik"
+    }
+   },
+   {
+    "title": "Salah konfigurasi: target port keliru",
+    "text": "Rizky mengubah target port ingress menjadi 8080, padahal web server di dalam container mendengarkan di port 80. Ingress kini meneruskan request ke port yang tidak menjawab, sehingga setiap request gagal. Kedua revision rusak sekaligus, karena ingress adalah pengaturan tingkat aplikasi, bukan bagian dari sebuah revision.",
+    "set": {
+     "t-ingress": "target port 8080 ✗"
+    }
+   },
+   {
+    "title": "Beres, dan giliran Anda di lab",
+    "text": "Mengembalikan target port ke 80 langsung memulihkan trafik ke kedua revision; tidak perlu revision baru. Rangkumannya: build image sekali, simpan di registry privat, tarik dengan managed identity, dan pilih layanan sesuai banyaknya platform yang Anda inginkan, dari Container Instances untuk eksekusi tunggal hingga Container Apps untuk aplikasi yang perlu diskalakan.",
+    "tip": "Di Lab 13 Anda mengerjakan semuanya sendiri: mengimpor storefront:v1 ke registry Anda, menjalankannya di Container Instances, menskalakan container app dari 0 ke 5 dan kembali, membagi trafik 80/20, serta memperbaiki target port yang rusak.",
+    "set": {
+     "t-ingress": "target port 80 ✓"
+    }
+   }
+  ],
+  "svg": {
+   "Azure region · Southeast Asia": "Region Azure · Southeast Asia",
+   "Container Apps environment · cae-nusa": "Environment Container Apps · cae-nusa",
+   "Dewi's laptop": "Laptop Dewi",
+   "Dockerfile + storefront code": "Dockerfile + kode storefront",
+   "layer 3 · your code": "layer 3 · kode Anda",
+   "layer 2 · dependencies": "layer 2 · dependensi",
+   "Compute meter": "Meteran compute",
+   "nothing running": "tidak ada yang berjalan",
+   "Shoppers": "Pembeli",
+   "quiet night: nobody shopping": "malam sepi: tak ada pembeli",
+   "acrnusa… · private": "acrnusa… · privat",
+   "no images yet": "belum ada image",
+   "one container group": "satu container group",
+   "starts in seconds": "menyala dalam hitungan detik",
+   "In the lab: az acr import": "Di lab: az acr import",
+   "copies a public image into": "menyalin image publik ke",
+   "your registry. No Docker.": "registry Anda. Tanpa Docker.",
+   "Cold start: the first request": "Cold start: request pertama",
+   "waits while a replica starts.": "menunggu replica menyala.",
+   "Min 1 replica avoids it.": "Min 1 replica mencegahnya.",
+   "Ingress forwards to 8080,": "Ingress meneruskan ke 8080,",
+   "the app listens on 80.": "aplikasi mendengarkan di 80.",
+   "Nothing answers: requests fail.": "Tak ada jawaban: request gagal.",
+   "replicas: 0 (min 0 · max 5)": "replica: 0 (min 0 · maks 5)",
+   "Ingress (Envoy) · public HTTPS": "Ingress (Envoy) · HTTPS publik"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -692,6 +832,119 @@ svg .node > rect.layer{fill:var(--surface)}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -811,7 +1064,7 @@ svg .node > rect.layer{fill:var(--surface)}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -846,7 +1099,7 @@ svg .node > rect.layer{fill:var(--surface)}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -859,7 +1112,7 @@ svg .node > rect.layer{fill:var(--surface)}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -880,7 +1133,7 @@ svg .node > rect.layer{fill:var(--surface)}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -888,7 +1141,7 @@ svg .node > rect.layer{fill:var(--surface)}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

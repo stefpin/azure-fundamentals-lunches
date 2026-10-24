@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 20 · Bangun Ulang Semua dalam Sejam? — Makan Siang 20: Infrastructure as Code dengan Bicep (Dasar) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 20 · Infrastructure as Code dengan Bicep (Dasar). Seluruh desain hanya ada di ingatan orang, padahal ingatan tidak bisa di-redeploy. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/20-infrastructure-as-code-bicep.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/20-infrastructure-as-code-bicep.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/20-infrastructure-as-code-bicep.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/20-infrastructure-as-code-bicep.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 20 · Bangun Ulang Semua dalam Sejam? — Makan Siang 20: Infrastructure as Code dengan Bicep (Dasar)">
+<meta property="og:description" content="Makan Siang 20 · Infrastructure as Code dengan Bicep (Dasar). Seluruh desain hanya ada di ingatan orang, padahal ingatan tidak bisa di-redeploy. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/20-infrastructure-as-code-bicep.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="20" style="--c:#d98a00">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/20-infrastructure-as-code-bicep.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 20</span> Season 1 · 🛡️ Bagian 4 · Keamanan, operasional, dan tata kelola</div>
+      <h1>Bangun Ulang Semua dalam Sejam?</h1>
+      <div class="lunch-title">Makan Siang 20 · Infrastructure as Code dengan Bicep (Dasar)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan manajemen dan tata kelola Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 50 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Siapa yang Bikin server-baru-final2?">↩ 04</a><a class="chip" href="08-networking-basic.html" title="Jangan Tabrak Jaringan Saya">↩ 08</a><a class="chip" href="18-governance-compliance-basic.html" title="Storage Account di West Europe">↩ 18</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 19 · Tagihan yang Tak Bisa Dibaca, setiap biaya kini punya pemilik, pemborosan sudah hilang, dan anggaran mengawasi sisanya.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, senang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 68% siap</b>Setelah episode ini Anda bisa menjawab: “Kita tetap online, dan seluruh lingkungan bisa dibangun ulang dari kode.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-mengapa-infrastructure-as-code">Mengapa infrastructure as code</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-template-arm-bicep-dan-terraform">Template ARM, Bicep, dan Terraform</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-anatomi-bicep">Anatomi Bicep</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-men-deploy-dengan-aman-scope-mode-dan-what-if">Men-deploy dengan aman: scope, mode, dan what-if</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-siklus-hidup-dan-pagar-pengaman-deployment-stack-verified-module-dan-pipeline">Siklus hidup dan pagar pengaman: deployment stack, verified module, dan pipeline</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-bagaimana-semuanya-menyatu-untuk-nusantara-retail">Bagaimana semuanya menyatu untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/20-infrastructure-as-code-bicep.html">🔬 Buka Lab 20</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> mengapa infrastructure as code (<em>infrastruktur sebagai kode</em>) penting dan apa bedanya deployment deklaratif dengan skrip imperatif.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membandingkan</strong> template ARM JSON (<em>templat ARM</em>), Bicep, dan Terraform, lalu memilih salah satunya untuk sebuah tim.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membaca dan menulis</strong> file Bicep: parameter, variabel, resource (<em>sumber daya</em>), symbolic name, dependensi, output, module, loop, kondisi, dan decorator.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Men-deploy dengan aman</strong> memakai scope, mode, dan what-if, serta <strong>melindungi</strong> apa yang sudah Anda deploy dengan template spec dan deployment stack — pengganti Azure Blueprints.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 20</span>
+        <div class="story-body"><p>Sembilan belas makan siang sudah berlalu, dan lingkungan Azure Nusantara Retail kini benar-benar nyata — dibangun satu
+klik portal dan satu perintah CLI demi satu. Hari Selasa, Dewi meminta &quot;salinan jaringan toko online untuk testing&quot;.
+Tidak ada yang bisa membuat salinan yang benar-benar sama. Hari Rabu, Pak Budi menemukan sebuah aturan NSG (network
+security group) yang tidak pernah ia setujui; activity log menyebut Rizky mengubahnya pukul 23.00, tetapi tidak menyebut
+alasannya. Hari Kamis, Ibu Sari membaca catatan pemulihan bencana (disaster recovery) dari Makan Siang 17 dan
+melontarkan pertanyaan yang membuat seisi rapat terdiam: &quot;Kalau Southeast Asia lenyap besok, bisakah kita membangun
+ulang semuanya — persis sama — di region lain, dalam satu jam?&quot;</p>
+<p>Jawaban jujurnya: tidak. Bukan karena Azure tidak mampu, tetapi karena desainnya tersimpan di ingatan orang, bukan di
+dalam sebuah file. Persis seperti resep rendang keluarga yang tidak pernah ditulis: selama sang juru masak ada, semuanya
+lancar; begitu ia berhalangan, tidak ada yang bisa menghasilkan rasa yang sama.</p>
+<p>Pertanyaan hari ini: <strong>bagaimana Anda menuliskan lingkungan Azure Nusantara Retail dalam kode yang bisa ditinjau,
+diulang, dan dilindungi?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-mengapa-infrastructure-as-code" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Mengapa infrastructure as code</h3><div class="prose"><p><strong>Infrastructure as code (IaC)</strong> berarti menuliskan infrastruktur Anda — jaringan, server, database, policy — dalam file
+teks yang tinggal berdampingan dengan kode aplikasi Anda. File itu disimpan di Git (sistem yang mencatat setiap versi
+file), perubahannya ditinjau lewat pull request (usulan perubahan yang diperiksa rekan sebelum digabungkan), dan
+deployment-nya diserahkan kepada sebuah tool. Kedengarannya seperti hobi para developer. Sebenarnya ini adalah praktik
+operasional dan tata kelola, dan IaC memecahkan persis masalah-masalah yang dialami Nusantara Retail:</p>
+<ul>
+<li><strong>Bisa diulang.</strong> Jaringan test dan jaringan produksi berasal dari file yang sama dengan parameter yang berbeda,
+sehingga &quot;sudah jalan di test&quot; benar-benar berarti sesuatu.</li>
+<li><strong>Tinjauan dan audit.</strong> Perubahan aturan NSG menjadi pull request yang disetujui Pak Budi <em>sebelum</em> sampai ke Azure,
+dan riwayat Git mencatat siapa mengubah apa, kapan, dan mengapa.</li>
+<li><strong>Pemulihan yang cepat.</strong> Membangun ulang sebuah lingkungan cukup dengan satu perintah, bukan satu akhir pekan
+berbekal screenshot — kepingan yang selama ini hilang dari rencana pemulihan bencana di Makan Siang 17.</li>
+<li><strong>Deteksi drift.</strong> Drift adalah pergeseran antara kondisi nyata dan isi file. Ketika seseorang mengubah resource
+secara manual, pratinjau berikutnya menunjukkan perbedaannya dengan file.</li>
+<li><strong>Eksperimen yang lebih murah.</strong> Jika Anda bisa membangun ulang dalam hitungan menit, Anda bisa menghapus tanpa rasa
+takut — kebiasaan hemat biaya dari Makan Siang 19.</li>
+</ul>
+<p>Ada dua gaya otomatisasi. Skrip <strong>imperatif</strong> menjelaskan <em>bagaimana</em>: buat virtual network (<em>jaringan virtual</em>), lalu
+subnet, lalu pasang NSG — dan jika subnet-nya ternyata sudah ada, Anda sendiri yang harus menangani error-nya. Skrip
+Azure CLI di lab-lab sebelumnya bersifat imperatif. File <strong>deklaratif</strong> menjelaskan <em>apa</em>: &quot;ada sebuah virtual network
+dengan dua subnet ini dan NSG ini&quot;. Mesinnya membandingkan kondisi yang diinginkan (desired state) itu dengan apa yang
+sudah ada, lalu menentukan sendiri langkah-langkahnya. Deployment deklaratif bersifat <strong>idempoten</strong>: jalankan file yang
+sama dua kali, dan eksekusi kedua tidak mengubah apa pun, karena kenyataan sudah sesuai dengan file.</p>
+<p>Ibaratnya memesan ojek online. Cara imperatif seperti memandu pengemudi belokan demi belokan: &quot;lurus, belok kiri di
+masjid, kanan di pom bensin&quot; — kalau jalannya ditutup, Anda sendiri yang harus mencari jalan lain. Cara deklaratif
+seperti memasukkan alamat tujuan di aplikasi: Anda cukup menyebut <em>ke mana</em>, dan aplikasinya yang menentukan rute. Kalau
+Anda memesan lagi ke alamat tempat Anda sudah berdiri, tidak ada perjalanan yang terjadi — itulah idempoten.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  dev[&quot;Dewi mengedit&lt;br/&gt;main.bicep&quot;] --&gt; pr[&quot;Pull request&lt;br/&gt;tinjauan + what-if&quot;]
+  pr --&gt; ci[&quot;Pipeline&lt;br/&gt;GitHub Actions (OIDC)&quot;]
+  ci --&gt;|&quot;az deployment / az stack&quot;| arm[&quot;Azure Resource Manager&quot;]
+  arm --&gt; rp[&quot;Resource provider&lt;br/&gt;Network · Storage · Monitor&quot;]
+  rp --&gt; az[&quot;Resource sesuai&lt;br/&gt;dengan file&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Semua jalan menuju tempat yang sama. Entah Anda mengeklik di portal, menjalankan CLI, atau men-deploy sebuah file,
+permintaannya selalu melewati <strong>Azure Resource Manager</strong> (Makan Siang 04), yang memeriksa izin dan policy Anda lalu
+memanggil resource provider — layanan di balik setiap jenis resource, misalnya Microsoft.Network untuk jaringan. IaC
+hanya membuat permintaan-permintaan itu bisa diulang.</p>
+</div></article><article class="scene-card" id="2-template-arm-bicep-dan-terraform" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Template ARM, Bicep, dan Terraform</h3><div class="prose"><p>Azure Resource Manager secara bawaan memahami <strong>template ARM</strong>: dokumen JSON (format teks untuk data terstruktur) yang
+berisi daftar parameter, variabel, resource, dan output. Template ini lengkap dan presisi, tetapi bertele-tele.
+Ekspresinya ditulis di dalam string yang diapit kurung siku, seperti <code>&quot;[parameters('location')]&quot;</code>, dan lingkungan
+berukuran sedang dengan cepat menjadi ratusan baris yang sulit ditinjau.</p>
+<p><strong>Bicep</strong> adalah bahasa khusus (domain-specific language, DSL) buatan Microsoft untuk pekerjaan yang sama. File Bicep
+lebih pendek dan lebih mirip kode: Anda memanggil fungsi secara langsung, merujuk resource lain dengan <strong>symbolic name</strong>
+(nama simbolis), dan Bicep menentukan sendiri dependensinya. Saat Anda men-deploy, Bicep CLI melakukan <strong>transpile</strong>,
+yaitu menerjemahkan file itu menjadi template ARM JSON, sehingga Bicep bisa melakukan semua yang bisa dilakukan template
+ARM, termasuk setiap jenis resource dan versi API (antarmuka yang dipakai untuk berbicara dengan layanan Azure) sejak
+hari pertama dirilis. Tidak ada file state terpisah: Azure sendiri yang menjadi catatan tentang apa yang ada. Bicep
+gratis, open source, dan didukung Microsoft, dan extension Visual Studio Code-nya memberi Anda IntelliSense (saran
+otomatis saat mengetik), validasi, dan visualizer.</p>
+<p><strong>Terraform</strong>, buatan HashiCorp, adalah alternatif populer dengan bahasanya sendiri, HCL (HashiCorp Configuration
+Language). Kekuatannya adalah jangkauan: satu tool dan satu alur kerja untuk Azure, cloud lain, dan banyak produk SaaS
+(<em>perangkat lunak sebagai layanan</em>). Harga dari jangkauan itu adalah sebuah <strong>file state</strong> yang mencatat apa saja yang
+dikelola Terraform; Anda harus menyimpannya secara terpusat, menguncinya selama perubahan berlangsung, dan
+melindunginya, karena file itu bisa berisi secret (data rahasia seperti password atau key).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Template ARM (JSON)</th>
+<th>Bicep</th>
+<th>Terraform</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bahasa</td>
+<td>JSON dengan ekspresi dalam kurung siku</td>
+<td>DSL ringkas, dikompilasi menjadi ARM JSON</td>
+<td>HCL</td>
+</tr>
+<tr>
+<td>Cloud</td>
+<td>Hanya Azure</td>
+<td>Hanya Azure</td>
+<td>Azure, cloud lain, dan penyedia SaaS</td>
+</tr>
+<tr>
+<td>State</td>
+<td>Azure adalah sumber kebenaran</td>
+<td>Azure adalah sumber kebenaran</td>
+<td>File state yang harus Anda simpan, kunci, dan lindungi</td>
+</tr>
+<tr>
+<td>Fitur Azure baru</td>
+<td>Versi API apa pun sejak hari pertama</td>
+<td>Versi API apa pun sejak hari pertama</td>
+<td>Setelah provider-nya mendukung (provider AzAPI bisa memanggil versi API apa pun)</td>
+</tr>
+<tr>
+<td>Pratinjau perubahan</td>
+<td>what-if</td>
+<td>what-if</td>
+<td><code>terraform plan</code></td>
+</tr>
+<tr>
+<td>Menghapus yang sudah keluar dari file</td>
+<td>Deployment stack</td>
+<td>Deployment stack</td>
+<td><code>apply</code> berikutnya menghancurkannya</td>
+</tr>
+<tr>
+<td>Paling cocok untuk</td>
+<td>Template yang dihasilkan otomatis atau yang sudah ada</td>
+<td>Tim yang fokus di Azure dan baru mulai</td>
+<td>Tim multi-cloud, atau yang sudah punya keahlian Terraform</td>
+</tr>
+</tbody>
+</table></div>
+<p>Bagi Nusantara Retail — toko yang hanya memakai Azure, dengan tim kecil dan tanpa kode Terraform yang sudah ada — Bicep
+adalah pilihan yang wajar. Jika kelak mereka perlu mengelola DNS di penyedia lain atau repositori GitHub dari pipeline
+yang sama — rangkaian langkah otomatis yang mem-build dan men-deploy kode — Terraform layak dilirik lagi. Keduanya sah;
+yang tidak sah adalah mencampur keduanya untuk resource yang sama, karena dua tool yang sama-sama merasa memiliki sebuah
+resource akan saling membatalkan perubahan.</p>
+<p>Skrip imperatif tidak lantas hilang. Skrip tetap menjadi alat yang tepat untuk pekerjaan sekali jalan, untuk pekerjaan
+data plane (mengolah isi resource, bukan resource-nya) seperti mengunggah foto produk ke sebuah container, dan sebagai
+perekat di dalam pipeline: build file Bicep, jalankan what-if, deploy, lalu jalankan skrip singkat untuk smoke test,
+yaitu uji cepat bahwa hasilnya benar-benar hidup. Patokannya sederhana: apa pun yang harus <em>ada</em> masuk ke file
+deklaratif; apa pun yang cukup <em>terjadi</em> sekali boleh berupa skrip.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Anda tidak harus mulai dari halaman kosong. Halaman <strong>Export template</strong> pada sebuah resource group (<em>grup sumber
+daya</em>) menghasilkan template ARM JSON dari apa yang sudah ada, dan <code>az bicep decompile --file template.json</code> mengubah
+JSON menjadi Bicep. Perlakukan hasilnya sebagai draf pertama: template hasil ekspor berisi nilai read-only dan nilai
+default yang sebaiknya Anda hapus, serta nama-nama yang di-hard-code yang sebaiknya Anda ubah menjadi parameter.</p>
+</aside>
+</div></article><article class="scene-card" id="3-anatomi-bicep" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Anatomi Bicep</h3><div class="prose"><p>Berikut sebuah file Bicep yang kecil tetapi lengkap. File ini membuat sebuah network security group dan sebuah virtual
+network yang subnet-nya memakai NSG tersebut:</p>
+<div class="code" data-lang="bicep"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bicep</span><button class="copy-btn" type="button">Salin</button></div><pre><code>targetScope = &#x27;resourceGroup&#x27;
+
+@description(&#x27;Azure region for every resource.&#x27;)
+param location string = resourceGroup().location
+
+@allowed([
+  &#x27;lab&#x27;
+  &#x27;test&#x27;
+  &#x27;prod&#x27;
+])
+param environment string = &#x27;lab&#x27;
+
+var tags = {
+  costCenter: &#x27;retail-lab&#x27;
+  environment: environment
+}
+
+resource nsgWeb &#x27;Microsoft.Network/networkSecurityGroups@2024-05-01&#x27; = {
+  name: &#x27;nsg-web&#x27;
+  location: location
+  tags: tags
+}
+
+resource vnet &#x27;Microsoft.Network/virtualNetworks@2024-05-01&#x27; = {
+  name: &#x27;vnet-nusa-iac&#x27;
+  location: location
+  tags: tags
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        &#x27;10.20.0.0/16&#x27;
+      ]
+    }
+    subnets: [
+      {
+        name: &#x27;snet-web&#x27;
+        properties: {
+          addressPrefix: &#x27;10.20.1.0/24&#x27;
+          networkSecurityGroup: {
+            id: nsgWeb.id // a symbolic reference creates an implicit dependency
+          }
+        }
+      }
+    ]
+  }
+}
+
+output vnetId string = vnet.id
+</code></pre></div>
+<p>Setiap bagian punya tugasnya masing-masing:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Elemen</th>
+<th>Sintaks</th>
+<th>Kegunaannya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Target scope</td>
+<td><code>targetScope = 'resourceGroup'</code></td>
+<td>Ke mana file di-deploy: resource group (default), subscription (<em>langganan</em>), management group (<em>grup manajemen</em>), atau tenant</td>
+</tr>
+<tr>
+<td>Parameter</td>
+<td><code>param location string = resourceGroup().location</code></td>
+<td>Input yang berubah antar-deployment; nilai default boleh memakai fungsi</td>
+</tr>
+<tr>
+<td>Decorator</td>
+<td><code>@description()</code>, <code>@allowed()</code>, <code>@minLength()</code>, <code>@secure()</code></td>
+<td>Dokumentasi dan validasi; <code>@secure()</code> menjauhkan secret dari log</td>
+</tr>
+<tr>
+<td>Variabel</td>
+<td><code>var tags = { … }</code></td>
+<td>Nilai yang dihitung sekali lalu dipakai ulang, misalnya satu set tag</td>
+</tr>
+<tr>
+<td>Resource</td>
+<td><code>resource nsgWeb 'Type@apiVersion' = { … }</code></td>
+<td>Satu resource Azure; versi API menentukan properti apa saja yang tersedia</td>
+</tr>
+<tr>
+<td>Symbolic name</td>
+<td><code>nsgWeb</code>, <code>vnet</code></td>
+<td>Cara file merujuk sebuah resource — bukan nama resource itu di Azure</td>
+</tr>
+<tr>
+<td>Dependensi implisit</td>
+<td><code>nsgWeb.id</code> dipakai di dalam <code>vnet</code></td>
+<td>Bicep mengurutkan deployment untuk Anda; <code>dependsOn</code> jarang diperlukan</td>
+</tr>
+<tr>
+<td>Resource yang sudah ada</td>
+<td><code>resource kv '…' existing = { name: '…' }</code></td>
+<td>Merujuk resource yang tidak di-deploy oleh file ini</td>
+</tr>
+<tr>
+<td>Output</td>
+<td><code>output vnetId string = vnet.id</code></td>
+<td>Nilai yang dikembalikan kepada Anda atau ke langkah berikutnya</td>
+</tr>
+<tr>
+<td>Module</td>
+<td><code>module net 'network.bicep' = { params: { … } }</code></td>
+<td>Memakai ulang file Bicep lain, dari folder lokal atau dari registry (tempat berbagi module)</td>
+</tr>
+<tr>
+<td>Loop</td>
+<td><code>[for name in names: { … }]</code></td>
+<td>Banyak resource atau properti serupa dari sebuah array</td>
+</tr>
+<tr>
+<td>Kondisi</td>
+<td><code>resource logs '…' = if (deployLogs) { … }</code></td>
+<td>Men-deploy resource hanya jika sebuah ekspresi bernilai true</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Versi API</strong> pada setiap jenis resource (<code>@2024-05-01</code>) mengunci skemanya: properti apa saja yang ada dan apa artinya.
+Di VS Code, extension Bicep memvalidasi setiap properti terhadap skema itu saat Anda mengetik. Fungsi seperti
+<code>resourceGroup()</code> dan <code>uniqueString()</code> membantu Anda menghindari nilai yang di-hard-code.
+<code>uniqueString(resourceGroup().id)</code> selalu mengembalikan hash (rangkaian karakter hasil perhitungan) 13 karakter yang
+sama untuk resource group yang sama, sehingga sangat cocok untuk nama yang harus unik secara global seperti storage
+account (<em>akun penyimpanan</em>): unik di seluruh Azure, tetapi identik di setiap redeploy.</p>
+<p>Karena <code>vnet</code> merujuk ke <code>nsgWeb.id</code>, Bicep tahu bahwa NSG harus ada lebih dulu. Resource yang tidak saling bergantung
+dibuat secara paralel:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  p[&quot;Parameter dan variabel&lt;br/&gt;location · environment · tags&quot;] --&gt; nsg[&quot;nsgWeb&lt;br/&gt;networkSecurityGroups&quot;]
+  p --&gt; vnet[&quot;vnet&lt;br/&gt;virtualNetworks + subnets&quot;]
+  p --&gt; st[&quot;storage&lt;br/&gt;storageAccounts&quot;]
+  p --&gt; log[&quot;logs&lt;br/&gt;workspaces&quot;]
+  nsg --&gt;|&quot;nsgWeb.id&quot;| vnet
+  vnet --&gt; out[&quot;Output&quot;]
+  st --&gt; out
+  log --&gt; out
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Untuk nilai parameter, Anda bisa mengetiknya di command line atau menyimpannya dalam <strong>file <code>.bicepparam</code></strong>, yang
+diawali <code>using 'main.bicep'</code> dan berisi penetapan nilai seperti <code>param environment = 'test'</code>. Satu template ditambah
+satu file parameter per lingkungan adalah pola klasiknya. Codebase yang lebih besar menambahkan tipe buatan sendiri
+(user-defined types), fungsi, dan file bersama, tetapi blok-blok bangunan di tabel atas sudah bisa membawa Anda cukup
+jauh.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Jangan pernah menulis password, key, atau connection string ke dalam file Bicep, file parameter di Git, atau sebuah
+<strong>output</strong>. Output disimpan dalam riwayat deployment, tempat siapa pun yang bisa membaca resource group dapat
+melihatnya. Tandai parameter rahasia dengan <code>@secure()</code>, ambil nilai dari Key Vault saat deployment, dan utamakan
+managed identity — identitas aplikasi yang dikelola Azure tanpa password (Makan Siang 15) — sehingga tidak ada secret
+yang perlu dioper sama sekali.</p>
+</aside>
+</div></article><article class="scene-card" id="4-men-deploy-dengan-aman-scope-mode-dan-what-if" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Men-deploy dengan aman: scope, mode, dan what-if</h3><div class="prose"><p>Sebuah deployment menargetkan sebuah <strong>scope</strong> (cakupan) dengan perintah yang sesuai: <code>az deployment group create</code> untuk
+resource group, <code>az deployment sub create</code> untuk subscription (untuk membuat resource group, policy assignment, atau
+anggaran), <code>az deployment mg create</code> untuk management group, dan <code>az deployment tenant create</code> untuk tenant, wadah
+tingkat teratas milik organisasi Anda. Setiap deployment juga tercatat di Azure, sehingga halaman <strong>Deployments</strong> pada
+resource group menunjukkan apa yang di-deploy, kapan, dan dengan parameter apa.</p>
+<p>Deployment ke resource group punya <strong>mode</strong>. Mode <strong>Incremental</strong>, yang merupakan default sekaligus yang
+direkomendasikan, membuat atau memperbarui apa yang dijelaskan file dan membiarkan semua hal lain di resource group.
+Mode <strong>Complete</strong> juga menghapus resource yang tidak ada di file. Microsoft tidak lagi merekomendasikan mode complete
+dan sedang menghentikannya secara bertahap; untuk menghapus resource lewat kode, gunakan deployment stack (bagian 5).</p>
+<p>Ada satu hal halus yang menjebak hampir semua orang: file selalu menggambarkan kondisi yang diinginkan sebuah resource
+secara <em>lengkap</em>. Jika Anda me-redeploy sebuah NSG yang file-nya hanya mencantumkan satu aturan, aturan apa pun yang
+ditambahkan Rizky secara manual akan hilang, karena properti yang tidak ada di file direset. Itu fitur — file selalu
+menang — tetapi hanya jika semua orang mengetahuinya.</p>
+<p>Sebelum ada yang berubah, mintalah pratinjau. <strong>What-if</strong> membandingkan file dengan apa yang sudah ada dan mencetak diff
+(daftar perbedaan):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az deployment group what-if --resource-group rg-storefront-test --template-file main.bicep
+</code></pre></div>
+<p>Anggap saja seperti halaman ringkasan pesanan di aplikasi belanja online sebelum Anda menekan tombol Bayar: Anda bisa
+melihat apa yang akan ditambah, diubah, atau dihapus, dan masih bisa membatalkannya.</p>
+<p>Setiap resource mendapat simbol: <code>+</code> dibuat, <code>~</code> diubah (dengan properti yang berubah tercantum di bawahnya), <code>-</code>
+dihapus, dan <code>=</code> tidak berubah. Dalam mode incremental Anda tidak akan pernah melihat penghapusan; simbol itu baru
+muncul pada mode complete atau pada deployment stack yang menghapus resource yang tidak lagi dikelola. What-if terkadang
+melaporkan <strong>noise</strong> — properti yang diisi Azure dengan nilai default tampil sebagai perubahan padahal sebenarnya tidak
+ada yang berubah — jadi bacalah diff-nya, jangan hanya memercayai baris ringkasannya. Anda juga bisa menambahkan
+<code>--confirm-with-what-if</code> ke <code>az deployment group create</code> untuk melihat pratinjau dan menjawab ya atau tidak sebelum
+deployment berjalan.</p>
+<p>Masalah paling murah ditangkap sebelum Azure melihatnya, jadi bayangkan tiga pemeriksaan yang makin lama makin ketat.
+<code>az bicep build</code> mengompilasi file menjadi ARM JSON di mesin Anda dan melaporkan <strong>error</strong> (symbol yang salah ketik,
+kurung kurawal yang hilang) serta <strong>warning</strong> dari linter bawaan, yaitu pemeriksa kesalahan umum (parameter yang tidak
+dipakai, properti yang tidak dikenal skema). Error menghentikan build; warning tidak — jadi tetaplah membacanya.
+Berikutnya, <code>az deployment group validate</code> bertanya kepada Resource Manager apakah template itu akan diterima di
+resource group tujuan, tanpa men-deploy apa pun. Terakhir, what-if menunjukkan diff yang sebenarnya terhadap apa yang
+ada. Secara default, what-if memeriksa izin yang sama dengan deployment sungguhan, karena itu tim biasanya membiarkan
+identitas pipeline yang menjalankan pratinjau lalu mengirimkan hasilnya kepada para peninjau.</p>
+<p>Deployment juga meninggalkan jejak. Beri setiap deployment nama yang bermakna dengan <code>--name</code> (jika tidak, nama file
+yang dipakai), dan halaman <strong>Deployments</strong> pada resource group menyimpan template, parameter, output, dan error apa pun
+untuk setiap eksekusi. Ketika deployment gagal di tengah jalan, perbaiki file lalu deploy lagi: resource yang sudah ada
+cukup dikonfirmasi, dan yang gagal dicoba lagi. Itulah buah dari idempotensi.</p>
+<p>Terakhir, <strong>template spec</strong> menyimpan sebuah template sebagai resource berversi di Azure
+(<code>Microsoft.Resources/templateSpecs</code>). Tim lain bisa men-deploy &quot;network v1.2&quot; dari portal atau CLI tanpa akses ke
+repositori Git Anda, dan Anda mengatur siapa yang boleh memakainya dengan Azure RBAC (role-based access control,
+<em>kontrol akses berbasis peran</em>).</p>
+</div></article><article class="scene-card" id="5-siklus-hidup-dan-pagar-pengaman-deployment-stack-verified-module-dan-pipeline" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Siklus hidup dan pagar pengaman: deployment stack, verified module, dan pipeline</h3><div class="prose"><p>Deployment biasa membuat resource lalu melupakannya. <strong>Deployment stack</strong> (<code>Microsoft.Resources/deploymentStacks</code>)
+mengingatnya. Stack men-deploy sebuah file Bicep atau template, menyimpan daftar <strong>managed resource</strong> (resource yang
+dikelolanya), dan menerapkan dua aturan pada resource tersebut:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Pengaturan stack</th>
+<th>Flag CLI</th>
+<th>Nilai</th>
+<th>Fungsinya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Action on unmanage</td>
+<td><code>--action-on-unmanage</code></td>
+<td><code>detachAll</code>, <code>deleteResources</code>, <code>deleteAll</code></td>
+<td>Apa yang terjadi pada resource yang keluar dari file atau saat stack dihapus: dipertahankan sebagai resource biasa yang tidak dikelola, dihapus, atau sekalian menghapus resource group yang dikelola</td>
+</tr>
+<tr>
+<td>Deny settings</td>
+<td><code>--deny-settings-mode</code></td>
+<td><code>none</code>, <code>denyDelete</code>, <code>denyWriteAndDelete</code></td>
+<td>Membuat <strong>deny assignment</strong> (aturan larangan yang mengalahkan izin dari role) yang memblokir penghapusan, atau penulisan dan penghapusan, pada managed resource — bahkan untuk Owner</td>
+</tr>
+<tr>
+<td>Pengecualian</td>
+<td><code>--deny-settings-excluded-principals</code>, <code>--deny-settings-excluded-actions</code></td>
+<td>Hingga 5 principal, hingga 200 action</td>
+<td>Membebaskan, misalnya, identitas pipeline atau satu operasi yang tidak berbahaya</td>
+</tr>
+<tr>
+<td>Scope turunan</td>
+<td><code>--deny-settings-apply-to-child-scopes</code></td>
+<td>Aktif atau nonaktif</td>
+<td>Memperluas perlindungan ke child resource seperti database SQL</td>
+</tr>
+</tbody>
+</table></div>
+<p>Membuat stack terlihat seperti ini:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az stack group create --name stack-storefront --resource-group rg-storefront-prod \
+  --template-file main.bicep --action-on-unmanage deleteResources \
+  --deny-settings-mode denyDelete --yes
+</code></pre></div>
+<p>Deny settings mirip dengan resource lock (<em>kunci sumber daya</em>) dari Makan Siang 04, dengan dua perbedaan. Lock berlaku
+untuk semua orang, termasuk pipeline Anda; deny settings bisa mengecualikan principal (pengguna, grup, atau identitas
+aplikasi) tertentu. Selain itu, deny settings ikut bersama stack: muncul saat Anda men-deploy stack dan hilang saat Anda
+menghapusnya. Deny settings hanya melindungi <strong>control plane</strong>, yaitu lapisan pengelolaan resource — stack DenyDelete
+mencegah seseorang menghapus storage account, bukan menghapus blob di dalamnya — dan hanya resource yang dideklarasikan
+di file. Membuat stack dengan deny settings memerlukan izin tambahan, yang tercakup dalam role <strong>Azure Deployment Stack
+Owner</strong>. Untuk pemisahan yang lebih kuat, letakkan stack di scope induk (misalnya, stack tingkat subscription yang
+men-deploy ke sebuah resource group), sehingga orang yang bekerja di resource group itu tidak bisa mengubah stack-nya
+sendiri.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Deny assignment yang dibuat oleh stack adalah milik stack itu. Anda tidak bisa menghapusnya di halaman <strong>Access
+control (IAM)</strong>, dan menjadi Owner pun tidak membantu. Untuk mengubah apa yang dilindungi, perbarui stack-nya (atau
+hapus stack-nya). Uji deny settings di lab terlebih dahulu, dan selalu kecualikan identitas yang menjalankan pipeline
+Anda.</p>
+</aside>
+<p>Deployment stack, bersama template spec dan Azure Policy, adalah pengganti yang direkomendasikan untuk <strong>Azure
+Blueprints</strong>, yang sedang dipensiunkan: assignment baru diblokir mulai 31 Oktober 2026, dan layanan ini pensiun
+sepenuhnya pada 31 Januari 2027.</p>
+<p>Anda tidak harus menulis setiap resource dari nol. <strong>Azure Verified Modules (AVM)</strong> adalah pustaka module Bicep dan
+Terraform yang sudah teruji, dimiliki Microsoft, dan mengikuti panduan Well-Architected. Resource module membungkus satu
+jenis resource dengan default yang masuk akal dan aman; pattern module menggabungkan beberapa resource. Anda merujuk
+sebuah module dari registry publik dan mengunci (pin) versinya:</p>
+<div class="code" data-lang="bicep"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bicep</span><button class="copy-btn" type="button">Salin</button></div><pre><code>module images &#x27;br/public:avm/res/storage/storage-account:&lt;version&gt;&#x27; = {
+  params: {
+    name: &#x27;stnusa${uniqueString(resourceGroup().id)}&#x27;
+    skuName: &#x27;Standard_LRS&#x27;
+  }
+}
+</code></pre></div>
+<p>Kepingan terakhir adalah siapa yang menjalankan deployment. Di lingkungan yang matang, orang tidak men-deploy dari
+laptop mereka: pipeline yang melakukannya. Dengan <strong>GitHub Actions</strong>, workflow meminta token <strong>OpenID Connect (OIDC)</strong> —
+semacam tanda pengenal digital yang hanya berlaku sebentar — dari GitHub, dan sebuah app registration Microsoft Entra
+atau user-assigned managed identity dengan <strong>federated credential</strong> memercayai token dari repositori dan branch (cabang
+kode di Git) tersebut. Tidak ada password atau client secret yang disimpan di mana pun:</p>
+<div class="code" data-lang="yaml"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>yaml</span><button class="copy-btn" type="button">Salin</button></div><pre><code>permissions:
+  id-token: write   # allow the job to request an OIDC token
+  contents: read
+steps:
+  # (check out the repository first)
+  - uses: azure/login@v2
+    with:
+      client-id: ${{ secrets.AZURE_CLIENT_ID }}
+      tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+      subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+  - run: az deployment group what-if --resource-group rg-storefront-test --template-file infra/main.bicep
+</code></pre></div>
+<p>Makan Siang 22 membangun federated credential ini langkah demi langkah.</p>
+</div></article><article class="scene-card" id="6-bagaimana-semuanya-menyatu-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Bagaimana semuanya menyatu untuk Nusantara Retail</h3><div class="prose"><p>Cara kerja yang baru ini muat dalam satu halaman. Repositori mendapat folder <code>infra</code>: <code>main.bicep</code>, beberapa module
+(jaringan, penyimpanan, pemantauan), dan satu file <code>.bicepparam</code> per lingkungan. Permintaan Dewi akan salinan test
+berubah menjadi sebuah file parameter baru dan sebuah pull request. Pipeline menjalankan <code>az bicep build</code> dan what-if
+pada setiap pull request dan mengirimkan diff-nya untuk ditinjau. Pak Budi menyetujui perubahan jaringan di pull
+request, alih-alih menemukannya belakangan di activity log.</p>
+<p>Ketika pull request digabungkan (merge), pipeline men-deploy produksi sebagai deployment stack dengan <code>denyDelete</code>,
+hanya dengan mengecualikan identitas pipeline itu sendiri. Rizky tetap bisa melihat semuanya, tetapi menghapus storage
+account produksi secara tidak sengaja tidak mungkin lagi terjadi. Jika Pak Budi ingin menghentikan pengeditan lewat
+portal juga, <code>denyWriteAndDelete</code> bisa melakukannya, dengan konsekuensi setiap perubahan harus lewat pipeline — dan
+justru itulah intinya.</p>
+<p>Lingkungan test memakai file yang sama dengan file parameter berbeda dan action <code>deleteResources</code>. Jumat sore, tim
+menghapus stack test, dan bersamanya setiap resource test — tidak ada yang ditagih selama akhir pekan. Hari Senin,
+pipeline membangunnya kembali, identik sampai ke tag-nya, dalam hitungan menit.</p>
+<p>Lalu pertanyaan Ibu Sari? Membangun ulang di region lain sekarang cukup dengan mengganti parameter ditambah satu
+deployment, sementara datanya kembali dari backup dan replika yang Anda rancang di Makan Siang 17. Di Makan Siang 21
+Anda akan men-deploy seluruh platform inti dengan cara ini, dari Bicep yang modular. Makan Siang 22 membahas identitas
+pipeline OIDC, dan Makan Siang 31 memakai deployment stack untuk mengelola tata kelola di banyak subscription.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Pukul 23.00 Rizky menambahkan aturan &quot;allow RDP from anywhere&quot; (izinkan akses Remote Desktop
+dari mana saja) ke <code>nsg-web</code> lewat portal. Apa yang terjadi pada aturan itu saat pipeline berikutnya men-deploy file
+Bicep dalam mode incremental? Dan apa yang akan terjadi pada pukul 23.00 itu jika stack-nya memakai
+<code>denyWriteAndDelete</code> dan Rizky tidak dikecualikan?</p>
+</aside>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Dari satu file menjadi satu lingkungan utuh: tulis, pratinjau, deploy, lindungi, bangun ulang</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/20-infrastructure-as-code-bicep.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/20-infrastructure-as-code-bicep.html?lang=id" title="Demo interaktif: Dari satu file menjadi satu lingkungan utuh: tulis, pratinjau, deploy, lindungi, bangun ulang" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/20-infrastructure-as-code-bicep/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Resource yang direncanakan muncul samar-samar selagi file ditulis, dan baru menjadi nyata ketika Resource Manager
+men-deploy-nya.</li>
+<li>Panel what-if: <code>+</code> pada eksekusi pertama, <code>=</code> saat Anda me-redeploy, <code>~</code> ketika satu parameter berubah, <code>-</code> ketika
+stack membuang resource yang sudah keluar dari file.</li>
+<li>Penghapusan manual yang ditolak oleh deny assignment milik stack.</li>
+<li>Betapa cepatnya resource group yang kosong dibangun ulang dari file yang sama.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi men-deploy file Bicep yang sama dua kali berturut-turut. Deployment kedua selesai dengan cepat dan tidak
+mengubah apa pun. Sifat infrastructure as code deklaratif apa yang ditunjukkan oleh hal ini?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Idempotensi</strong> — <em>alasannya:</em> Resource Manager membandingkan kondisi yang diinginkan di file dengan apa yang ada dan
+hanya bertindak pada perbedaannya, sehingga mengulang deployment itu aman.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Anda menghapus Log Analytics workspace dari <code>main.bicep</code> lalu me-redeploy dengan <code>az deployment group create</code> dalam
+mode default. Apakah workspace itu terhapus? Jika Anda ingin kode yang menghapusnya, apa yang sebaiknya Anda pakai?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Tidak — mode incremental membiarkan resource yang tidak ada di file tetap utuh. Gunakan <strong>deployment stack</strong> dengan
+<code>--action-on-unmanage deleteResources</code> (atau <code>deleteAll</code>) — <em>alasannya:</em> mode complete tidak lagi direkomendasikan
+dan sedang dihentikan secara bertahap, digantikan oleh stack.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Sebelum perubahan di produksi, Pak Budi ingin melihat persis apa yang akan terjadi. Perintah apa yang Anda jalankan,
+dan apa arti <code>~</code> di depan sebuah resource?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><code>az deployment group what-if</code> (atau <code>az deployment group create --confirm-with-what-if</code>); <code>~</code> berarti resource itu
+sudah ada dan akan <strong>diubah</strong>, dengan properti yang berubah tercantum di bawahnya — <em>alasannya:</em> what-if menampilkan
+pratinjau perubahan tanpa benar-benar melakukannya.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Sebuah perusahaan berjalan di Azure, tetapi juga ingin memakai tool dan alur kerja yang sama untuk mengelola DNS-nya
+di penyedia lain dan repositori GitHub-nya. Bicep atau Terraform?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Terraform</strong> — <em>alasannya:</em> Bicep hanya men-deploy resource Azure, sedangkan Terraform punya provider untuk banyak
+cloud dan produk SaaS (dengan konsekuensi adanya file state yang harus Anda simpan dan lindungi).</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Pak Budi ingin tidak ada seorang pun selain pipeline deployment yang bisa menghapus virtual network produksi yang
+dibuat dari file Bicep. Apa yang Anda gunakan, dan mengapa bukan lock CanNotDelete?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Deploy sebagai <strong>deployment stack</strong> dengan <code>--deny-settings-mode denyDelete</code> dan identitas pipeline di
+<code>--deny-settings-excluded-principals</code> — <em>alasannya:</em> lock berlaku untuk semua orang, termasuk pipeline, sedangkan
+deny settings pada stack bisa mengecualikan principal tertentu dan dikelola bersama kodenya.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Infrastructure as code mengubah lingkungan Anda menjadi file yang bisa ditinjau dan diulang; deployment <strong>deklaratif</strong> bersifat idempoten, jadi me-redeploy itu aman.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p><strong>Bicep</strong> adalah bahasa ringkas yang dikompilasi menjadi ARM JSON dengan dukungan sejak hari pertama untuk setiap API Azure; <strong>Terraform</strong> menambah jangkauan multi-cloud dengan konsekuensi adanya file state.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>File Bicep terdiri dari parameter, variabel, resource dengan <strong>symbolic name</strong>, output, dan secara opsional module, loop, serta kondisi; rujukan seperti <code>nsgWeb.id</code> menciptakan <strong>dependensi implisit</strong>.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Deploy dalam mode <strong>incremental</strong>, selalu lihat pratinjau dengan <strong>what-if</strong>, dan ingat bahwa file menggambarkan kondisi yang diinginkan setiap resource secara lengkap.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p><strong>Deployment stack</strong> mengelola sekelompok resource sebagai satu kesatuan, menghapus apa yang keluar dari file, dan melindungi resource dengan <strong>deny settings</strong>; bersama template spec dan Azure Policy, stack menggantikan Azure Blueprints.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Kalau belum pernah dibangun ulang dari file, itu baru harapan.</strong> Setiap kali ada yang bilang lingkungannya &quot;sudah
+semuanya di Bicep&quot;, saya selalu menanyakan hal yang sama: kapan terakhir kali salinan test dihapus lalu dibangun ulang
+hanya lewat pipeline? Pembangunan ulang itulah ujian yang sesungguhnya, karena di situlah ketahuan apa yang terlupa
+dari file: role assignment yang diberikan secara manual, secret yang diketik langsung di portal, record DNS yang
+ditambahkan seseorang malam-malam. Karena itu saya menjadwalkan latihan ini, mencatat berapa lama waktunya, dan
+mengubah setiap celah yang ditemukan menjadi pull request. Kebiasaan kedua saya lebih sederhana: saat meninjau
+perubahan, saya membaca hasil what-if sebelum membaca Bicep-nya. Kode menunjukkan apa yang dimaksud penulisnya; diff
+menunjukkan apa yang benar-benar akan terjadi. Saya paling teliti pada setiap <code>-</code> dan pada <code>~</code> di resource yang tidak
+pernah direncanakan untuk disentuh.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>20</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Sembilan belas makan siang penuh klik dalam satu file</h3>
+          <div class="prose"><p>Anda melengkapi sebuah <code>main.bicep</code> starter yang berisi latihan bertanda jelas — sebuah network security group, sebuah
+virtual network dengan dua subnet, sebuah Log Analytics workspace, dan output — di samping storage account yang sudah
+ditulis. Anda mem-build-nya, melihat pratinjaunya dengan what-if, men-deploy-nya, mengubah satu parameter dan
+menyaksikan what-if melaporkan modifikasi, lalu me-redeploy. Terakhir, Anda men-deploy file yang sama sebagai deployment
+stack dengan DenyDelete, menyaksikan upaya menghapus storage account gagal, dan menghapus semuanya dengan menghapus
+stack.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 50 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/20-infrastructure-as-code-bicep.html">Mulai Lab 20 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/azure-resource-manager/bicep/overview" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Bicep?</b><span>Bahasanya, manfaatnya, dan jalur dari file pertama Anda hingga module.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-resource-manager/bicep/deploy-what-if" target="_blank" rel="noopener"><b>Microsoft Learn: Bicep what-if — pratinjau perubahan sebelum deployment</b><span>Jenis perubahan, format hasil, dan cara membaca noise.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-resource-manager/bicep/deployment-stacks" target="_blank" rel="noopener"><b>Microsoft Learn: Membuat dan men-deploy deployment stack Azure dengan Bicep</b><span>Managed resource, action on unmanage, dan deny settings, lengkap dengan contoh CLI dan PowerShell.</span><small>learn.microsoft.com ↗</small></a><a href="https://azure.github.io/Azure-Verified-Modules/" target="_blank" rel="noopener"><b>Azure Verified Modules</b><span>Indeks module, spesifikasi, dan cara memakai module di Bicep dan Terraform.</span><small>azure.github.io ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🧬</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Koder Infra</h2>
+        <p class="muted">Tuliskan infrastruktur sebagai kode.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Kita tetap online, dan seluruh lingkungan bisa dibangun ulang dari kode.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 21</b><h4>Jawaban Hari Jumat</h4><p>Rapat bulanan jatuh hari Jumat, dan direktur ingin jawaban yang lugas — lengkap dengan angka.</p><p style="margin-top:10px"><a href="21-core-capstone.html">Tonton Episode 21 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="19-cost-management.html"><small>← Episode sebelumnya</small>19 · Tagihan yang Tak Bisa Dibaca</a><a class="next" href="21-core-capstone.html"><small>Episode berikutnya →</small>21 · Jawaban Hari Jumat</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/20-infrastructure-as-code-bicep/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

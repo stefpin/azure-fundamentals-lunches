@@ -1,8 +1,11 @@
 # Lab 18 · Keep data in the right place
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 18 · Governance and Compliance (Basic)](../../lunches/18-governance-compliance-basic/README.md)
 > **Time:** about 45 minutes, including 10–20 minutes of waiting for Azure Policy · **Cost:** 💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by `setup.sh`.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

@@ -1,8 +1,11 @@
 # Lab 28 · Orders that survive a regional outage
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 28 · Relational Databases (Advanced)](../../lunches/28-relational-databases-advanced/README.md)
 > **Time:** about 60 minutes (including about 10 minutes of setup and some waiting) · **Cost:** 💲💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by `setup.sh`.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

@@ -1,0 +1,128 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 26 · Hybrid Connectivity — Demo interaktif",
+    "kicker": "Makan Siang 26 · Hybrid Connectivity · Demo interaktif",
+    "title": "Tunnel ke kantor pusat, jalur privat, dan satu hub untuk setiap toko",
+    "lede": "Saksikan tunnel VPN site-to-site terbentuk, membawa lalu lintas terenkripsi, lalu putus karena key yang tidak cocok; bandingkan dengan jalur privat ExpressRoute; lalu hubungkan empat puluh toko melalui hub Virtual WAN. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Kantor pusat terhubung ke Azure: tunnel VPN site-to-site, jalur privat ExpressRoute, dan hub Virtual WAN",
+    "svgDesc": "Adegan pertama: kantor pusat Nusantara Retail di Jakarta (10.0.0.0/16) dengan server gudang, perangkat VPN, dan router edge; internet publik di tengah; dan virtual network hub Azure (10.40.0.0/16) dengan GatewaySubnet yang berisi VPN gateway dan ExpressRoute gateway, ditambah Orders API. Sebuah tunnel IPsec terbentuk melalui internet, membawa lalu lintas terenkripsi, gagal ketika shared key di kedua sisi berbeda, lalu berfungsi lagi. Kemudian lalu lintas menempuh jalur privat ExpressRoute melalui penyedia dan edge Microsoft di peering location Jakarta, dengan VPN sebagai cadangan. Panel menampilkan status koneksi dan effective route untuk kantor pusat. Adegan kedua: hub Virtual WAN di Indonesia Central yang menghubungkan toko-toko, kantor pusat, staf jarak jauh, VNet toko online, dan hub kedua di Southeast Asia, diikuti tiga kartu rangkuman."
+  },
+  "steps": [
+    {
+      "title": "Kantor pusat bertemu cloud",
+      "text": "Setiap malam, server gudang di kantor pusat Jakarta mengirim pergerakan stok hari itu ke Orders API di Azure. Pak Budi menolak membuka kedua server ke internet, dan ia benar. Kedua sisi memakai alamat privat: 10.0.0.0/16 di kantor pusat, 10.40.0.0/16 di Azure. Saat ini, paket dari Azure ke 10.0.1.20 langsung dibuang, karena satu-satunya rute yang cocok, 10.0.0.0/8, punya next hop None."
+    },
+    {
+      "title": "Gateway di GatewaySubnet",
+      "text": "Di Azure, VPN gateway tinggal di subnet khusus bernama GatewaySubnet: /27 atau lebih besar, dan tidak pernah dengan NSG. Gateway VpnGw1AZ bersifat zone-redundant dan memakai IP publik Standard. Di kantor pusat, firewall Pak Budi menjadi perangkat VPN. Local network gateway memberi tahu Azure IP publik firewall itu dan rentang alamat di belakangnya, dan sebuah connection mengikat kedua ujung dengan shared key."
+    },
+    {
+      "title": "IKE: membuktikan shared key",
+      "text": "Begitu connection ada, kedua ujung mulai berbicara dengan IKE, Internet Key Exchange. Mereka menyepakati algoritma enkripsi dan saling membuktikan bahwa mereka memegang pre-shared key yang sama, tanpa pernah mengirimkan key itu sendiri. Hasilnya adalah IKE security association. Di atasnya, mereka membuat IPsec security association untuk lalu lintas sebenarnya. Selama kedua fase belum berhasil, statusnya Connecting.",
+      "set": {
+        "t-conn": "Status: Connecting (IKE)"
+      }
+    },
+    {
+      "title": "Connected: paket terenkripsi mengalir",
+      "text": "Kedua fase berhasil dan status berubah menjadi Connected. Firewall mengenkripsi setiap paket dari server gudang, membungkusnya dalam IPsec, lalu mengirimkannya melintasi internet, yang hanya melihat lalu lintas di antara dua alamat IP publik. VPN gateway mendekripsinya dan mengantarkannya ke Orders API. Azure juga menambahkan rute dengan sendirinya: 10.0.0.0/16 kini mengarah ke virtual network gateway.",
+      "set": {
+        "t-conn": "Status: Connected · IPsec",
+        "lbl-tunnel": "Tunnel IPsec · terenkripsi",
+        "t-route": "10.0.0.0/16 → VirtualNetworkGateway"
+      }
+    },
+    {
+      "title": "Satu key salah, tunnel lenyap",
+      "text": "Sebulan kemudian, Rizky merotasi key di firewall tetapi lupa mengubah sisi Azure. Pada negosiasi berikutnya autentikasi gagal, tidak ada security association yang terbentuk, dan status turun menjadi NotConnected. Paket kini berhenti di tepi tunnel yang hilang. Sebagian besar tunnel yang gagal berasal dari ketidakcocokan seperti ini: key, algoritma enkripsi, atau rentang alamat di kedua sisi tidak sepakat.",
+      "set": {
+        "t-conn": "Status: NotConnected · key tidak cocok",
+        "lbl-tunnel": "tanpa tunnel: key berbeda"
+      }
+    },
+    {
+      "title": "Sudah pulih, tetapi internet naik-turun",
+      "text": "Perbaikannya: satu key yang sama di kedua sisi, dibuat secara acak dan disimpan di tempat aman, seperti Key Vault. Tunnel kembali. Namun di akhir bulan, sinkronisasi malam merayap pelan: tunnel menumpang internet publik, jadi latensi dan throughput berubah-ubah mengikuti setiap provider di sepanjang jalan. Ibu Sari meminta sesuatu yang lebih dapat diprediksi sebelum gudang memindahkan lebih banyak data ke Azure.",
+      "set": {
+        "t-conn": "Status: Connected",
+        "lbl-tunnel": "Tunnel IPsec · terenkripsi",
+        "t-inet": "padat: latensi naik-turun"
+      }
+    },
+    {
+      "title": "ExpressRoute: jalur privat",
+      "text": "ExpressRoute menempuh jalan yang berbeda. Penyedia konektivitas menghubungkan router edge kantor pusat ke router edge Microsoft di peering location Jakarta, dan kedua sisi bertukar rute dengan BGP. Azure private peering membawa lalu lintas ke ExpressRoute gateway di GatewaySubnet yang sama dengan VPN gateway. Lalu lintasnya tidak pernah menyentuh internet publik, sehingga latensinya tetap dapat diprediksi.",
+      "set": {
+        "t-inet": "dipakai bersama, best effort"
+      }
+    },
+    {
+      "title": "Privat tidak sama dengan terenkripsi",
+      "text": "Hati-hati dengan satu asumsi: ExpressRoute itu privat, tetapi tidak terenkripsi secara default. Ketika data harus terenkripsi selama transit, gunakan TLS di aplikasi, MACsec di port ExpressRoute Direct, atau VPN IPsec di atas private peering. Circuit melalui penyedia berkisar dari 50 Mbps hingga 10 Gbps, dan pemesanannya memakan waktu berminggu-minggu selagi penyedia menyiapkan sisinya."
+    },
+    {
+      "title": "VPN tetap jadi cadangan",
+      "text": "Nusantara Retail mempertahankan site-to-site VPN setelah ExpressRoute hadir: kedua gateway bisa berbagi GatewaySubnet, dan Azure lebih memilih rute ExpressRoute selama circuit aktif. Ketika penyedia mengalami gangguan, rute BGP dari circuit ditarik dan lalu lintas kembali ke tunnel terenkripsi. Lebih lambat, tetapi gudang tetap bisa sinkron. Untuk ketahanan lebih tinggi, tambahkan ExpressRoute Metro atau circuit kedua.",
+      "set": {
+        "t-conn": "Status: Connected · cadangan dipakai",
+        "lbl-tunnel": "Tunnel IPsec · jalur cadangan"
+      }
+    },
+    {
+      "title": "Empat puluh toko, satu hub",
+      "text": "Tahun depan, keempat puluh toko bergabung. Dengan gateway biasa, itu berarti puluhan tunnel, local network gateway, dan peering, ditambah perutean di antara semuanya yang harus Anda bangun sendiri. Azure Virtual WAN mengubahnya menjadi layanan terkelola: satu virtual hub per region, dengan gateway untuk site-to-site VPN, user VPN, dan ExpressRoute, plus hub router. Perangkat SD-WAN di setiap toko terhubung ke hub Indonesia Central."
+    },
+    {
+      "title": "Any-to-any lewat hub",
+      "text": "Hub router pada virtual WAN Standard menyediakan transit any-to-any: sebuah toko bisa menjangkau kantor pusat dan VNet toko online, dan staf jarak jauh terhubung dengan user VPN serta akun Microsoft Entra ID mereka. Hub-hub dalam virtual WAN yang sama saling terhubung lewat backbone Microsoft, sehingga salinan pemulihan bencana di balik hub Southeast Asia juga terjangkau. Jenis Basic hanya mendukung site-to-site VPN."
+    },
+    {
+      "title": "Pilih jalur yang pas",
+      "text": "Tiga alat, tiga tugas. Site-to-site VPN terenkripsi, cepat dimulai, dan cadangan yang alami. ExpressRoute memberi jalur privat yang dapat diprediksi untuk lalu lintas besar dan stabil, dengan enkripsi ditambahkan bila data membutuhkannya. Virtual WAN mengelola hub dan transit begitu banyak lokasi bergabung. Apa pun pilihannya, rencanakan rentang alamat lebih dulu: jaringan yang tumpang-tindih tidak bisa dihubungkan tanpa NAT.",
+      "tip": "Di Lab 26 Anda membangun dua VPN gateway, menghubungkannya dengan shared key yang dibuat saat runtime, mengirim lalu lintas lewat tunnel — lalu menghapus semuanya di hari yang sama."
+    }
+  ],
+  "svg": {
+    "Head office · Jakarta": "Kantor pusat · Jakarta",
+    "Azure hub VNet": "VNet hub Azure",
+    "GatewaySubnet · no NSG": "GatewaySubnet · tanpa NSG",
+    "Public internet": "Internet publik",
+    "shared, best effort": "dipakai bersama, best effort",
+    "IKE: agree and authenticate": "IKE: bersepakat dan autentikasi",
+    "Warehouse server": "Server gudang",
+    "VPN device": "Perangkat VPN",
+    "firewall · public IP": "firewall · IP publik",
+    "Edge router": "Router edge",
+    "BGP over the circuit": "BGP lewat circuit",
+    "Provider network": "Jaringan penyedia",
+    "private circuit": "circuit privat",
+    "Jakarta peering location": "peering location Jakarta",
+    "encrypt it: TLS, MACsec or IPsec": "enkripsi sendiri: TLS, MACsec atau IPsec",
+    "Site-to-site connection": "Koneksi site-to-site",
+    "local network gateway: HQ public IP + 10.0.0.0/16": "local network gateway: IP publik HQ + 10.0.0.0/16",
+    "Status: not created": "Status: belum dibuat",
+    "traffic to head office, 10.0.1.20": "lalu lintas ke kantor pusat, 10.0.1.20",
+    "10.0.0.0/8 → None (dropped)": "10.0.0.0/8 → None (dibuang)",
+    "one managed hub per region · hubs meshed over Microsoft's backbone": "satu hub terkelola per region · antar-hub terhubung lewat backbone Microsoft",
+    "Store 1 · Medan": "Toko 1 · Medan",
+    "SD-WAN box · VPN": "Perangkat SD-WAN · VPN",
+    "Store 2 · Surabaya": "Toko 2 · Surabaya",
+    "+ 37 more stores": "+ 37 toko lainnya",
+    "Store 40 · Makassar": "Toko 40 · Makassar",
+    "Head office": "Kantor pusat",
+    "ExpressRoute + VPN backup": "ExpressRoute + VPN cadangan",
+    "Remote staff": "Staf jarak jauh",
+    "VNet · storefront": "VNet · toko online",
+    "orders API and web": "orders API dan web",
+    "disaster recovery VNet": "VNet pemulihan bencana",
+    "encrypted tunnel over the internet": "tunnel terenkripsi lewat internet",
+    "live in hours · pay per gateway hour": "siap dalam hitungan jam · bayar per jam gateway",
+    "start here, keep it as the backup": "mulai di sini, lalu jadikan cadangan",
+    "private path, predictable latency": "jalur privat, latensi dapat diprediksi",
+    "weeks to order · encrypt it yourself": "pemesanan berminggu-minggu · enkripsi sendiri",
+    "for heavy, steady traffic": "untuk lalu lintas besar dan stabil",
+    "managed hubs for many sites": "hub terkelola untuk banyak lokasi",
+    "any-to-any transit (Standard)": "transit any-to-any (Standard)",
+    "when the forty stores join": "saat empat puluh toko bergabung"
+  }
+}

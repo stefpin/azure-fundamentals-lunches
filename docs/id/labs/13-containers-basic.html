@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 13 · Mengemas toko online · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 13: Mengemas toko online. sekitar 45 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/13-containers-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/13-containers-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/13-containers-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/13-containers-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 13 · Mengemas toko online">
+<meta property="og:description" content="Lab Azure praktik 13: Mengemas toko online. sekitar 45 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/13-containers-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="13" style="--c:#11935a">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/13-containers-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#11935a">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 13</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>13</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Mengemas toko online</h1>
+        <p class="lab-story">🏪 <b>Episode 13 · Di Laptop Saya Jalan, Kok</b> — Kalimat paling mahal di kantor. <a href="../lunches/13-containers-basic.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 45 menit</span>
+          <span class="chip cost">💲 gratis atau hampir gratis</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 7 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--membuat-registry-privat-dan-mengimpor-image-toko-online">Tugas 1 · Membuat registry privat dan mengimpor image toko online</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--menjalankan-container-dalam-hitungan-detik-dengan-container-instances">Tugas 2 · Menjalankan container dalam hitungan detik dengan Container Instances</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--men-deploy-ke-container-apps-dan-menarik-image-dengan-managed-identity">Tugas 3 · Men-deploy ke Container Apps dan menarik image dengan managed identity</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--menyaksikan-penskalaan-dari-nol-ke-lima-dan-kembali-lagi">Tugas 4 · Menyaksikan penskalaan dari nol ke lima dan kembali lagi</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--merilis-v2-ke-20-pembeli">Tugas 5 · Merilis v2 ke 20% pembeli</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/app/Dockerfile" target="_blank" rel="noopener"><span>app/Dockerfile</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/13-containers-basic" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Nusantara Retail menginginkan satu kemasan toko online yang berjalan sama persis di mana pun, dan pilihan hosting yang
+tidak memakan biaya pada pukul tiga pagi. Anda akan membuat <strong>Azure Container Registry</strong> privat dan mengimpor sebuah
+aplikasi web contoh berukuran kecil buatan Microsoft ke dalamnya sebagai <code>storefront:v1</code>. Anda akan menjalankan image
+yang sama dalam hitungan detik di <strong>Azure Container Instances</strong>, lalu men-deploy-nya dari registry Anda ke <strong>Azure
+Container Apps</strong>, dengan menarik image memakai managed identity milik aplikasi, bukan kata sandi. Terakhir, Anda akan
+menguji bebannya (replica 0 → 5 → 0), merilis revision kedua ke 20% request, dan memperbaiki target port yang rusak.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  MCR[&quot;mcr.microsoft.com&lt;br/&gt;azuredocs/aks-helloworld:v1&quot;]
+  subgraph rg[&quot;rg-lunch13-&amp;lt;suffix&amp;gt;&quot;]
+    ACR[(&quot;acrnusa&amp;lt;suffix&amp;gt;&lt;br/&gt;storefront:v1&quot;)]
+    ACI[&quot;ci-nusa-storefront&lt;br/&gt;Container Instances&quot;]
+    subgraph cae[&quot;Environment Container Apps cae-nusa&quot;]
+      APP[&quot;ca-nusa-storefront&lt;br/&gt;revision v1: 80%&lt;br/&gt;revision v2: 20%&quot;]
+    end
+  end
+  MCR --&gt;|&quot;az acr import&quot;| ACR
+  MCR --&gt;|&quot;pull (image publik)&quot;| ACI
+  ACR --&gt;|&quot;pull dengan managed identity milik aplikasi&quot;| APP
+  SHOP[&quot;Pembeli dan loop curl Anda&quot;] --&gt;|HTTPS| APP
+  SHOP --&gt;|HTTP| ACI
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Image contoh ini adalah aplikasi web mungil buatan Microsoft yang mendengarkan di <strong>port 80</strong> dan menampilkan nilai
+environment variable <code>TITLE</code> sebagai judul halamannya. Aplikasi ini sebenarnya dibuat untuk panduan AKS, tetapi itu
+tidak masalah: container image bisa berjalan di mana saja. Dengan mengubah <code>TITLE</code>, Anda bisa langsung melihat salinan
+atau revision mana yang menjawab sebuah request.</p>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Sebuah subscription (<em>langganan</em>) Azure tempat Anda boleh membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang.</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/13-containers-basic
+source ../common/config.sh
+RG=$(rg_name 13)
+ACR_NAME=&quot;acrnusa${SUFFIX}&quot;
+APP=ca-nusa-storefront
+</code></pre></div>
+<ul>
+<li>Pastikan resource provider yang dipakai lab ini sudah terdaftar. Ini langkah sekali jalan untuk setiap subscription
+dan bisa memakan waktu satu atau dua menit:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for ns in Microsoft.ContainerRegistry Microsoft.ContainerInstance Microsoft.App Microsoft.OperationalInsights; do
+  az provider register --namespace &quot;$ns&quot; --wait
+done
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab menimbulkan biaya selama resource itu masih ada. Akhiri dengan bagian <strong>Bersihkan</strong>, bahkan jika Anda
+berhenti di tengah jalan. Jika Cloud Shell kehabisan waktu (timeout), buka lagi, <code>cd</code> kembali ke folder ini, lalu
+jalankan ulang baris <code>source</code> dan baris variabel di atas (serta baris <code>LOGIN_SERVER=</code>, <code>FQDN=</code>, atau <code>REV1=</code> dari
+tugas yang sedang Anda kerjakan).</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–5 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasar-dasarnya</td>
+<td>baca <a href="#-ringkasan-tantangan">Ringkasan tantangan</a> saja, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--membuat-registry-privat-dan-mengimpor-image-toko-online" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Membuat registry privat dan mengimpor image toko online</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--membuat-registry-privat-dan-mengimpor-image-toko-online" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Registry adalah satu-satunya sumber acuan (single source of truth) untuk image Anda. <code>az acr import</code> menyalin image dari
+registry lain di dalam Azure, jadi Anda tidak memerlukan Docker di Cloud Shell.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ensure_rg &quot;$RG&quot; 13
+
+az acr create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$ACR_NAME&quot; \
+  --sku Basic \
+  --location &quot;$LOCATION&quot; \
+  --output none
+
+LOGIN_SERVER=$(az acr show --name &quot;$ACR_NAME&quot; --query loginServer --output tsv)
+echo &quot;Login server: $LOGIN_SERVER&quot;
+
+az acr import \
+  --name &quot;$ACR_NAME&quot; \
+  --source mcr.microsoft.com/azuredocs/aks-helloworld:v1 \
+  --image storefront:v1
+
+az acr repository show-tags --name &quot;$ACR_NAME&quot; --repository storefront --output table
+az acr show --name &quot;$ACR_NAME&quot; --query &quot;{tier:sku.name, adminUser:adminUserEnabled}&quot; --output table
+</code></pre></div>
+<p>Perhatikan bahwa image itu kini punya nama baru di registry Anda, <code>storefront:v1</code>, sementara isinya (dan digest-nya)
+identik dengan aslinya dari Microsoft. Admin user bernilai <code>false</code>: tidak ada satu pun bagian lab ini yang membutuhkan
+kata sandi registry.</p>
+<p><strong>Opsional — build di cloud dengan ACR Tasks.</strong> File <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/app/Dockerfile" target="_blank" rel="noopener"><code>app/Dockerfile</code></a> menambahkan satu layer di atas
+image contoh (judul default yang baru). Jika subscription Anda mengizinkan ACR Tasks, build image itu di Azure:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az acr build --registry &quot;$ACR_NAME&quot; --image storefront:v1-built ./app
+</code></pre></div>
+<p>Jika Anda melihat <code>TasksOperationsNotAllowed</code>, berarti subscription Anda memakai kredit gratis Azure, dan saat tulisan
+ini dibuat eksekusi ACR Tasks sedang dihentikan sementara untuk subscription seperti itu. Lewati langkah ini; impor di
+atas sudah cukup untuk seluruh lab.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Home › Container registries › acrnusa… › Services › Repositories › storefront</em> menampilkan tag
+beserta digest-nya. <em>Settings › Access keys</em> menunjukkan bahwa admin user nonaktif.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>az acr repository show-tags</code> menampilkan <code>v1</code>, dan registry menunjukkan <code>Basic</code> dengan admin user
+<code>false</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--menjalankan-container-dalam-hitungan-detik-dengan-container-instances" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Menjalankan container dalam hitungan detik dengan Container Instances</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--menjalankan-container-dalam-hitungan-detik-dengan-container-instances" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Container Instances menjalankan satu container group tanpa cluster dan tanpa VM yang perlu Anda urus. Anda membayar per
+detik selama container group itu berjalan.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az container create \
+  --resource-group &quot;$RG&quot; \
+  --name ci-nusa-storefront \
+  --image mcr.microsoft.com/azuredocs/aks-helloworld:v1 \
+  --os-type Linux \
+  --cpu 1 --memory 1.5 \
+  --ports 80 \
+  --dns-name-label &quot;nusa-store-${SUFFIX}&quot; \
+  --environment-variables TITLE=&quot;Nusantara Retail storefront on Container Instances&quot; \
+  --output none
+
+az container show --resource-group &quot;$RG&quot; --name ci-nusa-storefront \
+  --query &quot;{state:instanceView.state, fqdn:ipAddress.fqdn}&quot; --output table
+
+ACI_FQDN=$(az container show --resource-group &quot;$RG&quot; --name ci-nusa-storefront --query ipAddress.fqdn --output tsv)
+curl -s &quot;http://${ACI_FQDN}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+az container logs --resource-group &quot;$RG&quot; --name ci-nusa-storefront
+</code></pre></div>
+<p>Mengapa container group ini menarik image dari registry publik Microsoft, bukan dari registry Anda? Untuk menarik image
+dari registry privat, Container Instances memerlukan managed identity jenis <strong>user-assigned</strong> yang memegang AcrPull; ia
+tidak bisa memakai system-assigned identity untuk menarik image. Tantangan tambahan 1 menunjukkan caranya. Container
+Apps, yang akan Anda pakai berikutnya, bisa memakai system-assigned identity miliknya sendiri. Perhatikan juga bahwa
+alamatnya hanya HTTP biasa: Container Instances memberi Anda alamat IP dan nama DNS, bukan endpoint HTTPS yang
+terkelola.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Home › Container instances › ci-nusa-storefront</em> menampilkan status dan FQDN (fully qualified
+domain name, nama domain lengkap) di <strong>Overview</strong>, dan <strong>Containers › Logs</strong> menampilkan output yang sama dengan
+<code>az container logs</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> statusnya <code>Running</code>, FQDN-nya berbentuk <code>nusa-store-&lt;suffix&gt;.&lt;region&gt;.azurecontainer.io</code>, dan
+<code>curl</code> mencetak <code>&lt;title&gt;Nusantara Retail storefront on Container Instances&lt;/title&gt;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--men-deploy-ke-container-apps-dan-menarik-image-dengan-managed-identity" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Men-deploy ke Container Apps dan menarik image dengan managed identity</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--men-deploy-ke-container-apps-dan-menarik-image-dengan-managed-identity" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Pertama, buat environment, yaitu batas aman yang dipakai bersama oleh aplikasi-aplikasi Anda. Prosesnya memakan waktu
+dua sampai empat menit. Jika Anda tidak menyebutkan workspace Log Analytics, CLI akan membuatkannya untuk log
+environment dan memberi tahu Anda.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az containerapp env create \
+  --name cae-nusa \
+  --resource-group &quot;$RG&quot; \
+  --location &quot;$LOCATION&quot; \
+  --output none
+</code></pre></div>
+<p>Sekarang buat aplikasinya dari registry <strong>Anda</strong>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az containerapp create \
+  --name &quot;$APP&quot; \
+  --resource-group &quot;$RG&quot; \
+  --environment cae-nusa \
+  --image &quot;${LOGIN_SERVER}/storefront:v1&quot; \
+  --registry-server &quot;$LOGIN_SERVER&quot; \
+  --registry-identity system \
+  --ingress external \
+  --target-port 80 \
+  --min-replicas 0 \
+  --max-replicas 5 \
+  --scale-rule-name http-busy \
+  --scale-rule-type http \
+  --scale-rule-http-concurrency 10 \
+  --env-vars TITLE=&quot;Nusantara Retail storefront v1&quot; \
+  --output none
+</code></pre></div>
+<p>Fungsi flag-flag yang penting:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Arti</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--registry-identity system</code></td>
+<td>Mengaktifkan system-assigned managed identity milik aplikasi, memberinya <strong>AcrPull</strong> pada registry Anda, lalu menarik image dengan identitas itu. Karena CLI mengerjakan beberapa langkah sekaligus untuk Anda, <code>--no-wait</code> tidak diizinkan bersama opsi ini.</td>
+</tr>
+<tr>
+<td><code>--ingress external --target-port 80</code></td>
+<td>Menerbitkan aplikasi di alamat HTTPS publik dan meneruskan request ke port 80, tempat aplikasi contoh mendengarkan.</td>
+</tr>
+<tr>
+<td><code>--min-replicas 0 --max-replicas 5</code></td>
+<td>Menyusut ke nol saat menganggur; tidak pernah menjalankan lebih dari lima replica.</td>
+</tr>
+<tr>
+<td><code>--scale-rule-type http --scale-rule-http-concurrency 10</code></td>
+<td>Menambah satu replica untuk kira-kira setiap 10 request bersamaan.</td>
+</tr>
+<tr>
+<td><code>--env-vars TITLE=...</code></td>
+<td>Pengaturan di dalam template revision; mengubahnya nanti akan membuat revision baru.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Buka aplikasinya dan buktikan bahwa tidak ada kata sandi yang terlibat:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>FQDN=$(az containerapp show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --query properties.configuration.ingress.fqdn --output tsv)
+echo &quot;https://${FQDN}&quot;
+curl -s &quot;https://${FQDN}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+
+az containerapp show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;properties.configuration.registries&quot; --output table
+
+PRINCIPAL_ID=$(az containerapp show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query identity.principalId --output tsv)
+ACR_ID=$(az acr show --name &quot;$ACR_NAME&quot; --query id --output tsv)
+az role assignment list --assignee &quot;$PRINCIPAL_ID&quot; --scope &quot;$ACR_ID&quot; --query &quot;[].roleDefinitionName&quot; --output tsv
+</code></pre></div>
+<p>Request pertama mungkin memakan waktu beberapa detik: itulah cold start dari replica pertama.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Buka <em>Container Apps › ca-nusa-storefront</em>. <strong>Settings › Identity</strong> menampilkan
+system-assigned identity, <strong>Application › Containers</strong> menampilkan image dari registry Anda, dan <strong>Application ›
+Revisions and replicas</strong> menampilkan revision yang sedang berjalan.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>curl</code> mencetak <code>&lt;title&gt;Nusantara Retail storefront v1&lt;/title&gt;</code>, tabel registries menampilkan login
+server Anda dengan identity <code>system</code>, dan daftar role mencetak <code>AcrPull</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--menyaksikan-penskalaan-dari-nol-ke-lima-dan-kembali-lagi" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Menyaksikan penskalaan dari nol ke lima dan kembali lagi</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--menyaksikan-penskalaan-dari-nol-ke-lima-dan-kembali-lagi" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Periksa berapa replica yang sedang berjalan sekarang. Sesaat setelah aplikasi dibuat, Anda mungkin melihat 1; setelah
+sekitar lima menit tanpa trafik, seharusnya Anda melihat 0.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az containerapp replica list --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query &quot;length(@)&quot; --output tsv
+</code></pre></div>
+<p>Sekarang, mari bermain peran promo 12.12. Loop di bawah ini mengirim trafik selama sekitar dua menit, 40 request
+sekaligus, dan menghitung replica setiap 15 detik selama loop berjalan:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>end=$((SECONDS + 120))
+while (( SECONDS &lt; end )); do
+  seq 1 400 | xargs -P 40 -I{} curl -s -o /dev/null &quot;https://${FQDN}/&quot;
+done &amp;
+LOAD_PID=$!
+
+for i in $(seq 1 8); do
+  sleep 15
+  echo &quot;$(date +%T)  replicas: $(az containerapp replica list --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query &#x27;length(@)&#x27; --output tsv)&quot;
+done
+wait &quot;$LOAD_PID&quot;
+</code></pre></div>
+<p>Jumlahnya naik, dan tidak pernah melewati lima karena itulah batas maksimum Anda. Ketika beban berhenti, platform
+menunggu dulu sebelum menghapus replica: masa tenang (cool-down) sebelum replica terakhir hilang secara default adalah
+300 detik. Periksa lagi setelah sekitar tujuh menit:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>sleep 420
+az containerapp replica list --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query &quot;length(@)&quot; --output tsv
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>ca-nusa-storefront › Monitoring › Metrics</em>, metric <strong>Replica Count</strong>, aggregation <strong>Max</strong>, time
+range <strong>Last 30 minutes</strong> menggambar seluruh kurva 0 → 5 → 0. Metric <strong>Requests</strong> menampilkan beban yang Anda kirim.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Anda melihat jumlah replica naik ke 5 (dan tidak lebih) selama beban berlangsung, lalu turun
+kembali ke 0 setelah trafik berhenti.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--merilis-v2-ke-20-pembeli" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Merilis v2 ke 20% pembeli</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--merilis-v2-ke-20-pembeli" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Canary release memerlukan dua revision yang aktif dan sebuah aturan trafik. Urutan langkahnya penting.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code># 1. Allow several revisions to be active at the same time.
+az containerapp revision set-mode --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --mode multiple --output none
+
+# 2. Pin all traffic to the current revision BEFORE you deploy anything new.
+REV1=$(az containerapp show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query properties.latestRevisionName --output tsv)
+az containerapp ingress traffic set --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --revision-weight &quot;${REV1}=100&quot; --output none
+
+# 3. Deploy v2. A new environment variable is a revision-scope change, so it creates a new revision.
+az containerapp update --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --set-env-vars TITLE=&quot;Nusantara Retail storefront v2&quot; \
+  --revision-suffix v2 \
+  --output none
+REV2=&quot;${APP}--v2&quot;
+
+# 4. Test v2 on its own address before any shopper sees it.
+REV2_FQDN=$(az containerapp revision show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --revision &quot;$REV2&quot; \
+  --query properties.fqdn --output tsv)
+curl -s &quot;https://${REV2_FQDN}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+
+# 5. Canary: 80% stays on v1, 20% goes to v2.
+az containerapp ingress traffic set --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --revision-weight &quot;${REV1}=80&quot; &quot;${REV2}=20&quot; --output none
+
+az containerapp revision list --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;[].{revision:name, active:properties.active, traffic:properties.trafficWeight, replicas:properties.replicas}&quot; \
+  --output table
+</code></pre></div>
+<p>Tanpa langkah 2, aturan yang sudah ada, &quot;100% ke revision terbaru&quot;, akan mengirim semua pembeli ke v2 begitu v2 siap.
+Sekarang ambil sampel alamat publik sebanyak 40 kali dan hitung judul mana yang menjawab:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for i in $(seq 1 40); do curl -s &quot;https://${FQDN}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;; done | sort | uniq -c
+</code></pre></div>
+<p>Perkirakan sekitar 32 jawaban dari v1 dan 8 dari v2; angka pastinya berbeda-beda di setiap percobaan.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Application › Revisions and replicas</em> (di beberapa versi portal bernama <em>Revision
+management</em>) menampilkan kedua revision, persentase trafik masing-masing, dan URL-nya sendiri, serta memungkinkan Anda
+mengubah pembagian trafik dengan beberapa klik.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> daftar revision menampilkan dua revision aktif dengan trafik <code>80</code> dan <code>20</code>, dan sampel Anda
+menampilkan kedua judul, sebagian besar v1.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Rizky memutuskan bahwa &quot;mulai sekarang semua aplikasi kita mendengarkan di 8080&quot;, lalu memperbarui ingress tanpa
+memeriksa image-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az containerapp ingress update --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --target-port 8080 --output none
+
+for i in $(seq 1 5); do
+  curl -s -o /dev/null -w &quot;%{http_code}\n&quot; --max-time 30 &quot;https://${FQDN}/&quot;
+done
+</code></pre></div>
+<p><strong>Gejala:</strong> alih-alih <code>200</code>, Anda mendapat error atau timeout (<code>000</code> berarti <code>curl</code> menyerah), dan setelah beberapa saat
+revision-revision itu melaporkan bahwa mereka tidak sehat:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az containerapp revision list --name &quot;$APP&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;[].{revision:name, health:properties.healthState, running:properties.runningState}&quot; --output table
+</code></pre></div>
+<p>Perhatikan bahwa <strong>kedua</strong> revision rusak sekaligus. Temukan penyebabnya dan perbaiki.</p>
+<details class="plain"><summary>Petunjuk</summary>
+<p>Bandingkan <code>az containerapp show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --query properties.configuration.ingress.targetPort</code>
+dengan port yang benar-benar didengarkan oleh aplikasi contoh (lihat kembali <code>--ports 80</code> di Tugas 2). Ingress adalah
+pengaturan <strong>application-scope</strong> (berlaku di tingkat aplikasi): ia berlaku untuk semua revision sekaligus dan tidak
+membuat revision baru.</p>
+</details>
+<details class="plain"><summary>Perbaikan</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az containerapp ingress update --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --target-port 80 --output none
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; --max-time 60 &quot;https://${FQDN}/&quot;
+</code></pre></div>
+<p>Target port harus sama dengan port tempat proses mendengarkan di dalam container. <code>EXPOSE</code> di Dockerfile hanya
+mendokumentasikannya.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu
+Anda ulangi.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Perintah ini menghapus resource group (<em>grup sumber daya</em>) <code>rg-lunch13-&lt;suffix&gt;</code> beserta seluruh isinya: registry,
+container group, environment dan aplikasi Container Apps, serta workspace Log Analytics. Tidak ada satu pun bagian lab
+ini yang berada di luar resource group: role assignment AcrPull menempel pada registry, dan system-assigned identity
+milik aplikasi ikut terhapus bersama aplikasinya. Penghapusan masih berlanjut di latar belakang selama beberapa menit.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>The registry DNS name acrnusa….azurecr.io is already in use</code></td>
+<td>Nama registry bersifat global, dan orang lain sudah memakai nama Anda</td>
+<td>Pilih suffix lain: <code>export SUFFIX=&lt;5 new lowercase letters or digits&gt;</code>, lalu jalankan <code>source ../common/config.sh</code> lagi dan atur ulang variabelnya</td>
+</tr>
+<tr>
+<td><code>(TasksOperationsNotAllowed) ACR Tasks requests for the registry … are not permitted</code></td>
+<td>Eksekusi ACR Tasks dihentikan sementara untuk subscription yang memakai kredit gratis Azure</td>
+<td>Lewati <code>az acr build</code> yang opsional; <code>az acr import</code> sudah cukup untuk lab ini</td>
+</tr>
+<tr>
+<td><code>(MissingSubscriptionRegistration) The subscription is not registered to use namespace 'Microsoft.App'</code></td>
+<td>Resource provider belum terdaftar</td>
+<td>Jalankan loop <code>az provider register</code> dari <strong>Sebelum mulai</strong> lalu coba lagi</td>
+</tr>
+<tr>
+<td><code>DNS name label not available</code> saat membuat container group</td>
+<td>Orang lain sudah memakai label itu di region tersebut</td>
+<td>Gunakan label lain, misalnya <code>--dns-name-label &quot;nusa-store-${SUFFIX}-2&quot;</code></td>
+</tr>
+<tr>
+<td>Pembuatan container app gagal dengan <code>... UNAUTHORIZED: authentication required ...</code></td>
+<td>Penetapan AcrPull untuk identitas itu belum tersebar (propagate), atau registry Anda memakai mode izin ABAC</td>
+<td>Tunggu satu menit lalu jalankan <code>az containerapp update --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --image &quot;${LOGIN_SERVER}/storefront:v1&quot;</code>. Jika <code>az acr show --name &quot;$ACR_NAME&quot; --query roleAssignmentMode</code> menampilkan <code>AbacRepositoryPermissions</code>, tetapkan <strong>Container Registry Repository Reader</strong> ke identitas aplikasi, bukan AcrPull</td>
+</tr>
+<tr>
+<td><code>unrecognized arguments</code> atau <code>the following arguments are required</code> dari perintah <code>az containerapp</code></td>
+<td>Azure CLI versi lama (kemungkinan besar di PC lokal)</td>
+<td>Jalankan <code>az upgrade</code>; jika Anda memakai extension Container Apps, <code>az extension add --name containerapp --upgrade</code></td>
+</tr>
+<tr>
+<td>Jumlah replica tidak pernah mencapai 5</td>
+<td>Request yang berjalan bersamaan kurang banyak</td>
+<td>Naikkan paralelismenya (<code>-P 60</code>) atau durasinya, dan pastikan <code>FQDN</code> sudah diatur</td>
+</tr>
+<tr>
+<td>Replica tetap di atas 0 lama setelah pengujian</td>
+<td>Masa cool-down belum selesai, atau masih ada loop beban yang berjalan</td>
+<td>Tunggu 5–10 menit; jalankan <code>jobs</code> dan <code>kill %1</code> jika loop di latar belakang masih hidup</td>
+</tr>
+<tr>
+<td>Ke-40 sampel request semuanya menampilkan v1</td>
+<td>v2 masih mendapat 0% trafik</td>
+<td><code>az containerapp ingress traffic show --name &quot;$APP&quot; --resource-group &quot;$RG&quot;</code> lalu ulangi langkah 5 di Tugas 5</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ol>
+<li>
+<p><strong>Tarik image ke Container Instances dari registry Anda.</strong> Buat user-assigned identity, beri identitas itu AcrPull,
+lalu biarkan container group kedua memakainya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az identity create --resource-group &quot;$RG&quot; --name id-nusa-acrpull --output none
+ID_RES=$(az identity show --resource-group &quot;$RG&quot; --name id-nusa-acrpull --query id --output tsv)
+ID_PRINCIPAL=$(az identity show --resource-group &quot;$RG&quot; --name id-nusa-acrpull --query principalId --output tsv)
+ACR_ID=$(az acr show --name &quot;$ACR_NAME&quot; --query id --output tsv)
+az role assignment create --assignee-object-id &quot;$ID_PRINCIPAL&quot; --assignee-principal-type ServicePrincipal \
+  --role AcrPull --scope &quot;$ACR_ID&quot; --output none
+sleep 60   # give the role assignment time to propagate
+az container create --resource-group &quot;$RG&quot; --name ci-nusa-private \
+  --image &quot;${LOGIN_SERVER}/storefront:v1&quot; --acr-identity &quot;$ID_RES&quot; --assign-identity &quot;$ID_RES&quot; \
+  --os-type Linux --cpu 1 --memory 1.5 --ports 80 --dns-name-label &quot;nusa-private-${SUFFIX}&quot; --output none
+</code></pre></div>
+<p>Jika penarikan image ditolak, baca prasyaratnya di artikel Container Instances tentang deployment dari registry
+dengan managed identity; prasyarat itu berubah dari waktu ke waktu.</p>
+</li>
+<li>
+<p><strong>Pakai hasil build Anda sendiri.</strong> Jika <code>az acr build</code> berhasil di Tugas 1, deploy <code>storefront:v1-built</code> sebagai
+revision ketiga dan beri revision itu 10% trafik.</p>
+</li>
+<li>
+<p><strong>Tambahkan label.</strong> Label memberi v2 alamat uji yang stabil, yang tidak berubah ketika Anda memindahkan label itu ke
+revision lain; temukan URL label tersebut di <em>Revisions and replicas</em>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az containerapp revision label add --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --label staging --revision &quot;$REV2&quot;
+</code></pre></div>
+</li>
+<li>
+<p><strong>Pantau log.</strong> Alirkan output konsol selagi Anda mengirim request; tambahkan <code>--type system</code> untuk melihat event
+penskalaan dari platform sebagai gantinya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az containerapp logs show --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --follow
+</code></pre></div>
+</li>
+<li>
+<p><strong>Tuntaskan rilisnya.</strong> Setelah <code>verify.sh</code> lulus, pindahkan 100% trafik ke v2 dan nonaktifkan v1:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az containerapp ingress traffic set --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --revision-weight &quot;${REV2}=100&quot;
+az containerapp revision deactivate --name &quot;$APP&quot; --resource-group &quot;$RG&quot; --revision &quot;$REV1&quot;
+</code></pre></div>
+</li>
+</ol>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep):</p>
+<ol>
+<li>Resource group <code>rg-lunch13-&lt;suffix&gt;</code> di region lab Anda, dibuat dengan <code>ensure_rg &quot;$(rg_name 13)&quot; 13</code> agar
+<code>cleanup.sh</code> bisa menemukannya.</li>
+<li>Container registry <code>acrnusa&lt;suffix&gt;</code> dengan admin user nonaktif, berisi image <code>storefront:v1</code> yang disalin dari
+<code>mcr.microsoft.com/azuredocs/aks-helloworld:v1</code> (aplikasinya mendengarkan di port 80).</li>
+<li>Container group <code>ci-nusa-storefront</code> yang menjalankan image contoh yang sama dengan DNS name label publik dan
+menjawab HTTP 200 di port 80.</li>
+<li>Environment Container Apps <code>cae-nusa</code> dengan container app <code>ca-nusa-storefront</code> yang menjalankan <code>storefront:v1</code> dari
+registry Anda dan melakukan autentikasi dengan <strong>system-assigned managed identity</strong> miliknya (tanpa kata sandi
+registry), dengan external ingress pada target port 80, antara 0 dan 5 replica, serta sebuah HTTP scale rule.</li>
+<li>Multiple revision mode dengan dua revision yang aktif. Revision yang lebih baru mengatur environment variable
+<code>TITLE</code>, dan trafik dibagi 80/20 dengan 20% menuju revision yang lebih baru.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="12-cosmos-db.html"><small>← Lab sebelumnya</small>12 · Katalog produk yang siap tumbuh</a><a class="next" href="14-serverless.html"><small>Lab berikutnya →</small>14 · Menanggapi pesanan baru secara otomatis</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/13-containers-basic/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

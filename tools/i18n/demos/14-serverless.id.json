@@ -1,0 +1,99 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 14 · Serverless: Azure Functions, Logic Apps, dan Event Grid — Demo interaktif",
+    "kicker": "Makan Siang 14 · Serverless: Azure Functions, Logic Apps, dan Event Grid · Demo interaktif",
+    "title": "Dari unggahan foto ke thumbnail, dan workflow yang berjalan sendiri",
+    "lede": "Saksikan foto yang diunggah berubah menjadi event, sebuah function melakukan scale out saat lonjakan lalu kembali ke nol, event yang gagal mendarat dengan aman di container dead-letter, dan sebuah run Logic App menyala langkah demi langkah. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Thumbnail berbasis event dengan Event Grid dan Azure Functions, serta sebuah workflow Logic App",
+    "svgDesc": "Atas: tim marketing mengunggah foto ke Blob storage; Event Grid mengirim setiap event BlobCreated ke function app di plan Flex Consumption, yang menulis thumbnail dan bertambah dari nol hingga delapan instance lalu kembali lagi; event yang gagal berakhir di container dead-letter. Bawah: Logic App Consumption dengan recurrence trigger, panggilan HTTP ke sebuah function, sebuah kondisi, serta connector Outlook dan Teams."
+  },
+  "steps": [
+    {
+      "title": "VM yang menunggu seharian",
+      "text": "Setiap malam, tim marketing Nusantara Retail mengunggah ratusan foto produk ke Blob storage. Saat ini sebuah VM kecil bangun, mencari file-file baru, lalu mengubah ukurannya menjadi thumbnail. VM itu bekerja sekitar dua puluh menit dan menganggur sepanjang sisa hari, sementara tagihannya terus berjalan siang dan malam. Mari kita ganti dengan sesuatu yang hanya berjalan ketika ada pekerjaan."
+    },
+    {
+      "title": "Komponen-komponen serverless",
+      "text": "Tiga komponen menggantikan VM itu. Blob storage menerbitkan sebuah event setiap kali file dibuat. Event Grid mengirim event itu ke setiap subscriber, dalam hal ini sebuah function. Function app berjalan di plan Flex Consumption dan saat ini punya nol instance, yang juga berarti nol biaya compute. Container kedua, thumbnails, menampung hasilnya."
+    },
+    {
+      "title": "Satu foto, satu event",
+      "text": "Seorang desainer mengunggah kopi-toraja.jpg. Storage account tidak mengirim foto itu ke mana pun. Ia menerbitkan event kecil yang menggambarkan apa yang terjadi: sebuah blob dibuat, di container ini, dengan nama dan ukuran ini. Event Grid memeriksa filter subscription, yang hanya menginginkan file JPEG di product-images, lalu mendorong event itu ke function dalam sekejap."
+    },
+    {
+      "title": "Function terbangun",
+      "text": "Belum ada instance yang berjalan, jadi platform mengalokasikan satu instance dan memuat kodenya: cold start selama satu atau dua detik. Function membaca foto, mengubah ukurannya, lalu menyerahkan hasilnya ke output binding, yang menuliskannya ke container thumbnails. Anda membayar beberapa detik waktu eksekusi dan memori itu, bukan jam-jam di antaranya.",
+      "set": {
+        "t-inst": "1 instance"
+      }
+    },
+    {
+      "title": "Lonjakan: 300 foto sekaligus",
+      "text": "Katalog 12.12 tiba: tiga ratus foto dalam beberapa menit. Event Grid mengirim event-event itu secara paralel, dan Flex Consumption cepat menambah instance untuk mengimbanginya, tetapi tidak pernah melebihi maximum instance count yang Anda tetapkan. Setiap foto mendapat eksekusinya sendiri, dan thumbnail siap dalam hitungan menit, tanpa ada yang perlu mengubah ukuran server.",
+      "set": {
+        "t-inst": "8 instance"
+      }
+    },
+    {
+      "title": "Kembali ke nol",
+      "text": "Ketika unggahan berhenti, instance yang menganggur dilepas satu per satu sampai tidak ada yang tersisa. Aplikasi sudah menyusut ke nol, begitu pula tagihan compute-nya. Foto berikutnya akan kembali mengalami cold start. Untuk batch malam hari, itu tidak masalah. Untuk function checkout, Anda bisa menjaga satu always-ready instance tetap hangat dan membayar sedikit biaya dasar untuknya.",
+      "set": {
+        "t-inst": "0 instance"
+      }
+    },
+    {
+      "title": "Foto yang membuat kode error",
+      "text": "Sebuah file rusak bernama catalogue-cover.jpg tiba. Function melempar error, sehingga pengirimannya gagal. Event Grid tidak langsung menyerah: ia mencoba lagi dengan jeda yang makin panjang, siapa tahu masalahnya hanya sementara. Tetapi file ini tidak akan pernah bisa diubah ukurannya, berapa kali pun dicoba. Tanpa rencana, ia akan terus gagal berjam-jam atau lenyap tanpa ada yang menyadarinya.",
+      "set": {
+        "t-inst": "1 instance"
+      }
+    },
+    {
+      "title": "Di-dead-letter, bukan hilang",
+      "text": "Ketika jatah percobaan habis, Event Grid memindahkan event itu ke container dead-letter alih-alih membuangnya, dan sebuah alert mengabari Dewi (Makan Siang 16). Dewi menemukan nama file di event yang di-dead-letter, memeriksa fotonya, lalu menambahkan pengaman di kode, yang kini melewati gambar yang tidak terbaca dan mencatatnya di log. Semua foto lain diproses seperti biasa.",
+      "set": {
+        "t-inst": "0 instance"
+      }
+    },
+    {
+      "title": "Sementara itu, sebuah workflow",
+      "text": "Tidak semua pekerjaan memerlukan kode. Tim keuangan ingin laporan stok setiap pagi, jadi Dewi membuat Logic App Consumption di designer: recurrence trigger pukul tujuh pagi, action HTTP yang memanggil function laporan stok yang kecil, sebuah kondisi, serta connector untuk Outlook dan Teams. Tidak ada server atau SDK yang perlu dikelola, dan tagihannya per action yang dijalankan."
+    },
+    {
+      "title": "Trigger dan HTTP menyala",
+      "text": "Pukul 07.00 recurrence trigger terpicu dan sebuah run dimulai. Action HTTP memanggil function laporan stok, yang terbangun di Flex Consumption, membaca tingkat stok, lalu mengembalikannya sebagai JSON. Run history mencatat input, output, dan durasi setiap langkah, sehingga tim keuangan bisa melihat persis apa yang terjadi, satu langkah demi satu langkah.",
+      "set": {
+        "t-la-1": "✓ terpicu 07.00",
+        "t-la-2": "✓ 200 OK · 0,4 s"
+      }
+    },
+    {
+      "title": "Kondisi dan connector",
+      "text": "Kondisi menemukan tiga produk di bawah sepuluh unit, jadi cabang ya dijalankan. Connector Office 365 Outlook mengirim email ke manajer toko, dan connector Teams memposting daftarnya ke channel toko, keduanya melalui koneksi yang sudah sign-in sekali lalu disimpan. Seandainya Teams sedang tersendat, retry policy milik action itu cukup mencoba lagi.",
+      "set": {
+        "t-la-3": "✓ true: 3 SKU",
+        "t-la-4": "✓ terkirim",
+        "t-la-5": "✓ diposting"
+      }
+    },
+    {
+      "title": "Rangkuman",
+      "text": "Event mengabarkan bahwa sesuatu terjadi, dan Event Grid mendorongnya ke subscriber. Functions menjalankan kode Anda untuk setiap event, bertambah saat lonjakan, lalu kembali ke nol. Event yang gagal dicoba ulang lalu di-dead-letter, tidak pernah hilang diam-diam. Logic Apps merangkai connector menjadi workflow yang bisa Anda baca langkah demi langkah. Bersama-sama, mereka menggantikan server yang menunggu seharian.",
+      "tip": "Di Lab 14 Anda membangun sisi pesanan dari desain ini: function HTTP di Flex Consumption yang memasukkan pesanan ke queue lewat output binding, plus Logic App Consumption yang mengirim pesanan heartbeat setiap 15 menit."
+    }
+  ],
+  "svg": {
+    "Event-driven thumbnails": "Thumbnail berbasis event",
+    "0 instances": "0 instance",
+    "Logic App · morning stock check": "Logic App · cek stok pagi",
+    "waiting": "menunggu",
+    "uploads photos": "mengunggah foto",
+    "BlobCreated event": "event BlobCreated",
+    "storage container": "container storage",
+    "every day 07:00": "setiap hari 07.00",
+    "call stock function": "panggil function stok",
+    "any SKU below 10?": "ada SKU di bawah 10?",
+    "email the manager": "email ke manajer",
+    "post to #stores": "posting ke #stores"
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 21 · Capstone Inti: Menyatukan Semuanya — Demo interaktif",
+    "kicker": "Makan Siang 21 · Capstone Inti · Demo interaktif",
+    "title": "Toko yang tetap buka",
+    "lede": "Ikuti satu pesanan melewati arsitektur target Nusantara Retail, matikan satu availability zone, lalu saksikan pemantauan, policy, dan budget menjalankan tugasnya masing-masing. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Arsitektur target Nusantara Retail tetap bertahan saat kehilangan satu availability zone",
+    "svgDesc": "Seorang pembeli menjangkau load balancer yang zone-redundant di region Indonesia Central. Di belakangnya, sebuah subnet yang dilindungi network security group berisi web server di availability zone 1 dan 2, yang memakai Azure SQL dan Key Vault. Azure Monitor, engineer yang sedang piket, budget, Bicep, dan Azure Policy mengelilingi desain ini. Zone 1 gagal, lalu lintas berlanjut melalui zone 2, sebuah alert dikirim lewat e-mail, deployment kontraktor di luar region ditolak, dan budget memberi peringatan pada 80 persen."
+  },
+  "steps": [
+    {
+      "title": "Kalau server itu mati…",
+      "text": "Toko online Nusantara Retail masih berjalan di satu server fisik di ruangan sebelah pantry. Saat server itu berhenti, toko ikut berhenti. Pertanyaan Ibu Sari sudah menunggu sebulan penuh: berapa lama kita tidak bisa jualan? Di demo ini Anda mengikuti satu pesanan melewati arsitektur target yang dibangun selama bulan inti, lalu sengaja merusaknya dan melihatnya tetap bertahan."
+    },
+    {
+      "title": "Semuanya berasal dari kode",
+      "text": "Satu deployment Bicep membangun seluruh platform: jaringan dengan subnet yang dikunci rapat, dua web server di dua availability zone, Standard load balancer, Azure SQL, Key Vault, pemantauan, policy, dan budget. Karena desainnya berupa kode, setiap perubahan dipratinjau dulu dengan what-if, dan seluruh lingkungan bisa dibangun ulang dalam hitungan menit, bukan hari."
+    },
+    {
+      "title": "Seorang pembeli membuka toko online",
+      "text": "Seorang pembeli di Surabaya membuka toko online. Request-nya tiba di Standard public IP yang zone-redundant pada load balancer — alamat yang tidak bergantung pada satu zone mana pun. Web server tidak punya public IP sendiri, jadi load balancer adalah satu-satunya jalan masuk dari internet."
+    },
+    {
+      "title": "NSG meloloskan HTTP",
+      "text": "Sebelum request sampai ke server, network security group milik subnet memeriksanya. HTTP di port 80 dari internet diizinkan, begitu pula health probe dari load balancer; SSH dan semua yang lain ditolak. Administrator memakai Run Command sebagai gantinya, sehingga tidak ada port manajemen yang pernah terbuka ke internet."
+    },
+    {
+      "title": "Tersebar di dua zone",
+      "text": "Koneksi baru disebar ke vm-web-1 di zone 1 dan vm-web-2 di zone 2. Setiap lima detik load balancer meminta halaman kesehatan dari setiap server dan hanya mengirim lalu lintas ke server yang menjawab. Server tidak menyimpan data sendiri, jadi mana pun di antaranya bisa diganti dari kode."
+    },
+    {
+      "title": "Pesanan dan secret di PaaS",
+      "text": "Aplikasi menulis pesanan ke Azure SQL Database, yang hanya menerima identitas Microsoft Entra, sehingga tidak ada kata sandi database di mana pun. Aplikasi membaca pengaturannya dari Key Vault melalui managed identity, dan Azure RBAC menentukan siapa boleh membaca secret yang mana. Di production, database juga zone-redundant, dan cadangan otomatis memungkinkan point-in-time restore."
+    },
+    {
+      "title": "Zone 1 padam",
+      "text": "Sekarang kegagalannya. Masalah listrik membuat availability zone 1 offline, dan vm-web-1 ikut padam. Health probe-nya tidak terjawab, jadi dalam hitungan detik load balancer menandainya down dan berhenti mengirim koneksi baru ke sana. Beberapa request yang sudah dalam perjalanan ke zone 1 gagal, dan pembeli itu cukup mengklik ulang.",
+      "set": {
+        "t-vm1": "tak terjangkau ✗"
+      }
+    },
+    {
+      "title": "Toko tetap buka",
+      "text": "Setiap request baru kini menuju vm-web-2 di zone 2, yang tetap terhubung ke database. Pembeli terus berbelanja, dan tidak ada satu pengaturan pun yang diedit. Inilah separuh pertama jawaban untuk Ibu Sari: saat sebuah server atau bahkan satu zone gagal, waktu kita tidak bisa jualan diukur dalam hitungan detik, dan tidak ada pesanan yang hilang."
+    },
+    {
+      "title": "Pemantauan angkat tangan",
+      "text": "Azure Monitor menyadarinya lebih dulu daripada pelanggan. Metrik health probe load balancer turun dan resource health virtual machine berubah, sehingga sebuah alert rule menyala. Action group mengirim e-mail berisi nama resource dan waktunya kepada engineer yang sedang piket — minggu ini Dewi — dan ia membuka runbook kegagalan zone.",
+      "set": {
+        "t-oncall": "e-mail: zone 1 mati"
+      }
+    },
+    {
+      "title": "Policy berkata tidak",
+      "text": "Sementara itu Rizky, sang kontraktor, mencoba membuat VM uji coba sebentar di West US. Azure Policy mengevaluasi request itu sebelum apa pun dibangun dan menolaknya, karena Nusantara Retail menyimpan data pelanggan di Indonesia. Penolakan itu tercatat di activity log, jadi guardrail ini ditegakkan sekaligus terlihat oleh siapa pun yang memeriksa.",
+      "set": {
+        "t-pol": "ditolak: West US"
+      }
+    },
+    {
+      "title": "Budget mencatat skor",
+      "text": "Bagian keuangan memasang budget bulanan pada resource group, dengan alert pada 50, 80, dan 100 persen. Saat pengeluaran bulan berjalan melewati 80 persen, bagian keuangan dan Ibu Sari menerima e-mail. Budget memperingatkan tetapi tidak pernah menghentikan apa pun — anggap saja alarm asap, bukan sprinkler pemadam api.",
+      "set": {
+        "t-budget": "80% · e-mail terkirim"
+      }
+    },
+    {
+      "title": "Zone 1 kembali",
+      "text": "Saat zone 1 pulih, vm-web-1 kembali menjawab health probe dan load balancer memasukkannya lagi ke rotasi dengan sendirinya. Alert selesai secara otomatis dan kedua zone kembali berbagi beban. Setelahnya Dewi menambahkan pelajaran baru ke runbook: insiden ini hanya memakan beberapa detik, bukan penjualan.",
+      "set": {
+        "t-vm1": "sehat ✓",
+        "t-oncall": "alert selesai"
+      }
+    },
+    {
+      "title": "Jawaban untuk Ibu Sari",
+      "text": "Inilah jawabannya, skenario demi skenario. Server atau zone gagal: hitungan detik, tidak ada yang hilang. Pesanan terhapus tanpa sengaja: pulihkan ke saat tepat sebelum kesalahan, lalu masukkan ulang pesanan beberapa menit. Seluruh region hilang: Indonesia Central tidak punya pasangan, jadi rencananya membangun ulang dari Bicep di region kedua dalam hitungan jam, kecuali Anda membayar replika siaga.",
+      "tip": "Bangun sendiri di Lab 21: deploy Bicep yang modular, hentikan VM di zone 1, dan saksikan toko tetap buka."
+    }
+  ],
+  "svg": {
+    "Azure region · Indonesia Central": "Region Azure · Indonesia Central",
+    "snet-web · NSG: HTTP 80 only": "snet-web · NSG: hanya HTTP 80",
+    "Ibu Sari asks:": "Ibu Sari bertanya:",
+    "“If that server": "“Kalau server itu",
+    "dies, how long": "mati, berapa lama",
+    "can't we sell?”": "tak bisa jualan?”",
+    "Shopper": "Pembeli",
+    "in Surabaya": "di Surabaya",
+    "Old server": "Server lama",
+    "next to the pantry": "di sebelah pantry",
+    "test VM, West US": "VM uji, West US",
+    "zone-redundant IP": "IP zone-redundant",
+    "Indonesia only": "hanya Indonesia",
+    "healthy ✓": "sehat ✓",
+    "RBAC · secrets": "RBAC · secret",
+    "Entra-only · backups": "khusus Entra · cadangan",
+    "metrics · alerts": "metrik · alert",
+    "On-call: Dewi": "Piket: Dewi",
+    "no alerts": "tidak ada alert",
+    "35% of the month": "terpakai 35%",
+    "everything as code": "semua sebagai kode",
+    "The answer for Ibu Sari": "Jawaban untuk Ibu Sari",
+    "Server or zone fails: seconds, none lost": "Server/zone gagal: detik, tak ada yang hilang",
+    "Orders deleted: restore, minutes lost": "Pesanan terhapus: restore, hilang beberapa menit",
+    "Region lost: rebuild elsewhere, hours": "Region hilang: bangun di region lain, berjam-jam"
+  }
+}

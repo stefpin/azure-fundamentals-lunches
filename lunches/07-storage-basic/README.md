@@ -1,9 +1,12 @@
 # Lunch 07 · Storage (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 2:** Core infrastructure
 > **Time:** 60 minutes · **Prerequisite lunches:** 03, 05
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 07 · Store product images and invoices](../../labs/07-storage-basic/README.md) — about 45 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -331,7 +334,7 @@ What to watch for:
    <details><summary>Show answer</summary>
 
    Rehydrate it with **high priority**, ideally by **copying** it to a new blob in the hot tier. High priority may finish
-   in under an hour for blobs under 10 GB, but it isn't guaranteed, because archived blobs are offline until rehydrated;
+   in under an hour for blobs under 10 GB, but that isn't guaranteed;
    copying also avoids the early deletion charge.
 
    </details>
@@ -373,6 +376,16 @@ What to watch for:
   anonymous access off.
 - Pick the data-movement tool by size and bandwidth: portal or Storage Explorer for small jobs, AzCopy for scripts and
   bulk, Azure File Sync for hybrid file servers, Data Box for tens of terabytes.
+
+## 🗒️ Field notes from Stefanus
+
+> **Three copies of a deleted file are still zero files.** In every storage design review I ask two questions about
+> each account. First: *which failure must this data survive?* The answer picks the letters — LRS, ZRS or GZRS — not
+> habit, and not the Azure CLI default, which quietly gives you RA-GRS. Second: *who could delete or overwrite it by
+> mistake, and how would we find out?* Redundancy copies a mistake as faithfully as it copies the data, so soft delete
+> and versioning go on the checklist before go-live, not after the first accident. And because redundancy, keys and
+> network rules belong to the whole account, I group data by what it needs, not by which team owns it: product photos
+> and ten-year invoices rarely make good roommates.
 
 ## 🔬 Your lab: Store product images and invoices
 

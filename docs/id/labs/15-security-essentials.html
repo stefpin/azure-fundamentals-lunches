@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 15 · Keluarkan kata sandi dari file konfigurasi · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 15: Keluarkan kata sandi dari file konfigurasi. sekitar 45 menit, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/15-security-essentials.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/15-security-essentials.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/15-security-essentials.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/15-security-essentials.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 15 · Keluarkan kata sandi dari file konfigurasi">
+<meta property="og:description" content="Lab Azure praktik 15: Keluarkan kata sandi dari file konfigurasi. sekitar 45 menit, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/15-security-essentials.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="15" style="--c:#d98a00">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/15-security-essentials.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#d98a00">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 15</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>15</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Keluarkan kata sandi dari file konfigurasi</h1>
+        <p class="lab-story">🏪 <b>Episode 15 · Password di Dalam File Zip</b> — Kata sandi database terkirim lewat pesan chat — dan sudah dua tahun tersimpan di Git. <a href="../lunches/15-security-essentials.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 45 menit</span>
+          <span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 10 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--melihat-masalahnya">Tugas 1 · Melihat masalahnya</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--membuat-key-vault-dengan-rbac-permission-model">Tugas 2 · Membuat key vault dengan RBAC permission model</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--memberi-diri-anda-peran-data-lalu-menyimpan-secret">Tugas 3 · Memberi diri Anda peran data, lalu menyimpan secret</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--memberi-vm-sebuah-managed-identity">Tugas 4 · Memberi VM sebuah managed identity</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--meminta-secret-dari-dalam-vm--dan-ditolak">Tugas 5 · Meminta secret dari dalam VM — dan ditolak</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--memberikan-hak-akses-minimum-dan-mencoba-lagi">Tugas 6 · Memberikan hak akses minimum dan mencoba lagi</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--menghapus-kata-sandi-dari-file-konfigurasi">Tugas 7 · Menghapus kata sandi dari file konfigurasi</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-8--meninjau-secure-score-dan-rekomendasi-anda">Tugas 8 · Meninjau secure score dan rekomendasi Anda</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/cloud-init-app.yml" target="_blank" rel="noopener"><span>cloud-init-app.yml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/vm/read-secret.sh" target="_blank" rel="noopener"><span>vm/read-secret.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/vm/remove-password.sh" target="_blank" rel="noopener"><span>vm/remove-password.sh</span><small>1 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/15-security-essentials" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Server aplikasi toko online Nusantara Retail menyimpan kata sandi database pesanan dalam teks biasa di
+<code>/etc/nusa/appsettings.json</code>. Anda akan memindahkan secret itu ke <strong>Azure Key Vault</strong> (dengan RBAC permission model),
+memberi server tersebut <strong>system-assigned managed identity</strong>, lalu membuktikan — dari dalam VM — bahwa identitas itu
+ditolak dengan <strong>403</strong> sampai Anda memberinya peran <strong>Key Vault Secrets User</strong>, dan setelah itu berhasil membaca secret
+dengan <strong>200 OK</strong>. Terakhir, Anda menghapus kata sandi dari file dan meninjau <strong>secure score</strong> Anda di Microsoft
+Defender for Cloud.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  you([&quot;Anda · Key Vault Secrets Officer&quot;]) -- &quot;menyimpan secret&quot; --&gt; kv
+  subgraph rg[&quot;rg-lunch15-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph vnet[&quot;vnet-nusa-app 10.15.0.0/16 · snet-app dengan service endpoint Key Vault&quot;]
+      vm[&quot;vm-app-1&lt;br/&gt;system-assigned identity&lt;br/&gt;tanpa IP publik&quot;]
+    end
+    kv[&quot;kv-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;RBAC permission model&lt;br/&gt;secret: sql-connection&quot;]
+  end
+  vm -- &quot;1 · permintaan token&quot; --&gt; imds[&quot;IMDS 169.254.169.254&quot;]
+  vm -- &quot;2 · GET secret dengan bearer token&quot; --&gt; kv
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda bisa membuat resource dan <strong>menetapkan peran</strong> (Owner, atau Contributor ditambah User
+Access Administrator). Lihat <a href="01-before-you-begin.html">Lab 01</a>.</li>
+<li>Masuk dengan <strong>akun pengguna</strong> (user account) — skrip-skrip lab mencari object ID Anda sendiri untuk memberi Anda
+peran Key Vault.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang.</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/15-security-essentials
+source ../common/config.sh
+RG=$(rg_name 15)
+KV_NAME=&quot;kv-nusa-${SUFFIX}&quot;
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya — server aplikasi dengan masalah kata sandi tadi. Prosesnya sekitar 4 menit:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<p><code>setup.sh</code> membuat virtual network yang subnet-nya <strong>tidak punya akses internet keluar</strong> (outbound), dan VM-nya <strong>tanpa
+IP publik</strong>. Agar VM tetap bisa menjangkau Key Vault, subnet itu diberi <strong>service endpoint</strong> untuk <code>Microsoft.KeyVault</code>:
+lalu lintas ke Key Vault berjalan melalui jaringan tulang punggung (backbone) milik Azure. Anda mengelola VM hanya
+melalui <strong>Run Command</strong>, sehingga tidak ada port SSH yang terbuka.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab dikenai biaya selama masih ada (VM kecil, disk-nya, dan sebuah key vault). Selalu akhiri dengan bagian
+<strong>Bersihkan</strong>, bahkan jika Anda berhenti di tengah jalan. Pembersihan juga melakukan <strong>purge</strong> pada vault yang sudah
+di-soft-delete, sehingga namanya bisa dipakai lagi.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–8 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>jalankan <code>setup.sh</code>, baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--melihat-masalahnya" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Melihat masalahnya</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--melihat-masalahnya" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sebelum memperbaiki apa pun, lihat dulu apa yang akan ditemukan oleh penyerang — atau oleh siapa saja yang mendapat
+salinan cadangan (backup) — di server ini.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-app-1 \
+  --command-id RunShellScript \
+  --scripts &quot;cloud-init status --wait &gt; /dev/null; ls -l /etc/nusa; cat /etc/nusa/appsettings.json&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Run Command memakai VM agent (program kecil milik Azure yang berjalan di dalam VM) untuk menjalankan skrip sebagai root,
+lalu mengembalikan output-nya. Eksekusi pertama memakan waktu sekitar satu menit, karena Azure memasang ekstensi Run
+Command di VM.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Anda melihat <code>appsettings.json</code> dengan izin <code>-rw-r--r--</code> (setiap pengguna bisa membacanya) dan
+connection string yang berisi <code>Password=</code>. Kata sandi itu adalah nilai sekali pakai yang dibuat saat VM pertama kali
+menyala. Anggap saja sudah bocor: solusinya bukan menyembunyikannya dengan lebih rapi, melainkan menggantinya dan
+menyimpan kata sandi yang baru di tempat yang lebih aman.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--membuat-key-vault-dengan-rbac-permission-model" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Membuat key vault dengan RBAC permission model</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--membuat-key-vault-dengan-rbac-permission-model" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az keyvault create --name &quot;$KV_NAME&quot; --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; \
+  --enable-rbac-authorization true \
+  --retention-days 7 \
+  --output none
+
+az keyvault show --name &quot;$KV_NAME&quot; \
+  --query &quot;{name:name, rbacModel:properties.enableRbacAuthorization, retentionDays:properties.softDeleteRetentionInDays, purgeProtection:properties.enablePurgeProtection, uri:properties.vaultUri}&quot; \
+  --output table
+</code></pre></div>
+<p>Arti setiap flag:</p>
+<ul>
+<li><code>--enable-rbac-authorization true</code> memilih <strong>Azure RBAC permission model</strong> untuk data plane. Versi CLI saat ini
+sebenarnya sudah memakainya sebagai default; menuliskannya secara eksplisit membuat niat Anda jelas.</li>
+<li><code>--retention-days 7</code> membuat vault yang dihapus tetap bisa dipulihkan selama 7 hari (nilai minimum; default-nya 90).
+Soft delete sendiri selalu aktif.</li>
+<li>Tidak ada <code>--enable-purge-protection</code>: purge protection tidak bisa dibatalkan, padahal Anda ingin melakukan purge pada
+vault lab ini di akhir. Di produksi, aktifkan fitur ini.</li>
+</ul>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka memakai portal?</strong> <em>Home › Key vaults › Create</em>: pilih resource group dan region Anda, beri nama
+<code>kv-nusa-&lt;suffix&gt;</code>, tier <strong>Standard</strong>, days to retain deleted vaults <strong>7</strong>, purge protection <strong>Disable</strong>; di tab
+<strong>Access configuration</strong>, pilih <strong>Azure role-based access control</strong>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tabel menampilkan <code>rbacModel</code> <strong>True</strong>, <code>retentionDays</code> <strong>7</strong>, dan kolom <code>purgeProtection</code> yang
+kosong (tidak diatur). Catat <code>uri</code>-nya: <code>https://kv-nusa-&lt;suffix&gt;.vault.azure.net/</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--memberi-diri-anda-peran-data-lalu-menyimpan-secret" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Memberi diri Anda peran data, lalu menyimpan secret</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--memberi-diri-anda-peran-data-lalu-menyimpan-secret" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Kemungkinan besar Anda membuat vault tadi sebagai Owner atau Contributor. Coba saja tampilkan daftar secret-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az keyvault secret list --vault-name &quot;$KV_NAME&quot; --output table
+</code></pre></div>
+<p>Anda mendapat <strong>Forbidden</strong>: <em>&quot;Caller is not authorized to perform action on resource&quot;</em> dengan kode internal
+<code>ForbiddenByRbac</code>. Owner dan Contributor adalah peran control plane, sedangkan secret berada di data plane. Berikan diri
+Anda peran data plane untuk orang yang mengelola secret, dengan cakupan hanya vault ini:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>KV_ID=$(az keyvault show --name &quot;$KV_NAME&quot; --query id --output tsv)
+ME=$(az ad signed-in-user show --query id --output tsv)
+
+az role assignment create --assignee-object-id &quot;$ME&quot; --assignee-principal-type User \
+  --role &quot;Key Vault Secrets Officer&quot; --scope &quot;$KV_ID&quot; --output none
+</code></pre></div>
+<p>Sekarang simpan connection string untuk database pesanan. Karena kata sandi lama dianggap sudah bocor, buat kata sandi
+yang <strong>baru</strong>. (Di dunia nyata, Anda akan menggantinya di database terlebih dahulu; lab ini tidak memiliki database
+sungguhan.)</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>NEW_PW=&quot;$(openssl rand -base64 18)&quot;
+az keyvault secret set --vault-name &quot;$KV_NAME&quot; --name sql-connection \
+  --value &quot;Server=tcp:sql-nusa-orders.database.windows.net,1433;Database=orders;User ID=storefront;Password=${NEW_PW};Encrypt=True;&quot; \
+  --output none
+unset NEW_PW
+
+az keyvault secret list --vault-name &quot;$KV_NAME&quot; \
+  --query &quot;[].{id:id, enabled:attributes.enabled, created:attributes.created}&quot; --output table
+</code></pre></div>
+<p><code>--output none</code> itu penting: <code>secret set</code> mengembalikan secret beserta nilainya, dan Anda tidak ingin nilai itu muncul
+di riwayat terminal atau di rekaman layar. <code>secret list</code> hanya menampilkan metadata.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Masih Forbidden tepat setelah role assignment?</strong> Role assignment butuh beberapa menit untuk menyebar. Tunggu satu
+menit, lalu jalankan perintahnya lagi.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>secret list</code> menampilkan satu baris yang <code>id</code>-nya berakhir dengan <code>/secrets/sql-connection</code>,
+dengan <code>enabled</code> <strong>True</strong>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--memberi-vm-sebuah-managed-identity" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Memberi VM sebuah managed identity</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--memberi-vm-sebuah-managed-identity" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm identity assign --resource-group &quot;$RG&quot; --name vm-app-1 --output none
+
+PRINCIPAL_ID=$(az vm show --resource-group &quot;$RG&quot; --name vm-app-1 --query identity.principalId --output tsv)
+echo &quot;VM identity object ID: $PRINCIPAL_ID&quot;
+
+az ad sp show --id &quot;$PRINCIPAL_ID&quot; --query &quot;{displayName:displayName, type:servicePrincipalType}&quot; --output table
+</code></pre></div>
+<p>Azure telah membuat service principal di Microsoft Entra ID untuk VM tersebut dan mengelola kredensialnya. Tidak ada
+seorang pun — termasuk Anda — yang pernah melihat kata sandinya.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka memakai portal?</strong> Buka <code>vm-app-1</code> › <strong>Identity</strong> › <strong>System assigned</strong> › Status <strong>On</strong> › <strong>Save</strong>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>displayName</code> milik service principal tersebut adalah <strong>vm-app-1</strong> dan <code>type</code>-nya
+<strong>ManagedIdentity</strong>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--meminta-secret-dari-dalam-vm--dan-ditolak" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Meminta secret dari dalam VM — dan ditolak</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--meminta-secret-dari-dalam-vm--dan-ditolak" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Skrip <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/vm/read-secret.sh" target="_blank" rel="noopener"><code>vm/read-secret.sh</code></a> berjalan <strong>di dalam</strong> VM dan melakukan apa yang dikerjakan aplikasi
+sungguhan (atau Azure SDK) di balik layar:</p>
+<ol>
+<li>memanggil instance metadata endpoint <code>http://169.254.169.254/metadata/identity/oauth2/token</code> dengan <code>curl</code>, membawa
+header <code>Metadata: true</code> dan <code>resource=https://vault.azure.net</code>, untuk mendapatkan access token bagi Key Vault;</li>
+<li>memanggil REST API Key Vault dengan <code>curl</code> — <code>GET https://&lt;vault&gt;.vault.azure.net/secrets/sql-connection?api-version=2025-07-01</code>
+— dengan header <code>Authorization: Bearer &lt;token&gt;</code>.</li>
+</ol>
+<p>Skrip ini mencetak audience token dan object ID identitas (keduanya klaim di dalam token, bukan rahasia), status HTTP,
+dan — jika berhasil — hanya pratinjau nilai yang disamarkan.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-app-1 \
+  --command-id RunShellScript --scripts @vm/read-secret.sh --parameters &quot;$KV_NAME&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Output yang diharapkan (ID Anda akan berbeda):</p>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Enable succeeded:
+[stdout]
+Step 1: ask the managed identity endpoint (IMDS) for a token, audience https://vault.azure.net
+  got a token (1500 characters); the token itself is never printed
+  token audience (aud):     https://vault.azure.net
+  identity object ID (oid): 4f6c1d2e-...
+Step 2: GET https://kv-nusa-ab12c.vault.azure.net/secrets/sql-connection
+  HTTP 403
+  error:   Forbidden / ForbiddenByRbac
+  message: Caller is not authorized to perform action on resource.
+RESULT: HTTP 403
+
+[stderr]
+</code></pre></div>
+<p>Bacalah seperti seorang security engineer: <strong>autentikasi berhasil</strong> (Key Vault menerima token yang valid untuk audience
+yang benar), tetapi <strong>otorisasi gagal</strong> (identitas ini belum punya peran apa pun di vault).</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>RESULT: HTTP 403</code>, dan <code>oid</code> di output sama dengan <code>$PRINCIPAL_ID</code> dari Tugas 4.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--memberikan-hak-akses-minimum-dan-mencoba-lagi" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Memberikan hak akses minimum dan mencoba lagi</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--memberikan-hak-akses-minimum-dan-mencoba-lagi" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Aplikasi hanya perlu <strong>membaca</strong> secret dari vault <strong>ini</strong>, jadi berikan <strong>Key Vault Secrets User</strong> — bukan Officer,
+bukan Administrator — pada cakupan vault:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az role assignment create --assignee-object-id &quot;$PRINCIPAL_ID&quot; --assignee-principal-type ServicePrincipal \
+  --role &quot;Key Vault Secrets User&quot; --scope &quot;$KV_ID&quot; --output none
+</code></pre></div>
+<p>Peran ini butuh beberapa menit untuk menyebar. Loop berikut mencoba ulang setiap menit, paling lama sepuluh menit:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for i in 1 2 3 4 5 6 7 8 9 10; do
+  OUT=$(az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-app-1 \
+    --command-id RunShellScript --scripts @vm/read-secret.sh --parameters &quot;$KV_NAME&quot; \
+    --query &quot;value[0].message&quot; --output tsv)
+  echo &quot;$OUT&quot; | grep &quot;RESULT:&quot;
+  if echo &quot;$OUT&quot; | grep -q &quot;RESULT: HTTP 200&quot;; then echo &quot;$OUT&quot;; break; fi
+  echo &quot;Not yet - waiting 60 seconds for the role assignment to propagate...&quot;; sleep 60
+done
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka memakai portal?</strong> Key vault › <strong>Access control (IAM)</strong> › <strong>Add role assignment</strong> › <strong>Key Vault Secrets
+User</strong> › Assign access to <strong>Managed identity</strong> › <strong>Virtual machine</strong> › <code>vm-app-1</code> › <strong>Review + assign</strong>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>RESULT: HTTP 200</code> dan nilai tersamar yang diawali <code>Server=tcp:sql-nusa-orders...</code>. VM berhasil
+membaca secret tanpa memiliki kata sandi apa pun.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--menghapus-kata-sandi-dari-file-konfigurasi" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Menghapus kata sandi dari file konfigurasi</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--menghapus-kata-sandi-dari-file-konfigurasi" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Kini aplikasi hanya perlu tahu <strong>di mana</strong> secret itu disimpan. <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/vm/remove-password.sh" target="_blank" rel="noopener"><code>vm/remove-password.sh</code></a>
+menulis ulang file konfigurasi dengan URI vault dan nama secret-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-app-1 \
+  --command-id RunShellScript --scripts @vm/remove-password.sh --parameters &quot;$KV_NAME&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Aplikasi toko online sungguhan akan membaca secret saat start-up dengan Azure SDK (<code>DefaultAzureCredential</code> otomatis
+memakai managed identity), menyimpannya di memori, lalu mengambil versi baru setelah rotasi.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> file yang baru memiliki bagian <code>KeyVault</code> berisi <code>VaultUri</code> dan <code>OrdersConnectionSecretName</code>, dan
+baris terakhirnya berbunyi <code>RESULT: CONFIG CLEAN</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-8--meninjau-secure-score-dan-rekomendasi-anda" data-kind="task"><h2><span class="task-tag">Tugas 8</span><span class="title">Meninjau secure score dan rekomendasi Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-8--meninjau-secure-score-dan-rekomendasi-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><strong>Foundational CSPM</strong> yang gratis di Defender for Cloud menilai subscription Anda berdasarkan Microsoft cloud security
+benchmark.</p>
+<ol>
+<li>Di portal, buka <strong>Microsoft Defender for Cloud</strong> › <strong>Overview</strong> dan temukan tile <strong>secure score</strong>.</li>
+<li>Buka <strong>Recommendations</strong>. Filter berdasarkan resource group Anda, <code>rg-lunch15-&lt;suffix&gt;</code>, lalu buka satu rekomendasi
+untuk VM atau key vault. Baca deskripsinya, resource yang terdampak, dan langkah perbaikannya.</li>
+<li>Buka <strong>Environment settings</strong> › subscription Anda › <strong>Defender plans</strong>. Perhatikan bahwa foundational CSPM gratis,
+sedangkan paket perlindungan workload (Servers, Storage, Key Vault…) dibayar per resource. <strong>Jangan</strong> mengaktifkan
+paket berbayar untuk lab ini.</li>
+</ol>
+<p>Anda juga bisa membaca skornya dari CLI:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az security secure-scores list --output jsonc
+</code></pre></div>
+<p>Cari nilai skor saat ini dan nilai maksimumnya di output.</p>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Catatan</span>Resource baru tidak langsung muncul: Defender for Cloud menghitung ulang setiap kontrol kira-kira setiap delapan jam,
+dan subscription yang benar-benar baru bisa butuh waktu lebih lama untuk penilaian pertamanya. Jika belum ada apa pun
+untuk resource lab Anda, lihat rekomendasi untuk resource lain di subscription tersebut, lalu kembali ke tugas ini
+besok.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Anda bisa menyebutkan secure score Anda saat ini dan satu rekomendasi, serta menjelaskan apakah
+perbaikannya gratis (cukup mengubah konfigurasi) atau membutuhkan paket berbayar.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Kesalahan klasik adalah meminta token untuk <strong>audience yang salah</strong> — misalnya audience Azure Resource Manager yang
+tersalin dari contoh lain. Berikan audience itu sebagai parameter kedua skrip:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-app-1 \
+  --command-id RunShellScript --scripts @vm/read-secret.sh \
+  --parameters &quot;$KV_NAME&quot; &quot;https://management.azure.com/&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p><strong>Gejala:</strong> <code>HTTP 401</code>, error <code>Unauthorized</code>, dengan pesan
+<code>AKV10022: Invalid audience. Expected https://vault.azure.net, found: https://management.azure.com/.</code></p>
+<details class="plain"><summary>Petunjuk: apa yang salah, dan cara memperbaikinya</summary>
+<p>Tokennya sepenuhnya valid — tetapi untuk Azure Resource Manager. Setiap token diterbitkan untuk satu audience, dan Key
+Vault menolak token yang ditujukan untuk pihak lain. Ini adalah kegagalan <strong>autentikasi</strong> (401), berbeda dengan
+kegagalan <strong>otorisasi</strong> (403) di Tugas 5. Perbaiki dengan meminta <code>resource=https://vault.azure.net</code>: jalankan lagi
+perintahnya tanpa parameter kedua, dan Anda kembali mendapat <code>RESULT: HTTP 200</code>.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan harus menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu Anda
+ulangi. Skrip ini menjalankan dua skrip kecil yang hanya membaca (read-only) di dalam VM, jadi prosesnya sekitar satu
+menit.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Skrip ini meminta konfirmasi (atur <code>ASSUME_YES=1</code> untuk melewati pertanyaan itu). Skrip menghapus key vault, menghapus
+resource group <code>rg-lunch15-&lt;suffix&gt;</code> (VM, disk, jaringan) di latar belakang, lalu melakukan <strong>purge</strong> pada vault yang
+sudah di-soft-delete, sehingga nama <code>kv-nusa-&lt;suffix&gt;</code> bisa dipakai lagi. Role assignment pada cakupan vault ikut hilang
+bersama vault-nya. Jika sebuah vault memiliki purge protection (lihat tantangan tambahan), skrip memberi tahu bahwa vault
+itu tidak bisa di-purge dan bahwa Azure akan menghapusnya setelah masa retensinya berakhir.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>az keyvault create</code> gagal dengan <code>VaultAlreadyExists</code> — namanya &quot;is already in use&quot;</td>
+<td>Masih ada vault yang di-soft-delete dengan nama yang sama dari percobaan sebelumnya (nama vault yang di-soft-delete tetap dicadangkan)</td>
+<td>Jalankan <code>bash cleanup.sh</code> (skrip itu melakukan purge), atau <code>az keyvault purge --name &quot;$KV_NAME&quot; --location &quot;$LOCATION&quot;</code>; atau pulihkan vault dengan <code>az keyvault recover --name &quot;$KV_NAME&quot;</code></td>
+</tr>
+<tr>
+<td><code>Forbidden</code> / <code>ForbiddenByRbac</code> dari <code>az keyvault secret set</code> atau <code>secret list</code></td>
+<td>Anda belum punya peran data plane, atau perannya belum selesai menyebar</td>
+<td>Kerjakan role assignment di Tugas 3; tunggu satu sampai lima menit, lalu coba lagi</td>
+</tr>
+<tr>
+<td>Output Run Command berbunyi <code>RESULT: HTTP 403</code> setelah Tugas 6</td>
+<td>Penundaan propagasi, atau peran diberikan ke principal atau cakupan yang salah</td>
+<td>Tunggu beberapa menit; periksa apakah <code>az role assignment list --scope &quot;$KV_ID&quot; --output table</code> menampilkan <code>Key Vault Secrets User</code> untuk object ID milik VM</td>
+</tr>
+<tr>
+<td><code>RESULT: HTTP 401</code> dengan <code>AKV10022: Invalid audience</code></td>
+<td>Token diminta untuk resource yang berbeda</td>
+<td>Minta <code>resource=https://vault.azure.net</code> (lihat Rusak lalu perbaiki)</td>
+</tr>
+<tr>
+<td><code>RESULT: NO TOKEN</code> dan IMDS menjawab <code>Identity not found</code></td>
+<td>VM belum punya managed identity, atau identity itu baru diberikan beberapa detik sebelumnya</td>
+<td>Kerjakan Tugas 4; tunggu satu menit, lalu coba lagi</td>
+</tr>
+<tr>
+<td><code>RESULT: HTTP 000</code> — &quot;the VM could not reach the vault&quot; (VM tidak bisa menjangkau vault)</td>
+<td>Tidak ada jalur jaringan: service endpoint hilang, atau Anda membatasi firewall vault</td>
+<td>Jalankan lagi <code>bash setup.sh</code> (skrip itu menerapkan ulang service endpoint); jika Anda mengubah firewall vault, izinkan <code>snet-app</code></td>
+</tr>
+<tr>
+<td><code>(Conflict) Run command extension execution is in progress</code></td>
+<td>Run Command lain masih berjalan di VM</td>
+<td>Tunggu sampai selesai, lalu coba lagi — satu skrip dalam satu waktu</td>
+</tr>
+<tr>
+<td><code>az ad signed-in-user show</code> gagal</td>
+<td>Cloud Shell masuk dengan service principal atau managed identity, bukan dengan akun pengguna</td>
+<td>Jalankan <code>az login</code> dengan akun pengguna Anda</td>
+</tr>
+<tr>
+<td>Defender for Cloud tidak menampilkan rekomendasi untuk resource lab</td>
+<td>Penilaian berjalan sesuai jadwal</td>
+<td>Kembali lagi nanti — lihat catatan di Tugas 8</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li><strong>Kebersihan secret:</strong> beri secret tanggal kedaluwarsa dan content type:
+<code>az keyvault secret set-attributes --vault-name &quot;$KV_NAME&quot; --name sql-connection --expires 2027-01-31T00:00:00Z --content-type &quot;text/plain&quot;</code>.
+Lalu rotasikan dengan menetapkan nilai baru, dan tampilkan daftar versinya dengan <code>az keyvault secret list-versions</code>.</li>
+<li><strong>Kunci jaringannya:</strong> tolak akses publik dan izinkan hanya subnet aplikasi:
+<code>az keyvault network-rule add --resource-group &quot;$RG&quot; --name &quot;$KV_NAME&quot; --vnet-name vnet-nusa-app --subnet snet-app</code>,
+lalu <code>az keyvault update --resource-group &quot;$RG&quot; --name &quot;$KV_NAME&quot; --default-action Deny</code>. VM tetap bisa membaca
+secret; <code>az keyvault secret list</code> dari Cloud Shell kini diblokir oleh firewall vault. Atur kembali
+<code>--default-action Allow</code> sebelum Anda menjalankan <code>verify.sh</code>.</li>
+<li><strong>Rasakan purge protection:</strong> buat vault kedua <code>kv-nusa2-${SUFFIX}</code> dengan <code>--enable-purge-protection true --retention-days 7</code>, hapus vault itu, lalu coba <code>az keyvault purge</code> padanya. Perintah itu ditolak. (<code>cleanup.sh</code>
+menghapusnya, tetapi namanya tetap dicadangkan selama tujuh hari.)</li>
+<li><strong>Tukar identitas:</strong> buat user-assigned identity (<code>az identity create</code>), pasang ke VM
+(<code>az vm identity assign --identities &lt;its resource ID&gt;</code>), lalu berikan peran itu kepadanya sebagai gantinya. VM yang
+punya beberapa identitas harus menyebutkan identitas mana yang ia inginkan, jadi tambahkan
+<code>--data-urlencode &quot;client_id=&lt;its client ID&gt;&quot;</code> ke permintaan IMDS di salinan <code>vm/read-secret.sh</code>. Makan Siang 22
+menjelaskan kapan user-assigned identity menjadi pilihan yang lebih baik.</li>
+<li><strong>Audit:</strong> tambahkan diagnostic setting yang mengirim log <code>AuditEvent</code> milik vault ke Log Analytics workspace, lalu
+temukan aktivitas pembacaan oleh VM (Makan Siang 16 dan 30).</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Jalankan <code>bash setup.sh</code>, lalu bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep):</p>
+<ol>
+<li>Key vault bernama <code>kv-nusa-&lt;suffix&gt;</code> di <code>rg-lunch15-&lt;suffix&gt;</code>, yang memakai permission model <strong>Azure RBAC</strong>.</li>
+<li>Anda memegang <strong>Key Vault Secrets Officer</strong> di vault tersebut (cakupan vault).</li>
+<li>Vault berisi secret bernama <code>sql-connection</code> yang menyimpan connection string dengan kata sandi <strong>baru</strong>.</li>
+<li><code>vm-app-1</code> memiliki <strong>system-assigned managed identity</strong>.</li>
+<li>Identitas itu memegang <strong>Key Vault Secrets User</strong> pada cakupan vault dan <strong>tidak memiliki role assignment lain</strong> di
+subscription.</li>
+<li>Dari dalam <code>vm-app-1</code>, <code>vm/read-secret.sh</code> (dijalankan melalui Run Command) melaporkan <code>RESULT: HTTP 200</code>.</li>
+<li><code>/etc/nusa/appsettings.json</code> di VM tidak lagi berisi kata sandi.</li>
+<li>Anda sudah melihat secure score dan setidaknya satu rekomendasi di Defender for Cloud (tidak diperiksa oleh skrip).</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="14-serverless.html"><small>← Lab sebelumnya</small>14 · Menanggapi pesanan baru secara otomatis</a><a class="next" href="16-monitoring-basic.html"><small>Lab berikutnya →</small>16 · Tahu lebih dulu daripada pelanggan</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/15-security-essentials/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

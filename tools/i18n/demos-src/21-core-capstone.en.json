@@ -1,0 +1,122 @@
+{
+  "page": {
+    "doc_title": "Lunch 21 · Core Capstone: Putting It All Together — Interactive demo",
+    "kicker": "Lunch 21 · Core Capstone · Interactive demo",
+    "title": "The shop that stays open",
+    "lede": "Follow one order through Nusantara Retail's target architecture, switch off an availability zone, and watch monitoring, policy and the budget do their jobs. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "Nusantara Retail's target architecture surviving the loss of an availability zone",
+    "svgDesc": "A shopper reaches a zone-redundant load balancer in the Indonesia Central region. Behind it, a subnet protected by a network security group holds web servers in availability zones 1 and 2, which use Azure SQL and Key Vault. Azure Monitor, an on-call engineer, a budget, Bicep and Azure Policy surround the design. Zone 1 fails, traffic continues through zone 2, an alert is e-mailed, a contractor's out-of-region deployment is denied, and the budget warns at 80 percent."
+  },
+  "steps": [
+    {
+      "title": "If that server dies…",
+      "text": "Nusantara Retail's storefront still runs on one physical server in the room next to the pantry. When it stops, the shop stops. Ibu Sari's question has waited all month: how long can't we sell? In this demo you follow one order through the target architecture the core month built, then break it on purpose and watch it hold."
+    },
+    {
+      "title": "Everything comes from code",
+      "text": "One Bicep deployment builds the whole platform: a network with a locked-down subnet, two web servers in two availability zones, a Standard load balancer, Azure SQL, Key Vault, monitoring, a policy and a budget. Because the design is code, every change is previewed with what-if first, and the whole environment can be rebuilt in minutes instead of days."
+    },
+    {
+      "title": "A shopper opens the storefront",
+      "text": "A shopper in Surabaya opens the storefront. The request reaches a zone-redundant Standard public IP on the load balancer, an address that does not depend on any single zone. The web servers have no public IP addresses of their own, so the load balancer is the only way in from the internet."
+    },
+    {
+      "title": "The NSG lets HTTP through",
+      "text": "Before the request reaches a server, the subnet's network security group checks it. HTTP on port 80 from the internet is allowed, and so are the load balancer's health probes; SSH and everything else is denied. Administrators use Run Command instead, so no management port is ever open to the internet."
+    },
+    {
+      "title": "Spread across two zones",
+      "text": "New connections are spread across vm-web-1 in zone 1 and vm-web-2 in zone 2. Every five seconds the load balancer asks each server for its health page and only sends traffic to servers that answer. The servers keep no data of their own, so any of them can be replaced from code."
+    },
+    {
+      "title": "Orders and secrets in PaaS",
+      "text": "The application writes orders to Azure SQL Database, which accepts only Microsoft Entra identities, so no database password exists anywhere. It reads its settings from Key Vault through a managed identity, and Azure RBAC decides who may read which secret. In production the database is zone-redundant too, and automatic backups allow point-in-time restore."
+    },
+    {
+      "title": "Zone 1 goes dark",
+      "text": "Now the failure. A power problem takes availability zone 1 offline, and vm-web-1 with it. Its health probes go unanswered, so within seconds the load balancer marks it down and stops sending it new connections. The few requests already on their way to zone 1 fail, and those shoppers simply click again.",
+      "set": {
+        "t-vm1": "unreachable ✗"
+      }
+    },
+    {
+      "title": "The shop stays open",
+      "text": "Every new request now goes to vm-web-2 in zone 2, which still reaches the database. Shoppers keep buying, and nobody edited a single setting. This is the first half of the answer for Ibu Sari: when a server or even a whole zone fails, the time we can't sell is measured in seconds, and no orders are lost."
+    },
+    {
+      "title": "Monitoring raises its hand",
+      "text": "Azure Monitor notices before the customers do. The load balancer's health probe metric drops and the virtual machine's resource health changes, so an alert rule fires. The action group e-mails the on-call engineer, Dewi this week, with the resource name and the time, and she opens the zone-failure runbook.",
+      "set": {
+        "t-oncall": "e-mail: zone 1 down"
+      }
+    },
+    {
+      "title": "Policy says no",
+      "text": "Meanwhile Rizky, the contractor, tries to create a quick test VM in West US. Azure Policy evaluates the request before anything is built and denies it, because Nusantara Retail keeps customer data in Indonesia. The denial is recorded in the activity log, so the guardrail is both enforced and visible to everyone who looks.",
+      "set": {
+        "t-pol": "denied: West US"
+      }
+    },
+    {
+      "title": "The budget keeps score",
+      "text": "Finance set a monthly budget on the resource group, with alerts at 50, 80 and 100 percent. When month-to-date spending passes 80 percent, finance and Ibu Sari receive an e-mail. A budget warns but never stops anything, so think of it as a smoke alarm rather than a sprinkler.",
+      "set": {
+        "t-budget": "80% · e-mail sent"
+      }
+    },
+    {
+      "title": "Zone 1 comes back",
+      "text": "When zone 1 recovers, vm-web-1 answers its health probe again and the load balancer adds it back to the rotation by itself. The alert resolves automatically and both zones share the load once more. Afterwards Dewi adds what she learned to the runbook: this incident cost seconds, not sales.",
+      "set": {
+        "t-vm1": "healthy ✓",
+        "t-oncall": "alert resolved"
+      }
+    },
+    {
+      "title": "The answer for Ibu Sari",
+      "text": "Here is the answer, scenario by scenario. A server or a zone fails: seconds, nothing lost. Someone deletes orders by mistake: restore to just before the error and re-enter a few minutes of orders. The whole region is lost: Indonesia Central has no pair, so the plan rebuilds from Bicep in a second region within hours, unless you pay for a standby replica.",
+      "tip": "Build it yourself in Lab 21: deploy the modular Bicep, stop the zone-1 VM, and watch the shop stay open."
+    }
+  ],
+  "svg": [
+    "Azure region · Indonesia Central",
+    "snet-web · NSG: HTTP 80 only",
+    "Availability zone 1",
+    "Availability zone 2",
+    "Ibu Sari asks:",
+    "“If that server",
+    "dies, how long",
+    "can't we sell?”",
+    "Shopper",
+    "in Surabaya",
+    "Old server",
+    "next to the pantry",
+    "Rizky",
+    "test VM, West US",
+    "Load balancer",
+    "zone-redundant IP",
+    "NSG",
+    "Azure Policy",
+    "Indonesia only",
+    "vm-web-1",
+    "healthy ✓",
+    "vm-web-2",
+    "Key Vault",
+    "RBAC · secrets",
+    "Azure SQL",
+    "Entra-only · backups",
+    "zone-redundant",
+    "Azure Monitor",
+    "metrics · alerts",
+    "On-call: Dewi",
+    "no alerts",
+    "Budget",
+    "35% of the month",
+    "Bicep",
+    "everything as code",
+    "The answer for Ibu Sari",
+    "Server or zone fails: seconds, none lost",
+    "Orders deleted: restore, minutes lost",
+    "Region lost: rebuild elsewhere, hours"
+  ]
+}

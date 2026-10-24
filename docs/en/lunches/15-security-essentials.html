@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 15 · The Password in the Zip File — Lunch 15: Security Essentials: Defense in Depth, Key Vault and Defender for Cloud (Basic) · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 15 · Security Essentials: Defense in Depth, Key Vault and Defender for Cloud (Basic). A database password went out in a chat message — and it has been in Git for two years. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/15-security-essentials.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/15-security-essentials.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/15-security-essentials.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/15-security-essentials.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 15 · The Password in the Zip File — Lunch 15: Security Essentials: Defense in Depth, Key Vault and Defender for Cloud (Basic)">
+<meta property="og:description" content="Lunch 15 · Security Essentials: Defense in Depth, Key Vault and Defender for Cloud (Basic). A database password went out in a chat message — and it has been in Git for two years. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/15-security-essentials.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lunch" data-lunch="15" style="--c:#d98a00">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/lunches/15-security-essentials.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 15</span> Season 1 · 🛡️ Part 4 · Secure, operate &amp; govern</div>
+      <h1>The Password in the Zip File</h1>
+      <div class="lunch-title">Lunch 15 · Security Essentials: Defense in Depth, Key Vault and Defender for Cloud (Basic)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure architecture and services</span>
+        <span class="chip cost">🔬 Lab · about 45 minutes · 💲💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Who Made server-baru-final2?">↩ 04</a><a class="chip" href="05-identity-access-basic.html" title="Just Give Him My Password">↩ 05</a><a class="chip" href="06-virtual-machines-basic.html" title="Escape from the Pantry">↩ 06</a><a class="chip" href="08-networking-basic.html" title="Don&#x27;t Overlap My Network">↩ 08</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 14 · When the Courier API Slows Down, orders flow through queues and functions, so a slow partner no longer blocks checkout.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, calmer"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director&#x27;s question · 54% ready</b>After this episode you can say: “Failures go unnoticed, and a leaked file no longer leaks a password.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#field-notes">🗒️ Notes</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today&#x27;s menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-defense-in-depth-and-zero-trust-no-single-wall">Defense in depth and Zero Trust: no single wall</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-microsoft-defender-for-cloud-a-coach-and-a-guard">Microsoft Defender for Cloud: a coach and a guard</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-azure-key-vault-one-safe-for-secrets-keys-and-certificates">Azure Key Vault: one safe for secrets, keys and certificates</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-managed-identities-no-secrets-in-code">Managed identities: no secrets in code</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-encryption-edge-protection-and-a-security-operations-centre">Encryption, edge protection and a security operations centre</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-how-it-fits-together-for-nusantara-retail">How it fits together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Field notes</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/15-security-essentials.html">🔬 Open Lab 15</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today&#x27;s menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> defense in depth and name the Azure services that protect each layer.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Apply</strong> the three Zero Trust principles and the shared responsibility model to a design decision.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Compare</strong> what Microsoft Defender for Cloud gives you for free with what the paid Defender plans add.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> how to store secrets, keys and certificates in Azure Key Vault, and explain the RBAC permission model, soft delete and purge protection.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Describe</strong> how a managed identity gets a token, and why that takes passwords out of code.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 15</span>
+        <div class="story-body"><p>Rizky, the contractor, needs a colleague to fix a bug in the storefront, so he zips the project folder and sends it
+through a chat app. Dewi spots the problem a minute too late: the zip contains <code>appsettings.json</code>, and in it sits the
+password for the orders database, in plain text. Worse, the same file has lived in the Git repository for two years,
+and the same password is used on three servers.</p>
+<p>Ibu Sari calls a short meeting. &quot;Who else has this password? And how would we even know?&quot; Pak Budi points out that the
+head-office firewall blocks attackers. You are not so sure that one wall is a plan: firewalls don't read zip files.</p>
+<p>Today's question: <strong>how do we protect the shop in layers, so that one mistake isn't a breach — and how do we get
+secrets out of files for good?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-defense-in-depth-and-zero-trust-no-single-wall" data-spy><span class="scene-no">Scene 1 of 6</span><h3>Defense in depth and Zero Trust: no single wall</h3><div class="prose"><p><strong>Defense in depth</strong> means stacking several independent security controls, so that an attacker who gets past one
+still faces the next. Each layer has a job: stop the attack, slow it down, or at least make enough noise that someone
+notices. Old castles worked this way, with a moat, walls, a gate and guards. Cloud security works the same way, with
+fewer crocodiles.</p>
+<p>The AZ-900 skills outline describes seven layers, from the outside in. Picture an onion with your data at the centre:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  subgraph L1[&quot;1 · Physical security — Microsoft datacenters&quot;]
+    subgraph L2[&quot;2 · Identity and access — Entra ID, MFA, RBAC&quot;]
+      subgraph L3[&quot;3 · Perimeter — DDoS Protection, Azure Firewall&quot;]
+        subgraph L4[&quot;4 · Network — subnets, NSGs, private endpoints&quot;]
+          subgraph L5[&quot;5 · Compute — patching, Defender for Servers&quot;]
+            subgraph L6[&quot;6 · Application — WAF, Key Vault, managed identities&quot;]
+              D[(&quot;7 · Data — orders and customer records, encrypted&quot;)]
+            end
+          end
+        end
+      end
+    end
+  end
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>The table maps each layer to the Azure features you meet in this course.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Protects against</th>
+<th>Azure features (examples)</th>
+<th>Who looks after it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Physical security</td>
+<td>Someone entering a datacenter or walking off with a disk</td>
+<td>Datacenter access control, cameras, secure disk destruction</td>
+<td>Microsoft</td>
+</tr>
+<tr>
+<td>2. Identity and access</td>
+<td>Stolen or weak passwords, too much access</td>
+<td>Microsoft Entra ID, MFA, Conditional Access, Azure RBAC, Privileged Identity Management</td>
+<td>You (Microsoft runs the service)</td>
+</tr>
+<tr>
+<td>3. Perimeter</td>
+<td>Floods and attacks from the internet</td>
+<td>Azure DDoS Protection, Azure Firewall</td>
+<td>Shared</td>
+</tr>
+<tr>
+<td>4. Network</td>
+<td>An attacker moving sideways between machines</td>
+<td>Virtual networks and subnets, network security groups, private endpoints</td>
+<td>You</td>
+</tr>
+<tr>
+<td>5. Compute</td>
+<td>Unpatched or exposed virtual machines</td>
+<td>Azure Update Manager, Defender for Servers, Azure Bastion, no public IPs</td>
+<td>You (for IaaS)</td>
+</tr>
+<tr>
+<td>6. Application</td>
+<td>Bugs, injection attacks, secrets in code</td>
+<td>Web Application Firewall, Azure Key Vault, managed identities, secure coding</td>
+<td>You</td>
+</tr>
+<tr>
+<td>7. Data</td>
+<td>Data read by the wrong person, even after a leak</td>
+<td>Encryption at rest and in transit, customer-managed keys, Microsoft Purview, backups</td>
+<td>You</td>
+</tr>
+</tbody>
+</table></div>
+<p>Look at the last column. Microsoft secures the physical layer and the platform itself; almost everything inside your
+subscription is your job. That is the <strong>shared responsibility model</strong> from Lunch 02 again. With IaaS you also patch
+the operating system; with PaaS, Microsoft does that and your share shrinks. Your data, accounts and identities stay
+yours in every model.</p>
+<p><strong>Zero Trust</strong> is the mindset behind modern defense in depth. It drops the old idea that everything inside the company
+network can be trusted, and it rests on three principles:</p>
+<ul>
+<li><strong>Verify explicitly.</strong> Decide every access request using all the signals you have: who the user is, a second factor,
+device health, location, and how sensitive the thing being opened is.</li>
+<li><strong>Use least privilege access.</strong> Give the smallest role, at the smallest scope, for the shortest time (Lunch 05's
+RBAC, Lunch 22's just-in-time access).</li>
+<li><strong>Assume breach.</strong> Design as if an attacker is already inside: segment networks, encrypt data, keep secrets out of
+reach and watch the logs.</li>
+</ul>
+<p>Pak Budi's firewall is a perimeter control. It is useful, but it does nothing about a password inside a zip file.
+That is an identity and application problem, and it needs controls at those layers.</p>
+</div></article><article class="scene-card" id="2-microsoft-defender-for-cloud-a-coach-and-a-guard" data-spy><span class="scene-no">Scene 2 of 6</span><h3>Microsoft Defender for Cloud: a coach and a guard</h3><div class="prose"><p>Knowing the layers is one thing; checking hundreds of settings across a growing subscription by hand is another.
+<strong>Microsoft Defender for Cloud</strong> does the checking for you. It is a cloud-native application protection platform with
+two main jobs:</p>
+<ul>
+<li><strong>Cloud security posture management (CSPM)</strong> is the coach. It keeps comparing your resources with security best
+practice and tells you what to fix.</li>
+<li><strong>Cloud workload protection</strong> is the guard. Paid <strong>Defender plans</strong> watch running workloads and raise <strong>security
+alerts</strong> when something suspicious happens, such as a brute-force attempt on a VM or an unusual burst of reads from
+a key vault.</li>
+</ul>
+<p>Every Azure subscription can use <strong>foundational CSPM</strong> at no cost. It assesses your resources against the <strong>Microsoft
+cloud security benchmark</strong>, turns each failed check into a <strong>recommendation</strong> with remediation steps (often a <em>Fix</em>
+button), and rolls the results into a <strong>secure score</strong>: a percentage where higher means less identified risk.
+Defender for Cloud recalculates each security control about every eight hours, so a fix doesn't move the score
+instantly. At the time of writing there are two views of the score: the classic secure score in the Azure portal, and
+a newer risk-based Cloud Secure Score in the Microsoft Defender portal, which weighs how exposed and how critical each
+asset is.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Foundational CSPM</th>
+<th>Defender CSPM</th>
+<th>Workload protection plans</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Price</td>
+<td>Free</td>
+<td>Paid, per billable resource</td>
+<td>Paid, per protected resource (server, storage account, database…)</td>
+</tr>
+<tr>
+<td>Main question</td>
+<td>&quot;What is misconfigured?&quot;</td>
+<td>&quot;Which risks could really hurt us?&quot;</td>
+<td>&quot;Is someone attacking us right now?&quot;</td>
+</tr>
+<tr>
+<td>You get</td>
+<td>Asset inventory, recommendations, secure score, remediation tools, workflow automation</td>
+<td>Attack path analysis, cloud security explorer, agentless vulnerability and secrets scanning, data security posture, regulatory compliance assessments, governance</td>
+<td>Security alerts from Defender for Servers (Plan 1 or 2), Storage, Databases, Containers, App Service, Key Vault, Resource Manager, APIs and AI services</td>
+</tr>
+<tr>
+<td>Turn it on</td>
+<td>From day one</td>
+<td>For larger production estates</td>
+<td>For the production workloads you care about</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Cost tip.</strong> Paid plans bill for every protected resource for as long as they are on. In a lab subscription, look
+at the plans page but leave paid plans off. For production, estimate with the pricing calculator first, then enable
+plans for the workloads you actually run.</p>
+</aside>
+<p>Recommendations are grouped into <strong>security controls</strong> with names such as <em>Enable MFA</em>, <em>Secure management ports</em>,
+<em>Apply system updates</em> and <em>Encrypt data in transit</em>. A resource counts as healthy for a control only when it passes
+every recommendation in that control, so fixing half the findings on a VM earns no points, while fixing the cause for
+all resources (for example, a policy that blocks public IPs on app servers) earns the whole control. Each
+recommendation shows the affected resources, the risk, and the steps or the Azure Policy that fixes it at scale
+(Lunch 18).</p>
+<p>Treat the secure score as a to-do list sorted by impact, not a grade to chase, and use its trend to show Ibu Sari that
+the shop gets safer month by month. Defender for Cloud is also moving into the Microsoft Defender portal, next to
+Microsoft Sentinel, so a security team can work in one place.</p>
+</div></article><article class="scene-card" id="3-azure-key-vault-one-safe-for-secrets-keys-and-certificates" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Azure Key Vault: one safe for secrets, keys and certificates</h3><div class="prose"><p>Rizky's zip file shows the real problem with secrets in files: files get copied — into Git, backups, chats and
+laptops. <strong>Azure Key Vault</strong> gives every secret one home, with access control, versioning and audit logs, so
+applications fetch secrets at run time instead of carrying them around. A vault holds three kinds of objects:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Object</th>
+<th>What it is</th>
+<th>Nusantara Retail example</th>
+<th>Good to know</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Secret</strong></td>
+<td>Any small sensitive string; authorised callers get the value back</td>
+<td>The orders database connection string, the payment gateway's API key</td>
+<td>Every update creates a new version; set expiry dates</td>
+</tr>
+<tr>
+<td><strong>Key</strong></td>
+<td>A cryptographic key for encrypt/decrypt, sign/verify, wrap/unwrap</td>
+<td>The customer-managed key that encrypts the invoice storage account</td>
+<td>The private key never leaves the vault; you ask Key Vault to do the operation</td>
+</tr>
+<tr>
+<td><strong>Certificate</strong></td>
+<td>An X.509 certificate with its policy and lifecycle</td>
+<td>The TLS certificate for the storefront's domain</td>
+<td>Key Vault can renew from integrated issuers and warn before expiry</td>
+</tr>
+</tbody>
+</table></div>
+<p>Vaults come in two tiers: <strong>Standard</strong> for software-protected keys and <strong>Premium</strong>, which adds keys protected by
+hardware security modules (HSMs). For a dedicated, single-tenant HSM there is a separate service, Azure Key Vault
+Managed HSM. Microsoft recommends <strong>one vault per application per environment</strong>, such as <code>kv-nusa-prod</code> and
+<code>kv-nusa-dev</code>, so a leak in development never exposes production.</p>
+<p><strong>Two planes, two kinds of permission.</strong> Like every Azure resource, a vault has a <strong>control plane</strong> (create, configure
+and delete the vault through Azure Resource Manager) and a <strong>data plane</strong> (read and write the secrets themselves at
+<code>https://&lt;vault-name&gt;.vault.azure.net</code>). The control plane always uses Azure RBAC. For the data plane, the <strong>Azure RBAC
+permission model</strong> is the default and recommended choice: current Azure CLI versions create vaults with it unless you
+opt out, and from Key Vault API version 2026-02-01 it is the default for every new vault. The older <strong>access policy</strong>
+model still works, but RBAC lets you manage access in one place, at any scope, with the same tools as the rest of Azure.</p>
+<p>This surprises people: being <strong>Owner</strong> of the subscription does not let you read a secret. Owner is a control-plane
+role. To work with secrets you need a data-plane role, for example:</p>
+<ul>
+<li><strong>Key Vault Secrets User</strong> reads secret values — exactly what an application needs.</li>
+<li><strong>Key Vault Secrets Officer</strong> creates, updates, deletes and reads secrets — for the people who manage them.</li>
+<li><strong>Key Vault Administrator</strong> performs every data-plane operation on keys, secrets and certificates.</li>
+<li><strong>Key Vault Reader</strong> reads metadata but never secret values.</li>
+</ul>
+<p>An Owner can still grant themselves a data role, which is one more reason to keep the list of Owners short.</p>
+<p><strong>Network and logging.</strong> By default a new vault accepts requests from any network, though every request still needs a
+valid identity and role. For production, close the public endpoint with the vault firewall and allow only selected
+virtual networks, or reach the vault through a private endpoint (Lunches 24 and 25). Then send the vault's audit logs
+to a Log Analytics workspace with a diagnostic setting, so &quot;who read the orders password last Tuesday?&quot; has an answer
+(Lunch 16). Give secrets expiry dates, and rotate them by adding a new version — apps that read &quot;the latest version&quot;
+pick it up without a code change. App Service can even resolve Key Vault references in app settings for you (Lunch 10).</p>
+<p><strong>Soft delete and purge protection.</strong> Deleting a vault or a secret is not the end. <strong>Soft delete</strong> is on for every new
+vault and can't be turned off: deleted vaults and objects stay recoverable for a retention period chosen at creation,
+from 7 to 90 days (90 by default), and the vault's name stays reserved meanwhile. To <strong>purge</strong> is to delete permanently
+before that period ends. <strong>Purge protection</strong> is optional: once enabled it can't be disabled, and nobody, not even an
+Owner, can purge until the retention period has passed. Many services that encrypt data with your own keys require it.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Purge protection is a one-way door. Turn it on for production vaults, especially vaults that hold encryption keys.
+In a lab, leave it off (Lab 15 does) so you can purge the vault and reuse its name straight away.</p>
+</aside>
+</div></article><article class="scene-card" id="4-managed-identities-no-secrets-in-code" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Managed identities: no secrets in code</h3><div class="prose"><p>Key Vault solves storage, but it creates a puzzle: the app must sign in to Key Vault to read its secrets, and signing
+in sounds like it needs… another secret. Security people call this the &quot;secret zero&quot; problem.</p>
+<p>A <strong>managed identity</strong> breaks the loop. It is an identity in Microsoft Entra ID (a service principal) that Azure creates
+for a resource, with credentials that Azure stores and rotates. Your code never sees them. There are two kinds:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>System-assigned</th>
+<th>User-assigned</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How you create it</td>
+<td>Switch it on for one resource</td>
+<td>Create it as its own Azure resource (<code>id-…</code>)</td>
+</tr>
+<tr>
+<td>Lifecycle</td>
+<td>Deleted together with the resource</td>
+<td>Lives until you delete it</td>
+</tr>
+<tr>
+<td>Shared between resources</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Good for</td>
+<td>One app on one VM or App Service</td>
+<td>Many instances that need the same access, or access granted before the resources exist</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>How the token flow works.</strong> On an Azure VM, the app asks a local endpoint, the <strong>Azure Instance Metadata Service
+(IMDS)</strong> at <code>169.254.169.254</code>, for an access token. That address is reachable only from inside the VM, and the request
+must carry the header <code>Metadata: true</code>, which protects against forged requests. The app names the <strong>audience</strong>, the
+service the token is for, such as <code>https://vault.azure.net</code>. Azure obtains a token from Microsoft Entra ID for the
+VM's identity and returns it. The app then calls Key Vault with the token, and Key Vault checks two things in order:</p>
+<ol>
+<li><strong>Authentication</strong> — is the token valid, unexpired and issued for Key Vault? A token for the wrong audience gets
+HTTP <strong>401 Unauthorized</strong>.</li>
+<li><strong>Authorization</strong> — does this identity hold a data-plane role on this vault? If not, HTTP <strong>403 Forbidden</strong> with the
+inner error code <code>ForbiddenByRbac</code>.</li>
+</ol>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  autonumber
+  participant App as Storefront app on vm-app-1
+  participant IMDS as IMDS 169.254.169.254
+  participant Entra as Microsoft Entra ID
+  participant KV as Key Vault kv-nusa-prod
+  App-&gt;&gt;IMDS: GET token, resource = https://vault.azure.net (header Metadata: true)
+  IMDS-&gt;&gt;Entra: Request a token for the VM&#x27;s managed identity
+  Entra--&gt;&gt;IMDS: Access token (audience vault.azure.net)
+  IMDS--&gt;&gt;App: Access token
+  App-&gt;&gt;KV: GET /secrets/sql-connection (Authorization: Bearer token)
+  KV-&gt;&gt;KV: Token valid? Role assignment for this identity?
+  alt No data-plane role yet
+    KV--&gt;&gt;App: 403 Forbidden (ForbiddenByRbac)
+  else Key Vault Secrets User on this vault
+    KV--&gt;&gt;App: 200 OK with the secret value
+  end
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span><strong>Common mistakes:</strong> committing secrets to Git and planning to &quot;rotate later&quot;; one shared vault for every app and
+environment; giving an app Key Vault Administrator &quot;to make it work&quot;; and debugging a 403 that would have fixed
+itself, because new role assignments take a few minutes to propagate. Cache secrets in memory, too — reading Key
+Vault on every web request is slow and can hit service limits.</p>
+</aside>
+<p>Remember where the trust boundary sits: <strong>any</strong> code running on the VM can ask IMDS for the VM's tokens. A managed
+identity proves &quot;this request comes from vm-app-1&quot;, not &quot;this request comes from the storefront process&quot;. So keep each
+identity's roles small, don't share a VM between unrelated apps, and protect the VM itself (layer 5) as carefully as
+the vault.</p>
+<p>The best secret is no secret at all. Azure SQL, Azure Storage and many other services accept Entra ID tokens directly,
+so the storefront's managed identity could sign in to the orders database with no password anywhere (Lunch 11). Key
+Vault then holds only what really must stay a secret, like a payment provider's API key. Azure SDKs hide the token
+exchange behind <code>DefaultAzureCredential</code>; Lunch 22 goes deeper.</p>
+</div></article><article class="scene-card" id="5-encryption-edge-protection-and-a-security-operations-centre" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Encryption, edge protection and a security operations centre</h3><div class="prose"><p><strong>Encryption at rest</strong> is on by default. Azure Storage, managed disks and new Azure SQL databases (through Transparent
+Data Encryption) encrypt data with <strong>platform-managed keys</strong> without any setup. When a regulator — or Ibu Sari — wants
+more control, switch to <strong>customer-managed keys</strong> kept in Key Vault. Azure uses envelope encryption: a key in your
+vault wraps the keys that encrypt the data, so disabling your key makes the data unreadable. For VMs, use <strong>encryption
+at host</strong>, which also covers temporary disks and caches; the older Azure Disk Encryption is scheduled for retirement on
+15 September 2028, so don't start new projects with it.</p>
+<p><strong>Encryption in transit</strong> means TLS on every connection: HTTPS-only web apps, a minimum TLS version on storage accounts
+and databases, and an IPsec VPN or ExpressRoute with encryption for links to head office (Lunch 26).</p>
+<p>At the edge, three network security services do different jobs. <strong>Azure Firewall</strong> is a managed, stateful firewall for
+traffic between networks and to the internet, in Basic, Standard and Premium SKUs (Lunch 25). A <strong>Web Application
+Firewall (WAF)</strong> on Application Gateway or Azure Front Door inspects HTTP requests and blocks common attacks such as SQL
+injection (Lunch 27). <strong>Azure DDoS Protection</strong> absorbs floods aimed at public IP addresses, in three tiers:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>DDoS tier</th>
+<th>What you get</th>
+<th>Cost</th>
+<th>Fits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Infrastructure protection</td>
+<td>Always-on detection and mitigation of common volumetric attacks on every public IP</td>
+<td>Included, no setup</td>
+<td>Every workload</td>
+</tr>
+<tr>
+<td>DDoS IP Protection</td>
+<td>Mitigation tuned to each protected IP, plus metrics, alerts, mitigation reports and flow logs</td>
+<td>Per protected public IP</td>
+<td>A few business-critical public IPs</td>
+</tr>
+<tr>
+<td>DDoS Network Protection</td>
+<td>Everything in IP Protection, plus DDoS rapid response support, cost protection and a WAF discount</td>
+<td>Per plan, priced per 100 protected public IPs</td>
+<td>Many public endpoints across subscriptions</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Microsoft Sentinel</strong> sits on top of all this. It is Microsoft's cloud-native <strong>SIEM</strong> (security information and
+event management) and <strong>SOAR</strong> (security orchestration, automation and response) service: it collects logs and alerts
+from Entra ID, Azure, Defender for Cloud and other sources, correlates them into incidents, and runs playbooks built
+on Logic Apps to respond automatically. Sentinel now lives in the Microsoft Defender portal; Microsoft has announced
+that after 31 March 2027 it will no longer be supported in the Azure portal.</p>
+</div></article><article class="scene-card" id="6-how-it-fits-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>How it fits together for Nusantara Retail</h3><div class="prose"><p>Here is the plan you take back to Ibu Sari, layer by layer:</p>
+<ul>
+<li><strong>Identity:</strong> MFA and Conditional Access for every staff account. Rizky's access is scoped to one resource group and
+ends with his contract (Lunches 05 and 22).</li>
+<li><strong>Perimeter and network:</strong> DDoS infrastructure protection comes free. App servers lose their public IPs; admins use
+Run Command or Bastion. A WAF in front of the storefront follows later.</li>
+<li><strong>Application:</strong> one vault per environment, <code>kv-nusa-prod</code> and <code>kv-nusa-dev</code>, using the RBAC permission model, with
+purge protection on in production. The storefront reads its secrets through a system-assigned managed identity that
+holds <strong>Key Vault Secrets User</strong> on its own vault only. Dewi holds Secrets Officer on the dev vault.</li>
+<li><strong>Data:</strong> encryption at rest stays on, and the orders database moves to Entra-only authentication (Lunch 11).</li>
+<li><strong>Posture:</strong> foundational CSPM is on. The team reviews the top recommendations every Monday and reports the secure
+score monthly; paid plans come later, starting with production servers.</li>
+</ul>
+<p>And the leaked password? Rotate it in the database first, then store the new value only in Key Vault. A secret that
+has ever been in Git must be treated as public.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>Next month Rizky's laptop, with the old zip file on it, is stolen. After today's changes, which
+layers still protect the orders database — and why is the password in that zip now worthless?</p>
+</aside>
+<p>In the next lunch you'll learn to watch all of this with Azure Monitor. Lunches 22, 24, 25 and 27 go deeper into
+managed identities, private endpoints, Azure Firewall and WAF.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Layers that stop attacks, and a secret without a password</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/15-security-essentials.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/15-security-essentials.html" title="Interactive demo: Layers that stop attacks, and a secret without a password" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/15-security-essentials/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>Five attacks stop at five different layers — no single control does all the work.</li>
+<li>The first request to Key Vault is authenticated but not authorised: a valid token still gets 403 until a role exists.</li>
+<li>After the role assignment, the config file keeps only a pointer to the vault, never the password.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi is Owner of the Nusantara Retail subscription. She opens <code>kv-nusa-dev</code>, which uses the Azure RBAC permission
+model, and gets &quot;The operation is not allowed by RBAC&quot; when she lists secrets. What is wrong, and what is the
+least-privilege fix?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Owner is a control-plane role and grants no data-plane access. Assign Dewi <strong>Key Vault Secrets Officer</strong> at the
+scope of <code>kv-nusa-dev</code>. <em>Why:</em> reading or writing secrets needs a data-plane role, whatever your control-plane power.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>The storefront app on a VM must read one connection string. Option A: store a service principal's client secret in
+an environment variable. Option B: enable a system-assigned managed identity and grant it Key Vault Secrets User on
+the vault. Which do you choose?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Option B. No credential exists in code, configuration or environment variables, Azure rotates it, and the role is
+read-only on one vault. <em>Why:</em> managed identities remove the &quot;secret zero&quot; problem.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Ibu Sari asks: &quot;If we only want the secure score and the list of recommendations, what does Defender for Cloud cost
+us?&quot;</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Nothing: foundational CSPM is free. Defender CSPM (attack paths, risk prioritisation) and the workload protection
+plans (threat alerts) are paid. <em>Why:</em> posture assessment against the Microsoft cloud security benchmark is included.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>An administrator deletes <code>kv-nusa-prod</code> by mistake. It has purge protection on and a 90-day retention period. A
+colleague wants to purge it and recreate a fresh vault with the same name. What happens?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The purge is refused and the name stays reserved, but the vault can be recovered with <code>az keyvault recover</code>, secrets
+included. <em>Why:</em> with purge protection on, nobody can permanently delete a vault before its retention period ends.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>App A on one VM gets HTTP 401 <code>AKV10022: Invalid audience</code> from Key Vault. App B on another VM gets HTTP 403
+<code>ForbiddenByRbac</code>. Which check failed in each case?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>App A failed <strong>authentication</strong>: it requested its token for the wrong audience (for example Azure Resource Manager
+instead of <code>https://vault.azure.net</code>). App B passed authentication but failed <strong>authorization</strong>: its identity has no
+data-plane role on the vault. <em>Why:</em> Key Vault checks who you are before what you may do.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Defense in depth stacks independent controls across seven layers; Zero Trust adds verify explicitly, least privilege and assume breach.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Defender for Cloud's foundational CSPM is free and gives recommendations and a secure score; Defender CSPM and the workload protection plans add risk prioritisation and threat detection for a fee.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>Key Vault stores secrets, keys and certificates. Use one vault per app per environment, the RBAC permission model and, in production, purge protection. Soft delete is always on.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Owner is not enough to read a secret: apps need <strong>Key Vault Secrets User</strong>, people who manage secrets need <strong>Key Vault Secrets Officer</strong>.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Managed identities get tokens from IMDS, so code holds no credentials — and with Entra authentication to services such as Azure SQL, many secrets disappear completely.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Field notes from Stefanus</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Every secret needs a fire drill.</strong> In design reviews I ask one question about each credential: <em>if it appeared in
+a public chat tonight, how long would it take us to make it worthless, and who would do it?</em> If the honest answer is
+&quot;several redeployments, and nobody knows where it is used&quot;, the design is not finished. So before go-live I rotate
+every secret once, on purpose, on a quiet afternoon: change it at the source, add the new value as a new version in
+Key Vault, and check that the apps pick it up without a code change. A rotation you have never practised is one you
+cannot trust in an incident. And when the drill hurts, I take that as a hint to replace the secret with a managed
+identity: nothing to leak, nothing for us to rotate.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">More about the author →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>15</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Get the password out of the config file</h3>
+          <div class="prose"><p><code>setup.sh</code> builds Nusantara Retail's app server as it is today: a small Linux VM with no public IP and a database
+password sitting in a config file. You create a key vault with the RBAC permission model, store a fresh connection
+string, switch on the VM's managed identity and watch its first request fail with 403. Then you grant <strong>Key Vault
+Secrets User</strong>, read the secret successfully from inside the VM, remove the password from the file and review your
+secure score in Defender for Cloud.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 45 minutes</span><span class="chip cost">💲💲 small charges while running</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/15-security-essentials.html">Start Lab 15 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/key-vault/general/rbac-guide" target="_blank" rel="noopener"><b>Microsoft Learn: Provide access to Key Vault keys, certificates, and secrets with Azure role-based access control</b><span>Every data-plane role and how to assign it.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/defender-for-cloud/concept-cloud-security-posture-management" target="_blank" rel="noopener"><b>Microsoft Learn: What is Cloud Security Posture Management (CSPM)</b><span>A feature-by-feature comparison of foundational CSPM and Defender CSPM.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/entra/identity/managed-identities-azure-resources/how-to-use-vm-token" target="_blank" rel="noopener"><b>Microsoft Learn: How to use managed identities for Azure resources on an Azure VM to acquire an access token</b><span>The IMDS token request in several languages, with error handling.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/security/fundamentals/encryption-atrest" target="_blank" rel="noopener"><b>Microsoft Learn: Azure data encryption at rest</b><span>Platform-managed versus customer-managed keys and envelope encryption.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🔐</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Secret Keeper</h2>
+        <p class="muted">Protect secrets and defend in depth.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“Failures go unnoticed, and a leaked file no longer leaks a password.”</b></p>
+        <div class="teaser"><b>Next episode · 16</b><h4>Customers Knew First</h4><p>Instagram noticed the slowdown forty minutes before you did.</p><p style="margin-top:10px"><a href="16-monitoring-basic.html">Watch Episode 16 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="14-serverless.html"><small>← Previous episode</small>14 · When the Courier API Slows Down</a><a class="next" href="16-monitoring-basic.html"><small>Next episode →</small>16 · Customers Knew First</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/15-security-essentials/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

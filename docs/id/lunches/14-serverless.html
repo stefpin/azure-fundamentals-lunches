@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 14 · Saat API Kurir Lemot — Makan Siang 14: Serverless: Azure Functions, Logic Apps, dan Event Grid · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 14 · Serverless: Azure Functions, Logic Apps, dan Event Grid. Satu mitra yang lambat tidak boleh ikut memperlambat setiap checkout. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/14-serverless.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/14-serverless.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/14-serverless.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/14-serverless.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 14 · Saat API Kurir Lemot — Makan Siang 14: Serverless: Azure Functions, Logic Apps, dan Event Grid">
+<meta property="og:description" content="Makan Siang 14 · Serverless: Azure Functions, Logic Apps, dan Event Grid. Satu mitra yang lambat tidak boleh ikut memperlambat setiap checkout. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/14-serverless.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="14" style="--c:#11935a">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/14-serverless.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 14</span> Season 1 · 🧩 Bagian 3 · Layanan platform dan data</div>
+      <h1>Saat API Kurir Lemot</h1>
+      <div class="lunch-title">Makan Siang 14 · Serverless: Azure Functions, Logic Apps, dan Event Grid</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 50 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="02-cloud-concepts.html" title="Sewa, Bukan Beli?">↩ 02</a><a class="chip" href="07-storage-basic.html" title="Flashdisk yang Pulang Tiap Jumat">↩ 07</a><a class="chip" href="10-app-service.html" title="Jumat Malam Dewi">↩ 10</a><a class="chip" href="13-containers-basic.html" title="Di Laptop Saya Jalan, Kok">↩ 13</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 13 · Di Laptop Saya Jalan, Kok, toko online kini dikemas sebagai kontainer yang bisa di-scale dari nol dengan Container Apps.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, lebih tenang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 50% siap</b>Setelah episode ini Anda bisa menjawab: “Gangguan tidak terasa — bahkan saat API mitra sedang lambat.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-arti-serverless-yang-sebenarnya">Arti serverless yang sebenarnya</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-azure-functions-trigger-binding-dan-kode-anda">Azure Functions: trigger, binding, dan kode Anda</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-hosting-plan-tempat-function-anda-berjalan">Hosting plan: tempat function Anda berjalan</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-logic-apps-workflow-dari-balok-balok-penyusun">Logic Apps: workflow dari balok-balok penyusun</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-event-dan-pesan-event-grid-service-bus-event-hubs-dan-storage-queues">Event dan pesan: Event Grid, Service Bus, Event Hubs, dan Storage queues</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-menyatukan-semuanya-untuk-nusantara-retail">Menyatukan semuanya untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/14-serverless.html">🔬 Buka Lab 14</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> arti serverless, apa yang Anda peroleh, dan kompromi apa saja (cold start, batas waktu, kode stateless) yang Anda terima.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menguraikan</strong> cara Azure Functions memakai trigger dan binding, serta <strong>memilih</strong> hosting plan: Flex Consumption, Premium, Dedicated, atau Container Apps.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> antara Event Grid, Service Bus, Event Hubs, dan Storage queues untuk sebuah event atau pesan.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memutuskan</strong> kapan sebuah pekerjaan cocok dibuat sebagai workflow Logic Apps dan kapan sebagai function (<em>fungsi</em>).</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 14</span>
+        <div class="story-body"><p>Toko online kini berjalan di App Service, dan Harbolnas sudah di depan mata. Dewi sedang membaca catatan insiden tahun
+lalu. Ketika pembeli mengklik <em>Bayar</em>, toko online mengerjakan semuanya di dalam satu request itu: menyimpan pesanan,
+mengirim email ke gudang, menambahkan poin loyalitas, dan memesan kurir. Pada 12.12 tahun lalu, API milik perusahaan
+kurir melambat, sehingga setiap checkout ikut melambat, dan sebagian pembeli akhirnya menyerah.</p>
+<p>Tim marketing punya sakit kepala yang lebih kecil. Setiap malam mereka mengunggah ratusan foto produk baru, dan sebuah
+VM kecil mengubah ukurannya menjadi thumbnail. VM itu bekerja sekitar dua puluh menit sehari dan menganggur sepanjang
+sisa waktunya, dengan tagihan yang terus berjalan selama dua puluh empat jam penuh. Sementara itu, tim keuangan ingin
+menerima laporan stok di inbox mereka setiap pagi, dan tidak ada yang sempat menulis satu skrip lagi untuk itu.</p>
+<p>Pertanyaan hari ini: <strong>bagaimana kita menanggapi hal-hal yang terjadi — pesanan baru, foto baru, jam tujuh pagi — tanpa
+server yang menunggu-nunggu dan tanpa membuat pelanggan menunggu?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-arti-serverless-yang-sebenarnya" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Arti serverless yang sebenarnya</h3><div class="prose"><p><strong>Serverless</strong> tidak berarti servernya tidak ada. Artinya, server tidak pernah menjadi urusan Anda: Anda tidak
+memilihnya, tidak menentukan ukurannya, tidak menambalnya (patch), dan tidak menjaganya tetap menyala. Anda menyerahkan
+sepotong kode atau sebuah workflow (alur kerja) kepada platform dan menyebutkan kapan ia harus berjalan; platform
+mencarikan daya komputasi (compute), menjalankannya, lalu melepasnya lagi. Ada tiga ciri yang mendefinisikannya:</p>
+<ul>
+<li><strong>Berbasis event (event-driven).</strong> Kode berjalan karena sesuatu terjadi: sebuah HTTP request, timer, file baru, atau
+pesan di dalam queue (antrean).</li>
+<li><strong>Skala otomatis, hingga nol.</strong> Satu event mendapat satu instance; seribu event mendapat lebih banyak; tanpa event,
+tidak ada instance sama sekali.</li>
+<li><strong>Bayar per eksekusi.</strong> Pada plan bergaya consumption (<em>model berbasis penggunaan</em>), Anda membayar eksekusi dan waktu
+komputasi yang dipakainya, bukan jam-jam menganggur.</li>
+</ul>
+<p>Ibaratnya ojek online. Anda tidak perlu membeli motor, mengganti oli, atau membayar parkir bulanan; Anda cukup memesan
+saat butuh, seorang pengemudi datang, dan Anda membayar per perjalanan. Tidak ada perjalanan, tidak ada biaya. Saat jam
+sibuk, aplikasi mendatangkan lebih banyak pengemudi; sesekali Anda perlu menunggu sebentar sampai pengemudi tiba, dan
+itulah gambaran cold start yang akan kita bahas sebentar lagi.</p>
+<p>Pada penggeser model tanggung jawab bersama dari Makan Siang 02, serverless berada lebih jauh ke kanan daripada App
+Service: dengan web app (<em>aplikasi web</em>), Anda masih memilih plan dan jumlah instance; dengan function serverless,
+umumnya tidak.</p>
+<p>Komprominya nyata, dan sebaiknya Anda mengenalnya sebelum 12.12. Function yang sudah menyusut ke nol butuh sejenak untuk
+menyala ketika event berikutnya tiba; jeda itu disebut <strong>cold start</strong>. Eksekusi punya batas waktu, dan function yang
+dipicu HTTP harus menjawab dalam 230 detik, berapa pun timeout yang diizinkan plan-nya. Instance datang dan pergi, jadi
+kode harus <strong>stateless</strong>, yaitu tidak menyimpan status di dalam dirinya: apa pun yang perlu disimpan masuk ke
+penyimpanan, queue, atau database. Dan bayar per eksekusi memang murah untuk pekerjaan yang datang dalam lonjakan, tetapi
+bisa lebih mahal daripada plan tetap untuk trafik yang tidak pernah berhenti.</p>
+<p>Jadi serverless bukan jawaban untuk segalanya. Toko online itu sendiri, yang sibuk sepanjang hari dengan trafik stabil
+dan sesi pengguna yang panjang, lebih nyaman di App Service (Makan Siang 10). Job transcoding video yang membuat CPU
+sibuk selama satu jam lebih cocok di container (<em>kontainer</em>) atau VM (<em>komputer virtual</em>). Serverless bersinar untuk
+pekerjaan kecil, datang dalam lonjakan, dan berbentuk event, yang jumlahnya puluhan di setiap toko: memvalidasi
+pesanan, mengubah ukuran foto, mengirim struk, merapikan file lama di malam hari.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph sources[&quot;Sesuatu terjadi&quot;]
+    http[&quot;HTTP request&lt;br/&gt;checkout mengirim pesanan&quot;]
+    blob[&quot;Blob baru&lt;br/&gt;foto produk diunggah&quot;]
+    timer[&quot;Timer&lt;br/&gt;setiap pagi pukul 07.00&quot;]
+  end
+  subgraph fn[&quot;Function app di Flex Consumption&quot;]
+    f1[&quot;new_order&quot;]
+    f2[&quot;make_thumbnail&quot;]
+    f3[&quot;stock_report&quot;]
+  end
+  http --&gt; f1
+  blob --&gt;|&quot;lewat Event Grid&quot;| f2
+  timer --&gt; f3
+  f1 --&gt;|&quot;output binding&quot;| q[(&quot;Queue: orders&quot;)]
+  f2 --&gt;|&quot;output binding&quot;| t[(&quot;Container: thumbnails&quot;)]
+  f3 --&gt; mail[&quot;Email ke tim keuangan&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></article><article class="scene-card" id="2-azure-functions-trigger-binding-dan-kode-anda" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Azure Functions: trigger, binding, dan kode Anda</h3><div class="prose"><p><strong>Azure Functions</strong> menjalankan potongan-potongan kecil kode, yang disebut <em>function</em>, sebagai tanggapan atas event.
+Setiap function punya tepat satu <strong>trigger</strong> (pemicu), yaitu event yang memulainya, dan <strong>binding</strong> dalam jumlah berapa
+pun, yaitu sambungan deklaratif ke data. Deklaratif berarti Anda cukup menyatakan apa yang Anda butuhkan, bukan menulis
+cara mengambilnya. <em>Input binding</em> menyerahkan data kepada kode Anda saat mulai berjalan, misalnya sebuah dokumen dari
+Cosmos DB. <em>Output binding</em> mengambil sebuah nilai dari kode Anda dan menuliskannya ke suatu tempat, misalnya pesan
+queue atau sebuah blob. Binding menghilangkan kode boilerplate (kode rutin yang selalu sama): tidak perlu membuat client
+library, tidak perlu mengurus koneksi, dan tidak perlu menulis loop retry untuk kasus-kasus sederhana.</p>
+<p>Ibaratnya dapur warung makan. Trigger adalah nota pesanan yang masuk ke dapur; tanpa nota, koki tidak memasak. Binding
+adalah pelayan: ia mengantarkan bahan ke meja koki (input) dan membawa piring yang sudah jadi ke meja pelanggan
+(output). Koki, yaitu kode Anda, cukup fokus memasak.</p>
+<p>Trigger yang umum antara lain <strong>HTTP</strong>, <strong>timer</strong> (dengan jadwal CRON, format penulisan jadwal yang berasal dari
+Unix), <strong>Blob storage</strong>, <strong>Queue storage</strong>, <strong>Service Bus</strong>, <strong>Event Hubs</strong>, <strong>Event Grid</strong>, dan change feed
+<strong>Cosmos DB</strong>. Berikut inti function yang Anda deploy di lab hari ini, dalam model pemrograman Python v2, tempat
+decorator (baris yang diawali <code>@</code>) menyatakan trigger dan binding-nya:</p>
+<div class="code" data-lang="python"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>python</span><button class="copy-btn" type="button">Salin</button></div><pre><code>@app.route(route=&quot;orders&quot;, methods=[&quot;POST&quot;])                                         # trigger: HTTP POST /api/orders
+@app.queue_output(arg_name=&quot;msg&quot;, queue_name=&quot;orders&quot;, connection=&quot;OrdersStorage&quot;)  # output binding
+def new_order(req: func.HttpRequest, msg: func.Out[str]) -&gt; func.HttpResponse:
+    order = req.get_json()
+    msg.set(json.dumps(order))            # the Functions host writes the queue message
+    return func.HttpResponse(&quot;queued&quot;, status_code=200)
+</code></pre></div>
+<p>Nilai <code>connection</code> bukanlah connection string, yaitu teks yang berisi alamat sekaligus kunci rahasia. Nilai itu adalah
+<em>nama</em> sebuah koneksi yang dicari platform di pengaturan aplikasi, dan koneksi terbaik sama sekali tidak menyimpan
+secret: pengaturan seperti <code>OrdersStorage__queueServiceUri</code> memberi tahu host untuk memakai <strong>managed identity</strong> milik
+aplikasi, dan sebuah role assignment menentukan apa saja yang boleh dilakukan identitas itu.</p>
+<p>Trigger berbeda-beda dalam cara event-nya tiba. Sebagian <strong>di-push</strong> (didorong): HTTP request atau event Event Grid
+dikirimkan ke function Anda begitu hal itu terjadi. Sebagian lagi <strong>di-pull</strong> (ditarik): trigger Queue storage memeriksa
+(polling) queue secara berkala, dan makin jarang memeriksa selama queue-nya kosong. Di Flex Consumption, trigger Blob
+storage memakai Event Grid sebagai sumbernya, sehingga file baru tiba sebagai event yang di-push, bukan ditemukan
+dengan memindai isi container.</p>
+<p>Function HTTP juga punya <strong>authorization level</strong> (tingkat otorisasi). <em>Anonymous</em> membolehkan siapa saja memanggil;
+<em>function</em> mewajibkan <strong>function key</strong>, yaitu secret bersama yang dikirim di header <code>x-functions-key</code> atau di parameter
+query <code>code</code>; <em>admin</em> mewajibkan master key. Key sudah memadai untuk satu layanan yang memanggil layanan lain, seperti
+di lab hari ini. API publik layak mendapat perlindungan lebih: sign-in dengan Microsoft Entra ID (<em>ID Microsoft Entra</em>)
+melalui autentikasi bawaan yang sudah Anda kenal di Makan Siang 10, atau Azure API Management di depannya.</p>
+<p>Function dikelompokkan ke dalam sebuah <strong>function app</strong>, unit yang Anda deploy, konfigurasi, dan skalakan. Semua
+function dalam satu function app berbagi pengaturan, hosting plan, dan versi runtime-nya. Setiap function app juga
+memerlukan sebuah <strong>storage account</strong> (<em>akun penyimpanan</em>) untuk pembukuannya sendiri: key, checkpoint trigger, dan,
+pada plan terbaru, paket deployment itu sendiri.</p>
+<p>Anda bisa menulis function dalam <strong>C#</strong>, <strong>JavaScript dan TypeScript</strong>, <strong>Python</strong>, <strong>Java</strong>, dan <strong>PowerShell</strong>, dan
+<em>custom handler</em> memungkinkan bahasa lain ikut bergabung. Untuk C#, gunakan <em>isolated worker model</em>: dukungan untuk
+in-process model yang lebih lama berakhir pada 10 November 2026. Developer menjalankan host Functions yang sama di
+laptop mereka dengan Azure Functions Core Tools (<code>func start</code>) atau VS Code; pengaturan lokal disimpan di file
+<code>local.settings.json</code> yang tidak pernah di-deploy dan tidak pernah boleh masuk ke Git.</p>
+<p>Ketika sebuah pekerjaan terdiri atas beberapa langkah yang harus tetap utuh meski terjadi restart, misalnya <em>pesan
+stok, tagih kartu, pesan kurir, tunggu konfirmasi gudang</em>, lihatlah <strong>Durable Functions</strong>. Sebuah <em>orchestrator
+function</em> menjabarkan langkah-langkah itu dalam kode biasa, dan platform menyimpan kemajuannya setelah setiap langkah.
+Pola seperti chaining (merangkai langkah berurutan), fan-out dan fan-in (memecah pekerjaan menjadi banyak tugas paralel
+lalu mengumpulkan hasilnya), serta menunggu persetujuan manusia cukup ditulis dalam beberapa baris, bukan dengan state
+machine buatan sendiri.</p>
+</div></article><article class="scene-card" id="3-hosting-plan-tempat-function-anda-berjalan" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Hosting plan: tempat function Anda berjalan</h3><div class="prose"><p>Kodenya sama di mana pun; <strong>hosting plan</strong>-lah yang menentukan cara penskalaannya, biayanya, dan cara ia terhubung ke
+jaringan:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Plan</th>
+<th>Skala dan batasan</th>
+<th>Cold start</th>
+<th>Jaringan</th>
+<th>Yang Anda bayar</th>
+<th>Pilih saat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Flex Consumption</strong></td>
+<td>Berbasis event, per kelompok function, hingga 1.000 instance; hanya Linux</td>
+<td>Berkurang; always-ready instance opsional menghilangkannya</td>
+<td>Integrasi virtual network (<em>jaringan virtual</em>), private endpoint (<em>titik akhir privat</em>)</td>
+<td>Waktu eksekusi × memori instance, ditambah jumlah eksekusi (dengan jatah gratis bulanan), ditambah always-ready instance bila ada</td>
+<td>Default untuk aplikasi serverless baru</td>
+</tr>
+<tr>
+<td><strong>Premium</strong></td>
+<td>Berbasis event dengan worker yang sudah dipanaskan (prewarmed); minimal satu instance selalu menyala</td>
+<td>Tidak ada untuk instance yang sudah hangat</td>
+<td>Integrasi virtual network, private endpoint</td>
+<td>Core dan memori dari instance yang berjalan</td>
+<td>Trafik stabil, sama sekali tanpa cold start, container Linux kustom</td>
+</tr>
+<tr>
+<td><strong>Dedicated</strong> (App Service plan)</td>
+<td>Manual atau autoscale, seperti web app</td>
+<td>Tidak ada dengan Always On</td>
+<td>Sama seperti App Service</td>
+<td>Instance plan, seperti di Makan Siang 10</td>
+<td>Anda sudah membayar plan yang kapasitasnya masih tersisa, atau butuh tagihan tetap</td>
+</tr>
+<tr>
+<td><strong>Container Apps</strong></td>
+<td>Replica berbasis event, bisa menyusut ke nol</td>
+<td>Saat sudah menyusut ke nol</td>
+<td>Environment Container Apps</td>
+<td>Harga Container Apps</td>
+<td>Function berdampingan dengan container lain, image kustom, GPU</td>
+</tr>
+<tr>
+<td><strong>Consumption</strong> (legacy)</td>
+<td>Berbasis event; Windows saat ini, versi Linux akan dipensiunkan</td>
+<td>Ya</td>
+<td>Tanpa integrasi virtual network</td>
+<td>Eksekusi dan waktu komputasi</td>
+<td>Hanya untuk aplikasi Windows yang sudah ada</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Flex Consumption</strong> adalah plan yang direkomendasikan Microsoft untuk aplikasi serverless baru. Plan ini berjalan di
+Linux dan memungkinkan Anda memilih memori instance (512 MB, 2.048 MB, atau 4.096 MB) serta <strong>maximum instance count</strong>,
+yaitu batas atas jumlah instance, yang melindungi anggaran (budget) Anda sekaligus sistem apa pun yang menjadi tujuan
+tulisan function tersebut. Plan ini menyusut ke nol saat menganggur. Untuk function HTTP yang peka terhadap latensi, Anda bisa menjaga
+satu atau beberapa <strong>always-ready instance</strong> tetap hangat, dengan biaya dasar. Dua batasan yang perlu diketahui: satu
+function app per Flex Consumption plan, dan tidak ada deployment slot.</p>
+<p>Bagaimana bayar per eksekusi dihitung? Tagihan menghitung memori setiap instance dikalikan dengan waktu yang dipakainya
+untuk menjalankan kode Anda, dalam satuan <strong>GB-detik</strong> (GB-seconds), ditambah jumlah eksekusi; setiap eksekusi dihitung
+minimal satu detik. Misalkan function thumbnail berjalan 300 kali semalam, satu per satu, masing-masing dua detik di
+instance 2.048 MB: hasilnya 300 × 2 detik × 2 GB = 1.200 GB-detik dan 300 eksekusi, dan sama sekali nol untuk 23 jam
+sisanya. Masukkan angka Anda sendiri ke pricing calculator (<em>kalkulator harga</em>); jatah gratis bulanan sering kali
+menutup seluruh biaya beban kerja kecil.</p>
+<p>Cold start perlu direncanakan, bukan ditanggapi dengan panik. Jaga paket deployment tetap kecil, impor library berat
+hanya di tempat yang benar-benar membutuhkannya, dan ukur latensi request pertama setelah masa sepi. Kalau hal itu
+penting, misalnya untuk checkout, tambahkan always-ready instance di Flex Consumption atau pindahkan function tersebut ke
+Premium. Untuk job foto malam hari, satu detik waktu start sama sekali tidak menjadi masalah.</p>
+<p>Plan <strong>Consumption</strong> yang lebih lama kini disebut legacy (warisan). Hosting di Linux pada plan Consumption akan
+dipensiunkan pada 30 September 2028 dan tidak lagi menerima versi bahasa baru, jadi aplikasi Python baru sebaiknya
+dimulai di Flex Consumption. Premium cocok untuk aplikasi yang sibuk hampir sepanjang hari dan sama sekali tidak bisa
+menoleransi cold start. Dedicated masuk akal bila Anda sudah membayar App Service plan yang kapasitasnya masih tersisa.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Serverless bukan berarti tanpa biaya. Function yang menulis ke queue yang sama dengan yang memicunya, atau function
+HTTP publik yang dibombardir bot, bisa terus menambah instance dan membengkakkan tagihan dalam hitungan jam. Tetapkan
+maximum instance count, wajibkan key atau sign-in pada function HTTP, dan biarkan alert anggaran dari Lab 01 tetap
+menyala.</p>
+</aside>
+</div></article><article class="scene-card" id="4-logic-apps-workflow-dari-balok-balok-penyusun" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Logic Apps: workflow dari balok-balok penyusun</h3><div class="prose"><p>Tidak semua otomatisasi memerlukan kode. <strong>Azure Logic Apps</strong> menyusun <strong>workflow</strong> dari balok-balok penyusun di sebuah
+designer visual, di portal atau di VS Code. Setiap workflow dimulai dengan tepat satu <strong>trigger</strong> (jadwal, HTTP request,
+email baru, file baru) yang diikuti oleh <strong>action</strong> (tindakan): memanggil API, menerapkan kondisi, mengulang untuk
+setiap item, mengirim email, mengirim posting ke Teams, menulis baris ke database. Di balik designer, setiap workflow
+adalah sebuah definisi JSON, jadi Anda bisa menyimpannya di Git.</p>
+<p>Kekuatan supernya adalah <strong>connector</strong> (konektor), jumlahnya lebih dari 1.400 saat tulisan ini dibuat. Connector
+<em>built-in</em> berjalan di dalam runtime Logic Apps: jadwal, panggilan HTTP, kondisi, loop, dan kode inline. Connector
+<em>managed</em> adalah proxy yang dijalankan Microsoft untuk layanan seperti Office 365 Outlook, Teams, SharePoint,
+Salesforce, SAP, dan server SFTP; Anda cukup sign-in sekali, lalu workflow memakai koneksi tersimpan itu. Setiap
+eksekusi (run) dicatat di <strong>run history</strong>, lengkap dengan input, output, dan durasi setiap langkah, sehingga Anda bisa
+melihat persis di mana sebuah run gagal lalu mengirimkannya ulang (resubmit). Error juga menjadi bagian dari desain:
+setiap action punya <strong>retry policy</strong> untuk kegagalan sementara, dan pengaturan <em>run after</em> membuat sebuah langkah hanya
+berjalan ketika langkah sebelumnya gagal atau kehabisan waktu, misalnya untuk mengirim email ke engineer yang sedang
+piket, alih-alih gagal diam-diam.</p>
+<p>Logic Apps hadir dalam dua jenis resource:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Consumption</th>
+<th>Standard</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Berjalan di</strong></td>
+<td>Azure Logic Apps multitenant, dipakai bersama pelanggan lain</td>
+<td>Runtime single-tenant di Workflow Service Plan, App Service Environment v3, atau infrastruktur Anda sendiri</td>
+</tr>
+<tr>
+<td><strong>Workflow per resource</strong></td>
+<td>Satu</td>
+<td>Banyak, stateful dan stateless</td>
+</tr>
+<tr>
+<td><strong>Penagihan</strong></td>
+<td>Per eksekusi trigger dan action</td>
+<td>Hosting plan, ditambah transaksi storage untuk workflow stateful</td>
+</tr>
+<tr>
+<td><strong>Jaringan</strong></td>
+<td>Jaringan multitenant bersama</td>
+<td>Integrasi virtual network dan private endpoint</td>
+</tr>
+<tr>
+<td><strong>Cocok untuk</strong></td>
+<td>Memulai, volume rendah atau yang sesekali melonjak</td>
+<td>Volume lebih tinggi, jaringan privat, pengembangan lokal</td>
+</tr>
+</tbody>
+</table></div>
+<p>Bagaimana memilih antara Logic Apps dan Functions? Keduanya serverless, dan keduanya bekerja sama dengan baik:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Azure Functions</th>
+<th>Azure Logic Apps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Gaya</strong></td>
+<td>Kode lebih dulu: C#, Python, JavaScript, dan lainnya</td>
+<td>Designer lebih dulu, low code; JSON di balik layar</td>
+</tr>
+<tr>
+<td><strong>Paling kuat untuk</strong></td>
+<td>Logika kustom, pemrosesan data, penanganan event bervolume tinggi</td>
+<td>Mengorkestrasi langkah-langkah lintas banyak sistem dengan connector</td>
+</tr>
+<tr>
+<td><strong>Cara terhubung</strong></td>
+<td>Trigger dan binding untuk layanan Azure, SDK untuk sisanya</td>
+<td>1.400+ connector, termasuk Office 365, SAP, Salesforce, dan SFTP</td>
+</tr>
+<tr>
+<td><strong>State jangka panjang</strong></td>
+<td>Durable Functions</td>
+<td>Bawaan: workflow stateful dengan run history</td>
+</tr>
+<tr>
+<td><strong>Contoh di Nusantara</strong></td>
+<td>Memvalidasi pesanan, mengubah ukuran foto</td>
+<td>Laporan stok pagi lewat email, persetujuan untuk pesanan besar</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sebuah workflow bisa memanggil function untuk langkah yang berat di sisi kode, dan sebuah function bisa memulai
+workflow. Bagi pengguna bisnis yang ingin mengotomatiskan tugas mereka sendiri di Microsoft 365, <strong>Power Automate</strong>
+memakai ekosistem connector yang sama tanpa perlu mengurus subscription Azure; Logic Apps adalah saudaranya yang
+di-hosting di Azure dan dikelola oleh tim TI.</p>
+</div></article><article class="scene-card" id="5-event-dan-pesan-event-grid-service-bus-event-hubs-dan-storage-queues" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Event dan pesan: Event Grid, Service Bus, Event Hubs, dan Storage queues</h3><div class="prose"><p>Desain serverless selalu mengoper informasi ke sana kemari, dan Azure punya empat layanan untuk itu. Memilih dengan
+tepat dimulai dari satu pembedaan. <strong>Event</strong> (peristiwa) adalah pemberitahuan ringan bahwa sesuatu telah terjadi:
+<em>sebuah foto diunggah</em>, <em>sebuah VM dihapus</em>. Penerbitnya tidak peduli siapa yang bereaksi, atau apakah ada yang
+bereaksi. <strong>Message</strong> (pesan) membawa data yang diharapkan diproses oleh seseorang: <em>ini pesanan JKT-1001; tolong
+kirimkan</em>. Pengirimnya mengandalkan penerima untuk menjalankan tugasnya.</p>
+<p>Ibaratnya, event seperti pengumuman di grup WhatsApp RT: &quot;Besok pagi air PAM mati.&quot; Warga boleh bereaksi, misalnya
+menampung air, atau cuek saja. Pesan lebih mirip surat perintah kerja yang diserahkan kepada seorang tukang: pekerjaan
+itu memang harus dikerjakan, dan pengirimnya menunggu hasilnya.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Layanan</th>
+<th>Model</th>
+<th>Paling cocok untuk</th>
+<th>Fitur utama</th>
+<th>Contoh di Nusantara</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Event Grid</strong></td>
+<td>Mendorong (push) event ke subscriber</td>
+<td>Bereaksi terhadap perubahan di resource Azure dan aplikasi Anda sendiri</td>
+<td>Filter berdasarkan jenis event dan subjek, event bawaan dari layanan Azure, retry dan dead-lettering, HTTP dan MQTT</td>
+<td>&quot;Sebuah foto produk diunggah&quot; → function thumbnail</td>
+</tr>
+<tr>
+<td><strong>Storage queues</strong></td>
+<td>Queue sederhana yang diperiksa (polling) oleh consumer</td>
+<td>Tumpukan pekerjaan yang murah dan sederhana antarkomponen</td>
+<td>Pesan hingga 64 KB, kapasitas sangat besar, bagian dari storage account</td>
+<td>&quot;Pesanan JKT-1001 dibuat&quot; → pemroses pesanan</td>
+</tr>
+<tr>
+<td><strong>Service Bus</strong></td>
+<td>Message broker kelas enterprise: queue dan topic</td>
+<td>Transaksi bisnis yang tidak boleh hilang, terduplikasi, atau tertukar urutannya</td>
+<td>First-in-first-out dengan session, duplicate detection, transaksi, dead-letter queue, topic dengan subscription</td>
+<td>Pembayaran dan reservasi stok untuk setiap pesanan</td>
+</tr>
+<tr>
+<td><strong>Event Hubs</strong></td>
+<td>Stream terpartisi yang dibaca consumer sesuai kecepatannya sendiri</td>
+<td>Jutaan event per detik: telemetri dan analitik</td>
+<td>Partisi, consumer group, endpoint yang kompatibel dengan Kafka, Capture ke storage</td>
+<td>Clickstream dari toko online, telemetri dari mesin kasir di 40 toko</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  start{&quot;Apa yang Anda kirim?&quot;} --&gt;|&quot;Pemberitahuan bahwa sesuatu terjadi&quot;| eg[&quot;Event Grid&quot;]
+  start --&gt;|&quot;Aliran telemetri yang terus-menerus&quot;| eh[&quot;Event Hubs&quot;]
+  start --&gt;|&quot;Pekerjaan yang harus diproses seseorang&quot;| q{&quot;Perlu urutan, transaksi,&lt;br/&gt;duplicate detection, atau topic?&quot;}
+  q --&gt;|Ya| sb[&quot;Service Bus&quot;]
+  q --&gt;|&quot;Tidak, sederhana dan murah sudah cukup&quot;| sq[&quot;Storage queue&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Event Grid punya kosakatanya sendiri. <strong>Topic</strong> adalah tempat event diterbitkan: <em>system topic</em> membawa event dari
+layanan Azure, misalnya event <em>blob created</em> dari sebuah storage account, sedangkan <em>custom topic</em> membawa event dari
+aplikasi Anda sendiri. <strong>Event subscription</strong> meneruskan event yang cocok ke sebuah <strong>handler</strong>: function, webhook,
+queue, Event Hubs, dan lainnya. Filter pada jenis event atau subjeknya menjaga handler tetap tenang, misalnya hanya
+untuk file berakhiran <code>.jpg</code> di container <code>product-images</code>. Jika handler gagal, Event Grid mencoba lagi dengan jeda
+yang makin panjang, dan bisa melakukan <strong>dead-letter</strong>, yaitu memindahkan event yang tidak bisa dikirim ke sebuah
+storage container, supaya tidak ada yang hilang diam-diam.</p>
+<p>Layanan-layanan ini sering dikombinasikan, bukan dipilih satu untuk semua keperluan. Nusantara Retail bisa memakai
+Event Grid untuk mengabarkan <em>ada foto yang masuk</em>, Storage queue untuk pesanan baru hari ini, Service Bus untuk
+pembayaran nanti, dan Event Hubs untuk clickstream yang ingin dianalisis tim marketing.</p>
+</div></article><article class="scene-card" id="6-menyatukan-semuanya-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Menyatukan semuanya untuk Nusantara Retail</h3><div class="prose"><p>Beginilah cara gagasan hari ini menjawab tiga masalah dari cerita tadi.</p>
+<p><strong>Checkout yang tidak menunggu.</strong> Toko online mengirim setiap pesanan ke function yang dipicu HTTP, <code>new_order</code>, yang
+memvalidasinya, memasukkannya ke queue <code>orders</code>, lalu langsung menjawab. Function kedua, yang dipicu oleh queue itu,
+mengerjakan bagian yang lambat: mengirim email ke gudang, menambah poin loyalitas, memesan kurir. Jika API kurir lambat
+saat 12.12, queue hanya akan memanjang sebentar dan pembeli tidak menyadarinya. Jika ada satu pesanan yang terus gagal,
+trigger queue mencobanya lagi (lima kali secara default), lalu memindahkannya ke queue <em>poison</em>, tempat seseorang bisa
+memeriksanya alih-alih kehilangannya.</p>
+<p>Ibaratnya restoran cepat saji: kasir menerima pesanan, memberi nomor antrean, lalu melayani pelanggan berikutnya. Kasir
+tidak berdiri menunggu burger matang. Dapur bekerja dengan kecepatannya sendiri; kalau dapur sedang kewalahan, deretan
+nomor antrean hanya bertambah panjang, tetapi kasir tetap melayani.</p>
+<p><strong>Thumbnail tanpa VM yang menganggur.</strong> Foto produk masuk ke Blob storage. Event Grid menerbitkan event <em>blob created</em>,
+dan function thumbnail di Flex Consumption berjalan sekali untuk setiap foto. Ketika tim marketing mengunggah tiga ratus
+foto sekaligus, platform menambah instance selama beberapa menit; setelah itu ia kembali menyusut ke nol, dan tagihan
+pun berhenti bersamanya. VM pengubah ukuran foto itu bisa dihapus.</p>
+<p><strong>Laporan tanpa developer.</strong> Sebuah Logic App Consumption dengan recurrence trigger pukul 07.00 memanggil function
+laporan stok yang kecil melalui HTTP, memeriksa sebuah kondisi (<em>adakah produk yang stoknya di bawah sepuluh unit?</em>),
+lalu memakai connector Office 365 Outlook dan Teams untuk mengabari para manajer toko. Tim keuangan bisa membaca run
+history-nya sendiri.</p>
+<p>Dua kebiasaan membuat desain ini bisa dipercaya. Koneksi memakai <strong>managed identity</strong>, bukan key, di mana pun
+memungkinkan (Makan Siang 15 membahasnya lebih dalam). Dan setiap consumer (penerima pesan) ditulis agar tetap aman
+ketika pesan yang sama datang dua kali, karena queue dan event dikirim <strong>at least once</strong> (minimal sekali). Dalam
+praktiknya, itu berarti sesekali ada duplikat, tetapi tidak pernah ada yang hilang diam-diam.</p>
+<p>Bayangkan notifikasi transfer di aplikasi m-banking yang masuk dua kali untuk transaksi yang sama. Kasir yang teliti
+mencocokkan nomor referensinya dulu sebelum mencatat pembayaran, supaya uang yang sama tidak tercatat dua kali.
+Consumer Anda perlu melakukan hal yang sama dengan ID pesanan.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Toko online kini menampilkan <em>&quot;Terima kasih atas pesanan Anda&quot;</em> bahkan sebelum gudang melihat
+pesanan itu. Apa yang dijamin oleh queue, dan apa yang harus dilakukan pemroses pesanan jika pesanan yang sama datang
+dua kali?</p>
+</aside>
+<p>Makan siang berikutnya, Esensi Keamanan, mengeluarkan secret dari file-file konfigurasi yang tersisa dengan Key Vault
+dan managed identity, serta melihat platform dari sudut pandang penyerang.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Dari unggahan foto ke thumbnail, dan workflow yang berjalan sendiri</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/14-serverless.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/14-serverless.html?lang=id" title="Demo interaktif: Dari unggahan foto ke thumbnail, dan workflow yang berjalan sendiri" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/14-serverless/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Foto yang diunggah berubah menjadi sebuah event kecil; yang bekerja dan menulis thumbnail adalah function-nya, bukan
+event-nya.</li>
+<li>Penghitung instance naik selama lonjakan dan turun kembali ke nol sesudahnya, begitu pula tagihannya.</li>
+<li>Event yang gagal tidak hilang: ia dicoba ulang, lalu di-dead-letter agar bisa diperiksa seseorang.</li>
+<li>Logic App menyala satu langkah demi satu langkah, persis seperti yang dicatat di run history-nya.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Function thumbnail berjalan sekitar 2.000 kali pada 12.12 dan nyaris tidak berjalan pada hari-hari lain. Function
+itu harus menjangkau storage account yang hanya mengizinkan trafik dari sebuah virtual network. Hosting plan mana
+yang paling cocok?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Flex Consumption — <em>alasannya:</em> plan ini menyusut ke nol di antara lonjakan, ditagih per eksekusi, dan mendukung
+integrasi virtual network, yang tidak dimiliki plan Consumption versi legacy.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Sebuah function milik tim keuangan, yang dipicu lewat HTTP, menyusun laporan penjualan besar yang memakan waktu
+sekitar enam menit. Pemanggilnya terus-menerus kehabisan waktu (timeout), padahal plan-nya mengizinkan eksekusi
+panjang. Mengapa, dan desain apa yang lebih baik?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Batas waktu khusus untuk HTTP — <em>alasannya:</em> function yang dipicu HTTP harus menjawab dalam 230 detik, berapa pun
+timeout plan-nya. Desain yang lebih baik: terima request-nya, taruh pekerjaannya di queue (atau mulai orkestrasi
+Durable Functions), langsung kembalikan jawaban, dan biarkan pemanggil mengambil laporannya ketika sudah siap.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Pesan pembayaran harus diproses berurutan untuk setiap pelanggan, tidak pernah dua kali, dan penagihan serta
+pembaruan stok harus berhasil atau gagal bersama-sama. Storage queue, Service Bus, Event Hubs, atau Event Grid?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Service Bus — <em>alasannya:</em> session memberikan urutan first-in-first-out per pelanggan, duplicate detection membuang
+pesan yang berulang, dan transaksi mengelompokkan operasi-operasinya. Storage queues tidak punya satu pun fitur ini,
+sedangkan Event Grid dan Event Hubs menyelesaikan masalah yang berbeda.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Setiap pagi, tim toko ingin tingkat stok diperiksa dan, jika ada yang menipis, sebuah email dikirim ke manajer toko
+serta sebuah posting muncul di Teams. Tidak ada developer yang sedang senggang. Apa yang akan Anda gunakan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Logic App Consumption: trigger Recurrence, action HTTP atau connector database untuk membaca stok, sebuah kondisi,
+serta connector Office 365 Outlook dan Teams — <em>alasannya:</em> workflow ini dirakit di designer, bukan ditulis sebagai
+kode, dan ditagih per action.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Sebuah function yang dipicu queue crash berulang kali karena satu pesan pesanan yang formatnya rusak. Apa yang
+terjadi pada pesan itu?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Pesan itu akhirnya dipindahkan ke poison queue — <em>alasannya:</em> trigger queue mencobanya ulang; setelah lima percobaan
+gagal (nilai default <code>maxDequeueCount</code>), host memindahkannya ke poison queue yang namanya sama dengan queue asal
+ditambah <code>-poison</code> di belakangnya, sehingga pesan itu tidak lagi menghambat pesan lain dan bisa diperiksa.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Serverless berarti kode berbasis event, penskalaan otomatis hingga nol, dan tagihan per eksekusi, dengan imbalan cold start, batas waktu, dan desain stateless.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Sebuah function punya satu trigger dan binding dalam jumlah berapa pun; nama koneksi menunjuk ke pengaturan aplikasi, dan koneksi terbaik memakai managed identity, bukan secret.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Flex Consumption adalah plan default untuk aplikasi serverless baru (Linux, hingga 1.000 instance, dukungan virtual network, always-ready instance opsional). Premium, Dedicated, dan Container Apps melayani kebutuhan instance yang selalu hangat, beban yang stabil, atau container, sedangkan Consumption sudah berstatus legacy.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Logic Apps mengorkestrasi workflow dengan 1.400+ connector (Consumption ditagih per action; Standard bersifat single-tenant dengan banyak workflow per resource). Functions menangani kode kustom, dan keduanya berpadu dengan baik.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Event memberi tahu (Event Grid), pesan meminta (Storage queues, Service Bus), dan stream mengalir (Event Hubs). Pilih berdasarkan kebutuhan urutan, jaminan pengiriman, dan volume, lalu rancang consumer untuk pengiriman at-least-once.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Setiap pesan gagal harus punya pemilik.</strong> Retry, poison queue, dan dead-letter adalah jaring pengaman desain
+serverless, dan jebakan yang paling sering saya lihat adalah jaring yang tidak pernah diperiksa siapa pun. Karena itu,
+dalam design review saya menanyakan hal yang sama untuk setiap trigger: setelah percobaan terakhir gagal, pesannya
+pergi ke mana, siapa yang tahu, dan dari mana ia tahu? Kalau jawabannya &quot;menumpuk di poison queue sampai kebetulan
+ada yang melihat&quot;, saya pasang alert dulu sebelum menambah function baru. Ibaratnya gudang paket retur: kalau tidak
+pernah dibuka, isinya sama saja dengan hilang. Dua pertanyaan berikutnya: apa yang terjadi kalau pesan ini datang dua
+kali, dan apa yang mencegah function ini menambah instance tanpa batas? Saya ingin melihat pengecekan ID pesanan dan
+maximum instance count yang tertulis jelas, bukan sekadar diasumsikan.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>14</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Menanggapi pesanan baru secara otomatis</h3>
+          <div class="prose"><p>Anda akan membuat function app di plan Flex Consumption, memberinya managed identity dan koneksi tanpa kata sandi
+(passwordless) ke sebuah Storage queue, lalu men-deploy function Python yang sudah disediakan, yang memvalidasi pesanan
+dan memasukkannya ke queue melalui output binding. Anda akan mengujinya dengan <code>curl</code>, mengintip isi queue, dan
+menambahkan Logic App Consumption yang mengirim pesanan heartbeat setiap 15 menit. Lalu sebuah pengaturan yang terhapus
+merusak alur pesanan, dan Anda memakai log untuk mencari tahu penyebabnya.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 50 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/14-serverless.html">Mulai Lab 14 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/azure-functions/functions-scale" target="_blank" rel="noopener"><b>Microsoft Learn: Opsi hosting Azure Functions</b><span>Perbandingan lengkap plan, batasan, penskalaan, dan perilaku cold start.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-functions/flex-consumption-plan" target="_blank" rel="noopener"><b>Microsoft Learn: Hosting Azure Functions di plan Flex Consumption</b><span>Ukuran instance, always-ready instance, penagihan, dan batasan terkini.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/service-bus-messaging/compare-messaging-services" target="_blank" rel="noopener"><b>Microsoft Learn: Memilih antara Azure Event Grid, Event Hubs, dan Service Bus</b><span>Event versus pesan, berdampingan.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/logic-apps/logic-apps-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Azure Logic Apps?</b><span>Workflow, connector, serta Consumption versus Standard.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">⚡</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Digerakkan Event</h2>
+        <p class="muted">Pisahkan pekerjaan dengan event dan function.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Gangguan tidak terasa — bahkan saat API mitra sedang lambat.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 15</b><h4>Password di Dalam File Zip</h4><p>Kata sandi database terkirim lewat pesan chat — dan sudah dua tahun tersimpan di Git.</p><p style="margin-top:10px"><a href="15-security-essentials.html">Tonton Episode 15 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="13-containers-basic.html"><small>← Episode sebelumnya</small>13 · Di Laptop Saya Jalan, Kok</a><a class="next" href="15-security-essentials.html"><small>Episode berikutnya →</small>15 · Password di Dalam File Zip</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/14-serverless/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

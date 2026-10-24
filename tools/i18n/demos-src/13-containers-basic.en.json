@@ -1,0 +1,142 @@
+{
+  "page": {
+    "doc_title": "Lunch 13 · Containers (Basic) — Interactive demo",
+    "kicker": "Lunch 13 · Containers (Basic) · Interactive demo",
+    "title": "Build once, run anywhere, scale to zero",
+    "lede": "Follow Nusantara Retail's storefront image from Dewi's laptop to a private registry, Container Instances and Container Apps. Watch replicas go 0 → 1 → 5 → 0 and a new revision take 20% of the traffic. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "A container image travels from a laptop to Azure Container Registry, then runs on Container Instances and Container Apps",
+    "svgDesc": "On the left, Dewi's laptop builds a layered image, a compute meter shows what is billed, and shoppers send requests. In the Azure region, a container registry stores the image, Container Instances runs one container group, and a Container Apps environment holds an ingress and two revisions whose replicas scale between zero and five."
+  },
+  "steps": [
+    {
+      "title": "Works on my machine — only",
+      "text": "Dewi's new storefront pages run perfectly on her laptop but crash on the test server, which has an older runtime. Ibu Sari has a second worry: the 12.12 sale needs ten times the capacity for a few hours, yet at 3 a.m. almost nobody shops. Containers answer both: one package that runs the same everywhere, and services that grow and shrink with shoppers."
+    },
+    {
+      "title": "Build an image from a Dockerfile",
+      "text": "Dewi writes a Dockerfile: start from a base image, add the dependencies, copy the code, set the start command. The build produces an image made of read-only layers, with her code as the thin top layer. Everything the app needs is now inside one package tagged storefront:v1, so the test server's old runtime no longer matters."
+    },
+    {
+      "title": "Push it to a private registry",
+      "text": "The image goes to Azure Container Registry, Nusantara Retail's private registry in the same region as the apps. A tag such as v1 is a label you can move; the digest identifies the exact content. Services that pull from the registry sign in with a managed identity that holds the AcrPull role, so there is no password to leak.",
+      "set": {
+        "t-acr-tag": "storefront:v1"
+      }
+    },
+    {
+      "title": "Run it now with Container Instances",
+      "text": "Container Instances pulls the image and starts a container group in seconds: no VM and no cluster to look after. It answers on a DNS name and bills per second for the CPU and memory it holds. It suits the nightly price import or a quick test, but it does not scale out or balance load by itself.",
+      "set": {
+        "t-meter": "ACI: billed per second",
+        "t-aci": "running · per-second billing"
+      }
+    },
+    {
+      "title": "Container Apps: environment, revision, ingress",
+      "text": "For the storefront itself Nusantara Retail chooses Container Apps. The environment is the secure boundary. Ingress publishes a public HTTPS address and forwards requests to target port 80. Revision v1 is an immutable snapshot of the image, settings and scale rules. With the minimum set to zero and no shoppers at night, nothing runs, and no compute is billed.",
+      "set": {
+        "t-meter": "app: 0 replicas, no charge",
+        "t-rev1": "Revision v1 · 100%"
+      }
+    },
+    {
+      "title": "First shopper: zero to one",
+      "text": "At 07:00 the first shopper arrives. Ingress holds the request while the platform starts a replica from the image: a cold start of a few seconds. After that, requests are fast. If those seconds at opening time cost sales, production sets the minimum to one replica and accepts a small idle charge instead.",
+      "set": {
+        "t-shop": "07:00 · first shopper",
+        "t-rep1": "replicas: 1 (min 0 · max 5)",
+        "t-meter": "1 replica: per second"
+      }
+    },
+    {
+      "title": "Sale traffic: scale out to five",
+      "text": "The 12.12 sale starts. The HTTP scale rule targets 10 concurrent requests per replica, so 45 concurrent requests ask for ceil(45 ÷ 10) = 5 replicas. KEDA adds replicas within seconds, and the maximum of five also caps the bill if the crowd keeps growing. Shoppers never see the scaling; they just see a fast shop.",
+      "set": {
+        "t-shop": "12.12 sale: 45 at once",
+        "t-rep1": "replicas: 5 (maximum reached)",
+        "t-meter": "5 replicas: per second"
+      }
+    },
+    {
+      "title": "Quiet again: back to zero",
+      "text": "The sale ends and requests fade. The platform waits for a cool-down, 300 seconds by default before the last replica goes, and then scales the revision back to zero. The image stays safe in the registry and the compute meter stops. Scale to zero is why the lab, and a quiet test environment, cost almost nothing.",
+      "set": {
+        "t-shop": "quiet night again",
+        "t-rep1": "replicas: 0 (min 0 · max 5)",
+        "t-meter": "app: 0 replicas, no charge"
+      }
+    },
+    {
+      "title": "Ship v2 with zero traffic",
+      "text": "Dewi changes an environment variable, which creates revision v2. First she switched the app to multiple revision mode and pinned 100% of the traffic to v1; otherwise the newest revision would take every shopper at once. Now v2 is active but receives no shoppers, and she tests it on its own revision address.",
+      "set": {
+        "t-rev2": "Revision v2 · 0% (testing)",
+        "t-shop": "normal day: steady traffic",
+        "t-rep1": "replicas: 2",
+        "t-meter": "2 replicas: per second"
+      }
+    },
+    {
+      "title": "Canary release: an 80/20 split",
+      "text": "Ingress now sends about four requests in five to v1 and one in five to v2, and each revision scales on its own share of the traffic. If v2's error rate rises, Dewi moves its weight back to 0% in seconds. If it looks healthy, she moves it to 100% and later deactivates v1.",
+      "set": {
+        "t-rev1": "Revision v1 · 80%",
+        "t-rev2": "Revision v2 · 20%",
+        "t-rep1": "replicas: 4",
+        "t-rep2": "replicas: 1",
+        "t-meter": "5 replicas: per second"
+      }
+    },
+    {
+      "title": "Misconfigured: the wrong target port",
+      "text": "Rizky changes the ingress target port to 8080, but the web server inside the container listens on port 80. Ingress now forwards requests to a port where nothing answers, so every request fails. Both revisions break at once, because ingress is an application-wide setting rather than part of a revision.",
+      "set": {
+        "t-ingress": "target port 8080 ✗"
+      }
+    },
+    {
+      "title": "Fixed, and your turn in the lab",
+      "text": "Setting the target port back to 80 restores traffic to both revisions immediately; no new revision is needed. The recap: build an image once, keep it in a private registry, pull it with a managed identity, and choose the service by how much platform you want, from Container Instances for single runs to Container Apps for apps that scale.",
+      "tip": "In Lab 13 you do all of this yourself: import storefront:v1 into your own registry, run it on Container Instances, scale a container app from 0 to 5 and back, split traffic 80/20, and repair a broken target port.",
+      "set": {
+        "t-ingress": "target port 80 ✓"
+      }
+    }
+  ],
+  "svg": [
+    "Azure region · Southeast Asia",
+    "Container Apps environment · cae-nusa",
+    "Dewi's laptop",
+    "Dockerfile + storefront code",
+    "storefront:v1",
+    "layer 3 · your code",
+    "layer 2 · dependencies",
+    "layer 1 · OS + runtime",
+    "Compute meter",
+    "nothing running",
+    "Shoppers",
+    "quiet night: nobody shopping",
+    "Container Registry",
+    "acrnusa… · private",
+    "no images yet",
+    "Container Instances",
+    "one container group",
+    "starts in seconds",
+    "In the lab: az acr import",
+    "copies a public image into",
+    "your registry. No Docker.",
+    "Cold start: the first request",
+    "waits while a replica starts.",
+    "Min 1 replica avoids it.",
+    "Ingress forwards to 8080,",
+    "the app listens on 80.",
+    "Nothing answers: requests fail.",
+    "Revision v1",
+    "replicas: 0 (min 0 · max 5)",
+    "Revision v2",
+    "Ingress (Envoy) · public HTTPS",
+    "target port 80",
+    "v1",
+    "v2"
+  ]
+}

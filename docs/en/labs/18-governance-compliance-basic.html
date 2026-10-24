@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 18 · Keep data in the right place · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 18: Keep data in the right place. about 45 minutes, including 10–20 minutes of waiting for Azure Policy, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/18-governance-compliance-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/18-governance-compliance-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/18-governance-compliance-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/18-governance-compliance-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 18 · Keep data in the right place">
+<meta property="og:description" content="Hands-on Azure lab 18: Keep data in the right place. about 45 minutes, including 10–20 minutes of waiting for Azure Policy, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/18-governance-compliance-basic.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lab" data-lab="18" style="--c:#d98a00">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/labs/18-governance-compliance-basic.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#d98a00">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 18</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>18</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Keep data in the right place</h1>
+        <p class="lab-story">🏪 <b>Episode 18 · A Storage Account in West Europe</b> — Untagged resources, data in the wrong region, and nothing stopped anyone. <a href="../lunches/18-governance-compliance-basic.html">Read the lunch</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ about 45 minutes, including 10–20 minutes of waiting for Azure Policy</span>
+          <span class="chip cost">💲 free or close to free</span>
+          <span class="chip">Difficulty ★★☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 10 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--find-the-three-built-in-definitions-by-display-name">Task 1 · Find the three built-in definitions by display name</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--assign-allowed-locations-to-the-resource-group">Task 2 · Assign &quot;Allowed locations&quot; to the resource group</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--assign-require-a-tag-on-resources">Task 3 · Assign &quot;Require a tag on resources&quot;</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--assign-inherit-a-tag-from-the-resource-group-if-missing-with-a-managed-identity">Task 4 · Assign &quot;Inherit a tag from the resource group if missing&quot; with a managed identity</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--wait-for-the-guardrails-then-prove-the-denials">Task 5 · Wait for the guardrails, then prove the denials</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--create-compliant-resources--and-let-modify-do-the-work">Task 6 · Create compliant resources — and let Modify do the work</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--remediate-the-legacy-resources">Task 7 · Remediate the legacy resources</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-8--read-the-compliance-results">Task 8 · Read the compliance results</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/18-governance-compliance-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/18-governance-compliance-basic/lab-vars.sh" target="_blank" rel="noopener"><span>lab-vars.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/18-governance-compliance-basic/policy-probe.json" target="_blank" rel="noopener"><span>policy-probe.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/18-governance-compliance-basic/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/18-governance-compliance-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>9 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/18-governance-compliance-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>6 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/18-governance-compliance-basic" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Ibu Sari wants three guardrails before anyone deploys another resource: everything stays in the approved region,
+everything carries a <code>costCenter</code> tag for finance, and nobody has to remember to type that tag. You will put those rules
+on a lab resource group with three <strong>built-in</strong> Azure Policy definitions, prove that a deployment in the wrong region is
+refused, watch a <strong>Modify</strong> policy add a missing tag on its own, fix two &quot;legacy&quot; resources that existed before the rules
+with a <strong>remediation task</strong>, and read the <strong>compliance</strong> report an auditor would ask for.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch18-&amp;lt;suffix&amp;gt; · tagged costCenter=CC-1001 in Task 6&quot;]
+    L1[&quot;stlegacy&amp;lt;suffix&amp;gt;&lt;br/&gt;legacy, no tag&quot;]
+    L2[&quot;nsg-legacy&lt;br/&gt;legacy, no tag&quot;]
+    N1[&quot;stnusa&amp;lt;suffix&amp;gt;&lt;br/&gt;compliant&quot;]
+    N2[&quot;nsg-app&lt;br/&gt;tag inherited&quot;]
+  end
+  A1[&quot;Allowed locations&lt;br/&gt;Deny&quot;] --&gt; rg
+  A2[&quot;Require a tag on resources&lt;br/&gt;Deny&quot;] --&gt; rg
+  A3[&quot;Inherit a tag from the RG if missing&lt;br/&gt;Modify + managed identity&quot;] --&gt; rg
+  A3 -. &quot;remediation task&quot; .-&gt; L1
+  A3 -. &quot;remediation task&quot; .-&gt; L2
+  X[&quot;stdenied&amp;lt;suffix&amp;gt;&lt;br/&gt;in another region&quot;] -. &quot;RequestDisallowedByPolicy&quot; .-&gt; A1
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>) and where you are
+<strong>Owner</strong> (or Contributor plus User Access Administrator). The Modify assignment in Task 4 creates a role assignment
+for its managed identity, and plain Contributor cannot do that. Use a personal or dedicated lab subscription.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install.</li>
+<li>Get the lab files and load the shared settings plus this lab's names:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/18-governance-compliance-basic
+source ../common/config.sh
+source lab-vars.sh        # RG, RG_ID, DENIED_LOCATION, resource and assignment names
+echo &quot;Lab RG: $RG | allowed region: $LOCATION | region used for the denial test: $DENIED_LOCATION&quot;
+</code></pre></div>
+<ul>
+<li>Create the starting point — the resource group and two untagged &quot;legacy&quot; resources (about 2 minutes):</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist (here: almost nothing — an empty storage account or two and some network
+security groups). Finish with the <strong>Clean up</strong> section, even if you stop halfway. Every assignment in this lab is
+scoped to the lab resource group, so the rest of your subscription is not affected.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Cloud Shell forgets your variables when it times out. If a command complains about an empty value, go back to the lab
+folder and run <code>source ../common/config.sh &amp;&amp; source lab-vars.sh</code> again. Task 1 also tells you how to restore the
+three policy IDs.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–8 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--find-the-three-built-in-definitions-by-display-name" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Find the three built-in definitions by display name</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--find-the-three-built-in-definitions-by-display-name" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Built-in definitions are written and maintained by Microsoft, and they are identified by a GUID. Scripts that copy
+GUIDs around are hard to read and easy to break, so this course always looks them up by <strong>display name</strong>. Each
+<code>az policy definition list</code> call searches thousands of definitions, so give it 10–30 seconds.</p>
+<p>First, look at the three definitions — their mode, their parameters and their effect:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy definition list \
+  --query &quot;[?policyType==&#x27;BuiltIn&#x27; &amp;&amp; contains([&#x27;Allowed locations&#x27;, &#x27;Require a tag on resources&#x27;, &#x27;Inherit a tag from the resource group if missing&#x27;], displayName)].{name:displayName, mode:mode, parameters:join(&#x27;, &#x27;, keys(parameters)), effect:policyRule.then.effect}&quot; \
+  --output table
+</code></pre></div>
+<p>All three use <strong>Indexed</strong> mode (they look at resources that support tags and locations, not at resource groups). The
+parameter names — <code>listOfAllowedLocations</code> and <code>tagName</code> — are exactly what you will pass in Tasks 2–4. If <em>Allowed
+locations</em> shows <code>[parameters('effect')]</code> as its effect, the effect is itself a parameter whose default is Deny; the
+other two have their effect (<code>deny</code>, <code>modify</code>) written into the rule.</p>
+<p>Now store the three IDs. <code>lookup_builtin_ids</code> (defined in <code>lab-vars.sh</code>) runs one query like the one below and sets
+three variables:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code># What lookup_builtin_ids does, for one definition:
+az policy definition list --query &quot;[?policyType==&#x27;BuiltIn&#x27; &amp;&amp; displayName==&#x27;Allowed locations&#x27;].id | [0]&quot; --output tsv
+
+lookup_builtin_ids
+printf &#x27;%s\n&#x27; &quot;$ALLOWED_LOCATIONS_ID&quot; &quot;$REQUIRE_TAG_ID&quot; &quot;$INHERIT_TAG_ID&quot;
+</code></pre></div>
+<p>Finally, find out which role the Modify policy needs to do its job. The definition lists it in <code>roleDefinitionIds</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ROLE_ID=$(az policy definition list \
+  --query &quot;[?id==&#x27;$INHERIT_TAG_ID&#x27;] | [0].policyRule.then.details.roleDefinitionIds[0]&quot; --output tsv)
+az role definition list --query &quot;[?name==&#x27;${ROLE_ID##*/}&#x27;].roleName | [0]&quot; --output tsv
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Policy › Definitions</em>, search for each display name and open it to read the JSON: the <code>if</code>
+condition, the <code>then</code> effect, the parameters and (for the inherit policy) <code>roleDefinitionIds</code>. Then come back and run
+<code>lookup_builtin_ids</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> three IDs that start with <code>/providers/Microsoft.Authorization/policyDefinitions/</code>, and the role
+name <strong>Contributor</strong>.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--assign-allowed-locations-to-the-resource-group" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Assign &quot;Allowed locations&quot; to the resource group</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--assign-allowed-locations-to-the-resource-group" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>An assignment connects a definition to a scope and supplies the parameter values. The scope here is the lab resource
+group, written as a resource ID. Region names must be the programmatic ones (<code>southeastasia</code>, not &quot;Southeast Asia&quot;).
+The non-compliance message appears inside the error, so people learn what to do instead of filing a ticket.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy assignment create \
+  --name &quot;$A_LOCATIONS&quot; \
+  --display-name &quot;Lunch 18 - Allowed locations&quot; \
+  --scope &quot;$RG_ID&quot; \
+  --policy &quot;$ALLOWED_LOCATIONS_ID&quot; \
+  --params &quot;{ &#x27;listOfAllowedLocations&#x27;: { &#x27;value&#x27;: [ &#x27;$LOCATION&#x27; ] } }&quot; \
+  --output none
+
+az policy assignment non-compliance-message create \
+  --name &quot;$A_LOCATIONS&quot; \
+  --scope &quot;$RG_ID&quot; \
+  --message &quot;Nusantara Retail keeps lab resources in $LOCATION. Please choose that region.&quot; \
+  --output none
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the assignment shows your region and the enforcement mode <code>Default</code>:
+<code>az policy assignment show --name &quot;$A_LOCATIONS&quot; --scope &quot;$RG_ID&quot; --query &quot;{scope:scope, locations:parameters.listOfAllowedLocations.value, enforcement:enforcementMode}&quot; --output jsonc</code></p>
+</div>
+</div></section><section class="lab-section" id="task-3--assign-require-a-tag-on-resources" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Assign &quot;Require a tag on resources&quot;</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--assign-require-a-tag-on-resources" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>This one refuses any new or updated resource in the group that has no <code>costCenter</code> tag. It does not apply to the
+resource group itself.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy assignment create \
+  --name &quot;$A_REQUIRE_TAG&quot; \
+  --display-name &quot;Lunch 18 - Require costCenter tag&quot; \
+  --scope &quot;$RG_ID&quot; \
+  --policy &quot;$REQUIRE_TAG_ID&quot; \
+  --params &quot;{ &#x27;tagName&#x27;: { &#x27;value&#x27;: &#x27;costCenter&#x27; } }&quot; \
+  --output none
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> two assignments on the group:
+<code>az policy assignment list --resource-group &quot;$RG&quot; --query &quot;[].{name:name, displayName:displayName, enforcement:enforcementMode}&quot; --output table</code></p>
+</div>
+</div></section><section class="lab-section" id="task-4--assign-inherit-a-tag-from-the-resource-group-if-missing-with-a-managed-identity" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Assign &quot;Inherit a tag from the resource group if missing&quot; with a managed identity</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--assign-inherit-a-tag-from-the-resource-group-if-missing-with-a-managed-identity" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Modify policies change resources for you. Changing a request on the fly needs nothing special, but fixing resources that
+already exist (Task 7) is done by a <strong>remediation task</strong>, and that task acts as a <strong>managed identity</strong> that belongs to
+the assignment. Three extra flags handle it: <code>--mi-system-assigned</code> creates the identity, <code>--location</code> says where it
+lives, and <code>--identity-scope</code> plus <code>--role</code> grant it the Contributor role you found in Task 1 — on this resource group
+only.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy assignment create \
+  --name &quot;$A_INHERIT_TAG&quot; \
+  --display-name &quot;Lunch 18 - Inherit costCenter from the resource group&quot; \
+  --scope &quot;$RG_ID&quot; \
+  --policy &quot;$INHERIT_TAG_ID&quot; \
+  --params &quot;{ &#x27;tagName&#x27;: { &#x27;value&#x27;: &#x27;costCenter&#x27; } }&quot; \
+  --mi-system-assigned \
+  --location &quot;$LOCATION&quot; \
+  --identity-scope &quot;$RG_ID&quot; \
+  --role Contributor \
+  --output none
+
+PRINCIPAL_ID=$(az policy assignment show --name &quot;$A_INHERIT_TAG&quot; --scope &quot;$RG_ID&quot; --query identity.principalId --output tsv)
+az role assignment list --scope &quot;$RG_ID&quot; \
+  --query &quot;[?principalId==&#x27;$PRINCIPAL_ID&#x27;].{role:roleDefinitionName, scope:scope}&quot; --output table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Policy › Assignments › Assign policy</em>. On the <strong>Remediation</strong> tab, keep <em>System assigned
+managed identity</em>, pick your region, and the portal grants the roles from <code>roleDefinitionIds</code> automatically.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> one row with role <strong>Contributor</strong> at your resource group's scope. If the list is empty, the new
+identity was probably still replicating in Microsoft Entra ID: wait a minute and run
+<code>az role assignment create --assignee-object-id &quot;$PRINCIPAL_ID&quot; --assignee-principal-type ServicePrincipal --role Contributor --scope &quot;$RG_ID&quot;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--wait-for-the-guardrails-then-prove-the-denials" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Wait for the guardrails, then prove the denials</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--wait-for-the-guardrails-then-prove-the-denials" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A new assignment takes about five minutes — sometimes longer — to reach its scope. Instead of guessing, ask Azure
+Resource Manager to <strong>validate</strong> (not deploy) a tiny template with a network security group in the forbidden region.
+Validation runs the same Deny checks as a real deployment and creates nothing. This loop checks every 30 seconds:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>for i in $(seq 1 30); do
+  out=$(az deployment group validate --resource-group &quot;$RG&quot; --template-file policy-probe.json \
+        --parameters location=&quot;$DENIED_LOCATION&quot; --only-show-errors --output none 2&gt;&amp;1)
+  if grep -qiE &quot;RequestDisallowedByPolicy|disallowed by policy|policy violation&quot; &lt;&lt;&lt;&quot;$out&quot;; then
+    echo &quot;Allowed locations is enforced now.&quot;; break
+  elif [ -n &quot;$out&quot; ]; then
+    echo &quot;$out&quot;; break
+  fi
+  echo &quot;Not enforced yet (check $i of 30) - trying again in 30 seconds...&quot;; sleep 30
+done
+</code></pre></div>
+<p>While you wait, re-read <em>Effects</em> in the lunch: which of your three assignments will act <strong>before</strong> the request
+reaches the storage resource provider?</p>
+<p><strong>5a · The wrong region.</strong> Ask for a storage account in the forbidden region. It even carries the right tag, so only
+the location rule can object:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage account create --name &quot;$DENIED_SA&quot; --resource-group &quot;$RG&quot; \
+  --location &quot;$DENIED_LOCATION&quot; --sku Standard_LRS --tags costCenter=&quot;$COST_CENTER&quot;
+</code></pre></div>
+<p>You should get an error that starts with <code>(RequestDisallowedByPolicy) Resource 'stdenied…' was disallowed by policy</code>.
+Read on: it names the assignment <em>Lunch 18 - Allowed locations</em> and shows your non-compliance message. Your Owner role
+did not help — RBAC said yes, the policy said no.</p>
+<p><strong>5b · The missing tag.</strong> Ask for a network security group in the right region, without tags:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network nsg create --name nsg-untagged --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot;
+</code></pre></div>
+<p>This time the error names <em>Lunch 18 - Require costCenter tag</em>. The inherit policy could not help, because the resource
+group itself has no <code>costCenter</code> tag yet — there was nothing to copy.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> two <code>RequestDisallowedByPolicy</code> errors, and nothing new in the group:
+<code>az resource list --resource-group &quot;$RG&quot; --query &quot;[].name&quot; --output tsv</code> still shows only the two legacy resources.
+If 5b succeeded instead, the tag rule was not enforced yet: delete it with
+<code>az network nsg delete --name nsg-untagged --resource-group &quot;$RG&quot;</code>, wait two minutes and try again.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--create-compliant-resources--and-let-modify-do-the-work" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Create compliant resources — and let Modify do the work</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--create-compliant-resources--and-let-modify-do-the-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>First the obvious way: right region, right tag.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az storage account create --name &quot;$COMPLIANT_SA&quot; --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; \
+  --sku Standard_LRS --kind StorageV2 --min-tls-version TLS1_2 --allow-blob-public-access false \
+  --tags costCenter=&quot;$COST_CENTER&quot; --output none
+</code></pre></div>
+<p>Now the convenient way. Tag the resource group <strong>once</strong> (<code>Merge</code> keeps its existing tags), then run the command that
+failed in 5b again, under a new name and still without tags:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az tag update --resource-id &quot;$RG_ID&quot; --operation Merge --tags costCenter=&quot;$COST_CENTER&quot; --output none
+az group show --name &quot;$RG&quot; --query tags --output jsonc
+
+az network nsg create --name nsg-app --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; --output none
+az network nsg show --name nsg-app --resource-group &quot;$RG&quot; --query tags --output jsonc
+</code></pre></div>
+<p>Azure Policy runs <strong>Modify before Deny</strong>: the inherit policy copied <code>costCenter</code> from the resource group into the
+request, so the require policy found the tag and let it through.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>nsg-app</code> shows <code>&quot;costCenter&quot;: &quot;CC-1001&quot;</code> although you never typed it. If <code>nsg-app</code> is still
+refused straight after you tagged the group, wait a minute and run the create command again.</p>
+</div>
+</div></section><section class="lab-section" id="task-7--remediate-the-legacy-resources" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">Remediate the legacy resources</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--remediate-the-legacy-resources" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p><code>stlegacy…</code> and <code>nsg-legacy</code> existed before the rules, so no request ever passed through the Modify policy for them.
+Deny and Modify never touch existing resources on their own; they only report them. Look at the report first:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy state list --resource-group &quot;$RG&quot; --filter &quot;complianceState eq &#x27;NonCompliant&#x27;&quot; \
+  --query &quot;[].{assignment:policyAssignmentName, type:resourceType}&quot; --output table
+</code></pre></div>
+<p>You should see the legacy resources listed for the tag assignments (if the list is empty, the first evaluation is still
+running — continue anyway). A <strong>remediation task</strong> fixes them in bulk through the assignment's managed identity.
+<code>ReEvaluateCompliance</code> makes it re-check every resource first, so you do not have to wait for a scan:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>INHERIT_ASSIGNMENT_ID=$(az policy assignment show --name &quot;$A_INHERIT_TAG&quot; --scope &quot;$RG_ID&quot; --query id --output tsv)
+
+az policy remediation create \
+  --name &quot;$REMEDIATION&quot; \
+  --resource-group &quot;$RG&quot; \
+  --policy-assignment &quot;$INHERIT_ASSIGNMENT_ID&quot; \
+  --resource-discovery-mode ReEvaluateCompliance \
+  --output none
+</code></pre></div>
+<p>Check the task every minute or so. It usually finishes within 2–10 minutes:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy remediation show --name &quot;$REMEDIATION&quot; --resource-group &quot;$RG&quot; \
+  --query &quot;{state:provisioningState, deployments:deploymentStatus}&quot; --output jsonc
+</code></pre></div>
+<p>When the state is <code>Succeeded</code>, look at the tags:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az resource list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{name:name, location:location, costCenter:tags.costCenter}&quot; --output table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Policy › Remediation</em> lists every Modify and DeployIfNotExists assignment with resources to
+fix. The <em>Remediation tasks</em> tab shows progress and links to each change.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> every resource in the table — including <code>stlegacy…</code> and <code>nsg-legacy</code> — shows <code>CC-1001</code>, and the
+remediation task shows <code>Succeeded</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-8--read-the-compliance-results" data-kind="task"><h2><span class="task-tag">Task 8</span><span class="title">Read the compliance results</span><button class="btn btn-sm done-toggle" type="button" data-task="task-8--read-the-compliance-results" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Compliance results refresh after changes, after new assignments, once a day and on demand. Ask for an on-demand scan of
+your resource group; the command waits until the scan is done, which usually takes a few minutes:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az policy state trigger-scan --resource-group &quot;$RG&quot;
+
+az policy state summarize --resource-group &quot;$RG&quot; --query &quot;results || value[0].results&quot; --output jsonc
+
+az policy state list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{assignment:policyAssignmentName, state:complianceState, type:resourceType}&quot; --output table
+</code></pre></div>
+<p><code>summarize</code> gives the auditor's view: how many resources and policies are non-compliant (<code>resourceDetails</code> counts
+them per state). <code>list</code> gives the engineer's view: one record per resource and assignment.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Policy › Compliance</em>, set the scope to your resource group, and open each assignment. The
+<em>Resource compliance</em> tab shows every resource and its state; <em>Compliance details</em> explains why.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> compliance records exist for all three assignments, and every resource is <code>Compliant</code>. A
+non-compliant record usually means a scan or the remediation task is still catching up — run the scan again in a few
+minutes.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Someone &quot;tidies up&quot; the resource group and deletes its <code>costCenter</code> tag. The next day Dewi's pipeline — the same one
+that worked in Task 6 — fails. Reproduce it:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az tag update --resource-id &quot;$RG_ID&quot; --operation Delete --tags costCenter=&quot;$COST_CENTER&quot; --output none
+az network nsg create --name nsg-breakfix --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; --output none
+</code></pre></div>
+<p><strong>Symptom:</strong> <code>RequestDisallowedByPolicy</code>, naming <em>Lunch 18 - Require costCenter tag</em>. The existing resources are fine —
+they keep their tags.</p>
+<details class="plain"><summary>Hint</summary>
+<p>The inherit policy copies the tag <strong>from the resource group</strong>. With no tag on the group there is nothing to copy, so the
+request reaches the Deny rule unchanged. Fix the source, not the pipeline: put the tag back on the group, wait a minute,
+and run the <code>nsg create</code> command again. It succeeds, and <code>nsg-breakfix</code> gets <code>costCenter</code> automatically.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az tag update --resource-id &quot;$RG_ID&quot; --operation Merge --tags costCenter=&quot;$COST_CENTER&quot; --output none
+</code></pre></div>
+<p>In production, protect the source too — for example with the built-in <em>Require a tag on resource groups</em> policy at
+subscription scope.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. The compliance checks need
+evaluation results — if they fail, run <code>az policy state trigger-scan --resource-group &quot;$RG&quot;</code> and try again a few
+minutes later.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This removes the role assignment of the inherit policy's managed identity, the three policy assignments and the
+resource group <code>rg-lunch18-&lt;suffix&gt;</code> with everything in it (including remediation tasks and any lock you added in the
+stretch goals). Deletion continues in the background for a few minutes.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>(RequestDisallowedByPolicy) Resource 'stnusa…' was disallowed by policy</code> in Task 6</td>
+<td>the command lacks <code>--tags costCenter=…</code>, or uses another region</td>
+<td>add the tag and use <code>--location &quot;$LOCATION&quot;</code></td>
+</tr>
+<tr>
+<td>The storage account in <code>$DENIED_LOCATION</code> was <strong>created</strong> in Task 5a</td>
+<td>the assignment was not enforced yet</td>
+<td>delete it: <code>az storage account delete --name &quot;$DENIED_SA&quot; --resource-group &quot;$RG&quot; --yes</code>, run the probe loop, try again</td>
+</tr>
+<tr>
+<td><code>AuthorizationFailed</code> … <code>Microsoft.Authorization/roleAssignments/write</code> in Task 4</td>
+<td>you are not Owner or User Access Administrator, so the CLI cannot grant the identity its role</td>
+<td>use a subscription you own, or ask an Owner to grant Contributor on the resource group to the identity</td>
+</tr>
+<tr>
+<td><code>PrincipalNotFound</code> in Task 4</td>
+<td>the brand-new managed identity has not replicated in Microsoft Entra ID yet</td>
+<td>wait a minute, then run the <code>az role assignment create</code> command from the Task 4 checkpoint</td>
+</tr>
+<tr>
+<td><code>InvalidCreatePolicyAssignmentRequest</code> mentioning a managed identity</td>
+<td>the Modify assignment was created without <code>--mi-system-assigned</code> and <code>--location</code></td>
+<td>run the Task 4 command exactly as shown</td>
+</tr>
+<tr>
+<td><code>The subscription is not registered to use namespace 'Microsoft.PolicyInsights'</code></td>
+<td>the resource provider is not registered yet</td>
+<td><code>az provider register --namespace Microsoft.PolicyInsights</code>, wait a minute or two (<code>setup.sh</code> does this)</td>
+</tr>
+<tr>
+<td>Remediation state <code>Failed</code>; <code>deploymentStatus</code> shows failed deployments</td>
+<td>the identity has no role on the resource group</td>
+<td>fix the Task 4 checkpoint, then create a new remediation task with a different <code>--name</code></td>
+</tr>
+<tr>
+<td><code>az policy state list</code> returns <code>[]</code></td>
+<td>no evaluation has finished yet</td>
+<td><code>az policy state trigger-scan --resource-group &quot;$RG&quot;</code>, then wait</td>
+</tr>
+<tr>
+<td><code>(StorageAccountAlreadyTaken)</code></td>
+<td>someone else uses that global name</td>
+<td>pick another name, for example <code>COMPLIANT_SA=&quot;stnusa${SUFFIX}x&quot;</code></td>
+</tr>
+<tr>
+<td>The probe loop prints an error and stops</td>
+<td>usually the wrong folder (<code>policy-probe.json</code> not found)</td>
+<td><code>cd</code> into <code>labs/18-governance-compliance-basic</code> and run it again</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li><strong>Report before you enforce.</strong> Switch <em>Allowed locations</em> to report-only, wait about five minutes, create a storage
+account in <code>$DENIED_LOCATION</code> (it now succeeds), scan, and find it as non-compliant. Then switch back and delete it:
+<code>az policy assignment update --name &quot;$A_LOCATIONS&quot; --scope &quot;$RG_ID&quot; --enforcement-mode DoNotEnforce</code> (and later
+<code>--enforcement-mode Default</code>).</li>
+<li><strong>Exempt one resource.</strong> Give <code>stnusa…</code> a <em>Waiver</em> exemption from the tag rule that expires tomorrow, and watch it
+turn <em>Exempt</em> after a scan: <code>az policy exemption create --name tag-waiver --policy-assignment &quot;$(az policy assignment show --name &quot;$A_REQUIRE_TAG&quot; --scope &quot;$RG_ID&quot; --query id --output tsv)&quot; --exemption-category Waiver --scope &quot;$(az storage account show --name &quot;$COMPLIANT_SA&quot; --resource-group &quot;$RG&quot; --query id --output tsv)&quot; --expires-on &quot;$(date -u -d '+1 day' +%Y-%m-%dT%H:%M:%SZ)&quot;</code>.</li>
+<li><strong>Lock it.</strong> Add <code>az lock create --name no-delete --lock-type CanNotDelete --resource-group &quot;$RG&quot;</code>, then try to delete
+<code>nsg-app</code> and read the <code>ScopeLocked</code> error. <code>cleanup.sh</code> removes the lock for you.</li>
+<li><strong>Explore regulatory initiatives:</strong>
+<code>az policy set-definition list --query &quot;[?policyType=='BuiltIn' &amp;&amp; metadata.category=='Regulatory Compliance'].displayName&quot; --output tsv | sort | head -n 20</code>.</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build the following, any way you like (portal, CLI, Bicep). Start with <code>bash setup.sh</code>.</p>
+<ol>
+<li>On <code>rg-lunch18-&lt;suffix&gt;</code>, assign the built-in <strong>Allowed locations</strong> policy so that resources can only be created in
+your lab region (<code>$LOCATION</code>).</li>
+<li>On the same resource group, assign <strong>Require a tag on resources</strong> for the tag <code>costCenter</code>.</li>
+<li>On the same resource group, assign <strong>Inherit a tag from the resource group if missing</strong> for <code>costCenter</code>, with a
+<strong>system-assigned managed identity</strong> that holds the role the definition asks for on the resource group.</li>
+<li>Show that a storage account in another region is refused, then create a compliant storage account (not the legacy
+one) in <code>$LOCATION</code>.</li>
+<li>Tag the resource group <code>costCenter=CC-1001</code> and use a <strong>remediation task</strong> so that both legacy resources from
+<code>setup.sh</code> carry the tag.</li>
+<li>Make sure compliance results exist for all three assignments.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="17-backup-disaster-recovery.html"><small>← Previous lab</small>17 · The restore drill</a><a class="next" href="19-cost-management.html"><small>Next lab →</small>19 · Find the waste you made yourself</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/18-governance-compliance-basic/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

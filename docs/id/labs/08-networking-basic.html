@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 08 · Membangun jaringan Nusantara Retail · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 08: Membangun jaringan Nusantara Retail. sekitar 50 menit, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/08-networking-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/08-networking-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/08-networking-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/08-networking-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 08 · Membangun jaringan Nusantara Retail">
+<meta property="og:description" content="Lab Azure praktik 08: Membangun jaringan Nusantara Retail. sekitar 50 menit, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/08-networking-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="08" style="--c:#e2482f">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/08-networking-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#e2482f">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 08</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>08</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Membangun jaringan Nusantara Retail</h1>
+        <p class="lab-story">🏪 <b>Episode 08 · Jangan Tabrak Jaringan Saya</b> — Jaringan 10.0.0.0/16 milik Pak Budi tidak boleh bentrok — dan Rizky ingin SSH dibuka untuk seluruh internet. <a href="../lunches/08-networking-basic.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 50 menit</span>
+          <span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 9 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--merencanakan-dan-membuat-virtual-network">Tugas 1 · Merencanakan dan membuat virtual network</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--menulis-aturan-keamanan-nsg-dan-sebuah-application-security-group">Tugas 2 · Menulis aturan keamanan: NSG dan sebuah application security group</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--membuat-vm-web-dan-vm-app">Tugas 3 · Membuat VM web dan VM app</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--menguji-lalu-lintas-dari-internet-dan-antar-tier">Tugas 4 · Menguji lalu lintas dari internet dan antar-tier</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--memberi-app-tier-yang-privat-jalan-keluar">Tugas 5 · Memberi app tier yang privat jalan keluar</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--mendiagnosis-dengan-ip-flow-verify">Tugas 6 · Mendiagnosis dengan IP flow verify</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--menerbitkan-nama-di-public-dns-zone">Tugas 7 · Menerbitkan nama di public DNS zone</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/08-networking-basic/app-cloud-init.yml" target="_blank" rel="noopener"><span>app-cloud-init.yml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/08-networking-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/08-networking-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>10 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/08-networking-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>7 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/08-networking-basic" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Jaringan toko online yang diminta Dewi: sebuah virtual network (<em>jaringan virtual</em>) di <code>10.20.0.0/16</code> yang tidak
+pernah tumpang tindih dengan kantor pusat Pak Budi (<code>10.0.0.0/16</code>), dibagi menjadi <strong>web tier</strong> yang bisa dijangkau
+pembeli dan <strong>app tier privat</strong> yang tidak bisa dilihat siapa pun dari internet. Network security group dan sebuah
+application security group hanya mengizinkan tepat dua hal masuk — HTTP ke web server dan TCP 8080 dari web server ke
+app tier — dan sebuah NAT gateway memberi app tier satu alamat yang bisa diprediksi untuk panggilan keluar. Anda
+membuktikan setiap aturan dengan lalu lintas sungguhan dan dengan IP flow verify dari Network Watcher, lalu menerbitkan
+nama <code>www</code> dan <code>shop</code> di sebuah public Azure DNS zone.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  you[&quot;Anda, di Cloud Shell&quot;] --&gt;|&quot;HTTP 80&quot;| pip[&quot;pip-vm-web&lt;br/&gt;Standard public IP&quot;]
+  subgraph rg[&quot;rg-lunch08-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph vnet[&quot;vnet-nusa-shop · 10.20.0.0/16&quot;]
+      subgraph web[&quot;snet-web · 10.20.1.0/24 · nsg-web · private subnet&quot;]
+        vmweb[&quot;vm-web · 10.20.1.4&lt;br/&gt;di asg-web&quot;]
+      end
+      subgraph app[&quot;snet-app · 10.20.2.0/24 · nsg-app · private subnet&quot;]
+        vmapp[&quot;vm-app · 10.20.2.4&lt;br/&gt;tanpa public IP&quot;]
+      end
+    end
+    nat[&quot;ng-nusa-app&lt;br/&gt;NAT gateway + pip-ng-nusa-app&quot;]
+    dns[&quot;Azure DNS zone&lt;br/&gt;www (A) · shop (CNAME)&quot;]
+  end
+  pip --&gt; vmweb
+  vmweb --&gt;|&quot;hanya TCP 8080&quot;| vmapp
+  vmapp --&gt;|&quot;keluar&quot;| nat --&gt; internet[&quot;Internet&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang.</li>
+<li>Sekitar 4 vCPU kuota kosong di region Anda: lab ini menjalankan dua VM <code>$VM_SIZE_SMALL</code> (masing-masing 2 vCPU secara
+default).</li>
+<li>Ambil file lab, muat pengaturan bersama, dan definisikan beberapa variabel. Kalau Cloud Shell tersambung ulang di
+tengah lab, jalankan lagi blok ini sebelum melanjutkan:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/08-networking-basic
+source ../common/config.sh
+RG=$(rg_name 08)
+VNET=vnet-nusa-shop
+ZONE=&quot;nusantara-retail-${SUFFIX}.xyz&quot;
+
+# Helper: run shell commands inside a VM through the Azure VM agent (no SSH, no public IP needed).
+# Each call takes 20-40 seconds.
+run_on() {
+  az vm run-command invoke -g &quot;$RG&quot; -n &quot;$1&quot; --command-id RunShellScript \
+    --scripts &quot;$2&quot; --query &quot;value[0].message&quot; -o tsv
+}
+</code></pre></div>
+<ul>
+<li>Lab ini tidak punya <code>setup.sh</code>: membangun jaringannya <em>adalah</em> lab itu sendiri.</li>
+</ul>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab memakan biaya selama masih ada — terutama dua VM, public IP, dan NAT gateway. Akhiri dengan bagian
+<strong>Bersihkan</strong>, bahkan kalau Anda berhenti di tengah jalan.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–7 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--merencanakan-dan-membuat-virtual-network" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Merencanakan dan membuat virtual network</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--merencanakan-dan-membuat-virtual-network" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Rencana alamat didahulukan, karena itulah satu-satunya hal yang tidak bisa Anda ubah belakangan tanpa membangun ulang.
+Toko online mendapat <code>10.20.0.0/16</code> — jauh dari <code>10.0.0.0/16</code> milik kantor pusat — dengan satu /24 per tier dan ruang
+yang lega untuk tumbuh. Kedua subnet adalah <strong>private subnet</strong>: tanpa akses internet keluar default. Alat-alat Azure
+versi terbaru sudah membuat subnet di VNet baru dengan cara itu; menyetel flag-nya secara eksplisit mendokumentasikan
+niat Anda dan memberi hasil yang sama di alat versi lama.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ensure_rg &quot;$RG&quot; 08
+
+az network vnet create -g &quot;$RG&quot; -n &quot;$VNET&quot; --location &quot;$LOCATION&quot; \
+  --address-prefixes 10.20.0.0/16 --output none
+
+az network vnet subnet create -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-web \
+  --address-prefixes 10.20.1.0/24 --default-outbound-access false --output none
+
+az network vnet subnet create -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-app \
+  --address-prefixes 10.20.2.0/24 --default-outbound-access false --output none
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Home › Virtual networks › Create</em> — di tab <strong>IP addresses</strong>, setel address space ke
+<code>10.20.0.0/16</code>, hapus subnet default yang disarankan, lalu tambahkan <code>snet-web</code> dan <code>snet-app</code>. Biarkan opsi private
+subnet (tanpa default outbound access) tetap aktif; portal mengaktifkannya secara default. Setelah itu kembali ke
+sini untuk Tugas 2.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> dua subnet, keduanya dengan <code>False</code> di kolom <em>defaultOutbound</em>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vnet subnet list -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; \
+  --query &quot;[].{subnet:name, prefix:addressPrefix || addressPrefixes[0], defaultOutbound:defaultOutboundAccess}&quot; -o table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-2--menulis-aturan-keamanan-nsg-dan-sebuah-application-security-group" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Menulis aturan keamanan: NSG dan sebuah application security group</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--menulis-aturan-keamanan-nsg-dan-sebuah-application-security-group" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Satu NSG per subnet membuat aturan setiap tier terkumpul di satu tempat yang mudah dibaca. Application security group
+<code>asg-web</code> memberi nama pada <em>peran</em> &quot;web server&quot;, sehingga aturan tidak bergantung pada alamat IP.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network nsg create -g &quot;$RG&quot; -n nsg-web --location &quot;$LOCATION&quot; --output none
+az network nsg create -g &quot;$RG&quot; -n nsg-app --location &quot;$LOCATION&quot; --output none
+az network asg create -g &quot;$RG&quot; -n asg-web --location &quot;$LOCATION&quot; --output none
+
+# nsg-web: shoppers may reach the web servers on HTTP, nothing else from the internet.
+az network nsg rule create -g &quot;$RG&quot; --nsg-name nsg-web -n Allow-HTTP-Internet \
+  --priority 100 --direction Inbound --access Allow --protocol Tcp \
+  --source-address-prefixes Internet --source-port-ranges &#x27;*&#x27; \
+  --destination-asgs asg-web --destination-port-ranges 80 --output none
+
+# nsg-app: only web servers may call the app tier, and only on TCP 8080 ...
+az network nsg rule create -g &quot;$RG&quot; --nsg-name nsg-app -n Allow-Web-To-App-8080 \
+  --priority 100 --direction Inbound --access Allow --protocol Tcp \
+  --source-asgs asg-web --source-port-ranges &#x27;*&#x27; \
+  --destination-address-prefixes 10.20.2.0/24 --destination-port-ranges 8080 --output none
+
+# ... and everything else from inside the VNet is denied, long before the default AllowVnetInBound (65000).
+az network nsg rule create -g &quot;$RG&quot; --nsg-name nsg-app -n Deny-VNet-Inbound \
+  --priority 4000 --direction Inbound --access Deny --protocol &#x27;*&#x27; \
+  --source-address-prefixes VirtualNetwork --source-port-ranges &#x27;*&#x27; \
+  --destination-address-prefixes &#x27;*&#x27; --destination-port-ranges &#x27;*&#x27; --output none
+
+# Attach each NSG to its subnet.
+az network vnet subnet update -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-web --nsg nsg-web --output none
+az network vnet subnet update -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-app --nsg nsg-app --output none
+</code></pre></div>
+<p>Perhatikan apa yang <em>tidak</em> Anda tulis: tidak ada aturan untuk SSH. SSH yang masuk dari internet akan jatuh sampai ke
+<code>DenyAllInBound</code>.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Buka <strong>nsg-app › Inbound security rules</strong> untuk melihat dua aturan Anda tersusun di atas tiga
+aturan default. Portal menampilkan urutan prioritas dengan sangat visual. Setelah itu kembali ke sini untuk Tugas 3.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>nsg-app</code> menampilkan aturan Anda di 100 dan 4000 di atas aturan default, dan kedua subnet
+menampilkan NSG-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network nsg rule list -g &quot;$RG&quot; --nsg-name nsg-app --include-default \
+  --query &quot;[?direction==&#x27;Inbound&#x27;] | sort_by(@, &amp;priority)[].{priority:priority, name:name, access:access, port:destinationPortRange}&quot; -o table
+az network vnet subnet list -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; --query &quot;[].{subnet:name, nsg:networkSecurityGroup.id}&quot; -o table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-3--membuat-vm-web-dan-vm-app" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Membuat VM web dan VM app</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--membuat-vm-web-dan-vm-app" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><code>vm-web</code> mendapat public IP Standard dan bergabung dengan <code>asg-web</code>. <code>vm-app</code> tidak mendapat public IP sama sekali.
+Keduanya memakai <code>--nsg &quot;&quot;</code> agar CLI tidak menambahkan NSG tingkat NIC di samping NSG subnet Anda. VM web menjalankan
+web server cloud-init bersama milik kursus (port 80); VM app menjalankan <code>app-cloud-init.yml</code> milik lab ini, sebuah
+layanan mungil di port 8080. Keduanya tidak butuh akses internet untuk mulai berjalan. Setiap VM butuh 2–4 menit; baca
+bagian 4 dari bacaan makan siang ini sambil menunggu.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm create -g &quot;$RG&quot; -n vm-web --location &quot;$LOCATION&quot; \
+  --image &quot;$VM_IMAGE&quot; --size &quot;$VM_SIZE_SMALL&quot; \
+  --vnet-name &quot;$VNET&quot; --subnet snet-web --private-ip-address 10.20.1.4 \
+  --public-ip-address pip-vm-web --public-ip-sku Standard \
+  --nsg &quot;&quot; --asgs asg-web \
+  --admin-username &quot;$ADMIN_USER&quot; --generate-ssh-keys \
+  --custom-data &quot;$AZL_COMMON_DIR/cloud-init-web.yml&quot; --output none
+
+az vm create -g &quot;$RG&quot; -n vm-app --location &quot;$LOCATION&quot; \
+  --image &quot;$VM_IMAGE&quot; --size &quot;$VM_SIZE_SMALL&quot; \
+  --vnet-name &quot;$VNET&quot; --subnet snet-app --private-ip-address 10.20.2.4 \
+  --public-ip-address &quot;&quot; --nsg &quot;&quot; \
+  --admin-username &quot;$ADMIN_USER&quot; --generate-ssh-keys \
+  --custom-data app-cloud-init.yml --output none
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Tab <em>Create a virtual machine › Networking</em>: pilih <code>vnet-nusa-shop</code> dan subnet-nya, lalu
+setel <strong>NIC network security group</strong> ke <strong>None</strong> (NSG subnet sudah melindunginya). Setelah <code>vm-web</code> dibuat, buka
+<em>vm-web › Networking › Application security groups</em> dan tambahkan network interface-nya ke <code>asg-web</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>vm-web</code> punya public IP dan <code>vm-app</code> tidak punya; NIC milik <code>vm-web</code> adalah anggota <code>asg-web</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm list -g &quot;$RG&quot; -d --query &quot;[].{vm:name, private:privateIps, public:publicIps, state:powerState}&quot; -o table
+WEB_NIC_ID=$(az vm show -g &quot;$RG&quot; -n vm-web --query &quot;networkProfile.networkInterfaces[0].id&quot; -o tsv)
+az network nic show --ids &quot;$WEB_NIC_ID&quot; --query &quot;ipConfigurations[0].applicationSecurityGroups[].id&quot; -o tsv
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-4--menguji-lalu-lintas-dari-internet-dan-antar-tier" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Menguji lalu lintas dari internet dan antar-tier</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--menguji-lalu-lintas-dari-internet-dan-antar-tier" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sekarang buktikan aturan-aturan itu dengan paket sungguhan. Beri cloud-init waktu satu-dua menit setelah VM dibuat.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>WEB_IP=$(az network public-ip show -g &quot;$RG&quot; -n pip-vm-web --query ipAddress -o tsv)
+echo &quot;vm-web public IP: $WEB_IP&quot;
+
+# From Cloud Shell (the internet): HTTP works, SSH doesn&#x27;t.
+curl -s --max-time 10 &quot;http://$WEB_IP&quot; | grep -o &#x27;&lt;h1&gt;.*&lt;/h1&gt;&#x27;
+timeout 5 bash -c &quot;&lt;/dev/tcp/$WEB_IP/22&quot; 2&gt;/dev/null &amp;&amp; echo &quot;port 22 is OPEN&quot; || echo &quot;port 22 is closed&quot;
+
+# From vm-web to vm-app: 8080 works, SSH (22) is blocked by Deny-VNet-Inbound.
+run_on vm-web &#x27;curl -s --max-time 5 http://10.20.2.4:8080/ || echo &quot;8080 BLOCKED&quot;&#x27;
+run_on vm-web &#x27;timeout 5 bash -c &quot;&lt;/dev/tcp/10.20.2.4/22&quot; &amp;&amp; echo &quot;22 OPEN&quot; || echo &quot;22 BLOCKED&quot;&#x27;
+</code></pre></div>
+<p>Tanpa aturan Anda di 4000, Run Command yang kedua akan mencetak <code>22 OPEN</code>: aturan default <code>AllowVnetInBound</code>
+meloloskan semua lalu lintas di dalam VNet.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>&lt;h1&gt;Nusantara Retail&lt;/h1&gt;</code>, <code>port 22 is closed</code>, satu baris JSON yang berisi
+<code>nusantara-retail-app-tier</code>, dan <code>22 BLOCKED</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--memberi-app-tier-yang-privat-jalan-keluar" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Memberi app tier yang privat jalan keluar</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--memberi-app-tier-yang-privat-jalan-keluar" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><code>vm-app</code> harus memanggil penyedia pembayaran di internet. Pertama, lihat apa arti private subnet dalam praktik, lalu
+tambahkan metode outbound eksplisit yang direkomendasikan: NAT gateway.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code># Before: vm-app has no public IP and lives in a private subnet.
+run_on vm-app &#x27;curl -s --max-time 10 https://api.ipify.org || echo &quot;NO OUTBOUND ACCESS&quot;&#x27;
+</code></pre></div>
+<p>Perintah itu berjalan sedikit lebih lama lalu mencetak <code>NO OUTBOUND ACCESS</code> — padahal <code>nsg-app</code> berisi aturan default
+<code>AllowInternetOutBound</code>. Izin bukanlah jalur. Run Command sendiri tetap berfungsi, karena VM agent berbicara dengan
+Azure melalui alamat platform <code>168.63.129.16</code>, bukan melalui internet.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network public-ip create -g &quot;$RG&quot; -n pip-ng-nusa-app --location &quot;$LOCATION&quot; \
+  --sku Standard --allocation-method Static --output none
+
+az network nat gateway create -g &quot;$RG&quot; -n ng-nusa-app --location &quot;$LOCATION&quot; \
+  --public-ip-addresses pip-ng-nusa-app --idle-timeout 4 --output none
+
+az network vnet subnet update -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-app \
+  --nat-gateway ng-nusa-app --output none
+
+NAT_IP=$(az network public-ip show -g &quot;$RG&quot; -n pip-ng-nusa-app --query ipAddress -o tsv)
+echo &quot;NAT gateway public IP: $NAT_IP&quot;
+
+# After: the same test now succeeds and shows which address the internet sees.
+run_on vm-app &#x27;curl -s --max-time 10 https://api.ipify.org || echo &quot;NO OUTBOUND ACCESS&quot;&#x27;
+</code></pre></div>
+<p>Tanpa route table, tanpa perubahan di VM: NAT gateway melayani setiap VM di <code>snet-app</code>. Tidak ada apa pun di internet
+yang bisa membuka koneksi ke <code>vm-app</code> melaluinya.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Create a resource › NAT gateway</em> — di tab <strong>Outbound IP</strong>, buat public IP baru, dan di tab
+<strong>Networking</strong>, pilih <code>vnet-nusa-shop</code> lalu centang <code>snet-app</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> sebelum ada NAT gateway, <code>NO OUTBOUND ACCESS</code>; sesudahnya, sebuah alamat IP yang sama dengan
+<code>$NAT_IP</code>. Kalau percobaan pertama setelah NAT gateway dibuat masih gagal, tunggu satu menit lalu jalankan lagi.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--mendiagnosis-dengan-ip-flow-verify" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Mendiagnosis dengan IP flow verify</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--mendiagnosis-dengan-ip-flow-verify" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><strong>IP flow verify</strong> dari Network Watcher menguji satu paket terhadap aturan NSG yang berlaku untuk sebuah VM, tanpa
+mengirim lalu lintas apa pun, lalu menyebutkan aturan yang memutuskan. Gunakan setiap kali &quot;tidak bisa tersambung&quot; dan
+Anda menginginkan bukti.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>MY_IP=$(my_public_ip); echo &quot;Your public IP: $MY_IP&quot;
+
+# 1. Web tier -&gt; app tier on 8080: expect Allow, rule Allow-Web-To-App-8080.
+az network watcher test-ip-flow -g &quot;$RG&quot; --vm vm-app --direction Inbound --protocol TCP \
+  --local 10.20.2.4:8080 --remote 10.20.1.4:50000 -o table
+
+# 2. Web tier -&gt; app tier on 22: expect Deny, rule Deny-VNet-Inbound.
+az network watcher test-ip-flow -g &quot;$RG&quot; --vm vm-app --direction Inbound --protocol TCP \
+  --local 10.20.2.4:22 --remote 10.20.1.4:50000 -o table
+
+# 3. You (the internet) -&gt; vm-web on 22 and on 80: expect Deny (DenyAllInBound), then Allow (Allow-HTTP-Internet).
+az network watcher test-ip-flow -g &quot;$RG&quot; --vm vm-web --direction Inbound --protocol TCP \
+  --local 10.20.1.4:22 --remote &quot;$MY_IP&quot;:50000 -o table
+az network watcher test-ip-flow -g &quot;$RG&quot; --vm vm-web --direction Inbound --protocol TCP \
+  --local 10.20.1.4:80 --remote &quot;$MY_IP&quot;:50000 -o table
+
+# 4. vm-app -&gt; internet on 443: Allow (AllowInternetOutBound). IP flow verify checks rules, not paths.
+az network watcher test-ip-flow -g &quot;$RG&quot; --vm vm-app --direction Outbound --protocol TCP \
+  --local 10.20.2.4:50000 --remote 13.107.21.200:443 -o table
+</code></pre></div>
+<p>Ingin gambaran lengkapnya? Effective security rules menampilkan gabungan aturan di sebuah NIC, dengan <code>asg-web</code> dan
+service tag yang dijabarkan menjadi rentang alamat sungguhan:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>APP_NIC_ID=$(az vm show -g &quot;$RG&quot; -n vm-app --query &quot;networkProfile.networkInterfaces[0].id&quot; -o tsv)
+az network nic list-effective-nsg --ids &quot;$APP_NIC_ID&quot; \
+  --query &quot;value[].effectiveSecurityRules[].{name:name, priority:priority, direction:direction, access:access}&quot; -o table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Network Watcher › IP flow verify</em> menanyakan lima nilai yang sama dalam sebuah formulir, dan
+<em>Network Watcher › Effective security rules</em> menampilkan tampilan gabungan per NIC.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Allow · Deny · Deny · Allow · Allow, masing-masing dengan nama aturan yang memutuskan — misalnya
+<code>securityRules/Deny-VNet-Inbound</code> atau <code>defaultSecurityRules/DenyAllInBound</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--menerbitkan-nama-di-public-dns-zone" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Menerbitkan nama di public DNS zone</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--menerbitkan-nama-di-public-dns-zone" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Pembeli mengetik nama, bukan alamat IP. Buat sebuah public zone, tambahkan record <code>A</code> untuk <code>www</code> dan sebuah <code>CNAME</code>
+yang menjadikan <code>shop</code> alias dari <code>www</code>. Anda tidak memiliki domain <code>nusantara-retail-&lt;suffix&gt;.xyz</code>, jadi tidak ada
+seorang pun di internet yang akan diarahkan ke name server Azure Anda — tetapi Anda bisa bertanya langsung kepada name
+server itu, dan begitulah cara menguji sebuah zone sebelum mendelegasikan domain sungguhan.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network dns zone create -g &quot;$RG&quot; -n &quot;$ZONE&quot; --output none
+az network dns record-set a add-record -g &quot;$RG&quot; -z &quot;$ZONE&quot; -n www -a &quot;$WEB_IP&quot; --ttl 300 --output none
+az network dns record-set cname set-record -g &quot;$RG&quot; -z &quot;$ZONE&quot; -n shop -c &quot;www.$ZONE&quot; --ttl 300 --output none
+
+az network dns record-set list -g &quot;$RG&quot; -z &quot;$ZONE&quot; -o table
+
+NS1=$(az network dns zone show -g &quot;$RG&quot; -n &quot;$ZONE&quot; --query &quot;nameServers[0]&quot; -o tsv)
+echo &quot;Asking name server $NS1&quot;
+nslookup &quot;www.$ZONE&quot; &quot;$NS1&quot;
+nslookup &quot;shop.$ZONE&quot; &quot;$NS1&quot;
+
+# Without the name server, your normal resolver can&#x27;t find it: the domain isn&#x27;t delegated to Azure DNS.
+nslookup &quot;www.$ZONE&quot; || true
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Create a resource › DNS zone</em>, lalu <strong>+ Record set</strong> di dalam zone itu. Halaman <strong>Overview</strong>
+mencantumkan empat name server yang akan Anda berikan ke registrar domain. <code>dig @&quot;$NS1&quot; &quot;www.$ZONE&quot;</code> juga bisa
+dipakai di Cloud Shell.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> query <code>www</code> mengembalikan <code>$WEB_IP</code>; query <code>shop</code> menampilkan <code>canonical name = www.&lt;your zone&gt;</code>
+dan alamat yang sama; query terakhir gagal menemukan nama itu.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Pada suatu Jumat sore, Rizky &quot;memperketat keamanan&quot;. Tambahkan aturannya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network nsg rule create -g &quot;$RG&quot; --nsg-name nsg-app -n Deny-Web-Subnet \
+  --priority 90 --direction Inbound --access Deny --protocol &#x27;*&#x27; \
+  --source-address-prefixes 10.20.1.0/24 --source-port-ranges &#x27;*&#x27; \
+  --destination-address-prefixes &#x27;*&#x27; --destination-port-ranges &#x27;*&#x27; --output none
+</code></pre></div>
+<p>Tunggu sekitar 30 detik, lalu ulangi panggilan ke aplikasi dari Tugas 4:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>run_on vm-web &#x27;curl -s --max-time 5 http://10.20.2.4:8080/ || echo &quot;8080 BLOCKED&quot;&#x27;
+</code></pre></div>
+<p><strong>Gejala:</strong> <code>8080 BLOCKED</code>, padahal <code>Allow-Web-To-App-8080</code> masih ada. Temukan biang keroknya dengan bukti, lalu
+perbaiki.</p>
+<details class="plain"><summary>Petunjuk dan perbaikan</summary>
+<p>Jalankan lagi tes IP flow verify pertama dari Tugas 6. Kini jawabannya <strong>Deny</strong> dengan <code>securityRules/Deny-Web-Subnet</code>:
+prioritas 90 diperiksa sebelum allow Anda di 100, dan kecocokan pertama yang menang. Hapus aturan itu (atau ganti
+nomornya menjadi di atas 100 kalau Rizky memang benar-benar membutuhkannya):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network nsg rule delete -g &quot;$RG&quot; --nsg-name nsg-app -n Deny-Web-Subnet
+run_on vm-web &#x27;curl -s --max-time 5 http://10.20.2.4:8080/ || echo &quot;8080 BLOCKED&quot;&#x27;
+</code></pre></div>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Skrip ini butuh sekitar tiga menit karena menjalankan tes lalu
+lintas sungguhan lewat Run Command dan menanyakan aturan-aturan kunci kepada IP flow verify. Kalau ada pemeriksaan yang
+gagal, pesannya memberi tahu tugas mana yang perlu Anda ulangi.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Perintah ini menghapus resource group <code>rg-lunch08-&lt;suffix&gt;</code> beserta seluruh isinya: VM, disk, public IP, NAT gateway,
+NSG, ASG, dan DNS zone. Penghapusan berlanjut di latar belakang selama beberapa menit. Tidak ada yang dibuat di luar
+resource group: Network Watcher (di <code>NetworkWatcherRG</code>) adalah resource regional bersama yang gratis dan diaktifkan
+Azure untuk Anda, dan SSH key di <code>~/.ssh</code> dipakai ulang oleh lab-lab lain.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>curl</code> ke public IP VM web menggantung atau tidak mencetak apa-apa</td>
+<td>cloud-init masih menyalakan web server, aturan HTTP belum ada, atau NIC <code>vm-web</code> tidak ada di <code>asg-web</code></td>
+<td>Tunggu dua menit; periksa pemeriksaan di Tugas 2 dan Tugas 3; jalankan tes IP flow verify nomor 3 untuk port 80</td>
+</tr>
+<tr>
+<td><code>az vm create</code> gagal dengan <code>SkuNotAvailable</code></td>
+<td><code>$VM_SIZE_SMALL</code> tidak ditawarkan untuk subscription Anda di region ini</td>
+<td>Tampilkan ukuran yang tersedia dengan <code>az vm list-skus -l &quot;$LOCATION&quot; --size Standard_B -o table</code>, lalu <code>export VM_SIZE_SMALL=&lt;size&gt;</code> dan <code>source ../common/config.sh</code> lagi</td>
+</tr>
+<tr>
+<td><code>Operation could not be completed as it results in exceeding approved ... Cores quota</code></td>
+<td>Kuota vCPU kosong di region itu tidak cukup</td>
+<td>Hapus VM dari lab lain (<code>bash cleanup.sh</code> di folder masing-masing) atau minta tambahan kuota</td>
+</tr>
+<tr>
+<td><code>Run command extension execution is in progress. Please wait for completion before invoking a run command.</code></td>
+<td>Run Command hanya menjalankan satu skrip dalam satu waktu per VM</td>
+<td>Tunggu 30 detik lalu jalankan lagi</td>
+</tr>
+<tr>
+<td>Tes <em>sebelum</em> di Tugas 5 mencetak alamat IP alih-alih <code>NO OUTBOUND ACCESS</code></td>
+<td>Subnet-nya bukan private, atau NAT gateway sudah terpasang</td>
+<td><code>az network vnet subnet show -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n snet-app --query &quot;{private:defaultOutboundAccess, nat:natGateway.id}&quot;</code>. Kalau Anda menjadikan subnet private setelah membuat <code>vm-app</code>, deallocate lalu nyalakan lagi VM-nya</td>
+</tr>
+<tr>
+<td>Tes <em>sesudah</em> di Tugas 5 masih mencetak <code>NO OUTBOUND ACCESS</code></td>
+<td>Asosiasinya masih diterapkan, atau NAT gateway tidak punya public IP</td>
+<td>Tunggu satu menit lalu coba lagi; periksa <code>natGateway.id</code> di <code>snet-app</code> dan <code>az network nat gateway show -g &quot;$RG&quot; -n ng-nusa-app --query publicIpAddresses</code></td>
+</tr>
+<tr>
+<td><code>az network watcher test-ip-flow</code> melaporkan bahwa Network Watcher tidak aktif atau tidak ditemukan untuk region itu</td>
+<td>Anda memilih keluar (opt out) dari pengaktifan otomatis</td>
+<td><code>az network watcher configure -g NetworkWatcherRG -l &quot;$LOCATION&quot; --enabled true</code></td>
+</tr>
+<tr>
+<td>IP flow verify gagal hanya untuk satu VM</td>
+<td>VM itu sedang berhenti (deallocated)</td>
+<td><code>az vm start -g &quot;$RG&quot; -n &lt;vm&gt;</code></td>
+</tr>
+<tr>
+<td><code>nslookup</code> mengatakan <code>NXDOMAIN</code> bahkan dengan <code>$NS1</code></td>
+<td>Salah ketik di nama zone atau record, atau <code>$ZONE</code> belum disetel di shell ini</td>
+<td>Jalankan lagi blok <em>Sebelum mulai</em>; <code>az network dns record-set list -g &quot;$RG&quot; -z &quot;$ZONE&quot; -o table</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>Buat <code>asg-app</code>, tambahkan NIC milik <code>vm-app</code> ke dalamnya, lalu ubah <code>Allow-Web-To-App-8080</code> agar memakai
+<code>--destination-asgs asg-app</code>. Kini aturan Anda sama sekali tidak berisi alamat IP.</li>
+<li>Tambahkan <strong>alias record</strong> yang mengikuti resource public IP alih-alih menyalin alamatnya:
+<code>az network dns record-set a create -g &quot;$RG&quot; -z &quot;$ZONE&quot; -n store --target-resource &quot;$(az network public-ip show -g &quot;$RG&quot; -n pip-vm-web --query id -o tsv)&quot;</code>.</li>
+<li>Di portal, jalankan <strong>Network Watcher › Connection troubleshoot</strong> dari <code>vm-web</code> ke <code>10.20.2.4</code> port 8080, lalu ke
+port 22, dan bandingkan jawabannya dengan IP flow verify.</li>
+<li>Aktifkan <strong>VNet flow logs</strong> untuk <code>vnet-nusa-shop</code> di portal (<em>Network Watcher › Flow logs › Create</em>, target type
+<em>Virtual network</em>). Fitur ini membutuhkan storage account di region yang sama; hapus keduanya setelah selesai.</li>
+<li>Pelajari SKU NAT gateway <strong>StandardV2</strong> yang zone-redundant, yang membutuhkan public IP StandardV2, lalu tentukan
+kapan toko online akan membutuhkannya.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep). Gunakan nama-nama ini agar <code>verify.sh</code>
+bisa menemukan resource Anda:</p>
+<ol>
+<li>Resource group <code>rg-lunch08-&lt;suffix&gt;</code> (nilai dari <code>rg_name 08</code>) di <code>$LOCATION</code>, dibuat dengan <code>ensure_rg</code> agar
+membawa tag kursus.</li>
+<li>Virtual network <code>vnet-nusa-shop</code> dengan address space <code>10.20.0.0/16</code>, dan dua <strong>private subnet</strong> (tanpa default
+outbound access): <code>snet-web</code> <code>10.20.1.0/24</code> dan <code>snet-app</code> <code>10.20.2.0/24</code>.</li>
+<li>NSG <code>nsg-web</code> yang dikaitkan dengan <code>snet-web</code> dan NSG <code>nsg-app</code> yang dikaitkan dengan <code>snet-app</code>. Simpan semua
+aturan di kedua NSG subnet ini: network interface VM tidak punya NSG sendiri.</li>
+<li>Application security group <code>asg-web</code>.</li>
+<li>VM <code>vm-web</code> (<code>$VM_SIZE_SMALL</code>, <code>$VM_IMAGE</code>, <code>cloud-init-web.yml</code> bersama) di <code>snet-web</code>, dengan public IP
+Standard, dan NIC-nya di <code>asg-web</code>. HTTP (TCP 80) dari internet bisa menjangkaunya; SSH (TCP 22) dari internet
+tidak bisa.</li>
+<li>VM <code>vm-app</code> (<code>$VM_SIZE_SMALL</code>, <code>$VM_IMAGE</code>, <code>app-cloud-init.yml</code> milik lab ini) di <code>snet-app</code> <strong>tanpa</strong> public IP.
+Anggota <code>asg-web</code> bisa menjangkaunya hanya di TCP 8080; lalu lintas lain dari dalam VNet (misalnya TCP 22 dari
+<code>vm-web</code>) ditolak.</li>
+<li>NAT gateway dengan public IP Standard yang terpasang di <code>snet-app</code>; koneksi keluar <code>vm-app</code> berangkat dari IP
+tersebut.</li>
+<li>Public DNS zone di resource group itu dengan record <code>A</code> <code>www</code> yang menunjuk ke public IP <code>vm-web</code> dan record <code>CNAME</code>
+<code>shop</code> yang menunjuk ke <code>www.&lt;your zone&gt;</code>.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="07-storage-basic.html"><small>← Lab sebelumnya</small>07 · Menyimpan gambar produk dan faktur</a><a class="next" href="09-load-balancing-basic.html"><small>Lab berikutnya →</small>09 · Menjaga toko tetap buka saat server gagal</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/08-networking-basic/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

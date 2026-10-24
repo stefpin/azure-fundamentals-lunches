@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 16 · Tahu lebih dulu daripada pelanggan · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 16: Tahu lebih dulu daripada pelanggan. sekitar 45 menit, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/16-monitoring-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/16-monitoring-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/16-monitoring-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/16-monitoring-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 16 · Tahu lebih dulu daripada pelanggan">
+<meta property="og:description" content="Lab Azure praktik 16: Tahu lebih dulu daripada pelanggan. sekitar 45 menit, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/16-monitoring-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="16" style="--c:#d98a00">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/16-monitoring-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#d98a00">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 16</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>16</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Tahu lebih dulu daripada pelanggan</h1>
+        <p class="lab-story">🏪 <b>Episode 16 · Pelanggan Tahu Duluan</b> — Instagram sudah ramai membahas toko yang lambat empat puluh menit sebelum Anda menyadarinya. <a href="../lunches/16-monitoring-basic.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 45 menit</span>
+          <span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★☆☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 9 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--melihat-apa-yang-sudah-dikumpulkan-azure">Tugas 1 · Melihat apa yang sudah dikumpulkan Azure</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--membuat-action-group-yang-mengirim-email-kepada-anda">Tugas 2 · Membuat action group yang mengirim email kepada Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--membuat-metric-alert-untuk-cpu">Tugas 3 · Membuat metric alert untuk CPU</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--membuat-cpu-ngos-ngosan-dan-menangkap-alert-nya">Tugas 4 · Membuat CPU ngos-ngosan dan menangkap alert-nya</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--mendengar-kabar-masalah-azure-service-health-alert">Tugas 5 · Mendengar kabar masalah Azure: Service Health alert</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--siapa-yang-menghentikan-toko--activity-log-alert-dan-sebuah-kueri">Tugas 6 · &quot;Siapa yang menghentikan toko?&quot; — activity log alert dan sebuah kueri</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--meminta-pendapat-kedua-dari-advisor">Tugas 7 · Meminta pendapat kedua dari Advisor</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/cpu-load.sh" target="_blank" rel="noopener"><span>cpu-load.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/16-monitoring-basic" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Jumat lalu, pelanggan Nusantara Retail menyadari toko yang lambat sebelum ada seorang pun di kantor pusat yang tahu,
+dan pada hari Sabtu tidak ada yang bisa menjawab siapa yang menghentikan VM toko online. Di lab ini Anda membangun
+sistem peringatan dini yang mengatasi kedua masalah itu. <code>setup.sh</code> memberi Anda sebuah VM toko online yang kecil. Anda
+menambahkan action group yang mengirim email kepada Anda, metric alert untuk CPU, activity log alert yang menangkap VM
+yang di-deallocate, dan Service Health alert untuk subscription Anda. Setelah itu Anda sengaja membuat CPU ngos-ngosan
+dan menerima alert-nya, menjawab &quot;siapa pelakunya?&quot; dari activity log, meminta saran dari Advisor, dan memperbaiki alert
+rule milik seorang rekan yang tidak pernah terpicu.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch16-&amp;lt;suffix&amp;gt;&quot;]
+    VM[&quot;vm-nusa-web&lt;br/&gt;VM toko online&quot;]
+    MA[&quot;alert-cpu-high&lt;br/&gt;metric alert&quot;]
+    DA[&quot;alert-vm-deallocated&lt;br/&gt;activity log alert&quot;]
+    SH[&quot;alert-service-health&lt;br/&gt;activity log alert&quot;]
+    AG[&quot;ag-nusa-oncall&lt;br/&gt;action group&quot;]
+  end
+  SUB[(&quot;Subscription Anda&lt;br/&gt;event Service Health&quot;)]
+  VM -- Percentage CPU --&gt; MA
+  VM -- activity log --&gt; DA
+  SUB --&gt; SH
+  MA --&gt; AG
+  DA --&gt; AG
+  SH --&gt; AG
+  AG -- email --&gt; YOU[&quot;Kotak masuk Anda&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang.</li>
+<li>Alamat email yang bisa Anda baca di ponsel selama lab berlangsung (alamat pribadi pun tidak masalah).</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/16-monitoring-basic
+source ../common/config.sh
+RG=$(rg_name 16)
+export ALERT_EMAIL=&quot;you@example.com&quot;     # change this to your own address
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya — satu VM Linux kecil tanpa port masuk (inbound) yang terbuka. Prosesnya sekitar 3–5 menit:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab dikenai biaya selama masih ada. Selalu akhiri dengan bagian <strong>Bersihkan</strong>, bahkan jika Anda berhenti di
+tengah jalan.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Cloud Shell terputus setelah sekitar 20 menit tanpa ketikan. Jika itu terjadi, sambungkan lagi dan muat ulang
+variabelnya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>cd ~/azure-fundamentals-lunches/labs/16-monitoring-basic &amp;&amp; source ../common/config.sh
+RG=$(rg_name 16); export ALERT_EMAIL=&quot;you@example.com&quot;
+VM_ID=$(az vm show -g &quot;$RG&quot; -n vm-nusa-web --query id -o tsv)
+AG_ID=$(az monitor action-group show -g &quot;$RG&quot; -n ag-nusa-oncall --query id -o tsv 2&gt;/dev/null)
+</code></pre></div>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–7 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--melihat-apa-yang-sudah-dikumpulkan-azure" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Melihat apa yang sudah dikumpulkan Azure</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--melihat-apa-yang-sudah-dikumpulkan-azure" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sebelum membangun apa pun, lihat dulu data yang Anda dapatkan secara gratis: metrik platform dan activity log. Tanpa
+agent, tanpa workspace, tanpa pengaturan.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>VM_ID=$(az vm show --resource-group &quot;$RG&quot; --name vm-nusa-web --query id --output tsv)
+
+# Which CPU metrics does a VM publish?
+az monitor metrics list-definitions --resource &quot;$VM_ID&quot; \
+  --query &quot;[?contains(name.value, &#x27;CPU&#x27;)].{metric:name.value, unit:unit, aggregation:primaryAggregationType}&quot; \
+  --output table
+
+# The last hour of CPU in 5-minute buckets
+az monitor metrics list --resource &quot;$VM_ID&quot; --metric &quot;Percentage CPU&quot; \
+  --interval PT5M --aggregation Average Maximum \
+  --query &quot;value[0].timeseries[0].data[].{time:timeStamp, avg:average, max:maximum}&quot; \
+  --output table
+
+# Who created the VM? The activity log already knows.
+az monitor activity-log list --resource-group &quot;$RG&quot; --offset 2h \
+  --query &quot;[?operationName.value==&#x27;Microsoft.Compute/virtualMachines/write&#x27;].{time:eventTimestamp, caller:caller, status:status.value}&quot; \
+  --output table
+</code></pre></div>
+<p>Anda akan melihat metrik seperti <em>CPU Credits Remaining</em>: <code>$VM_SIZE_SMALL</code> adalah ukuran B-series yang burstable, yang
+hanya bisa berlari dengan kecepatan penuh selama masih punya CPU credit. Ibaratnya kuota internet: selama kuotanya masih
+ada, kecepatannya penuh. VM baru dimulai dengan credit yang cukup untuk lab ini.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka memakai portal?</strong> Buka VM, lalu <em>Monitoring › Metrics</em> dan pilih <em>Percentage CPU</em>; ganti agregasinya
+antara Avg dan Max, lalu perhatikan garisnya berubah. Setelah itu buka <em>Activity log</em> di menu VM.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Anda melihat <em>Percentage CPU</em> di daftar definisi, satu kolom berisi nilai CPU yang rendah (VM
+sedang menganggur), dan satu atau beberapa baris activity log untuk <code>virtualMachines/write</code> dengan akun <strong>Anda</strong> sebagai
+caller.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--membuat-action-group-yang-mengirim-email-kepada-anda" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Membuat action group yang mengirim email kepada Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--membuat-action-group-yang-mengirim-email-kepada-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Action group adalah daftar &quot;siapa yang diberi tahu&quot;. Satu grup bisa melayani banyak alert rule, jadi Anda membuatnya
+lebih dulu.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor action-group create \
+  --resource-group &quot;$RG&quot; \
+  --name ag-nusa-oncall \
+  --short-name nusaoncall \
+  --action email oncall-email &quot;$ALERT_EMAIL&quot; usecommonalertschema \
+  --output none
+
+AG_ID=$(az monitor action-group show --resource-group &quot;$RG&quot; --name ag-nusa-oncall --query id --output tsv)
+
+az monitor action-group show --resource-group &quot;$RG&quot; --name ag-nusa-oncall \
+  --query &quot;{enabled:enabled, shortName:groupShortName, receivers:emailReceivers[].{name:name, status:status, commonSchema:useCommonAlertSchema}}&quot; \
+  --output yaml
+</code></pre></div>
+<ul>
+<li><code>--short-name</code> (maksimal 12 karakter) muncul di pesan SMS.</li>
+<li><code>--action email &lt;receiver-name&gt; &lt;address&gt; usecommonalertschema</code> menambahkan satu penerima email (receiver) yang memakai
+common alert schema.</li>
+<li>Email alert dikirim dari alamat no-reply milik Microsoft (misalnya <code>azure-noreply@microsoft.com</code>). Jika Anda memakai
+kotak surat kantor dengan filter yang ketat, tambahkan pengirim itu ke daftar aman (safe list).</li>
+</ul>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka memakai portal?</strong> <em>Monitor › Alerts › Action groups › Create</em>. Setelah menyimpan, buka grupnya dan pilih
+<strong>Test action group</strong> untuk mengirim email contoh kepada diri sendiri — cara terbaik untuk menemukan masalah folder
+spam sejak awal.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>enabled: true</code> dan satu receiver bernama <code>oncall-email</code> dengan status <code>Enabled</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--membuat-metric-alert-untuk-cpu" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Membuat metric alert untuk CPU</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--membuat-metric-alert-untuk-cpu" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sekarang rule-nya: &quot;setiap menit, rata-ratakan CPU selama lima menit terakhir; jika di atas 70%, picu alert Sev 2 dan
+jalankan action group&quot;.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor metrics alert create \
+  --resource-group &quot;$RG&quot; \
+  --name alert-cpu-high \
+  --scopes &quot;$VM_ID&quot; \
+  --condition &quot;avg Percentage CPU &gt; 70&quot; \
+  --window-size 5m \
+  --evaluation-frequency 1m \
+  --severity 2 \
+  --action &quot;$AG_ID&quot; \
+  --description &quot;Storefront VM: average CPU above 70% for 5 minutes&quot; \
+  --output none
+
+az monitor metrics alert show --resource-group &quot;$RG&quot; --name alert-cpu-high \
+  --query &quot;{enabled:enabled, severity:severity, window:windowSize, every:evaluationFrequency, metric:criteria.allOf[0].metricName, aggregation:criteria.allOf[0].timeAggregation, operator:criteria.allOf[0].operator, threshold:criteria.allOf[0].threshold, autoResolve:autoMitigate}&quot; \
+  --output yaml
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Arti</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--condition &quot;avg Percentage CPU &gt; 70&quot;</code></td>
+<td>agregasi (<code>avg</code>), nama metrik, operator, dan ambang batas (threshold)</td>
+</tr>
+<tr>
+<td><code>--window-size 5m</code></td>
+<td>periode lookback: seberapa banyak data yang dilihat pada setiap evaluasi</td>
+</tr>
+<tr>
+<td><code>--evaluation-frequency 1m</code></td>
+<td>seberapa sering rule dijalankan</td>
+</tr>
+<tr>
+<td><code>--severity 2</code></td>
+<td>Sev 0 berarti kritis, Sev 4 berarti verbose</td>
+</tr>
+<tr>
+<td><code>--action &quot;$AG_ID&quot;</code></td>
+<td>action group mana yang dijalankan saat rule terpicu</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka memakai portal?</strong> VM › <em>Alerts</em> › <em>Create</em> › <em>Alert rule</em>. Signal <em>Percentage CPU</em>, threshold <em>Static</em>,
+aggregation <em>Average</em>, operator <em>Greater than</em>, value <em>70</em>, check every <em>1 minute</em>, lookback period <em>5 minutes</em>. Pilih
+<code>ag-nusa-oncall</code> di tab <em>Actions</em>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> output menampilkan <code>enabled: true</code>, <code>window: PT5M</code>, <code>every: PT1M</code>, <code>aggregation: Average</code>,
+<code>operator: GreaterThan</code>, dan <code>threshold: 70.0</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--membuat-cpu-ngos-ngosan-dan-menangkap-alert-nya" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Membuat CPU ngos-ngosan dan menangkap alert-nya</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--membuat-cpu-ngos-ngosan-dan-menangkap-alert-nya" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Saatnya menguji alarm. Anda akan menjalankan skrip kecil <strong>di dalam</strong> VM dengan <strong>Run Command</strong> — tanpa SSH, tanpa port
+yang terbuka, tanpa memasang paket apa pun. Lihat dulu isinya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>cat cpu-load.sh
+</code></pre></div>
+<p>Skrip ini menjalankan satu loop sibuk (busy loop) untuk setiap vCPU, dibungkus dengan <code>timeout</code>, sehingga bebannya
+berhenti dengan sendirinya. Mulai beban selama 15 menit:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke \
+  --resource-group &quot;$RG&quot; \
+  --name vm-nusa-web \
+  --command-id RunShellScript \
+  --scripts @cpu-load.sh \
+  --parameters 15 \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Run Command butuh 20–60 detik untuk mengembalikan hasil. Setelah itu, saksikan CPU naik (jalankan perintah ini lagi
+setiap beberapa menit):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor metrics list --resource &quot;$VM_ID&quot; --metric &quot;Percentage CPU&quot; \
+  --interval PT1M --offset 20m --aggregation Average \
+  --query &quot;value[0].timeseries[0].data[].{time:timeStamp, avg:average}&quot; \
+  --output table
+</code></pre></div>
+<p>CPU seharusnya mendekati 100% dalam dua atau tiga menit, dan email alert tiba sekitar 5–10 menit setelah Anda memulai
+beban. Sambil menunggu, baca lagi bagian 3 dari bacaan makan siang, atau buka <em>Monitor › Alerts</em> di portal dan filter
+berdasarkan resource group Anda untuk melihat alert-nya muncul.</p>
+<p>Setelah email-nya tiba, Anda bisa menghentikan beban lebih awal tanpa menunggu timer habis:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-nusa-web --command-id RunShellScript \
+  --scripts @cpu-load.sh --parameters stop --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Beberapa menit setelah CPU turun, rule itu resolved dengan sendirinya dan mengirim email kedua, &quot;Resolved&quot; — metric
+alert bersifat stateful.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka memakai portal?</strong> VM › <em>Operations › Run command › RunShellScript</em>, tempel isi <code>cpu-load.sh</code> dan ganti
+<code>${1:-10}</code> dengan jumlah menit. Output-nya muncul di portal saat skrip selesai.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> email dari Azure Monitor yang menyebutkan <code>alert-cpu-high</code> dan Sev 2 ada di kotak masuk Anda, dan
+alert-nya muncul di <em>Monitor › Alerts</em> dengan monitor condition <strong>Fired</strong> (kemudian <strong>Resolved</strong>).</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--mendengar-kabar-masalah-azure-service-health-alert" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Mendengar kabar masalah Azure: Service Health alert</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--mendengar-kabar-masalah-azure-service-health-alert" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Service Health alert memberi tahu Anda ketika Azure memublikasikan insiden, pemeliharaan terencana, atau advisory yang
+memengaruhi layanan yang Anda pakai. Rule-nya berupa activity log alert. Rule ini <em>disimpan</em> di resource group lab Anda
+(sehingga ikut terhapus saat pembersihan), tetapi <em>cakupannya</em> adalah seluruh subscription.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>SUB_ID=$(az account show --query id --output tsv)
+
+az monitor activity-log alert create \
+  --resource-group &quot;$RG&quot; \
+  --name alert-service-health \
+  --scope &quot;/subscriptions/$SUB_ID&quot; \
+  --condition category=ServiceHealth \
+  --action-group &quot;$AG_ID&quot; \
+  --description &quot;Azure service issues, planned maintenance and advisories for this subscription&quot; \
+  --output none
+
+az monitor activity-log alert show --resource-group &quot;$RG&quot; --name alert-service-health \
+  --query &quot;{enabled:enabled, location:location, scope:scopes[0], condition:condition.allOf}&quot; --output yaml
+</code></pre></div>
+<p>Jangan berharap ada email hari ini: alert ini hanya terpicu ketika Azure memublikasikan event Service Health yang
+memengaruhi Anda.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka memakai portal?</strong> <em>Service Health › Health alerts › Create service health alert</em> memungkinkan Anda
+mencentang layanan, region, dan jenis event (service issue, planned maintenance, health advisory, security advisory),
+alih-alih mendengarkan semuanya. Begitulah yang Anda lakukan di produksi.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>enabled: true</code>, <code>location: Global</code>, scope-nya <code>/subscriptions/&lt;your-subscription-id&gt;</code>, dan
+condition-nya berisi <code>category</code> yang bernilai <code>ServiceHealth</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--siapa-yang-menghentikan-toko--activity-log-alert-dan-sebuah-kueri" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">&quot;Siapa yang menghentikan toko?&quot; — activity log alert dan sebuah kueri</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--siapa-yang-menghentikan-toko--activity-log-alert-dan-sebuah-kueri" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Pertama, alarmnya: activity log alert yang terpicu setiap kali sebuah VM di resource group ini di-deallocate.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>RG_ID=$(az group show --name &quot;$RG&quot; --query id --output tsv)
+
+az monitor activity-log alert create \
+  --resource-group &quot;$RG&quot; \
+  --name alert-vm-deallocated \
+  --scope &quot;$RG_ID&quot; \
+  --condition &quot;category=Administrative and operationName=Microsoft.Compute/virtualMachines/deallocate/action and status=Succeeded&quot; \
+  --action-group &quot;$AG_ID&quot; \
+  --description &quot;A VM in this resource group was deallocated&quot; \
+  --output none
+</code></pre></div>
+<p>Sekarang berperanlah sebagai Rizky dan hentikan VM-nya. Langkah ini juga menghentikan argo biaya komputasi, kabar baik
+untuk anggaran (budget) Anda:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm deallocate --resource-group &quot;$RG&quot; --name vm-nusa-web
+</code></pre></div>
+<p>Lalu jawab pertanyaan Ibu Sari dari activity log. Entri baru bisa butuh beberapa menit untuk muncul, jadi ulangi
+perintahnya jika tabelnya masih kosong:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor activity-log list --resource-group &quot;$RG&quot; --offset 1h \
+  --query &quot;[?operationName.value==&#x27;Microsoft.Compute/virtualMachines/deallocate/action&#x27;].{time:eventTimestamp, caller:caller, status:status.value}&quot; \
+  --output table
+</code></pre></div>
+<p>Email alert biasanya tiba dalam beberapa menit; activity log alert bisa butuh waktu hingga sekitar 20 menit.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka memakai portal?</strong> <em>Monitor › Activity log</em>, filter berdasarkan resource group dan operasi <em>Deallocate
+Virtual Machine</em>, lalu buka salah satu entri: bagian <strong>Summary</strong> menampilkan <em>Event initiated by</em>. Setelah itu buka
+<em>Help › Resource health</em> milik VM: VM ditampilkan sebagai unavailable karena seorang pengguna menghentikannya — &quot;kita&quot;,
+bukan Azure.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tabel menampilkan operasi deallocate dengan akun <strong>Anda</strong> sebagai caller dan sebuah baris
+<code>Succeeded</code>, dan email untuk <code>alert-vm-deallocated</code> tiba.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--meminta-pendapat-kedua-dari-advisor" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Meminta pendapat kedua dari Advisor</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--meminta-pendapat-kedua-dari-advisor" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Advisor meninjau subscription Anda secara gratis. Tampilkan rekomendasinya, lalu filter berdasarkan kategori:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az advisor recommendation list \
+  --query &quot;[].{category:category, impact:impact, problem:shortDescription.problem, resource:impactedValue}&quot; \
+  --output table
+
+az advisor recommendation list --category Cost --output table
+</code></pre></div>
+<p>Kategori di CLI adalah <code>HighAvailability</code> (ditampilkan sebagai Reliability di portal), <code>Security</code>, <code>Performance</code>, <code>Cost</code>,
+dan <code>OperationalExcellence</code>. Advisor menganalisis resource secara berkala, jadi VM yang benar-benar baru bisa butuh waktu
+hingga satu hari untuk mendapat rekomendasi; yang Anda lihat sekarang mungkin menyangkut resource lain di subscription
+Anda, atau daftarnya mungkin kosong.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka memakai portal?</strong> Cari <strong>Advisor</strong>. Halaman overview menampilkan lima kategori dan <strong>Advisor score</strong>
+Anda. Buka sebuah rekomendasi untuk melihat resource yang terdampak serta opsi <em>Postpone</em> dan <em>Dismiss</em>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> perintahnya berjalan tanpa error. Catat satu rekomendasi (jika ada) beserta kategorinya. Daftar
+kosong adalah hasil yang sah untuk subscription yang masih baru.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Rizky menyalin alert CPU untuk tim operasional, &quot;supaya alarm palsunya lebih sedikit&quot;. Buat rule-nya persis seperti yang
+ia buat:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor metrics alert create \
+  --resource-group &quot;$RG&quot; \
+  --name alert-cpu-rizky \
+  --scopes &quot;$VM_ID&quot; \
+  --condition &quot;min Percentage CPU &gt; 70&quot; \
+  --window-size 1h \
+  --evaluation-frequency 15m \
+  --severity 3 \
+  --action &quot;$AG_ID&quot; \
+  --description &quot;Rizky&#x27;s CPU alert&quot; \
+  --output none
+</code></pre></div>
+<p><strong>Gejala:</strong> selama flash sale 15 menit dengan CPU 100%, <code>alert-cpu-high</code> terpicu, tetapi <code>alert-cpu-rizky</code> tidak
+pernah. Anda tidak perlu menjalankan beban lagi untuk membuktikannya: lihat apa yang akan dilihat setiap rule selama
+lonjakan di Tugas 4.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code># Hourly view: what Rizky&#x27;s rule evaluates
+az monitor metrics list --resource &quot;$VM_ID&quot; --metric &quot;Percentage CPU&quot; \
+  --interval PT1H --offset 3h --aggregation Minimum Average Maximum \
+  --query &quot;value[0].timeseries[0].data[].{hour:timeStamp, min:minimum, avg:average, max:maximum}&quot; \
+  --output table
+
+# 5-minute view: the windows where the good rule saw an average above 70
+az monitor metrics list --resource &quot;$VM_ID&quot; --metric &quot;Percentage CPU&quot; \
+  --interval PT5M --offset 3h --aggregation Average \
+  --query &quot;value[0].timeseries[0].data[?average &gt; \`70\`].{time:timeStamp, avg:average}&quot; \
+  --output table
+</code></pre></div>
+<details class="plain"><summary>Petunjuk: mengapa rule itu tidak pernah terpicu, dan bagaimana memperbaikinya?</summary>
+<p>Dua pilihan membuat rule itu buta:</p>
+<ul>
+<li><strong>Minimum</strong> berarti &quot;nilai terendah dalam window&quot;. Agar nilai minimum melebihi 70, CPU harus bertahan di atas 70%
+<em>sepanjang</em> window.</li>
+<li><strong>Window satu jam</strong> berarti satu jam penuh. Lonjakan Anda hanya berlangsung 15 menit, sehingga nilai minimum per jam
+tetap rendah (lihat kolom <code>min</code>), bahkan rata-rata per jamnya pun tetap jauh di bawah 70.</li>
+</ul>
+<p>Agregasi pada kondisi yang sudah ada tidak bisa diganti hanya dengan satu flag, jadi ganti rule-nya (atau hapus saja:
+<code>alert-cpu-high</code> sudah menangani kasus ini, dan rule ganda berarti email ganda):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor metrics alert delete --resource-group &quot;$RG&quot; --name alert-cpu-rizky
+
+az monitor metrics alert create \
+  --resource-group &quot;$RG&quot; \
+  --name alert-cpu-rizky \
+  --scopes &quot;$VM_ID&quot; \
+  --condition &quot;avg Percentage CPU &gt; 70&quot; \
+  --window-size 5m \
+  --evaluation-frequency 1m \
+  --severity 3 \
+  --action &quot;$AG_ID&quot; \
+  --description &quot;Rizky&#x27;s CPU alert, fixed: average over 5 minutes&quot; \
+  --output none
+</code></pre></div>
+<p>Ingin bukti? Nyalakan VM (<code>az vm start -g &quot;$RG&quot; -n vm-nusa-web</code>), jalankan lagi beban dari Tugas 4 selama 10 menit, dan
+saksikan kedua rule terpicu. Setelah itu, deallocate lagi VM-nya.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan harus menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu Anda
+ulangi. Atur <code>ALERT_EMAIL</code> sebelum menjalankannya agar alamat receiver juga ikut diperiksa.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Skrip ini menghapus resource group <code>rg-lunch16-&lt;suffix&gt;</code> beserta seluruh isinya: VM, disk-nya, network interface, IP
+publik, network security group, dan virtual network, action group, serta keempat alert rule — termasuk Service Health
+alert, yang tinggal di resource group walaupun mengawasi seluruh subscription. Tidak ada yang dibuat di luar resource
+group. Penghapusan berlanjut di latar belakang selama beberapa menit. Alert yang sudah terpicu tetap terlihat hingga 30
+hari dan entri activity log hingga 90 hari; keduanya tidak dikenai biaya.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>(ResourceGroupNotFound) Resource group 'rg-lunch16-…' could not be found.</code></td>
+<td><code>setup.sh</code> belum dijalankan, atau Cloud Shell ini memakai akhiran (suffix) acak yang berbeda</td>
+<td>jalankan <code>bash setup.sh</code>; periksa akhirannya dengan <code>cat ~/.azlunches-suffix</code></td>
+</tr>
+<tr>
+<td>Tidak ada email alert 15 menit setelah beban dimulai</td>
+<td>email-nya masuk folder spam, receiver-nya berhenti berlangganan (unsubscribed), atau CPU tidak pernah melewati 70%</td>
+<td>periksa folder junk; jalankan perintah <code>show</code> di Tugas 2 — jika status receiver bukan <code>Enabled</code>, jalankan <code>az monitor action-group enable-receiver --resource-group &quot;$RG&quot; --action-group-name ag-nusa-oncall --name oncall-email</code>; periksa nilai CPU dari Tugas 4</td>
+</tr>
+<tr>
+<td>CPU bertahan di sekitar 10–20% saat beban berjalan</td>
+<td>VM burstable sudah menghabiskan CPU credit-nya dan ditahan di level baseline</td>
+<td>periksa metrik <em>CPU Credits Remaining</em>; hentikan beban, tunggu, lalu coba durasi yang lebih pendek — atau pakai ukuran yang lebih besar dengan mengatur <code>VM_SIZE_SMALL</code> sebelum menjalankan <code>setup.sh</code></td>
+</tr>
+<tr>
+<td><code>(Conflict) Run command extension execution is in progress. Please wait for completion before invoking a run command.</code></td>
+<td>Run Command hanya menjalankan satu skrip dalam satu waktu</td>
+<td>tunggu satu menit, lalu coba lagi</td>
+</tr>
+<tr>
+<td>Run Command berjalan bermenit-menit dan tidak mengembalikan apa pun</td>
+<td>VM masih booting, atau tidak bisa menjangkau Azure lewat HTTPS untuk mengembalikan output</td>
+<td>tunggu dua menit setelah membuat atau menyalakan VM; pastikan VM masih punya IP publik (IP itulah yang menyediakan akses keluar)</td>
+</tr>
+<tr>
+<td>Alert deallocate belum tiba setelah 10 menit</td>
+<td>event activity log bisa butuh hingga sekitar 20 menit untuk mencapai sistem alert</td>
+<td>tunggu, lalu periksa condition rule-nya dengan kueri di Tugas 6 dan <code>az monitor activity-log alert show</code></td>
+</tr>
+<tr>
+<td><code>az advisor recommendation list</code> tidak mencetak apa pun</td>
+<td>Advisor belum menganalisis resource yang baru</td>
+<td>itu normal; coba <code>az advisor recommendation list --refresh</code> atau lihat lagi besok di portal</td>
+</tr>
+<tr>
+<td>Error tentang kombinasi window size dan frequency</td>
+<td>sebagian kombinasi lookback dan frequency tidak diizinkan</td>
+<td>gunakan nilai di panduan ini (5 menit dan 1 menit)</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li><strong>Resource Health alert:</strong> buat activity log alert dengan <code>--condition category=ResourceHealth</code> dan
+<code>--scope &quot;$VM_ID&quot;</code>, lalu deallocate dan nyalakan lagi VM-nya, kemudian bandingkan email-nya dengan email dari Tugas 6.</li>
+<li><strong>Jam tenang:</strong> di <em>Monitor › Alerts › Alert processing rules</em>, buat aturan yang meredam notifikasi untuk resource
+group Anda selama jendela pemeliharaan mingguan, lalu uji dengan Tugas 4.</li>
+<li><strong>Dynamic threshold:</strong> buat rule CPU kedua dengan <code>--condition &quot;avg Percentage CPU &gt; dynamic medium 2 of 4&quot;</code> dan
+pelajari bagaimana Azure mengenali pola normalnya.</li>
+<li><strong>SMS:</strong> tambahkan receiver SMS dengan <code>az monitor action-group update --add-action sms …</code> (pastikan dulu negara Anda
+didukung).</li>
+<li><strong>Ingatan lebih panjang:</strong> ekspor activity log ke Log Analytics workspace (<em>Monitor › Activity log › Export Activity
+Logs</em>) dan kueri tabel <code>AzureActivity</code> — cuplikan awal Makan Siang 30.</li>
+<li><strong>Tampilan satu halaman:</strong> sematkan grafik CPU ke Azure dashboard, atau buka <em>Monitor › Dashboards with Grafana</em> dan
+jelajahi dashboard VM yang sudah tersedia.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Jalankan <code>bash setup.sh</code> untuk mendapatkan resource group <code>rg-lunch16-&lt;suffix&gt;</code> dengan VM <code>vm-nusa-web</code>. Lalu bangun
+hal-hal berikut di resource group tersebut, dengan cara apa pun yang Anda suka (portal, CLI, Bicep):</p>
+<ol>
+<li>Action group bernama <code>ag-nusa-oncall</code> dengan setidaknya satu receiver email.</li>
+<li>Metric alert bernama <code>alert-cpu-high</code> pada <code>vm-nusa-web</code>: <strong>Average</strong> <em>Percentage CPU</em> <strong>lebih besar dari 70</strong> dalam
+window <strong>5 menit</strong>, dalam keadaan aktif, dan tersambung ke action group.</li>
+<li>Activity log alert bernama <code>alert-service-health</code>, disimpan di resource group, <strong>dengan cakupan seluruh subscription
+Anda</strong>, untuk kategori <strong>ServiceHealth</strong>, dan tersambung ke action group.</li>
+<li>Activity log alert bernama <code>alert-vm-deallocated</code> yang terpicu saat sebuah VM di resource group <strong>di-deallocate</strong>, dan
+tersambung ke action group.</li>
+<li>Buktikan semuanya berfungsi: terima email alert CPU saat VM diberi beban, dan email deallocate setelah VM dihentikan.</li>
+<li>Jika Anda membuat rule Rizky (<code>alert-cpu-rizky</code>), pastikan rule itu memakai agregasi <strong>Average</strong> dan window
+<strong>15 menit atau kurang</strong> — atau hapus saja.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="15-security-essentials.html"><small>← Lab sebelumnya</small>15 · Keluarkan kata sandi dari file konfigurasi</a><a class="next" href="17-backup-disaster-recovery.html"><small>Lab berikutnya →</small>17 · Latihan pemulihan data</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

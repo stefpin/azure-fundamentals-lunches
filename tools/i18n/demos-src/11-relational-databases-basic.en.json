@@ -1,0 +1,178 @@
+{
+  "page": {
+    "doc_title": "Lunch 11 · Relational Databases (Basic): Azure SQL — Interactive demo",
+    "kicker": "Lunch 11 · Relational Databases (Basic) · Interactive demo",
+    "title": "Which database, how to get in, and what you pay",
+    "lede": "Follow Nusantara Retail's orders through a “which database?” decision tree, a connection that meets the gateway, the firewall and Microsoft Entra ID, and a serverless database that pauses itself. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Choosing a database for Nusantara Retail's orders, connecting through the Azure SQL gateway and firewall, and serverless auto-pause",
+    "svgDesc": "Scene one is a decision tree that asks about the data, the engine and the control needed, and ends at Azure SQL Database. Scene two follows a client connection through the regional gateway, the server firewall and Microsoft Entra authentication. Scene three shows a serverless database that pauses when idle and resumes on the next connection, and the free offer allowance."
+  },
+  "steps": [
+    {
+      "title": "The orders need a new home",
+      "text": "Nusantara Retail's orders still live in SQL Server Express on the server next to the pantry. Before you pick a product, ask questions about the data itself. Step through the tree with Next, or jump to any step in the list. The first question: is this relational data, with tables, keys and transactions?"
+    },
+    {
+      "title": "Question 1: relational or not?",
+      "text": "An order is a row linked to customer, product and order-line rows, and a payment must update several of them together or not at all. That is relational data with ACID transactions, so the answer is yes. A catalogue whose items all have different attributes, or a global shopping cart, would follow the No branch to Azure Cosmos DB, the topic of Lunch 12."
+    },
+    {
+      "title": "Questions 2 and 3: engine, control",
+      "text": "Dewi's code already speaks T-SQL, so the SQL Server engine stays; apps built on open-source engines would go to Azure Database for PostgreSQL or MySQL flexible server. Next: does anyone need the operating system or an old SQL Server version? Only then is SQL Server on Azure VMs worth the patching, backups and clustering you would own. Nobody does, so the answer is no."
+    },
+    {
+      "title": "The answer: Azure SQL Database",
+      "text": "Last question: does the app need instance features such as SQL Server Agent jobs, cross-database queries or CLR? Finance's old accounting package does, so it would land on SQL Managed Instance. The orders app does not, so the path ends at Azure SQL Database: a fully managed single database, with patching, backups and high availability handled by Microsoft."
+    },
+    {
+      "title": "A connection's journey begins",
+      "text": "Now connect to it. Your client resolves sql-nusa-ab12c.database.windows.net to a regional gateway that listens on TCP port 1433. With the Redirect policy, clients inside Azure are then sent straight to the node that hosts the database; with Proxy, traffic keeps flowing through the gateway. The default uses Redirect inside Azure and Proxy from outside. But the server firewall gets a say first."
+    },
+    {
+      "title": "Closed by default",
+      "text": "A brand-new server allows no IP address at all. Your connection reaches the gateway, the firewall finds no matching rule, and the attempt ends with error 40615, which names the refused client IP. Authentication has not even started yet. This is the safest possible default: nothing gets in until you decide who may."
+    },
+    {
+      "title": "Open the door for one IP",
+      "text": "You add a server-level firewall rule for exactly one address: your client's public IP, here called IP A. Your connection now passes, shown in green. The unknown client at IP B is still stopped at the firewall, shown in red. Resist the Allow Azure services switch: it admits every address inside Azure. And remember that Cloud Shell's IP can change between sessions.",
+      "set": {
+        "t-fw-rules": "rule: allow IP A only"
+      }
+    },
+    {
+      "title": "Prove who you are with Entra",
+      "text": "Passing the firewall only gets you to the sign-in. This server uses Microsoft Entra-only authentication: you first get an access token from Microsoft Entra ID, with MFA and Conditional Access applied, and present it with the connection. The database signs you in as your Entra user. A SQL login with a guessed password is rejected, even from an allowed IP address.",
+      "set": {
+        "t-db-auth": "signed in as you"
+      }
+    },
+    {
+      "title": "Serverless: pay while it works",
+      "text": "Last scene: the bill. The orders database runs on General Purpose serverless compute. It scales between a minimum and a maximum number of vCores as the load changes, and you pay per second for the compute it actually uses, plus storage. Follow one day: a quiet early morning, a busy late morning, then a long lunch."
+    },
+    {
+      "title": "Idle? It pauses itself",
+      "text": "After the last query at 13:00, nothing is connected. When the auto-pause delay passes, 60 minutes by default and 15 at the minimum, the database pauses. From then on the compute meter stops and you pay only for storage. A query window left open in a tool would keep it awake, so close your tools when you finish.",
+      "set": {
+        "t-sdb-status": "Paused · 0 vCores",
+        "t-meter1": "storage only",
+        "t-meter2": "compute meter stopped"
+      }
+    },
+    {
+      "title": "The first login wakes it",
+      "text": "At 19:00 Dewi's test app connects again. The first attempt gets error 40613, database not currently available, while the database resumes, which usually takes under a minute. The app retries and gets in, and the compute meter starts again. Good retry logic matters; for a database that is busy all day, provisioned compute may be the better fit.",
+      "set": {
+        "t-sdb-status": "Resuming, then online",
+        "t-meter1": "compute (per second)",
+        "t-meter2": "+ storage (always)"
+      }
+    },
+    {
+      "title": "The free offer for small databases",
+      "text": "For development and labs, try the free offer. At the time of writing, each subscription gets up to ten free General Purpose serverless databases, each with 100,000 vCore-seconds of compute, 32 GB of data and 32 GB of backup storage every month. When the allowance runs out, the database pauses until next month, or keeps running and bills the extra if you chose that."
+    },
+    {
+      "title": "Recap: choose, connect, pay",
+      "text": "Choose with questions: relational data, T-SQL, and no need for the operating system or instance features lead to Azure SQL Database. Connect through the gateway and a firewall that allows only known IP addresses, then sign in with Microsoft Entra-only authentication. Pay per second with serverless, let idle databases pause, and use the free offer for development.",
+      "tip": "In Lab 11 you build exactly this: an Entra-only server, a free or serverless sqldb-orders database, one firewall rule, and an Orders table you query from Cloud Shell and the portal."
+    }
+  ],
+  "svg": [
+    "Which database fits the orders?",
+    "No",
+    "Yes",
+    "Orders",
+    "new data",
+    "Tables, keys,",
+    "transactions?",
+    "relational data",
+    "Azure Cosmos DB",
+    "NoSQL · Lunch 12",
+    "SQL Server",
+    "engine, T-SQL?",
+    "skills and code",
+    "PostgreSQL / MySQL",
+    "flexible server",
+    "Need the OS or",
+    "old SQL version?",
+    "full control",
+    "SQL Server on VMs",
+    "IaaS · you patch",
+    "Instance features?",
+    "SQL Agent, cross-DB",
+    "queries, CLR",
+    "SQL Managed Instance",
+    "near-100% compatible",
+    "Azure SQL Database",
+    "PaaS · single DB or pool",
+    "Orders → Azure SQL Database",
+    "relational, T-SQL, no OS work,",
+    "no instance features needed",
+    "Azure region · Southeast Asia",
+    "Logical server · sql-nusa-ab12c.database.windows.net",
+    "token",
+    "Microsoft Entra ID",
+    "issues access tokens",
+    "You · Cloud Shell",
+    "sqlcmd · client IP A",
+    "Unknown client",
+    "IP B · password guess",
+    "Gateway",
+    "TCP 1433",
+    "proxy or redirect",
+    "Server firewall",
+    "no rules: deny all",
+    "checks client IP",
+    "sqldb-orders",
+    "waiting for sign-in",
+    "Entra-only auth",
+    "Microsoft Entra-only authentication",
+    "token from Entra ID: accepted",
+    "SQL login + password: rejected",
+    "Error 40615",
+    "Client with IP address 'A'",
+    "is not allowed to access",
+    "the server.",
+    "Think twice",
+    "'Allow Azure services' admits",
+    "every IP inside Azure, other",
+    "customers' resources too",
+    "Serverless compute: one day of sqldb-orders",
+    "vCores used",
+    "Paused",
+    "storage only",
+    "60 min idle",
+    "resume",
+    "Dewi's test app",
+    "connects when it works",
+    "Online · 0.5–2 vCores",
+    "General Purpose serverless",
+    "You pay for",
+    "compute (per second)",
+    "+ storage (always)",
+    "19:00 · first login after a pause",
+    "error 40613 while it resumes (usually under",
+    "a minute), then the app retries and gets in",
+    "Free offer · per database, per month",
+    "100,000 vCore-seconds · 32 GB data · 32 GB backup",
+    "up to 10 per subscription",
+    "example: a third used this month",
+    "Three things to remember",
+    "1 · Choose",
+    "Relational data + T-SQL,",
+    "no OS, no instance",
+    "features needed",
+    "2 · Connect",
+    "Gateway, then firewall:",
+    "known IPs only, then",
+    "Entra-only sign-in",
+    "No shared passwords",
+    "3 · Pay",
+    "Serverless bills per",
+    "second; idle databases",
+    "pause themselves",
+    "Free offer for dev/test",
+    "Next: build it yourself in Lab 11"
+  ]
+}

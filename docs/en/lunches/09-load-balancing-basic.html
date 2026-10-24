@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 09 · Two Servers, One Address — Lunch 09: Load Balancing (Basic): Azure Load Balancer · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 09 · Load Balancing (Basic): Azure Load Balancer. A perfectly good twin server sits idle while shoppers can only find one. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/09-load-balancing-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 09 · Two Servers, One Address — Lunch 09: Load Balancing (Basic): Azure Load Balancer">
+<meta property="og:description" content="Lunch 09 · Load Balancing (Basic): Azure Load Balancer. A perfectly good twin server sits idle while shoppers can only find one. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/09-load-balancing-basic.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lunch" data-lunch="09" style="--c:#e2482f">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/lunches/09-load-balancing-basic.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 09</span> Season 1 · 🏗️ Part 2 · Core infrastructure</div>
+      <h1>Two Servers, One Address</h1>
+      <div class="lunch-title">Lunch 09 · Load Balancing (Basic): Azure Load Balancer</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure architecture and services</span>
+        <span class="chip cost">🔬 Lab · about 50 minutes · 💲💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="03-global-infrastructure.html" title="Where Does the Shop Live?">↩ 03</a><a class="chip" href="06-virtual-machines-basic.html" title="Escape from the Pantry">↩ 06</a><a class="chip" href="08-networking-basic.html" title="Don&#x27;t Overlap My Network">↩ 08</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 08 · Don&#x27;t Overlap My Network, you planned the address space and locked traffic down with NSGs and explicit outbound access.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, calmer"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director&#x27;s question · 35% ready</b>After this episode you can say: “If one server dies, customers don&#x27;t even notice.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#field-notes">🗒️ Notes</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today&#x27;s menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-one-address-many-servers-why-load-balance">One address, many servers: why load balance</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-anatomy-of-a-standard-load-balancer">Anatomy of a Standard load balancer</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-health-probes-and-how-traffic-is-shared">Health probes and how traffic is shared</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-getting-in-and-getting-out-inbound-nat-rules-outbound-rules-and-snat">Getting in and getting out: inbound NAT rules, outbound rules and SNAT</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-zones-and-special-flavours-ha-ports-gateway-and-global-load-balancers">Zones and special flavours: HA ports, gateway and global load balancers</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-choosing-your-load-balancer--and-nusantaras-new-front-door">Choosing your load balancer — and Nusantara&#x27;s new front door</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Field notes</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/09-load-balancing-basic.html">🔬 Open Lab 09</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today&#x27;s menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> why a load balancer is the first step from &quot;one server&quot; to &quot;always open&quot;, and what <em>layer 4</em> means.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Describe</strong> the parts of an Azure Standard Load Balancer: frontend, backend pool, health probe, load-balancing rule, inbound NAT rule and outbound rule.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> between a public and an internal load balancer, and between the distribution modes.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> in plain words how outbound connections and SNAT work, and why new networks need an explicit outbound method.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Recognise</strong> when Application Gateway, Front Door or Traffic Manager is the better tool.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 09</span>
+        <div class="story-body"><p>Dewi has done her homework. The storefront now runs on two Ubuntu VMs, <code>vm-web-1</code> in availability zone 1 and
+<code>vm-web-2</code> in zone 2, inside the private subnet Pak Budi designed in Lunch 08. There is just one problem: shoppers
+know only one address, and right now it points at <code>vm-web-1</code>. If that VM reboots for patching, the shop is closed
+even though a perfectly good twin is idling in the next zone.</p>
+<p>Ibu Sari is direct about it at the Monday meeting. &quot;Two servers are no use if customers can only find one. And
+Pak Budi says he can't even log in to them now that they have no public addresses.&quot; Rizky, the contractor, adds that
+the servers also fail to download security updates since the network change. Three complaints, one root cause: the
+servers have no shared front door.</p>
+<p>Today's question: <strong>how do you give two servers one address, send shoppers only to servers that are healthy, and
+still let administrators and updates get in and out safely?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-one-address-many-servers-why-load-balance" data-spy><span class="scene-no">Scene 1 of 6</span><h3>One address, many servers: why load balance</h3><div class="prose"><p>A single server is a <strong>single point of failure</strong>: when it stops, the service stops. In Lunch 02 you met two ways to
+grow. Scaling <strong>up</strong> (a bigger VM) has a ceiling and still leaves you with one machine. Scaling <strong>out</strong> (more VMs) has no
+such ceiling, but it raises a new question: which server should each customer talk to?</p>
+<p>A <strong>load balancer</strong> answers that question. It owns one address, receives traffic for the whole group, and passes each
+new connection to one of several servers. It also keeps checking which servers are healthy, so a broken one quietly
+stops receiving customers. That one component gives Nusantara Retail four things at once:</p>
+<ul>
+<li><strong>Availability.</strong> A failed VM, a crashed web service or a whole failed availability zone no longer closes the shop.</li>
+<li><strong>Scale.</strong> When the 12.12 sale arrives, Dewi adds a third VM to the group instead of replacing the server.</li>
+<li><strong>Maintenance without downtime.</strong> Pak Budi can patch <code>vm-web-1</code> while <code>vm-web-2</code> carries the traffic.</li>
+<li><strong>A stable address.</strong> Shoppers, DNS records and the payment provider's allow list keep using one IP address while
+servers come and go behind it.</li>
+</ul>
+<p>Load balancers differ in <em>how much of the conversation they understand</em>. Networking people describe this with the
+layers of the OSI model. You only need two of them:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Layer 4 (transport)</th>
+<th>Layer 7 (application)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What it looks at</td>
+<td>IP addresses, ports and protocol (TCP or UDP)</td>
+<td>the HTTP request itself: host name, URL path, headers, cookies</td>
+</tr>
+<tr>
+<td>What it does with a connection</td>
+<td>passes packets straight through to one server</td>
+<td>ends the client's connection and opens a new one to the server (a <em>proxy</em>)</td>
+</tr>
+<tr>
+<td>Can it route <code>/images</code> to other servers?</td>
+<td>no — it never reads the URL</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>Can it decrypt HTTPS or run a web application firewall?</td>
+<td>no</td>
+<td>yes</td>
+</tr>
+<tr>
+<td>What the server sees as the client</td>
+<td>the real client IP address</td>
+<td>the proxy's address (client IP in a header)</td>
+</tr>
+<tr>
+<td>Azure examples</td>
+<td><strong>Azure Load Balancer</strong></td>
+<td>Application Gateway, Front Door</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Azure Load Balancer</strong> is Azure's layer 4 load balancer. It works with any TCP or UDP traffic, not only web
+traffic, adds very little delay because it never opens or reads your data, and scales to millions of flows. It is a
+<em>regional</em> service: one load balancer serves resources in one region (a global tier exists too; see section 5).
+Because it doesn't read requests, it is also the simplest load balancer to reason about, which makes it the right
+place to start.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Azure Load Balancer comes in <strong>Standard</strong> and <strong>Gateway</strong> SKUs. The <strong>Basic</strong> SKU — and Basic public IP addresses —
+were <strong>retired on September 30, 2025</strong>. Older tutorials that use <code>--sku Basic</code> no longer apply. Everything in this
+course uses Standard, which adds availability zones, secure-by-default networking, outbound rules and a 99.99 % SLA
+(check the SLA page for its conditions).</p>
+</aside>
+</div></article><article class="scene-card" id="2-anatomy-of-a-standard-load-balancer" data-spy><span class="scene-no">Scene 2 of 6</span><h3>Anatomy of a Standard load balancer</h3><div class="prose"><p>A load balancer is a small set of named parts that refer to each other. Once you know the parts, the portal wizard,
+the CLI and a Bicep file all look the same.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  client([Shopper]) --&gt;|TCP 80| fe[&quot;Frontend IP&lt;br/&gt;pip-lb-nusa-web&lt;br/&gt;zone-redundant&quot;]
+  admin([Admin]) --&gt;|TCP 50001| fe
+  fe --&gt; rule[&quot;Load-balancing rule&lt;br/&gt;TCP 80 → 80&quot;]
+  fe --&gt; nat[&quot;Inbound NAT rule&lt;br/&gt;50001 → vm-web-1:22&quot;]
+  rule --&gt; pool
+  probe[&quot;Health probe&lt;br/&gt;HTTP GET /health&quot;] -.checks.-&gt; pool
+  subgraph pool[&quot;Backend pool be-web&quot;]
+    vm1[&quot;vm-web-1 · zone 1&quot;]
+    vm2[&quot;vm-web-2 · zone 2&quot;]
+  end
+  nat --&gt; vm1
+  pool --&gt;|&quot;Outbound rule (SNAT)&quot;| out([Internet])
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>What it is</th>
+<th>Nusantara Retail example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Frontend IP configuration</strong></td>
+<td>the address clients connect to; public (a Standard public IP) or private (an IP from a subnet)</td>
+<td><code>fe-web</code> using the public IP <code>pip-lb-nusa-web</code></td>
+</tr>
+<tr>
+<td><strong>Backend pool</strong></td>
+<td>the group of servers that can receive traffic, defined by their NICs or their IP addresses</td>
+<td><code>be-web</code> with the NICs of <code>vm-web-1</code> and <code>vm-web-2</code></td>
+</tr>
+<tr>
+<td><strong>Health probe</strong></td>
+<td>a repeated check of each pool member; only healthy members get new connections</td>
+<td><code>probe-http</code>: HTTP GET <code>/health</code> on port 80 every 5 seconds</td>
+</tr>
+<tr>
+<td><strong>Load-balancing rule</strong></td>
+<td>maps a frontend IP and port to a backend pool and port, using a probe</td>
+<td><code>rule-http</code>: TCP 80 on the frontend → port 80 on the pool</td>
+</tr>
+<tr>
+<td><strong>Inbound NAT rule</strong></td>
+<td>forwards one frontend port to one specific VM (port forwarding, not balancing)</td>
+<td><code>nat-ssh-vm1</code>: frontend port 50001 → <code>vm-web-1</code> port 22</td>
+</tr>
+<tr>
+<td><strong>Outbound rule</strong></td>
+<td>lets pool members reach the internet through the frontend IP, with ports you allocate</td>
+<td><code>rule-outbound</code>: 10,000 source ports per VM</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Public or internal?</strong> The frontend decides which kind of load balancer you have:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Public load balancer</th>
+<th>Internal load balancer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Frontend</td>
+<td>a Standard public IP address</td>
+<td>a private IP address from one of your subnets</td>
+</tr>
+<tr>
+<td>Who can reach it</td>
+<td>anyone on the internet (filtered by NSGs)</td>
+<td>clients inside the virtual network, peered networks and on-premises networks connected by VPN or ExpressRoute</td>
+</tr>
+<tr>
+<td>Typical use</td>
+<td>the storefront web tier</td>
+<td>the order API behind the web tier, a database cluster, firewall appliances</td>
+</tr>
+<tr>
+<td>Gives backends internet access?</td>
+<td>can, through outbound rules</td>
+<td>no; use a NAT gateway or a separate public load balancer</td>
+</tr>
+</tbody>
+</table></div>
+<p>Nusantara Retail will eventually use both: a public load balancer in front of the web servers and an internal one in
+front of the app subnet from Lunch 08, so the order API is never exposed to the internet.</p>
+<p>Two Standard behaviours surprise newcomers. First, a Standard load balancer is <strong>secure by default</strong>: inbound traffic is
+blocked until a network security group (NSG) on the subnet or NIC allows it. The NSG sees the shopper's real IP address,
+because a layer 4 load balancer does not replace the source address. Second, the <strong>backend pool</strong> can be defined by NIC or
+by IP address. Pools built from NICs are the recommended choice for virtual machines and give the most predictable
+outbound behaviour.</p>
+</div></article><article class="scene-card" id="3-health-probes-and-how-traffic-is-shared" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Health probes and how traffic is shared</h3><div class="prose"><p>A load balancer is only as smart as its <strong>health probe</strong>. Every few seconds the platform sends a probe to every pool
+member and records the answer. Standard load balancers support three probe types:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Probe type</th>
+<th>Healthy when…</th>
+<th>Good for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TCP</strong></td>
+<td>the server completes the TCP handshake on the port</td>
+<td>any TCP service; it proves only that something is listening</td>
+</tr>
+<tr>
+<td><strong>HTTP</strong></td>
+<td>an HTTP GET on your path returns <code>200 OK</code></td>
+<td>web servers; let the application decide whether it is healthy</td>
+</tr>
+<tr>
+<td><strong>HTTPS</strong></td>
+<td>like HTTP, but over TLS</td>
+<td>web servers that only listen on HTTPS (no client certificates)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Some details are worth remembering:</p>
+<ul>
+<li><strong>Probes come from <code>168.63.129.16</code>.</strong> In NSG rules this source is represented by the <strong>AzureLoadBalancer</strong> service
+tag. A default NSG rule allows it, but a home-made &quot;deny everything&quot; rule with a higher priority silently blocks the
+probes, and then every server looks dead.</li>
+<li><strong>The interval</strong> is configurable, with a minimum of 5 seconds. The portal suggests 5 seconds; the CLI and templates
+default to 15. For HTTP probes, any answer other than <code>200</code> marks the server down immediately; a probe that gets no
+reply at all times out after 30 seconds at most.</li>
+<li><strong>A failed probe affects new connections only.</strong> Shoppers already connected to the failing server keep their TCP
+connection until it closes or times out; new connections go to healthy members. If <em>every</em> member is down, a
+Standard load balancer sends no new connections anywhere.</li>
+<li><strong>Probe something meaningful.</strong> A TCP probe on port 80 stays green when the web application returns errors. An HTTP
+probe on a <code>/health</code> page that the application controls can say &quot;take me out of rotation&quot; before maintenance.</li>
+</ul>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Give every application a cheap <code>/health</code> page and probe it over HTTP. Make it check what the server itself needs
+(disk space, its own configuration), but be careful about checking shared dependencies: if <code>/health</code> fails whenever
+the shared database is slow, every server fails at once and the load balancer has nowhere to send anyone.</p>
+</aside>
+<p>How does the load balancer choose a server for each new connection? By default it computes a hash of five values — the
+<strong>5-tuple</strong>: source IP, source port, destination IP, destination port and protocol. The same connection always hashes to
+the same server, so packets of one conversation stay together. A new connection from the same browser uses a new
+source port, so it can land on the other server. Across thousands of shoppers this spreads load evenly; with only a
+handful of clients behind one company proxy, the spread can be lopsided.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Distribution mode</th>
+<th>Hash of</th>
+<th>Behaviour</th>
+<th>Use it when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>None</strong> (default, <em>hash-based</em>)</td>
+<td>5-tuple</td>
+<td>each new connection may go to any healthy server</td>
+<td>the application keeps no session data on the server</td>
+</tr>
+<tr>
+<td><strong>Client IP</strong></td>
+<td>source IP + destination IP</td>
+<td>one client IP keeps going to the same server</td>
+<td>a legacy app stores the shopping cart in server memory</td>
+</tr>
+<tr>
+<td><strong>Client IP and protocol</strong></td>
+<td>source IP + destination IP + protocol</td>
+<td>the same, per protocol</td>
+<td>an app opens related TCP and UDP sessions that must meet on one server</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>Session persistence</em> (the two &quot;Client IP&quot; modes) is a crutch, not a design. If a server fails, its sessions are lost
+anyway; many shoppers behind one mobile carrier or office proxy look like a single client IP; and adding a server
+reshuffles everybody. The durable fix is to keep session state outside the VMs, for example in a database or cache.</p>
+<p>Two more rule settings matter in practice. The <strong>idle timeout</strong> (4 minutes by default) closes TCP connections that send
+nothing; you can raise it within limits, and you should enable <strong>TCP reset</strong> so both ends hear about the closure
+instead of discovering it later. <strong>HA ports</strong>, another rule setting, appear in section 5.</p>
+</div></article><article class="scene-card" id="4-getting-in-and-getting-out-inbound-nat-rules-outbound-rules-and-snat" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Getting in and getting out: inbound NAT rules, outbound rules and SNAT</h3><div class="prose"><p><strong>Getting in to one server.</strong> Load-balancing rules spread traffic, but an administrator who wants to SSH to <code>vm-web-1</code>
+needs to reach <em>that</em> VM. An <strong>inbound NAT rule</strong> forwards one frontend port to one VM's port: connect to the frontend IP
+on port 50001 and you arrive at <code>vm-web-1</code> on port 22. The NSG evaluates the translated packet, so it must allow
+port 22, ideally from a single admin address. A newer form of the rule targets a whole backend pool with a port range
+and assigns each member its own frontend port; the older pool-based <em>inbound NAT pools</em> used by scale sets retire on
+September 30, 2027. For day-to-day administration, Azure Bastion (Lunch 06) is the safer habit — no management port
+is exposed to the internet at all.</p>
+<p><strong>Getting out.</strong> Servers also start conversations: downloading updates, calling the payment provider, sending e-mail
+through a mail service. In Lunch 08 you learned that virtual networks created with API versions released after
+March 31, 2026 get <strong>private subnets</strong> by default, so VMs have no implicit internet access, and that a Standard load
+balancer adds none by itself. Something must provide outbound access explicitly.</p>
+<p>That something uses <strong>SNAT</strong> — source network address translation. Think of the head office switchboard. Two hundred
+employees share one public phone number. When an employee calls out, the operator notes which line the call used, so
+that when the other party answers, the call is put through to the right desk. The public number is the frontend IP;
+each &quot;line&quot; is a <strong>SNAT port</strong>. One public IP offers about 64,000 of them for outbound connections, shared by all the
+VMs that use it.</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant VM as vm-web-1 (10.9.1.4)
+  participant LB as Load balancer frontend (public IP)
+  participant API as Payment API (internet)
+  VM-&gt;&gt;LB: from 10.9.1.4:40123 to API:443
+  Note over LB: SNAT: swap the source for&lt;br/&gt;public IP : SNAT port 1032&lt;br/&gt;and remember the mapping
+  LB-&gt;&gt;API: from public IP:1032 to API:443
+  API--&gt;&gt;LB: reply to public IP:1032
+  Note over LB: look up port 1032 → 10.9.1.4:40123
+  LB--&gt;&gt;VM: reply delivered
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Each simultaneous connection to the <em>same</em> destination IP and port needs its own SNAT port. A server that opens
+thousands of short connections to one API, without reusing them, can run out of its share — <strong>SNAT port exhaustion</strong> —
+and new outbound calls fail while the rest of the VM looks fine.</p>
+<p>An <strong>outbound rule</strong> is how you take control. You choose which frontend IPs to use, which backend pool may leave, the
+protocols, an idle timeout (4–120 minutes) and, most importantly, how many SNAT ports each VM gets, in multiples of 8.
+Two VMs could receive up to 32,000 ports each from one IP; adding frontend IPs adds ports. Without an outbound rule,
+a load-balancing rule can still provide outbound access implicitly, but with a small default allocation (at most 1,024
+ports per VM, fewer in large pools). Microsoft recommends against relying on that.</p>
+<p>The options for outbound access, best first:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NAT gateway</strong> on the subnet</td>
+<td>the recommended choice: dynamic port allocation, scales well, takes precedence over the others</td>
+</tr>
+<tr>
+<td><strong>Public IP on the VM</strong></td>
+<td>fine for a single special server; every VM gets its own exposed address</td>
+</tr>
+<tr>
+<td><strong>Load balancer outbound rules</strong></td>
+<td>good when the VMs already sit behind a public load balancer; you size the ports</td>
+</tr>
+<tr>
+<td>Load-balancing rule without outbound rules</td>
+<td>implicit, small fixed allocation — avoid for production</td>
+</tr>
+<tr>
+<td>Default outbound access</td>
+<td>implicit and changing; not available in private subnets — avoid</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>When you add an outbound rule that uses the same frontend IP as a load-balancing rule, the rule must have outbound
+SNAT disabled (<code>--disable-outbound-snat true</code>), otherwise creating the outbound rule fails. The reverse mistake
+hurts more: disable SNAT on the rule but forget the outbound rule, and the VMs lose internet access — updates and
+payment calls fail while the website itself looks healthy.</p>
+</aside>
+</div></article><article class="scene-card" id="5-zones-and-special-flavours-ha-ports-gateway-and-global-load-balancers" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Zones and special flavours: HA ports, gateway and global load balancers</h3><div class="prose"><p><strong>Zones.</strong> In Lunch 03 you met zone-redundant and zonal resources. A load balancer frontend can be either. A
+<strong>zone-redundant</strong> frontend is served from all zones of the region, so it survives the loss of any one of them; a
+<strong>zonal</strong> frontend is pinned to one zone and fails with it. Standard public IPs created with zones 1, 2 and 3 are
+zone-redundant, and Microsoft now treats Standard public IPs created without a zone as zone-redundant in regions that
+have zones. Spread the backend VMs across zones too, as Dewi did. A frontend that survives a zone failure does not help
+if both servers sat in that zone.</p>
+<p><strong>HA ports.</strong> On an <em>internal</em> Standard load balancer, a rule with protocol <em>All</em> and port 0 balances every TCP and UDP
+flow on every port. That is how firewall appliances in a hub network are made highly available (Lunch 25): one rule,
+all traffic, and a probe that reflects the health of the whole appliance.</p>
+<p><strong>Gateway Load Balancer.</strong> A separate SKU for inserting third-party network virtual appliances — firewalls, intrusion
+detection, packet analysers — transparently into the path. You <em>chain</em> it to a public load balancer frontend or a VM's
+public IP, and traffic visits the appliances before reaching your application, with no route tables to maintain.</p>
+<p><strong>Global (cross-region) load balancer.</strong> A Standard load balancer can also be created in the <em>global</em> tier. It offers
+one static <strong>anycast</strong> public IP that is advertised from many Azure regions, and its backend pool contains regional
+public load balancers. Shoppers enter Microsoft's network at the nearest participating region and are sent to the
+closest healthy regional deployment; if a region fails, traffic moves within seconds because no DNS caching is
+involved. It is still layer 4, supports public frontends only, and must be created in one of a list of <em>home regions</em>
+(Southeast Asia and East Asia are on it; check the documentation for others). Lunch 27 compares it with the global
+layer 7 options.</p>
+</div></article><article class="scene-card" id="6-choosing-your-load-balancer--and-nusantaras-new-front-door" data-spy><span class="scene-no">Scene 6 of 6</span><h3>Choosing your load balancer — and Nusantara's new front door</h3><div class="prose"><p>Azure has four main load balancing services, and choosing between them is a favourite exam and interview topic. Two
+questions do most of the work: <em>is it web traffic that needs layer 7 features?</em> and <em>is it regional or global?</em></p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Azure Load Balancer</th>
+<th>Application Gateway</th>
+<th>Azure Front Door</th>
+<th>Traffic Manager</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Layer</td>
+<td>4 (TCP/UDP)</td>
+<td>7 (HTTP/HTTPS)</td>
+<td>7 (HTTP/HTTPS)</td>
+<td>DNS</td>
+</tr>
+<tr>
+<td>Scope</td>
+<td>regional (global tier for cross-region)</td>
+<td>regional</td>
+<td>global, at Microsoft's edge</td>
+<td>global</td>
+</tr>
+<tr>
+<td>Sees your traffic?</td>
+<td>passes it through</td>
+<td>yes, as a proxy in your network</td>
+<td>yes, as a proxy at the edge</td>
+<td>no — it only answers DNS queries</td>
+</tr>
+<tr>
+<td>Signature features</td>
+<td>any protocol, very low latency, outbound rules, HA ports</td>
+<td>path and host routing, TLS termination, WAF, autoscale</td>
+<td>caching, fast global failover, WAF, edge TLS</td>
+<td>priority, weighted, performance and geographic routing</td>
+</tr>
+<tr>
+<td>Nusantara Retail example</td>
+<td>today's web VMs; the internal order API</td>
+<td><code>/images/*</code> to an images app, with a WAF</td>
+<td>shoppers from Medan to Makassar</td>
+<td>DNS failover between two regions</td>
+</tr>
+</tbody>
+</table></div>
+<p>This lunch builds the first column. Lunch 27 covers the other three in depth, including how they combine — Front
+Door in front of Application Gateway, for example.</p>
+<p>Here is Nusantara Retail's design after today. A Standard public load balancer, <code>lb-nusa-web</code>, owns a zone-redundant
+frontend IP. Its backend pool holds the NICs of <code>vm-web-1</code> (zone 1) and <code>vm-web-2</code> (zone 2). An HTTP probe asks each
+server for <code>/health</code> every 5 seconds, and a rule sends TCP 80 to healthy servers only. An inbound NAT rule gives Pak
+Budi emergency SSH to <code>vm-web-1</code> from the office IP until Bastion arrives, and an outbound rule lets both servers reach
+the update mirrors and the payment provider through the same public IP — which the payment provider can put on its
+allow list. The answer to Ibu Sari's question has changed: if one server dies, shoppers notice nothing beyond a retried
+page; if a zone fails, the shop stays open; if the whole region fails, that is a story for Lunches 17 and 27.</p>
+<p>For production, the same design would run in <strong>Indonesia Central</strong> (Jakarta), which has three availability zones and
+keeps customer data in Indonesia. The labs use Southeast Asia for the widest service availability; the design is
+identical.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>Nusantara Retail's payment provider allows calls only from known IP addresses. Which address
+will the provider see when <code>vm-web-2</code> calls it today — and what would change if Dewi replaced the outbound rule with
+a NAT gateway that has its own public IP?</p>
+</aside>
+<p>Advanced partner: <a href="27-load-balancing-advanced.html">Lunch 27 · Load Balancing (Advanced)</a> covers Application
+Gateway, Front Door and Traffic Manager.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Keep the shop open: Azure Load Balancer</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/09-load-balancing-basic.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/09-load-balancing-basic.html" title="Interactive demo: Keep the shop open: Azure Load Balancer" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/09-load-balancing-basic/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>New connections spread across both zones; a failed probe takes a server out and a passing one brings it back.</li>
+<li>The inbound NAT rule always lands on the same VM — port forwarding, not balancing.</li>
+<li>Without an outbound method the servers are stuck inside; the outbound rule translates them to the frontend IP.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi's old storefront code keeps each shopping cart in the web server's memory. Since the load balancer went live,
+some customers lose their cart halfway through checkout. What can you change on the load balancer today, and what is
+the better long-term fix?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Switch the rule to <strong>Client IP</strong> session persistence; long term, keep session state outside the VMs (a database or
+cache). <em>Why:</em> the default 5-tuple hash can send each new connection to a different server.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Rizky adds a rule <em>Deny-All-Inbound</em> (priority 200) to <code>nsg-web</code> to &quot;tighten security&quot;. The rule
+<em>Allow-HTTP-Internet</em> (priority 100) is still there, yet within seconds the storefront stops answering through the
+load balancer. Both VMs serve pages locally. What happened?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The deny rule blocks the <strong>health probes</strong> from <code>168.63.129.16</code> (service tag <em>AzureLoadBalancer</em>), so every member is
+marked down. Allow <em>AzureLoadBalancer</em> with a priority number below 200. <em>Why:</em> the default probe allow rule has
+priority 65001 and loses to any custom deny.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Pak Budi creates an inbound NAT rule from frontend port 50001 to <code>vm-web-1</code> port 22 and an NSG rule allowing TCP
+<strong>50001</strong> from his office IP. SSH still times out. What is wrong?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The NSG must allow destination port <strong>22</strong>. <em>Why:</em> the NSG evaluates the packet after the load balancer has translated
+the port.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>After a network redesign the web servers sit in a private subnet behind the load balancer, and the rule has
+outbound SNAT disabled. Security updates now fail. Give two ways to fix it.</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Add an <strong>outbound rule</strong> for the backend pool, or attach a <strong>NAT gateway</strong> to the subnet (recommended). <em>Why:</em> private
+subnets have no default outbound access, and a Standard load balancer gives none unless you configure it.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Nusantara Retail wants <code>shop.nusantararetail.co.id/images/*</code> served by a separate pool of image servers and wants a
+web application firewall in front of everything. Is Azure Load Balancer the right tool?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>No — use <strong>Application Gateway</strong> (regional) or <strong>Azure Front Door</strong> (global), covered in Lunch 27. <em>Why:</em> a layer 4
+load balancer never reads the URL path, so it can neither route by path nor inspect requests.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>A load balancer gives a group of servers <strong>one address</strong> and sends new connections only to <strong>healthy</strong> members; Azure Load Balancer does it at <strong>layer 4</strong>, for any TCP or UDP traffic.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Use the <strong>Standard</strong> SKU (Basic retired on September 30, 2025). It is secure by default: NSGs must allow client traffic and the AzureLoadBalancer probes.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>The parts are always the same: <strong>frontend IP, backend pool, health probe, load-balancing rule</strong>, plus <strong>inbound NAT rules</strong> to reach one VM and <strong>outbound rules</strong> to let the pool out.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>The <strong>5-tuple hash</strong> spreads connections; <strong>session persistence</strong> pins a client IP to a server but doesn't replace keeping state off the VMs.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Outbound access must be <strong>explicit</strong>: size SNAT ports with <strong>outbound rules</strong> or prefer a <strong>NAT gateway</strong>. A zone-redundant frontend plus VMs in several zones survives a zone failure.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Field notes from Stefanus</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>A failover you have never tested is only a hope.</strong> In design reviews I ask one question about every load-balanced
+service: <em>when did you last stop one of these servers on purpose?</em> If the answer is &quot;never&quot;, I don't call it highly
+available yet. Before go-live I stop the web service on each backend in turn, in working hours, while the team
+watches: the probe should take it out within seconds and the shop should keep answering. Then I test the way out,
+because it fails quietly: from inside each VM I call the payment API or the update mirror and check which public
+address the other side sees. And when every backend turns unhealthy at once, I check the probe and the NSG before I
+touch a server.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">More about the author →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>09</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Keep the shop open when a server fails</h3>
+          <div class="prose"><p><code>setup.sh</code> gives you two web VMs in zones 1 and 2 with no public IPs. You build a Standard public load balancer with a
+zone-redundant frontend, probe and rule, watch requests spread across both zones, stop one web server and see the shop
+stay open. Then you add an inbound NAT rule for SSH and an outbound rule so both servers can reach the internet — the
+core of the design the Lunch 21 capstone builds on.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 50 minutes</span><span class="chip cost">💲💲 small charges while running</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/09-load-balancing-basic.html">Start Lab 09 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/load-balancer/load-balancer-custom-probe-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Azure Load Balancer health probes</b><span>Probe types, intervals and what happens to connections when probes fail.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/load-balancer/load-balancer-outbound-connections" target="_blank" rel="noopener"><b>Microsoft Learn: Source Network Address Translation (SNAT) for outbound connections</b><span>The outbound options ranked, SNAT ports and how to avoid exhaustion.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/load-balancer/skus" target="_blank" rel="noopener"><b>Microsoft Learn: Azure Load Balancer SKUs</b><span>What Standard offers and the Basic retirement notice.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/architecture/guide/technology-choices/load-balancing-overview" target="_blank" rel="noopener"><b>Azure Architecture Center: Load balancing options</b><span>The official guide to choosing between Azure's load balancers; a preview of Lunch 27.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">⚖️</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Always Open</h2>
+        <p class="muted">Keep selling when a server fails.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“If one server dies, customers don&#x27;t even notice.”</b></p>
+        <div class="teaser"><b>Next episode · 10</b><h4>Dewi&#x27;s Friday Nights</h4><p>Patching servers every Friday night is not what a developer was hired for.</p><p style="margin-top:10px"><a href="10-app-service.html">Watch Episode 10 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="08-networking-basic.html"><small>← Previous episode</small>08 · Don&#x27;t Overlap My Network</a><a class="next" href="10-app-service.html"><small>Next episode →</small>10 · Dewi&#x27;s Friday Nights</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/09-load-balancing-basic/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

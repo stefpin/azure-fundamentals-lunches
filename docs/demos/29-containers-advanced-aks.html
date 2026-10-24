@@ -325,7 +325,7 @@ svg rect.slot{fill:none;stroke:var(--node-stroke);stroke-width:1.2;stroke-dashar
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/29-containers-advanced-aks.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/29-containers-advanced-aks.html" data-href-id="../id/lunches/29-containers-advanced-aks.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -1017,10 +1017,159 @@ svg rect.slot{fill:none;stroke:var(--node-stroke);stroke-width:1.2;stroke-dashar
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 29 · Containers (Lanjutan): Azure Kubernetes Service — Demo interaktif",
+   "kicker": "Makan Siang 29 · Containers (Lanjutan) · Demo interaktif",
+   "title": "Katakan apa yang Anda inginkan, dan Kubernetes menjaganya tetap nyata",
+   "lede": "Ikuti Deployment storefront milik Nusantara Retail di sebuah cluster AKS: tiga replica yang tersebar di tiga availability zone, node gagal yang dipulihkan cluster dengan sendirinya, Horizontal Pod Autoscaler saat promo 12.12, serta rolling update lengkap dengan rollback. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Cluster AKS dengan satu node di setiap availability zone dari tiga zona menjalankan Deployment storefront",
+   "svgDesc": "Di sebelah kiri, kubectl milik Rizky berbicara dengan control plane AKS, sebuah papan membandingkan desired state dan kondisi sebenarnya dari Deployment, dan Horizontal Pod Autoscaler mengawasi CPU. Di dalam region Azure, Service LoadBalancer di bagian atas mengirim request pembeli ke pod storefront di tiga node, satu per availability zone, dan setiap node punya ruang untuk dua pod. Keterangan di bawah menjelaskan setiap kejadian."
+  },
+  "steps": [
+   {
+    "title": "Banyak layanan, satu cluster",
+    "text": "Tim Dewi telah memecah toko menjadi beberapa layanan, dan vendor program loyalitas mengirim Helm chart yang membutuhkan Kubernetes sungguhan. Rizky membangun cluster AKS di Southeast Asia dengan satu node di setiap availability zone, tiga zona sekaligus. Syarat Ibu Sari: toko harus bertahan saat ada server yang rusak dan saat serbuan pembeli 12.12, dan tidak boleh ada yang harus terus mengasuh cluster itu."
+   },
+   {
+    "title": "Azure menjalankan control plane",
+    "text": "AKS membagi pekerjaan. Azure menjalankan dan mem-patch control plane: API server yang menjadi tujuan setiap perintah kubectl, database etcd, scheduler, dan para controller. Di tier Free, bagian ini gratis, tetapi tanpa SLA yang dijamin secara finansial. Node adalah virtual machine di subscription Anda yang menjalankan kubelet dan containerd, dan Anda membayarnya per jam."
+   },
+   {
+    "title": "Nyatakan desired state",
+    "text": "Rizky menerapkan sebuah manifest: Deployment bernama storefront dengan tiga replica image v1, masing-masing meminta 50 millicore CPU dan 64 MiB memori. Ia tidak pernah menyebut node mana yang dipakai. API server menyimpan desired state ini di etcd. Sebuah controller membandingkannya dengan kenyataan, menemukan nol pod padahal yang diinginkan tiga, lalu membuat tiga objek pod."
+   },
+   {
+    "title": "Scheduler menyebar pod ke berbagai zona",
+    "text": "Scheduler memilih node untuk setiap pod baru. Node mana pun punya ruang untuk request sekecil itu, dan topology spread constraint di pod template meminta sebaran yang merata antarzona, sehingga setiap zona mendapat satu pod. Kubelet di setiap node menarik image dan menyalakan container. Pod baru dihitung siap hanya ketika readiness probe-nya menjawab.",
+    "set": {
+     "t-actual": "siap: 3 dari 3"
+    }
+   },
+   {
+    "title": "Satu alamat di depan pod yang berpindah-pindah",
+    "text": "Service bertipe LoadBalancer memberi pod-pod itu satu alamat yang stabil. AKS menambahkan rule dan alamat IP publik ke Azure load balancer milik cluster di node resource group, dan Service membagi request ke pod-pod yang siap di ketiga zona. Pod datang dan pergi dengan alamat IP baru, tetapi Service selalu melacaknya, sehingga pembeli tidak pernah menyadarinya."
+   },
+   {
+    "title": "Sebuah node gagal di zona 3",
+    "text": "Pukul 14.05, virtual machine di zona 3 berhenti merespons. Dalam sekitar satu menit, Kubernetes menandai node itu NotReady dan pod-nya tidak siap, sehingga Service berhenti mengirim request ke sana. Toko tetap buka dengan dua pod lainnya, meski cadangan kapasitasnya berkurang. Lihat papan: desired state tetap tiga. Hanya kondisi sebenarnya yang berubah.",
+    "set": {
+     "t-n3": "NotReady ✗",
+     "t-p3s": "mati ✗",
+     "t-actual": "siap: 2 dari 3"
+    }
+   },
+   {
+    "title": "Controller mengganti pod yang hilang",
+    "text": "Pod di node yang tidak terjangkau diberi waktu lima menit untuk pulih. Setelah itu Kubernetes mengusirnya, dan controller menghitung dua pod berjalan padahal yang diinginkan tiga. Ia membuat satu lagi, scheduler menempatkannya di node sehat di zona 1, dan begitu readiness probe-nya lolos, kondisi sebenarnya kembali sama dengan desired state. Tidak ada petugas jaga yang perlu dipanggil.",
+    "set": {
+     "t-actual": "siap: 3 dari 3"
+    }
+   },
+   {
+    "title": "Serbuan pembeli 12.12 datang",
+    "text": "Auto-repair sudah me-reboot node 3, dan node itu kembali Ready, tetapi kosong: Kubernetes tidak memindahkan pod yang sedang berjalan kembali ke sana dengan sendirinya. Lalu promo 12.12 dimulai, dan rata-rata pemakaian ketiga pod mencapai 100% dari CPU request-nya. Horizontal Pod Autoscaler memeriksa setiap 15 detik, membandingkannya dengan target 50%, lalu menghitung ceil(3 × 100 ÷ 50) = 6 pod.",
+    "set": {
+     "t-n3": "Ready · diperbaiki",
+     "t-shop": "promo 12.12: traffic 10×",
+     "t-hpa": "CPU 100% · target 50%"
+    }
+   },
+   {
+    "title": "HPA menambah tiga pod",
+    "text": "HPA tidak menyalakan pod sendiri. Ia menaikkan jumlah replica yang diinginkan Deployment dari tiga menjadi enam, lalu para controller membuat tiga pod baru. Scheduler menempatkannya di tempat yang sebarannya paling tipis: dua di node yang sudah diperbaiki di zona 3 dan satu di zona 2. Pod-pod itu menyala dalam hitungan detik karena node masih punya ruang, dan rata-rata CPU turun kembali mendekati target.",
+    "set": {
+     "t-desired": "diinginkan: 6 × v1 (HPA)",
+     "t-actual": "siap: 6 dari 6",
+     "t-hpa": "CPU 50% · 6 pod"
+    }
+   },
+   {
+    "title": "Rolling update: satu pod setiap kali",
+    "text": "Setelah promo, HPA menunggu stabilization window lima menitnya habis, lalu kembali ke tiga pod. Sekarang tim merilis v2. Dengan maxSurge 1 dan maxUnavailable 0, Deployment lebih dulu menambah satu pod v2. Pod itu tidak menerima request sampai readiness probe-nya lolos; baru setelah itu satu pod v1 dibuang, dan siklusnya berulang untuk pod berikutnya.",
+    "set": {
+     "t-desired": "diinginkan: 3 × v2",
+     "t-actual": "siap: 3 v1 + 0 v2",
+     "t-hpa": "CPU 15% · 3 pod",
+     "t-shop": "promo usai: hari biasa"
+    }
+   },
+   {
+    "title": "Rollout selesai, toko tidak pernah tutup",
+    "text": "Tiga siklus kemudian, semua pod menjalankan v2, dan toko tidak pernah tutup: minimal tiga pod siap tetap berada di belakang Service sepanjang waktu. Kubernetes menyimpan ReplicaSet lama dengan nol pod, dan itulah yang membuat rollback cepat. Pola yang sama melindungi Anda saat AKS men-drain node selama upgrade, asalkan Anda menjalankan beberapa replica dan sebuah PodDisruptionBudget.",
+    "set": {
+     "t-pv2s": "siap",
+     "t-p2": "v2",
+     "t-p5": "v2",
+     "t-actual": "siap: 3 dari 3 (v2)"
+    }
+   },
+   {
+    "title": "Salah ketik pada tag image",
+    "text": "Berikutnya, Rizky memasang tag yang tidak ada: v99. Pod baru tidak bisa menarik image-nya; statusnya berganti-ganti antara ErrImagePull dan ImagePullBackOff, dan kubectl describe menunjukkan alasannya di bagian events. Karena maxUnavailable bernilai 0, tidak ada pod v2 yang dibuang selama pod baru belum siap, jadi rollout hanya tertahan dan pembeli tidak merasakan apa-apa.",
+    "set": {
+     "t-dev": "kubectl set image …:v99",
+     "t-desired": "diinginkan: 3 × v99",
+     "t-actual": "siap: 3 v2 + 0 v99",
+     "t-pbad": "v99 ✗",
+     "t-pbads": "tanpa image"
+    }
+   },
+   {
+    "title": "Rollback, lalu giliran Anda",
+    "text": "kubectl rollout undo mengembalikan Deployment ke ReplicaSet sebelumnya, pod yang rusak dihapus, dan desired state kembali menjadi tiga pod v2. Rangkumannya: Anda menyatakan keinginan, Kubernetes terus menyelaraskan, zona dan replica meredam kegagalan, HPA mengubah beban menjadi replica, readiness probe membuat pembaruan aman, dan Azure menjalankan control plane untuk Anda.",
+    "tip": "Di Lab 29 Anda membangun cluster AKS kecil dengan Azure CNI Overlay, men-deploy storefront dengan probe, request, dan limit, menghapus pod lalu melihatnya kembali, melakukan scaling dengan HPA, meluncurkan perubahan, dan memperbaiki ImagePullBackOff dengan kubectl describe.",
+    "set": {
+     "t-dev": "kubectl rollout undo",
+     "t-desired": "diinginkan: 3 × v2",
+     "t-actual": "siap: 3 dari 3 (v2)"
+    }
+   }
+  ],
+  "svg": {
+   "Azure region · Southeast Asia": "Region Azure · Southeast Asia",
+   "Zone 1": "Zona 1",
+   "Zone 2": "Zona 2",
+   "Zone 3": "Zona 3",
+   "AKS control plane": "Control plane AKS",
+   "managed by Azure · Free tier": "dikelola Azure · tier Free",
+   "desired: 3 × v1": "diinginkan: 3 × v1",
+   "ready: 0 of 3": "siap: 0 dari 3",
+   "target: 50% of CPU request": "target: 50% dari CPU request",
+   "CPU 20% · 3 pods": "CPU 20% · 3 pod",
+   "Shoppers": "Pembeli",
+   "normal afternoon": "siang yang biasa",
+   "public IP · only ready pods get requests": "IP publik · request hanya ke pod yang siap",
+   "ready": "siap",
+   "starting": "memulai",
+   "deployment.yaml · the desired state": "deployment.yaml · kondisi diinginkan",
+   "The new version and how to roll it out": "Versi baru dan cara meluncurkannya",
+   "One wrong character": "Satu karakter yang salah",
+   "That tag does not exist in the registry.": "Tag itu tidak ada di registry.",
+   "Node 3 is NotReady, so its pod is marked not ready and the Service skips it.": "Node 3 NotReady: pod-nya ditandai tidak siap, dan Service melewatinya.",
+   "Kubernetes waits five minutes before evicting the pod, in case the node returns.": "Kubernetes menunggu lima menit sebelum mengusir pod, siapa tahu node-nya kembali.",
+   "Node auto-repair: AKS reboots a node that stays NotReady for five minutes,": "Node auto-repair: AKS me-reboot node yang tetap NotReady selama lima menit,",
+   "then reimages or redeploys it if needed. That can take up to an hour.": "lalu me-reimage atau me-redeploy-nya bila perlu; bisa sampai satu jam.",
+   "No room on any node? The new pods wait in Pending, and the cluster autoscaler": "Semua node penuh? Pod baru menunggu di Pending, dan cluster autoscaler",
+   "adds a node in a few minutes. Honest CPU and memory requests make this work.": "menambah node dalam beberapa menit, asalkan request CPU dan memorinya jujur.",
+   "Readiness gate: the Service sends requests to the v2 pod only after its readiness": "Gerbang readiness: Service mengirim request ke pod v2 hanya setelah readiness",
+   "probe passes. Then one v1 pod stops, and the next v2 pod starts.": "probe-nya lolos. Lalu satu pod v1 berhenti, dan pod v2 berikutnya mulai.",
+   "AKS upgrades drain one node at a time. A PodDisruptionBudget with minAvailable: 2": "Upgrade AKS men-drain node satu per satu. PodDisruptionBudget dengan minAvailable: 2",
+   "stops a drain from evicting more storefront pods than the shop can spare.": "mencegah drain mengusir pod storefront melebihi yang sanggup dilepas toko.",
+   "Back to the previous ReplicaSet: three v2 pods, and the broken pod is gone.": "Kembali ke ReplicaSet sebelumnya: tiga pod v2, dan pod yang rusak sudah hilang."
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -1036,6 +1185,119 @@ svg rect.slot{fill:none;stroke:var(--node-stroke);stroke-width:1.2;stroke-dashar
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -1155,7 +1417,7 @@ svg rect.slot{fill:none;stroke:var(--node-stroke);stroke-width:1.2;stroke-dashar
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -1190,7 +1452,7 @@ svg rect.slot{fill:none;stroke:var(--node-stroke);stroke-width:1.2;stroke-dashar
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -1203,7 +1465,7 @@ svg rect.slot{fill:none;stroke:var(--node-stroke);stroke-width:1.2;stroke-dashar
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -1224,7 +1486,7 @@ svg rect.slot{fill:none;stroke:var(--node-stroke);stroke-width:1.2;stroke-dashar
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -1232,7 +1494,7 @@ svg rect.slot{fill:none;stroke:var(--node-stroke);stroke-width:1.2;stroke-dashar
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

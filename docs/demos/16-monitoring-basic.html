@@ -257,7 +257,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/16-monitoring-basic.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/16-monitoring-basic.html" data-href-id="../id/lunches/16-monitoring-basic.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -607,10 +607,156 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 16 · Tahu lebih dulu daripada pelanggan — Demo interaktif",
+   "kicker": "Makan Siang 16 · Pemantauan (Dasar) · Demo interaktif",
+   "title": "Tahu lebih dulu daripada pelanggan: alert, activity log, dan kesehatan layanan",
+   "lede": "Lonjakan CPU berubah menjadi email, activity log menyebut siapa yang menghentikan VM, serta Service Health dan Resource Health membedakan “kita” dari “Azure”. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Alerting Azure Monitor untuk VM toko online Nusantara Retail",
+   "svgDesc": "Pelanggan memakai VM toko online di Southeast Asia. Metrik platform milik VM dan activity log mengalir ke Azure Monitor, tempat sebuah metric alert rule dan sebuah activity log alert memberi tahu engineer piket melalui action group. Service Health, Resource Health, dan Azure Advisor tampil di kolom kanan."
+  },
+  "steps": [
+   {
+    "title": "Jumat malam, tak ada yang mengawasi",
+    "text": "Pukul 19.40, Jumat malam saat flash sale. Pelanggan berjubel di VM toko online Nusantara Retail, CPU-nya nyaris 100%, dan halaman bergerak selambat siput. Tak seorang pun di kantor pusat tahu, karena tidak ada yang mengawasi VM itu. Dua belas menit lagi pelanggan akan mengeluh di Instagram. Data yang bisa memperingatkan tim sebenarnya sudah ada di Azure; hanya saja belum ada yang bertanya kepadanya.",
+    "set": {
+     "t-cpu": "CPU 96%",
+     "t-vm-state": "Kewalahan",
+     "t-cust": "situs lambat, checkout gagal"
+    }
+   },
+   {
+    "title": "Dua sinyal gratis, tanpa setup",
+    "text": "Hari Senin Anda membuka Azure Monitor dan menemukan dua jenis data yang sebenarnya sudah ada sejak awal. Metrik platform seperti Percentage CPU masuk setiap menit dan disimpan selama 93 hari. Activity log mencatat setiap operasi control plane: siapa membuat, mengubah, atau menghentikan apa. Keduanya dikumpulkan otomatis dan gratis. Resource log dan data guest harus diaktifkan sendiri.",
+    "set": {
+     "t-cpu": "CPU 35%",
+     "t-vm-state": "Running",
+     "t-cust": "belanja seperti biasa"
+    }
+   },
+   {
+    "title": "Tulis rule-nya sekali",
+    "text": "Anda membuat metric alert rule pada VM: setiap menit, rata-ratakan Percentage CPU selama lima menit terakhir lalu bandingkan dengan 70. Rule ini menunjuk ke action group ag-nusa-oncall, daftar \"siapa yang perlu diberi tahu\" yang bisa dipakai ulang: kotak surat on-call dan ponsel piket. Tanpa action group, alert hanya akan muncul di halaman Alerts di portal."
+   },
+   {
+    "title": "CPU naik, rule menyadarinya",
+    "text": "Jumat lagi, pukul 19.40. Flash sale dimulai dan CPU naik ke 92%. Setiap menit, rule menghitung ulang rata-rata lima menit: 48, lalu 67, lalu 84. Begitu rata-ratanya melewati 70, kondisinya terpenuhi. Rata-rata selama lima menit berarti lonjakan sepuluh detik tidak membangunkan siapa pun, sedangkan beban berlebih yang berlangsung terus akan membangunkan tim.",
+    "set": {
+     "t-cpu": "CPU 92%",
+     "t-vm-state": "Sibuk",
+     "t-rule-state": "rata-rata 5 menit: 84%"
+    }
+   },
+   {
+    "title": "Fired: email pun tiba",
+    "text": "Rule memicu alert Sev 2 dan menjalankan action group. Dalam satu menit, ponsel engineer piket bergetar karena email yang menyebutkan rule, VM, dan nilai yang melewati batas. Saat itu pukul 19.46: enam menit setelah lonjakan dimulai, dan jauh sebelum ada pelanggan yang menulis keluhan. Sekarang tim bisa bertindak.",
+    "set": {
+     "t-rule-state": "Fired · Sev 2",
+     "t-inbox": "1 alert: alert-cpu-high"
+    }
+   },
+   {
+    "title": "Diperbaiki, lalu resolved",
+    "text": "Dewi menaikkan ukuran VM (scale up) dan CPU turun ke 30%. Metric alert bersifat stateful: rule hanya terpicu sekali, bukan setiap menit, dan kini setelah rata-rata lima menit kembali di bawah 70, rule itu resolved dengan sendirinya dan mengirim email Resolved. Alert tetap ada di halaman Alerts selama 30 hari, dan di sana tim menandainya Closed.",
+    "set": {
+     "t-cpu": "CPU 30%",
+     "t-vm-state": "Running",
+     "t-rule-state": "Resolved",
+     "t-inbox": "2 email: Fired, Resolved"
+    }
+   },
+   {
+    "title": "Rule Rizky tak pernah terpicu",
+    "text": "Rizky menyalin rule itu untuk mengurangi alarm palsu: CPU minimum di atas 70 selama satu jam. Minimum berarti nilai terendah dalam window, jadi CPU harus bertahan di atas 70% selama satu jam penuh. Lonjakan flash sale ini hanya lima belas menit, sehingga kondisinya tidak pernah terpenuhi. Sinyal sampai ke rule dan berhenti di situ. Tak ada yang diberi tahu.",
+    "set": {
+     "t-rule": "min CPU > 70% · window 1 jam",
+     "t-rule-state": "Tak pernah terpicu ✗",
+     "t-cpu": "CPU 97%",
+     "t-vm-state": "Sibuk",
+     "t-inbox": "Kotak masuk: tak ada alert baru"
+    }
+   },
+   {
+    "title": "Solusinya: rata-rata selama lima menit",
+    "text": "Solusinya: katakan persis apa yang Anda maksud. Rata-rata selama lima menit, diperiksa setiap menit, menangkap beban berlebih yang berkepanjangan tanpa bereaksi pada lonjakan sesaat. Agregasi dan window adalah dua pengaturan di balik kebanyakan alert yang tak pernah terpicu, atau yang terpicu terus-menerus. Di lab, Anda sendiri merusak rule Rizky dan membuktikan perbedaannya dengan riwayat metrik.",
+    "set": {
+     "t-rule": "avg CPU > 70% · window 5 menit",
+     "t-rule-state": "Fired · Sev 2",
+     "t-inbox": "1 alert: alert-cpu-high"
+    }
+   },
+   {
+    "title": "02.00: siapa yang menghentikan toko?",
+    "text": "Sabtu, pukul 02.00. Rizky men-deallocate VM toko online supaya hemat biaya selama akhir pekan. Permintaannya lewat Azure Resource Manager, dan activity log mencatatnya secara otomatis: operasinya, waktunya, statusnya, dan pemanggilnya (caller). Tanpa agent, tanpa pengaturan, tanpa biaya. Entri tidak bisa diubah atau dihapus, karena itulah activity log menjadi tempat pertama untuk dicek.",
+    "set": {
+     "t-vm-state": "Deallocated",
+     "t-cpu": "CPU —",
+     "t-rule-state": "Resolved",
+     "t-actlog": "Deallocate VM · rizky@… · Succeeded",
+     "t-cust": "situs tidak bisa diakses"
+    }
+   },
+   {
+    "title": "Activity log alert langsung memberi tahu Anda",
+    "text": "Activity log alert mengawasi entri baru yang cocok dengan sebuah kondisi: di sini, VM mana pun di resource group produksi yang di-deallocate. Alert ini terpicu untuk setiap event yang cocok dan memakai action group yang sama, sehingga engineer piket tahu tentang penghentian itu dalam hitungan menit, bukan saat pelanggan pertama menelepon Sabtu pagi. Perkirakan ada jeda beberapa menit.",
+    "set": {
+     "t-inbox": "Alert: VM di-deallocate"
+    }
+   },
+   {
+    "title": "Masalah Azure atau masalah kita?",
+    "text": "Pak Budi bertanya apakah Azure sedang mengalami gangguan. Service Health menjawab untuk layanan dan region yang Anda pakai: tidak ada insiden di Southeast Asia. Resource Health menjawab untuk satu resource: vm-nusa-web unavailable, user initiated. Dari sempit ke luas, Resource Health dulu lalu Service Health, terlihat bahwa kali ini penyebabnya kita sendiri. Pada hari yang buruk, Anda akan melihat platform initiated dan service issue yang sedang aktif.",
+    "set": {
+     "t-sh": "Tak ada masalah di Southeast Asia",
+     "t-rh": "vm-nusa-web: Unavailable (user)"
+    }
+   },
+   {
+    "title": "Advisor: pendapat kedua yang gratis",
+    "text": "Senin pagi: kopi dan Azure Advisor. Advisor meninjau konfigurasi dan pemakaian secara gratis, lalu memilah sarannya ke dalam lima kategori: keandalan, keamanan, performa, biaya, dan keunggulan operasional. Hari ini ia menyarankan membuat Service Health alert dan menyesuaikan ukuran VM toko online yang menganggur sepanjang minggu. Saran keamanannya berasal dari Defender for Cloud; saran biayanya menjadi bahan Makan Siang 19.",
+    "set": {
+     "t-adv": "Cost: sesuaikan ukuran vm-nusa-web",
+     "t-vm-state": "Running",
+     "t-cpu": "CPU 28%",
+     "t-cust": "belanja seperti biasa"
+    }
+   },
+   {
+    "title": "Rangkuman: tahu lebih dulu, tahu sebabnya",
+    "text": "Metrik gratis dan activity log selalu tersedia. Metric alert dengan agregasi dan window yang tepat, tersambung ke action group, memberi tahu tim lebih dulu. Activity log dan activity log alert memberi tahu siapa mengubah apa. Resource Health dan Service Health membedakan kita dari Azure, dan Advisor terus menyempurnakan pengaturannya. Pertanyaan Ibu Sari akhirnya terjawab.",
+    "tip": "Di Lab 16 Anda membangunnya sendiri: action group, alert CPU yang Anda picu dengan Run Command, activity log alert dan Service Health alert, serta rule Rizky yang rusak untuk diperbaiki."
+   }
+  ],
+  "svg": {
+   "Customers": "Pelanggan",
+   "shopping the flash sale": "belanja saat flash sale",
+   "contractor · 02:00": "kontraktor · 02.00",
+   "Platform metrics": "Metrik platform",
+   "every minute · kept 93 days · free": "tiap menit · disimpan 93 hari · gratis",
+   "avg CPU > 70% · 5 min window": "avg CPU > 70% · window 5 menit",
+   "who did what, when · kept 90 days": "siapa, apa, kapan · disimpan 90 hari",
+   "on by default · free": "aktif secara default · gratis",
+   "VM deallocated in rg-nusa-prod": "VM di-deallocate di rg-nusa-prod",
+   "On-call engineer": "Engineer piket",
+   "Inbox: no alerts yet": "Kotak masuk: belum ada alert",
+   "email and SMS": "email dan SMS",
+   "your services and regions": "layanan dan region Anda",
+   "one resource at a time": "satu resource dalam satu waktu",
+   "5 categories of free advice": "5 kategori saran gratis"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -626,6 +772,119 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -745,7 +1004,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -780,7 +1039,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -793,7 +1052,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -814,7 +1073,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -822,7 +1081,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

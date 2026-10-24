@@ -1,8 +1,11 @@
 # Lab 02 · Make the business case
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 02 · Cloud Concepts](../../lunches/02-cloud-concepts/README.md)
 > **Time:** about 40 minutes · **Cost:** 💲 — no Azure resources are created (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★☆☆
 > **Works on its own:** ✅ You do not need any earlier lab. The main tasks do not even need an Azure subscription.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

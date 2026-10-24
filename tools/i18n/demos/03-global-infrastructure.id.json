@@ -1,0 +1,102 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 03 · Infrastruktur global Azure — Demo interaktif",
+    "kicker": "Makan Siang 03 · Infrastruktur global · Demo interaktif",
+    "title": "Dari bola dunia ke satu pusat data",
+    "lede": "Perbesar tampilan dari geografi ke sebuah region, availability zone, dan pusat datanya, saksikan satu zona gagal, lalu bandingkan region yang punya pasangan dengan region yang tidak punya. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Memperbesar tampilan dari bola dunia ke sebuah region Azure, availability zone, dan pusat datanya",
+    "svgDesc": "Bola dunia yang disederhanakan menampilkan geografi Asia Pacific dan Indonesia dengan region Southeast Asia, East Asia, dan Indonesia Central. Kamera memperbesar Indonesia Central, yang punya tiga availability zone berisi pusat data, sebuah public IP zone-redundant, web server zonal, dan salinan storage zone-redundant. Zona 1 gagal, web server kedua di zona 2 menjaga toko tetap buka, lalu kamera memperkecil tampilan lagi untuk membandingkan pasangan region Southeast Asia dan East Asia dengan Indonesia Central, yang tidak punya pasangan."
+  },
+  "steps": [
+    {
+      "title": "Satu server di sebelah pantri",
+      "text": "Toko online Nusantara Retail masih berjalan di satu server fisik, di ruangan sebelah pantri kantor Jakarta. Kalau listrik ruangan itu padam, toko ikut tutup. Azure menyebar kapasitasnya ke banyak region di seluruh dunia, dan setiap region dibangun dari beberapa pusat data. Mari kita perbesar langkah demi langkah, dari seluruh planet sampai ke satu gedung, lalu lihat apa yang terjadi saat sebagian di antaranya gagal."
+    },
+    {
+      "title": "Geografi: di mana data boleh tinggal",
+      "text": "Perbesar ke Asia. Azure mengelompokkan region ke dalam geografi, dan setiap geografi adalah batas residensi data, yaitu batas tempat data boleh disimpan. Southeast Asia (Singapura) dan East Asia (Hong Kong) ada di geografi Asia Pacific. Indonesia Central punya geografinya sendiri: Indonesia. Jika undang-undang atau kontrak mewajibkan data pelanggan tetap di Indonesia, tepi geografi itulah garis yang tidak boleh Anda lewati."
+    },
+    {
+      "title": "Sebuah region: Indonesia Central",
+      "text": "Region adalah sekumpulan pusat data di satu wilayah metropolitan, yang terhubung oleh jaringan cepat berlatensi rendah. Indonesia Central di Jakarta dibuka pada 27 Mei 2025. Region ini punya tiga availability zone tetapi tidak punya region pasangan, seperti yang kini ditunjukkan labelnya. Region Southeast Asia di Singapura letaknya dekat dan juga punya tiga zona. Anda memilih region setiap kali membuat sebagian besar resource.",
+      "set": {
+        "t-jkt": "Indonesia Central · 3 zona · tanpa pasangan"
+      }
+    },
+    {
+      "title": "Di dalam region: tiga zona",
+      "text": "Buka region-nya, dan Anda akan menemukan availability zone. Setiap zona adalah kelompok pusat data terpisah dengan listrik, pendingin, dan jaringannya sendiri. Zona-zona itu berjarak beberapa kilometer, sehingga kebakaran atau banjir di satu zona semestinya tidak menjalar ke zona lain, tetapi cukup dekat untuk waktu bolak-balik sekitar dua milidetik. Setiap region yang menyediakan zona punya minimal tiga zona."
+    },
+    {
+      "title": "Zona terdiri atas pusat data",
+      "text": "Lihat lebih dekat: setiap zona berisi satu pusat data atau lebih, yaitu gedung sungguhan yang penuh server dan switch. Di sini zona 2 hanya punya satu gedung, sedangkan zona 1 dan 3 masing-masing punya dua. Nomor zona yang Anda lihat adalah label logis untuk subscription Anda, jadi zona 1 Anda bisa jadi gedung yang berbeda dengan zona 1 milik rekan Anda di subscription lain."
+    },
+    {
+      "title": "Resource zonal dan zone-redundant",
+      "text": "Sekarang tempatkan resource toko. vm-web-1 bersifat zonal: Anda mematoknya ke zona 1, jadi VM itu tinggal di tepat satu zona. Standard public IP bersifat zone-redundant, jadi Azure menyebarnya ke ketiga zona. Storage account memakai zone-redundant storage (ZRS), yang menyimpan salinan sinkron dari setiap penulisan di setiap zona."
+    },
+    {
+      "title": "Hari biasa: lalu lintas dan salinan",
+      "text": "Di hari biasa, pembeli menuju public IP, permintaannya mendarat di vm-web-1, dan gambar produk baru ditulis ke storage. Setiap penulisan disalin ke ketiga zona sebelum Azure mengonfirmasinya, jadi tidak ada zona yang memegang satu-satunya salinan. Semuanya tampak sehat, tetapi perhatikan bahwa seluruh pekerjaan komputasi dikerjakan oleh satu zona saja."
+    },
+    {
+      "title": "Zona 1 padam",
+      "text": "Sekarang zona 1 kehilangan listrik. Public IP yang zone-redundant tetap menjawab, dan storage account tetap melayani data dari salinan di zona 2 dan 3. Tetapi vm-web-1 bersifat zonal dan hanya tinggal di zona 1, jadi VM itu mati, dan bersamanya seluruh toko. Bagian yang zone-redundant selamat; satu-satunya bagian yang zonal tidak.",
+      "set": {
+        "t-vm1": "mati ✗"
+      }
+    },
+    {
+      "title": "Solusi: sebar komputasi ke beberapa zona",
+      "text": "Solusinya adalah berhenti bergantung pada satu zona. Jalankan web server kedua, vm-web-2, di zona 2, lalu pasang Standard load balancer dengan frontend zone-redundant di depan keduanya. Saat zona 1 gagal, lalu lintas tinggal mengalir ke zona 2. Dua VM zonal di zona yang berbeda membuat lapisan web menjadi zone-resilient. Anda akan membangun persis ini di Makan Siang 09.",
+      "set": {
+        "t-pip": "load balancer · frontend zone-redundant"
+      }
+    },
+    {
+      "title": "Region pair: Singapura dan Hong Kong",
+      "text": "Zona tidak membantu jika seluruh region hilang, jadi mari perkecil tampilan lagi. Microsoft memasangkan sebagian region: Southeast Asia berpasangan dengan East Asia. Sebuah pasangan mendapat pembaruan terencana yang digilir satu region demi satu region, prioritas pemulihan saat gangguan meluas, dan tetap berada di satu geografi. Segelintir layanan, seperti geo-redundant storage, bisa menyalin data ke pasangannya. Aplikasi Anda sendiri tidak pernah disalin otomatis."
+    },
+    {
+      "title": "Tanpa pasangan? Anda yang memilih",
+      "text": "Indonesia Central tidak punya pasangan, seperti banyak region yang lebih baru. Anda tetap punya pilihan. Simpan semuanya di Indonesia: sebar ke tiga zona dan simpan backup di region itu. Atau pilih region kedua sendiri, misalnya Southeast Asia, sekitar 17 milidetik jauhnya menurut pengukuran Microsoft pada Juli 2026, lalu bangun replikasinya sendiri, selama aturan data Anda mengizinkan data keluar dari Indonesia."
+    },
+    {
+      "title": "Rangkuman: pilih dengan sengaja",
+      "text": "Rangkuman: geografi menentukan residensi data, region menentukan lokasi dan layanan, zona melindungi dari kegagalan setingkat gedung, dan sebuah pasangan atau region kedua pilihan Anda melindungi dari hilangnya satu region. Patok resource zonal dengan sengaja, utamakan opsi zone-redundant untuk komponen bersama, dan jangan pernah berasumsi bahwa region pair menyalin data Anda.",
+      "tip": "Di Lab 03, Anda menampilkan daftar region, pasangan, dan pemetaan zona dengan CLI, membuat Standard public IP yang zonal dan yang zone-redundant, lalu membandingkan storage LRS dengan ZRS."
+    }
+  ],
+  "svg": {
+    "Azure global infrastructure (simplified, not to scale)": "Infrastruktur global Azure (disederhanakan, tidak sesuai skala)",
+    "Asia Pacific geography": "Geografi Asia Pacific",
+    "Indonesia geography": "Geografi Indonesia",
+    "Today: one server": "Kini: satu server",
+    "next to the pantry": "di sebelah pantri",
+    "single point of failure": "titik kegagalan tunggal",
+    "Region pair gives you": "Manfaat region pair",
+    "Staggered updates": "Pembaruan bergiliran",
+    "Recovery priority": "Prioritas pemulihan",
+    "Same geography": "Geografi yang sama",
+    "NOT: copies of your data": "BUKAN: salinan data Anda",
+    "NOT: automatic failover": "BUKAN: failover otomatis",
+    "No pair": "Tanpa pair",
+    "Your DR choice": "Pilihan DR Anda",
+    "No pair? Your choices": "Tanpa pasangan? Opsi:",
+    "A: 3 zones + backups,": "A: 3 zona + backup,",
+    "all inside Indonesia": "semua di dalam Indonesia",
+    "B: your own 2nd region;": "B: region kedua sendiri;",
+    "you build the copies": "salinannya Anda bangun",
+    "and check data rules": "dan cek aturan data",
+    "Zone 1": "Zona 1",
+    "Zone 2": "Zona 2",
+    "Zone 3": "Zona 3",
+    "Shoppers": "Pembeli",
+    "zone 1 only": "hanya zona 1",
+    "zone 2 only": "hanya zona 2",
+    "ZRS copy": "Salinan ZRS",
+    "Every zone has its own": "Tiap zona: listrik,",
+    "power, cooling and": "pendingin, jaringan",
+    "network, km apart": "sendiri; berjarak km"
+  }
+}

@@ -1,5 +1,7 @@
 # Lunch 07 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the part an animation cannot show.
 > **Length target:** 4–6 minutes (short videos keep attention; split anything longer).
 > **Record in:** a personal or dedicated demo subscription — never a company subscription.

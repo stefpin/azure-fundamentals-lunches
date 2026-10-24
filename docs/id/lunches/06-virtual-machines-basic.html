@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 06 · Kabur dari Pantry — Makan Siang 06: Virtual Machines (Dasar) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 06 · Virtual Machines (Dasar). Kipas angin meja di depan server bukanlah strategi — saatnya memindahkan toko dari mesin itu. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/06-virtual-machines-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/06-virtual-machines-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/06-virtual-machines-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/06-virtual-machines-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 06 · Kabur dari Pantry — Makan Siang 06: Virtual Machines (Dasar)">
+<meta property="og:description" content="Makan Siang 06 · Virtual Machines (Dasar). Kipas angin meja di depan server bukanlah strategi — saatnya memindahkan toko dari mesin itu. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/06-virtual-machines-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="06" style="--c:#e2482f">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/06-virtual-machines-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 06</span> Season 1 · 🏗️ Bagian 2 · Infrastruktur inti</div>
+      <h1>Kabur dari Pantry</h1>
+      <div class="lunch-title">Makan Siang 06 · Virtual Machines (Dasar)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 45 menit · 💲💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="01-before-you-begin.html" title="Ruang Sebelah Pantry">↩ 01</a><a class="chip" href="03-global-infrastructure.html" title="Toko Kita Tinggal di Mana?">↩ 03</a><a class="chip" href="04-resource-hierarchy-basic.html" title="Siapa yang Bikin server-baru-final2?">↩ 04</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 05 · Kasih Saja Password Saya, akses Rizky kini pas dengan kebutuhannya — dan ada cara yang rapi untuk mencabutnya kembali.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-1"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, cemas"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 18% siap</b>Setelah episode ini Anda bisa menjawab: “Kalau VM-nya mati, kita bisa membangunnya ulang dalam sekitar sepuluh menit.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-kapan-virtual-machine-adalah-alat-yang-tepat">Kapan virtual machine adalah alat yang tepat</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-komponen-penyusunnya-vm-adalah-sekumpulan-resource">Komponen penyusunnya: VM adalah sekumpulan resource</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-memilih-size-dan-disk">Memilih size dan disk</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-masuk-dan-keluar">Masuk, dan keluar</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-hidup-bersama-vm-power-state-tagihan-resizing-dan-auto-shutdown">Hidup bersama VM: power state, tagihan, resizing, dan auto-shutdown</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-membayar-vm-dan-artinya-bagi-nusantara-retail">Membayar VM, dan artinya bagi Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/06-virtual-machines-basic.html">🔬 Buka Lab 06</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memutuskan</strong> kapan virtual machine (VM, <em>komputer virtual</em>) berbasis IaaS (infrastructure as a service, <em>infrastruktur sebagai layanan</em>) adalah alat yang tepat untuk sebuah workload (beban kerja: aplikasi atau layanan yang Anda jalankan), dan apa saja yang tetap Anda kelola sendiri.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menyebutkan</strong> setiap resource yang dibuat Azure untuk sebuah VM — image, size, disk, network interface, virtual network (<em>jaringan virtual</em>), public IP, dan network security group — serta menjelaskan fungsi masing-masing.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> keluarga size VM dan tipe managed disk, termasuk kapan size burstable seri B cocok dipakai.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membandingkan</strong> cara-cara untuk sign in dan terhubung ke VM, serta menjelaskan mengapa virtual network baru membutuhkan akses outbound (lalu lintas keluar) yang eksplisit.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> power state dan tagihannya, resizing, auto-shutdown, serta opsi harga utama untuk VM.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 06</span>
+        <div class="story-body"><p>Senin, pukul 08.15. Server toko online di sebelah pantry kembali berdengung keras, dan Pak Budi sudah menaruh kipas angin meja di depannya, &quot;untuk hari ini saja&quot;. Ibu Sari sudah membaca catatan konsep cloud Anda dari Makan Siang 02 dan punya permintaan sederhana: &quot;Sebelum kita merancang ulang apa pun, bisakah setidaknya toko kita dipindahkan dari kotak itu ke Azure?&quot;</p>
+<p>Dewi bersemangat. &quot;Isinya cuma Ubuntu dan nginx. Kasih saya satu server di cloud, sore ini juga situsnya saya salin ke sana.&quot; Pak Budi tidak seantusias itu. Dia ingin tahu siapa yang boleh sign in, port mana saja yang akan terbuka ke internet, dan apakah server baru itu masih bisa mengunduh update keamanan. Lalu tim keuangan melontarkan pertanyaan yang dari tadi dihindari semua orang: &quot;Apakah kita tetap bayar di malam hari, saat tidak ada yang belanja?&quot;</p>
+<p>Tugas Anda hari ini adalah menyewa server pertama itu dengan benar. Apa sebenarnya yang Anda dapatkan — dan Anda bayar — ketika membuat sebuah virtual machine di Azure?</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-kapan-virtual-machine-adalah-alat-yang-tepat" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Kapan virtual machine adalah alat yang tepat</h3><div class="prose"><p><strong>Virtual machine (VM)</strong> adalah komputer yang dijalankan Azure untuk Anda di atas server fisik miliknya. Anda memilih image sistem operasi (OS) dan sebuah size (ukuran), Azure mencarikan host (server fisik) yang masih punya kapasitas kosong, dan beberapa menit kemudian Anda punya mesin yang bisa Anda masuki. Inilah bentuk paling murni dari <strong>infrastructure as a service (IaaS)</strong>: Microsoft memiliki gedung, host fisik, hypervisor (perangkat lunak yang membagi satu server fisik menjadi banyak VM), dan jaringan fisik; Anda memiliki semuanya mulai dari sistem operasi ke atas — patch, firewall di dalam OS, web server, aplikasi, dan datanya. Dalam gambaran <em>model tanggung jawab bersama</em> (shared responsibility model) dari Makan Siang 02, VM adalah pilihan cloud yang meninggalkan pekerjaan paling banyak di sisi Anda.</p>
+<p>Ibaratnya menyewa ruko kosong: pemilik menyediakan bangunan, listrik, dan jalan di depannya, tetapi rak, kasir, kebersihan, dan gembok di dalam toko sepenuhnya urusan Anda. Kalau Anda ingin semuanya beres dan tinggal pakai, Anda menyewa kios siap pakai di mal — itulah layanan platform yang akan kita temui nanti.</p>
+<p>Lalu, mengapa memilih opsi yang paling banyak pekerjaannya? Karena kadang kendali lebih penting daripada kenyamanan:</p>
+<ul>
+<li><strong>Lift and shift.</strong> Toko online sudah berjalan di Ubuntu dengan nginx. Memindahkannya ke VM apa adanya — disebut <strong>rehosting</strong> — hampir tidak butuh perubahan kode, sehingga Nusantara Retail bisa meninggalkan ruang pantry bulan ini dan memodernisasi belakangan.</li>
+<li><strong>Kendali penuh atas sistem operasi.</strong> Sebagian perangkat lunak butuh kernel module tertentu, agent dari vendor, atau lisensi yang terikat pada OS.</li>
+<li><strong>Perangkat lunak yang tidak pernah dirancang untuk cloud.</strong> Aplikasi bisnis lama yang mengharapkan path disk yang tetap, sebuah Windows service, atau hostname yang tidak berubah paling nyaman berjalan di VM.</li>
+<li><strong>Lingkungan berumur pendek.</strong> Developer bisa membuat, merusak, dan menghapus server uji dalam hitungan menit.</li>
+</ul>
+<p>Jika yang Anda inginkan hanyalah menjalankan aplikasi web, layanan platform seperti Azure App Service (Makan Siang 10), sebuah container (<em>kontainer</em>, Makan Siang 13), atau sebuah function (<em>fungsi</em>, Makan Siang 14) biasanya lebih hemat tenaga, karena Azure yang mem-patch platformnya dan mengurus scaling-nya untuk Anda. Kebiasaan yang baik: pilih VM saat Anda butuh kendali, dan tuliskan alasannya. Catatan itu kelak memberi tahu Anda kapan saatnya memodernisasi.</p>
+</div></article><article class="scene-card" id="2-komponen-penyusunnya-vm-adalah-sekumpulan-resource" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Komponen penyusunnya: VM adalah sekumpulan resource</h3><div class="prose"><p>Saat Anda memilih <strong>Create</strong> di portal atau menjalankan <code>az vm create</code>, Azure Resource Manager tidak membuat satu benda saja. Ia membuat sekeluarga kecil resource terpisah di resource group (<em>grup sumber daya</em>) Anda, masing-masing dengan resource ID sendiri, pengaturan sendiri, dan — kadang-kadang — baris tagihan sendiri. Mengenal keluarga ini adalah pembeda antara subscription (<em>langganan</em>) yang rapi dan tumpukan disk yang terlupakan. Mirip memesan nasi kotak: satu pesanan, tetapi isinya nasi, lauk, sayur, dan kerupuk yang terpisah. Bedanya, sisa nasi kotak tidak mengirim tagihan; disk yang tertinggal mengirim tagihan setiap bulan.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  dewi[&quot;Dewi · Cloud Shell&quot;]
+  shopper[&quot;Browser pembeli&quot;]
+  subgraph rg[&quot;Resource group rg-lunch06-&amp;lt;suffix&amp;gt;&quot;]
+    pip[&quot;Public IP pip-web-1&lt;br/&gt;SKU Standard, statis&quot;]
+    nsg[&quot;NSG nsg-web&lt;br/&gt;aturan inbound&quot;]
+    subgraph vnet[&quot;VNet vnet-nusa-web · 10.20.0.0/16&quot;]
+      subgraph snet[&quot;Subnet snet-web · 10.20.1.0/24&quot;]
+        nic[&quot;NIC · IP privat 10.20.1.4&quot;]
+      end
+    end
+    vm[&quot;VM vm-web-1&lt;br/&gt;size + image&quot;]
+    os[(&quot;OS disk&quot;)]
+    data[(&quot;Data disk · LUN 0&quot;)]
+  end
+  dewi --&gt;|&quot;SSH 22&quot;| pip
+  shopper --&gt;|&quot;HTTP 80&quot;| pip
+  pip --&gt; nic
+  nsg -. &quot;menyaring lalu lintas&quot; .- nic
+  nic --- vm
+  vm --- os
+  vm --- data
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Komponen</th>
+<th>Apa itu</th>
+<th>Contoh di Nusantara Retail</th>
+<th>Hati-hati dengan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Image</strong></td>
+<td>Templat untuk OS disk, dari Azure Marketplace atau buatan Anda sendiri</td>
+<td>Ubuntu Server 24.04 LTS (long-term support)</td>
+<td>Pilih versi yang masih didukung dan terbaru</td>
+</tr>
+<tr>
+<td><strong>Size</strong></td>
+<td>vCPU (CPU virtual), memori, penyimpanan lokal, bandwidth, dan fitur</td>
+<td>Standard_B2ats_v2</td>
+<td>Tidak semua size tersedia di setiap region (<em>wilayah</em>) atau availability zone (<em>zona ketersediaan</em>)</td>
+</tr>
+<tr>
+<td><strong>OS disk</strong></td>
+<td>Managed disk yang dibuat dari image</td>
+<td>30 GiB berisi Ubuntu dan nginx</td>
+<td>Tetap ditagih meskipun VM sedang mati</td>
+</tr>
+<tr>
+<td><strong>Data disk</strong></td>
+<td>Managed disk tambahan yang Anda pasang (attach), format, dan mount</td>
+<td>8 GiB untuk foto produk</td>
+<td>Azure yang memasangnya; Anda yang memformatnya</td>
+</tr>
+<tr>
+<td><strong>Temporary disk</strong></td>
+<td>Penyimpanan lokal di host fisik, jika size-nya punya</td>
+<td>Tidak ada di size Basv2</td>
+<td>Terhapus saat VM pindah host — jangan pernah menyimpan data di sana</td>
+</tr>
+<tr>
+<td><strong>Network interface (NIC)</strong></td>
+<td>Menghubungkan VM ke subnet dan menyimpan IP privatnya</td>
+<td>10.20.1.4</td>
+<td>Setiap VM butuh minimal satu</td>
+</tr>
+<tr>
+<td><strong>Virtual network dan subnet</strong></td>
+<td>Ruang alamat privat Anda di Azure</td>
+<td>vnet-nusa-web, 10.20.0.0/16</td>
+<td>Hindari tumpang tindih dengan 10.0.0.0/16 milik kantor pusat</td>
+</tr>
+<tr>
+<td><strong>Public IP address</strong></td>
+<td>Alamat yang menghadap internet, SKU Standard</td>
+<td>pip-web-1</td>
+<td>SKU Basic sudah dipensiunkan pada 30 September 2025</td>
+</tr>
+<tr>
+<td><strong>Network security group (NSG)</strong></td>
+<td>Aturan allow dan deny untuk NIC atau subnet</td>
+<td>nsg-web</td>
+<td>Standard public IP tetap tertutup sampai NSG mengizinkan lalu lintas</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Image</strong> menentukan apa yang mendarat di OS disk. VM Generation 2 baru yang dibuat dari portal, CLI, atau PowerShell kini memakai <strong>Trusted Launch</strong> secara default — Secure Boot ditambah virtual TPM (Trusted Platform Module, chip keamanan dalam versi virtual) yang melindungi proses boot — tanpa biaya tambahan. Makan Siang 23 akan membahasnya lagi.</p>
+<p>Ada dua pelajaran praktis dari tabel ini. Pertama, jika Anda membiarkan <code>az vm create</code> mengarang jaringannya sendiri, ia memilih 10.0.0.0/16 — persis rentang kantor pusat milik Pak Budi. Hari ini tidak masalah, tetapi akan menyakitkan pada hari Anda menghubungkan kedua jaringan itu (Makan Siang 26), jadi lab menetapkan rentangnya sendiri. Kedua, menghapus VM tidak selalu ikut menghapus disk, NIC, dan public IP-nya; portal menampilkan opsi &quot;delete with VM&quot;, dan sisa-sisanya terus menelan biaya. Di lab, menghapus seluruh resource group adalah jalan keluar yang bersih.</p>
+</div></article><article class="scene-card" id="3-memilih-size-dan-disk" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Memilih size dan disk</h3><div class="prose"><p><strong>Size</strong> sebuah VM menentukan jumlah vCPU, memori, disk lokal (jika ada), jumlah maksimum data disk, dan bandwidth jaringan. Nama size terlihat seperti kode rahasia, tetapi sebenarnya mengikuti pola. Pada <code>Standard_B2ats_v2</code>, <strong>B</strong> adalah keluarganya, <strong>2</strong> adalah jumlah vCPU, <strong>a</strong> berarti prosesor AMD (<strong>p</strong> berarti Arm), <strong>t</strong> berarti memori yang sangat kecil (tiny), <strong>s</strong> berarti bisa memakai disk Premium SSD, dan <strong>v2</strong> adalah versi serinya. Huruf <strong>d</strong> pada nama berarti size tersebut punya temporary disk lokal.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Keluarga</th>
+<th>Dioptimalkan untuk</th>
+<th>Workload umum</th>
+<th>Contoh di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>B</strong> — burstable</td>
+<td>CPU dasar rendah dengan lonjakan singkat</td>
+<td>Web server kecil, dev/test, proof of concept</td>
+<td>VM toko online yang pertama</td>
+</tr>
+<tr>
+<td><strong>D</strong> — general purpose</td>
+<td>CPU dan memori seimbang</td>
+<td>Sebagian besar aplikasi production, app server, database kecil</td>
+<td>API inventaris yang bebannya stabil</td>
+</tr>
+<tr>
+<td><strong>E</strong> — memory optimised</td>
+<td>Memori lebih besar per vCPU</td>
+<td>Database relasional, cache, analitik in-memory</td>
+<td>SQL Server yang lebih besar nanti</td>
+</tr>
+<tr>
+<td><strong>F</strong> — compute optimised</td>
+<td>CPU lebih banyak per GiB memori</td>
+<td>Batch job, web tier yang berat di CPU, game server</td>
+<td>Perhitungan ulang harga setiap malam</td>
+</tr>
+<tr>
+<td><strong>L</strong> — storage optimised</td>
+<td>Disk lokal yang besar dan cepat</td>
+<td>Database NoSQL, big data, data warehouse</td>
+<td>Cluster pencarian produk</td>
+</tr>
+<tr>
+<td><strong>M</strong> — very large memory</td>
+<td>RAM berukuran terabyte</td>
+<td>SAP HANA, database in-memory yang sangat besar</td>
+<td>Tidak dibutuhkan — cukup untuk diketahui</td>
+</tr>
+<tr>
+<td><strong>N</strong> — GPU</td>
+<td>Prosesor grafis (graphics processing unit) NVIDIA atau AMD</td>
+<td>Training dan inference AI, rendering, workstation grafis</td>
+<td>Model pengenalan gambar</td>
+</tr>
+</tbody>
+</table></div>
+<p>Size <strong>burstable seri B</strong> layak dibahas lebih dalam, karena murah dan mudah disalahgunakan. Setiap size punya <strong>baseline</strong> — porsi vCPU yang selalu boleh dipakai. Saat pemakaian di bawah baseline, VM menabung <strong>CPU credit</strong>; saat di atasnya, VM membelanjakan credit itu. Satu credit kira-kira setara satu vCPU yang berjalan 100% selama satu menit. Sebuah <code>Standard_B2ats_v2</code> punya baseline 20%, mulai dengan 60 credit, mengumpulkan hingga 24 credit per jam saat menganggur, dan bisa menabung hingga 576. Jika kedua vCPU-nya bekerja habis-habisan, VM menghabiskan sekitar 1,6 credit per menit, sehingga VM yang baru dibuat bisa berlari kencang sekitar 35–40 menit. Ketika credit-nya habis, Azure menurunkan kecepatannya (throttle) kembali ke baseline sampai VM mengumpulkan credit lagi. Ibaratnya uang saku dan celengan: baseline adalah uang saku harian yang selalu ada, sedangkan credit adalah isi celengan dari hari-hari yang hemat. Saat ada keperluan besar, celengan dipecah; kalau celengan kosong, Anda kembali hidup dari uang saku saja. Pola ini cocok untuk toko online — sebagian besar waktu sepi, dengan puncak singkat — tetapi tidak untuk laporan tiga jam yang terus menyibukkan CPU. Pantau metrik <strong>CPU Credits Remaining</strong>. Satu catatan lagi: size seri B generasi awal (seperti B1s) sudah berstatus End of Life — sejak Juli 2026 subscription baru tidak bisa men-deploy-nya, dan size itu pensiun pada 15 November 2028 — sehingga rancangan baru memakai Bsv2, Basv2, atau Bpsv2.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Sebelum memilih, tampilkan daftar size yang benar-benar bisa dipakai subscription Anda di sebuah region:
+<code>az vm list-skus --location southeastasia --size Standard_B --resource-type virtualMachines --output table</code>.
+Kolom <code>Restrictions</code> memberi tahu Anda jika sebuah size tidak ditawarkan untuk Anda atau tidak tersedia di suatu zona.</p>
+</aside>
+<p>Setiap disk VM adalah <strong>managed disk</strong>: Azure yang menyimpan dan mereplikasinya untuk Anda, dan Anda tinggal memilih tipenya.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tipe disk</th>
+<th>Paling cocok untuk</th>
+<th>Bisa menjadi OS disk?</th>
+<th>Perlu diketahui</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Standard HDD</strong></td>
+<td>Backup, data yang jarang dipakai</td>
+<td>Ya, tetapi dipensiunkan untuk OS disk pada 8 September 2028</td>
+<td>Paling murah; latensinya naik-turun</td>
+</tr>
+<tr>
+<td><strong>Standard SSD</strong></td>
+<td>Web server, aplikasi ringan, dev/test</td>
+<td>Ya</td>
+<td>Pilihan default yang masuk akal untuk VM kecil</td>
+</tr>
+<tr>
+<td><strong>Premium SSD</strong></td>
+<td>Aplikasi production dan database</td>
+<td>Ya</td>
+<td>Tingkatan ukurannya tetap; butuh size dengan huruf <strong>s</strong> di namanya</td>
+</tr>
+<tr>
+<td><strong>Premium SSD v2</strong></td>
+<td>Database yang butuh performa yang bisa diatur</td>
+<td>Tidak — hanya data disk</td>
+<td>Kapasitas, IOPS, dan throughput diatur terpisah</td>
+</tr>
+<tr>
+<td><strong>Ultra Disk</strong></td>
+<td>I/O paling menuntut, seperti SAP HANA</td>
+<td>Tidak — hanya data disk</td>
+<td>Ubah performa tanpa me-restart VM</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sekadar penjelasan singkatannya: HDD (hard disk drive) adalah disk dengan piringan berputar, SSD (solid-state drive) adalah penyimpanan flash yang jauh lebih cepat, dan IOPS (input/output operations per second) adalah jumlah operasi baca-tulis (I/O) per detik.</p>
+<p>Anda membayar ukuran yang Anda pesan (provisioned), dibulatkan ke atas ke tingkatan ukuran berikutnya, entah disknya penuh atau kosong. Standard SSD dan Premium SSD juga tersedia dalam versi zone-redundant (ZRS, zone-redundant storage). Pilihan disk bahkan memengaruhi janji uptime: saat tulisan ini dibuat (Oktober 2026), satu VM yang semua disknya Premium SSD atau Ultra Disk mendapat SLA (service level agreement, janji tingkat layanan) konektivitas 99,9%, Standard SSD memberi 99,5%, dan Standard HDD hanya 95% — periksa
+<a href="https://www.microsoft.com/licensing/docs/view/Service-Level-Agreements-SLA-for-Online-Services" target="_blank" rel="noopener">perjanjian tingkat layanan (SLA)</a>
+untuk angka terbaru.</p>
+</div></article><article class="scene-card" id="4-masuk-dan-keluar" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Masuk, dan keluar</h3><div class="prose"><p>Pertama, <strong>autentikasi</strong> — cara Anda membuktikan identitas kepada sistem operasi:</p>
+<ul>
+<li><strong>SSH key pair</strong> (sepasang kunci untuk SSH, Secure Shell — jalur terenkripsi untuk mengendalikan server dari jauh) adalah default untuk Linux. <code>--generate-ssh-keys</code> membuat sepasang kunci di <code>~/.ssh</code>; Azure hanya menyimpan public key di VM, dan private key tidak pernah meninggalkan tangan Anda. Ibaratnya gembok dan kuncinya: public key adalah gembok yang boleh dipasang di mana saja, private key adalah satu-satunya kunci yang bisa membukanya.</li>
+<li><strong>Kata sandi</strong> wajib untuk Windows dan bisa dipakai di Linux. Hindari di Linux; kalau terpaksa memakainya, buat secara acak (generate).</li>
+<li><strong>Login Microsoft Entra ID</strong> (<em>ID Microsoft Entra</em>) memungkinkan orang sign in dengan identitas perusahaannya. Akses diberikan dengan role Azure RBAC (<em>kontrol akses berbasis peran</em>) seperti <em>Virtual Machine User Login</em> atau <em>Virtual Machine Administrator Login</em> (Makan Siang 05). Saat kontrak Rizky berakhir, Anda cukup menghapus satu role assignment — tidak ada kunci yang harus diburu satu per satu.</li>
+</ul>
+<p>Lalu, <strong>cara terhubung</strong>:</p>
+<ul>
+<li><strong>SSH</strong> (port 22) untuk Linux dan <strong>RDP</strong> (Remote Desktop Protocol, port 3389) untuk Windows membutuhkan jalur jaringan dan aturan NSG.</li>
+<li><strong>Azure Bastion</strong> adalah jump host (server perantara untuk masuk ke server lain) terkelola di dalam virtual network Anda. Anda terhubung dari browser, dan VM sama sekali tidak butuh public IP. SKU (tingkatan produk) Developer yang gratis cocok untuk dev/test di region tertentu (Southeast Asia salah satunya) dan melayani satu VM sekaligus; Basic, Standard, dan Premium adalah SKU berbayar untuk production.</li>
+<li><strong>Run Command</strong> menjalankan skrip di dalam VM melalui Azure VM agent, tanpa port inbound apa pun. Lab memakainya untuk me-mount disk.</li>
+<li><strong>Serial console</strong> memberi Anda konsol teks melalui boot diagnostics, bahkan saat jaringan di dalam VM sedang rusak.</li>
+</ul>
+<p>Lalu lintas masuk (inbound) bertemu dengan <strong>NSG</strong>. Aturan default-nya mengizinkan lalu lintas dari dalam virtual network dan dari probe load balancer Azure, lalu menolak semua yang lain — termasuk apa pun dari internet. Bayangkan satpam kompleks perumahan dengan daftar tamu: siapa pun yang namanya tidak ada di daftar tidak boleh masuk, sesopan apa pun dia mengetuk. Untuk VM Linux, <code>az vm create</code> juga menambahkan aturan yang mengizinkan SSH dari mana saja — praktis untuk lab, berisiko di production, tempat Anda akan membatasi alamat sumbernya atau memakai Bastion. Lalu lintas web di port 80 tetap diblokir sampai Anda menambahkan aturan, misalnya dengan <code>az vm open-port</code>. Makan Siang 08 membahas NSG secara tuntas.</p>
+<p>Lalu lintas keluar (outbound) berubah belakangan ini, dan perubahan ini sering mengejutkan orang.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Virtual network yang dibuat dengan versi API Azure yang dirilis setelah 31 Maret 2026 — dan portal sudah melakukannya —
+memakai <strong>private subnet</strong>: VM tidak mendapat akses internet outbound secara default. VM yang harus menjangkau internet (untuk
+<code>apt-get update</code>, aktivasi Windows, atau memanggil API eksternal) membutuhkan metode yang eksplisit: public IP pada VM, NAT
+gateway (network address translation) pada subnet, atau outbound rule pada load balancer. Virtual network yang sudah ada tidak diubah.</p>
+</aside>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  q1{&quot;Apakah VM perlu memulai&lt;br/&gt;koneksi ke internet?&quot;}
+  q1 -- &quot;Tidak&quot; --&gt; none[&quot;Biarkan privat:&lt;br/&gt;tanpa jalur outbound sama sekali&quot;]
+  q1 -- &quot;Ya&quot; --&gt; q2{&quot;Seperti apa kondisinya?&quot;}
+  q2 -- &quot;Satu VM yang sudah punya&lt;br/&gt;public IP untuk inbound&quot; --&gt; pip[&quot;Standard public IP pada NIC&lt;br/&gt;(lab hari ini)&quot;]
+  q2 -- &quot;Beberapa VM dalam satu subnet&quot; --&gt; nat[&quot;NAT gateway pada subnet&lt;br/&gt;(disarankan, Makan Siang 08)&quot;]
+  q2 -- &quot;VM di belakang&lt;br/&gt;public load balancer&quot; --&gt; lbo[&quot;Outbound rule load balancer&lt;br/&gt;(Makan Siang 09)&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>VM toko online hari ini punya Standard public IP sendiri, jadi ia punya akses outbound eksplisit dan bisa memasang nginx. Hapus IP itu tanpa menambahkan NAT gateway, maka <code>apt-get</code> akan menggantung begitu saja.</p>
+</div></article><article class="scene-card" id="5-hidup-bersama-vm-power-state-tagihan-resizing-dan-auto-shutdown" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Hidup bersama VM: power state, tagihan, resizing, dan auto-shutdown</h3><div class="prose"><p>VM berpindah-pindah di antara beberapa <strong>power state</strong> (status daya), dan hanya sebagian yang menghentikan meteran compute.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Power state</th>
+<th>Apa yang terjadi</th>
+<th>Compute ditagih?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Starting</td>
+<td>VM sedang booting</td>
+<td>Ya</td>
+</tr>
+<tr>
+<td>Running</td>
+<td>Kondisi kerja normal</td>
+<td>Ya</td>
+</tr>
+<tr>
+<td>Stopping</td>
+<td>OS sedang dimatikan</td>
+<td>Ya</td>
+</tr>
+<tr>
+<td>Stopped (allocated)</td>
+<td>OS mati, tetapi VM masih menempati tempatnya di host</td>
+<td><strong>Ya</strong></td>
+</tr>
+<tr>
+<td>Deallocating</td>
+<td>Azure sedang melepaskan kapasitas host</td>
+<td>Tidak</td>
+</tr>
+<tr>
+<td>Deallocated</td>
+<td>Yang tersisa hanya disk dan alamat IP</td>
+<td>Tidak — disk dan public IP tetap ditagih</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="diagram"><pre class="mermaid">stateDiagram-v2
+  [*] --&gt; Running : create atau start
+  Running --&gt; Stopped : az vm stop, atau shutdown dari dalam OS
+  Stopped --&gt; Running : start
+  Stopped --&gt; Deallocated : az vm deallocate
+  Running --&gt; Deallocated : deallocate, tombol Stop di portal, auto-shutdown
+  Deallocated --&gt; Running : start, mungkin di host yang berbeda
+  note right of Stopped : compute tetap ditagih
+  note right of Deallocated : compute tidak ditagih, disk dan public IP tetap ditagih
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Shutdown dari dalam sistem operasi (<code>sudo shutdown -h now</code>) atau menjalankan <code>az vm stop</code> membuat VM berada dalam status
+<strong>Stopped (allocated) — dan tetap ditagih untuk compute</strong>. Gunakan tombol <strong>Stop</strong> di portal, <code>az vm deallocate</code>, atau
+auto-shutdown, yang semuanya melakukan deallocate.</p>
+</aside>
+<p>Ibaratnya parkir di mal: mematikan mesin mobil di dalam gedung parkir tidak menghentikan argo parkir, karena Anda masih menempati slotnya (stopped). Argo baru berhenti setelah Anda keluar dari gedung (deallocated). Barang yang Anda titipkan di loker — disk dan public IP — tetap dikenai biaya sewa loker.</p>
+<p>Deallocation mempertahankan managed disk Anda, dan Standard public IP tetap memegang alamatnya, karena Standard IP selalu statis. Apa pun yang ada di temporary disk akan hilang, dan start berikutnya bisa saja mendarat di host fisik yang berbeda.</p>
+<p><strong>Resizing</strong> adalah vertical scaling (penskalaan vertikal): Anda mengubah size, Azure me-restart VM, dan VM kembali dengan resource yang lebih besar atau lebih kecil. <code>az vm list-vm-resize-options</code> menampilkan size yang tersedia di hardware cluster tempat VM Anda berjalan saat ini. Jika size yang Anda inginkan tidak ada di daftar, lakukan deallocate pada VM terlebih dahulu supaya Azure bisa menempatkannya di mana saja dalam region tersebut. Ketika satu VM yang lebih besar sudah tidak cukup, Anda melakukan scale <em>out</em> — menambah jumlah VM di belakang load balancer (Makan Siang 09) atau scale set (<em>Kumpulan Skala Komputer Virtual</em>, Makan Siang 23).</p>
+<p><strong>Auto-shutdown</strong> melakukan deallocate pada VM di jam yang sama setiap hari dan bisa mengirim e-mail kepada Anda sebelumnya. Portal membiarkan Anda memilih zona waktu; CLI mengharapkan UTC (Coordinated Universal Time, acuan waktu dunia), jadi pukul 19.00 di Jakarta (UTC+7) ditulis <code>1200</code>. Fitur ini sempurna untuk VM uji dan berbahaya untuk apa pun yang dipakai pelanggan.</p>
+<p>Ada dua cara mengonfigurasi VM tanpa login yang akan sering muncul di kursus ini. <strong>cloud-init</strong> membaca &quot;custom data&quot; saat boot pertama VM Linux untuk memasang paket, menulis file, dan menjalankan perintah. <strong>VM extension</strong> adalah add-on kecil yang dipasang oleh Azure VM agent — Custom Script extension, Azure Monitor Agent, login Microsoft Entra, dan masih banyak lagi. Image dari Marketplace sudah menyertakan agent tersebut.</p>
+</div></article><article class="scene-card" id="6-membayar-vm-dan-artinya-bagi-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Membayar VM, dan artinya bagi Nusantara Retail</h3><div class="prose"><p>Compute hanya ditagih selama VM dialokasikan (allocated); disk dan public IP ditagih selama keduanya ada; data yang keluar dari Azure dan lisensi Windows ikut menambah tagihan. Lima opsi pembelian mengubah harga bagian compute:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Opsi</th>
+<th>Cara kerjanya</th>
+<th>Cocok untuk</th>
+<th>Contoh di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pay-as-you-go</strong> (<em>model berbasis penggunaan</em>)</td>
+<td>Tanpa komitmen; bayar sesuai waktu VM dialokasikan</td>
+<td>Lab, pengujian, workload baru</td>
+<td>Minggu-minggu pertama setelah migrasi</td>
+</tr>
+<tr>
+<td><strong>Reservations</strong></td>
+<td>Berkomitmen pada satu size VM di satu region selama satu atau tiga tahun</td>
+<td>Server stabil yang tidak akan berubah</td>
+<td>Toko online setelah size-nya mantap</td>
+</tr>
+<tr>
+<td><strong>Azure savings plan for compute</strong></td>
+<td>Berkomitmen pada pengeluaran per jam selama satu atau tiga tahun, lintas size dan region</td>
+<td>Pengeluaran stabil yang bentuknya bisa berubah</td>
+<td>Campuran VM dan App Service di masa depan</td>
+</tr>
+<tr>
+<td><strong>Spot</strong></td>
+<td>Kapasitas sisa dengan diskon besar; bisa dikeluarkan (evicted) dengan pemberitahuan 30 detik; tanpa SLA</td>
+<td>Batch job yang boleh terputus, dev/test</td>
+<td>Job thumbnail foto di malam hari (Makan Siang 23)</td>
+</tr>
+<tr>
+<td><strong>Azure Hybrid Benefit</strong></td>
+<td>Memakai ulang lisensi Windows Server atau SQL Server yang memenuhi syarat (juga subscription RHEL dan SLES, yaitu Red Hat Enterprise Linux dan SUSE Linux Enterprise Server)</td>
+<td>VM Windows dan SQL Server</td>
+<td>Server Windows back office</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ibaratnya mencari tempat tinggal: pay-as-you-go seperti menginap di hotel per malam, reservation seperti kontrak kos setahun yang jauh lebih murah asalkan Anda yakin akan tinggal, dan Spot seperti kamar sisa berharga miring yang bisa diminta dikosongkan dengan pemberitahuan 30 detik. Makan Siang 19 mengubah opsi-opsi ini menjadi strategi biaya.</p>
+<p>Inilah rencana langkah pertama untuk Nusantara Retail. Production akan berjalan di <strong>Indonesia Central</strong> (Jakarta) agar data pelanggan tetap berada di dalam negeri; lab memakai Southeast Asia karena pilihan layanannya paling lengkap. Toko online mendapat satu VM Ubuntu 24.04 dengan size burstable B2ats_v2, karena trafiknya naik-turun tetapi sebagian besar rendah. OS disk-nya Premium SSD demi SLA 99,9% untuk satu VM; foto produk disimpan di data disk terpisah. NSG mengizinkan HTTP dan HTTPS dari internet, dan SSH hanya dari kantor pusat — atau tidak dari mana pun setelah Bastion terpasang. Public IP milik VM memberinya akses outbound eksplisit yang dibutuhkan untuk update. Salinan uji mendapat auto-shutdown dan di-deallocate pada malam hari; VM production tidak.</p>
+<p>Itu menjawab pertanyaan tim keuangan, tetapi belum menjawab pertanyaan sang direktur, Ibu Sari: <em>&quot;Kalau server itu mati, berapa lama kita tidak bisa jualan?&quot;</em> Satu VM tetaplah satu titik kegagalan (single point of failure): 99,9% berarti ada jatah downtime sekitar 43 menit dalam sebulan 30 hari, dan maintenance terencana atau kerusakan host bisa me-restart VM itu. Jaringan (Makan Siang 08), load balancing (Makan Siang 09), dan scale set (Makan Siang 23) menghapus titik lemah itu selangkah demi selangkah.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Dewi mengusulkan auto-shutdown pukul 19.00 WIB untuk VM toko online production demi menghemat
+biaya. Apa yang terjadi pada pembeli yang berbelanja selepas makan malam — dan VM Nusantara Retail mana yang <em>seharusnya</em>
+mendapat auto-shutdown?</p>
+</aside>
+<p>➡️ Availability set (<em>set ketersediaan</em>) dan availability zone, scale set dengan autoscale, custom image, Spot VM, serta patching dalam skala besar dilanjutkan di
+<a href="23-virtual-machines-advanced.html">Makan Siang 23 · Virtual Machines (Lanjutan)</a>.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Apa yang sebenarnya tercipta saat Anda membuat VM</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/06-virtual-machines-basic.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/06-virtual-machines-basic.html?lang=id" title="Demo interaktif: Apa yang sebenarnya tercipta saat Anda membuat VM" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/06-virtual-machines-basic/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Bagaimana satu perintah <code>az vm create</code> berubah menjadi resource-resource terpisah: virtual network, public IP, NSG, NIC, VM, dan OS disk.</li>
+<li>Mengapa paket SSH lolos melewati NSG sementara permintaan HTTP pertama dibuang — dan satu aturan mana yang mengubah hal itu.</li>
+<li>Bagaimana VM menjangkau mirror paket Ubuntu melalui public IP-nya sendiri (akses outbound eksplisit).</li>
+<li>Meteran mana yang tetap berjalan setelah <code>az vm stop</code>, dan meteran mana yang masih berjalan setelah <code>az vm deallocate</code>.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi selesai menguji pukul 18.00 dan menjalankan <code>sudo shutdown -h now</code> di dalam VM uji. Keesokan paginya, tim keuangan
+bertanya mengapa VM itu ditagih untuk compute sepanjang malam. Apa yang terjadi, dan apa yang seharusnya dia lakukan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Shutdown dari dalam OS membuat VM berada dalam status <strong>Stopped (allocated)</strong>, yang tetap ditagih untuk compute. Seharusnya
+dia melakukan deallocate — dengan tombol Stop di portal, <code>az vm deallocate</code>, atau auto-shutdown — <em>alasannya:</em> hanya
+deallocation yang melepaskan kapasitas host yang ditagih oleh meteran compute.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Sebuah laporan penjualan malam hari membuat kedua vCPU pada VM <code>Standard_B2ats_v2</code> bekerja 100% selama tiga jam. Setelah
+sekitar 40 menit, VM menjadi sangat lambat. Mengapa, dan apa yang akan Anda ubah?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>VM menghabiskan CPU credit-nya dan kecepatannya diturunkan ke baseline 20%. Gunakan size non-burstable seperti VM seri D
+(seimbang) atau seri F (compute optimised) untuk pekerjaan CPU yang terus-menerus — <em>alasannya:</em> size seri B dirancang untuk
+workload yang sebagian besar waktunya sepi dan hanya sesekali melonjak singkat.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Pak Budi membuat virtual network baru dengan API terbaru, menambahkan VM tanpa public IP, dan <code>apt-get update</code>
+menggantung. Tidak ada masalah lain. Apa yang kurang?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Metode outbound yang eksplisit. Virtual network baru memakai private subnet, sehingga VM membutuhkan NAT gateway pada subnet
+(pilihan yang umum), outbound rule load balancer, atau public IP sendiri — <em>alasannya:</em> akses outbound default tidak lagi
+diberikan kepada VM di private subnet.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Anda menginginkan SLA single-VM tertinggi untuk toko online production. Tipe disk apa yang bisa Anda pakai untuk OS disk dan
+untuk data disk?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>OS disk Premium SSD, dengan data disk Premium SSD, Premium SSD v2, atau Ultra Disk — <em>alasannya:</em> SLA single-instance tertinggi
+(99,9% saat tulisan ini dibuat) mensyaratkan penyimpanan kelas premium, dan Premium SSD v2 serta Ultra Disk tidak bisa menjadi OS disk.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Rizky, seorang kontraktor outsourcing, harus memecahkan masalah di VM toko online selama satu minggu. Pak Budi tidak ingin port 22
+terbuka ke internet atau SSH key dibagikan ke sana kemari. Apa yang Anda siapkan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Azure Bastion (atau Run Command untuk tugas berbasis skrip) ditambah login Microsoft Entra ID, dengan role assignment
+<em>Virtual Machine User Login</em> untuk Rizky yang Anda cabut setelah seminggu — <em>alasannya:</em> Bastion tidak membutuhkan port inbound
+publik, dan akses yang terikat pada identitas serta role RBAC mudah diberikan dan dicabut.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>VM adalah IaaS: Azure menjalankan hardware dan hypervisor; Anda memiliki OS, patch, perangkat lunak, dan datanya.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>&quot;Satu VM&quot; sebenarnya sekumpulan resource — VM, OS disk, data disk, NIC, virtual network, Standard public IP, dan NSG — dan sisa-sisanya terus menelan biaya sampai Anda menghapusnya.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Pilih keluarga size sesuai workload (B untuk beban yang melonjak-lonjak, D seimbang, E memori, F compute, L penyimpanan, M memori sangat besar, N GPU) dan tipe disk sesuai kebutuhan I/O dan SLA Anda.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Lalu lintas inbound membutuhkan aturan NSG; lalu lintas outbound dari virtual network baru membutuhkan metode eksplisit — public IP, NAT gateway, atau outbound rule load balancer.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Stopped bukan deallocated: hanya deallocation yang menghentikan meteran compute, dan disk serta public IP tetap ditagih sampai dihapus.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Pertanyaan jam dua pagi.</strong> Dalam setiap design review, saya mengajukan satu pertanyaan untuk setiap VM: <em>seharusnya VM ini
+dalam kondisi apa pada pukul 02.00?</em> Kalau jawabannya &quot;mati&quot;, saya ingin ada auto-shutdown atau jadwal yang melakukan deallocate
+— bukan sekadar janji, dan bukan shutdown dari dalam sistem operasi, karena cara itu membiarkan meteran compute tetap berjalan.
+Kalau jawabannya &quot;sudah tidak ada&quot;, saya menghapus resource group-nya, bukan cuma VM-nya, sebab disk dan public IP yatim adalah
+baris tagihan kecil yang diam-diam lolos dari bersih-bersih yang terburu-buru. Dan kalau jawabannya &quot;sibuk&quot;, saya memeriksa
+keluarga size-nya sebelum ada yang mengutak-atik kode: VM burstable yang kehabisan CPU credit kelihatannya persis seperti bug.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>06</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>VM web server pertama Anda</h3>
+          <div class="prose"><p>Anda akan membuat VM Ubuntu dengan Azure CLI, masuk lewat SSH dari Cloud Shell, memasang nginx dan menerbitkan halaman
+Nusantara Retail, membuka port 80, menambahkan dan me-mount data disk, me-resize VM, menjadwalkan auto-shutdown, dan
+menyaksikan perbedaan antara stopped dan deallocated. Satu kerusakan yang disengaja — menghapus aturan port 80 — mengajari
+Anda cara melacak situs web yang tiba-tiba berhenti menjawab.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 45 menit</span><span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/06-virtual-machines-basic.html">Mulai Lab 06 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/virtual-machines/sizes/overview" target="_blank" rel="noopener"><b>Microsoft Learn: Ikhtisar size virtual machine</b><span>Setiap keluarga dan seri, lengkap dengan aturan penamaan yang sudah diurai.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/virtual-machines/disks-types" target="_blank" rel="noopener"><b>Microsoft Learn: Tipe managed disk Azure</b><span>Batas performa dan kapan memilih setiap tipe disk.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/virtual-machines/states-billing" target="_blank" rel="noopener"><b>Microsoft Learn: Status dan status penagihan Azure Virtual Machines</b><span>Tabel resmi power state dan penagihan.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/virtual-network/ip-services/default-outbound-access" target="_blank" rel="noopener"><b>Microsoft Learn: Akses outbound default di Azure</b><span>Private subnet dan opsi outbound eksplisit.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🖥️</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Server Perdana</h2>
+        <p class="muted">Bangun dan jalankan VM Azure pertama Anda.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Kalau VM-nya mati, kita bisa membangunnya ulang dalam sekitar sepuluh menit.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 07</b><h4>Flashdisk yang Pulang Tiap Jumat</h4><p>Empat puluh ribu foto dan faktur sepuluh tahun tersimpan di satu disk di sebelah pantry.</p><p style="margin-top:10px"><a href="07-storage-basic.html">Tonton Episode 07 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="05-identity-access-basic.html"><small>← Episode sebelumnya</small>05 · Kasih Saja Password Saya</a><a class="next" href="07-storage-basic.html"><small>Episode berikutnya →</small>07 · Flashdisk yang Pulang Tiap Jumat</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/06-virtual-machines-basic/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 09 · Load Balancing (Dasar) — Demo interaktif",
+    "kicker": "Makan Siang 09 · Load Balancing (Dasar) · Demo interaktif",
+    "title": "Toko tetap buka: Azure Load Balancer",
+    "lede": "Dua server web di dua availability zone, di belakang satu Standard load balancer. Saksikan request tersebar, sebuah server gagal dalam health probe lalu pulih, seorang admin menjangkau satu VM, dan server mendapat jalan keluar ke internet. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Standard load balancer yang membagi lalu lintas pembeli ke dua server web di dua availability zone",
+    "svgDesc": "Pembeli di sebelah kiri menjangkau IP frontend yang zone-redundant. Load balancer memeriksa vm-web-1 di zona 1 dan vm-web-2 di zona 2 dengan probe, mengirim koneksi baru hanya ke server yang sehat, meneruskan SSH admin di port 50001 ke vm-web-1, dan menerjemahkan lalu lintas keluar dari server menjadi IP frontend."
+  },
+  "steps": [
+    {
+      "title": "Satu server, satu titik lemah",
+      "text": "Toko online Nusantara Retail masih tinggal di satu server di samping pantry, sehingga setiap request pembeli mendarat di mesin yang sama. Saat server itu di-restart untuk patching, atau mati begitu saja, toko tutup. Itulah pertanyaan sang direktur: kalau server itu mati, berapa lama kita tidak bisa jualan? Hari ini Anda menggantinya dengan dua server dan sebuah load balancer."
+    },
+    {
+      "title": "Dua server web, dua zona",
+      "text": "Dewi kini menjalankan toko online di dua VM Ubuntu kecil: vm-web-1 di availability zone 1 dan vm-web-2 di zona 2, masing-masing zona dengan listrik, pendingin, dan jaringannya sendiri. Kedua VM tidak punya alamat IP publik dan berada di subnet privat, jadi pembeli tidak bisa menjangkaunya secara langsung. Keduanya butuh satu pintu depan bersama."
+    },
+    {
+      "title": "Pintu depan: frontend dan pool",
+      "text": "Standard load balancer publik mendapat satu alamat IP frontend: Standard public IP yang tersebar di zona 1, 2, dan 3, sehingga tetap hidup jika salah satu zona hilang. Di belakangnya, backend pool mencantumkan network interface kedua VM. Pembeli hanya pernah melihat alamat frontend; server boleh datang dan pergi di belakangnya."
+    },
+    {
+      "title": "Health probe bertanya: masih sehat?",
+      "text": "Setiap lima detik, health probe mengirim HTTP GET /health ke setiap server, dan hanya jawaban 200 OK yang dihitung sehat. Probe datang dari alamat platform 168.63.129.16, yang dalam aturan NSG disebut service tag AzureLoadBalancer. Kalau alamat itu tak sengaja diblokir, semua server terlihat mati. Hanya anggota yang sehat yang menerima koneksi baru.",
+      "set": {
+        "t-vm1": "sehat ✓ · /health = 200",
+        "t-vm2": "sehat ✓ · /health = 200"
+      }
+    },
+    {
+      "title": "Sebuah rule membagi koneksi baru",
+      "text": "Load-balancing rule menyatakan: TCP port 80 di frontend diteruskan ke port 80 pada anggota pool yang sehat. Untuk setiap koneksi baru, load balancer menghitung hash dari lima nilai — IP dan port sumber, IP dan port tujuan, serta protokol — lalu memilih sebuah server. Koneksi berikutnya dari browser memakai port sumber baru, jadi bisa mendarat di zona lain."
+    },
+    {
+      "title": "Opsional: menempel ke satu server",
+      "text": "Jika aplikasi lama menyimpan keranjang belanja di memori server, session persistence bisa membantu: dalam mode Client IP, alamat klien yang sama selalu sampai ke server yang sama. Anggap ini solusi tambal sulam. Banyak pembeli di balik satu operator seluler terlihat seperti satu klien, dan server yang gagal tetap kehilangan keranjangnya. Simpan data sesi di luar VM."
+    },
+    {
+      "title": "vm-web-2 gagal dalam probe",
+      "text": "Layanan web di vm-web-2 crash. VM-nya masih berjalan, tetapi tidak ada yang menjawab di port 80. Probe berikutnya tidak mendapat 200 OK, sehingga load balancer menandai vm-web-2 tidak sehat dalam hitungan detik. Tidak ada yang membuat tiket dan tidak ada yang mengubah DNS: probe menyadarinya sendiri.",
+      "set": {
+        "t-vm2": "probe gagal ✗ · tak ada jawaban"
+      }
+    },
+    {
+      "title": "Lalu lintas memutari kegagalan",
+      "text": "Koneksi baru kini hanya menuju vm-web-1. Pembeli yang sudah terhubung ke vm-web-2 tetap memegang koneksinya sampai koneksi itu ditutup; semua orang lain diarahkan ke zona 1. Hal yang sama terjadi jika seluruh zona 2 kehilangan listrik: frontend yang zone-redundant tetap menjawab dari zona yang selamat, dan toko tetap buka."
+    },
+    {
+      "title": "Pulih tanpa tiket",
+      "text": "Dewi menjalankan ulang layanan web. Probe berikutnya menerima 200 OK, vm-web-2 ditandai sehat dan mulai menerima koneksi baru lagi — tak seorang pun menyentuh load balancer. Inilah inti lab hari ini: hentikan sebuah server dengan sengaja, saksikan request pindah ke zona lain, jalankan lagi server itu, lalu saksikan request kembali.",
+      "set": {
+        "t-vm2": "sehat ✓ · /health = 200"
+      }
+    },
+    {
+      "title": "Menjangkau satu VM: inbound NAT",
+      "text": "Pak Budi masih butuh SSH untuk keadaan darurat, tetapi VM tidak punya IP publik. Inbound NAT rule meneruskan port frontend 50001 ke port 22 di vm-web-1 — selalu VM yang sama, karena ini penerusan port, bukan pembagian beban. NSG memeriksa port 22 hasil terjemahan, jadi izinkan hanya dari IP kantor. Azure Bastion adalah kebiasaan jangka panjang yang lebih aman."
+    },
+    {
+      "title": "Server tidak bisa keluar",
+      "text": "Sekarang arah sebaliknya. vm-web-1 harus mengunduh update keamanan dan memanggil penyedia pembayaran. Namun subnet-nya privat, dan load-balancing rule dibuat dengan outbound SNAT dinonaktifkan. Tanpa metode outbound yang eksplisit, request itu tidak ke mana-mana. Situs web tetap terlihat sehat, jadi kegagalan ini tersembunyi sampai update atau pembayaran mulai gagal."
+    },
+    {
+      "title": "Outbound rule membuka jalan",
+      "text": "Outbound rule menerjemahkan alamat privat server menjadi IP frontend: itulah SNAT. Setiap VM mendapat jatah port sumber yang tetap, di sini 10.000 dari sekitar 64.000 yang ditawarkan satu IP publik. Penyedia pembayaran melihat satu alamat yang dikenal dan bisa memasukkannya ke daftar izin. Untuk banyak VM atau lalu lintas keluar yang berat, NAT gateway lebih mudah diskalakan."
+    },
+    {
+      "title": "Rangkuman: satu pintu, pemeriksaan yang jujur",
+      "text": "Satu frontend zone-redundant, backend pool di dua zona, probe yang mengatakan keadaan sebenarnya, rule yang membagi koneksi, NAT rule untuk keadaan darurat, dan outbound rule sebagai jalan keluar. Itu menjawab sebagian besar pertanyaan sang direktur: satu server, atau bahkan satu zona penuh, boleh gagal, dan toko tetap berjualan.",
+      "tip": "Lab 09: bangun desain ini di Cloud Shell, lalu hentikan layanan web di vm-web-2 dan saksikan toko tetap buka."
+    }
+  ],
+  "svg": {
+    "Azure region · Southeast Asia": "Region Azure · Southeast Asia",
+    "vnet-nusa-web · snet-web (private subnet) · nsg-web": "vnet-nusa-web · snet-web (subnet privat) · nsg-web",
+    "Head office · server room by the pantry": "Kantor pusat · ruang server dekat pantry",
+    "How long can't we sell?": "Berapa lama tak bisa jualan?",
+    "Ibu Sari, the director": "Ibu Sari, direktur",
+    "No public IPs, private subnet": "Tanpa IP publik, subnet privat",
+    "the NSG allows TCP 80 · no default internet access": "NSG mengizinkan TCP 80 · tanpa akses internet default",
+    "Backend pool be-web: 2 NICs": "Backend pool be-web: 2 NIC",
+    "vm-web-1 (zone 1) · vm-web-2 (zone 2)": "vm-web-1 (zona 1) · vm-web-2 (zona 2)",
+    "Probes come from 168.63.129.16": "Probe datang dari 168.63.129.16",
+    "NSG rules call it the AzureLoadBalancer service tag": "di aturan NSG: service tag AzureLoadBalancer",
+    "A 5-tuple hash picks the server": "Hash 5-tuple memilih server",
+    "source IP + port · destination IP + port · protocol": "IP + port sumber · IP + port tujuan · protokol",
+    "same client address → same server (use sparingly)": "alamat klien sama → server sama (seperlunya)",
+    "Port forwarding, not balancing": "Penerusan port, bukan pembagian beban",
+    "the NSG checks port 22 · allow only your IP": "NSG memeriksa port 22 · izinkan hanya IP Anda",
+    "Private subnet + SNAT off on the rule": "Subnet privat + SNAT di rule mati",
+    "no explicit outbound method = no way out": "tanpa metode outbound eksplisit = tak ada jalan keluar",
+    "SNAT: 10.9.1.x → frontend IP": "SNAT: 10.9.1.x → IP frontend",
+    "10,000 source ports per VM · about 64,000 per public IP": "10.000 port sumber per VM · sekitar 64.000 per IP publik",
+    "Shoppers": "Pembeli",
+    "internet · browsers": "internet · browser",
+    "office IP only": "hanya IP kantor",
+    "Payment API": "API pembayaran",
+    "internet service": "layanan internet",
+    "Pantry server": "Server dekat pantry",
+    "one machine · one weak spot": "satu mesin · satu titik lemah",
+    "Frontend IP": "IP frontend",
+    "web server running": "server web berjalan"
+  }
+}

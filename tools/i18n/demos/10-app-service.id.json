@@ -1,0 +1,152 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 10 · Aplikasi Web dengan Azure App Service — Demo interaktif",
+    "kicker": "Makan Siang 10 · Aplikasi Web dengan Azure App Service · Demo interaktif",
+    "title": "Front end, scale out, dan swap slot tanpa downtime",
+    "lede": "Ikuti request seorang pembeli melewati App Service, saksikan autoscale menambah instance untuk promo 12.12, dan lihat slot staging menjalani warm-up lalu di-swap ke production. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Request yang mengalir melalui front end App Service ke instance-instance sebuah App Service plan, autoscale, dan swap slot staging",
+    "svgDesc": "Pelanggan di sebelah kiri mengirim request ke front end App Service, yang meneruskannya ke hingga tiga instance plan Standard S1 di sebelah kanan. Setiap instance menjalankan slot production dan, kemudian, sebuah slot staging. Dewi, di kiri bawah, men-deploy dan menguji versi 2 di staging sebelum di-swap ke production."
+  },
+  "steps": [
+    {
+      "title": "Patching setiap Jumat malam",
+      "text": "Toko online Nusantara Retail berjalan di dua VM yang di-patch Dewi setiap Jumat malam: sistem operasi, Python, sertifikat, dan nginx, satu VM demi satu VM. Harbolnas, promo 12.12, tinggal delapan minggu lagi dan butuh kapasitas ekstra hanya untuk satu malam. Di demo ini Anda memindahkan toko ke Azure App Service, tempat Microsoft menjalankan server dan Dewi cukup merilis kode."
+    },
+    {
+      "title": "Front end dan worker",
+      "text": "Setiap request untuk alamat toko lebih dulu sampai di front end App Service. Front end mengakhiri HTTPS, memilih instance yang sehat, lalu meneruskan request. Instance adalah worker dari App Service plan Anda: di sini satu virtual machine Standard S1 yang menjalankan Linux. Kode Anda berjalan di slot production pada instance itu, dan tak seorang pun login untuk mem-patch-nya."
+    },
+    {
+      "title": "Sebuah request menempuh jalurnya",
+      "text": "Seorang pembeli membuka toko online. Front end memeriksa host name, memilih sebuah instance, dan meneruskan request lewat jaringan internal Azure. Aplikasi Python membaca setting-nya, yang diserahkan App Service sebagai environment variable, lalu mengembalikan halaman. Perhatikan apa yang tidak ada: tidak ada VM yang harus di-patch dan tidak ada server web yang harus dikonfigurasi. Itu sekarang tugas Microsoft."
+    },
+    {
+      "title": "Lalu lintas Harbolnas datang",
+      "text": "12 Desember, pukul delapan malam. Lalu lintas melonjak tiga kali lipat dalam hitungan menit, dan satu-satunya instance berjalan pada CPU 94 persen. Halaman melambat dan sebagian request timeout. Scale up ke ukuran yang lebih besar akan membantu sementara, tetapi me-restart aplikasi dan tetap punya batas atas. Scale out menambah instance berukuran sama, dan front end membagi beban di antara mereka.",
+      "set": {
+        "t-p1c": "CPU 94% · lambat"
+      }
+    },
+    {
+      "title": "Autoscale menambah instance",
+      "text": "Sebuah aturan autoscale memantau rata-rata CPU plan. Jika di atas 70 persen selama sepuluh menit, aturan itu menambah satu instance, hingga tiga. Setiap instance baru menjalankan kode yang sama yang sudah di-deploy, dan front end langsung mengirim lalu lintas kepadanya. CPU turun ke sekitar 40 persen di semua instance. Setelah keramaian usai, aturan scale in menghapus instance tambahan, sehingga Anda berhenti membayarnya.",
+      "set": {
+        "t-p1c": "CPU 41% · melayani",
+        "t-p2c": "CPU 38% · melayani",
+        "t-p3c": "CPU 40% · melayani",
+        "t-plan": "3 instance"
+      }
+    },
+    {
+      "title": "Merilis v2 dengan cara berisiko",
+      "text": "Dewi punya halaman checkout baru, versi 2. Misalkan ia men-deploy-nya langsung ke slot production di tengah promo. Setiap instance harus restart dan memuat kode baru, sehingga pembeli pertama harus menunggu atau mendapat error. Lebih buruk lagi, jika versi 2 punya bug, setiap pelanggan mengalaminya sekaligus, dan satu-satunya cara membatalkannya adalah deployment berikutnya beserta putaran restart berikutnya.",
+      "set": {
+        "t-p1": "v2",
+        "t-p2": "v2",
+        "t-p3": "v2",
+        "t-fe": "prod → v2",
+        "t-dewi": "deploy ke prod",
+        "t-p1c": "restart…",
+        "t-p2c": "restart…",
+        "t-p3c": "restart…"
+      }
+    },
+    {
+      "title": "Putar ulang: tambahkan slot staging",
+      "text": "Mari kita putar ulang. Tier Standard ke atas menyertakan deployment slot: aplikasi hidup dengan host name sendiri yang berjalan di instance yang sama dengan production. Dewi membuat slot bernama staging dan menyalin setting production ke dalamnya. Slot itu tidak menambah biaya karena berbagi instance milik plan, tetapi memang memakai sebagian CPU dan memorinya.",
+      "set": {
+        "t-p1c": "CPU 41% · melayani",
+        "t-p2c": "CPU 38% · melayani",
+        "t-p3c": "CPU 40% · melayani",
+        "t-p1": "v1",
+        "t-p2": "v1",
+        "t-p3": "v1",
+        "t-fe": "prod → v1",
+        "t-dewi": "membuat slot"
+      }
+    },
+    {
+      "title": "Deploy dan uji di staging",
+      "text": "Dewi men-deploy versi 2 ke slot staging dan membuka alamatnya sendiri, yang berakhiran -staging.azurewebsites.net. Pelanggan tidak pernah melihatnya: host name production tetap mengarahkan setiap pembeli ke versi 1. Ia menguji checkout, membaca log stream, dan memperbaiki salah ketik, semuanya sementara promo tetap berjalan di versi 1.",
+      "set": {
+        "t-s1": "v2",
+        "t-s2": "v2",
+        "t-s3": "v2",
+        "t-dewi": "menguji staging",
+        "t-s1c": "diuji",
+        "t-s2c": "diuji",
+        "t-s3c": "diuji"
+      }
+    },
+    {
+      "title": "Warm-up sebelum swap",
+      "text": "Dewi memulai swap dengan production sebagai target. App Service lebih dulu menerapkan setting sticky milik production ke instance staging dan me-restart-nya. Lalu ia mengirim sebuah request ke setiap instance staging dan menunggu sampai masing-masing menjawab. Production tetap melayani versi 1 sepanjang waktu, jadi pembeli tidak merasakan apa pun dari persiapan ini.",
+      "set": {
+        "t-s1c": "warm-up selesai ✓",
+        "t-s2c": "warm-up selesai ✓",
+        "t-s3c": "warm-up selesai ✓",
+        "t-dewi": "memulai swap"
+      }
+    },
+    {
+      "title": "Swap: routing berbalik",
+      "text": "Setelah setiap instance selesai warm-up, App Service mengalihkan aturan routing. Host name production kini menunjuk ke versi 2 yang sudah hangat, dan slot staging berisi versi 1. Request yang sedang berjalan selesai secara normal dan tidak ada yang hilang. Bagi pembeli, checkout baru muncul begitu saja; production sendiri tidak perlu restart untuk kode baru.",
+      "set": {
+        "t-p1": "v2",
+        "t-p2": "v2",
+        "t-p3": "v2",
+        "t-fe": "prod → v2",
+        "t-s1": "v1",
+        "t-s2": "v1",
+        "t-s3": "v1",
+        "t-s1c": "versi sebelumnya",
+        "t-s2c": "versi sebelumnya",
+        "t-s3c": "versi sebelumnya"
+      }
+    },
+    {
+      "title": "Ada yang salah? Swap balik",
+      "text": "Setengah jam kemudian, bagian keuangan menemukan kesalahan pembulatan pada voucher versi 2. Dewi tidak men-deploy ulang apa pun. Ia melakukan swap lagi: App Service melakukan warm-up versi 1 di slotnya dan mengalihkan routing kembali, sehingga production kembali ke versi 1 dalam satu atau dua menit, tetap tanpa downtime. Ia memperbaiki versi 2 di staging dengan tenang.",
+      "set": {
+        "t-p1": "v1",
+        "t-p2": "v1",
+        "t-p3": "v1",
+        "t-fe": "prod → v1",
+        "t-s1": "v2",
+        "t-s2": "v2",
+        "t-s3": "v2",
+        "t-s1c": "memperbaiki bug",
+        "t-s2c": "memperbaiki bug",
+        "t-s3c": "memperbaiki bug",
+        "t-dewi": "swap balik"
+      }
+    },
+    {
+      "title": "Rangkuman",
+      "text": "Front end mengakhiri HTTPS dan meneruskan request ke instance di App Service plan. Tier, ukuran, dan jumlah instance plan menentukan fitur dan harganya. Autoscale menambah instance saat beban naik dan menghapusnya setelahnya. Deployment slot memungkinkan Dewi menguji rilis di perangkat keras production, men-swap-nya tanpa downtime, dan swap balik saat ada yang salah.",
+      "tip": "Di Lab 10, Anda men-deploy toko ini ke plan Free F1 dengan az webapp up, mengatur app setting STORE_NAME, memaksa HTTPS, dan membaca log stream. Tantangan tambahannya mengulang swap slot staging ini di plan Standard S1."
+    }
+  ],
+  "svg": {
+    "Customers": "Pelanggan",
+    "shoppers on 12.12": "pembeli saat 12.12",
+    "TLS termination": "terminasi TLS",
+    "production slot": "slot production",
+    "CPU 35% · serving": "CPU 35% · melayani",
+    "staging slot": "slot staging",
+    "empty": "kosong",
+    "settings copied": "setting tersalin",
+    "Autoscale rule": "Aturan autoscale",
+    "CPU > 70% for 10 min": "CPU > 70% selama 10 mnt",
+    "→ add 1 instance": "→ tambah 1 instance",
+    "max 3, scale in later": "maks. 3, lalu scale in",
+    "Risky deploy": "Deploy berisiko",
+    "all instances restart": "semua instance restart",
+    "slow first requests": "request awal lambat",
+    "undo = redeploy": "batal = deploy ulang",
+    "Slot swap": "Swap slot",
+    "1. warm up staging": "1. pemanasan staging",
+    "2. switch routing": "2. alihkan routing",
+    "no dropped requests": "tak ada request hilang"
+  }
+}

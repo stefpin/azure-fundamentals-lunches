@@ -1,0 +1,156 @@
+{
+  "page": {
+    "doc_title": "Lunch 16 · Know before customers do — Interactive demo",
+    "kicker": "Lunch 16 · Monitoring (Basic) · Interactive demo",
+    "title": "Know before customers do: alerts, the activity log and health",
+    "lede": "A CPU spike becomes an email, the activity log names who stopped the VM, and Service Health and Resource Health tell &ldquo;us&rdquo; from &ldquo;Azure&rdquo;. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Azure Monitor alerting for the Nusantara Retail storefront VM",
+    "svgDesc": "Customers use a storefront VM in Southeast Asia. The VM's platform metrics and the activity log feed Azure Monitor, where a metric alert rule and an activity log alert notify the on-call engineer through an action group. Service Health, Resource Health and Azure Advisor appear in the right-hand column."
+  },
+  "steps": [
+    {
+      "title": "Friday night, nobody is watching",
+      "text": "It is 19:40 on flash-sale Friday. Customers crowd onto Nusantara Retail's storefront VM, its CPU sits near 100%, and pages crawl. Nobody at head office knows, because nothing is watching the VM. Customers will complain on Instagram twelve minutes from now. The data that could have warned the team already exists in Azure; nobody has asked it a question yet.",
+      "set": {
+        "t-cpu": "CPU 96%",
+        "t-vm-state": "Overloaded",
+        "t-cust": "pages crawl, carts fail"
+      }
+    },
+    {
+      "title": "Two free signals, zero setup",
+      "text": "On Monday you open Azure Monitor and find two kinds of data that were there all along. Platform metrics such as Percentage CPU arrive every minute and are kept for 93 days. The activity log records every control-plane operation: who created, changed or stopped what. Both are collected automatically and cost nothing. Resource logs and guest data must be switched on.",
+      "set": {
+        "t-cpu": "CPU 35%",
+        "t-vm-state": "Running",
+        "t-cust": "shopping normally"
+      }
+    },
+    {
+      "title": "Write the rule once",
+      "text": "You create a metric alert rule on the VM: every minute, average the last five minutes of Percentage CPU and compare it with 70. The rule points to an action group, ag-nusa-oncall, a reusable list of who to tell: the on-call mailbox and the duty phone. Without an action group, the alert would only appear on the Alerts page in the portal."
+    },
+    {
+      "title": "CPU climbs, the rule notices",
+      "text": "Friday again, 19:40. The flash sale starts and CPU climbs to 92%. Each minute the rule recalculates the five-minute average: 48, then 67, then 84. As soon as the average crosses 70, the condition is met. Averaging over five minutes means a ten-second spike wakes nobody, while a sustained overload does.",
+      "set": {
+        "t-cpu": "CPU 92%",
+        "t-vm-state": "Busy",
+        "t-rule-state": "5-min average: 84%"
+      }
+    },
+    {
+      "title": "Fired: the email lands",
+      "text": "The rule fires a Sev 2 alert and runs the action group. Within a minute the on-call engineer's phone buzzes with an email that names the rule, the VM and the value that crossed the line. It is 19:46: six minutes after the spike began, and long before any customer posts a complaint. Now the team can act.",
+      "set": {
+        "t-rule-state": "Fired · Sev 2",
+        "t-inbox": "1 alert: alert-cpu-high"
+      }
+    },
+    {
+      "title": "Fixed, then resolved",
+      "text": "Dewi scales the VM up and CPU drops to 30%. Metric alerts are stateful: the rule fired once instead of every minute, and now that the five-minute average is back below 70 it resolves itself and sends a Resolved email. The alert stays on the Alerts page for 30 days, where the team marks it Closed.",
+      "set": {
+        "t-cpu": "CPU 30%",
+        "t-vm-state": "Running",
+        "t-rule-state": "Resolved",
+        "t-inbox": "2 emails: Fired, Resolved"
+      }
+    },
+    {
+      "title": "Rizky's rule never fires",
+      "text": "Rizky copied the rule to reduce false alarms: minimum CPU above 70 over one hour. Minimum means the lowest value in the window, so CPU would have to stay above 70% for the entire hour. This flash-sale spike lasts fifteen minutes, so the condition is never true. The signal reaches the rule and stops there. Nobody is told.",
+      "set": {
+        "t-rule": "min CPU > 70% · 1 hour window",
+        "t-rule-state": "Never fires ✗",
+        "t-cpu": "CPU 97%",
+        "t-vm-state": "Busy",
+        "t-inbox": "Inbox: no new alerts"
+      }
+    },
+    {
+      "title": "The fix: average over five minutes",
+      "text": "The fix is to say what you mean. Average over five minutes, checked every minute, catches a sustained overload without reacting to single spikes. Aggregation and window are the two settings behind most alerts that never fire, or fire all the time. In the lab you break Rizky's rule yourself and prove the difference with the metric history.",
+      "set": {
+        "t-rule": "avg CPU > 70% · 5 min window",
+        "t-rule-state": "Fired · Sev 2",
+        "t-inbox": "1 alert: alert-cpu-high"
+      }
+    },
+    {
+      "title": "02:00: who stopped the shop?",
+      "text": "Saturday, 02:00. Rizky deallocates the storefront VM to save money over the weekend. The request goes through Azure Resource Manager, and the activity log records it automatically: the operation, the time, the status and the caller. No agent, no setting, no cost. Entries can't be edited or deleted, which is why the activity log is the first place to look.",
+      "set": {
+        "t-vm-state": "Deallocated",
+        "t-cpu": "CPU —",
+        "t-rule-state": "Resolved",
+        "t-actlog": "Deallocate VM · rizky@… · Succeeded",
+        "t-cust": "site unavailable"
+      }
+    },
+    {
+      "title": "An activity log alert tells you at once",
+      "text": "An activity log alert watches for new entries that match a condition: here, any VM in the production resource group being deallocated. It fires for every matching event and uses the same action group, so the on-call engineer hears about the stop within minutes, not when the first customer phones on Saturday morning. Expect a few minutes of delay.",
+      "set": {
+        "t-inbox": "Alert: VM deallocated"
+      }
+    },
+    {
+      "title": "Is it Azure or is it us?",
+      "text": "Pak Budi asks whether Azure had an outage. Service Health answers for the services and regions you use: no incident in Southeast Asia. Resource Health answers for one resource: vm-nusa-web is unavailable, user initiated. Narrow to wide, Resource Health first and Service Health second, tells you this one was us. On a bad day you would see platform initiated and an active service issue.",
+      "set": {
+        "t-sh": "No issues in Southeast Asia",
+        "t-rh": "vm-nusa-web: Unavailable (user)"
+      }
+    },
+    {
+      "title": "Advisor: the free second opinion",
+      "text": "Monday morning: coffee and Azure Advisor. It reviews configuration and usage for free and sorts its advice into five categories: reliability, security, performance, cost and operational excellence. Today it suggests creating Service Health alerts and right-sizing the storefront VM that idles all week. Its security advice comes from Defender for Cloud; its cost advice feeds Lunch 19.",
+      "set": {
+        "t-adv": "Cost: right-size vm-nusa-web",
+        "t-vm-state": "Running",
+        "t-cpu": "CPU 28%",
+        "t-cust": "shopping normally"
+      }
+    },
+    {
+      "title": "Recap: know first, know why",
+      "text": "Free metrics and the activity log were always there. A metric alert with the right aggregation and window, wired to an action group, tells the team first. The activity log and an activity log alert tell you who changed what. Resource Health and Service Health separate us from Azure, and Advisor keeps improving the setup. Ibu Sari's questions finally have answers.",
+      "tip": "In Lab 16 you build this yourself: an action group, a CPU alert you trigger with Run Command, activity log and Service Health alerts, and Rizky's broken rule to repair."
+    }
+  ],
+  "svg": [
+    "Southeast Asia",
+    "rg-nusa-prod",
+    "Azure Monitor",
+    "Customers",
+    "shopping the flash sale",
+    "vm-nusa-web",
+    "CPU 35%",
+    "Running",
+    "Rizky",
+    "contractor · 02:00",
+    "Platform metrics",
+    "every minute · kept 93 days · free",
+    "Metric alert rule",
+    "avg CPU > 70% · 5 min window",
+    "Status: OK",
+    "Activity log",
+    "who did what, when · kept 90 days",
+    "on by default · free",
+    "Activity log alert",
+    "VM deallocated in rg-nusa-prod",
+    "On-call engineer",
+    "Inbox: no alerts yet",
+    "email and SMS",
+    "Action group",
+    "ag-nusa-oncall",
+    "email · SMS · webhook",
+    "Service Health",
+    "your services and regions",
+    "Resource Health",
+    "one resource at a time",
+    "Azure Advisor",
+    "5 categories of free advice"
+  ]
+}

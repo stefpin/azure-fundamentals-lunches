@@ -1,9 +1,12 @@
 # Lunch 01 · Before You Begin: Your Azure Lab, Tools and Cost Guardrails (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 1:** Foundations
 > **Time:** 60 minutes · **Prerequisite lunches:** none
 > **AZ-900 skill area:** Describe Azure management and governance
 > **Lab:** [Lab 01 · Set up your lab environment](../../labs/01-before-you-begin/README.md) — about 30 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -384,6 +387,16 @@ What to watch for:
   them and hands them to resource providers. The labs use Bash and the Azure CLI in Cloud Shell.
 - One region, one tagged resource group per lab and a random suffix make cleanup a single command: deleting the group
   deletes everything inside it.
+
+## 🗒️ Field notes from Stefanus
+
+> **Write the delete command first.** Before I build anything in Azure, even a five-minute test, I write down the
+> command that will remove it. In this course that line is `bash cleanup.sh`; in my own work it is usually one
+> `az group delete`, plus a note for anything that lives outside the group, such as a role assignment. If I cannot write
+> that line, I am about to scatter resources that I will later have to hunt for. My second habit takes five seconds: I
+> run `az account show` before the first command of every session. A typo fails loudly, as you will see in Lab 01; a
+> perfectly correct command in the wrong subscription succeeds quietly. So give your lab subscription a name you cannot
+> mistake. A budget email reminds me of what I forgot, a day late; the delete line works tonight.
 
 ## 🔬 Your lab: Set up your lab environment
 

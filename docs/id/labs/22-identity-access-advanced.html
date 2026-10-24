@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 22 · Pipeline tanpa kata sandi dan hak akses minimum · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 22: Pipeline tanpa kata sandi dan hak akses minimum. sekitar 50 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/22-identity-access-advanced.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/22-identity-access-advanced.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/22-identity-access-advanced.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/22-identity-access-advanced.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 22 · Pipeline tanpa kata sandi dan hak akses minimum">
+<meta property="og:description" content="Lab Azure praktik 22: Pipeline tanpa kata sandi dan hak akses minimum. sekitar 50 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/22-identity-access-advanced.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="22" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/22-identity-access-advanced.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 22</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>22</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Pipeline tanpa kata sandi dan hak akses minimum</h1>
+        <p class="lab-story">🏪 <b>Episode 22 · Empat Temuan Auditor</b> — Secret pipeline yang kedaluwarsa, lima Owner permanen, dan kontraktor yang tidak pernah benar-benar pergi. <a href="../lunches/22-identity-access-advanced.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 50 menit</span>
+          <span class="chip cost">💲 gratis atau hampir gratis</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 10 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--membuat-resource-group-dan-mencatat-id-anda">Tugas 1 · Membuat resource group dan mencatat ID Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--menulis-custom-role">Tugas 2 · Menulis custom role</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--meng-assign-custom-role-ke-grup-operator">Tugas 3 · Meng-assign custom role ke grup operator</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--memberi-managed-identity-user-assigned-sebuah-data-role">Tugas 4 · Memberi managed identity user-assigned sebuah data role</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--membuat-app-registration-tanpa-secret">Tugas 5 · Membuat app registration tanpa secret</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--menambahkan-federated-credential-untuk-github-actions">Tugas 6 · Menambahkan federated credential untuk GitHub Actions</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--opsional-sign-in-dari-github-actions-tanpa-secret">Tugas 7 · (Opsional) Sign-in dari GitHub Actions tanpa secret</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-8--tur-hanya-baca-conditional-access-dan-pim">Tugas 8 · (Tur hanya-baca) Conditional Access dan PIM</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/22-identity-access-advanced/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/22-identity-access-advanced/federated-credential.json" target="_blank" rel="noopener"><span>federated-credential.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/22-identity-access-advanced/github-workflow-example.yml" target="_blank" rel="noopener"><span>github-workflow-example.yml</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/22-identity-access-advanced/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/22-identity-access-advanced/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/22-identity-access-advanced/vm-operator-role.json" target="_blank" rel="noopener"><span>vm-operator-role.json</span><small>1 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/22-identity-access-advanced" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    <div class="prose wide lab-pre"><aside class="callout caution" data-icon="🛑">
+<p><span class="callout-title">Hati-hati</span><strong>Gunakan tenant dan subscription milik Anda sendiri.</strong> Lab ini membuat custom role, grup, dan app registration. Anda membutuhkan <strong>Owner</strong> pada subscription (untuk membuat custom role dan role assignment) serta hak untuk membuat grup dan app registration di Microsoft Entra ID. Tenant yang ikut tercipta bersama akun gratis pribadi Anda memberikan semua itu; tenant perusahaan atau kampus biasanya tidak — dan memang bukan tempat untuk bereksperimen.</p>
+</aside>
+</div>
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Temuan auditor dari makan siang, diperbaiki dalam versi mini. Anda akan menulis custom role <strong>Nusantara VM Operator</strong> dari sebuah file JSON — start, restart, dan deallocate VM, tidak lebih — lalu meng-assign-nya ke grup operator di scope resource group. Anda akan memberi <strong>managed identity user-assigned</strong> sebuah data role pada storage account, supaya aplikasi pelaporan di masa depan tidak butuh storage key. Dan Anda akan membuat <strong>app registration tanpa secret sama sekali</strong>: satu-satunya kredensialnya adalah federated credential yang memercayai GitHub Actions pada branch main dari satu repository. Jika Anda punya repository GitHub, Anda akan melihat sebuah workflow sign-in ke Azure dengan OpenID Connect. Conditional Access dan PIM membutuhkan lisensi P1 dan P2, jadi keduanya hadir sebagai tur portal terpandu.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph entra[&quot;Tenant Microsoft Entra Anda&quot;]
+    APP[&quot;app-nusa-github-deploy-&amp;lt;suffix&amp;gt;&lt;br/&gt;app registration + service principal&lt;br/&gt;tanpa secret&quot;] --- FIC[&quot;federated credential&lt;br/&gt;repo:&amp;lt;owner&amp;gt;/&amp;lt;repo&amp;gt;:ref:refs/heads/main&quot;]
+    GRP[&quot;grp-nusa-vm-operators-&amp;lt;suffix&amp;gt;&quot;]
+  end
+  GH[&quot;GitHub Actions&lt;br/&gt;(opsional)&quot;] -.-&gt;|token OIDC| FIC
+  subgraph rg[&quot;rg-lunch22-&amp;lt;suffix&amp;gt;&quot;]
+    MI[&quot;id-nusa-reports&lt;br/&gt;managed identity user-assigned&quot;]
+    ST[&quot;stnusareports&amp;lt;suffix&amp;gt;&lt;br/&gt;storage account&quot;]
+  end
+  GRP --&gt;|&quot;Nusantara VM Operator &amp;lt;suffix&amp;gt;&lt;br/&gt;custom role&quot;| rg
+  MI --&gt;|Storage Blob Data Reader| ST
+  APP --&gt;|Reader| rg
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda menjadi <strong>Owner</strong> (lihat <a href="01-before-you-begin.html">Lab 01</a>), di tenant milik Anda sendiri.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu diinstal; <code>jq</code> sudah tersedia.</li>
+<li>Opsional, untuk Tugas 7: <strong>akun GitHub</strong> dan repository milik Anda (boleh kosong).</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/22-identity-access-advanced
+source ../common/config.sh
+RG=$(rg_name 22)
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab menimbulkan biaya selama masih ada. Akhiri dengan bagian <strong>Bersihkan</strong>, walaupun Anda berhenti di tengah jalan. Storage account nyaris tidak berbiaya selama masih kosong, tetapi custom role, grup, dan app registration berada di luar resource group, sehingga hanya <code>cleanup.sh</code> yang bisa menghapusnya.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–8 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--membuat-resource-group-dan-mencatat-id-anda" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Membuat resource group dan mencatat ID Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--membuat-resource-group-dan-mencatat-id-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Custom role dan role assignment ditulis dengan merujuk ID resource, jadi simpan ID-ID yang nanti Anda butuhkan.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ensure_rg &quot;$RG&quot; 22
+SUB_ID=$(az account show --query id --output tsv)
+TENANT_ID=$(az account show --query tenantId --output tsv)
+RG_ID=$(az group show --name &quot;$RG&quot; --query id --output tsv)
+echo &quot;$RG_ID&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>RG_ID</code> terlihat seperti <code>/subscriptions/…/resourceGroups/rg-lunch22-&lt;suffix&gt;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--menulis-custom-role" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Menulis custom role</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--menulis-custom-role" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Buka <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/22-identity-access-advanced/vm-operator-role.json" target="_blank" rel="noopener"><code>vm-operator-role.json</code></a>. File ini mencantumkan persis apa yang dibutuhkan operator shift malam: membaca VM dan statusnya, menjalankan (start), me-restart, dan men-deallocate VM, serta melihat resource group. Tidak ada wildcard, tidak ada <code>write</code>, tidak ada <code>delete</code>, dan tidak ada data action. <code>AssignableScopes</code> hanya akan berisi resource group lab, sehingga role ini tidak bisa dipakai di tempat lain. Isi placeholder-nya, lalu buat role tersebut:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ROLE_NAME=&quot;Nusantara VM Operator ${SUFFIX}&quot;
+sed -e &quot;s|__SUFFIX__|${SUFFIX}|&quot; -e &quot;s|__SUBSCRIPTION_ID__|${SUB_ID}|&quot; -e &quot;s|__RESOURCE_GROUP__|${RG}|&quot; \
+  vm-operator-role.json &gt; my-vm-operator-role.json
+cat my-vm-operator-role.json
+az role definition create --role-definition @my-vm-operator-role.json --query &quot;{name:roleName, id:name}&quot; --output table
+</code></pre></div>
+<p>Nama role harus unik di tenant Anda — itulah sebabnya nama ini diakhiri dengan suffix Anda. Cari role itu di scope resource group, karena hanya di sanalah role ini bisa di-assign:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az role definition list --name &quot;$ROLE_NAME&quot; --scope &quot;$RG_ID&quot; \
+  --query &quot;[0].{name:roleName, type:roleType, actions:permissions[0].actions, scopes:assignableScopes}&quot; --output json
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>rg-lunch22-&lt;suffix&gt; › Access control (IAM) › Add › Add custom role</em>, lalu pilih <strong>Start from JSON</strong> dan unggah <code>my-vm-operator-role.json</code>. Tab <em>Permissions</em> memungkinkan Anda mencari setiap operasi berdasarkan kata kunci — cara yang bagus untuk menemukan nama-nama action.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> role menampilkan <code>&quot;type&quot;: &quot;CustomRole&quot;</code>, enam action, dan satu assignable scope, yaitu resource group Anda. Jika pencarian tidak mengembalikan apa pun, tunggu semenit: role baru butuh sedikit waktu untuk tereplikasi.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--meng-assign-custom-role-ke-grup-operator" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Meng-assign custom role ke grup operator</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--meng-assign-custom-role-ke-grup-operator" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Role diberikan kepada grup, bukan kepada orang satu per satu. Buat satu grup untuk shift malam dan assign custom role berdasarkan <strong>ID</strong>-nya (sebuah GUID), yang tetap berfungsi walaupun suatu saat ada yang mengganti nama role tersebut.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>OPS_GROUP=&quot;grp-nusa-vm-operators-${SUFFIX}&quot;
+OPS_GROUP_ID=$(az ad group create --display-name &quot;$OPS_GROUP&quot; --mail-nickname &quot;$OPS_GROUP&quot; \
+  --description &quot;Lab 22: night-shift operators who start, restart and deallocate VMs&quot; --query id --output tsv)
+ROLE_GUID=$(az role definition list --name &quot;$ROLE_NAME&quot; --scope &quot;$RG_ID&quot; --query &quot;[0].name&quot; --output tsv)
+az role assignment create \
+  --assignee-object-id &quot;$OPS_GROUP_ID&quot; \
+  --assignee-principal-type Group \
+  --role &quot;$ROLE_GUID&quot; \
+  --scope &quot;$RG_ID&quot; \
+  --output none
+az role assignment list --scope &quot;$RG_ID&quot; \
+  --query &quot;[].{principal:principalName, role:roleDefinitionName}&quot; --output table
+</code></pre></div>
+<p>Jika Anda mendapat <code>RoleDefinitionDoesNotExist</code> atau <em>Role … doesn't exist</em>, role baru itu belum tereplikasi: tunggu semenit lalu jalankan perintahnya lagi.</p>
+<p>Tidak bisa membuat grup di tenant Anda? Assign role itu ke diri Anda sendiri, dengan <code>--assignee-object-id &quot;$(my_object_id)&quot; --assignee-principal-type User</code>. Karena Anda Owner, hal ini tidak menambah apa pun pada kemampuan Anda, tetapi Anda bisa melihat assignment-nya, dan <code>verify.sh</code> menerima principal apa pun.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tabel menampilkan grup operator Anda dengan <strong>Nusantara VM Operator &lt;suffix&gt;</strong>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--memberi-managed-identity-user-assigned-sebuah-data-role" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Memberi managed identity user-assigned sebuah data role</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--memberi-managed-identity-user-assigned-sebuah-data-role" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Aplikasi pelaporan akan membaca ekspor data penjualan dari blob storage. Alih-alih menyimpan storage key di konfigurasinya, aplikasi itu mendapat identitasnya sendiri — dibuat sebagai resource yang berdiri sendiri, sehingga tetap ada saat compute aplikasinya dibangun ulang.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az identity create --name id-nusa-reports --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; --output none
+MI_PRINCIPAL_ID=$(az identity show --name id-nusa-reports --resource-group &quot;$RG&quot; --query principalId --output tsv)
+
+ST_NAME=&quot;stnusareports${SUFFIX}&quot;
+az storage account create --name &quot;$ST_NAME&quot; --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; \
+  --sku Standard_LRS --kind StorageV2 --min-tls-version TLS1_2 --allow-blob-public-access false --output none
+ST_ID=$(az storage account show --name &quot;$ST_NAME&quot; --resource-group &quot;$RG&quot; --query id --output tsv)
+
+az role assignment create \
+  --assignee-object-id &quot;$MI_PRINCIPAL_ID&quot; \
+  --assignee-principal-type ServicePrincipal \
+  --role &quot;Storage Blob Data Reader&quot; \
+  --scope &quot;$ST_ID&quot; \
+  --output none
+az role assignment list --assignee-object-id &quot;$MI_PRINCIPAL_ID&quot; --all \
+  --query &quot;[].{role:roleDefinitionName, scope:scope}&quot; --output table
+</code></pre></div>
+<p>Identitas ini punya dua ID: <strong>principal ID</strong> (service principal-nya, yang menerima role) dan <strong>client ID</strong>, yang diteruskan kode ke <code>ManagedIdentityCredential</code> untuk memilih identitas ini. <em>Storage Blob Data Reader</em> adalah <strong>data role</strong>: ia bisa membaca blob, tetapi tidak bisa mengubah account atau menampilkan key-nya.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tepat satu baris — <strong>Storage Blob Data Reader</strong>, dengan scope storage account Anda.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--membuat-app-registration-tanpa-secret" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Membuat app registration tanpa secret</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--membuat-app-registration-tanpa-secret" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Pipeline juga membutuhkan identitas. Buat app registration beserta service principal-nya, lalu beri service principal itu role <strong>Reader</strong> pada resource group — cukup bagi contoh workflow untuk menampilkan daftar resource.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>APP_NAME=&quot;app-nusa-github-deploy-${SUFFIX}&quot;
+APP_ID=$(az ad app create --display-name &quot;$APP_NAME&quot; --query appId --output tsv)
+az ad sp create --id &quot;$APP_ID&quot; --output none
+SP_ID=$(az ad sp show --id &quot;$APP_ID&quot; --query id --output tsv)
+az role assignment create \
+  --assignee-object-id &quot;$SP_ID&quot; \
+  --assignee-principal-type ServicePrincipal \
+  --role &quot;Reader&quot; \
+  --scope &quot;$RG_ID&quot; \
+  --output none
+az ad app credential list --id &quot;$APP_ID&quot; --output table
+</code></pre></div>
+<p><code>APP_ID</code> adalah <strong>application (client) ID</strong> yang akan dipakai GitHub. Perintah terakhir menampilkan client secret milik aplikasi — dan tidak mencetak apa pun, karena memang tidak ada. Pertahankan seperti itu.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span><code>az ad app create</code> tidak mencegah Anda membuat aplikasi kedua dengan display name yang sama. Jika Anda menjalankan tugas ini dua kali, cari dulu aplikasinya: <code>az ad app list --display-name &quot;$APP_NAME&quot; --query &quot;[].appId&quot; --output tsv</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>az ad sp show --id &quot;$APP_ID&quot; --query &quot;{name:displayName, type:servicePrincipalType}&quot; --output table</code> menampilkan aplikasi Anda dengan tipe <strong>Application</strong>, dan daftar kredensialnya kosong.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--menambahkan-federated-credential-untuk-github-actions" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Menambahkan federated credential untuk GitHub Actions</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--menambahkan-federated-credential-untuk-github-actions" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Tentukan repository mana yang harus dipercaya Azure. <code>GITHUB_REPO</code> adalah bagian subject di antara <code>repo:</code> dan <code>:ref:</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>GITHUB_REPO=&quot;&lt;your-github-user&gt;/&lt;your-repo&gt;&quot;          # a repository you own
+# No GitHub account? Use a name only you know, so nothing can ever match it:
+# GITHUB_REPO=&quot;nusa-lab-${SUFFIX}/storefront&quot;
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Repository GitHub yang dibuat setelah <strong>15 Juli 2026</strong> memakai subject <em>immutable</em> (tidak berubah) yang menambahkan ID numerik, misalnya <code>repo:octo-learner@1234567/storefront@891011:ref:refs/heads/main</code>. Repository yang lebih lama tetap memakai bentuk klasik <code>repo:owner/repo</code>, kecuali pemiliknya memilih ikut (opt in). Untuk repository publik, perintah ini mencetak bentuk immutable-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>curl -s &quot;https://api.github.com/repos/${GITHUB_REPO}&quot; | jq -r &#x27;&quot;\(.owner.login)@\(.owner.id)/\(.name)@\(.id)&quot;&#x27;
+</code></pre></div>
+<p>Jika repository Anda memakai format itu, isi <code>GITHUB_REPO</code> dengan nilai yang tercetak. Ragu? Pakai bentuk klasik dulu; Tugas 7 akan menunjukkan subject yang persis jika ternyata tidak cocok.</p>
+</aside>
+<p>Sekarang lihat <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/22-identity-access-advanced/federated-credential.json" target="_blank" rel="noopener"><code>federated-credential.json</code></a> — issuer, subject, dan audience — isi repository-nya, lalu buat credential-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>sed &quot;s|__GITHUB_REPO__|${GITHUB_REPO}|&quot; federated-credential.json &gt; my-federated-credential.json
+cat my-federated-credential.json
+az ad app federated-credential create --id &quot;$APP_ID&quot; --parameters my-federated-credential.json --output none
+az ad app federated-credential list --id &quot;$APP_ID&quot; \
+  --query &quot;[].{name:name, issuer:issuer, subject:subject, audiences:join(&#x27;,&#x27;, audiences)}&quot; --output table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Microsoft Entra admin center › App registrations › app-nusa-github-deploy-&lt;suffix&gt; › Certificates &amp; secrets › Federated credentials › Add credential</em>, skenario <strong>GitHub Actions deploying Azure resources</strong>. Portal menyusun subject dari organisasi, repository, dan entity type (branch, environment, pull request, atau tag).</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> satu credential, <code>github-main-branch</code>, dengan issuer <code>https://token.actions.githubusercontent.com</code>, subject Anda, dan audience <code>api://AzureADTokenExchange</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--opsional-sign-in-dari-github-actions-tanpa-secret" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">(Opsional) Sign-in dari GitHub Actions tanpa secret</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--opsional-sign-in-dari-github-actions-tanpa-secret" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Kerjakan tugas ini jika <code>GITHUB_REPO</code> adalah repository sungguhan milik Anda.</p>
+<ol>
+<li>
+<p>Cetak nilai-nilai yang dibutuhkan workflow:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>echo &quot;AZURE_CLIENT_ID=$APP_ID&quot;; echo &quot;AZURE_TENANT_ID=$TENANT_ID&quot;
+echo &quot;AZURE_SUBSCRIPTION_ID=$SUB_ID&quot;; echo &quot;AZURE_RESOURCE_GROUP=$RG&quot;
+</code></pre></div>
+</li>
+<li>
+<p>Di GitHub, buka <strong>Settings › Secrets and variables › Actions</strong> milik repository. Tambahkan tiga <strong>repository secret</strong> (<code>AZURE_CLIENT_ID</code>, <code>AZURE_TENANT_ID</code>, <code>AZURE_SUBSCRIPTION_ID</code>) dan, di tab <strong>Variables</strong>, satu <strong>repository variable</strong> (<code>AZURE_RESOURCE_GROUP</code>). ID-ID ini bukan rahasia; menyimpannya sebagai secret hanya membuatnya tidak muncul di log.</p>
+</li>
+<li>
+<p>Di branch <strong>main</strong>, buat <code>.github/workflows/azure-oidc.yml</code> dengan isi dari <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/22-identity-access-advanced/github-workflow-example.yml" target="_blank" rel="noopener"><code>github-workflow-example.yml</code></a>. Perhatikan <code>permissions: id-token: write</code> dan langkah <code>azure/login@v3</code> yang hanya memakai tiga ID — tanpa <code>client-secret</code>.</p>
+</li>
+<li>
+<p>Commit ke main akan memulai workflow (atau gunakan <strong>Actions › Azure OIDC sign-in (Lab 22) › Run workflow</strong> pada main). Langkah sign-in berhasil, dan langkah berikutnya menampilkan <code>id-nusa-reports</code> serta storage account Anda.</p>
+</li>
+<li>
+<p>Sekarang buat branch bernama <code>feature/test</code> dan jalankan workflow di sana. Sign-in gagal dengan <code>AADSTS700213: No matching federated identity record found for presented assertion subject …</code> — subject-nya berakhiran <code>refs/heads/feature/test</code>, dan tidak ada yang memercayainya. Penolakan itu adalah batas keamanan yang sedang bekerja.</p>
+</li>
+</ol>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> run hijau di <code>main</code> dan sign-in merah di <code>feature/test</code>. Jika <code>main</code> juga gagal dengan <code>AADSTS700213</code>, salin subject dari pesan error (pesan itu menunjukkan format yang dipakai repository Anda) dan perbaiki <code>GITHUB_REPO</code> di Tugas 6.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-8--tur-hanya-baca-conditional-access-dan-pim" data-kind="task"><h2><span class="task-tag">Tugas 8</span><span class="title">(Tur hanya-baca) Conditional Access dan PIM</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-8--tur-hanya-baca-conditional-access-dan-pim" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Conditional Access membutuhkan <strong>Microsoft Entra ID P1</strong>, sedangkan Privileged Identity Management dan fitur access review yang lengkap membutuhkan <strong>Microsoft Entra ID P2</strong> atau <strong>Microsoft Entra ID Governance</strong>. Halaman produk Entra dari Microsoft menawarkan uji coba gratis (free trial); baca dulu ketentuan trial yang berlaku saat ini, dan ingat bahwa saat trial berakhir, assignment PIM yang eligible akan dihapus. Tanpa lisensi ini Anda tetap bisa membuka halaman-halamannya dan membaca sambil mengikuti; Anda hanya tidak bisa membuat policy atau assignment eligible. Tidak ada bagian tugas ini yang diperiksa oleh <code>verify.sh</code>.</p>
+<p><strong>Conditional Access</strong> — <em>Microsoft Entra admin center › Entra ID › Conditional Access › Policies › New policy</em>:</p>
+<ol>
+<li><strong>Name:</strong> <em>Contractors · Azure management · require MFA</em>.</li>
+<li><strong>Users:</strong> sertakan (include) grup kontraktor; <strong>kecualikan</strong> (exclude) akun-akun akses darurat Anda.</li>
+<li><strong>Target resources:</strong> aplikasi cloud yang mewakili Azure management (cari <em>Azure</em> di kolom pemilih).</li>
+<li><strong>Grant:</strong> <em>Grant access</em> › <em>Require multifactor authentication</em>. <strong>Session:</strong> <em>Sign-in frequency</em> 8 jam.</li>
+<li><strong>Enable policy: Report-only</strong> › <strong>Create</strong>. Lalu buka <em>Sign-in logs</em> dan tab <strong>Report-only</strong> pada salah satu sign-in, serta coba tool <strong>What If</strong> di daftar policy, untuk melihat apa yang <em>akan</em> dilakukan policy tersebut.</li>
+</ol>
+<p><strong>Privileged Identity Management</strong> — <em>Microsoft Entra admin center › ID Governance › Privileged Identity Management › Azure resources</em>, lalu pilih subscription Anda dan <code>rg-lunch22-&lt;suffix&gt;</code>:</p>
+<ol>
+<li><strong>Settings › Owner › Edit:</strong> atur <em>Activation maximum duration</em> (1–24 jam), wajibkan MFA dan justifikasi saat aktivasi, dan wajibkan persetujuan dengan minimal dua approver.</li>
+<li><strong>Assignments › Add assignments:</strong> role <strong>Owner</strong>, seorang anggota, assignment type <strong>Eligible</strong>, dengan tanggal berakhir.</li>
+<li>Sebagai anggota tersebut, buka <em>My roles › Azure resources</em> dan klik <strong>Activate</strong> — lalu amati assignment itu menjadi active dan kemudian kedaluwarsa.</li>
+</ol>
+<p><strong>Access review</strong> — <em>ID Governance › Access reviews › New access review</em>: tinjau anggota grup kontraktor setiap triwulan, biarkan pemilik grup yang memutuskan, dan terapkan hasilnya secara otomatis.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Anda bisa menjelaskan mengapa setiap policy Conditional Access dimulai dalam report-only dengan akun darurat dikecualikan, dan apa yang berubah ketika sebuah role berstatus <em>eligible</em>, bukan <em>active</em>.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><strong>Scope creep (cakupan yang diam-diam melebar) pada custom role.</strong> Dewi bilang role operator itu &quot;terlalu ribet&quot; dan meminta Anda &quot;tambahkan saja <code>Microsoft.Compute/virtualMachines/*</code> biar selalu jalan&quot;. Lakukan:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>jq &#x27;.Actions += [&quot;Microsoft.Compute/virtualMachines/*&quot;]&#x27; my-vm-operator-role.json &gt; my-vm-operator-role-broken.json
+az role definition update --role-definition @my-vm-operator-role-broken.json --output none
+bash verify.sh
+</code></pre></div>
+<p><strong>Gejala:</strong> setelah semenit, <code>verify.sh</code> gagal pada pemeriksaan <em>Grants no wildcard, write or delete actions</em>. Wildcard itu diam-diam menambahkan <code>write</code> dan <code>delete</code> — operator kini bisa mengubah ukuran atau menghapus VM toko online — ditambah setiap operasi VM yang akan ditambahkan Microsoft di masa depan.</p>
+<details class="plain"><summary>Petunjuk: cara memperbaikinya</summary>
+<p>Kembalikan definisi aslinya. <code>az role definition update</code> mencari role berdasarkan nama di dalam file dan mengganti permission-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az role definition update --role-definition @my-vm-operator-role.json --output none
+az role definition list --name &quot;$ROLE_NAME&quot; --scope &quot;$RG_ID&quot; --query &quot;[0].permissions[0].actions&quot; --output tsv
+</code></pre></div>
+<p>Pelajarannya: tulis operasi secara eksplisit. Jika seorang operator benar-benar butuh lebih, tambahkan satu action yang ia butuhkan — bukan wildcard.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya bertuliskan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu Anda ulangi.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Dengan urutan yang aman, perintah ini menghapus assignment custom role lalu role-nya (custom role tidak bisa dihapus selama masih di-assign), app registration beserta service principal dan federated credential-nya (dan mem-purge-nya dari <em>Deleted applications</em>), managed identity beserta role assignment-nya, grup operator, resource group <code>rg-lunch22-&lt;suffix&gt;</code> beserta storage account-nya, dan file <code>my-*.json</code> yang dihasilkan selama lab. Penghapusan resource group berlanjut di latar belakang selama beberapa menit. Jika Anda mengerjakan Tugas 7, hapus juga file workflow, secret, dan variable dari repository GitHub Anda.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RoleDefinitionDoesNotExist</code>, atau <em>Role 'Nusantara VM Operator …' doesn't exist</em></td>
+<td>Custom role baru belum tereplikasi, atau Anda mencarinya di scope yang salah</td>
+<td>Tunggu semenit; cari dengan <code>--scope &quot;$RG_ID&quot;</code>; assign berdasarkan <code>ROLE_GUID</code></td>
+</tr>
+<tr>
+<td>Error yang menyatakan role dengan nama yang sama sudah ada</td>
+<td>Anda sudah membuat role itu pada percobaan sebelumnya</td>
+<td>Lewati perintah create dan lanjutkan dari langkah pencarian, atau gunakan <code>az role definition update</code></td>
+</tr>
+<tr>
+<td><code>There are existing role assignments referencing role (code: RoleDefinitionHasAssignments)</code></td>
+<td>Anda mencoba menghapus custom role yang masih di-assign</td>
+<td>Hapus dulu assignment-nya — <code>cleanup.sh</code> melakukannya dengan urutan itu</td>
+</tr>
+<tr>
+<td><code>MissingSubscriptionRegistration</code> yang menyebut <code>Microsoft.ManagedIdentity</code></td>
+<td>Resource provider belum terdaftar di subscription baru</td>
+<td><code>az provider register --namespace Microsoft.ManagedIdentity --wait</code>, lalu coba lagi</td>
+</tr>
+<tr>
+<td><code>The storage account named stnusareports… is already taken.</code></td>
+<td>Nama storage berlaku global dan sudah dipakai orang lain</td>
+<td>Gunakan nama lain, misalnya <code>ST_NAME=&quot;stnusarpt${SUFFIX}&quot;</code>; <code>verify.sh</code> menerima storage account apa pun di grup itu</td>
+</tr>
+<tr>
+<td><code>Insufficient privileges to complete the operation.</code> saat membuat grup atau aplikasi</td>
+<td>Anda tidak bisa membuat objek direktori di tenant ini</td>
+<td>Gunakan tenant dari akun gratis pribadi Anda</td>
+</tr>
+<tr>
+<td><code>PrincipalNotFound … does not exist in the directory</code></td>
+<td>Service principal atau grup yang baru belum tereplikasi</td>
+<td>Tunggu semenit lalu coba lagi; tetap sertakan <code>--assignee-principal-type</code></td>
+</tr>
+<tr>
+<td>GitHub: <code>AADSTS700213: No matching federated identity record found for presented assertion subject …</code></td>
+<td>Subject tidak cocok: branch salah, job dengan <code>environment:</code>, atau format immutable</td>
+<td>Salin subject dari pesan error dan buat credential dengan nilai yang persis sama</td>
+</tr>
+<tr>
+<td>GitHub: error yang menyebut <code>ACTIONS_ID_TOKEN_REQUEST_URL</code> atau izin id-token</td>
+<td>Workflow tidak punya <code>permissions: id-token: write</code></td>
+<td>Tambahkan blok <code>permissions</code> dari file contoh</td>
+</tr>
+<tr>
+<td>GitHub: <em>No subscriptions found for …</em></td>
+<td>Service principal belum punya role, atau role-nya belum berlaku</td>
+<td>Periksa assignment Reader di Tugas 5 dan tunggu beberapa menit</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li><strong>Subject kelas production:</strong> tambahkan federated credential kedua dengan subject <code>repo:&lt;owner&gt;/&lt;repo&gt;:environment:production</code>, buat GitHub environment bernama <em>production</em> dengan seorang required reviewer, lalu tambahkan <code>environment: production</code> ke job.</li>
+<li><strong>Federation tanpa app registration:</strong> pasang kepercayaannya pada managed identity —
+<code>az identity federated-credential create --name github-main --identity-name id-nusa-reports --resource-group &quot;$RG&quot; --issuer https://token.actions.githubusercontent.com --subject &quot;repo:${GITHUB_REPO}:ref:refs/heads/main&quot; --audiences api://AzureADTokenExchange</code>
+— lalu gunakan client ID identitas itu di workflow. Hapus lagi sebelum Anda bersih-bersih.</li>
+<li><strong>Pakai identitasnya sungguhan:</strong> pasang <code>id-nusa-reports</code> ke resource compute kecil yang Anda buat di resource group ini (misalnya container instance), unggah sebuah blob sebagai diri Anda sendiri, lalu baca blob itu dari resource tersebut setelah <code>az login --identity --client-id &lt;the identity's client ID&gt;</code> — tanpa key sama sekali.</li>
+<li><strong>Uji custom role-nya:</strong> tambahkan pengguna uji ke grup operator (Lab 05 menunjukkan cara membuatnya), buat VM murah di resource group sebagai diri Anda sendiri (💲💲 selama berjalan), lalu pastikan operator bisa me-restart-nya tetapi tidak bisa menghapusnya.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep), di tenant dan subscription milik Anda sendiri:</p>
+<ol>
+<li>Resource group <code>rg-lunch22-&lt;suffix&gt;</code> dengan tag <code>course=azure-fundamentals-lunches</code> dan <code>lunch=22</code>.</li>
+<li>Custom role <code>Nusantara VM Operator &lt;suffix&gt;</code> yang mengizinkan membaca, menjalankan, me-restart, dan men-deallocate virtual machine, tanpa action wildcard, <code>write</code>, atau <code>delete</code> dan tanpa data action, yang bisa di-assign <strong>hanya</strong> di resource group tersebut — dan sudah di-assign ke setidaknya satu principal di sana.</li>
+<li>Managed identity user-assigned <code>id-nusa-reports</code> di resource group itu, yang memegang <strong>Storage Blob Data Reader</strong> pada sebuah storage account di grup yang sama, dan tidak memegang role lain.</li>
+<li>App registration <code>app-nusa-github-deploy-&lt;suffix&gt;</code> dengan service principal, <strong>tanpa</strong> client secret maupun certificate, role <strong>Reader</strong> pada resource group, dan federated credential dengan issuer <code>https://token.actions.githubusercontent.com</code>, audience <code>api://AzureADTokenExchange</code>, dan subject <code>repo:&lt;owner&gt;/&lt;repo&gt;:ref:refs/heads/main</code>.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="21-core-capstone.html"><small>← Lab sebelumnya</small>21 · Proyek capstone</a><a class="next" href="23-virtual-machines-advanced.html"><small>Lab berikutnya →</small>23 · Siap menghadapi promo 12.12</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/22-identity-access-advanced/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

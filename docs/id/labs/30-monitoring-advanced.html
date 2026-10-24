@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 30 · Mengapa checkout lambat pada hari Jumat? · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 30: Mengapa checkout lambat pada hari Jumat?. sekitar 60 menit, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/30-monitoring-advanced.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/30-monitoring-advanced.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/30-monitoring-advanced.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/30-monitoring-advanced.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 30 · Mengapa checkout lambat pada hari Jumat?">
+<meta property="og:description" content="Lab Azure praktik 30: Mengapa checkout lambat pada hari Jumat?. sekitar 60 menit, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/30-monitoring-advanced.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="30" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/30-monitoring-advanced.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 30</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>30</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Mengapa checkout lambat pada hari Jumat?</h1>
+        <p class="lab-story">🏪 <b>Episode 30 · Kenapa Checkout Lambat Hari Jumat?</b> — CPU baik-baik saja, tetapi checkout butuh empat detik dan 312 keranjang belanja ditinggalkan. <a href="../lunches/30-monitoring-advanced.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 60 menit</span>
+          <span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★★</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 9 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--berkeliling-ruang-bukti">Tugas 1 · Berkeliling ruang bukti</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--memberi-vm-identitas-dan-azure-monitor-agent">Tugas 2 · Memberi VM identitas dan Azure Monitor Agent</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--memberi-tahu-agent-apa-yang-dikumpulkan-data-collection-rule">Tugas 3 · Memberi tahu agent apa yang dikumpulkan: data collection rule</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--platform-log-diagnostic-setting-untuk-blob-storage">Tugas 4 · Platform log: diagnostic setting untuk Blob storage</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--application-insights-untuk-storefront">Tugas 5 · Application Insights untuk storefront</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--sepuluh-pertanyaan-kql">Tugas 6 · Sepuluh pertanyaan KQL</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--dari-query-menjadi-alert">Tugas 7 · Dari query menjadi alert</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/app/app.py" target="_blank" rel="noopener"><span>app/app.py</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/app/requirements.txt" target="_blank" rel="noopener"><span>app/requirements.txt</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/dcr-linux-nusa.json" target="_blank" rel="noopener"><span>dcr-linux-nusa.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>7 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/traffic.sh" target="_blank" rel="noopener"><span>traffic.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>7 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/30-monitoring-advanced" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Jumat lalu, checkout Nusantara Retail butuh empat detik, padahal semua grafik CPU tampak baik-baik saja. Dewi
+menyalahkan gambar produk, Pak Budi menyalahkan VM order job, dan Rizky menyalahkan penyedia pembayaran. Hari ini Anda
+membangun ruang bukti yang akan mengakhiri perdebatan itu: satu Log Analytics workspace yang diisi oleh tiga pipa —
+Azure Monitor Agent dengan data collection rule di VM, diagnostic setting di Blob storage, dan Application Insights di
+web app storefront. Setelah itu Anda menjawab sepuluh pertanyaan KQL bernilai, mengubah query checkout lambat menjadi
+log search alert, dan memperbaiki data collection rule yang diam-diam membuang warning.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch30-&amp;lt;suffix&amp;gt;&quot;]
+    VM[&quot;vm-nusa-app&lt;br/&gt;Azure Monitor Agent&quot;]
+    DCR[&quot;dcr-linux-nusa&lt;br/&gt;data collection rule&quot;]
+    ST[&quot;stnusalog&amp;lt;suffix&amp;gt;&lt;br/&gt;Blob storage&quot;]
+    APP[&quot;app-nusa30-&amp;lt;suffix&amp;gt;&lt;br/&gt;storefront Python&quot;]
+    APPI[&quot;appi-nusa-shop&lt;br/&gt;Application Insights&quot;]
+    LAW[(&quot;log-nusa&lt;br/&gt;Log Analytics workspace&quot;)]
+    AL[&quot;alert-slow-checkout&lt;br/&gt;log search alert&quot;]
+    TEST[&quot;avail-nusa-health&lt;br/&gt;standard availability test&quot;]
+  end
+  VM --- DCR
+  DCR -- &quot;Syslog, Perf, Heartbeat&quot; --&gt; LAW
+  ST -- &quot;diagnostic setting&quot; --&gt; LAW
+  APP -- &quot;autoinstrumentation&quot; --&gt; APPI
+  APPI -- &quot;AppRequests, AppTraces&quot; --&gt; LAW
+  TEST -- &quot;setiap 5 menit&quot; --&gt; APP
+  LAW --&gt; AL
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda bisa membuat resource dan memberikan role pada resource tersebut (lihat
+<a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang:
+<code>setup.sh</code> menambahkan extension Azure CLI yang dipakai lab ini (<code>monitor-control-service</code>, <code>application-insights</code>,
+<code>scheduled-query</code>, dan <code>log-analytics</code>).</li>
+<li>Opsional: alamat email yang bisa Anda baca selama lab, jika Anda ingin alert-nya masuk ke kotak masuk Anda.</li>
+<li>Ambil file lab, lalu muat pengaturan bersama dan nama-nama resource lab:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/30-monitoring-advanced
+source ../common/config.sh
+source lab.env
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya: workspace <code>log-nusa</code>, VM <code>vm-nusa-app</code>, storage account <code>stnusalog&lt;suffix&gt;</code>, dan web app
+storefront — semuanya belum dipantau. Prosesnya sekitar 6–10 menit:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab menimbulkan biaya selama masih ada. Akhiri lab dengan bagian <strong>Bersihkan</strong>, bahkan jika Anda berhenti di
+tengah jalan.</p>
+</aside>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Catatan</span>Data pemantauan tidak datang seketika. Agent, rule, diagnostic setting, atau resource Application Insights yang
+benar-benar baru biasanya butuh <strong>5–15 menit</strong> sebelum baris pertamanya muncul. Urutan tugas sudah diatur agar Anda
+bisa terus bekerja sementara data mulai mengalir; Tugas 6 adalah saatnya Anda meng-query data itu.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Cloud Shell terputus setelah sekitar 20 menit tanpa ketikan. Jika itu terjadi, sambungkan lagi dan muat ulang
+variabelnya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>cd ~/azure-fundamentals-lunches/labs/30-monitoring-advanced &amp;&amp; source ../common/config.sh &amp;&amp; source lab.env
+LAW_ID=$(az monitor log-analytics workspace show -g &quot;$RG&quot; -n &quot;$LAW&quot; --query id -o tsv)
+LAW_GUID=$(az monitor log-analytics workspace show -g &quot;$RG&quot; -n &quot;$LAW&quot; --query customerId -o tsv)
+VM_ID=$(az vm show -g &quot;$RG&quot; -n &quot;$VM&quot; --query id -o tsv)
+ST_ID=$(az storage account show -g &quot;$RG&quot; -n &quot;$ST&quot; --query id -o tsv)
+HOST=$(az webapp show -g &quot;$RG&quot; -n &quot;$APP&quot; --query defaultHostName -o tsv)
+kql() { az monitor log-analytics query --workspace &quot;$LAW_GUID&quot; --analytics-query &quot;$1&quot; --output table; }
+</code></pre></div>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–7 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--berkeliling-ruang-bukti" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Berkeliling ruang bukti</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--berkeliling-ruang-bukti" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Mulailah dari workspace yang masih kosong: di mana letaknya, berapa lama ia menyimpan data, dan bagaimana cara
+mengajukan pertanyaan kepadanya dari Cloud Shell.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>LAW_ID=$(az monitor log-analytics workspace show --resource-group &quot;$RG&quot; --workspace-name &quot;$LAW&quot; --query id --output tsv)
+LAW_GUID=$(az monitor log-analytics workspace show --resource-group &quot;$RG&quot; --workspace-name &quot;$LAW&quot; --query customerId --output tsv)
+
+az monitor log-analytics workspace show --resource-group &quot;$RG&quot; --workspace-name &quot;$LAW&quot; \
+  --query &quot;{name:name, location:location, pricing:sku.name, retentionDays:retentionInDays, workspaceGuid:customerId}&quot; \
+  --output yaml
+
+# Plan and retention of a table you&#x27;ll fill today
+az monitor log-analytics workspace table show --resource-group &quot;$RG&quot; --workspace-name &quot;$LAW&quot; --name Syslog \
+  --query &quot;{table:name, plan:plan || properties.plan, analyticsDays:retentionInDays || properties.retentionInDays, totalDays:totalRetentionInDays || properties.totalRetentionInDays}&quot; \
+  --output yaml
+
+# A small helper that runs KQL from Cloud Shell. It needs the workspace GUID, not the name.
+kql() { az monitor log-analytics query --workspace &quot;$LAW_GUID&quot; --analytics-query &quot;$1&quot; --output table; }
+kql &#x27;print Message = &quot;Selamat siang from log-nusa&quot;, Now = now()&#x27;
+</code></pre></div>
+<p>Workspace punya dua ID: resource ID Azure (<code>LAW_ID</code>), yang Anda pakai untuk <em>mengirim</em> data ke sana, dan GUID workspace
+(<code>LAW_GUID</code>, disebut <em>Workspace ID</em> di portal), yang Anda pakai untuk <em>meng-query</em>-nya. Ibaratnya sebuah toko: alamat
+gudang dipakai untuk mengirim barang, sedangkan nomor WhatsApp dipakai untuk bertanya. Keduanya milik toko yang sama,
+tetapi tidak bisa saling menggantikan.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Buka <code>log-nusa</code> › <em>Settings › Tables</em> untuk melihat plan dan retention setiap tabel, lalu
+<em>Logs</em>.
+Ganti editor dari <em>Simple mode</em> ke <em>KQL mode</em> — Anda akan memakai KQL mode di sepanjang sisa lab ini.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>retentionDays: 30</code>, tabel <code>Syslog</code> pada plan <code>Analytics</code> dengan analytics retention 30 hari,
+dan satu baris berisi sapaan Anda beserta waktu saat ini.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--memberi-vm-identitas-dan-azure-monitor-agent" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Memberi VM identitas dan Azure Monitor Agent</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--memberi-vm-identitas-dan-azure-monitor-agent" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Azure Monitor Agent masuk ke Azure Monitor dengan <strong>managed identity</strong> milik VM — tanpa key atau rahasia workspace yang
+perlu disimpan. Beri VM sebuah system-assigned identity, lalu pasang agent sebagai VM extension (komponen tambahan yang
+dipasang Azure ke dalam VM):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>VM_ID=$(az vm show --resource-group &quot;$RG&quot; --name &quot;$VM&quot; --query id --output tsv)
+
+az vm identity assign --resource-group &quot;$RG&quot; --name &quot;$VM&quot; --output none
+
+az vm extension set \
+  --resource-group &quot;$RG&quot; \
+  --vm-name &quot;$VM&quot; \
+  --name AzureMonitorLinuxAgent \
+  --publisher Microsoft.Azure.Monitor \
+  --enable-auto-upgrade true \
+  --output none
+
+az vm show --resource-group &quot;$RG&quot; --name &quot;$VM&quot; --query identity.type --output tsv
+az vm extension list --resource-group &quot;$RG&quot; --vm-name &quot;$VM&quot; \
+  --query &quot;[].{name:name, version:typeHandlerVersion, state:provisioningState, autoUpgrade:enableAutomaticUpgrade}&quot; \
+  --output table
+</code></pre></div>
+<p>Sekarang tanyakan kepada workspace apakah agent sudah melaporkan sesuatu:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kql &#x27;Heartbeat | where TimeGenerated &gt; ago(1h) | summarize count() by Computer&#x27;
+</code></pre></div>
+<p>Kosong. Itu memang yang diharapkan: agent tidak mengumpulkan apa pun sampai sebuah data collection rule memberitahunya
+apa yang harus dikumpulkan dan ke mana mengirimnya. Itulah Tugas 3.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> VM › <em>Settings › Identity</em> › <em>System assigned: On</em>. Lalu VM › <em>Settings › Extensions +
+applications</em> › <em>Add</em> › <em>Azure Monitor Agent for Linux</em>. (Membuat data collection rule di portal juga sekaligus
+memasang agent untuk Anda.)</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tipe identitasnya <code>SystemAssigned</code>, <code>AzureMonitorLinuxAgent</code> menampilkan <code>Succeeded</code> dengan
+auto-upgrade aktif, dan query Heartbeat tidak mengembalikan baris apa pun.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--memberi-tahu-agent-apa-yang-dikumpulkan-data-collection-rule" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Memberi tahu agent apa yang dikumpulkan: data collection rule</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--memberi-tahu-agent-apa-yang-dikumpulkan-data-collection-rule" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Baca dulu rule-nya — isinya pendek:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>cat dcr-linux-nusa.json
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Isinya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dataSources.syslog</code></td>
+<td>kumpulkan Syslog dari facility <code>auth</code>, <code>authpriv</code>, <code>cron</code>, <code>daemon</code>, <code>syslog</code>, dan <code>user</code>, pada level <strong>Warning</strong> ke atas</td>
+</tr>
+<tr>
+<td><code>dataSources.performanceCounters</code></td>
+<td>ambil sampel counter CPU, memori, disk, dan jaringan setiap 60 detik</td>
+</tr>
+<tr>
+<td><code>destinations.logAnalytics</code></td>
+<td>satu tujuan bernama <code>la-nusa</code>: workspace yang resource ID-nya menggantikan <code>__WORKSPACE_RESOURCE_ID__</code></td>
+</tr>
+<tr>
+<td><code>dataFlows</code></td>
+<td>kirim stream Syslog dan Perf ke <code>la-nusa</code> (keduanya mendarat di tabel <code>Syslog</code> dan <code>Perf</code>)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Syslog adalah catatan sistem standar di Linux. Setiap pesannya punya tingkat keparahan (severity), dari <em>debug</em> dan
+<em>info</em> yang paling ringan, lalu <em>warning</em>, sampai <em>err</em> dan <em>emerg</em> yang paling serius. &quot;Warning ke atas&quot; berarti
+warning dan semua yang lebih serius.</p>
+<p>Isi rule dengan workspace Anda, buat rule-nya, lalu hubungkan (associate) dengan VM:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>mkdir -p &quot;$OUT_DIR&quot;
+sed &quot;s|__WORKSPACE_RESOURCE_ID__|${LAW_ID}|&quot; dcr-linux-nusa.json &gt; &quot;$OUT_DIR/dcr.json&quot;
+
+az monitor data-collection rule create \
+  --resource-group &quot;$RG&quot; \
+  --location &quot;$LOCATION&quot; \
+  --name &quot;$DCR&quot; \
+  --rule-file &quot;$OUT_DIR/dcr.json&quot; \
+  --output none
+DCR_ID=$(az monitor data-collection rule show --resource-group &quot;$RG&quot; --name &quot;$DCR&quot; --query id --output tsv)
+
+az monitor data-collection rule association create \
+  --name &quot;$DCR_ASSOC&quot; \
+  --rule-id &quot;$DCR_ID&quot; \
+  --resource &quot;$VM_ID&quot; \
+  --output none
+
+az monitor data-collection rule association list --resource &quot;$VM_ID&quot; \
+  --query &quot;[].{association:name, rule:dataCollectionRuleId || properties.dataCollectionRuleId}&quot; --output table
+</code></pre></div>
+<p>Rule harus berada di region yang sama dengan workspace tujuannya; di sini semuanya berada di <code>$LOCATION</code>. Association
+itulah yang menghubungkan satu mesin dengan satu rule — di produksi, Azure Policy membuat association untuk setiap VM
+baru (Makan Siang 31).</p>
+<p>Sekarang beri server order job sesuatu untuk dilaporkan. Run Command (fitur untuk menjalankan perintah di dalam VM tanpa
+perlu login lewat SSH) menulis tiga pesan ke Syslog dengan tiga tingkat severity:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name &quot;$VM&quot; --command-id RunShellScript \
+  --scripts &quot;logger -p user.warning -t nusa-orders &#x27;Order batch 4471 retry 3/5: payment API slow&#x27;; logger -p user.info -t nusa-orders &#x27;Order batch 4471 started&#x27;; logger -p user.err -t nusa-orders &#x27;Order batch 4470 failed after 5 retries&#x27;&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Mana dari ketiganya yang seharusnya sampai ke workspace? Anda akan memeriksanya di Tugas 6. Heartbeat seharusnya mulai
+masuk dalam sekitar 5–10 menit; sementara itu lanjutkan ke Tugas 4.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Monitor › Settings › Data Collection Rules</em> › <em>Create</em>. Di <em>Resources</em> tambahkan
+<code>vm-nusa-app</code>; di <em>Collect and deliver</em> tambahkan <em>Linux Syslog</em> (minimum log level <em>LOG_WARNING</em>) dan <em>Performance
+Counters</em>, masing-masing dengan <code>log-nusa</code> sebagai tujuan. Buka <em>JSON View</em> dari rule yang sudah jadi dan bandingkan
+dengan file-nya.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> daftar association menampilkan <code>dcra-vm-nusa-app</code> yang menunjuk ke
+<code>.../dataCollectionRules/dcr-linux-nusa</code>, dan Run Command selesai tanpa error.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--platform-log-diagnostic-setting-untuk-blob-storage" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Platform log: diagnostic setting untuk Blob storage</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--platform-log-diagnostic-setting-untuk-blob-storage" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Gambar produk milik Dewi tersimpan di Blob storage. Siapa yang membacanya, seberapa cepat, dan pembacaan mana yang
+gagal? Layanan storage hanya menulis resource log tersebut jika Anda mengalirkannya ke suatu tempat. Untuk storage,
+setting-nya dipasang pada <strong>blob service</strong> (<code>.../blobServices/default</code>), bukan pada storage account itu sendiri:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ST_ID=$(az storage account show --resource-group &quot;$RG&quot; --name &quot;$ST&quot; --query id --output tsv)
+
+# Which log categories does the blob service offer?
+az monitor diagnostic-settings categories list --resource &quot;$ST_ID/blobServices/default&quot; \
+  --query &quot;(value || @)[].{category:name, type:categoryType}&quot; --output table
+
+az monitor diagnostic-settings create \
+  --name &quot;$DIAG&quot; \
+  --resource &quot;$ST_ID/blobServices/default&quot; \
+  --workspace &quot;$LAW_ID&quot; \
+  --logs &#x27;[{&quot;categoryGroup&quot;:&quot;allLogs&quot;,&quot;enabled&quot;:true}]&#x27; \
+  --output none
+
+az monitor diagnostic-settings list --resource &quot;$ST_ID/blobServices/default&quot; \
+  --query &quot;(value || @)[].{name:name, workspace:workspaceId, logs:logs[].categoryGroup}&quot; --output yaml
+</code></pre></div>
+<ul>
+<li><code>categoryGroup: allLogs</code> berarti &quot;setiap kategori log, termasuk yang ditambahkan belakangan&quot; — di sini <code>StorageRead</code>,
+<code>StorageWrite</code>, dan <code>StorageDelete</code>. Group <code>audit</code> adalah alternatif yang lebih kecil.</li>
+<li>Log storage mendarat di tabel resource-specific <code>StorageBlobLogs</code>.</li>
+<li>Diagnostic setting hidup lebih lama daripada resource-nya. Itu sebabnya <code>cleanup.sh</code> menghapusnya secara eksplisit.</li>
+</ul>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Storage account › <em>Monitoring › Diagnostic settings</em> › pilih <strong>blob</strong> › <em>Add diagnostic
+setting</em>. Centang <em>allLogs</em> dan <em>Send to Log Analytics workspace</em> › <code>log-nusa</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> satu setting bernama <code>diag-blob-to-log-nusa</code> yang workspace-nya berakhiran <code>/workspaces/log-nusa</code>
+dan daftar log-nya berisi <code>allLogs</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--application-insights-untuk-storefront" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Application Insights untuk storefront</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--application-insights-untuk-storefront" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Storefront di <code>app/app.py</code> sama sekali tidak berisi kode pemantauan. Anda akan menyalakan <strong>autoinstrumentation</strong>: App
+Service memuat agent berbasis OpenTelemetry milik Microsoft ke dalam proses Python dan mengirim request, exception, dan
+warning yang dicatat ke resource Application Insights berbasis workspace.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor app-insights component create \
+  --app &quot;$APPI&quot; \
+  --resource-group &quot;$RG&quot; \
+  --location &quot;$LOCATION&quot; \
+  --workspace &quot;$LAW_ID&quot; \
+  --application-type web \
+  --output none
+APPI_ID=$(az monitor app-insights component show --app &quot;$APPI&quot; --resource-group &quot;$RG&quot; --query id --output tsv)
+CONN=$(az monitor app-insights component show --app &quot;$APPI&quot; --resource-group &quot;$RG&quot; --query connectionString --output tsv)
+
+az webapp config appsettings set --resource-group &quot;$RG&quot; --name &quot;$APP&quot; \
+  --settings &quot;APPLICATIONINSIGHTS_CONNECTION_STRING=$CONN&quot; \
+             &quot;ApplicationInsightsAgent_EXTENSION_VERSION=~3&quot; \
+             &quot;OTEL_SERVICE_NAME=nusa-storefront&quot; \
+  --output none
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>App setting</th>
+<th>Alasannya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APPLICATIONINSIGHTS_CONNECTION_STRING</code></td>
+<td>ke mana telemetri dikirim (mengidentifikasi <code>appi-nusa-shop</code>)</td>
+</tr>
+<tr>
+<td><code>ApplicationInsightsAgent_EXTENSION_VERSION=~3</code></td>
+<td>menyalakan agent yang dikelola App Service di Linux</td>
+</tr>
+<tr>
+<td><code>OTEL_SERVICE_NAME</code></td>
+<td>pengaturan standar OpenTelemetry: nama yang tampil di application map dan di <code>AppRoleName</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Mengubah app setting akan me-restart aplikasi. Selanjutnya, awasi storefront dari luar dengan <strong>standard availability
+test</strong> yang memanggil <code>/health</code> setiap 5 menit dari lima lokasi: Singapura, Hong Kong, Jepang, Australia, dan Pantai
+Barat Amerika Serikat.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>HOST=$(az webapp show --resource-group &quot;$RG&quot; --name &quot;$APP&quot; --query defaultHostName --output tsv)
+
+az monitor app-insights web-test create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$WEBTEST&quot; \
+  --location &quot;$LOCATION&quot; \
+  --web-test-kind standard \
+  --defined-web-test-name &quot;$WEBTEST&quot; \
+  --synthetic-monitor-id &quot;$WEBTEST&quot; \
+  --enabled true \
+  --frequency 300 \
+  --timeout 30 \
+  --retry-enabled true \
+  --locations Id=apac-sg-sin-azr \
+  --locations Id=apac-hk-hkn-azr \
+  --locations Id=apac-jp-kaw-edge \
+  --locations Id=emea-au-syd-edge \
+  --locations Id=us-ca-sjc-azr \
+  --http-verb GET \
+  --request-url &quot;https://$HOST/health&quot; \
+  --expected-status-code 200 \
+  --tags &quot;hidden-link:$APPI_ID=Resource&quot; \
+  --output none
+</code></pre></div>
+<p>Tag <code>hidden-link</code> itulah yang menautkan test ke <code>appi-nusa-shop</code>, sehingga hasilnya muncul di bawah <em>Availability</em> dan
+di tabel <code>AppAvailabilityResults</code>. Standard test ditagih per eksekusi, jadi lab ini menjaga frekuensinya di 5 menit.</p>
+<p>Terakhir, mainkan suasana Jumat malam. <code>traffic.sh</code> mengirim pembeli ke storefront serta membaca dan menulis gambar
+produk; jalankan di latar belakang selama 25 menit:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>nohup bash traffic.sh 25 &gt; &quot;$OUT_DIR/traffic.log&quot; 2&gt;&amp;1 &amp;
+sleep 60; tail -n 3 &quot;$OUT_DIR/traffic.log&quot;
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Web app › <em>Monitoring › Application Insights</em> › <em>Turn on Application Insights</em> mengatur app
+setting yang sama untuk Anda. Untuk test-nya: <code>appi-nusa-shop</code> › <em>Investigate › Availability</em> › <em>Add Standard test</em>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> log traffic menampilkan putaran-putaran dengan beberapa checkout yang lambat dan sedikit yang
+gagal, dan <code>az monitor app-insights web-test list --resource-group &quot;$RG&quot; --query &quot;[].name&quot; --output tsv</code> mencetak
+<code>avail-nusa-health</code>.
+Jika log menyebut panggilan storage yang gagal, role assignment baru Anda masih dalam proses propagasi — lanjutkan
+saja.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--sepuluh-pertanyaan-kql" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Sepuluh pertanyaan KQL</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--sepuluh-pertanyaan-kql" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Beri pipa-pipa itu waktu sekitar sepuluh menit setelah Tugas 5, lalu periksa apa yang sudah tiba:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kql &#x27;union isfuzzy=true withsource=SourceTable Heartbeat, Syslog, Perf, StorageBlobLogs, AppRequests, AppTraces, AppExceptions, AppAvailabilityResults
+| where TimeGenerated &gt; ago(1h)
+| summarize Rows = count() by SourceTable&#x27;
+</code></pre></div>
+<p>Portal adalah tempat yang nyaman untuk tugas ini: <code>log-nusa</code> › <em>Logs</em>, <em>KQL mode</em>, rentang waktu <em>Set in query</em>. Setiap
+solusi di bawah juga bisa dijalankan di Cloud Shell sebagai <code>kql '&lt;query&gt;'</code> (grafik hanya ada di portal; CLI mencetak
+baris-barisnya).</p>
+<p>Penilaian: ★ = 1 poin, ★★ = 2 poin, ★★★ = 3 poin — total 20 poin. Tulis query Anda, jalankan, dan baru setelah itu buka
+solusinya. Empat belas poin atau lebih, dan Anda siap untuk tugas on-call (giliran jaga saat ada gangguan).</p>
+<p><strong>1. ★ Apakah agent-nya hidup?</strong> Komputer mana saja yang mengirim heartbeat melalui Azure Monitor Agent, dan kapan
+masing-masing terakhir melapor?</p>
+<details class="plain"><summary>Solusi 1</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Heartbeat
+| where TimeGenerated &gt; ago(1h)
+| where Category == &quot;Azure Monitor Agent&quot;
+| summarize LastSeen = max(TimeGenerated), Heartbeats = count() by Computer, OSType, Version
+</code></pre></div>
+<p>Harapkan satu baris untuk <code>vm-nusa-app</code> dengan kira-kira satu heartbeat per menit sejak association dibuat. <code>Heartbeat</code>
+gratis untuk di-ingest.</p>
+</details>
+<p><strong>2. ★ Apa yang diperingatkan server order job?</strong> Tampilkan warning Syslog dari empat jam terakhir, yang terbaru di
+atas.</p>
+<details class="plain"><summary>Solusi 2</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Syslog
+| where TimeGenerated &gt; ago(4h)
+| where SeverityLevel =~ &quot;warning&quot;
+| project TimeGenerated, Computer, Facility, ProcessName, SyslogMessage
+| sort by TimeGenerated desc
+</code></pre></div>
+<p>Pesan <em>Order batch 4471 retry 3/5</em> Anda dari <code>nusa-orders</code> ada di sana. Hapus filter severity dan Anda juga akan
+menemukan pesan <em>err</em> — tetapi tidak pernah pesan <em>info</em>: DCR mengumpulkan Warning ke atas, jadi agent sudah membuangnya
+di sumber.</p>
+</details>
+<p><strong>3. ★ Apa yang terjadi pada gambar produk?</strong> Hitung operasi blob berdasarkan nama operasi, hasil, dan tipe
+autentikasi.</p>
+<details class="plain"><summary>Solusi 3</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>StorageBlobLogs
+| where TimeGenerated &gt; ago(4h)
+| summarize Requests = count() by OperationName, StatusText, AuthenticationType
+| sort by Requests desc
+</code></pre></div>
+<p>Anda akan melihat <code>PutBlob</code>, <code>ListBlobs</code>, dan <code>GetBlob</code> dengan <code>Success</code> melalui <code>OAuth</code>, plus <code>GetBlob</code> dengan
+<code>BlobNotFound</code> — banner 12.12 yang tidak ada. Baris dengan <code>AuthorizationPermissionMismatch</code> berasal dari menit-menit
+sebelum role assignment Anda berlaku.</p>
+</details>
+<p><strong>4. ★★ Apakah VM Pak Budi sibuk?</strong> Buat grafik CPU rata-rata setiap komputer dalam ember 5 menit untuk satu jam
+terakhir.</p>
+<details class="plain"><summary>Solusi 4</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Perf
+| where TimeGenerated &gt; ago(1h)
+| where ObjectName == &quot;Processor&quot; and CounterName == &quot;% Processor Time&quot;
+| summarize AvgCpu = avg(CounterValue) by bin(TimeGenerated, 5m), Computer
+| render timechart
+</code></pre></div>
+<p>Garis yang datar dan rendah: VM-nya tidak bersalah.</p>
+</details>
+<p><strong>5. ★★ Berapa sisa memorinya?</strong> Tampilkan hanya sampel <em>Available MBytes Memory</em> terbaru untuk setiap komputer.</p>
+<details class="plain"><summary>Solusi 5</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Perf
+| where TimeGenerated &gt; ago(1h)
+| where ObjectName == &quot;Memory&quot; and CounterName == &quot;Available MBytes Memory&quot;
+| summarize arg_max(TimeGenerated, CounterValue) by Computer
+| project Computer, LastSample = TimeGenerated, AvailableMB = CounterValue
+</code></pre></div>
+<p><code>arg_max(TimeGenerated, CounterValue)</code> menyimpan seluruh baris terbaru per komputer, alih-alih merata-ratakannya.</p>
+</details>
+<p><strong>6. ★★ Operasi mana yang gagal?</strong> Untuk setiap nama request, tampilkan jumlah request, jumlah kegagalan, dan
+persentase kegagalannya, yang terburuk di atas.</p>
+<details class="plain"><summary>Solusi 6</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>AppRequests
+| where TimeGenerated &gt; ago(1h)
+| summarize Requests = count(), Failed = countif(Success == false) by Name
+| extend FailedPct = round(100.0 * Failed / Requests, 1)
+| sort by FailedPct desc
+</code></pre></div>
+<p><code>POST /checkout</code> gagal sekitar 7% dari waktu; <code>GET /products</code>, <code>GET /</code>, dan <code>GET /health</code> milik availability test sama
+sekali tidak gagal.</p>
+</details>
+<p><strong>7. ★★ Apa kata kodenya?</strong> Hitung warning yang menyebut payment gateway dalam ember 5 menit, sebagai grafik kolom.</p>
+<details class="plain"><summary>Solusi 7</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>AppTraces
+| where TimeGenerated &gt; ago(1h)
+| where SeverityLevel == 2 and Message has &quot;Payment gateway&quot;
+| summarize Warnings = count() by bin(TimeGenerated, 5m)
+| render columnchart
+</code></pre></div>
+<p>Di <code>AppTraces</code>, <code>SeverityLevel</code> 2 berarti <em>Warning</em>. Baris-baris ini berasal dari modul <code>logging</code> Python —
+autoinstrumentation mengumpulkan root logger.</p>
+</details>
+<p><strong>8. ★★★ Grafik untuk Ibu Sari.</strong> Plot median dan durasi persentil ke-95 dari request checkout dalam ember 5 menit.</p>
+<details class="plain"><summary>Solusi 8</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>AppRequests
+| where TimeGenerated &gt; ago(1h)
+| where Name has &quot;checkout&quot;
+| summarize p50 = percentile(DurationMs, 50), p95 = percentile(DurationMs, 95) by bin(TimeGenerated, 5m)
+| render timechart
+</code></pre></div>
+<p>Median bertahan di sekitar 200–300 ms sementara p95 berada di sekitar 2.500–3.000 ms: sebagian besar pelanggan
+baik-baik saja, dan satu dari lima menunggu penyedia pembayaran. Rata-rata akan menyembunyikan hal itu.</p>
+</details>
+<p><strong>9. ★★★ Kenapa checkout itu gagal?</strong> Tampilkan request yang gagal dalam satu jam terakhir beserta tipe dan pesan
+exception dari operasi yang sama. Pertahankan request gagal yang tidak punya exception.</p>
+<details class="plain"><summary>Solusi 9</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>AppRequests
+| where TimeGenerated &gt; ago(1h) and Success == false
+| project TimeGenerated, OperationId, Name, ResultCode, DurationMs
+| join kind=leftouter (
+    AppExceptions
+    | where TimeGenerated &gt; ago(1h)
+    | summarize arg_max(TimeGenerated, ExceptionType, OuterMessage) by OperationId
+  ) on OperationId
+| project TimeGenerated, Name, ResultCode, DurationMs, ExceptionType, OuterMessage
+| sort by TimeGenerated desc
+</code></pre></div>
+<p>Setiap kegagalan adalah <code>POST /checkout</code> dengan result code 500 setelah sekitar tiga detik, dan exception-nya menyebut
+bahwa penyedia pembayaran tidak menjawab. <code>kind=leftouter</code> mempertahankan request tanpa exception, dan <code>summarize</code> di
+sisi kanan menyimpan satu exception per operasi agar baris tidak berlipat ganda. Rizky benar.</p>
+</details>
+<p><strong>10. ★★★ Berapa biaya bukti ini?</strong> Tampilkan megabyte yang ditagih (billable) yang di-ingest per tabel dalam sehari
+terakhir, yang terbesar di atas, sebagai pie chart.</p>
+<details class="plain"><summary>Solusi 10</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Usage
+| where TimeGenerated &gt; ago(1d)
+| where IsBillable == true
+| summarize BillableMB = round(sum(Quantity), 2) by DataType
+| sort by BillableMB desc
+| render piechart
+</code></pre></div>
+<p><code>Quantity</code> dalam satuan MB. <code>Heartbeat</code> tidak muncul karena gratis. <code>Usage</code> ditulis secara berkelompok (batch), jadi di
+awal lab tabel ini mungkin masih kosong — jalankan lagi di akhir.</p>
+</details>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> pertanyaan 1, 6, dan 8 mengembalikan baris. Jika sebuah tabel masih kosong, tunggu beberapa menit
+dan gunakan tabel Pemecahan masalah.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--dari-query-menjadi-alert" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Dari query menjadi alert</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--dari-query-menjadi-alert" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Pertanyaan 8 sudah menemukan masalahnya; sekarang pastikan Anda mendengarnya lebih dulu lain kali. <strong>Log search alert</strong>
+menjalankan query sesuai jadwal. Jika Anda ingin menerima email, buat action group dulu (lewati blok ini jika tidak):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>export ALERT_EMAIL=&quot;you@example.com&quot;     # change this to your own address
+az monitor action-group create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$AG&quot; \
+  --short-name nusaoncall \
+  --action email oncall-email &quot;$ALERT_EMAIL&quot; usecommonalertschema \
+  --output none
+AG_ID=$(az monitor action-group show --resource-group &quot;$RG&quot; --name &quot;$AG&quot; --query id --output tsv)
+</code></pre></div>
+<p>Buat rule-nya. Jika Anda melewati action group, hilangkan baris <code>--action-groups</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor scheduled-query create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$ALERT&quot; \
+  --location &quot;$LOCATION&quot; \
+  --scopes &quot;$LAW_ID&quot; \
+  --condition &quot;count &#x27;SlowCheckout&#x27; &gt; 3 at least 1 violations out of 1 aggregated points&quot; \
+  --condition-query SlowCheckout=&quot;AppRequests | where Name has &#x27;checkout&#x27; and DurationMs &gt; 1000&quot; \
+  --window-size 10m \
+  --evaluation-frequency 5m \
+  --severity 3 \
+  --description &quot;More than 3 checkouts slower than 1 second in 10 minutes&quot; \
+  --action-groups &quot;$AG_ID&quot; \
+  --output none
+
+az monitor scheduled-query show --resource-group &quot;$RG&quot; --name &quot;$ALERT&quot; \
+  --query &quot;{enabled:enabled, every:evaluationFrequency, window:windowSize, query:criteria.allOf[0].query, operator:criteria.allOf[0].operator, threshold:criteria.allOf[0].threshold}&quot; \
+  --output yaml
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Artinya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--condition-query SlowCheckout=&quot;…&quot;</code></td>
+<td>query-nya, dengan nama placeholder; query ini mengembalikan checkout yang lambat, bukan vonis</td>
+</tr>
+<tr>
+<td><code>--condition &quot;count 'SlowCheckout' &gt; 3 …&quot;</code></td>
+<td>hitung baris yang dikembalikan query dan bunyikan alert jika jumlahnya lebih dari 3</td>
+</tr>
+<tr>
+<td><code>--window-size 10m</code></td>
+<td>setiap eksekusi melihat 10 menit terakhir: dua kali frekuensinya, sehingga baris yang datang terlambat tetap terhitung</td>
+</tr>
+<tr>
+<td><code>--evaluation-frequency 5m</code></td>
+<td>jalankan setiap 5 menit (rule 1 menit lebih mahal)</td>
+</tr>
+<tr>
+<td><code>--scopes &quot;$LAW_ID&quot;</code></td>
+<td>workspace yang menyimpan <code>AppRequests</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Alert ini butuh checkout lambat untuk dihitung. Jika <code>traffic.sh</code> sudah selesai (<code>tail -n 2 &quot;$OUT_DIR/traffic.log&quot;</code>
+menampilkan <em>Done</em>), jalankan lagi:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>nohup bash traffic.sh 15 &gt; &quot;$OUT_DIR/traffic.log&quot; 2&gt;&amp;1 &amp;
+</code></pre></div>
+<p>Alert berbunyi dalam sekitar 5–15 menit. Pantau <em>Monitor › Alerts</em> di portal, dengan filter pada resource group Anda.</p>
+<p><strong>Opsional — workbook untuk seluruh tim (portal, sekitar 5 menit):</strong> <code>log-nusa</code> › <em>Workbooks</em> › <em>New</em>. <em>Add › Add
+query</em>, tempel solusi 8 dan pilih <em>Time chart</em>; tambahkan query kedua dengan solusi 6 sebagai <em>Grid</em>. Pilih <em>Done
+editing</em>, lalu <em>Save</em> dengan nama <code>Checkout health</code> di resource group lab Anda. Itulah halaman yang bisa dibuka Ibu
+Sari sebelum 12.12.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Jalankan solusi 8 tanpa baris <code>render</code> di <em>Logs</em>, lalu pilih <em>New alert rule</em>. Query-nya ikut
+terbawa: atur <em>Measure</em> ke <em>Table rows</em>, <em>Aggregation granularity</em> ke 10 menit, threshold ke 3, dan frekuensi ke 5
+menit.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> rule menampilkan <code>enabled: true</code>, <code>every: PT5M</code>, <code>window: PT10M</code>, dan <code>threshold: 3.0</code>, dan alert
+<code>alert-slow-checkout</code> (Sev 3) yang berbunyi muncul di <em>Monitor › Alerts</em> — plus email jika Anda membuat action group.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Rizky memangkas data collection rule &quot;untuk menghemat tagihan log&quot;. Terapkan versinya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>sed &#x27;s/&quot;Warning&quot;, //&#x27; &quot;$OUT_DIR/dcr.json&quot; &gt; &quot;$OUT_DIR/dcr-rizky.json&quot;
+grep logLevels &quot;$OUT_DIR/dcr-rizky.json&quot;
+az monitor data-collection rule create --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; --name &quot;$DCR&quot; \
+  --rule-file &quot;$OUT_DIR/dcr-rizky.json&quot; --output none
+</code></pre></div>
+<p>Tunggu sekitar lima menit agar agent menerima perubahan itu, lalu biarkan server order job melaporkan dua masalah dengan
+penanda <code>rizkytest</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name &quot;$VM&quot; --command-id RunShellScript \
+  --scripts &quot;logger -p user.warning -t nusa-orders &#x27;Payment API slow again (rizkytest)&#x27;; logger -p user.err -t nusa-orders &#x27;Order batch 4480 failed (rizkytest)&#x27;&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p><strong>Gejala:</strong> sepuluh menit kemudian, hanya satu dari dua pesan itu yang ada di workspace, dan <code>bash verify.sh</code> gagal di
+salah satu pemeriksaan.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kql &#x27;Syslog | where TimeGenerated &gt; ago(30m) | where SyslogMessage has &quot;rizkytest&quot; | project TimeGenerated, SeverityLevel, SyslogMessage&#x27;
+</code></pre></div>
+<details class="plain"><summary>Petunjuk: apa yang hilang, dan bagaimana memperbaikinya?</summary>
+<p>Error-nya tiba; warning-nya tidak. Rule milik Rizky hanya mencantumkan <code>Error</code>, <code>Critical</code>, <code>Alert</code>, dan <code>Emergency</code>,
+sehingga agent kini membuang setiap warning di VM sebelum dikirim — termasuk warning &quot;payment API slow&quot; yang sebenarnya
+bisa menjelaskan kejadian hari Jumat. Menyaring di sumber adalah cara yang benar untuk menghemat uang, tetapi hanya
+untuk data yang tidak dibutuhkan siapa pun.</p>
+<p>Buat ulang rule dari file aslinya, yang menyertakan <code>Warning</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor data-collection rule create --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; --name &quot;$DCR&quot; \
+  --rule-file &quot;$OUT_DIR/dcr.json&quot; --output none
+</code></pre></div>
+<p>Tunggu sekitar lima menit, jalankan lagi perintah <code>logger</code> dengan penanda <code>rizkyfixed</code>, lalu query penanda itu sepuluh
+menit kemudian: kedua severity tiba. Warning yang Anda kirim saat rule sedang rusak hilang untuk selamanya — agent tidak
+mengisi ulang (backfill) apa yang sudah disaring oleh rule.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu Anda
+ulangi. Bagian terakhir menghitung baris per tabel sebagai catatan: jika sebuah tabel masih kosong, tunggu beberapa
+menit lalu jalankan script-nya lagi.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Perintah ini menghapus, secara berurutan: diagnostic setting pada blob service (diagnostic setting bisa hidup lebih lama
+daripada resource-nya), role assignment Storage Blob Data Contributor milik Anda, workspace <code>log-nusa</code> — secara
+permanen, alih-alih menyimpannya dalam kondisi soft-delete selama 14 hari — lalu resource group <code>rg-lunch30-&lt;suffix&gt;</code>
+beserta semua isinya: VM dan resource jaringannya, storage account, App Service plan dan web app, Application Insights
+beserta availability test-nya, data collection rule, alert rule, dan action group. Perintah ini juga menghapus folder
+lokal <code>$HOME/lab30-out</code>. Penghapusan berlanjut di latar belakang selama beberapa menit.</p>
+<p>Jika Anda membuat diagnostic setting tingkat subscription di tantangan tambahan, hapus juga — setting itu tidak berada
+di dalam resource group.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Perintah <code>az monitor data-collection</code>, <code>app-insights</code>, <code>scheduled-query</code>, atau <code>log-analytics query</code> meminta pemasangan extension, atau menyatakan perintahnya tidak dikenali</td>
+<td>extension CLI belum terpasang di Cloud Shell ini</td>
+<td>jalankan <code>bash setup.sh</code> lagi, atau <code>az extension add --name monitor-control-service</code> (dan <code>application-insights</code>, <code>scheduled-query</code>, <code>log-analytics</code>)</td>
+</tr>
+<tr>
+<td><code>setup.sh</code> gagal pada App Service plan dengan error kuota</td>
+<td>subscription Anda tidak punya kuota untuk plan Basic di region ini</td>
+<td>jalankan <code>export LAB30_APP_SKU=F1</code> (Free) atau pilih <code>LOCATION</code> lain, lalu <code>source lab.env</code> dan <code>bash setup.sh</code> lagi</td>
+</tr>
+<tr>
+<td>Tidak ada baris <code>Heartbeat</code> 15 menit setelah Tugas 3</td>
+<td>tidak ada managed identity, tidak ada association, agent tidak bisa menjangkau Azure Monitor, atau rule dan workspace berada di region yang berbeda</td>
+<td>ulangi pemeriksaan di Tugas 2 dan Tugas 3; VM butuh IP publiknya untuk HTTPS keluar; buat ulang rule di region milik workspace</td>
+</tr>
+<tr>
+<td>Baris <code>Heartbeat</code> tiba, tetapi warning Syslog tidak</td>
+<td>rule tidak menyertakan <code>Warning</code>, atau pesan dikirim sebelum rule berlaku</td>
+<td><code>grep logLevels &quot;$OUT_DIR/dcr.json&quot;</code>; kirim warning baru dengan perintah <code>logger</code> dari Tugas 3 lalu tunggu 10 menit</td>
+</tr>
+<tr>
+<td><code>StorageBlobLogs</code> tetap kosong</td>
+<td>diagnostic setting terpasang di storage account, bukan di <code>.../blobServices/default</code>, atau belum ada traffic blob</td>
+<td>ulangi Tugas 4 persis seperti tertulis; periksa <code>$OUT_DIR/traffic.log</code> untuk putaran storage</td>
+</tr>
+<tr>
+<td><code>traffic.sh</code> melaporkan putaran storage yang gagal selama lebih dari 10 menit</td>
+<td>role assignment dari <code>setup.sh</code> tidak ada</td>
+<td><code>az role assignment create --assignee-object-id &quot;$(az ad signed-in-user show --query id -o tsv)&quot; --assignee-principal-type User --role &quot;Storage Blob Data Contributor&quot; --scope &quot;$ST_ID&quot;</code></td>
+</tr>
+<tr>
+<td>Tidak ada baris <code>AppRequests</code> 15 menit setelah Tugas 5</td>
+<td>app setting tidak ada atau salah eja, atau aplikasi belum di-restart</td>
+<td>periksa dengan <code>az webapp config appsettings list --resource-group &quot;$RG&quot; --name &quot;$APP&quot; --output table</code>; <code>az webapp restart --resource-group &quot;$RG&quot; --name &quot;$APP&quot;</code>; pastikan <code>traffic.sh</code> masih berjalan</td>
+</tr>
+<tr>
+<td><code>az monitor log-analytics query</code> menyatakan workspace tidak ditemukan</td>
+<td>Anda memasukkan nama workspace atau resource ID</td>
+<td>gunakan GUID: <code>$LAW_GUID</code> (<em>Workspace ID</em> di portal)</td>
+</tr>
+<tr>
+<td>Alert rule tidak bisa dibuat: <em>Failed to resolve table or column expression named 'AppRequests'</em></td>
+<td>Application Insights belum mengirim data pertamanya</td>
+<td>tunggu sampai pertanyaan 6 mengembalikan baris, lalu jalankan perintahnya lagi (atau tambahkan <code>--skip-query-validation true</code>)</td>
+</tr>
+<tr>
+<td>Alert belum berbunyi setelah 15 menit</td>
+<td>checkout lambat dalam window 10 menit belum cukup banyak</td>
+<td>pastikan <code>traffic.sh</code> berjalan (<code>tail &quot;$OUT_DIR/traffic.log&quot;</code>); jalankan lagi dengan <code>nohup bash traffic.sh 15 &gt; &quot;$OUT_DIR/traffic.log&quot; 2&gt;&amp;1 &amp;</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li><strong>Transformasi saat ingestion:</strong> tambahkan <code>&quot;transformKql&quot;: &quot;source | where ProcessName != \&quot;nusa-orders\&quot;&quot;</code> ke data
+flow Syslog dalam salinan <code>$OUT_DIR/dcr.json</code>, buat ulang rule dari salinan itu, lalu pastikan warning <code>nusa-orders</code>
+yang baru tidak lagi tiba sementara warning Syslog lainnya tetap masuk. Setelah itu, buat ulang rule dari
+<code>$OUT_DIR/dcr.json</code>.</li>
+<li><strong>Table plan:</strong> buka <code>log-nusa</code> › <em>Settings › Tables</em>, cari tabel yang Anda isi hari ini yang menawarkan plan <em>Basic</em>,
+dan baca apa saja yang berubah (harga query, alert, retention) sebelum Anda beralih. Perlu dicatat, plan sebuah tabel
+hanya bisa diubah sekali seminggu.</li>
+<li><strong>Application map:</strong> buka <code>appi-nusa-shop</code> › <em>Investigate › Application map</em>, lalu <em>Performance</em> › <code>POST /checkout</code> ›
+telusuri sampel yang lambat untuk melihat end-to-end transaction-nya.</li>
+<li><strong>Activity log di workspace:</strong> buat diagnostic setting tingkat subscription yang mengirim activity log ke <code>log-nusa</code>
+(<code>az monitor diagnostic-settings subscription create</code>), query <code>AzureActivity</code>, lalu hapus setting itu dengan
+<code>az monitor diagnostic-settings subscription delete</code> sebelum Anda membersihkan lab.</li>
+<li><strong>Grafana:</strong> buka <em>Monitor › Dashboards with Grafana</em> dan jelajahi dashboard siap pakai untuk VM dan App Service Anda.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Jalankan <code>bash setup.sh</code> untuk mendapatkan resource group <code>rg-lunch30-&lt;suffix&gt;</code> dengan workspace <code>log-nusa</code>, VM
+<code>vm-nusa-app</code>, storage account <code>stnusalog&lt;suffix&gt;</code>, dan web app <code>app-nusa30-&lt;suffix&gt;</code>. Lalu bangun hal-hal berikut,
+dengan cara apa pun yang Anda suka (portal, CLI, Bicep):</p>
+<ol>
+<li><code>vm-nusa-app</code> memiliki <strong>system-assigned managed identity</strong> dan extension <strong>Azure Monitor Agent</strong>.</li>
+<li>Sebuah <strong>data collection rule</strong> yang ter-associate dengan VM mengumpulkan Syslog pada level <strong>Warning</strong> ke atas dan
+minimal satu performance counter, lalu mengirim keduanya ke <code>log-nusa</code>. (<code>dcr-linux-nusa.json</code> adalah titik awal
+yang valid.)</li>
+<li>Sebuah <strong>diagnostic setting</strong> pada <strong>blob service</strong> milik storage account mengirim category group <strong>allLogs</strong> ke
+<code>log-nusa</code>.</li>
+<li>Resource Application Insights <strong>berbasis workspace</strong> bernama <code>appi-nusa-shop</code> yang memakai <code>log-nusa</code>; web app
+mengirim telemetri ke sana melalui <strong>autoinstrumentation</strong>; sebuah <strong>standard availability test</strong> yang aktif dan
+tertaut ke resource itu memeriksa storefront.</li>
+<li>Sebuah <strong>log search alert</strong> bernama <code>alert-slow-checkout</code>, dengan scope <code>log-nusa</code> (atau <code>appi-nusa-shop</code>), yang
+meng-query <code>AppRequests</code> dan berbunyi ketika lebih dari 3 checkout butuh waktu lebih dari 1 detik.</li>
+<li>Bangkitkan traffic dengan <code>bash traffic.sh 20</code> dan jawab pertanyaan 6, 8, dan 9 dari Tugas 6 dengan query Anda
+sendiri.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="29-containers-advanced-aks.html"><small>← Lab sebelumnya</small>29 · Kubernetes untuk tim microservices</a><a class="next" href="31-governance-at-scale.html"><small>Lab berikutnya →</small>31 · Tata kelola untuk seluruh perusahaan</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/30-monitoring-advanced/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

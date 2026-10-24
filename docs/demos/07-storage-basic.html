@@ -265,7 +265,7 @@ svg .fulcrum{fill:var(--node-stroke)}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/07-storage-basic.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/07-storage-basic.html" data-href-id="../id/lunches/07-storage-basic.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -654,10 +654,164 @@ svg .fulcrum{fill:var(--node-stroke)}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 07 · Penyimpanan (Dasar) — Demo interaktif",
+   "kicker": "Makan Siang 07 · Penyimpanan (Dasar) · Demo interaktif",
+   "title": "Di mana salinan tinggal, dan di rak mana file disimpan?",
+   "lede": "Saksikan salinan data Nusantara Retail selamat (atau tidak) ketika sebuah disk, pusat data, zone, atau seluruh region gagal. Lalu miringkan jungkat-jungkit access tier dari hot ke archive. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Opsi redundansi storage saat terjadi kegagalan, disusul jungkat-jungkit access tier yang membandingkan harga penyimpanan dan harga akses",
+   "svgDesc": "Adegan pertama menampilkan aplikasi toko online yang menulis melalui satu blob endpoint ke salinan-salinan di region primer dengan tiga availability zone dan sebuah region sekunder pasangannya. Salinan ditempatkan dengan LRS, ZRS, dan GZRS, sementara sebuah disk, sebuah pusat data, sebuah zone, lalu seluruh region mengalami kegagalan. Adegan kedua menampilkan empat kartu tier (hot, cool, cold, archive) di atas jungkat-jungkit yang miring dari harga penyimpanan ke harga akses, serta jalur rehidrasi dari archive kembali ke hot."
+  },
+  "steps": [
+   {
+    "title": "File Nusantara butuh rumah",
+    "text": "Foto produk, faktur, dan daftar harga menumpuk di satu disk di sebelah pantry. Di Azure, semuanya pindah ke sebuah storage account: satu nama, satu blob endpoint, dan minimal tiga salinan untuk setiap objek. Letak salinan-salinan itulah yang menentukan kegagalan mana yang bisa dilewati toko. Region pasangan di sebelah kanan masih kosong untuk saat ini."
+   },
+   {
+    "title": "LRS: tiga salinan, satu gedung",
+    "text": "Locally redundant storage menyimpan tiga salinan di dalam satu pusat data, ibarat tiga fotokopi di satu laci. Inilah opsi termurah, dirancang untuk durabilitas minimal sebelas angka sembilan per tahun. Setiap penulisan dari toko online sampai ke ketiga salinan sebelum Azure mengonfirmasinya.",
+    "set": {
+     "t-mode": "LRS · 3 salinan di satu pusat data · ≥ 11 angka sembilan"
+    }
+   },
+   {
+    "title": "Disk rusak — tanpa drama",
+    "text": "Drive di bawah salinan 2 mati. Azure tetap melayani baca dan tulis dari salinan yang sehat, lalu membangun ulang salinan yang hilang di perangkat keras lain. Pelanggan tidak merasakan apa-apa. LRS melindungi Anda dari drive, server, dan rak yang rusak: kegagalan sehari-hari di dalam satu gedung.",
+    "set": {
+     "t-outcome": "Disk rusak: data tetap tersedia ✓"
+    }
+   },
+   {
+    "title": "Satu pusat data padam total",
+    "text": "Kini kebakaran atau banjir melumpuhkan seluruh pusat data. Ketiga salinan LRS ada di gedung itu, jadi permintaan dari toko online gagal dan, dalam skenario terburuk, datanya hilang untuk selamanya. LRS cocok untuk data yang bisa dibuat ulang, bukan untuk faktur sepuluh tahun.",
+    "set": {
+     "t-outcome": "Pusat data lumpuh: LRS tak bisa melayani"
+    }
+   },
+   {
+    "title": "ZRS: satu salinan di setiap zone",
+    "text": "Zone-redundant storage menempatkan salinan di tiga availability zone, masing-masing dengan listrik, pendingin, dan jaringannya sendiri. Setiap penulisan disalin secara sinkron ke semua zone sebelum Azure mengonfirmasinya. Durabilitas naik menjadi minimal dua belas angka sembilan, dengan harga sedikit lebih mahal daripada LRS.",
+    "set": {
+     "t-mode": "ZRS · 3 salinan di 3 zone · ≥ 12 angka sembilan",
+     "t-outcome": "Hari normal: semua salinan sehat"
+    }
+   },
+   {
+    "title": "Satu zone gagal total",
+    "text": "Zone 1 offline. Endpoint terus mengarahkan permintaan toko online ke salinan di zone 2 dan 3, sehingga pelanggan tetap bisa berbelanja. Aplikasi sebaiknya mencoba ulang sebentar selama Azure memperbarui perutean, tetapi tidak ada data yang hilang dan tidak ada yang perlu memulai failover.",
+    "set": {
+     "t-outcome": "Zone hilang: ZRS tetap melayani ✓"
+    }
+   },
+   {
+    "title": "Bencana di seluruh region",
+    "text": "Sekarang bayangkan bencana yang melanda seluruh region. LRS dan ZRS menyimpan semua salinan di dalam region itu, jadi keduanya lumpuh sampai region pulih. Kalau bisnis tidak bisa menerimanya, data butuh salinan di region kedua — dan region pasangan di sebelah kanan masih kosong.",
+    "set": {
+     "t-outcome": "Region lumpuh: LRS dan ZRS tak berdaya"
+    }
+   },
+   {
+    "title": "GZRS menambah salinan di tempat jauh",
+    "text": "Geo-zone-redundant storage memakai ZRS di region primer dan menyalin setiap perubahan secara asinkron ke region pasangan, tempat data disimpan dengan LRS. Durabilitas naik menjadi minimal enam belas angka sembilan. GRS bekerja dengan cara yang sama, tetapi dengan LRS di region primer. Indonesia Central tidak punya pasangan, jadi keduanya tidak tersedia di sana.",
+    "set": {
+     "t-mode": "GZRS · ZRS + salinan asinkron ke region pasangan",
+     "t-outcome": "Salinan sekunder sedikit tertinggal"
+    }
+   },
+   {
+    "title": "Failover ke region sekunder",
+    "text": "Region primer padam. Dengan GRS atau GZRS, Anda memulai account failover: DNS mengarahkan endpoint yang sama ke region sekunder, dan toko bisa membaca serta menulis lagi. Penulisan yang terjadi setelah Last Sync Time mungkin hilang. Dengan RA-GRS atau RA-GZRS, aplikasi bahkan bisa membaca salinan sekunder sebelum failover.",
+    "tip": "Redundansi juga menyalin kesalahan: hapus satu faktur, dan semua salinannya ikut berubah seketika. Soft delete dan versioning hadir di Makan Siang 24.",
+    "set": {
+     "t-outcome": "Setelah failover: toko kembali buka ✓"
+    }
+   },
+   {
+    "title": "Pertanyaan kedua: rak yang mana?",
+    "text": "Salinan menjawab seberapa aman datanya; access tier menjawab berapa biayanya. Bayangkan jungkat-jungkit: satu sisi adalah harga menyimpan satu gigabyte selama sebulan, sisi lainnya harga membacanya. Hot berat di harga penyimpanan dan ringan di harga akses, pas untuk foto produk yang dibaca sepanjang hari.",
+    "set": {
+     "t-example": "Foto produk, dibaca sepanjang hari → Hot"
+    }
+   },
+   {
+    "title": "Cool dan cold: rak yang lebih murah",
+    "text": "Cool dan cold menurunkan harga penyimpanan tetapi menarik biaya lebih untuk setiap pembacaan, dan keduanya mengharapkan blob tinggal minimal 30 dan 90 hari. Hapus, timpa, atau pindahkan blob lebih awal, dan Anda tetap membayar sisa harinya — seperti kontrak kos minimum. Foto musim lalu cocok di cool; faktur tahun lalu cocok di cold.",
+    "set": {
+     "t-example": "Foto dan faktur lama, jarang dibaca → Cool atau Cold"
+    }
+   },
+   {
+    "title": "Archive: gudang di luar kota",
+    "text": "Archive punya harga penyimpanan terendah dan harga akses tertinggi, dan blob-nya menjadi offline: Anda bisa melihat nama dan metadatanya di daftar, tetapi tidak bisa membaca isinya. Simpan minimal 180 hari. Archive hanya tersedia di account LRS, GRS, dan RA-GRS, dan cocok untuk faktur yang lebih tua dari setahun.",
+    "set": {
+     "t-example": "Faktur lebih tua dari setahun → Archive"
+    }
+   },
+   {
+    "title": "Rehidrasi butuh berjam-jam",
+    "text": "Untuk membaca faktur di archive, lakukan rehydrate ke tier online: ubah tier-nya, atau salin ke blob baru, yang menghindari biaya early deletion. Prioritas Standard bisa butuh hingga 15 jam. Prioritas High sering selesai dalam waktu kurang dari satu jam untuk blob di bawah 10 GB, dengan harga lebih mahal dan tanpa jaminan."
+   },
+   {
+    "title": "Rangkuman dan lab Anda",
+    "text": "Pilih redundansi berdasarkan kegagalan yang harus Anda lewati: LRS untuk perangkat keras, ZRS untuk satu zone, GZRS atau GRS untuk satu region. Pilih tier berdasarkan seberapa sering data dibaca, dan ingat masa minimum 30, 90, dan 180 hari. Tak satu pun dari pilihan itu melindungi dari penghapusan yang ceroboh; itu tugas Makan Siang 24.",
+    "tip": "Di Lab 07, Anda memindahkan satu blob ke Cool dan satu ke Archive, lalu mencoba mengunduh blob yang diarsipkan dan membaca error-nya."
+   }
+  ],
+  "svg": {
+   "Redundancy decides where the copies live": "Redundansi menentukan letak salinan",
+   "Normal day: every copy healthy": "Hari normal: semua salinan sehat",
+   "Storefront app": "Aplikasi toko",
+   "reads and writes": "membaca dan menulis",
+   "one name for every copy": "satu nama untuk semua salinan",
+   "Primary region · Southeast Asia": "Region primer · Southeast Asia",
+   "Datacenter": "Pusat data",
+   "Paired region · East Asia": "Pasangannya · East Asia",
+   "LRS inside the secondary": "LRS di region sekunder",
+   "copy 1": "salinan 1",
+   "copy 2": "salinan 2",
+   "copy 3": "salinan 3",
+   "copy 4": "salinan 4",
+   "copy 5": "salinan 5",
+   "copy 6": "salinan 6",
+   "disk failed": "disk rusak",
+   "Datacenter fire": "Pusat data terbakar",
+   "Zone 1 outage": "Zone 1 padam",
+   "Region-wide disaster": "Bencana satu region",
+   "Access tiers: storage price versus access price": "Access tier: harga simpan versus harga akses",
+   "online · no minimum": "online · tanpa minimum",
+   "priciest to keep": "termahal untuk disimpan",
+   "online · min 30 days": "online · min. 30 hari",
+   "cheaper to keep": "lebih murah disimpan",
+   "online · min 90 days": "online · min. 90 hari",
+   "cheaper still": "lebih murah lagi",
+   "offline · min 180 days": "offline · min. 180 hari",
+   "cheapest to keep": "termurah untuk disimpan",
+   "Standard: up to 15 h · High: often under 1 h": "Standard: hingga 15 jam · High: sering < 1 jam",
+   "price to keep each GB for a month": "harga menyimpan tiap GB per bulan",
+   "price to read it back": "harga membacanya kembali",
+   "Storage price": "Harga simpan",
+   "high": "tinggi",
+   "Access price: low": "Harga akses: rendah",
+   "lower": "lebih rendah",
+   "Access price": "Harga akses",
+   "higher": "lebih tinggi",
+   "Storage price: lowest": "Harga simpan: terendah",
+   "highest, plus hours": "tertinggi + berjam-jam",
+   "Which shelf fits which data?": "Rak mana untuk data yang mana?"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -673,6 +827,119 @@ svg .fulcrum{fill:var(--node-stroke)}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -792,7 +1059,7 @@ svg .fulcrum{fill:var(--node-stroke)}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -827,7 +1094,7 @@ svg .fulcrum{fill:var(--node-stroke)}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -840,7 +1107,7 @@ svg .fulcrum{fill:var(--node-stroke)}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -861,7 +1128,7 @@ svg .fulcrum{fill:var(--node-stroke)}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -869,7 +1136,7 @@ svg .fulcrum{fill:var(--node-stroke)}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

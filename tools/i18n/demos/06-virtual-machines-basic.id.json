@@ -1,0 +1,109 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 06 · Virtual Machines (Dasar) — Demo interaktif",
+    "kicker": "Makan Siang 06 · Virtual Machines (Dasar) · Demo interaktif",
+    "title": "Apa yang sebenarnya tercipta saat Anda membuat VM",
+    "lede": "Ikuti satu <code>az vm create</code> saat ia berubah menjadi enam resource Azure, saksikan SSH berhasil masuk sementara HTTP diblokir, dan lihat meteran mana yang berhenti saat VM dimatikan. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Apa yang dibuat Azure untuk satu virtual machine, serta bagaimana lalu lintas dan tagihan berperilaku",
+    "svgDesc": "Cloud Shell mengirim az vm create ke Azure Resource Manager. Di dalam sebuah resource group, muncul virtual network dengan subnet, Standard public IP, network security group, network interface, VM vm-web-1, OS disk, dan kemudian data disk. SSH dari Cloud Shell lolos melewati NSG, HTTP dari pembeli diblokir sampai port 80 dibuka, VM mengunduh update melalui public IP-nya, dan meteran compute serta disk menunjukkan apa yang ditagih saat VM dalam keadaan stopped atau deallocated."
+  },
+  "steps": [
+    {
+      "title": "Toko online keluar dari pantry",
+      "text": "Toko online Nusantara Retail masih berjalan di satu server fisik di sebelah pantry. Dewi membuka Azure Cloud Shell dan mengetik satu perintah, az vm create. Perhatikan apa yang sebenarnya dibangun oleh satu perintah itu, bagaimana lalu lintas sampai ke VM baru, dan meteran mana yang tetap berjalan saat VM dimatikan."
+    },
+    {
+      "title": "Satu permintaan tiba di Resource Manager",
+      "text": "Perintah itu menjadi satu permintaan ke Azure Resource Manager, pintu depan untuk setiap operasi create, update, dan delete. Resource Manager memeriksa siapa Dewi, apa yang boleh dia lakukan, dan kebijakan apa yang berlaku. Lalu ia menyerahkan pekerjaannya ke resource provider: Microsoft.Network untuk bagian jaringan dan Microsoft.Compute untuk VM beserta disknya."
+    },
+    {
+      "title": "Pertama, jaringan privat",
+      "text": "Microsoft.Network membuat virtual network vnet-nusa-web, 10.20.0.0/16, dengan subnet snet-web, 10.20.1.0/24. Dewi sengaja memilih rentang ini supaya tidak pernah bentrok dengan 10.0.0.0/16 milik kantor pusat. Subnet di virtual network baru bersifat privat secara default: tidak ada isinya yang otomatis mendapat jalur ke internet."
+    },
+    {
+      "title": "Pintu depan dan penjaganya",
+      "text": "Berikutnya dibuat sebuah Standard public IP address — statis, dan tertutup untuk lalu lintas masuk sampai ada aturan yang mengizinkan — serta network security group nsg-web. Karena ini VM Linux, CLI menambahkan satu aturan inbound: izinkan SSH di port 22 dari mana saja. Aturan default menolak semua lalu lintas lain dari internet."
+    },
+    {
+      "title": "NIC, VM, dan OS disk",
+      "text": "Sebuah network interface bergabung ke subnet dengan alamat privat 10.20.1.4. Microsoft.Compute lalu menempatkan vm-web-1 di sebuah host fisik: size Standard_B2ats_v2, image Ubuntu 24.04 LTS, Trusted Launch aktif. OS disk-nya adalah managed disk terpisah yang dibuat dari image. Satu perintah, enam resource terpisah — masing-masing dengan resource ID sendiri."
+    },
+    {
+      "title": "Meteran mulai berjalan",
+      "text": "Selama VM berjalan, dua meteran berdetak. Meteran compute menagih vCPU dan memori yang ditempati VM di host-nya. Meteran disk menagih ukuran yang dipesan (provisioned) untuk setiap managed disk, entah disk itu penuh atau kosong. Public IP menambahkan biaya kecilnya sendiri."
+    },
+    {
+      "title": "SSH berhasil masuk",
+      "text": "Dewi terhubung dari Cloud Shell dengan SSH. Paketnya sampai ke public IP, NSG menemukan aturan allow untuk port 22, dan NIC meneruskannya ke VM. Private key Dewi tidak pernah meninggalkan Cloud Shell; VM hanya menyimpan pasangan publiknya, jadi tidak ada kata sandi yang bisa ditebak oleh bot."
+    },
+    {
+      "title": "Outbound eksplisit untuk update",
+      "text": "Di dalam VM, Dewi memasang nginx dengan apt. Unduhannya keluar melalui Standard public IP milik VM sendiri menuju mirror paket Ubuntu. Public IP pada VM adalah metode outbound eksplisit, jadi cara ini tetap berhasil bahkan di subnet privat. Tanpa public IP, dia akan membutuhkan NAT gateway atau outbound rule pada load balancer."
+    },
+    {
+      "title": "HTTP diblokir",
+      "text": "nginx sudah berjalan, jadi seorang pembeli membuka situsnya. Permintaannya sampai ke public IP, tetapi NSG tidak punya aturan untuk port 80. Aturan default DenyAllInBound membuangnya, dan browser terus berputar sampai waktunya habis. nginx bahkan tidak pernah melihat permintaan itu — masalahnya ada di depan VM.",
+      "set": {
+        "t-rule80": "HTTP 80 · ditolak ✗"
+      }
+    },
+    {
+      "title": "Buka port 80",
+      "text": "Dewi menjalankan az vm open-port dengan port 80. Aturan allow baru dengan priority 900 bergabung ke NSG. Aturan diperiksa mulai dari angka terkecil, jadi HTTP kini cocok dengan aturan baru itu jauh sebelum mencapai aturan deny default. Permintaan pembeli mengalir sampai ke nginx, dan halamannya muncul.",
+      "set": {
+        "t-rule80": "HTTP 80 · izinkan (900)"
+      }
+    },
+    {
+      "title": "Data disk untuk foto produk",
+      "text": "Foto produk mendapat Standard SSD 8 GiB sendiri, dipasang di LUN 0. Azure memasang disknya, tetapi Linux hanya melihat perangkat kosong, jadi Dewi memakai Run Command untuk membuat partisi, memformat, dan me-mount-nya di /datadrive dengan entri fstab. B2ats_v2 tidak punya temporary disk, dan data penting memang tidak boleh disimpan di disk semacam itu."
+    },
+    {
+      "title": "Stopped bukan deallocated",
+      "text": "Pukul 18.00, Dewi menjalankan az vm stop. Ubuntu mati, tetapi VM tetap menempati tempatnya di host — statusnya Stopped (allocated) — sehingga meteran compute terus berjalan. Shutdown dari dalam sistem operasi pun hasilnya persis sama. Inilah kejutan yang ditemukan tim keuangan di tagihan.",
+      "set": {
+        "t-vm-state": "stopped (allocated)",
+        "t-compute": "masih ditagih"
+      }
+    },
+    {
+      "title": "Deallocate menghentikan meteran compute",
+      "text": "Sekarang dia menjalankan az vm deallocate. Azure melepaskan kapasitas host, statusnya menjadi Deallocated, dan meteran compute berhenti. Meteran disk tetap berjalan karena disknya masih ada, dan public IP statis tetap mempertahankan alamat beserta biaya kecilnya. Tombol Stop di portal dan auto-shutdown juga melakukan deallocate.",
+      "set": {
+        "t-vm-state": "deallocated",
+        "t-compute": "berhenti · tidak ditagih",
+        "t-disk": "masih ditagih"
+      }
+    },
+    {
+      "title": "Rangkuman: sewa dengan benar",
+      "text": "Satu perintah membangun enam resource, dan perintah kedua menambahkan data disk. NSG menentukan apa yang boleh masuk, public IP memberi akses outbound eksplisit, dan hanya deallocation yang menghentikan tagihan compute. Selanjutnya, bangun sendiri di Lab 06 — lalu rusak aturan port 80 dengan sengaja dan perbaiki.",
+      "tip": "Lab 06 · VM web server pertama Anda (sekitar 45 menit di Cloud Shell): buat VM, terbitkan halaman Nusantara Retail, buka port 80, mount data disk, resize, jadwalkan auto-shutdown, dan bandingkan stopped dengan deallocated.",
+      "set": {
+        "t-vm-state": "running",
+        "t-compute": "berjalan · ditagih",
+        "t-disk": "ditagih"
+      }
+    }
+  ],
+  "svg": {
+    "Azure region · Southeast Asia": "Region Azure · Southeast Asia",
+    "Ubuntu mirror": "Mirror Ubuntu",
+    "package downloads": "unduhan paket",
+    "Explicit outbound": "Outbound eksplisit",
+    "via the VM's public IP": "lewat public IP milik VM",
+    "Shopper": "Pembeli",
+    "web browser": "browser web",
+    "checks access, then calls providers": "cek akses, lalu memanggil provider",
+    "Standard · static": "Standard · statis",
+    "SSH 22 · allow": "SSH 22 · izinkan",
+    "HTTP 80 · no rule": "HTTP 80 · tanpa aturan",
+    "allow HTTP · 900": "izinkan HTTP · 900",
+    "Compute meter": "Meteran compute",
+    "running · billed": "berjalan · ditagih",
+    "while allocated": "selama dialokasikan",
+    "Disk meter": "Meteran disk",
+    "billed": "ditagih",
+    "per GiB provisioned": "per GiB yang dipesan"
+  }
+}

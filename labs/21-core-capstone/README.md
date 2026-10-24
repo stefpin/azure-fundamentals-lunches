@@ -1,8 +1,11 @@
 # Lab 21 · Capstone project
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 21 · Core Capstone: Putting It All Together](../../lunches/21-core-capstone/README.md)
 > **Time:** about 2–3 hours including deployment waits; split it into three sessions if you like · **Cost:** 💲💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★★
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its own steps (the provided Bicep files and `deploy.sh`).
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

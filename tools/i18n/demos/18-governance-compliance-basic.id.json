@@ -1,0 +1,113 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 18 · Sebuah deployment bertemu mesin policy — Demo interaktif",
+    "kicker": "Makan Siang 18 · Tata Kelola dan Kepatuhan (Dasar) · Demo interaktif",
+    "title": "Sebuah deployment bertemu mesin policy",
+    "lede": "Saksikan Azure Policy menolak region yang salah, melaporkan resource yang sudah ada, menambahkan tag yang hilang secara otomatis, dan memperbaiki resource lama dengan remediation task. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Sebuah permintaan deployment bertemu mesin Azure Policy",
+    "svgDesc": "Permintaan Dewi melewati Azure Resource Manager dan hingga tiga policy assignment pada sebuah resource group. Permintaan untuk West Europe ditolak, storage account bertag dibuat di Southeast Asia, policy Modify menambahkan tag costCenter yang hilang ke sebuah network security group, remediation task memberi tag pada dua resource lama, dan tampilan kepatuhan menghitung resource yang patuh dan yang tidak patuh."
+  },
+  "steps": [
+    {
+      "title": "Tanpa pagar pengaman di Nusantara Retail",
+      "text": "Resource group lab Nusantara Retail berada di Southeast Asia. Isinya dua resource lama tanpa tag, ditambah sebuah storage account yang dibuat Dewi di West Europe tahun lalu, lalu terlupakan. Bagian keuangan tidak tahu siapa membayar apa, dan penasihat hukum ingin data pelanggan tetap dekat dengan rumah. Saat ini tidak ada apa pun di Azure yang mencegah kesalahan berikutnya, dan tidak ada yang memberi tahu Ibu Sari berapa banyak kesalahan yang sudah ada."
+    },
+    {
+      "title": "Setiap permintaan melewati Resource Manager",
+      "text": "Entah Dewi memakai portal, CLI, atau pipeline, permintaannya selalu masuk ke Azure Resource Manager. Resource Manager memeriksa siapa dia dan apakah role-nya mengizinkan tindakan itu. Dewi seorang Contributor, jadi RBAC menjawab ya. Berikutnya, mesin Azure Policy mengevaluasi setiap assignment yang berlaku untuk scope tujuan. Saat ini belum ada satu pun, jadi apa pun boleh."
+    },
+    {
+      "title": "Meng-assign Allowed locations",
+      "text": "Anda meng-assign definisi bawaan Allowed locations ke resource group dan mengisi parameternya dengan Southeast Asia. Definisi adalah aturannya, assignment menerapkannya ke sebuah scope dengan nilai-nilai Anda, dan effect-nya adalah Deny. Assignment baru butuh sekitar lima menit untuk menjangkau scope-nya, jadi beri jeda sebelum mengujinya. Microsoft memelihara definisi bawaan seperti ini, jadi Anda tidak perlu menulis JSON-nya sendiri."
+    },
+    {
+      "title": "Permintaan untuk West Europe",
+      "text": "Dewi meminta storage account di West Europe. RBAC tetap menjawab ya, tetapi lokasinya tidak ada di daftar, jadi effect Deny memblokir permintaan itu sebelum sempat sampai ke resource provider storage. Dewi menerima RequestDisallowedByPolicy, error-nya menyebut assignment yang menghentikannya, dan tidak ada yang dibuat.",
+      "set": {
+        "t-weunew": "diblokir ✗"
+      }
+    },
+    {
+      "title": "Coba lagi di Southeast Asia",
+      "text": "Dewi mencoba lagi di Southeast Asia dan memberi tag costCenter CC-1001 pada akunnya. Semua aturan yang di-assign terpenuhi, jadi Resource Manager meneruskan permintaan ke resource provider storage, dan akunnya pun dibuat. Pagar pengaman itu tidak memperlambatnya; ia hanya menyingkirkan pilihan yang salah. Aturan yang hanya berkata tidak pada pilihan yang salah adalah aturan yang lama-lama tidak lagi dirasakan developer."
+    },
+    {
+      "title": "Resource yang sudah ada hanya dilaporkan",
+      "text": "Deny tidak pernah menghapus apa pun. Akun West Europe dari tahun lalu tetap berjalan, tetapi pemindaian kepatuhan berikutnya menandainya non-compliant. Pemindaian berjalan setelah assignment dibuat atau diubah, setelah setiap perubahan resource, sekali sehari, dan sesuai permintaan. Tampilan kepatuhan mengubah hasilnya menjadi skor, sehingga Anda bisa memutuskan langkah berikutnya.",
+      "set": {
+        "t-c-ok": "Patuh: 3",
+        "t-c-bad": "Tidak patuh: 1",
+        "t-c-pct": "Skor: 75%"
+      }
+    },
+    {
+      "title": "Tambahkan aturan tag",
+      "text": "Bagian keuangan menginginkan tag costCenter di semua resource, jadi Anda meng-assign dua definisi bawaan lagi: Require a tag on resources, sebuah aturan Deny, dan Inherit a tag from the resource group if missing, sebuah aturan Modify yang menyalin tag dari resource group. Assignment Modify mendapat managed identity. Setelah pemindaian berikutnya, ketiga resource tanpa tag muncul sebagai non-compliant.",
+      "set": {
+        "t-c-ok": "Patuh: 1",
+        "t-c-bad": "Tidak patuh: 3",
+        "t-c-pct": "Skor: 25%"
+      }
+    },
+    {
+      "title": "Permintaan tanpa tag ditolak",
+      "text": "Pipeline Dewi membuat network security group tanpa tag. Aturan Modify tidak punya apa pun untuk disalin, karena belum ada yang memberi tag pada resource group itu sendiri, jadi permintaan sampai ke aturan Deny tanpa perubahan dan ditolak. Inilah kejutan paling umum dengan policy tag: pewarisan hanya berfungsi jika induknya membawa tag."
+    },
+    {
+      "title": "Modify berjalan sebelum Deny",
+      "text": "Mengapa permintaan itu gagal, dan apa perbaikannya? Lihat urutan evaluasinya: Disabled lebih dulu, lalu Append dan Modify, lalu Deny, lalu Audit. AuditIfNotExists dan DeployIfNotExists baru berjalan setelah deployment. Modify mendapat kesempatan pertama untuk mengubah permintaan, jadi jika resource group membawa costCenter, tag yang hilang ditambahkan sebelum aturan Deny sempat memeriksanya."
+    },
+    {
+      "title": "Beri tag pada group, jalankan lagi",
+      "text": "Anda menambahkan costCenter CC-1001 ke resource group, cukup sekali. Dewi menjalankan pipeline yang persis sama sekali lagi. Kali ini aturan Modify menyalin tag ke dalam permintaan, aturan Deny menemukannya, dan network security group pun dibuat. Tidak ada yang mengubah pipeline; platform yang mengisi kekosongan, dan resource baru sudah patuh sejak detik pertama.",
+      "set": {
+        "t-rgtag": "rg-storefront-test · costCenter = CC-1001",
+        "t-newnsg": "costCenter diwarisi ✓",
+        "t-c-ok": "Patuh: 2",
+        "t-c-bad": "Tidak patuh: 3",
+        "t-c-pct": "Skor: 40%"
+      }
+    },
+    {
+      "title": "Perbaiki yang sudah ada",
+      "text": "Dua resource lama sudah ada sebelum aturan dibuat, jadi Modify tidak pernah melihatnya. Remediation task memperbaikinya secara massal, bertindak melalui managed identity milik assignment, yang memegang role Contributor pada resource group. Beberapa menit kemudian, keduanya membawa tag. Akun West Europe juga mendapat tag, tetapi tetap non-compliant: tidak ada tag yang bisa memperbaiki region yang salah.",
+      "set": {
+        "t-oldst": "costCenter ditambahkan ✓",
+        "t-oldnsg": "costCenter ditambahkan ✓",
+        "t-weuold": "bertag · region salah",
+        "t-c-ok": "Patuh: 4",
+        "t-c-bad": "Tidak patuh: 1",
+        "t-c-pct": "Skor: 80%"
+      }
+    },
+    {
+      "title": "Pagar pengaman, bukti, langkah berikutnya",
+      "text": "Rangkuman: RBAC menentukan siapa yang boleh bertindak, Azure Policy menentukan apa yang boleh ada, dan tampilan kepatuhan memberi Ibu Sari bukti untuk auditor. Deny memblokir region yang salah, Modify menambahkan tag yang hilang, dan remediation memperbaiki masa lalu. Akun terakhir yang non-compliant butuh keputusan manusia: memigrasikannya, atau memberi exemption dengan tanggal kedaluwarsa.",
+      "tip": "Di Lab 18 Anda membangun persis hal ini di resource group Anda sendiri: tiga assignment bawaan, deployment yang ditolak, tag yang diwarisi, remediation task, dan laporan kepatuhan."
+    }
+  ],
+  "svg": {
+    "rg-storefront-test · no tags": "rg-storefront-test · tanpa tag",
+    "Azure Policy assignments": "Assignment Azure Policy",
+    "identity and RBAC checks": "periksa identitas dan RBAC",
+    "Require costCenter": "Wajib ada costCenter",
+    "Deny · tag must exist": "Deny · tag wajib ada",
+    "Inherit costCenter": "Warisi costCenter",
+    "Modify · copy from RG": "Modify · salin dari RG",
+    "new · costCenter CC-1001": "baru · costCenter CC-1001",
+    "new resource": "resource baru",
+    "existing · no tag": "sudah ada · tanpa tag",
+    "uses the assignment's managed identity": "memakai managed identity milik assignment",
+    "request": "permintaan",
+    "never created": "tidak pernah dibuat",
+    "same RG, other region": "RG sama, region lain",
+    "Compliance view": "Tampilan kepatuhan",
+    "Compliant: –": "Patuh: –",
+    "Non-compliant: –": "Tidak patuh: –",
+    "Score: –": "Skor: –",
+    "checked on every change, after each assignment, daily, or on demand": "diperiksa tiap ada perubahan, assignment baru, harian, atau sesuai permintaan",
+    "Nothing was created.": "Tidak ada yang dibuat.",
+    "Order of evaluation": "Urutan evaluasi",
+    "after success: AuditIfNotExists,": "setelah sukses: AuditIfNotExists,"
+  }
+}

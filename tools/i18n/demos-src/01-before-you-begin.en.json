@@ -1,0 +1,145 @@
+{
+  "page": {
+    "doc_title": "Lunch 01 · From click to resource — Interactive demo",
+    "kicker": "Lunch 01 · Before You Begin · Interactive demo",
+    "title": "From click to resource",
+    "lede": "Follow requests from the Azure portal, the Azure CLI and Azure PowerShell through Azure Resource Manager to the resource providers, watch a budget fill up to 50, 80 and 100%, and see what deleting a resource group really does. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Requests from the Azure portal, the Azure CLI and Azure PowerShell flowing through Azure Resource Manager to resource providers, with a monthly budget gauge and alert",
+    "svgDesc": "Three tools on the left send requests to Azure Resource Manager in the middle, which checks identity, permissions and validity before passing each request to a resource provider: Microsoft.Resources, Microsoft.Storage or Microsoft.Compute. The providers build a resource group, a storage account and a virtual machine inside the lab subscription on the right. At the bottom, a monthly budget gauge fills to 50, 80 and 100 percent and sends alert e-mails; finally the resource group is deleted with everything inside it."
+  },
+  "steps": [
+    {
+      "title": "A clean lab, three ways in",
+      "text": "Meet your starting point: a personal lab subscription with nothing in it yet. On the left are three ways in: the Azure portal, the Azure CLI in Cloud Shell, and Azure PowerShell. In the middle stands Azure Resource Manager, the single front door that every request must pass through, whichever tool sends it."
+    },
+    {
+      "title": "Resource providers do the building",
+      "text": "Behind Resource Manager sit the resource providers. Each one builds one family of resources: Microsoft.Resources for resource groups, Microsoft.Storage for storage accounts and Microsoft.Compute for virtual machines. You never call a provider directly. Resource Manager first checks every request, then decides which provider receives it."
+    },
+    {
+      "title": "Click Create in the portal",
+      "text": "You create a resource group in the portal. The browser sends the request, with your sign-in token, to Resource Manager. It checks who you are with Microsoft Entra ID, checks that your role allows the action, and validates the request. Only then does Microsoft.Resources create rg-lunch01-ab12c inside your subscription.",
+      "set": {
+        "t-arm": "PUT resource group ✓"
+      }
+    },
+    {
+      "title": "The CLI uses the same door",
+      "text": "Now Dewi's way: az storage account create in Cloud Shell. A different tool, but the same path. The request reaches the same Resource Manager, passes the same three checks and goes to Microsoft.Storage, which builds the storage account in the same resource group. A command and a click give the same result.",
+      "set": {
+        "t-cli": "az storage account create",
+        "t-arm": "PUT storage account ✓"
+      }
+    },
+    {
+      "title": "PowerShell, same story",
+      "text": "Pak Budi prefers PowerShell, so he runs New-AzVM. Resource Manager checks his request in exactly the same way and hands it to Microsoft.Compute, which builds the virtual machine. Three tools, three people, one front door, and one place where identity, permissions and policy are enforced for everybody.",
+      "set": {
+        "t-ps": "New-AzVM",
+        "t-arm": "PUT virtual machine ✓"
+      }
+    },
+    {
+      "title": "A typo stops at the door",
+      "text": "Dewi types southeastasai instead of southeastasia. Resource Manager validates the request before any provider gets involved, and rejects it. Nothing is created and nothing is charged. The error code, LocationNotAvailableForResourceGroup, is specific and easy to search for, and the message lists the valid region names. Read errors from the top: code first, then message.",
+      "set": {
+        "t-cli": "location: southeastasai",
+        "t-arm": "request rejected ✗"
+      }
+    },
+    {
+      "title": "Resources quietly cost money",
+      "text": "Back to the resources that were created. The storage account and the virtual machine cost money for every hour they exist, whether anybody uses them or not. This is where your guardrail comes in: a monthly budget at subscription scope, with alerts at 50, 80 and 100 percent of actual cost.",
+      "set": {
+        "t-cli": "Cloud Shell · Bash",
+        "t-arm": "waiting for requests",
+        "t-spend": "Spent this month: 18% of budget"
+      }
+    },
+    {
+      "title": "50 percent: the first e-mail",
+      "text": "Half the budget is used, so the 50 percent alert fires and an e-mail arrives from azure-noreply@microsoft.com. Remember the delay: cost data can take 8 to 24 hours to arrive, and budgets are evaluated about once a day, so the e-mail describes yesterday's spending. Nothing is stopped. The message simply says: take a look.",
+      "set": {
+        "t-spend": "Spent this month: 52% of budget",
+        "t-alert": "Actual cost passed 50%"
+      }
+    },
+    {
+      "title": "80 percent: time to act",
+      "text": "At 80 percent the second alert arrives. This is the useful one, because there is still time to act before the month ends. You open Cost analysis, notice the virtual machine that ran all weekend, and decide it should not exist yet. Ibu Sari's finance team can be on the recipient list too, so nobody is surprised by the invoice.",
+      "set": {
+        "t-spend": "Spent this month: 81% of budget",
+        "t-alert": "Actual cost passed 80%"
+      }
+    },
+    {
+      "title": "100 percent: an alarm, not a brake",
+      "text": "Suppose nobody acts. Spending passes 100 percent and the last alert fires, but the virtual machine keeps running and keeps costing money. A budget never stops or deletes anything. On a credit-based subscription the spending limit is the real brake: when the credit is gone, resources are disabled. On pay-as-you-go, you are the brake.",
+      "set": {
+        "t-spend": "Spent: 104% of budget · the VM is still running",
+        "t-alert": "Actual cost passed 100%",
+        "t-alert3": "nothing has been stopped"
+      }
+    },
+    {
+      "title": "Delete the group, delete everything",
+      "text": "The fix is one command: az group delete. Resource Manager asks each provider to remove what it built, and the storage account and the virtual machine disappear together with the group. One resource group per lab, tagged with the lunch number, turns cleanup into a single reliable step. The meter stops, although this month's spending stays on the bill.",
+      "set": {
+        "t-cli": "az group delete",
+        "t-arm": "DELETE group ✓",
+        "t-spend": "Meter stopped · 104% stays on this month's bill"
+      }
+    },
+    {
+      "title": "Your turn: build the guardrails",
+      "text": "Recap. Every tool goes through Azure Resource Manager. Resource providers do the building. Validation catches mistakes before anything is created. A budget warns you but never stops anything. Deleting a resource group removes everything inside it. In Lab 01 you do all of this for real, in your own subscription.",
+      "tip": "Lab 01: open Cloud Shell, run check-environment.sh, create a monthly budget with 50/80/100% alerts, then create, inspect and delete a tagged resource group.",
+      "set": {
+        "t-cli": "Cloud Shell · Bash",
+        "t-arm": "waiting for requests"
+      }
+    }
+  ],
+  "svg": [
+    "Lab subscription",
+    "Azure portal",
+    "click Create",
+    "Azure CLI",
+    "Cloud Shell · Bash",
+    "Azure PowerShell",
+    "Az module",
+    "Azure Resource",
+    "Manager",
+    "management.azure.com",
+    "waiting for requests",
+    "Who are you?",
+    "Allowed?",
+    "Valid request?",
+    "Microsoft.Resources",
+    "resource groups",
+    "Microsoft.Storage",
+    "storage accounts",
+    "Microsoft.Compute",
+    "virtual machines",
+    "rg-lunch01-ab12c",
+    "tags: course · lunch=01",
+    "stnusaab12c",
+    "storage account",
+    "vm-web-1",
+    "virtual machine",
+    "rg-lunch01-ab12c deleted",
+    "storage account and VM gone",
+    "no more charges",
+    "Rejected by Azure Resource Manager",
+    "(LocationNotAvailableForResourceGroup)",
+    "The provided location 'southeastasai'",
+    "is not available for resource group.",
+    "Nothing was created. Fix: use a valid region name such as southeastasia.",
+    "Monthly budget · actual cost",
+    "Spent this month: 0% of budget",
+    "✉ Budget alert",
+    "Actual cost passed 50%",
+    "budget-azure-lunches",
+    "to: you and the finance team"
+  ]
+}

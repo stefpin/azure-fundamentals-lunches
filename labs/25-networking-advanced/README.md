@@ -1,8 +1,11 @@
 # Lab 25 · Hub and spoke for Nusantara Retail
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 25 · Virtual Networking (Advanced)](../../lunches/25-networking-advanced/README.md)
 > **Time:** about 60 minutes (including about 8 minutes of setup) · **Cost:** 💲💲, optional Azure Firewall path 💲💲💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★★
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by `setup.sh`.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 
@@ -341,7 +344,7 @@ regional resource, and the SSH key in `~/.ssh` is reused by other labs.
 | Symptom | Likely cause | Fix |
 |---|---|---|
 | `setup.sh` stops with `SkuNotAvailable` | `$VM_SIZE_SMALL` isn't offered to your subscription in this region | `az vm list-skus -l "$LOCATION" --size Standard_B -o table`, then `export VM_SIZE_SMALL=<size>`, `source ../common/config.sh` and run `setup.sh` again |
-| `Operation could not be completed as it results in exceeding approved ... Cores quota` | The lab needs 3 vCPUs at once | Clean up other labs' VMs or request more quota |
+| `Operation could not be completed as it results in exceeding approved ... Cores quota` | The lab needs about 6 vCPUs at once (three VMs) | Clean up other labs' VMs or request more quota |
 | A peering stays *Initiated* | Only one of the two links exists | Create the link from the other VNet |
 | `spoke1 -> hub` is unreachable even though the peering is *Connected* | `--allow-vnet-access` wasn't set; the CLI default is false | `az network vnet peering update -g "$RG" --vnet-name <vnet> -n <link> --allow-vnet-access true` on both links |
 | Next hop still says *None* after Task 5 | The route table isn't associated with the subnet, or the prefix has a typo | `az network vnet subnet show -g "$RG" --vnet-name vnet-nusa-spoke1 -n snet-workload --query routeTable.id`; read the effective routes |

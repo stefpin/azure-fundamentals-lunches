@@ -1,8 +1,11 @@
 # Lab 24 · Ransomware-proof invoices
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 24 · Storage (Advanced)](../../lunches/24-storage-advanced/README.md)
 > **Time:** about 60 minutes (including about 5 minutes for `setup.sh`) · **Cost:** 💲💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by `setup.sh`.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

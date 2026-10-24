@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 12 · Katalog produk yang siap tumbuh · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 12: Katalog produk yang siap tumbuh. sekitar 45 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/12-cosmos-db.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/12-cosmos-db.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/12-cosmos-db.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/12-cosmos-db.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 12 · Katalog produk yang siap tumbuh">
+<meta property="og:description" content="Lab Azure praktik 12: Katalog produk yang siap tumbuh. sekitar 45 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/12-cosmos-db.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="12" style="--c:#11935a">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/12-cosmos-db.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#11935a">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 12</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>12</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Katalog produk yang siap tumbuh</h1>
+        <p class="lab-story">🏪 <b>Episode 12 · Tabel 140 Kolom</b> — Setiap jenis produk baru berarti satu lagi perubahan skema hingga larut malam. <a href="../lunches/12-cosmos-db.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 45 menit</span>
+          <span class="chip cost">💲 gratis atau hampir gratis</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 8 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--membuat-account-serverless-untuk-api-for-nosql">Tugas 1 · Membuat account serverless untuk API for NoSQL</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--membuat-database-catalog-dan-container-products">Tugas 2 · Membuat database catalog dan container products</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--memberi-diri-sendiri-akses-data-dengan-microsoft-entra-id">Tugas 3 · Memberi diri sendiri akses data dengan Microsoft Entra ID</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--memasang-sdk-dan-memuat-katalog">Tugas 4 · Memasang SDK dan memuat katalog</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--membandingkan-point-read-query-satu-partisi-dan-query-lintas-partisi">Tugas 5 · Membandingkan point read, query satu partisi, dan query lintas partisi</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--mengubah-consistency-level-bawaan">Tugas 6 · Mengubah consistency level bawaan</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/app/cosmos_common.py" target="_blank" rel="noopener"><span>app/cosmos_common.py</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/app/load_products.py" target="_blank" rel="noopener"><span>app/load_products.py</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/app/products.json" target="_blank" rel="noopener"><span>app/products.json</span><small>10 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/app/query_products.py" target="_blank" rel="noopener"><span>app/query_products.py</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>4 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/12-cosmos-db" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Toko web Nusantara Retail menjual kopi, teh, batik, camilan, rempah, dan kerajinan, dan setiap kategori menggambarkan produknya dengan cara berbeda: kopi punya tingkat sangrai dan tingkat gilingan, batik punya teknik, bahan, dan motif. Anda memberi katalog itu rumah yang tidak memaksakan satu bentuk tabel untuk semuanya: sebuah account <strong>Azure Cosmos DB for NoSQL serverless</strong> dengan database <code>catalog</code> dan container <code>products</code> yang dipartisi berdasarkan <strong><code>/category</code></strong>. Anda memberi diri sendiri akses ke data dengan <strong>Microsoft Entra ID</strong> alih-alih account key, memuat 30 produk dengan program Python kecil yang memakai SDK <code>azure-cosmos</code>, lalu mengukur berapa biaya setiap hal: sebuah point read, sebuah single-partition query, dan sebuah cross-partition query, masing-masing lengkap dengan request charge dalam RU. Anda mengubah consistency level bawaan dan melihat harga sebuah pembacaan berubah, dan terakhir Anda memperbaiki query pencarian yang membaca seluruh katalog hanya untuk menjawab pertanyaan tentang kopi.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  entra[&quot;Microsoft Entra ID&quot;] -. &quot;token akses&quot; .-&gt; py
+  py[&quot;Anda di Cloud Shell&lt;br/&gt;load_products.py · query_products.py&lt;br/&gt;azure-cosmos SDK&quot;] --&gt;|&quot;HTTPS · data-plane role&lt;br/&gt;Cosmos DB Built-in Data Contributor&quot;| acct
+  subgraph rg[&quot;rg-lunch12-&amp;lt;suffix&amp;gt;&quot;]
+    acct[&quot;Account Cosmos DB cosmos-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;API for NoSQL · serverless&quot;] --&gt; db[(&quot;database: catalog&quot;)]
+    db --&gt; ctr[&quot;container: products&lt;br/&gt;partition key /category&quot;]
+  end
+  ctr --&gt; lp[&quot;logical partition&lt;br/&gt;coffee · tea · batik · snacks · spices · crafts&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Sebuah subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>). Role Contributor pada subscription atau resource group sudah cukup: data-plane role di Tugas 3 adalah pengaturan milik Cosmos DB, bukan role assignment Azure.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Cloud Shell sudah berisi Azure CLI dan Python 3; Tugas 4 akan memasang dua paket Python ke direktori home Anda.</li>
+<li>Ambil file lab, lalu muat pengaturan bersama dan nama-nama untuk lab ini:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/12-cosmos-db
+source ../common/config.sh
+source lab.env
+echo &quot;Account: $ACCOUNT  ·  endpoint: $COSMOS_ENDPOINT&quot;
+</code></pre></div>
+<ul>
+<li>Jika subscription ini belum pernah memakai Cosmos DB, daftarkan resource provider-nya (butuh satu atau dua menit dan aman untuk diulang):</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az provider register --namespace Microsoft.DocumentDB --wait
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Cloud Shell mengakhiri sesi setelah sekitar 20 menit tanpa aktivitas, dan variabel ikut hilang bersamanya. Jika itu terjadi, <code>cd</code> kembali ke folder lab dan jalankan lagi blok di atas (lewati <code>git clone</code>).</p>
+</aside>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Account serverless hanya menagih request unit yang Anda konsumsi dan penyimpanan yang Anda pakai, jadi biaya lab ini nyaris nol. Tetap selesaikan lab dengan bagian <strong>Bersihkan</strong>, meskipun Anda berhenti di tengah jalan.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–6 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--membuat-account-serverless-untuk-api-for-nosql" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Membuat account serverless untuk API for NoSQL</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--membuat-account-serverless-untuk-api-for-nosql" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Account adalah puncak hierarki Cosmos DB: ia memiliki endpoint, region, consistency level, dan model penagihan. Sekarang Anda memilih dua hal yang sulit atau bahkan mustahil diubah belakangan: <strong>API</strong> (NoSQL) dan <strong>capacity mode</strong>. Lab ini memakai <strong>serverless</strong>, dan inilah alasannya:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Serverless (lab ini)</th>
+<th>Provisioned throughput dengan free tier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Yang Anda bayar</td>
+<td>RU yang benar-benar dikonsumsi permintaan Anda, ditambah penyimpanan</td>
+<td>RU/s yang dipesan setiap jam (1.000 RU/s dan 25 GB pertama gratis selama account itu ada)</td>
+</tr>
+<tr>
+<td>Tersedia untuk</td>
+<td>setiap subscription</td>
+<td><strong>satu</strong> account per subscription, dipilih saat pembuatan; free tier Anda mungkin sudah terpakai</td>
+</tr>
+<tr>
+<td>Region</td>
+<td><strong>hanya satu region</strong>; Anda tidak bisa menambah region belakangan</td>
+<td>sebanyak yang Anda mau, masing-masing ditagih</td>
+</tr>
+<tr>
+<td>Cocok untuk</td>
+<td>pengembangan, pengujian, trafik kecil atau yang sesekali melonjak</td>
+<td>trafik stabil, beberapa region, produksi</td>
+</tr>
+</tbody>
+</table></div>
+<p>Serverless bisa dipakai di subscription mana pun dan biayanya nyaris nol untuk lab yang hanya menjalankan beberapa ratus permintaan. Komprominya: account serverless tetap tinggal di satu region; bagian <a href="#-tantangan-tambahan">Tantangan tambahan</a> menunjukkan region kedua pada account provisioned yang terpisah.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az group create --name &quot;$RG&quot; --location &quot;$LOCATION&quot; \
+  --tags course=&quot;$COURSE_TAG&quot; lunch=12 --output table
+
+az cosmosdb create \
+  --name &quot;$ACCOUNT&quot; \
+  --resource-group &quot;$RG&quot; \
+  --kind GlobalDocumentDB \
+  --locations regionName=&quot;$LOCATION&quot; failoverPriority=0 isZoneRedundant=False \
+  --capabilities EnableServerless \
+  --default-consistency-level Session \
+  --output none
+</code></pre></div>
+<p><code>--kind GlobalDocumentDB</code> adalah API for NoSQL (sekaligus nilai bawaannya). Pembuatan account memakan waktu sekitar 3–10 menit: saat yang tepat untuk membaca ulang bagian <em>Partisi</em> di bacaan Makan Siang 12.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Jalur di portal: <em>Home › Create a resource › Azure Cosmos DB › Azure Cosmos DB for NoSQL › Create</em>. Pilih resource group <code>rg-lunch12-&lt;suffix&gt;</code>, nama account <code>cosmos-nusa-&lt;suffix&gt;</code>, region Anda, dan <strong>Capacity mode: Serverless</strong>. Biarkan tab-tab lainnya pada pengaturan bawaan — lalu kembali ke sini dan lanjutkan dengan Tugas 2.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> account sudah ada, berbicara NoSQL, berjenis serverless, dan memakai konsistensi Session:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az cosmosdb show -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --query &quot;{api:kind, capabilities:capabilities[].name, \
+  consistency:consistencyPolicy.defaultConsistencyLevel, regions:locations[].locationName, \
+  endpoint:documentEndpoint}&quot; --output jsonc
+</code></pre></div>
+<p>Harapkan <code>&quot;api&quot;: &quot;GlobalDocumentDB&quot;</code>, <code>&quot;capabilities&quot;: [&quot;EnableServerless&quot;]</code>, <code>&quot;consistency&quot;: &quot;Session&quot;</code>, satu region, dan endpoint yang sama dengan <code>$COSMOS_ENDPOINT</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--membuat-database-catalog-dan-container-products" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Membuat database catalog dan container products</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--membuat-database-catalog-dan-container-products" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><strong>Database</strong> mengelompokkan container; <strong>container</strong> menyimpan item dan merupakan tempat Anda memilih <strong>partition key</strong>, yaitu property yang di-hash Cosmos DB untuk menentukan lokasi setiap item. Nusantara Retail menelusuri katalognya berdasarkan kategori (setiap halaman toko adalah satu kategori), dan setiap kategori paling banyak berisi beberapa ribu produk, jauh di bawah 20 GB yang bisa ditampung sebuah logical partition. Jadi <code>/category</code> cocok untuk <em>katalog</em>. Namun, kunci itu akan buruk untuk riwayat pesanan, di mana satu kategori bisa mengumpulkan jutaan penulisan selama promo 12.12; container tersebut akan memakai sesuatu seperti <code>/customerId</code>.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az cosmosdb sql database create \
+  --account-name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --name &quot;$DATABASE&quot; --output none
+
+az cosmosdb sql container create \
+  --account-name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --database-name &quot;$DATABASE&quot; --name &quot;$CONTAINER&quot; \
+  --partition-key-path &quot;$PARTITION_KEY&quot; --output none
+</code></pre></div>
+<p>Tidak ada <code>--throughput</code>: container serverless memang tidak punya throughput yang perlu diatur. Dan partition key bersifat permanen. Untuk mengubahnya belakangan, Anda harus menyalin setiap item ke container baru.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Jalur di portal: <em>account Cosmos DB Anda › Data Explorer › New Container</em>. Database id: <strong>Create new</strong> <code>catalog</code>; container id <code>products</code>; partition key <code>/category</code> — lalu kembali ke sini dan lanjutkan dengan Tugas 3.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> container sudah ada dengan partition key yang benar dan pengindeksan bawaan (consistent):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az cosmosdb sql container show -a &quot;$ACCOUNT&quot; -g &quot;$RG&quot; -d &quot;$DATABASE&quot; -n &quot;$CONTAINER&quot; \
+  --query &quot;{name:name, partitionKey:resource.partitionKey.paths[0], indexing:resource.indexingPolicy.indexingMode}&quot; \
+  --output jsonc
+</code></pre></div>
+<p>Harapkan <code>&quot;partitionKey&quot;: &quot;/category&quot;</code> dan <code>&quot;indexing&quot;: &quot;consistent&quot;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--memberi-diri-sendiri-akses-data-dengan-microsoft-entra-id" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Memberi diri sendiri akses data dengan Microsoft Entra ID</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--memberi-diri-sendiri-akses-data-dengan-microsoft-entra-id" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Cosmos DB punya dua &quot;bidang&quot; (plane). <strong>Control plane</strong> (membuat account, container, pengaturan) memakai role Azure biasa seperti Contributor. <strong>Data plane</strong> (membaca dan menulis <em>item</em>) memakai sistem role milik Cosmos DB sendiri: menjadi Owner subscription <strong>tidak</strong> membuat Anda bisa membaca satu produk pun dengan identitas Entra Anda. Ibaratnya gedung kantor: kartu akses pengelola gedung bisa mengatur ruangan dan lift (control plane), tetapi tidak otomatis bisa membuka lemari arsip di dalam ruangan (data plane) — lemari itu punya kuncinya sendiri. Anda membutuhkan data-plane role. Ada dua role bawaan; tampilkan daftarnya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az cosmosdb sql role definition list -a &quot;$ACCOUNT&quot; -g &quot;$RG&quot; \
+  --query &quot;[].{role:roleName, id:name}&quot; --output table
+</code></pre></div>
+<p>Anda akan melihat <strong>Cosmos DB Built-in Data Reader</strong> dan <strong>Cosmos DB Built-in Data Contributor</strong>. Berikan role contributor kepada diri Anda sendiri, dengan cakupan seluruh account (<code>/</code>). Anda juga bisa membatasi cakupannya ke <code>/dbs/catalog</code> atau ke satu container saja:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ME=$(my_object_id)
+az cosmosdb sql role assignment create \
+  --account-name &quot;$ACCOUNT&quot; \
+  --resource-group &quot;$RG&quot; \
+  --scope &quot;/&quot; \
+  --principal-id &quot;$ME&quot; \
+  --role-definition-name &quot;$DATA_ROLE&quot; \
+  --output none
+</code></pre></div>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Catatan</span>Halaman <strong>Access control (IAM)</strong> di portal mengelola role Azure di control plane. Halaman itu tidak menampilkan assignment data-plane ini, itulah sebabnya tugas ini memakai CLI.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> ada satu assignment untuk object ID Anda:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az cosmosdb sql role assignment list -a &quot;$ACCOUNT&quot; -g &quot;$RG&quot; \
+  --query &quot;[?principalId==&#x27;$ME&#x27;].{role:roleDefinitionId, scope:scope}&quot; --output table
+</code></pre></div>
+<p>Kolom role berakhiran <code>/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002</code>, yaitu Data Contributor bawaan. Assignment baru bisa butuh beberapa menit sebelum permintaan berhasil.</p>
+</div>
+<details class="plain">
+<summary><b>Hanya untuk keadaan darurat:</b> organisasi Anda memblokir assignment ini? Pakai account key, dan pahami apa yang Anda korbankan.</summary>
+<p>Jika <code>role assignment create</code> gagal dengan error otorisasi dan Anda tidak bisa mendapatkan izinnya, skrip-skrip ini juga menerima primary key milik account:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>export COSMOS_KEY=$(az cosmosdb keys list -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --query primaryMasterKey --output tsv)
+</code></pre></div>
+<p>Komprominya: primary key adalah rahasia bersama dengan akses baca dan tulis penuh ke <strong>setiap</strong> database di dalam account. Key itu tidak mencatat <em>siapa</em> yang memakainya, tidak pernah kedaluwarsa dengan sendirinya, dan siapa pun yang melihatnya di tangkapan layar atau di riwayat shell Anda langsung memegang seluruh katalog. Merotasinya (menggantinya dengan key baru) merusak setiap aplikasi yang memakainya. Identitas Entra bersifat per orang (atau per managed identity untuk aplikasi), bisa dibatasi ke satu container, dan bisa dicabut dengan satu perintah. Itulah sebabnya account produksi sering mematikan key sepenuhnya (lihat tantangan tambahan). Setelah selesai, jalankan <code>unset COSMOS_KEY</code>.</p>
+</details>
+</div></section><section class="lab-section" id="tugas-4--memasang-sdk-dan-memuat-katalog" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Memasang SDK dan memuat katalog</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--memasang-sdk-dan-memuat-katalog" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Dua skrip di <code>app/</code> memakai Azure Cosmos DB SDK for Python. <code>azure-identity</code> membuat keduanya bisa memakai ulang login Azure CLI Anda, sehingga tidak ada kata sandi atau key di dalam kode. Pasang keduanya ke direktori home Anda:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>pip install --user azure-cosmos azure-identity
+</code></pre></div>
+<p><code>app/products.json</code> berisi 30 produk: lima per kategori, masing-masing dengan field umum (<code>id</code>, <code>category</code>, <code>name</code>, <code>price</code> dalam rupiah, <code>stock</code>) dan sebuah objek <code>attributes</code> yang bentuknya bergantung pada kategori. Muat produk-produk itu:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>python3 app/load_products.py
+</code></pre></div>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Writing 30 items to catalog/products (partition key /category)
+Signed in with: Microsoft Entra ID (your Azure CLI / Cloud Shell sign-in)
+
+  upsert p-coffee-001           [coffee]    x.xx RU
+  ...
+Done: 30 items written for ... RU (about ... RU per write).
+Items per logical partition (category): batik=5, coffee=5, crafts=5, snacks=5, spices=5, tea=5
+</code></pre></div>
+<p>Setiap penulisan adalah <strong>upsert</strong> (update atau insert: perbarui jika item sudah ada, tambahkan jika belum), sehingga menjalankan skrip ini lagi akan menimpa 30 item yang sama, bukan menggandakannya. Perhatikan bahwa satu penulisan berbiaya beberapa RU, lebih mahal daripada satu pembacaan: secara bawaan Cosmos DB mengindeks <strong>setiap</strong> property dari setiap item, sehingga setiap penulisan juga memperbarui indeks. Itu juga alasan Anda tidak pernah mendeklarasikan skema atau indeks untuk <code>motif</code> batik maupun <code>roast</code> kopi.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Buka <em>Data Explorer › catalog › products › Items</em> untuk menelusuri data yang Anda muat. Buka dua item dari kategori yang berbeda dan bandingkan isi <code>attributes</code> keduanya.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> container berisi 30 item:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>python3 app/query_products.py count
+</code></pre></div>
+<p>Pesan yang berakhiran <code>HTTP 403</code> berarti role dari Tugas 3 belum berlaku: tunggu dua menit dan jalankan loader-nya lagi.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--membandingkan-point-read-query-satu-partisi-dan-query-lintas-partisi" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Membandingkan point read, query satu partisi, dan query lintas partisi</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--membandingkan-point-read-query-satu-partisi-dan-query-lintas-partisi" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Tagihan Cosmos DB sebagian besar adalah jumlah dari request charge, jadi cara Anda <em>meminta</em> data sama pentingnya dengan seberapa banyak data yang Anda punya. Jalankan tiga cara mencari kopi secara berdampingan:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>python3 app/query_products.py compare
+</code></pre></div>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Operation                                      Scope             Items      RU
+---------------------------------------------- ----------------- ----- -------
+Point read  id=&#x27;p-coffee-001&#x27;, key=&#x27;coffee&#x27;    one item              1    1.00
+Query  WHERE c.category = &#x27;coffee&#x27;             single partition      5    x.xx
+Query  WHERE c.price &lt; 50000                   cross-partition      13    x.xx
+</code></pre></div>
+<p>Biaya query bergantung pada data dan versi SDK Anda (masing-masing beberapa RU). Inilah yang ditunjukkan hasilnya:</p>
+<ul>
+<li><strong>Point read</strong> (id <strong>dan</strong> partition key): Cosmos DB langsung menuju satu item tanpa menjalankan mesin query. Item hingga 1 KB berbiaya 1 RU. Inilah cara termurah untuk mengambil apa pun, itulah sebabnya desain yang baik selalu mengetahui kedua nilai tersebut.</li>
+<li><strong>Single-partition query</strong>: partition key di dalam filter mengirim query ke satu logical partition beserta indeksnya.</li>
+<li><strong>Cross-partition query</strong>: tanpa partition key, query <strong>menyebar (fan out)</strong> ke setiap physical partition. Skrip ini mencetak berapa banyak physical partition yang dimiliki container Anda: hanya <strong>1</strong> pada ukuran sekecil ini, jadi biaya tambahannya kecil. Katalog besar yang tersebar di puluhan physical partition membayar beberapa RU, ditambah latensi, untuk setiap partisi yang dikunjungi query.</li>
+</ul>
+<p>Ibaratnya mengambil paket di loker: dengan nomor loker dan kode resi (point read), Anda langsung membuka satu pintu; tanpa keduanya, petugas harus memeriksa semua loker satu per satu (cross-partition query).</p>
+<p>Jalankan setiap query secara terpisah untuk melihat detail yang dikumpulkan skrip:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>python3 app/query_products.py read p-coffee-001 coffee
+python3 app/query_products.py query &quot;SELECT c.id, c.name, c.price FROM c WHERE c.price &lt; 50000&quot;
+python3 app/query_products.py query &quot;SELECT c.id, c.name, c.price FROM c WHERE c.category = &#x27;tea&#x27;&quot; --pk tea
+</code></pre></div>
+<p>Setiap query juga mencetak <strong>Documents the engine had to load</strong> (jumlah dokumen yang harus dimuat mesin query) di samping <strong>documents returned</strong> (jumlah dokumen yang dikembalikan). Ingat pasangan angka itu; itulah kunci latihan Rusak lalu perbaiki.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Di <em>Data Explorer › products › New SQL Query</em>, jalankan <code>SELECT * FROM c WHERE c.category = 'coffee'</code> lalu buka tab <strong>Query Stats</strong>: tab itu menampilkan request charge, retrieved document count, dan output document count.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Anda bisa menjelaskan, dengan angka Anda sendiri, mengapa point read paling murah, dan berapa jumlah physical partition yang dicetak skrip.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--mengubah-consistency-level-bawaan" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Mengubah consistency level bawaan</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--mengubah-consistency-level-bawaan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Konsistensi bawaan account ini adalah <strong>Session</strong>: Anda selalu membaca penulisan Anda sendiri, dan pembacaan dilayani oleh satu replika. <strong>Strong</strong> dan <strong>Bounded staleness</strong> membaca dari dua replika untuk menepati janjinya, sehingga pembacaan yang sama berbiaya sekitar dua kali lipat. Ubah bawaannya menjadi Strong, yang memakan waktu satu atau dua menit:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az cosmosdb update -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --default-consistency-level Strong --output none
+python3 app/query_products.py read p-coffee-001 coffee
+</code></pre></div>
+<p>Baris pertama kini berbunyi <code>consistency: account default (Strong)</code> dan point read berbiaya sekitar <strong>2 RU</strong>. Sebuah client juga bisa <em>melonggarkan</em> konsistensi untuk permintaannya sendiri tanpa menyentuh account:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>python3 app/query_products.py read p-coffee-001 coffee --consistency Eventual
+</code></pre></div>
+<p>Kembali ke sekitar <strong>1 RU</strong>. Ini hanya berlaku ke satu arah: client boleh memilih bawaan account atau level apa pun yang lebih lemah, tidak pernah yang lebih kuat. Kembalikan bawaannya ke Session, pilihan yang tepat untuk toko yang setiap pembelinya harus melihat keranjang belanjanya sendiri:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az cosmosdb update -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --default-consistency-level Session --output none
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Jalur di portal: <em>account Cosmos DB Anda › Settings › Default consistency</em> — pilih sebuah level lalu <strong>Save</strong>, kemudian kembali ke sini dan jalankan perintah <code>read</code> yang sama.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> account sudah kembali ke Session:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az cosmosdb show -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --query consistencyPolicy.defaultConsistencyLevel --output tsv
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Seorang developer membuat kotak pencarian di <strong>halaman kopi</strong> toko web. Kotak itu berfungsi, jadi langsung dirilis:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>python3 app/query_products.py query \
+  &quot;SELECT c.id, c.category, c.name, c.price FROM c WHERE CONTAINS(LOWER(c.name), &#x27;kopi&#x27;)&quot;
+</code></pre></div>
+<p>Lihat baris-baris terakhir output-nya. Cakupannya <strong>cross-partition</strong>, mesin query <strong>memuat semua 30 dokumen</strong> hanya untuk mengembalikan 6, dan salah satu dari 6 itu adalah camilan (Dodol Kopi) yang tidak semestinya muncul di halaman kopi. Dengan 30 produk, pemborosannya hanya beberapa RU. Sekarang beri katalog 10 salinan sintetis dari setiap produk (330 item) dan jalankan query yang sama lagi:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>python3 app/load_products.py --copies 10
+python3 app/query_products.py query \
+  &quot;SELECT c.id, c.category, c.name, c.price FROM c WHERE CONTAINS(LOWER(c.name), &#x27;kopi&#x27;)&quot;
+</code></pre></div>
+<p>Jumlah dokumen yang dimuat dan RU-nya tumbuh seiring <strong>seluruh katalog</strong>, pada setiap ketikan dari setiap pembeli. Tugas Anda: buat pencarian kopi ini murah, dan buat biayanya hanya tumbuh seiring kategori kopi saja.</p>
+<details class="plain">
+<summary>Petunjuk</summary>
+<p>Ada dua masalah terpisah. Query itu tidak memberi tahu Cosmos DB logical partition mana yang harus dicari. Selain itu, membungkus property dengan <code>LOWER()</code> membuat indeks tidak bisa membantu, sehingga setiap dokumen harus dimuat lalu diubah ke huruf kecil. <code>CONTAINS</code> punya argumen ketiga untuk pencocokan yang tidak membedakan huruf besar dan kecil.</p>
+</details>
+<details class="plain">
+<summary>Perbaikan</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>python3 app/query_products.py query \
+  &quot;SELECT c.id, c.category, c.name, c.price FROM c WHERE c.category = &#x27;coffee&#x27; AND CONTAINS(c.name, &#x27;kopi&#x27;, true)&quot; \
+  --pk coffee
+</code></pre></div>
+<p>Cakupannya kini <strong>single partition</strong>, dokumen yang dimuat turun menjadi produk kopi saja, request charge-nya turun, dan camilan itu hilang dari hasil. <code>LOWER()</code> dan <code>UPPER()</code> tidak bisa memakai indeks, sehingga mesin query harus memuat setiap dokumen. <code>CONTAINS(..., true)</code> melakukan sendiri pencocokan tanpa membedakan huruf besar dan kecil. Jika sebuah pencarian benar-benar harus mencakup semua kategori, simpan salinan nama dalam huruf kecil saat Anda menulis item, lalu filter berdasarkan property itu. Panduan query tuning dari Microsoft mencatat bahwa penghematan dari partition key menjadi besar pada container berukuran besar (sekitar 100 GB atau 30.000 RU/s ke atas); kebiasaan ini tetap layak dimiliki jauh sebelum itu.</p>
+</details>
+<p>Salinan-salinan itu tidak berbahaya dan <code>verify.sh</code> tidak mempermasalahkannya. Proses pembersihan akan menghapusnya bersama semua yang lain.</p>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu Anda ulangi. Skrip ini hanya membaca: ia menghitung item melalui kode Python yang sama dengan yang Anda pakai, jadi SDK dari Tugas 4 harus sudah terpasang.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Perintah ini menghapus resource group <code>rg-lunch12-&lt;suffix&gt;</code> dan, bersamanya, account, database, item, serta role assignment data-plane yang tinggal di dalam account. Tidak ada yang dibuat di luar resource group. Penghapusan berlanjut di latar belakang selama beberapa menit. Jika Anda memakai opsi darurat dengan key, jalankan juga <code>unset COSMOS_KEY</code>.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>az cosmosdb create</code> gagal dengan <em>Sorry, we are currently experiencing high demand in Southeast Asia region…</em></td>
+<td>Kapasitas di region itu sedang tidak mencukupi</td>
+<td>Ulangi perintahnya dengan region lain, misalnya <code>regionName=eastasia</code> atau <code>regionName=indonesiacentral</code>; resource group boleh tetap di tempatnya</td>
+</tr>
+<tr>
+<td><code>az cosmosdb create</code> menyatakan nama sudah dipakai</td>
+<td>Nama account adalah nama DNS global</td>
+<td><code>export LAB12_ACCOUNT=cosmos-nusa-&lt;something-unique&gt;</code>, jalankan lagi <code>source lab.env</code>, lalu ulangi Tugas 1</td>
+</tr>
+<tr>
+<td>Sebuah skrip mencetak <em>Cosmos DB refused the request (HTTP 403)</em> dengan <em>does not have required RBAC permissions to perform action [Microsoft.DocumentDB/databaseAccounts/readMetadata]</em></td>
+<td>Belum ada data-plane role, atau role-nya belum berlaku</td>
+<td>Cek bagian pemeriksaan di Tugas 3; jika assignment-nya sudah ada, tunggu beberapa menit lalu coba lagi</td>
+</tr>
+<tr>
+<td><em>Could not get a Microsoft Entra token from the Azure CLI</em></td>
+<td>CLI belum login (berjalan di PC Anda sendiri), atau sesi Cloud Shell sudah kedaluwarsa</td>
+<td>Jalankan <code>az login</code> (PC) atau mulai ulang Cloud Shell, lalu jalankan <code>source</code> untuk kedua file itu lagi</td>
+</tr>
+<tr>
+<td><em>The Azure Cosmos DB SDK for Python is not installed</em></td>
+<td><code>pip install</code> dari Tugas 4 belum dijalankan di lingkungan ini</td>
+<td><code>pip install --user azure-cosmos azure-identity</code></td>
+</tr>
+<tr>
+<td><code>pip</code> berhenti dengan <code>error: externally-managed-environment</code> (pada sebagian instalasi Linux dan macOS)</td>
+<td>Python Anda dikelola oleh sistem operasi</td>
+<td>Gunakan virtual environment: <code>python3 -m venv ~/.venv-lab12 &amp;&amp; source ~/.venv-lab12/bin/activate &amp;&amp; pip install azure-cosmos azure-identity</code></td>
+</tr>
+<tr>
+<td><em>Set COSMOS_ENDPOINT first</em></td>
+<td>Shell baru: variabelnya sudah hilang</td>
+<td><code>cd</code> ke folder lab lalu jalankan lagi <code>source ../common/config.sh</code> dan <code>source lab.env</code></td>
+</tr>
+<tr>
+<td><em>Not found (HTTP 404)</em> dari <code>read</code></td>
+<td>id yang salah <strong>atau</strong> partition key yang salah, misalnya <code>read p-coffee-001 tea</code></td>
+<td>Point read membutuhkan keduanya, dengan ejaan yang persis sama; nilainya peka huruf besar-kecil</td>
+</tr>
+<tr>
+<td>Tantangan tambahan dengan free tier gagal karena subscription sudah punya account free tier</td>
+<td>Hanya boleh ada satu account free tier per subscription</td>
+<td>Temukan account itu dengan <code>az cosmosdb list --query &quot;[?enableFreeTier].{name:name, rg:resourceGroup}&quot; --output table</code>, atau lewati tantangan ini (tanpa free tier, biayanya berjalan setiap jam)</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>
+<p><strong>Region kedua (💲 jika free tier Anda sudah terpakai).</strong> Account serverless hanya tinggal di satu region, jadi buat sebuah account <em>provisioned</em> kecil dengan dua region dan satu container 400 RU/s. Penagihannya RU/s × jumlah region, jadi totalnya 800 RU/s, masih di dalam jatah 1.000 RU/s milik free tier jika free tier masih tersedia di subscription Anda. Tanpa free tier, account ini ditagih setiap jam sampai Anda menghapusnya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>GEO=&quot;cosmos-nusa-geo-${SUFFIX}&quot;
+az cosmosdb create -n &quot;$GEO&quot; -g &quot;$RG&quot; --enable-free-tier true --default-consistency-level Session \
+  --locations regionName=&quot;$LOCATION&quot; failoverPriority=0 isZoneRedundant=False \
+  --locations regionName=&quot;$SECONDARY_LOCATION&quot; failoverPriority=1 isZoneRedundant=False --output none
+az cosmosdb sql database create -a &quot;$GEO&quot; -g &quot;$RG&quot; -n &quot;$DATABASE&quot; --output none
+az cosmosdb sql container create -a &quot;$GEO&quot; -g &quot;$RG&quot; -d &quot;$DATABASE&quot; -n &quot;$CONTAINER&quot; -p &quot;$PARTITION_KEY&quot; \
+  --throughput 400 --output none
+az cosmosdb sql role assignment create -a &quot;$GEO&quot; -g &quot;$RG&quot; --scope &quot;/&quot; --principal-id &quot;$(my_object_id)&quot; \
+  --role-definition-name &quot;$DATA_ROLE&quot; --output none
+COSMOS_ENDPOINT=&quot;https://${GEO}.documents.azure.com:443/&quot; python3 app/load_products.py
+</code></pre></div>
+<p>Lalu buka <em>Replicate data globally</em> di portal untuk melihat kedua region di peta. Hapus account itu setelah selesai (<code>az cosmosdb delete -n &quot;$GEO&quot; -g &quot;$RG&quot; --yes</code>), atau biarkan <code>cleanup.sh</code> menghapusnya bersama resource group.</p>
+</li>
+<li>
+<p><strong>Matikan key.</strong> Jadikan Entra ID satu-satunya jalan masuk, lalu buktikan bahwa key tidak lagi berfungsi:
+<code>az resource update -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --resource-type &quot;Microsoft.DocumentDB/databaseAccounts&quot; --set properties.disableLocalAuth=true</code>.</p>
+</li>
+<li>
+<p><strong>Rancang riwayat pesanan.</strong> Di Data Explorer, buat container <code>orders</code> dengan partition key <em>hierarkis</em> (<code>/storeId</code>, lalu <code>/orderMonth</code>), lalu tuliskan query mana dari bacaan Makan Siang 12 yang dilayaninya dengan baik dan mana yang tidak.</p>
+</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep):</p>
+<ol>
+<li>Sebuah account <strong>Cosmos DB for NoSQL</strong> di <code>rg-lunch12-&lt;suffix&gt;</code> (beri nama <code>cosmos-nusa-&lt;suffix&gt;</code>) yang <strong>serverless</strong>, atau provisioned dengan <strong>free tier</strong>, dan memakai <strong>Session</strong> sebagai konsistensi bawaannya.</li>
+<li>Database <strong><code>catalog</code></strong> dengan container <strong><code>products</code></strong> yang partition key-nya <strong><code>/category</code></strong>.</li>
+<li>Identitas Entra Anda sendiri memegang <strong>Cosmos DB Built-in Data Contributor</strong> pada account tersebut (akses dengan key adalah opsi darurat yang dicatat oleh <code>verify.sh</code>, tetapi tidak dianggap gagal).</li>
+<li>Setidaknya <strong>20 produk</strong> di dalam container. <code>app/load_products.py</code> memuat 30.</li>
+<li>Anda bisa menunjukkan, lengkap dengan request charge-nya, sebuah point read, sebuah single-partition query, dan sebuah cross-partition query (<code>app/query_products.py compare</code>).</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="11-relational-databases-basic.html"><small>← Lab sebelumnya</small>11 · Database pesanan Nusantara Retail</a><a class="next" href="13-containers-basic.html"><small>Lab berikutnya →</small>13 · Mengemas toko online</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

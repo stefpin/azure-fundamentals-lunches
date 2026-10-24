@@ -1,0 +1,124 @@
+{
+  "page": {
+    "doc_title": "Lunch 04 · Resource hierarchy and Azure Resource Manager — Interactive demo",
+    "kicker": "Lunch 04 · Resource hierarchy · Interactive demo",
+    "title": "From tenant to resource: how rules flow down",
+    "lede": "Build Nusantara Retail's hierarchy level by level, watch a role, a policy and a lock flow down while tags stay put, and take a resource ID apart. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Nusantara Retail's Azure hierarchy, from the Microsoft Entra tenant down to individual resources",
+    "svgDesc": "A tree shows the Microsoft Entra tenant, the Tenant root group, the mg-nusa management group with production and non-production children, a subscription under each, three resource groups and three resources. On the right, tools send requests through Azure Resource Manager to resource providers. Steps show a role assignment, a policy and a lock flowing down the tree while tags are not inherited, and a panel at the bottom takes the storage account's resource ID apart."
+  },
+  "steps": [
+    {
+      "title": "Everything in one big pile",
+      "text": "Nusantara Retail's first Azure experiments landed in one subscription with resource groups called test, rg1 and rg-new. Nobody can tell which resources belong to the storefront, who may change them, or what each one costs. Before real workloads arrive, you need a structure: a hierarchy that groups resources sensibly and lets rules flow down from the top."
+    },
+    {
+      "title": "The tenant sits on top",
+      "text": "Everything starts with the Microsoft Entra tenant: Nusantara Retail's identity directory with its users, groups and apps. Every subscription trusts exactly one tenant. The tenant answers the question 'who is signing in?'. Everything we build below it answers two other questions: where do resources live, and which rules apply to them?"
+    },
+    {
+      "title": "The root management group",
+      "text": "Each tenant has exactly one root management group, shown as Tenant root group. Its ID is the tenant ID, and it can't be moved or deleted. Every management group and subscription folds up to it, and new subscriptions land there by default. Nobody has access to it by default; a Global Administrator must elevate their access first."
+    },
+    {
+      "title": "Management groups organise subscriptions",
+      "text": "Below the root, you build management groups: mg-nusa for the company, then mg-nusa-prod and mg-nusa-nonprod. A management group can hold subscriptions and other management groups, and every item has exactly one parent. The tree can be up to six levels deep below the root. Designing a full landing-zone tree is the job of Lunch 31."
+    },
+    {
+      "title": "Subscriptions: billing and scale",
+      "text": "Subscriptions hang under the management groups. A subscription is a billing boundary, because usage is collected per subscription, and a scale boundary, because quotas such as vCPUs per region apply per subscription. Production and development get separate subscriptions, so a test can never eat production's quota or hide inside its bill."
+    },
+    {
+      "title": "Resource groups hold resources",
+      "text": "Inside each subscription, resource groups hold resources that share a lifecycle: you create, update and delete them together. rg-storefront-prod holds the web app; rg-shared-prod holds the storage account for product photos that several apps will use. Every resource lives in exactly one resource group, and resource groups can't be nested."
+    },
+    {
+      "title": "Every request passes through ARM",
+      "text": "Whether you click in the portal, type an Azure CLI command or deploy a Bicep file, the request goes to Azure Resource Manager. ARM checks who you are and what you may do, applies Azure Policy and locks, writes the activity log, and only then hands the work to a resource provider such as Microsoft.Storage. This is the control plane.",
+      "set": {
+        "t-arm": "request allowed ✓"
+      }
+    },
+    {
+      "title": "A role at a management group",
+      "text": "Now watch inheritance. The finance team gets the Reader role on mg-nusa-prod. That single assignment flows down to every subscription, resource group and resource beneath it, including ones added next year. The non-production branch is untouched. Assign roles as high as the job needs and as low as least privilege allows; Lunch 05 covers role-based access control."
+    },
+    {
+      "title": "A policy at a subscription",
+      "text": "Next, an Azure Policy assignment on sub-nusa-prod allows only Indonesia Central. Someone tries to create a storage account in Southeast Asia. ARM evaluates the policy before anything is built, and the request is denied. The policy covers every resource group and resource in that subscription, but not the development subscription next to it.",
+      "set": {
+        "t-arm": "policy: location denied ✗"
+      }
+    },
+    {
+      "title": "A lock on a resource group",
+      "text": "Pak Budi adds a CanNotDelete lock to rg-shared-prod. The storage account inside inherits it, so when someone tries to delete the account, ARM refuses, even for an Owner. A ReadOnly lock would go further and block every change, including POST actions such as listing the storage keys. Locks guard the control plane, not the data inside.",
+      "set": {
+        "t-arm": "lock: delete blocked ✗"
+      }
+    },
+    {
+      "title": "Tags do not flow down",
+      "text": "One thing does not inherit: tags. rg-storefront-prod carries costCenter=ecommerce, but the web app inside has no tags until you add them, or until Azure Policy copies them. Tags drive cost reports and Resource Graph queries, so put them on the resources themselves. Roles, policies and locks flow down; tags stay exactly where you put them.",
+      "set": {
+        "t-arm": "ready"
+      }
+    },
+    {
+      "title": "A resource ID is an address",
+      "text": "Every resource has a resource ID, a path that spells out exactly where it lives. Here is the ID of the storage account in rg-shared-prod. Scripts, templates, role assignments and locks all point at resources by ID. Because the resource group is part of the path, moving a resource to another group changes its ID, so update anything that refers to it."
+    },
+    {
+      "title": "Read the ID left to right",
+      "text": "Read it segment by segment: the subscription, then the resource group, then the resource provider namespace, the resource type and finally the resource name. Child resources simply add more type-and-name pairs. The legend sums up inheritance. With this pattern you can read any ID in an error message and know exactly which scope to check.",
+      "tip": "In Lab 04 you dissect a real resource ID, watch CanNotDelete and ReadOnly locks block you, move a storage account between resource groups and find it again by tag with Resource Graph."
+    }
+  ],
+  "svg": [
+    "Today's lab subscription",
+    "Resource groups: test, rg1, rg-new",
+    "server-baru-final2 · dewitest123 · …",
+    "No owner, no tags, no rules, no budget",
+    "Microsoft Entra tenant",
+    "Tenant root group",
+    "mg-nusa · Nusantara Retail",
+    "mg-nusa-prod",
+    "mg-nusa-nonprod",
+    "sub-nusa-prod",
+    "sub-nusa-dev",
+    "rg-storefront-prod",
+    "rg-shared-prod",
+    "rg-storefront-dev",
+    "app-nusa-shop",
+    "stnusaimg01",
+    "app-nusa-dev",
+    "Portal · CLI · PowerShell",
+    "Bicep · REST · SDKs",
+    "Azure Resource Manager",
+    "auth · RBAC · Policy · locks",
+    "ready",
+    "Resource providers",
+    "Microsoft.Storage, .Web, …",
+    "What flows down?",
+    "✓ Role assignments (RBAC)",
+    "✓ Policy assignments",
+    "✓ Locks (strictest wins)",
+    "✗ Tags: not inherited",
+    "Reader: Finance",
+    "Policy: IDC only",
+    "CanNotDelete",
+    "costCenter",
+    "no tags",
+    "Resource ID of stnusaimg01",
+    "/subscriptions/8f2a…",
+    "/resourceGroups/rg-shared-prod",
+    "/providers/Microsoft.Storage",
+    "/storageAccounts",
+    "/stnusaimg01",
+    "subscription",
+    "resource group",
+    "provider namespace",
+    "resource type",
+    "resource name"
+  ]
+}

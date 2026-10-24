@@ -1,5 +1,7 @@
 # Lunch 11 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — creating an Azure SQL database whose server accepts only
 > Microsoft Entra sign-ins, opening the firewall for one address, and querying it from the portal. The animation shows
 > the concepts; this video shows the screens.

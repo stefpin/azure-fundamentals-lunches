@@ -1,8 +1,11 @@
 # Lab 07 · Store product images and invoices
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 07 · Storage (Basic)](../../lunches/07-storage-basic/README.md)
 > **Time:** about 45 minutes · **Cost:** 💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★☆☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

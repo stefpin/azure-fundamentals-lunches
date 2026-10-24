@@ -1,0 +1,170 @@
+{
+  "page": {
+    "doc_title": "Lunch 17 · Backup and Disaster Recovery — Interactive demo",
+    "kicker": "Lunch 17 · Backup and Disaster Recovery · Interactive demo",
+    "title": "RPO, RTO, protected backups and a second region",
+    "lede": "Put Nusantara Retail&#x27;s worst Tuesday on a timeline, watch an attacker try to delete the backups, then fail the storefront over to Southeast Asia with Azure Site Recovery. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Backup and disaster recovery for Nusantara Retail",
+    "svgDesc": "Scene one: a timeline with a nightly backup, a ransomware attack and the recovery, showing the RPO and the RTO, then a backup every four hours. Scene two: an attacker deletes backups in a Recovery Services vault; soft delete keeps them, a Resource Guard blocks the next attempt and the file is restored. Scene three: Site Recovery replicates the storefront from Indonesia Central to Southeast Asia, runs a test failover and fails over during a regional outage."
+  },
+  "steps": [
+    {
+      "title": "One backup a night",
+      "text": "Nusantara Retail's orders server is protected by Azure Backup with DefaultPolicy: one backup a day at 22:00, each kept for 30 days. Monday night's backup succeeded, so a recovery point exists. From that moment on, every new order lives only on the server itself, until the next backup runs.",
+      "set": {
+        "t-a-title": "Orders server · DefaultPolicy: one recovery point a day at 22:00",
+        "t-a1": "DefaultPolicy: one recovery point a day, kept for 30 days",
+        "t-a2": "Every order written after 22:00 exists only on the server"
+      }
+    },
+    {
+      "title": "Ransomware strikes at 15:00",
+      "text": "On Tuesday at 15:00, ransomware encrypts the server. The newest clean copy is Monday's 22:00 recovery point, so everything since then is lost: 17 hours of orders. That gap is the recovery point objective in action. A nightly backup means accepting up to 24 hours of lost data. Can the business live with that?",
+      "set": {
+        "t-a1": "Data lost = the time since the last recovery point: the RPO",
+        "t-a2": "17 hours of orders gone · the target allowed up to 24 hours"
+      }
+    },
+    {
+      "title": "Back online four hours later",
+      "text": "Recovery isn't instant. Someone has to notice the attack, decide to restore, restore the VM from the recovery point, then check that the shop works. Here that takes until 19:00: four hours offline, which is the recovery time objective. Teams usually plan only the restore, but noticing and deciding often take longest.",
+      "set": {
+        "t-a1": "Downtime = notice + decide + restore + check: the RTO",
+        "t-a2": "4 hours offline, from 15:00 to 19:00"
+      }
+    },
+    {
+      "title": "Back up more often",
+      "text": "If 17 hours of orders is too much, back up more often. An Enhanced policy can take a recovery point every four hours, so the same attack at 15:00 loses about one hour of orders. The RTO doesn't change, though: restoring still takes hours. A much shorter RTO needs a standby copy, which comes at the end.",
+      "set": {
+        "t-a-title": "Orders server · Enhanced policy: a recovery point every 4 hours",
+        "t-a1": "Enhanced policy: a recovery point every 4 hours",
+        "t-a2": "RPO about 1 hour · RTO still about 4 hours"
+      }
+    },
+    {
+      "title": "The attacker targets the backups",
+      "text": "Modern ransomware goes after the backups first. With a stolen administrator password, the attacker opens the Recovery Services vault and deletes the backup data of the orders server, hoping to leave Nusantara Retail with no way back. Without protection, those recovery points would be gone in seconds.",
+      "set": {
+        "t-vm2": "orders.csv still on disk",
+        "t-b1": "Attacker: \"delete backup data\" for vm-orders",
+        "t-b2": "Without protection, every recovery point would be gone in seconds"
+      }
+    },
+    {
+      "title": "Soft delete keeps them",
+      "text": "The delete doesn't destroy anything. The recovery points move into a soft-deleted state and stay there for 14 days by default, at no extra cost. Under secure by default, soft delete can't be switched off on a Recovery Services vault, so even an administrator can't make the deletion permanent before the time runs out.",
+      "set": {
+        "t-b1": "Soft delete: kept 14 days (up to 180) · the first 14 days cost nothing",
+        "t-b2": "Secure by default: soft delete can't be switched off"
+      }
+    },
+    {
+      "title": "Two more locks",
+      "text": "The attacker now tries to stop protection and shorten retention. Multi-user authorization sends the request to a Resource Guard owned by the security team, who never approved it, so the operation fails. An immutable vault would also refuse to delete or shorten recovery points early. One stolen account is no longer enough.",
+      "set": {
+        "t-b1": "Multi-user authorization: critical operations need Resource Guard approval",
+        "t-b2": "Immutable vault: no early deletion and no shorter retention"
+      }
+    },
+    {
+      "title": "Undelete, then restore",
+      "text": "Pak Budi undeletes the items within the 14 days, resumes protection and restores the orders file from Monday's recovery point. That's exactly the drill you'll run in Lab 17. The lesson: a backup is only as good as its protection, and a restore is proven only once someone has actually done it.",
+      "set": {
+        "t-vm2": "orders.csv restored",
+        "t-b1": "Undelete, resume protection, then restore the file",
+        "t-b2": "Lab 17 runs exactly this drill"
+      }
+    },
+    {
+      "title": "A standby copy in Singapore",
+      "text": "Backups answer 'give me yesterday's data'. For a one-hour RTO, the storefront needs a standby copy. Indonesia Central has no paired region, so Nusantara Retail chooses Southeast Asia itself, once legal approves the data transfer. Site Recovery's Mobility service sends every disk write through a cache storage account to replica disks in Singapore.",
+      "set": {
+        "t-c1": "Indonesia Central has no paired region: you choose the target",
+        "t-c2": "Southeast Asia: close, three zones, broad services · check data residency first"
+      }
+    },
+    {
+      "title": "Recovery points every five minutes",
+      "text": "Site Recovery turns the replicated writes into crash-consistent recovery points every five minutes and keeps them for one day by default. That's an RPO of minutes, far better than a nightly backup. The replica VMs don't run yet, so Nusantara Retail pays for replication and disks, not for idle compute.",
+      "set": {
+        "t-c1": "Crash-consistent recovery points every 5 minutes, kept 1 day by default",
+        "t-c2": "You pay for replication and disks · the replica VMs don't run yet"
+      }
+    },
+    {
+      "title": "Rehearse with a test failover",
+      "text": "Twice a year, Nusantara Retail rehearses. A test failover boots copies of the VMs from a recovery point into an isolated virtual network in Southeast Asia, while production and replication carry on untouched. The team checks that the shop starts, times the whole exercise against the RTO, then cleans up the test.",
+      "set": {
+        "t-c1": "Test failover: an isolated VNet, production untouched",
+        "t-c2": "Time it: the measured RTO replaces the guess"
+      }
+    },
+    {
+      "title": "The primary region goes dark",
+      "text": "Then a region-wide outage hits Indonesia Central, and every zone there is affected. The team runs a failover: Site Recovery starts the VMs in Southeast Asia from the latest recovery point, minutes behind production. DNS and other dependencies switch over by runbook. Later they re-protect in the reverse direction and fail back home.",
+      "set": {
+        "t-c1": "Failover: VMs start from the latest recovery point",
+        "t-c2": "Then re-protect, and fail back once the primary is healthy"
+      }
+    },
+    {
+      "title": "Recap and your lab",
+      "text": "Two numbers and two tools. RPO is the data you can afford to lose and RTO is the time you can afford to be down; set both per system. Azure Backup, guarded by soft delete, immutability and MUA, gives you a long memory, and Site Recovery a fast standby. Without a region pair, you choose the second region yourself.",
+      "tip": "In Lab 17 you'll back up a VM, lose a file on purpose, restore it from a recovery point, and get back backups an attacker deleted.",
+      "set": {
+        "t-c1": "RPO and RTO per system · Backup for history · Site Recovery for speed",
+        "t-c2": "No region pair? Choose the second region yourself, and test it"
+      }
+    }
+  ],
+  "svg": [
+    "Orders server · DefaultPolicy: one recovery point a day at 22:00",
+    "Mon 22:00",
+    "Tue 15:00",
+    "Tue 19:00",
+    "Last good backup",
+    "Mon 22:00 · recovery point",
+    "Ransomware strikes",
+    "Tue 15:00 · files encrypted",
+    "Storefront back",
+    "Tue 19:00 · restored",
+    "RPO",
+    "17 hours of orders exist in no backup",
+    "RTO",
+    "4 hours offline",
+    "RPO now about 1 hour",
+    "DefaultPolicy: one recovery point a day, kept for 30 days",
+    "Every order written after 22:00 exists only on the server",
+    "Recovery Services vault · rsv-nusa",
+    "No active recovery points left",
+    "recovery point",
+    "Sun 22:00",
+    "Sat 22:00",
+    "Soft-deleted · kept 14 days · undelete possible",
+    "soft-deleted",
+    "Attacker",
+    "stolen admin password",
+    "Resource Guard",
+    "security team approves",
+    "vm-orders",
+    "orders.csv still on disk",
+    "Attacker: \"delete backup data\" for vm-orders",
+    "Without protection, every recovery point would be gone in seconds",
+    "Indonesia Central · primary",
+    "Southeast Asia · DR target",
+    "continuous replication",
+    "Storefront VMs",
+    "Mobility service",
+    "Cache storage",
+    "every write, first",
+    "Replica disks",
+    "recovery point every 5 min",
+    "Test failover",
+    "isolated VNet",
+    "Failover VMs",
+    "start here",
+    "Indonesia Central has no paired region: you choose the target",
+    "Southeast Asia: close, three zones, broad services · check data residency first"
+  ]
+}

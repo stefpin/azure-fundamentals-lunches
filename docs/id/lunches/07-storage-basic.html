@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 07 · Flashdisk yang Pulang Tiap Jumat — Makan Siang 07: Penyimpanan (Dasar) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 07 · Penyimpanan (Dasar). Empat puluh ribu foto dan faktur sepuluh tahun tersimpan di satu disk di sebelah pantry. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/07-storage-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/07-storage-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/07-storage-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/07-storage-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 07 · Flashdisk yang Pulang Tiap Jumat — Makan Siang 07: Penyimpanan (Dasar)">
+<meta property="og:description" content="Makan Siang 07 · Penyimpanan (Dasar). Empat puluh ribu foto dan faktur sepuluh tahun tersimpan di satu disk di sebelah pantry. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/07-storage-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="07" style="--c:#e2482f">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/07-storage-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 07</span> Season 1 · 🏗️ Bagian 2 · Infrastruktur inti</div>
+      <h1>Flashdisk yang Pulang Tiap Jumat</h1>
+      <div class="lunch-title">Makan Siang 07 · Penyimpanan (Dasar)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 45 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="03-global-infrastructure.html" title="Toko Kita Tinggal di Mana?">↩ 03</a><a class="chip" href="05-identity-access-basic.html" title="Kasih Saja Password Saya">↩ 05</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 06 · Kabur dari Pantry, toko online berjalan di VM Azure pertamanya — dan berhenti membayar compute saat VM itu di-deallocate.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-1"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, cemas"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 23% siap</b>Setelah episode ini Anda bisa menjawab: “Hitungan menit untuk membangun ulang server — dan file kita tersimpan paling sedikit tiga kali.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-storage-account-satu-nama-empat-layanan">Storage account: satu nama, empat layanan</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-redundansi-berapa-salinan-dan-di-mana">Redundansi: berapa salinan, dan di mana</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-access-tier-blob-membayar-untuk-menyimpan-atau-membayar-untuk-mengakses">Access tier blob: membayar untuk menyimpan atau membayar untuk mengakses</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-siapa-yang-boleh-masuk-pilihan-otorisasi">Siapa yang boleh masuk: pilihan otorisasi</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-memindahkan-data-masuk-dan-keluar">Memindahkan data masuk dan keluar</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-bagaimana-semuanya-menyatu-untuk-nusantara-retail">Bagaimana semuanya menyatu untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/07-storage-basic.html">🔬 Buka Lab 07</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> apa itu storage account (<em>akun penyimpanan</em>), empat layanan data apa saja yang ditawarkannya, dan jenis account mana yang cocok untuk sebuah beban kerja.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membandingkan</strong> LRS, ZRS, GRS, dan GZRS (beserta varian read-access-nya) berdasarkan kegagalan yang sanggup dilewati masing-masing.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> access tier (<em>tingkatan penyimpanan</em>) untuk blob — hot, cool, cold, atau archive — serta menjelaskan masa simpan minimum dan rehidrasi (rehydration).</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memutuskan</strong> cara orang dan aplikasi masuk: Microsoft Entra ID (<em>ID Microsoft Entra</em>) dengan data role, shared key, shared access signature, atau (jarang sekali) akses anonim.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menentukan</strong> alat yang tepat untuk memindahkan data: Storage browser, Azure Storage Explorer, AzCopy, Azure File Sync, atau Azure Data Box.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 07</span>
+        <div class="story-body"><p>Dewi membuka laporan disk server toko online dan langsung meringis. Empat puluh ribu foto produk, PDF faktur selama
+tujuh tahun, dan satu folder daftar harga untuk toko-toko cabang, semuanya tinggal di satu disk fisik yang sama, di
+ruangan sebelah pantry. Cadangan (backup) versi Pak Budi adalah sebuah flashdisk USB yang ikut pulang bersamanya setiap
+Jumat sore — itu pun kalau beliau ingat.</p>
+<p>Tim keuangan menambah satu bumbu cerita: aturan pajak mewajibkan faktur disimpan selama sepuluh tahun, padahal hampir
+tidak ada yang membuka faktur lagi setelah bulan pertama. Sementara itu, foto produk diunduh ribuan kali sehari, dan
+setiap kepala toko ingin daftar harga minggu ini tersedia di sebuah drive bersama.</p>
+<p>Ibu Sari lalu melontarkan pertanyaan yang sejak tadi dihindari semua orang: <em>&quot;Kalau ruangan itu kebanjiran, apakah foto
+dan faktur kita ikut hilang?&quot;</em></p>
+<p>Pertanyaan hari ini: <strong>di mana Nusantara Retail sebaiknya menyimpan file-filenya supaya disk yang rusak, gedung yang
+kebanjiran, bahkan bencana regional sekalipun tidak membuatnya hilang — tanpa membayar harga premium
+untuk faktur yang tidak pernah dibaca?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-storage-account-satu-nama-empat-layanan" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Storage account: satu nama, empat layanan</h3><div class="prose"><p><strong>Storage account</strong> adalah resource (<em>sumber daya</em>) Azure yang menampung objek-objek data Anda. Ia
+memberi Anda sebuah namespace — ruang nama — yang unik di seluruh dunia: nama account menjadi bagian dari setiap URL,
+misalnya <code>https://stnusaprod01.blob.core.windows.net</code>. Itulah sebabnya aturan penamaannya ketat: 3 sampai 24 karakter,
+hanya huruf kecil dan angka, dan tidak boleh ada storage account lain di Azure yang sudah memakainya. Ibaratnya nama domain
+website: kalau nama yang Anda incar sudah diambil orang lain, Anda harus mencari nama lain. Seperti resource lainnya,
+account ini berada di satu region (<em>wilayah</em>) dan satu resource group (<em>grup sumber daya</em>), dan dikelola oleh Azure
+Resource Manager (Makan Siang 04).</p>
+<p>Satu account menyediakan empat layanan data, masing-masing dengan endpoint (alamat akses) sendiri:</p>
+<ul>
+<li><strong>Blob Storage</strong> menyimpan objek — gambar, PDF, video, cadangan, log — yang di Azure disebut <em>blob</em> (dari <em>binary
+large object</em>, objek biner berukuran besar), di dalam <strong>container</strong>. Container adalah wadah yang datar, tanpa folder
+sungguhan; nama seperti <code>2026/10/INV-0042.pdf</code> hanya <em>terlihat</em> seperti jalur folder. Blob ada tiga jenis:
+<strong>block blob</strong> untuk file biasa (hampir semua yang Anda unggah), <strong>append blob</strong> yang hanya bisa bertambah di bagian
+akhir (ideal untuk log), dan <strong>page blob</strong> yang memungkinkan baca-tulis acak di posisi mana pun (format di balik
+hard disk virtual).</li>
+<li><strong>Azure Files</strong> menyediakan file share terkelola yang bisa di-mount (dipasang sebagai drive) oleh komputer melalui
+<strong>SMB</strong> (Server Message Block — untuk Windows, Linux, dan macOS) atau <strong>NFS</strong> (Network File System — untuk Linux,
+pada premium share berbasis SSD). Layanan ini menggantikan &quot;drive S:&quot; klasik di file server kantor.</li>
+<li><strong>Queue Storage</strong> menampung pesan-pesan sederhana, masing-masing hingga 64 KiB, agar satu bagian aplikasi bisa
+mengoper pekerjaan ke bagian lain — misalnya &quot;pesanan baru 1042 siap dikemas&quot; (selengkapnya di Makan Siang 14).
+Mirip kertas pesanan yang ditancapkan berderet di dapur warung: kasir menaruh, juru masak mengambil satu per satu.</li>
+<li><strong>Table Storage</strong> adalah penyimpanan key-attribute tanpa skema (schemaless) untuk catatan kecil yang terstruktur,
+misalnya jam buka toko. &quot;Tanpa skema&quot; artinya setiap baris boleh punya kolom yang berbeda-beda.</li>
+</ul>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  acct[&quot;Storage account: stnusaprod01&lt;br/&gt;Standard general-purpose v2&quot;]
+  acct --&gt; blob[&quot;Blob Storage&lt;br/&gt;…blob.core.windows.net&quot;]
+  acct --&gt; files[&quot;Azure Files&lt;br/&gt;…file.core.windows.net&quot;]
+  acct --&gt; queue[&quot;Queue Storage&lt;br/&gt;…queue.core.windows.net&quot;]
+  acct --&gt; table[&quot;Table Storage&lt;br/&gt;…table.core.windows.net&quot;]
+  blob --&gt; c1[&quot;Container: products&quot;] --&gt; b1[&quot;Blob: batik-shirt.jpg&quot;]
+  blob --&gt; c2[&quot;Container: invoices&quot;] --&gt; b2[&quot;Blob: 2026/10/INV-0042.pdf&quot;]
+  files --&gt; s1[&quot;File share: store-docs&quot;] --&gt; f1[&quot;price-list.xlsx&quot;]
+  queue --&gt; q1[&quot;Queue: new-orders&quot;]
+  table --&gt; t1[&quot;Table: storehours&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Saat membuat account, Anda memilih <strong>jenis</strong> (type) dan <strong>performance tier</strong>-nya. Account Standard berjalan di atas
+hard disk dan harganya dihitung untuk kapasitas; account premium berjalan di atas SSD dan harganya dihitung untuk
+kecepatan. Jenis account tidak bisa diubah belakangan — Anda harus membuat account baru lalu menyalin datanya ke sana.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Jenis account</th>
+<th>Layanan</th>
+<th>Opsi redundansi</th>
+<th>Cocok untuk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Standard general-purpose v2</td>
+<td>Blob, Files, Queue, Table</td>
+<td>LRS, ZRS, GRS, RA-GRS, GZRS, RA-GZRS</td>
+<td>Hampir semua kebutuhan — pilihan default</td>
+</tr>
+<tr>
+<td>Premium block blobs</td>
+<td>Block blob dan append blob</td>
+<td>LRS, ZRS</td>
+<td>Banyak objek kecil, jumlah transaksi tinggi, latensi rendah</td>
+</tr>
+<tr>
+<td>Premium file shares</td>
+<td>Azure Files (SMB dan NFS)</td>
+<td>LRS, ZRS</td>
+<td>File share perusahaan yang cepat, share NFS</td>
+</tr>
+<tr>
+<td>Premium page blobs</td>
+<td>Hanya page blob</td>
+<td>LRS, ZRS</td>
+<td>Beban kerja khusus bergaya disk</td>
+</tr>
+</tbody>
+</table></div>
+<p>Jenis account lama — general-purpose v1 dan account Blob Storage versi legacy — sedang dipensiunkan; upgrade ke
+general-purpose v2 alih-alih membuat yang baru. Managed disk untuk virtual machine (<em>komputer virtual</em>) dari Makan Siang
+06 juga memakai Azure Storage di balik layar, tetapi Anda mengelolanya sebagai resource disk, bukan lewat storage account.</p>
+</div></article><article class="scene-card" id="2-redundansi-berapa-salinan-dan-di-mana" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Redundansi: berapa salinan, dan di mana</h3><div class="prose"><p>Azure Storage selalu menyimpan minimal tiga salinan data Anda. Yang Anda pilih adalah <em>di mana</em> salinan-salinan itu
+tinggal, dan pilihan itulah yang menentukan kegagalan mana yang bisa Anda hadapi dengan santai. Redundansi (<em>opsi
+redundansi</em>) adalah pengaturan untuk seluruh account, jadi data dengan kebutuhan berbeda sering ditempatkan di account
+yang berbeda pula.</p>
+<p>Bayangkan Anda menyimpan tiga lembar fotokopi ijazah. Kalau ketiganya ada di satu laci, Anda aman dari satu lembar yang
+sobek, tetapi tidak dari banjir yang merendam rumah. Kalau satu lembar disimpan di rumah, satu di kantor, dan satu di
+rumah orang tua — masih satu kota — banjir di satu tempat tidak menghabisi semuanya. Dan kalau satu salinan lagi
+dititipkan ke saudara di kota lain, bencana besar di kota Anda pun tidak membuat ijazah itu lenyap. Kira-kira begitulah
+perbedaan LRS, ZRS, dan GRS/GZRS:</p>
+<ul>
+<li><strong>Locally redundant storage (LRS)</strong> menyimpan tiga salinan di dalam satu pusat data (datacenter). LRS
+melindungi dari drive, server, atau rak yang rusak, dan Microsoft merancangnya untuk durabilitas — ketahanan data
+agar tidak hilang — minimal 99,999999999% (sebelas angka sembilan) per tahun. Namun, kebakaran atau banjir di gedung
+itu bisa membuat semua salinan tidak dapat diakses — atau bahkan hilang. Ini opsi termurah.</li>
+<li><strong>Zone-redundant storage (ZRS)</strong> menulis setiap perubahan secara sinkron — serentak, sebelum dinyatakan berhasil — ke
+tiga (atau lebih) availability zone (<em>zona ketersediaan</em>) di region tersebut (Makan Siang 03). Sebuah penulisan baru
+dianggap berhasil setelah semua zone yang tersedia menerimanya. Kalau satu zone padam total, proses baca dan tulis
+tetap berjalan dari zone lain. Durabilitasnya: minimal dua belas angka sembilan.</li>
+<li><strong>Geo-redundant storage (GRS)</strong> memakai LRS di region primer dan menyalin data secara <em>asinkron</em> — menyusul beberapa
+saat kemudian — ke region sekunder pasangannya (<em>pasangan wilayah</em>), tempat data disimpan lagi dengan LRS.
+<strong>Geo-zone-redundant storage (GZRS)</strong> melakukan hal yang sama, tetapi dengan ZRS di region primer. Keduanya dirancang
+untuk durabilitas minimal enam belas angka sembilan.</li>
+</ul>
+<p>Dalam kondisi normal, salinan sekunder tidak bisa dibaca. Jika region primer tidak tersedia, Anda (atau, dalam kasus
+ekstrem, Microsoft) melakukan <strong>failover</strong>: DNS diperbarui sehingga region sekunder menjadi primer yang baru. Karena
+replikasinya asinkron, data yang paling akhir ditulis mungkin belum sampai; <strong>Last Sync Time</strong> pada account memberi tahu sampai
+titik waktu mana salinan sekunder sudah lengkap. Varian read-access, <strong>RA-GRS</strong> dan <strong>RA-GZRS</strong>, memungkinkan aplikasi
+membaca dari endpoint <code>-secondary</code> kapan saja — berguna kalau toko harus tetap menampilkan produk selama gangguan yang
+melanda satu region.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Opsi</th>
+<th>Tempat salinan berada</th>
+<th>Disk atau server rusak</th>
+<th>Pusat data rusak</th>
+<th>Zone rusak</th>
+<th>Region rusak</th>
+<th>Durabilitas per tahun</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LRS</td>
+<td>3 di satu pusat data</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+<td>❌</td>
+<td>≥ 11 angka sembilan</td>
+</tr>
+<tr>
+<td>ZRS</td>
+<td>3 tersebar di beberapa zone</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+<td>≥ 12 angka sembilan</td>
+</tr>
+<tr>
+<td>GRS / RA-GRS</td>
+<td>LRS + LRS di region pasangan</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>⚠️</td>
+<td>⚠️</td>
+<td>≥ 16 angka sembilan</td>
+</tr>
+<tr>
+<td>GZRS / RA-GZRS</td>
+<td>ZRS + LRS di region pasangan</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+<td>⚠️</td>
+<td>≥ 16 angka sembilan</td>
+</tr>
+</tbody>
+</table></div>
+<p>✅ data tetap tersedia · ❌ data tidak tersedia, mungkin hilang · ⚠️ data aman di region sekunder, tetapi penulisan baru
+bisa dilanjutkan hanya setelah failover; dengan RA-GRS atau RA-GZRS, aplikasi bisa langsung membaca salinan sekunder.</p>
+<p>Ada satu jebakan untuk Nusantara Retail. Geo-redundancy bergantung pada <strong>region pasangan</strong> (paired region), sedangkan
+Indonesia Central (Jakarta) tidak punya pasangan. Saat tulisan ini dibuat, pilihan yang tersisa di sana hanya LRS dan
+ZRS; kalau Anda butuh salinan di luar region, Anda harus mereplikasi datanya sendiri — misalnya dengan object
+replication atau backup ke Southeast Asia (Makan Siang 17 dan 24). Selalu periksa opsi apa saja yang ditawarkan region
+Anda.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  start([Sekumpulan data baru]) --&gt; q1{Bisakah dibuat ulang&lt;br/&gt;dengan murah jika hilang?}
+  q1 -- Ya --&gt; lrs[&quot;LRS&lt;br/&gt;3 salinan, 1 pusat data&quot;]
+  q1 -- Tidak --&gt; q2{Harus selamat dari&lt;br/&gt;bencana satu region?}
+  q2 -- Tidak --&gt; zrs[&quot;ZRS&lt;br/&gt;3 salinan di beberapa zone&quot;]
+  q2 -- Ya --&gt; q3{Apakah region-nya&lt;br/&gt;punya pasangan?}
+  q3 -- Tidak --&gt; own[&quot;ZRS plus salinan sendiri&lt;br/&gt;di region kedua&quot;]
+  q3 -- Ya --&gt; q4{Haruskah aplikasi membaca&lt;br/&gt;data sebelum failover?}
+  q4 -- Tidak --&gt; gzrs[&quot;GZRS (atau GRS)&quot;]
+  q4 -- Ya --&gt; ragzrs[&quot;RA-GZRS (atau RA-GRS)&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span><strong>Redundansi bukan cadangan (backup).</strong> Setiap salinan mencerminkan kondisi terkini yang sama: kalau seseorang
+menghapus atau menimpa sebuah faktur, ketiga (atau keenam) salinannya ikut berubah dalam sekejap. Perlindungan dari
+kesalahan manusia dan ransomware datang dari soft delete, versioning, immutability, dan backup — inti dari Makan
+Siang 24 dan Makan Siang 17.</p>
+</aside>
+</div></article><article class="scene-card" id="3-access-tier-blob-membayar-untuk-menyimpan-atau-membayar-untuk-mengakses" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Access tier blob: membayar untuk menyimpan atau membayar untuk mengakses</h3><div class="prose"><p>Foto produk dibaca ribuan kali sehari; faktur tahun 2019 mungkin tidak akan pernah dibuka lagi. Mengenakan tarif yang
+sama untuk keduanya berarti membuang uang, karena itu block blob punya <strong>access tier</strong>.
+Bayangkan jungkat-jungkit: ketika harga <em>menyimpan</em> satu gigabyte turun, harga <em>membacanya</em> naik.</p>
+<p>Ibaratnya cara sebuah toko menyimpan barang. Barang laris dipajang di rak depan: gampang diambil, tetapi tempatnya
+mahal. Stok musim lalu masuk gudang belakang, lebih murah tetapi perlu jalan sebentar. Arsip lama dikirim ke gudang
+sewaan di luar kota: sewanya murah sekali, tetapi setiap kali butuh satu dus, Anda harus memesan truk dan menunggu
+berjam-jam. Keempat tier Azure bekerja dengan logika yang sama:</p>
+<ul>
+<li><strong>Hot</strong> — harga penyimpanan tertinggi dan harga akses terendah. Blob baru masuk ke sini kecuali Anda memilih lain.</li>
+<li><strong>Cool</strong> — penyimpanan lebih murah, pembacaan lebih mahal, untuk data yang Anda simpan minimal <strong>30 hari</strong>.</li>
+<li><strong>Cold</strong> — lebih murah lagi, untuk data yang Anda simpan minimal <strong>90 hari</strong> dan jarang dibaca, tetapi tetap ingin
+bisa diambil seketika.</li>
+<li><strong>Archive</strong> — penyimpanan termurah, tetapi blob-nya <strong>offline</strong>: Anda bisa melihatnya di daftar dan membaca
+metadatanya, tetapi tidak isinya. Simpan minimal <strong>180 hari</strong>.</li>
+</ul>
+<p>Masa minimum itu ditegakkan lewat biaya <strong>early deletion</strong> (penghapusan dini). Hapus, timpa, atau pindahkan blob
+archive setelah 45 hari, dan Anda tetap membayar sisa 135 harinya, dihitung secara prorata. Persis seperti kos-kosan
+dengan kontrak minimal enam bulan: pindah setelah satu setengah bulan pun, sisa sewanya tetap ditagih. Hot, cool, dan
+cold adalah tier online dengan akses dalam hitungan milidetik; cool, cold, dan archive juga mengenakan biaya per
+gigabyte yang Anda baca.</p>
+<p>Untuk membaca blob archive, Anda harus melakukan <strong>rehydrate</strong> (rehidrasi) — &quot;membangunkan&quot; blob itu kembali ke tier
+online — entah dengan mengubah tier-nya atau dengan menyalinnya ke blob baru (menyalin menghindari biaya early
+deletion, karena blob asli di archive tetap di tempatnya). Prioritas standard bisa memakan waktu hingga 15 jam;
+prioritas high bisa selesai dalam waktu kurang dari satu jam untuk objek di bawah 10 GB, dengan harga lebih mahal dan
+tanpa jaminan. Satu batasan lagi: tier archive hanya tersedia di account LRS, GRS, dan RA-GRS — tidak di ZRS, GZRS,
+atau RA-GZRS.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Online?</th>
+<th>Masa simpan minimum</th>
+<th>Harga penyimpanan</th>
+<th>Harga akses</th>
+<th>Contoh di Nusantara</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hot</td>
+<td>Ya, milidetik</td>
+<td>—</td>
+<td>Tertinggi</td>
+<td>Terendah</td>
+<td>Foto produk saat ini</td>
+</tr>
+<tr>
+<td>Cool</td>
+<td>Ya, milidetik</td>
+<td>30 hari</td>
+<td>Lebih rendah</td>
+<td>Lebih tinggi</td>
+<td>Foto musim lalu</td>
+</tr>
+<tr>
+<td>Cold</td>
+<td>Ya, milidetik</td>
+<td>90 hari</td>
+<td>Lebih rendah lagi</td>
+<td>Lebih tinggi lagi</td>
+<td>Faktur tahun lalu</td>
+</tr>
+<tr>
+<td>Archive</td>
+<td>Tidak — rehydrate dulu (berjam-jam)</td>
+<td>180 hari</td>
+<td>Terendah</td>
+<td>Tertinggi</td>
+<td>Faktur yang lebih tua dari setahun</td>
+</tr>
+</tbody>
+</table></div>
+<p>Tier diatur per blob, saat mengunggah atau sesudahnya, dan setiap account punya tier default (hot, cool, atau cold —
+tidak pernah archive). Tier hanya berlaku untuk block blob. Memindahkan blob satu per satu secara manual jelas tidak
+praktis dalam jumlah besar, jadi Azure menawarkan dua jenis otomatisasi: aturan <strong>lifecycle management</strong> (&quot;pindahkan
+ke cool setelah 30 hari, hapus setelah sepuluh tahun&quot;), yang dibahas di Makan Siang 24, dan <strong>smart tier</strong>, yang
+mengamati pola akses lalu memindahkan blob antara hot, cool, dan cold untuk Anda. Saat tulisan ini dibuat, smart tier
+sudah generally available di region publik untuk account zone-redundant, dan fitur ini tidak pernah memakai archive.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Hitung harga sebuah tier dengan pola akses <em>Anda sendiri</em>, bukan sekadar tarif per gigabyte. Pustaka foto 10 GB yang
+dibaca sepanjang hari lebih murah di hot; 2 TB faktur yang dibaca dua kali setahun lebih cocok di cold atau archive.
+<a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">Pricing calculator</a> (<em>kalkulator harga</em>) menunjukkan kedua sisi
+jungkat-jungkit itu.</p>
+</aside>
+</div></article><article class="scene-card" id="4-siapa-yang-boleh-masuk-pilihan-otorisasi" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Siapa yang boleh masuk: pilihan otorisasi</h3><div class="prose"><p>Setiap permintaan ke data Anda harus diotorisasi — diperiksa apakah memang boleh — dan Azure Storage memberi beberapa
+cara untuk melakukannya. Ingat pembagian <strong>control plane</strong> dan <strong>data plane</strong> dari Makan Siang 04: control plane adalah
+urusan <em>mengelola</em> resource, data plane adalah urusan <em>isi</em> datanya. Ibaratnya pengelola gedung perkantoran: ia boleh
+mengatur lift, listrik, dan renovasi, tetapi tidak otomatis boleh membuka brankas para penyewa. Seorang Owner bisa
+membuat account dan mengubah pengaturannya, tetapi untuk membaca blob dengan identitas Microsoft
+Entra dibutuhkan <strong>data role</strong> — role dalam Azure RBAC (role-based access control, <em>kontrol akses berbasis peran</em>) —
+misalnya Storage Blob Data Reader, Storage Blob Data Contributor, atau Storage Blob Data Owner. Penetapan role yang
+baru bisa butuh beberapa menit sebelum berlaku.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Metode</th>
+<th>Cara membuktikan akses</th>
+<th>Cocok untuk</th>
+<th>Waspadai</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Microsoft Entra ID + Azure RBAC</td>
+<td>Token untuk user, grup, atau managed identity, dicocokkan dengan data role</td>
+<td>Orang dan aplikasi — default yang direkomendasikan</td>
+<td>Tetapkan data role, jangan hanya Owner</td>
+</tr>
+<tr>
+<td>Shared Key (account key)</td>
+<td>Salah satu dari dua key untuk seluruh account menandatangani permintaan</td>
+<td>Alat lama yang membutuhkannya</td>
+<td>Satu key membuka segalanya di account</td>
+</tr>
+<tr>
+<td>User delegation SAS</td>
+<td>Token di URL yang ditandatangani dengan key yang diperoleh lewat Entra ID</td>
+<td>Tautan berbatas waktu untuk satu blob atau container</td>
+<td>Berlaku paling lama 7 hari</td>
+</tr>
+<tr>
+<td>Service SAS atau account SAS</td>
+<td>Token di URL yang ditandatangani dengan account key</td>
+<td>Aplikasi lama (legacy)</td>
+<td>Sulit dicabut tanpa merotasi key</td>
+</tr>
+<tr>
+<td>Akses baca anonim</td>
+<td>Tanpa kredensial sama sekali</td>
+<td>Konten yang memang publik</td>
+<td>Mati secara default — biarkan tetap mati</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Shared Key</strong> patut diwaspadai: setiap account punya dua key, dan siapa pun yang memegang salah satunya bisa membaca,
+mengubah, atau menghapus segalanya. Siapa pun yang punya izin &quot;list keys&quot; — sudah termasuk dalam role Owner dan
+Contributor — bisa mengambilnya. Rotasi key secara berkala, simpan di Key Vault kalau Anda memang harus memakainya
+(Makan Siang 15), dan di Makan Siang 24 Anda akan melihat cara mematikan Shared Key.</p>
+<p><strong>Shared access signature (SAS)</strong> adalah token yang ditempelkan di ujung URL dan memberi izin tertentu (read, write,
+list…) atas resource tertentu sampai waktu kedaluwarsa. Ada tiga jenis. <strong>User delegation SAS</strong> ditandatangani dengan
+key yang Anda minta menggunakan kredensial Entra Anda, jadi tidak ada account key yang terlibat dan tautannya tidak
+bisa memberi izin melebihi hak Anda sendiri. <strong>Service SAS</strong> (satu layanan) dan <strong>account SAS</strong> (satu atau beberapa
+layanan) ditandatangani dengan account key. Siapa pun yang memegang SAS bisa memakainya, jadi buat masa berlakunya
+singkat, berikan izin sesedikit mungkin, dan selalu gunakan HTTPS.</p>
+<p>Bayangkan sebuah apartemen. Account key adalah kunci induk yang membuka semua unit, sedangkan SAS ibarat kartu akses
+tamu yang hanya membuka satu lantai dan mati tengah malam nanti. Kalau kartu tamu hilang, kerugiannya terbatas; kalau
+kunci induk yang hilang, seluruh gedung terancam.</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant D as Dewi (masuk dengan Entra ID)
+  participant S as Azure Storage
+  participant R as Rizky (kontraktor)
+  D-&gt;&gt;S: Minta user delegation key (butuh data role untuk blob)
+  S--&gt;&gt;D: Key, berlaku paling lama 7 hari
+  D-&gt;&gt;D: Tanda tangani SAS: satu faktur, hanya baca, kedaluwarsa dalam 1 jam
+  D-&gt;&gt;R: Kirim URL beserta token SAS
+  R-&gt;&gt;S: GET faktur dengan SAS
+  S--&gt;&gt;R: 200 OK — atau 403 setelah SAS kedaluwarsa
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p><strong>Akses baca anonim</strong> memungkinkan siapa saja membaca blob di sebuah container tanpa kredensial. Account baru tidak
+mengizinkannya, dan pengaturan di tingkat account mengalahkan pengaturan container mana pun. Biarkan tetap begitu,
+kecuali kontennya memang benar-benar publik.</p>
+<p>Dua pengaturan melindungi data saat berpindah di jaringan (in transit): <strong>secure transfer required</strong> (hanya HTTPS,
+aktif secara default) dan <strong>minimum TLS version</strong>, yang sebaiknya Anda setel ke TLS 1.2. TLS (Transport Layer
+Security) adalah protokol enkripsi di balik ikon gembok HTTPS di browser. Portal sudah menyetelnya secara default,
+tetapi Azure CLI membiarkan properti itu kosong kecuali Anda mengisinya, karena itu lab menyetelnya secara eksplisit.
+Data yang tersimpan (at rest) selalu dienkripsi dengan key yang dikelola Microsoft. Secara default, public endpoint
+(<em>titik akhir publik</em>) account menerima koneksi dari jaringan mana pun — otorisasi tetap berlaku — sedangkan firewall
+dan private endpoint (<em>titik akhir privat</em>) dibahas di Makan Siang 24.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Perlakukan account key dan URL SAS seperti kata sandi. Jangan pernah menempelkannya ke chat, email, atau kode sumber.
+Kalau salah satunya bocor, rotasi key-nya — atau, untuk user delegation SAS, cabut (revoke) delegation key-nya — dan
+anggap datanya sudah terbaca orang lain.</p>
+</aside>
+</div></article><article class="scene-card" id="5-memindahkan-data-masuk-dan-keluar" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Memindahkan data masuk dan keluar</h3><div class="prose"><p>Memilih alat sebagian besar soal <em>berapa banyak</em> datanya, <em>seberapa sering</em> dipindahkan, dan <em>seberapa bagus jaringan
+Anda</em>.</p>
+<ul>
+<li><strong>Storage browser</strong> di Azure portal sangat pas untuk unggahan cepat, mengubah tier sebuah blob, atau membuat SAS.</li>
+<li><strong>Azure Storage Explorer</strong> adalah aplikasi desktop gratis untuk Windows, macOS, dan Linux yang bisa menjelajahi blob,
+file, queue, dan table di banyak account sekaligus. Untuk transfer, di balik layar ia memakai AzCopy.</li>
+<li><strong>AzCopy</strong> adalah alat command-line yang dibuat untuk penyalinan massal dan lewat skrip. Ia mentransfer file secara
+paralel, bisa melanjutkan pekerjaan yang gagal, dan menyalin langsung antar-account dari server ke server. AzCopy
+sudah terpasang di Azure Cloud Shell dan melakukan autentikasi dengan Entra ID (<code>azcopy login</code>, atau dengan
+&quot;meminjam&quot; sesi masuk Azure CLI) atau dengan SAS. <code>azcopy sync</code> mencerminkan (mirror) isi sebuah folder.</li>
+<li><strong>Azure CLI</strong> (<code>az storage blob upload</code>, <code>upload-batch</code>) cukup untuk segelintir file di dalam skrip.</li>
+<li><strong>Azure File Sync</strong> menjaga file server Windows on-premises (di gedung sendiri) tetap sinkron dengan sebuah file
+share Azure. Dengan <strong>cloud tiering</strong>, hanya file yang sering dipakai yang tetap disimpan di disk lokal; sisanya
+diambil dari Azure saat dibutuhkan, sehingga setiap cabang melihat file yang sama.</li>
+<li><strong>Azure Data Box</strong> mengirimkan perangkat yang tangguh dan terenkripsi ke tempat Anda ketika jaringan menjadi
+hambatannya. Microsoft merekomendasikannya untuk transfer di atas sekitar 40 TB dengan konektivitas terbatas. Saat
+tulisan ini dibuat, perangkat generasi terbaru berkapasitas 120 TB atau 525 TB, dan <strong>Data Box Disk</strong> mengirim
+hingga lima SSD 8 TB per pesanan (khusus impor). Data Box Heavy sudah dipensiunkan.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Alat</th>
+<th>Paling cocok untuk</th>
+<th>Antarmuka</th>
+<th>Contoh di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Storage browser</td>
+<td>Unggahan sekali-sekali, tier, SAS</td>
+<td>Azure portal</td>
+<td>Dewi membetulkan satu foto yang salah</td>
+</tr>
+<tr>
+<td>Storage Explorer</td>
+<td>Menjelajahi banyak account</td>
+<td>Aplikasi desktop</td>
+<td>Tim keuangan memeriksa faktur yang diarsipkan</td>
+</tr>
+<tr>
+<td>AzCopy</td>
+<td>Penyalinan massal atau terjadwal</td>
+<td>Command line</td>
+<td>Unggahan foto baru setiap malam</td>
+</tr>
+<tr>
+<td>Azure File Sync</td>
+<td>File server hibrida</td>
+<td>Agent di Windows Server</td>
+<td>Share kantor pusat disinkronkan ke Azure</td>
+</tr>
+<tr>
+<td>Keluarga Data Box</td>
+<td>Puluhan atau ratusan TB secara offline</td>
+<td>Perangkat yang dikirim</td>
+<td>Arsip kertas hasil pindaian dari Surabaya</td>
+</tr>
+</tbody>
+</table></div>
+<p>Hitungan cepat menunjukkan mengapa Data Box ada. Sepuluh terabyte lewat jalur 100 Mbps yang dipakai penuh tanpa henti
+butuh sekitar sembilan hari; lima puluh terabyte lewat 50 Mbps butuh sekitar tiga bulan. Ibaratnya pindah rumah: satu
+kardus bisa dibawa naik ojek, tetapi isi satu rumah butuh truk ekspedisi — kalau dipaksa naik motor, Anda akan
+bolak-balik berbulan-bulan. Untuk memindahkan server, aplikasi, dan database secara utuh, titik awalnya adalah Azure
+Migrate, tetapi itu cerita untuk makan siang lain.</p>
+</div></article><article class="scene-card" id="6-bagaimana-semuanya-menyatu-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Bagaimana semuanya menyatu untuk Nusantara Retail</h3><div class="prose"><p>Kembali ke ruang server Ibu Sari yang dikhawatirkan kebanjiran. Inilah desain yang Anda sketsakan untuknya, dengan
+asumsi data produksi tetap di Indonesia Central demi residensi data (data harus tetap berada di Indonesia):</p>
+<ul>
+<li><strong>Foto produk</strong> masuk ke account general-purpose v2 dengan <strong>ZRS</strong> dan tier hot. Kalau satu zone gagal, website
+tetap bisa memuat gambar. Kelak, smart tier bisa otomatis &quot;mendinginkan&quot; foto produk yang sudah tidak dijual.</li>
+<li><strong>Faktur</strong> adalah kasus yang menarik. Tim keuangan ingin biayanya murah sekaligus aman dari kebakaran pusat data.
+ZRS selamat dari kebakaran tetapi tidak bisa memakai archive; LRS bisa memakai archive tetapi hanya tinggal di satu
+gedung. Anda mengusulkan ZRS dengan tier cold, ditambah salinan hasil replikasi di Southeast Asia setelah Makan
+Siang 24 menambahkan fitur-fitur perlindungannya — dan Anda mencatat kompromi (trade-off) itu secara tertulis.</li>
+<li><strong>Daftar harga toko</strong> pindah ke sebuah share <strong>Azure Files</strong>. Pak Budi memasang Azure File Sync di server kantor
+pusat, sehingga staf tetap memakai huruf drive yang sudah biasa mereka pakai, sementara salinan induknya tinggal di
+Azure.</li>
+<li><strong>Akses</strong> memakai Entra ID di mana-mana. Aplikasi toko online mendapat managed identity dengan role Storage Blob Data
+Reader (Makan Siang 15). Ketika Rizky, sang kontraktor, butuh satu faktur, Dewi mengirim <strong>user delegation SAS</strong>
+hanya-baca yang kedaluwarsa dalam satu jam. Akses anonim tetap mati, dan minimum TLS version-nya 1.2.</li>
+<li><strong>Migrasi</strong> 3 TB foto yang sudah ada berjalan dengan AzCopy lewat jaringan kantor dalam beberapa hari. Adapun
+60 TB faktur kertas hasil pindaian dari gudang lama di Surabaya dikirim dengan Data Box.</li>
+</ul>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Tim keuangan meminta penyimpanan semurah mungkin untuk faktur sepuluh tahun, tetap di
+Indonesia, dan aman sekalipun satu pusat data terbakar. Archive membutuhkan LRS atau GRS, dan Indonesia Central tidak
+punya pasangan untuk GRS. Kombinasi redundansi, tier, dan salinan tambahan mana yang akan Anda rekomendasikan — dan
+risiko mana yang bersedia Anda terima?</p>
+</aside>
+<p>Kini Anda sudah menjawab separuh pertama pertanyaan Ibu Sari: file-file itu selamat dari disk yang mati maupun pusat
+data yang lumpuh, dan Anda membayar setiap file sesuai cara pemakaiannya. Yang belum Anda cegah adalah seseorang yang
+<em>menghapus</em> atau <em>mengenkripsi</em> file-file itu. Makan siang berikutnya, Makan Siang 08, membangun jaringan tempat
+layanan-layanan Anda akan tinggal.</p>
+<p>➡️ <strong>Siap untuk yang lebih dalam?</strong> <a href="24-storage-advanced.html">Makan Siang 24 · Penyimpanan (Lanjutan)</a>
+menambahkan soft delete, versioning, immutability, aturan lifecycle, private endpoint, dan failover.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Di mana salinan tinggal, dan di rak mana file disimpan?</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/07-storage-basic.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/07-storage-basic.html?lang=id" title="Demo interaktif: Di mana salinan tinggal, dan di rak mana file disimpan?" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/07-storage-basic/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Kegagalan mana yang sanggup dilewati setiap opsi redundansi: satu disk, satu pusat data, satu zone, satu region utuh.</li>
+<li>Mengapa data geo-redundant baru tersedia <em>setelah</em> failover — kecuali Anda memilih varian read-access.</li>
+<li>Bagaimana jungkat-jungkit miring dari hot ke archive: penyimpanan makin murah, sementara setiap pembacaan makin mahal
+dan makin lambat.</li>
+<li>Berapa lama rehidrasi dari tier archive bisa berlangsung, dan dua cara melakukannya.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Foto produk untuk toko online harus tetap tersedia kalau satu availability zone di Indonesia Central gagal. Anggaran
+jadi pertimbangan, dan region itu tidak punya region pasangan. Opsi redundansi mana yang Anda pilih?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>ZRS.</strong> <em>Alasannya:</em> ZRS menyimpan tiga salinan sinkron di tiga zone, sehingga baca dan tulis tetap berjalan saat
+satu zone gagal; lagi pula, opsi geo-redundant memang tidak tersedia tanpa region pasangan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Seorang auditor membutuhkan faktur tahun 2019 yang tersimpan di tier archive — hari ini juga. Apa yang Anda lakukan,
+dan apa yang perlu Anda sampaikan kepada auditor soal waktunya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Lakukan rehydrate dengan <strong>prioritas high</strong>, idealnya dengan <strong>menyalinnya</strong> ke blob baru di tier hot. Sampaikan
+bahwa prioritas high bisa selesai dalam waktu kurang dari satu jam untuk blob di bawah 10 GB, tetapi tidak dijamin.
+<em>Alasannya:</em> blob archive bersifat offline sampai direhidrasi; menyalin juga menghindari biaya early deletion.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Rizky, sang kontraktor, perlu mengunduh satu faktur sore ini. Dewi berpikir untuk mengirimkan account key kepadanya.
+Apa yang sebaiknya ia lakukan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Buat <strong>user delegation SAS</strong> dengan izin read untuk satu blob itu saja dan masa berlaku yang singkat. <em>Alasannya:</em>
+SAS ini ditandatangani dengan kredensial Entra, bukan account key; cakupan dan waktunya terbatas, dan bisa dicabut,
+sedangkan account key akan membuka seluruh account.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Dewi adalah Owner dari subscription (<em>langganan</em>), tetapi <code>az storage blob list --auth-mode login</code> gagal dengan
+error izin. Mengapa?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Owner adalah role <strong>control plane</strong>. <em>Alasannya:</em> membaca data blob dengan identitas Entra membutuhkan <strong>data role</strong>
+seperti Storage Blob Data Reader atau Contributor — dan penetapan role yang baru bisa butuh beberapa menit sebelum
+berlaku.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Sebuah gudang di Surabaya menyimpan 50 TB dokumen hasil pindaian di NAS (network-attached storage) dan hanya punya
+jalur internet 50 Mbps. Apa cara paling praktis untuk memasukkan data itu ke Azure?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Pesan <strong>Azure Data Box</strong>, salin datanya secara lokal, lalu kirim kembali perangkatnya; setelah itu gunakan AzCopy
+atau alat serupa untuk file yang berubah sesudahnya. <em>Alasannya:</em> lewat 50 Mbps, unggahannya akan makan waktu
+kira-kira tiga bulan, dan Data Box memang dirancang untuk puluhan terabyte dengan bandwidth terbatas.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Storage account adalah namespace yang unik di seluruh dunia untuk data Blob, Files, Queue, dan Table; pilih Standard general-purpose v2 kecuali Anda butuh performa SSD.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Redundansi menentukan kegagalan mana yang bisa Anda lewati: LRS (perangkat keras), ZRS (satu zone), GRS dan GZRS (satu region, setelah failover — atau langsung untuk pembacaan dengan RA-). Redundansi bukan backup.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Access tier menukar harga penyimpanan dengan harga akses; cool, cold, dan archive punya masa minimum 30, 90, dan 180 hari, dan archive butuh rehidrasi berjam-jam.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Utamakan Microsoft Entra ID dengan data role; kalau terpaksa berbagi tautan, gunakan user delegation SAS yang berumur pendek, dan biarkan akses anonim tetap mati.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Pilih alat pemindahan data berdasarkan ukuran dan bandwidth: portal atau Storage Explorer untuk pekerjaan kecil, AzCopy untuk skrip dan data massal, Azure File Sync untuk file server hibrida, Data Box untuk puluhan terabyte.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Tiga salinan dari file yang terhapus tetap saja nol file.</strong> Setiap kali meninjau desain storage, saya mengajukan dua
+pertanyaan untuk setiap account. Pertama: <em>kegagalan apa yang harus bisa dilewati data ini?</em> Jawaban itulah yang
+memilihkan hurufnya — LRS, ZRS, atau GZRS — bukan kebiasaan, apalagi nilai default Azure CLI yang diam-diam memberi
+Anda RA-GRS. Kedua: <em>siapa yang bisa menghapus atau menimpa data ini tanpa sengaja, dan bagaimana kita akan tahu?</em>
+Redundansi menyalin kekeliruan sama setianya dengan menyalin data, jadi soft delete dan versioning masuk daftar
+periksa sebelum go-live, bukan setelah musibah pertama. Satu lagi: redundansi, key, dan aturan jaringan berlaku untuk
+seluruh account. Karena itu saya mengelompokkan data menurut kebutuhannya, bukan menurut tim pemiliknya — foto produk
+dan faktur sepuluh tahun jarang akur kalau disuruh tinggal serumah.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>07</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Menyimpan gambar produk dan faktur</h3>
+          <div class="prose"><p>Di waktu luang, Anda akan membangun account general-purpose v2 yang aman (TLS 1.2, tanpa akses anonim), memberi diri
+Anda sendiri sebuah data role, mengunggah faktur dengan Azure CLI dan gambar produk dengan AzCopy, memindahkan satu
+blob ke cool dan satu ke archive, membagikan sebuah gambar lewat user delegation SAS berdurasi satu jam yang Anda uji
+dengan <code>curl</code>, serta membuat share Azure Files untuk daftar harga toko. Anda juga akan sengaja merusak sebuah SAS dan
+membaca error 403 yang muncul.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 45 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/07-storage-basic.html">Mulai Lab 07 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/storage/common/storage-account-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Ikhtisar storage account</b><span>Jenis account, aturan penamaan, dan endpoint dalam satu halaman.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/storage/common/storage-redundancy" target="_blank" rel="noopener"><b>Microsoft Learn: Redundansi Azure Storage</b><span>Angka durabilitas resmi dan tabel skenario gangguan.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/storage/blobs/access-tiers-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Access tier untuk data blob</b><span>Masa minimum, early deletion, dan detail penagihan.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/storage/common/storage-sas-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Memberi akses terbatas dengan shared access signature</b><span>Jenis-jenis SAS dan praktik terbaiknya.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🗄️</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Penjaga Data</h2>
+        <p class="muted">Simpan data dengan redundansi dan tier yang tepat.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Hitungan menit untuk membangun ulang server — dan file kita tersimpan paling sedikit tiga kali.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 08</b><h4>Jangan Tabrak Jaringan Saya</h4><p>Jaringan 10.0.0.0/16 milik Pak Budi tidak boleh bentrok — dan Rizky ingin SSH dibuka untuk seluruh internet.</p><p style="margin-top:10px"><a href="08-networking-basic.html">Tonton Episode 08 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="06-virtual-machines-basic.html"><small>← Episode sebelumnya</small>06 · Kabur dari Pantry</a><a class="next" href="08-networking-basic.html"><small>Episode berikutnya →</small>08 · Jangan Tabrak Jaringan Saya</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/07-storage-basic/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

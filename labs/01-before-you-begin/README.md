@@ -1,8 +1,11 @@
 # Lab 01 · Set up your lab environment
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 01 · Before You Begin: Your Azure Lab, Tools and Cost Guardrails](../../lunches/01-before-you-begin/README.md)
 > **Time:** about 30 minutes · **Cost:** 💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★☆☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

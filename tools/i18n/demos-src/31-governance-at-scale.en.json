@@ -1,0 +1,143 @@
+{
+  "page": {
+    "doc_title": "Lunch 31 · Governance at scale — Interactive demo",
+    "kicker": "Lunch 31 · Resource Hierarchy and Governance (Advanced) · Interactive demo",
+    "title": "One hierarchy, one initiative, every subscription",
+    "lede": "Watch a landing-zone hierarchy build out, an initiative assigned at a management group cascade down to every subscription, a DeployIfNotExists remediation fail and then succeed, and an exemption keep an exception visible. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "Nusantara Retail's management group hierarchy and policy-driven governance",
+    "svgDesc": "Under the tenant root group, an intermediate root named nusa gets Platform, Landing zones, Sandboxes and Decommissioned management groups. Subscriptions are placed into Corp, Online and Sandboxes. An initiative saved at nusa and assigned at Landing zones cascades to the orders, storefront and loyalty subscriptions. A DeployIfNotExists remediation task first fails because its identity has no role on the log-nusa workspace, then succeeds after a role is granted. A Waiver exemption marks the loyalty beta storage account as exempt for 30 days, and a Git pipeline deploys everything as code."
+  },
+  "steps": [
+    {
+      "title": "Seven subscriptions, no structure",
+      "text": "Nusantara Retail now has seven subscriptions; four are shown here. Every one of them sits directly under the tenant root group, and each was configured by hand, a little differently each time. The guardrails from Lunch 18 protect only one of them. Rizky's blueprint, which stamped tags and roles onto new subscriptions, stops accepting new assignments at the end of October 2026."
+    },
+    {
+      "title": "Create an intermediate root",
+      "text": "Instead of hanging rules on the tenant root group, the platform team creates an intermediate root called nusa, just below it. Everything the company governs will live under nusa, while the tenant root stays almost empty. New or acquired subscriptions stay outside until someone deliberately moves them in. A management group's ID can never change, so choose it with care."
+    },
+    {
+      "title": "Platform holds shared services",
+      "text": "Platform holds the shared foundations, each in its own subscription: Security for SIEM tooling, Management for central logging, Connectivity for the hub network and Identity for domain services. The log-nusa workspace lives in the Management subscription. The platform team gets its rights here through Privileged Identity Management: eligible roles, activated only when needed and audited."
+    },
+    {
+      "title": "Landing zones by archetype",
+      "text": "Landing zones hold the workloads, split by archetype: Corp for applications that need the corporate network, Online for internet-facing ones. Sandboxes isolate experiments under lighter rules, and Decommissioned parks cancelled subscriptions until they are deleted. There are no groups for departments, environments or regions, so the tree stays three or four levels deep and is organised by the rules each workload needs."
+    },
+    {
+      "title": "Vending places every subscription",
+      "text": "Subscription vending turns a request into a governed subscription. A pipeline creates it, places it in the right management group, peers its network to the hub, and assigns Entra groups, a budget and tags. Orders lands in Corp, storefront and loyalty in Online, and Dewi's experiments in Sandboxes, which also becomes the default group for every new subscription."
+    },
+    {
+      "title": "One initiative, saved high",
+      "text": "The Nusantara baseline initiative bundles three policies: allowed locations with Deny, the costCenter tag with Modify, and diagnostic settings to log-nusa with DeployIfNotExists. It is saved at the intermediate root, so any group below nusa can use it, and assigned once at Landing zones with parameters. It starts in DoNotEnforce mode: report everything, block nothing."
+    },
+    {
+      "title": "The assignment cascades down",
+      "text": "Inheritance does the rest. The assignment flows from Landing zones to Corp and Online, and into every subscription, resource group and resource below them: today's three and next year's twenty. Sandboxes and Platform are untouched, because they do not sit under Landing zones. Placing a subscription in the right group is now all it takes to govern it."
+    },
+    {
+      "title": "The first compliance scan",
+      "text": "Then the first compliance evaluation finishes. Two resources send no diagnostic logs to log-nusa, and the loyalty team's beta storage account sits in West Europe, outside the allowed regions. Nothing was blocked, because the assignment is still in DoNotEnforce mode. The compliance view simply shows what needs fixing before enforcement begins.",
+      "set": {
+        "t-sql": "no diagnostics ✗",
+        "t-app": "no diagnostics ✗",
+        "t-beta": "West Europe ✗",
+        "t-c-ok": "Compliant: 0",
+        "t-c-bad": "Non-compliant: 3",
+        "t-c-ex": "Exempt: 0"
+      }
+    },
+    {
+      "title": "Remediation fails outside its scope",
+      "text": "A DeployIfNotExists remediation task starts, acting through the assignment's managed identity. Each deployment must create a diagnostic setting that points at log-nusa. But the workspace lives in the Management subscription, outside the assignment's scope, and the identity has no role there. Every deployment fails with an authorization error. The policy was right; the permissions were incomplete."
+    },
+    {
+      "title": "Grant the role, run again",
+      "text": "You grant the identity Log Analytics Contributor on log-nusa: the scope it writes to, not only the scope it is assigned at. A new remediation task succeeds. Both resources get diagnostic settings, and their logs start arriving in the workspace. Once the assignment is enforced, resources created later get theirs automatically, about ten minutes after they appear.",
+      "set": {
+        "t-sql": "diagnostics ✓",
+        "t-app": "diagnostics ✓",
+        "t-c-ok": "Compliant: 2",
+        "t-c-bad": "Non-compliant: 1"
+      }
+    },
+    {
+      "title": "A Waiver for the beta",
+      "text": "The loyalty beta needs West Europe for thirty days while a partner tests an integration. Ibu Sari accepts the risk, so the platform team creates a Waiver exemption on the beta's resource group, with an expiry date and the ticket number in its metadata. The account now shows as Exempt: still visible to auditors, and non-compliant again the day the waiver expires.",
+      "set": {
+        "t-beta": "Exempt · 30 days",
+        "t-c-bad": "Non-compliant: 0",
+        "t-c-ex": "Exempt: 1"
+      }
+    },
+    {
+      "title": "Governance as code",
+      "text": "Finally, nobody clicks policies into the portal any more. Definitions, assignments and exemptions live in Git, every change is a reviewed pull request, and a pipeline deploys them through a deployment stack whose deny settings protect what it manages: the replacement for the retiring blueprint. Enforcement then rolls out ring by ring, and Resource Graph reports compliance across every subscription.",
+      "set": {
+        "t-mode": "Enforced in rings"
+      }
+    },
+    {
+      "title": "Recap: govern from the top",
+      "text": "Recap: design the hierarchy for policy, not for the org chart. Vend subscriptions straight into the right group. Save definitions high and assign them once, starting in DoNotEnforce. Give remediation identities roles everywhere they write. Keep exceptions visible with time-boxed exemptions, and manage all of it as code.",
+      "tip": "In Lab 31 you build a small version in your own tenant: an intermediate root with platform, landing zones and corp groups, a custom initiative from JSON files, remediation, a Waiver exemption, Resource Graph queries and a policy-as-code export."
+    }
+  ],
+  "svg": [
+    "Tenant root group",
+    "nusa",
+    "intermediate root",
+    "Platform",
+    "Landing zones",
+    "Sandboxes",
+    "Decommissioned",
+    "Security",
+    "Management",
+    "Connectivity",
+    "Identity",
+    "log-nusa",
+    "workspace · Management",
+    "Corp",
+    "Online",
+    "sub-orders",
+    "sub-storefront",
+    "sub-loyalty",
+    "sub-dewi",
+    "sql-orders",
+    "orders database",
+    "app-storefront",
+    "web app",
+    "st-loyaltybeta",
+    "beta · West Europe",
+    "Nusantara baseline",
+    "saved at nusa · assigned at Landing zones",
+    "Allowed locations · Deny",
+    "costCenter tag · Modify",
+    "Diagnostics to log-nusa · DeployIfNotExists",
+    "DoNotEnforce first",
+    "Compliance",
+    "Compliant: –",
+    "Non-compliant: –",
+    "Exempt: –",
+    "Remediation task",
+    "DeployIfNotExists · managed identity",
+    "Log Analytics Contributor",
+    "Git repository",
+    "policy as code",
+    "Pipeline",
+    "deployment stack",
+    "Rizky's blueprint",
+    "no new assignments",
+    "after Oct 31, 2026;",
+    "retired Jan 31, 2027",
+    "Deployment failed",
+    "no role on log-nusa,",
+    "which is outside the",
+    "assignment scope",
+    "Waiver · 30 days",
+    "scope: loyalty beta RG",
+    "approved by Ibu Sari",
+    "ticket NUSA-1042"
+  ]
+}

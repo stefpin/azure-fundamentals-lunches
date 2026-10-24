@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 25 · Hub-and-spoke untuk Nusantara Retail · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 25: Hub-and-spoke untuk Nusantara Retail. sekitar 60 menit (termasuk sekitar 8 menit setup), biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/25-networking-advanced.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/25-networking-advanced.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/25-networking-advanced.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/25-networking-advanced.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 25 · Hub-and-spoke untuk Nusantara Retail">
+<meta property="og:description" content="Lab Azure praktik 25: Hub-and-spoke untuk Nusantara Retail. sekitar 60 menit (termasuk sekitar 8 menit setup), biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/25-networking-advanced.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="25" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/25-networking-advanced.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 25</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>25</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Hub-and-spoke untuk Nusantara Retail</h1>
+        <p class="lab-story">🏪 <b>Episode 25 · Buktikan Trafiknya Diperiksa</b> — Bagian keuangan ingin jaringan sendiri, dan auditor minta bukti siapa saja yang bisa berkomunikasi dengannya. <a href="../lunches/25-networking-advanced.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 60 menit (termasuk sekitar 8 menit setup)</span>
+          <span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★★</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 9 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--menjelajahi-titik-awal">Tugas 1 · Menjelajahi titik awal</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--membuat-peering-antara-hub-dan-setiap-spoke">Tugas 2 · Membuat peering antara hub dan setiap spoke</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--membuktikan-bahwa-peering-tidak-transitif">Tugas 3 · Membuktikan bahwa peering tidak transitif</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--mengubah-vm-hub-menjadi-router-sederhana">Tugas 4 · Mengubah VM hub menjadi router sederhana</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--mengirim-lalu-lintas-antar-spoke-melalui-hub">Tugas 5 · Mengirim lalu lintas antar-spoke melalui hub</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--membuktikan-bahwa-lalu-lintas-mengalir-melalui-hub">Tugas 6 · Membuktikan bahwa lalu lintas mengalir melalui hub</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-opsional--mengganti-router-dengan-azure-firewall-">🔧 Opsional · Mengganti router dengan Azure Firewall (💲💲💲)</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/25-networking-advanced/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/25-networking-advanced/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/25-networking-advanced/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/25-networking-advanced/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>6 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/25-networking-advanced" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Jaringan hub-and-spoke pertama milik Nusantara Retail. Toko online tinggal di <strong>spoke1</strong>, back office tim keuangan di
+<strong>spoke2</strong>, dan layanan bersama di <strong>hub</strong>. Anda membuat peering antara setiap spoke dan hub, membuktikan bahwa kedua
+spoke tetap tidak bisa saling bicara karena peering tidak transitif, lalu membuat keduanya bisa berkomunikasi <em>melalui
+hub</em>: sebuah VM Linux kecil di hub menjadi router (network virtual appliance yang sangat sederhana), dan route table di
+kedua spoke mengirim lalu lintas untuk spoke seberang ke router itu. Effective routes, next hop dari Network Watcher,
+dan penghitung paket terusan (forwarded-packet counter) di router membuktikan setiap lompatan. Jalur opsional mengganti
+router buatan tangan itu dengan Azure Firewall.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch25-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph hub[&quot;vnet-nusa-hub · 10.30.0.0/16&quot;]
+      nva[&quot;vm-hub-nva · 10.30.1.4&lt;br/&gt;IP forwarding aktif&quot;]
+    end
+    subgraph s1[&quot;vnet-nusa-spoke1 · 10.31.0.0/16&quot;]
+      vm1[&quot;vm-spoke1 · 10.31.1.4&lt;br/&gt;rt-spoke1: 10.32.0.0/16 → 10.30.1.4&quot;]
+    end
+    subgraph s2[&quot;vnet-nusa-spoke2 · 10.32.0.0/16&quot;]
+      vm2[&quot;vm-spoke2 · 10.32.1.4&lt;br/&gt;rt-spoke2: 10.31.0.0/16 → 10.30.1.4&quot;]
+    end
+  end
+  s1 &lt;--&gt;|&quot;peering&quot;| hub
+  s2 &lt;--&gt;|&quot;peering&quot;| hub
+  vm1 -. &quot;antar-spoke, lewat hub&quot; .-&gt; nva -.-&gt; vm2
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Sebuah subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu diinstal.</li>
+<li>Sekitar <strong>6 vCPU</strong> kuota yang masih kosong di region Anda: lab ini menjalankan tiga VM <code>$VM_SIZE_SMALL</code> (masing-masing
+2 vCPU secara default). Free trial sering hanya mengizinkan 4 vCPU per region: periksa dengan
+<code>bash ../common/check-environment.sh</code> dan, bila perlu, minta tambahan kuota di portal (<em>Subscriptions › Usage +
+quotas</em>) sebelum mulai. Tiga VM adalah jumlah minimum untuk lab ini, karena lalu lintas antar-spoke harus melewati
+sebuah router di hub.</li>
+<li>Ambil file lab, muat pengaturan bersama, dan definisikan sebuah fungsi bantu (helper). Jika Cloud Shell tersambung
+ulang di tengah lab, jalankan blok ini lagi sebelum melanjutkan:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/25-networking-advanced
+source ../common/config.sh
+RG=$(rg_name 25)
+
+# Helper: run shell commands inside a VM through the Azure VM agent. The VMs have no public IPs,
+# so this replaces SSH. Each call takes 20-40 seconds.
+run_on() {
+  az vm run-command invoke -g &quot;$RG&quot; -n &quot;$1&quot; --command-id RunShellScript \
+    --scripts &quot;$2&quot; --query &quot;value[0].message&quot; -o tsv
+}
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya — tiga virtual network tanpa peering, dengan satu VM di masing-masing. Prosesnya sekitar 8 menit;
+baca bagian 1 dan 2 dari bacaan makan siang ini sambil menunggu:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab menimbulkan biaya selama masih ada — terutama ketiga VM, dan Azure Firewall jika Anda mengambil jalur
+opsional. Akhiri dengan bagian <strong>Bersihkan</strong>, meskipun Anda berhenti di tengah jalan.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–6 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>jalankan <code>setup.sh</code>, baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--menjelajahi-titik-awal" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Menjelajahi titik awal</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--menjelajahi-titik-awal" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sebelum mengubah apa pun, lihat bagaimana Azure memandang jaringan ini dari dalam spoke1: tiga VNet yang terisolasi,
+dan sebuah route table di network interface <code>vm-spoke1</code> yang tidak pernah Anda buat.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vnet list -g &quot;$RG&quot; \
+  --query &#x27;[].{vnet:name, space:addressSpace.addressPrefixes[0], peerings:length(virtualNetworkPeerings || `[]`)}&#x27; -o table
+
+S1_NIC=$(az vm show -g &quot;$RG&quot; -n vm-spoke1 --query &quot;networkProfile.networkInterfaces[0].id&quot; -o tsv)
+az network nic show-effective-route-table --ids &quot;$S1_NIC&quot; -o table
+
+run_on vm-spoke1 &#x27;ping -c 3 -W 2 10.30.1.4 &gt;/dev/null &amp;&amp; echo &quot;spoke1 -&gt; hub: REACHABLE&quot; || echo &quot;spoke1 -&gt; hub: UNREACHABLE&quot;&#x27;
+</code></pre></div>
+<p>Baca effective routes itu pelan-pelan. <code>10.31.0.0/16</code> menuju <em>VnetLocal</em> (di dalam spoke1), <code>0.0.0.0/0</code> menuju
+internet, dan beberapa rentang privat — termasuk <code>10.0.0.0/8</code> — menuju <em>None</em>. Belum ada yang tahu tentang hub atau
+spoke2, sehingga paket untuk <code>10.30.1.4</code> cocok dengan <code>10.0.0.0/8</code> dan dibuang.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>vm-spoke1 › Networking › Network settings ›</em> pilih network interface › <em>Effective
+routes</em>. Tabelnya sama, dengan kolom <strong>Source</strong> (Default, User, Virtual network gateway).</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tiga VNet dengan 0 peering, tidak ada rute untuk <code>10.30.0.0/16</code> maupun <code>10.32.0.0/16</code> di
+effective routes, dan <code>spoke1 -&gt; hub: UNREACHABLE</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--membuat-peering-antara-hub-dan-setiap-spoke" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Membuat peering antara hub dan setiap spoke</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--membuat-peering-antara-hub-dan-setiap-spoke" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sebuah peering punya dua bagian, masing-masing dibuat dari salah satu VNet. Ada dua detail penting di CLI.
+<code>--allow-vnet-access</code> secara default bernilai <em>false</em> pada <code>az network vnet peering create</code>, jadi atur nilainya secara
+eksplisit. Lalu <code>--allow-forwarded-traffic</code> di link milik sebuah spoke membuat spoke itu mau menerima paket yang
+diteruskan router hub dari spoke <em>lainnya</em> — Anda membutuhkannya di Tugas 5. Mengaturnya di keempat link membuat
+semuanya tetap sederhana.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for spoke in spoke1 spoke2; do
+  az network vnet peering create -g &quot;$RG&quot; -n &quot;peer-hub-to-$spoke&quot; \
+    --vnet-name vnet-nusa-hub --remote-vnet &quot;vnet-nusa-$spoke&quot; \
+    --allow-vnet-access true --allow-forwarded-traffic true --output none
+  az network vnet peering create -g &quot;$RG&quot; -n &quot;peer-$spoke-to-hub&quot; \
+    --vnet-name &quot;vnet-nusa-$spoke&quot; --remote-vnet vnet-nusa-hub \
+    --allow-vnet-access true --allow-forwarded-traffic true --output none
+done
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>vnet-nusa-hub › Peerings › + Add</em> membuat kedua link dalam satu formulir. Biarkan kedua kotak
+<em>access</em> tetap tercentang, lalu centang kedua kotak <em>…to receive forwarded traffic…</em> — satu di bagian remote, satu di
+bagian local.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> empat link, semuanya <em>Connected</em>, dan sebuah rute baru untuk <code>10.30.0.0/16</code> (next hop: peering)
+di effective routes <code>vm-spoke1</code> — tetapi tetap belum ada apa-apa untuk <code>10.32.0.0/16</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for v in vnet-nusa-hub vnet-nusa-spoke1 vnet-nusa-spoke2; do
+  az network vnet peering list -g &quot;$RG&quot; --vnet-name &quot;$v&quot; \
+    --query &quot;[].{vnet:&#x27;$v&#x27;, link:name, state:peeringState, forwarded:allowForwardedTraffic}&quot; -o table
+done
+az network nic show-effective-route-table --ids &quot;$S1_NIC&quot; -o table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-3--membuktikan-bahwa-peering-tidak-transitif" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Membuktikan bahwa peering tidak transitif</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--membuktikan-bahwa-peering-tidak-transitif" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Spoke1 sekarang bisa menjangkau hub. Bisakah ia menjangkau spoke2, yang <em>juga</em> di-peering dengan hub?</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>run_on vm-spoke1 &#x27;ping -c 3 -W 2 10.30.1.4 &gt;/dev/null &amp;&amp; echo &quot;spoke1 -&gt; hub: REACHABLE&quot; || echo &quot;spoke1 -&gt; hub: UNREACHABLE&quot;&#x27;
+run_on vm-spoke1 &#x27;ping -c 3 -W 2 10.32.1.4 &gt;/dev/null &amp;&amp; echo &quot;spoke1 -&gt; spoke2: REACHABLE&quot; || echo &quot;spoke1 -&gt; spoke2: UNREACHABLE&quot;&#x27;
+
+# Ask Network Watcher where Azure sends a packet from vm-spoke1 to vm-spoke2.
+az network watcher show-next-hop -g &quot;$RG&quot; --vm vm-spoke1 \
+  --source-ip 10.31.1.4 --dest-ip 10.32.1.4 -o table
+</code></pre></div>
+<p>Hub menjawab; spoke2 diam saja. Next hop menunjukkan <strong>None</strong> dari sebuah <strong>System Route</strong>: paket masih cocok dengan
+<code>10.0.0.0/8</code>. Setiap peering hanya memperkenalkan spoke1 kepada tetangga langsungnya, yaitu hub.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>spoke1 -&gt; hub: REACHABLE</code>, <code>spoke1 -&gt; spoke2: UNREACHABLE</code>, dan next hop type <code>None</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--mengubah-vm-hub-menjadi-router-sederhana" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Mengubah VM hub menjadi router sederhana</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--mengubah-vm-hub-menjadi-router-sederhana" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Agar bisa membawa lalu lintas antar-spoke, <code>vm-hub-nva</code> harus mau menerima paket yang tidak dialamatkan kepadanya, lalu
+meneruskannya. Untuk itu dibutuhkan <strong>dua</strong> sakelar. Di Azure, <strong>IP forwarding</strong> pada NIC mencegah platform membuang
+paket yang tujuannya bukan alamat milik NIC itu. Di Linux, <code>net.ipv4.ip_forward</code> membuat kernel merutekan paket-paket
+tersebut alih-alih membuangnya. File di <code>/etc/sysctl.d</code> menjaga setelan ini tetap berlaku setelah reboot.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>HUB_NIC=$(az vm show -g &quot;$RG&quot; -n vm-hub-nva --query &quot;networkProfile.networkInterfaces[0].id&quot; -o tsv)
+
+az network nic update --ids &quot;$HUB_NIC&quot; --ip-forwarding true --output none
+az network nic show --ids &quot;$HUB_NIC&quot; --query enableIPForwarding -o tsv
+
+run_on vm-hub-nva &#x27;sysctl -w net.ipv4.ip_forward=1 &gt;/dev/null &amp;&amp; echo &quot;net.ipv4.ip_forward = 1&quot; &gt; /etc/sysctl.d/99-nusa-router.conf &amp;&amp; echo &quot;ip_forward=$(sysctl -n net.ipv4.ip_forward)&quot;&#x27;
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>vm-hub-nva › Networking ›</em> pilih network interface › <em>IP configurations</em> › centang
+<strong>Enable IP forwarding</strong> › Save. Bagian Linux tetap memerlukan Run Command di atas (<em>vm-hub-nva › Run command ›
+RunShellScript</em> di portal).</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>true</code> untuk NIC, dan <code>ip_forward=1</code> dari dalam VM.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--mengirim-lalu-lintas-antar-spoke-melalui-hub" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Mengirim lalu lintas antar-spoke melalui hub</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--mengirim-lalu-lintas-antar-spoke-melalui-hub" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sekarang ajari setiap spoke sebuah rute ke spoke lainnya, dengan VM hub sebagai next hop. Spoke2 membutuhkan bayangan
+cermin dari rute spoke1; tanpa rute itu, balasan tidak punya jalan pulang.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network route-table create -g &quot;$RG&quot; -n rt-spoke1 --location &quot;$LOCATION&quot; --output none
+az network route-table route create -g &quot;$RG&quot; --route-table-name rt-spoke1 -n to-spoke2-via-hub \
+  --address-prefix 10.32.0.0/16 --next-hop-type VirtualAppliance --next-hop-ip-address 10.30.1.4 --output none
+az network vnet subnet update -g &quot;$RG&quot; --vnet-name vnet-nusa-spoke1 -n snet-workload \
+  --route-table rt-spoke1 --output none
+
+az network route-table create -g &quot;$RG&quot; -n rt-spoke2 --location &quot;$LOCATION&quot; --output none
+az network route-table route create -g &quot;$RG&quot; --route-table-name rt-spoke2 -n to-spoke1-via-hub \
+  --address-prefix 10.31.0.0/16 --next-hop-type VirtualAppliance --next-hop-ip-address 10.30.1.4 --output none
+az network vnet subnet update -g &quot;$RG&quot; --vnet-name vnet-nusa-spoke2 -n snet-workload \
+  --route-table rt-spoke2 --output none
+</code></pre></div>
+<p>Periksa hasilnya dari kedua sisi. <code>/16</code> adalah prefix yang lebih panjang daripada <code>10.0.0.0/8</code>, jadi user route-lah
+yang menang:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network nic show-effective-route-table --ids &quot;$S1_NIC&quot; -o table
+az network watcher show-next-hop -g &quot;$RG&quot; --vm vm-spoke1 --source-ip 10.31.1.4 --dest-ip 10.32.1.4 -o table
+az network watcher show-next-hop -g &quot;$RG&quot; --vm vm-spoke2 --source-ip 10.32.1.4 --dest-ip 10.31.1.4 -o table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Create a resource › Route table</em>, lalu <strong>Routes › + Add</strong> (destination type <em>IP addresses</em>,
+next hop type <em>Virtual appliance</em>) dan <strong>Subnets › + Associate</strong>. Setelah itu, <em>Network Watcher › Next hop</em> memberikan
+jawaban yang sama dengan CLI.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> di effective routes ada rute <em>User</em> untuk <code>10.32.0.0/16</code> dengan next hop <em>VirtualAppliance</em>
+<code>10.30.1.4</code>; kedua kueri next hop menjawab <em>VirtualAppliance</em> <code>10.30.1.4</code> dan menyebut route table Anda. Jika
+effective routes belum menampilkan user route itu, tunggu satu menit lalu ulangi.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--membuktikan-bahwa-lalu-lintas-mengalir-melalui-hub" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Membuktikan bahwa lalu lintas mengalir melalui hub</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--membuktikan-bahwa-lalu-lintas-mengalir-melalui-hub" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Rute hanya menyatakan ke mana paket <em>seharusnya</em> pergi. Sekarang buktikan ke mana paket <em>benar-benar</em> pergi: baca
+penghitung paket terusan di router, kirim lalu lintas dari spoke1 ke spoke2, lalu baca penghitungnya lagi.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>run_on vm-hub-nva &#x27;nstat -az IpForwDatagrams&#x27;
+
+run_on vm-spoke1 &#x27;ping -c 5 -W 2 10.32.1.4; curl -s --max-time 5 http://10.32.1.4/ | grep -q vm-spoke2 &amp;&amp; echo &quot;HTTP from vm-spoke2: OK&quot; || echo &quot;HTTP: FAILED&quot;&#x27;
+
+run_on vm-hub-nva &#x27;nstat -az IpForwDatagrams&#x27;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>5 received, 0% packet loss</code>, <code>HTTP from vm-spoke2: OK</code>, dan nilai <code>IpForwDatagrams</code> yang
+bertambah setidaknya sepuluh di antara kedua pembacaan — setiap ping dan setiap balasan melintasi hub.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Tim Pak Budi menjalankan skrip &quot;bersih-bersih&quot; yang me-reset setelan NIC di seluruh subscription. Mari kita
+simulasikan:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network nic update --ids &quot;$HUB_NIC&quot; --ip-forwarding false --output none
+</code></pre></div>
+<p>Tunggu sekitar satu menit, lalu uji lagi dan tanyakan ke Network Watcher:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>run_on vm-spoke1 &#x27;ping -c 3 -W 2 10.32.1.4 &gt;/dev/null &amp;&amp; echo &quot;spoke1 -&gt; spoke2: REACHABLE&quot; || echo &quot;spoke1 -&gt; spoke2: UNREACHABLE&quot;&#x27;
+az network watcher show-next-hop -g &quot;$RG&quot; --vm vm-spoke1 --source-ip 10.31.1.4 --dest-ip 10.32.1.4 -o table
+</code></pre></div>
+<p><strong>Gejala:</strong> spoke2 kembali tidak terjangkau, padahal next hop masih menunjukkan <em>VirtualAppliance</em> <code>10.30.1.4</code> dan
+Linux masih punya <code>ip_forward=1</code>. Peruteannya benar; ada sesuatu di appliance yang menolak. Apa itu?</p>
+<details class="plain"><summary>Petunjuk dan perbaikan</summary>
+<p>Next hop hanya membuktikan keputusan perutean di spoke1. Paket memang sampai ke network interface VM hub — dan Azure
+membuangnya di sana, karena IP forwarding di NIC mati, sehingga paket yang dialamatkan ke <code>10.32.1.4</code> tidak diterima.
+Periksa, lalu nyalakan kembali:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network nic show --ids &quot;$HUB_NIC&quot; --query enableIPForwarding -o tsv     # false
+az network nic update --ids &quot;$HUB_NIC&quot; --ip-forwarding true --output none
+run_on vm-spoke1 &#x27;ping -c 3 -W 2 10.32.1.4 &gt;/dev/null &amp;&amp; echo &quot;spoke1 -&gt; spoke2: REACHABLE&quot; || echo &quot;spoke1 -&gt; spoke2: UNREACHABLE&quot;&#x27;
+</code></pre></div>
+</details>
+</div></section><section class="lab-section" id="-opsional--mengganti-router-dengan-azure-firewall-" data-kind="bonus"><h2><span class="title">🔥 Opsional · Mengganti router dengan Azure Firewall (💲💲💲)</span><button class="btn btn-sm done-toggle" type="button" data-task="-opsional--mengganti-router-dengan-azure-firewall-" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><aside class="callout caution" data-icon="🛑">
+<p><span class="callout-title">Hati-hati</span>Azure Firewall ditagih untuk setiap jam keberadaannya, ada atau tidak ada lalu lintas, dan dengan tarif yang jauh
+lebih tinggi daripada VM lab. Kerjakan bagian ini hanya jika Anda bisa menyelesaikannya dalam sekali duduk, dan hapus
+firewall tersebut segera sesudahnya.</p>
+</aside>
+<p>Firewall terkelola menggantikan router buatan tangan: Microsoft yang mengurus high availability dan patching, dan setiap
+aliran harus cocok dengan sebuah aturan. Firewall membutuhkan subnet sendiri bernama <code>AzureFirewallSubnet</code> (/26 atau
+lebih besar), sebuah IP publik Standard, dan sebuah <strong>Firewall Policy</strong> dengan network rule yang mengizinkan lalu lintas
+antar-spoke. Pembuatannya memakan waktu sekitar 10 menit. Perintah <code>az network firewall</code> yang pertama mungkin meminta
+Anda memasang ekstensi CLI <code>azure-firewall</code> — jawab <strong>Y</strong>.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vnet subnet create -g &quot;$RG&quot; --vnet-name vnet-nusa-hub -n AzureFirewallSubnet \
+  --address-prefixes 10.30.2.0/26 --output none
+az network public-ip create -g &quot;$RG&quot; -n pip-afw-nusa --location &quot;$LOCATION&quot; \
+  --sku Standard --allocation-method Static --output none
+
+az network firewall policy create -g &quot;$RG&quot; -n afwp-nusa --location &quot;$LOCATION&quot; --output none
+az network firewall policy rule-collection-group create -g &quot;$RG&quot; --policy-name afwp-nusa \
+  -n rcg-spokes --priority 200 --output none
+az network firewall policy rule-collection-group collection add-filter-collection -g &quot;$RG&quot; \
+  --policy-name afwp-nusa --rule-collection-group-name rcg-spokes -n allow-spoke-to-spoke \
+  --collection-priority 100 --action Allow --rule-type NetworkRule --rule-name spoke1-spoke2 \
+  --source-addresses 10.31.0.0/16 10.32.0.0/16 --destination-addresses 10.31.0.0/16 10.32.0.0/16 \
+  --destination-ports &#x27;*&#x27; --ip-protocols Any --output none
+
+az network firewall create -g &quot;$RG&quot; -n afw-nusa-hub --location &quot;$LOCATION&quot; \
+  --sku AZFW_VNet --tier Standard --firewall-policy afwp-nusa \
+  --vnet-name vnet-nusa-hub --conf-name ipconfig1 --public-ip pip-afw-nusa --output none
+
+FW_IP=$(az network firewall show -g &quot;$RG&quot; -n afw-nusa-hub \
+  --query &quot;ipConfigurations[0].privateIPAddress || ipConfigurations[0].privateIpAddress&quot; -o tsv)
+echo &quot;Firewall private IP: $FW_IP&quot;
+
+# Point both spokes&#x27; routes at the firewall instead of the VM.
+az network route-table route update -g &quot;$RG&quot; --route-table-name rt-spoke1 -n to-spoke2-via-hub \
+  --next-hop-ip-address &quot;$FW_IP&quot; --output none
+az network route-table route update -g &quot;$RG&quot; --route-table-name rt-spoke2 -n to-spoke1-via-hub \
+  --next-hop-ip-address &quot;$FW_IP&quot; --output none
+</code></pre></div>
+<p>Ulangi uji ping dan HTTP dari Tugas 6 (penghitung di VM hub kini diam saja) serta kueri next hop, yang sekarang
+menyebutkan IP privat firewall. Lalu hapus firewall beserta IP publiknya, dan arahkan rute-rute kembali ke <code>10.30.1.4</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network firewall delete -g &quot;$RG&quot; -n afw-nusa-hub
+az network public-ip delete -g &quot;$RG&quot; -n pip-afw-nusa
+for pair in &quot;rt-spoke1 to-spoke2-via-hub&quot; &quot;rt-spoke2 to-spoke1-via-hub&quot;; do
+  read -r rt route &lt;&lt;&lt; &quot;$pair&quot;
+  az network route-table route update -g &quot;$RG&quot; --route-table-name &quot;$rt&quot; -n &quot;$route&quot; \
+    --next-hop-ip-address 10.30.1.4 --output none
+done
+</code></pre></div>
+<p>Jika ada perintah firewall yang gagal karena sebuah flag telah berubah, gunakan portal saja: <em>Create a resource ›
+Firewall</em>, pilih <code>vnet-nusa-hub</code>, tier Standard, dan Firewall Policy baru, lalu tambahkan network rule di <em>Firewall
+Policy › Network rules</em>.</p>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan harus menyatakan <strong>PASS</strong>. Skrip ini butuh sekitar dua menit karena meminta next hop ke Network
+Watcher dan mengirim lalu lintas sungguhan lewat Run Command. Jika ada pemeriksaan yang gagal, pesannya memberi tahu
+tugas mana yang perlu Anda ulangi.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Perintah ini menghapus resource group <code>rg-lunch25-&lt;suffix&gt;</code> beserta seluruh isinya: VM dan disk-nya, ketiga VNet
+beserta peering-nya, route table, dan — jika Anda membuatnya — firewall. Penghapusan berlanjut di latar belakang selama
+beberapa menit. Tidak ada yang dibuat di luar resource group: Network Watcher (di <code>NetworkWatcherRG</code>) adalah resource
+regional yang gratis dan dipakai bersama, dan kunci SSH di <code>~/.ssh</code> dipakai ulang oleh lab lain.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setup.sh</code> berhenti dengan <code>SkuNotAvailable</code></td>
+<td><code>$VM_SIZE_SMALL</code> tidak ditawarkan untuk subscription Anda di region ini</td>
+<td><code>az vm list-skus -l &quot;$LOCATION&quot; --size Standard_B -o table</code>, lalu <code>export VM_SIZE_SMALL=&lt;size&gt;</code>, <code>source ../common/config.sh</code>, dan jalankan <code>setup.sh</code> lagi</td>
+</tr>
+<tr>
+<td><code>Operation could not be completed as it results in exceeding approved ... Cores quota</code></td>
+<td>Lab ini membutuhkan sekitar 6 vCPU sekaligus (tiga VM)</td>
+<td>Bersihkan VM dari lab lain atau minta tambahan kuota</td>
+</tr>
+<tr>
+<td>Sebuah peering tetap <em>Initiated</em></td>
+<td>Baru satu dari dua link yang ada</td>
+<td>Buat link dari VNet yang satunya lagi</td>
+</tr>
+<tr>
+<td><code>spoke1 -&gt; hub</code> tidak terjangkau meskipun peering sudah <em>Connected</em></td>
+<td><code>--allow-vnet-access</code> tidak diatur; default CLI adalah false</td>
+<td><code>az network vnet peering update -g &quot;$RG&quot; --vnet-name &lt;vnet&gt; -n &lt;link&gt; --allow-vnet-access true</code> di kedua link</td>
+</tr>
+<tr>
+<td>Next hop masih <em>None</em> setelah Tugas 5</td>
+<td>Route table belum dikaitkan dengan subnet, atau ada salah ketik pada prefix</td>
+<td><code>az network vnet subnet show -g &quot;$RG&quot; --vnet-name vnet-nusa-spoke1 -n snet-workload --query routeTable.id</code>; baca effective routes</td>
+</tr>
+<tr>
+<td>Next hop menunjukkan <em>VirtualAppliance</em> tetapi ping gagal</td>
+<td>IP forwarding mati di NIC atau di Linux, tidak ada rute balik di spoke2, atau <em>allow forwarded traffic</em> mati di link sebuah spoke</td>
+<td>Ulangi pemeriksaan Tugas 4; periksa <code>rt-spoke2</code>; periksa kolom <em>forwarded</em> pada pemeriksaan Tugas 2</td>
+</tr>
+<tr>
+<td><code>Run command extension execution is in progress. Please wait for completion before invoking a run command.</code></td>
+<td>Run Command hanya menjalankan satu skrip dalam satu waktu per VM</td>
+<td>Tunggu 30 detik lalu coba lagi</td>
+</tr>
+<tr>
+<td><code>show-next-hop</code> atau effective routes gagal untuk satu VM</td>
+<td>VM sedang berhenti (deallocated); kedua alat membutuhkan VM yang sedang berjalan</td>
+<td><code>az vm start -g &quot;$RG&quot; -n &lt;vm&gt;</code></td>
+</tr>
+<tr>
+<td><code>show-next-hop</code> melaporkan bahwa Network Watcher tidak aktif atau tidak ditemukan untuk region tersebut</td>
+<td>Anda memilih keluar (opt out) dari pengaktifan otomatis</td>
+<td><code>az network watcher configure -g NetworkWatcherRG -l &quot;$LOCATION&quot; --enabled true</code></td>
+</tr>
+<tr>
+<td><code>nstat: command not found</code></td>
+<td>Image yang tidak lazim, tanpa tool iproute2</td>
+<td>Baca penghitungnya dengan <code>grep -A1 '^Ip:' /proc/net/snmp</code> (kolom <em>ForwDatagrams</em>)</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>Pasang NSG yang hanya berisi aturan default di subnet spoke2, lalu pastikan lalu lintas antar-spoke tetap mengalir.
+Gunakan IP flow verify untuk melihat aturan mana yang mengizinkannya: service tag <em>VirtualNetwork</em> mencakup rentang
+yang di-peering <strong>dan</strong> prefix dari user-defined route Anda.</li>
+<li>Di portal, jalankan <strong>Network Watcher › Connection troubleshoot</strong> dari <code>vm-spoke1</code> ke <code>10.32.1.4</code> port 80, lalu baca
+hop-hop-nya: appliance di hub muncul di antara kedua spoke.</li>
+<li>Tambahkan spoke ketiga di <code>$SECONDARY_LOCATION</code> dengan global peering ke hub (perhatikan kuota vCPU Anda — dibutuhkan
+satu VM lagi), lalu rutekan melalui hub yang sama.</li>
+<li>Buat sketsa bagaimana Azure Virtual Network Manager akan menggantikan empat peering dan dua route table Anda dengan
+satu network group dan satu connectivity configuration hub-and-spoke.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Jalankan <code>bash setup.sh</code> terlebih dahulu, lalu bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI,
+Bicep):</p>
+<ol>
+<li>Peering <code>vnet-nusa-hub</code> dengan <code>vnet-nusa-spoke1</code> dan dengan <code>vnet-nusa-spoke2</code>, di kedua arah. Setiap link
+berstatus <em>Connected</em>, dan link spoke ke hub mengizinkan forwarded traffic. Jangan buat peering di antara kedua
+spoke.</li>
+<li>Ubah <code>vm-hub-nva</code> menjadi router: IP forwarding aktif di network interface-nya dan di dalam Linux (tetap berlaku
+setelah reboot).</li>
+<li>Kaitkan route table ke subnet kedua spoke sehingga lalu lintas spoke1 ↔ spoke2 memakai next hop type
+<em>VirtualAppliance</em> dengan IP <code>vm-hub-nva</code> (<code>10.30.1.4</code>) — atau, jika Anda mengambil jalur opsional, IP privat Azure
+Firewall — di <strong>kedua</strong> arah.</li>
+<li><code>vm-spoke1</code> bisa melakukan ping ke <code>vm-spoke2</code> dan mengambil halaman web-nya di port 80.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="24-storage-advanced.html"><small>← Lab sebelumnya</small>24 · Faktur tahan ransomware</a><a class="next" href="26-hybrid-connectivity.html"><small>Lab berikutnya →</small>26 · Menghubungkan kantor pusat</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/25-networking-advanced/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

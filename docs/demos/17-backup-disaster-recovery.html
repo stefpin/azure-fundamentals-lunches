@@ -373,7 +373,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/17-backup-disaster-recovery.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/17-backup-disaster-recovery.html" data-href-id="../id/lunches/17-backup-disaster-recovery.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -696,10 +696,177 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 17 · Pencadangan Data dan Pemulihan Bencana — Demo interaktif",
+   "kicker": "Makan Siang 17 · Pencadangan Data dan Pemulihan Bencana · Demo interaktif",
+   "title": "RPO, RTO, cadangan yang terlindungi, dan region kedua",
+   "lede": "Letakkan hari Selasa terburuk Nusantara Retail di sebuah garis waktu, saksikan penyerang mencoba menghapus cadangan, lalu pindahkan (failover) toko online ke Southeast Asia dengan Azure Site Recovery. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Pencadangan data dan pemulihan bencana untuk Nusantara Retail",
+   "svgDesc": "Adegan pertama: garis waktu dengan backup setiap malam, serangan ransomware, dan pemulihannya, yang menunjukkan RPO dan RTO, lalu backup setiap empat jam. Adegan kedua: penyerang menghapus cadangan di Recovery Services vault; soft delete menyimpannya, Resource Guard memblokir percobaan berikutnya, dan file berhasil di-restore. Adegan ketiga: Site Recovery mereplikasi toko online dari Indonesia Central ke Southeast Asia, menjalankan test failover, dan melakukan failover saat terjadi gangguan regional."
+  },
+  "steps": [
+   {
+    "title": "Satu backup setiap malam",
+    "text": "Server pesanan Nusantara Retail dilindungi Azure Backup dengan DefaultPolicy: satu backup per hari pukul 22.00, masing-masing disimpan 30 hari. Backup Senin malam berhasil, jadi sebuah recovery point sudah ada. Sejak saat itu, setiap pesanan baru hanya tersimpan di server itu sendiri, sampai backup berikutnya berjalan.",
+    "set": {
+     "t-a-title": "Server pesanan · DefaultPolicy: satu recovery point per hari pukul 22:00",
+     "t-a1": "DefaultPolicy: satu recovery point per hari, disimpan 30 hari",
+     "t-a2": "Setiap pesanan setelah pukul 22:00 hanya ada di server"
+    }
+   },
+   {
+    "title": "Ransomware menyerang pukul 15.00",
+    "text": "Selasa pukul 15.00, ransomware mengenkripsi server. Salinan bersih terbaru adalah recovery point Senin pukul 22.00, jadi semua yang masuk sejak itu hilang: 17 jam pesanan. Selisih itulah wujud nyata recovery point objective (RPO). Backup sekali semalam berarti menerima kehilangan data hingga 24 jam. Sanggupkah bisnis menerimanya?",
+    "set": {
+     "t-a1": "Data yang hilang = waktu sejak recovery point terakhir: itulah RPO",
+     "t-a2": "17 jam pesanan hilang · target mengizinkan hingga 24 jam"
+    }
+   },
+   {
+    "title": "Kembali online empat jam kemudian",
+    "text": "Pemulihan tidak terjadi seketika. Seseorang harus menyadari serangan itu, memutuskan untuk me-restore, me-restore VM dari recovery point, lalu memeriksa bahwa toko berfungsi. Di sini semuanya baru beres pukul 19.00: empat jam offline, dan itulah recovery time objective (RTO). Tim biasanya hanya merencanakan restore-nya, padahal menyadari dan memutuskan sering memakan waktu paling lama.",
+    "set": {
+     "t-a1": "Downtime = sadar + putuskan + restore + periksa: itulah RTO",
+     "t-a2": "4 jam offline, dari 15:00 sampai 19:00"
+    }
+   },
+   {
+    "title": "Backup lebih sering",
+    "text": "Jika kehilangan 17 jam pesanan terlalu banyak, buat backup lebih sering. Policy Enhanced bisa membuat recovery point setiap empat jam, sehingga serangan yang sama pukul 15.00 hanya menghilangkan sekitar satu jam pesanan. Namun RTO-nya tidak berubah: restore tetap butuh berjam-jam. RTO yang jauh lebih pendek membutuhkan salinan siaga, yang akan muncul di bagian akhir.",
+    "set": {
+     "t-a-title": "Server pesanan · Policy Enhanced: recovery point setiap 4 jam",
+     "t-a1": "Policy Enhanced: recovery point setiap 4 jam",
+     "t-a2": "RPO sekitar 1 jam · RTO tetap sekitar 4 jam"
+    }
+   },
+   {
+    "title": "Penyerang mengincar cadangan",
+    "text": "Ransomware modern mengincar cadangan lebih dulu. Dengan kata sandi administrator curian, penyerang membuka Recovery Services vault dan menghapus data backup server pesanan, berharap Nusantara Retail tidak punya jalan pulang. Tanpa perlindungan, recovery point itu akan lenyap dalam hitungan detik.",
+    "set": {
+     "t-vm2": "orders.csv masih di disk",
+     "t-b1": "Penyerang: \"delete backup data\" untuk vm-orders",
+     "t-b2": "Tanpa perlindungan, setiap recovery point lenyap dalam hitungan detik"
+    }
+   },
+   {
+    "title": "Soft delete menyimpannya",
+    "text": "Penghapusan itu tidak menghancurkan apa pun. Recovery point berpindah ke status soft-deleted dan bertahan di sana selama 14 hari secara default, tanpa biaya tambahan. Dengan secure by default, soft delete tidak bisa dimatikan di Recovery Services vault, jadi bahkan administrator pun tidak bisa membuat penghapusan itu permanen sebelum waktunya habis.",
+    "set": {
+     "t-b1": "Soft delete: disimpan 14 hari (hingga 180) · 14 hari pertama tanpa biaya",
+     "t-b2": "Secure by default: soft delete tidak bisa dimatikan"
+    }
+   },
+   {
+    "title": "Dua kunci tambahan",
+    "text": "Penyerang lalu mencoba menghentikan perlindungan dan memperpendek retensi. Multi-user authorization meneruskan permintaan itu ke Resource Guard milik tim keamanan, yang tidak pernah menyetujuinya, sehingga operasinya gagal. Immutable vault juga akan menolak menghapus atau memperpendek recovery point sebelum waktunya. Satu akun curian tidak lagi cukup.",
+    "set": {
+     "t-b1": "Multi-user authorization: operasi penting butuh persetujuan Resource Guard",
+     "t-b2": "Immutable vault: tidak ada penghapusan dini, tidak ada retensi yang dipersingkat"
+    }
+   },
+   {
+    "title": "Undelete, lalu restore",
+    "text": "Pak Budi melakukan undelete pada item-item itu dalam batas 14 hari, melanjutkan perlindungan, dan me-restore file pesanan dari recovery point hari Senin. Itulah latihan yang akan Anda jalankan di Lab 17. Pelajarannya: cadangan hanya sebaik perlindungannya, dan restore baru terbukti setelah seseorang benar-benar melakukannya.",
+    "set": {
+     "t-vm2": "orders.csv sudah pulih",
+     "t-b1": "Undelete, lanjutkan perlindungan, lalu restore file-nya",
+     "t-b2": "Lab 17 menjalankan latihan persis seperti ini"
+    }
+   },
+   {
+    "title": "Salinan siaga di Singapura",
+    "text": "Backup menjawab 'kembalikan data saya yang kemarin'. Untuk RTO satu jam, toko online butuh salinan siaga. Indonesia Central tidak punya region pasangan, jadi Nusantara Retail memilih Southeast Asia sendiri, setelah tim hukum menyetujui transfer datanya. Mobility service milik Site Recovery mengirim setiap penulisan disk melalui cache storage account ke disk replika di Singapura.",
+    "set": {
+     "t-c1": "Indonesia Central tidak punya region pasangan: Anda memilih targetnya",
+     "t-c2": "Southeast Asia: dekat, tiga zona, layanan lengkap · periksa residensi data dulu"
+    }
+   },
+   {
+    "title": "Recovery point setiap lima menit",
+    "text": "Site Recovery mengubah penulisan yang direplikasi menjadi recovery point crash-consistent setiap lima menit dan menyimpannya selama satu hari secara default. Itu berarti RPO dalam hitungan menit, jauh lebih baik daripada backup sekali semalam. VM replika belum berjalan, jadi Nusantara Retail membayar replikasi dan disk, bukan komputasi yang menganggur.",
+    "set": {
+     "t-c1": "Recovery point crash-consistent setiap 5 menit, disimpan 1 hari secara default",
+     "t-c2": "Anda membayar replikasi dan disk · VM replika belum berjalan"
+    }
+   },
+   {
+    "title": "Berlatih dengan test failover",
+    "text": "Dua kali setahun, Nusantara Retail berlatih. Test failover menyalakan salinan VM dari sebuah recovery point ke dalam virtual network yang terisolasi di Southeast Asia, sementara produksi dan replikasi tetap berjalan tanpa tersentuh. Tim memeriksa bahwa toko bisa menyala, mengukur waktu seluruh latihan dibandingkan RTO, lalu membersihkan hasil uji.",
+    "set": {
+     "t-c1": "Test failover: VNet terisolasi, produksi tidak tersentuh",
+     "t-c2": "Ukur waktunya: RTO yang terukur menggantikan tebakan"
+    }
+   },
+   {
+    "title": "Region utama padam",
+    "text": "Lalu gangguan satu region penuh melanda Indonesia Central, dan setiap zona di sana terdampak. Tim menjalankan failover: Site Recovery menyalakan VM di Southeast Asia dari recovery point terbaru, hanya beberapa menit di belakang produksi. DNS dan dependensi lain dialihkan sesuai runbook. Nanti mereka melakukan re-protect ke arah sebaliknya, lalu fail back ke rumah.",
+    "set": {
+     "t-c1": "Failover: VM menyala dari recovery point terbaru",
+     "t-c2": "Lalu re-protect, dan fail back setelah region utama sehat"
+    }
+   },
+   {
+    "title": "Rangkuman dan lab Anda",
+    "text": "Dua angka dan dua alat. RPO adalah data yang sanggup Anda relakan hilang, RTO adalah lama waktu layanan boleh mati; tetapkan keduanya per sistem. Azure Backup, yang dijaga soft delete, immutability, dan MUA, memberi Anda ingatan yang panjang, sedangkan Site Recovery memberi salinan siaga yang cepat. Tanpa pasangan region, Anda memilih region kedua sendiri.",
+    "tip": "Di Lab 17 Anda akan mencadangkan sebuah VM, sengaja menghilangkan sebuah file, me-restore-nya dari recovery point, dan mengembalikan cadangan yang dihapus penyerang.",
+    "set": {
+     "t-c1": "RPO dan RTO per sistem · Backup untuk riwayat · Site Recovery untuk kecepatan",
+     "t-c2": "Tidak punya pasangan region? Pilih region kedua sendiri, lalu ujilah"
+    }
+   }
+  ],
+  "svg": {
+   "Orders server · DefaultPolicy: one recovery point a day at 22:00": "Server pesanan · DefaultPolicy: satu recovery point per hari pukul 22:00",
+   "Mon 22:00": "Senin 22:00",
+   "Tue 15:00": "Selasa 15:00",
+   "Tue 19:00": "Selasa 19:00",
+   "Last good backup": "Backup baik terakhir",
+   "Mon 22:00 · recovery point": "Senin 22:00 · recovery point",
+   "Ransomware strikes": "Ransomware menyerang",
+   "Tue 15:00 · files encrypted": "Selasa 15:00 · terenkripsi",
+   "Storefront back": "Toko online kembali",
+   "Tue 19:00 · restored": "Selasa 19:00 · di-restore",
+   "17 hours of orders exist in no backup": "17 jam pesanan tidak ada di backup mana pun",
+   "4 hours offline": "4 jam offline",
+   "RPO now about 1 hour": "RPO kini sekitar 1 jam",
+   "DefaultPolicy: one recovery point a day, kept for 30 days": "DefaultPolicy: satu recovery point per hari, disimpan 30 hari",
+   "Every order written after 22:00 exists only on the server": "Setiap pesanan setelah pukul 22:00 hanya ada di server",
+   "No active recovery points left": "Tidak ada recovery point aktif yang tersisa",
+   "Sun 22:00": "Minggu 22:00",
+   "Sat 22:00": "Sabtu 22:00",
+   "Soft-deleted · kept 14 days · undelete possible": "Soft-deleted · disimpan 14 hari · bisa di-undelete",
+   "Attacker": "Penyerang",
+   "stolen admin password": "kata sandi admin curian",
+   "security team approves": "tim keamanan menyetujui",
+   "orders.csv still on disk": "orders.csv masih di disk",
+   "Attacker: \"delete backup data\" for vm-orders": "Penyerang: \"delete backup data\" untuk vm-orders",
+   "Without protection, every recovery point would be gone in seconds": "Tanpa perlindungan, setiap recovery point lenyap dalam hitungan detik",
+   "Indonesia Central · primary": "Indonesia Central · utama",
+   "Southeast Asia · DR target": "Southeast Asia · target DR",
+   "continuous replication": "replikasi berkelanjutan",
+   "Storefront VMs": "VM toko online",
+   "every write, first": "semua tulisan mampir dulu",
+   "Replica disks": "Disk replika",
+   "recovery point every 5 min": "recovery point setiap 5 menit",
+   "isolated VNet": "VNet terisolasi",
+   "Failover VMs": "VM failover",
+   "start here": "menyala di sini",
+   "Indonesia Central has no paired region: you choose the target": "Indonesia Central tidak punya region pasangan: Anda memilih targetnya",
+   "Southeast Asia: close, three zones, broad services · check data residency first": "Southeast Asia: dekat, tiga zona, layanan lengkap · periksa residensi data dulu"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -715,6 +882,119 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -834,7 +1114,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -869,7 +1149,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -882,7 +1162,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -903,7 +1183,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -911,7 +1191,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

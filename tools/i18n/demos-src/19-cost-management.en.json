@@ -1,0 +1,124 @@
+{
+  "page": {
+    "doc_title": "Lunch 19 · Cost Management — Interactive demo",
+    "kicker": "Lunch 19 · Cost Management · Interactive demo",
+    "title": "Where did the money go? Decompose the bill, hunt the orphans, set the alarms",
+    "lede": "Follow Nusantara Retail's first Azure invoice from one confusing total to a bill you can explain and control. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "An Azure bill decomposed into compute, storage and network, an orphan hunt, and a budget with alerts at 50, 80 and 100 percent",
+    "svgDesc": "On the left, Nusantara Retail's subscription holds compute, storage and network resources whose meters feed a monthly bill below them. Three orphaned resources are found with a Resource Graph query and deleted. On the right, a monthly budget gauge fills to 50, 80 and 100 percent and sends email alerts while the resources keep running."
+  },
+  "steps": [
+    {
+      "title": "A bill nobody can explain",
+      "text": "It is the first working day of the month and PT Nusantara Retail's Azure invoice has arrived. Ibu Sari sees one big total, higher than the spreadsheet she approved, and the finance team asks a fair question: what exactly are we paying for? In the next few minutes you will take this bill apart, hunt for waste and set up an early warning system."
+    },
+    {
+      "title": "Every resource runs a meter",
+      "text": "Inside the subscription sit the resources built over the last few weeks: web servers, an App Service plan, disks, a storage account, public IP addresses and the traffic to shoppers. Each one reports usage on meters: hours for compute, gigabyte-months for storage, gigabytes out and hours for networking. The bill is simply quantity times price for every meter, added up."
+    },
+    {
+      "title": "The bill, decomposed",
+      "text": "Group the same invoice by meter category and the single total splits into three parts. Compute is often the biggest slice, because machines and plans charge for every hour they exist. Storage charges for the capacity you provision. Network charges for public IP addresses and for data leaving Azure. In Cost Management this is cost analysis grouped by service."
+    },
+    {
+      "title": "Compute: you pay while it runs",
+      "text": "Compute meters tick for every hour a VM is allocated or a plan exists. vm-web-2 runs at five percent CPU all day: that is an oversized machine, not a busy one. Shutting it down from inside the operating system is not enough; only deallocating it stops the compute meter. The plan asp-test hosts no apps at all, yet it bills every hour."
+    },
+    {
+      "title": "Storage: you pay for capacity",
+      "text": "Managed disks are billed by their provisioned size, whether anyone reads them or not. disk-old belonged to a test VM that Rizky deleted last month, and deleting a VM does not delete its disks unless you ask. The storage account st-images works differently: you pay for the photos actually stored, plus the operations that read and write them."
+    },
+    {
+      "title": "Network: traffic out, idle IPs",
+      "text": "Data coming into Azure is free, but data going out to shoppers on the internet is charged per gigabyte, so busy product pages cost more. Standard public IP addresses are billed for every hour they exist, attached or not. pip-old used to point at a server that no longer exists, so every hour it exists is pure waste."
+    },
+    {
+      "title": "The numbers arrive late",
+      "text": "Here is the catch: cost data is not real time. Usage is collected, priced and loaded into Cost Management in batches, typically 8 to 24 hours later and up to 72 hours for some pay-as-you-go subscriptions. Budgets are evaluated about once a day. A runaway resource can run for a day before any chart shows it, so you need inventory tools as well.",
+      "set": {
+        "t-total": "Total so far: today's usage is not included yet"
+      }
+    },
+    {
+      "title": "Waste hides in plain sight",
+      "text": "Look again with a cost lens and three resources stand out: a disk attached to nothing, a public IP associated with nothing and an App Service plan with zero apps. Nobody uses them, yet their meters keep feeding the bill every hour. In the portal they all show a healthy Succeeded status, which is exactly why orphans survive for months."
+    },
+    {
+      "title": "The orphan hunt",
+      "text": "Azure Resource Graph queries every resource in every subscription you can read, in seconds. This query finds disks whose state is Unattached; similar ones find public IPs with no IP configuration and plans whose number of sites is zero. Unlike cost data, Resource Graph reflects changes almost immediately, so it is the right tool for a weekly orphan hunt."
+    },
+    {
+      "title": "Delete the waste, right-size the rest",
+      "text": "After checking with the owners, you delete the three orphans. Azure Advisor recommends a smaller size for vm-web-2; Advisor needs days of history, so brand-new waste will not show up there immediately. For the steady storefront servers, a reservation or savings plan would cut the hourly rate further, but only after the cleanup. Next month's total will be lower.",
+      "set": {
+        "t-total": "Next month: lower, three orphans removed",
+        "t-seg-compute": "VMs (empty plan removed)",
+        "t-seg-storage": "blobs, attached disks",
+        "t-seg-network": "data out, one IP"
+      }
+    },
+    {
+      "title": "A budget watches the trend",
+      "text": "Prevention beats cleanup, so you create a monthly budget on the storefront resource group with alerts at 50, 80 and 100 percent. Halfway through the month, actual spend crosses 50 percent and Cost Management emails Ibu Sari and the resource owners. Nothing is wrong yet, but now everyone knows where the month is heading.",
+      "set": {
+        "t-budget-sub": "rg-storefront · 50/80/100% alerts",
+        "t-spend": "Spend: 50% · email 1 sent"
+      }
+    },
+    {
+      "title": "Alerts, not brakes",
+      "text": "At 80 percent a second email arrives, and at 100 percent a third. Notice what does not happen: no resource stops. A budget is an alarm, not a brake, and it works on delayed data. For automatic action, attach an action group that runs automation, such as deallocating development VMs. Pay-as-you-go subscriptions have no spending limit to fall back on.",
+      "set": {
+        "t-spend": "Spend: 100% · nothing stopped"
+      }
+    },
+    {
+      "title": "Recap: see, find, fix, guard",
+      "text": "Decompose the bill by service and by tag, remember that cost data arrives hours late, hunt orphans with Resource Graph and Advisor, buy commitments only for steady workloads after the cleanup, and guard every resource group with a budget and alerts. Then repeat it every month: that loop of inform, optimize and operate is the heart of FinOps.",
+      "tip": "In Lab 19 you create three cheap orphans on purpose, find them with Resource Graph, check Advisor, set a 50/80/100% budget on the resource group, compare pay-as-you-go with a reservation, and then delete the waste."
+    }
+  ],
+  "svg": [
+    "Subscription · Nusantara Retail (Southeast Asia)",
+    "Compute · per hour",
+    "Storage · per GB-month",
+    "Network · per GB and hour",
+    "Monthly bill · PT Nusantara Retail",
+    "Total this month: higher than expected",
+    "Monthly budget",
+    "rg-storefront · no budget yet",
+    "Actual spend: not tracked",
+    "One total. What are we paying for?",
+    "Compute",
+    "VMs, plans",
+    "Storage",
+    "disks, blobs",
+    "Network",
+    "public IPs, data out",
+    "cost data: 8–24 h behind",
+    "vm-web-1",
+    "running 24/7",
+    "vm-web-2",
+    "running 24/7 · 5% CPU",
+    "asp-test",
+    "plan with 0 apps",
+    "st-images",
+    "product photos",
+    "disk-web-1",
+    "attached · OS disk",
+    "disk-old",
+    "unattached",
+    "data out",
+    "pages to shoppers",
+    "pip-web",
+    "attached to vm-web-1",
+    "pip-old",
+    "not associated",
+    "Advisor: resize",
+    "Azure Resource Graph · seconds, across every subscription you can read",
+    "Resources | where type =~ 'microsoft.compute/disks'",
+    "| where tostring(properties.diskState) =~ 'Unattached'",
+    "Alert email",
+    "Ibu Sari + resource owners"
+  ]
+}

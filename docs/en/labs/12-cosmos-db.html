@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 12 · A product catalogue that scales · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 12: A product catalogue that scales. about 45 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/12-cosmos-db.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/12-cosmos-db.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/12-cosmos-db.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/12-cosmos-db.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 12 · A product catalogue that scales">
+<meta property="og:description" content="Hands-on Azure lab 12: A product catalogue that scales. about 45 minutes, cost 💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/12-cosmos-db.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lab" data-lab="12" style="--c:#11935a">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/labs/12-cosmos-db.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#11935a">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 12</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>12</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">A product catalogue that scales</h1>
+        <p class="lab-story">🏪 <b>Episode 12 · The 140-Column Table</b> — Every new product type means another late-night schema change. <a href="../lunches/12-cosmos-db.html">Read the lunch</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ about 45 minutes</span>
+          <span class="chip cost">💲 free or close to free</span>
+          <span class="chip">Difficulty ★★☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 8 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--create-a-serverless-account-for-the-api-for-nosql">Task 1 · Create a serverless account for the API for NoSQL</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--create-the-catalog-database-and-the-products-container">Task 2 · Create the catalog database and the products container</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--give-yourself-data-access-with-microsoft-entra-id">Task 3 · Give yourself data access with Microsoft Entra ID</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--install-the-sdk-and-load-the-catalogue">Task 4 · Install the SDK and load the catalogue</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--point-read-single-partition-query-cross-partition-query">Task 5 · Point read, single-partition query, cross-partition query</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--change-the-default-consistency-level">Task 6 · Change the default consistency level</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/app/cosmos_common.py" target="_blank" rel="noopener"><span>app/cosmos_common.py</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/app/load_products.py" target="_blank" rel="noopener"><span>app/load_products.py</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/app/products.json" target="_blank" rel="noopener"><span>app/products.json</span><small>10 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/app/query_products.py" target="_blank" rel="noopener"><span>app/query_products.py</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>4 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/12-cosmos-db" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Nusantara Retail's web shop sells coffee, tea, batik, snacks, spices and crafts, and every category describes its
+products differently: coffee has a roast and a grind, batik has a technique, a fabric and a motif. You give the
+catalogue a home that doesn't force one table shape on all of them: a <strong>serverless Azure Cosmos DB for NoSQL</strong> account
+with a database <code>catalog</code> and a container <code>products</code> partitioned by <strong><code>/category</code></strong>. You give yourself access to the
+data with <strong>Microsoft Entra ID</strong> instead of account keys, load 30 products with a small Python program that uses the
+<code>azure-cosmos</code> SDK, and then measure what things cost: a point read, a single-partition query and a cross-partition
+query, each with its request charge in RU. You change the default consistency level and watch the price of a read
+change, and finally you fix a search query that reads the whole catalogue to answer a question about coffee.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  entra[&quot;Microsoft Entra ID&quot;] -. &quot;access token&quot; .-&gt; py
+  py[&quot;You in Cloud Shell&lt;br/&gt;load_products.py · query_products.py&lt;br/&gt;azure-cosmos SDK&quot;] --&gt;|&quot;HTTPS · data-plane role&lt;br/&gt;Cosmos DB Built-in Data Contributor&quot;| acct
+  subgraph rg[&quot;rg-lunch12-&amp;lt;suffix&amp;gt;&quot;]
+    acct[&quot;Cosmos DB account cosmos-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;API for NoSQL · serverless&quot;] --&gt; db[(&quot;database: catalog&quot;)]
+    db --&gt; ctr[&quot;container: products&lt;br/&gt;partition key /category&quot;]
+  end
+  ctr --&gt; lp[&quot;logical partitions&lt;br/&gt;coffee · tea · batik · snacks · spices · crafts&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>). Contributor on
+the subscription or resource group is enough: the data-plane role in Task 3 is a Cosmos DB setting, not an Azure role
+assignment.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. It already has the Azure CLI and
+Python 3; Task 4 installs two Python packages into your home directory.</li>
+<li>Get the lab files and load the shared settings and this lab's names:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/12-cosmos-db
+source ../common/config.sh
+source lab.env
+echo &quot;Account: $ACCOUNT  ·  endpoint: $COSMOS_ENDPOINT&quot;
+</code></pre></div>
+<ul>
+<li>If this subscription has never used Cosmos DB, register its resource provider (it takes a minute or two and is
+harmless to repeat):</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az provider register --namespace Microsoft.DocumentDB --wait
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Cloud Shell ends a session after about 20 minutes without activity, and variables disappear with it. If that
+happens, <code>cd</code> back into the lab folder and run the block above again (skip the <code>git clone</code>).</p>
+</aside>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>A serverless account bills only for the request units you consume and the storage you use, so this lab costs next
+to nothing. Finish with the <strong>Clean up</strong> section anyway, even if you stop halfway.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–6 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--create-a-serverless-account-for-the-api-for-nosql" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Create a serverless account for the API for NoSQL</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--create-a-serverless-account-for-the-api-for-nosql" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The account is the top of the Cosmos DB hierarchy: it owns the endpoint, the regions, the consistency level and the
+billing model. You choose two things now that are hard or impossible to change later: the <strong>API</strong> (NoSQL) and the
+<strong>capacity mode</strong>. This lab uses <strong>serverless</strong>, and here is why:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Serverless (this lab)</th>
+<th>Provisioned throughput with the free tier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>You pay for</td>
+<td>the RUs your requests actually consume, plus storage</td>
+<td>RU/s reserved every hour (the first 1,000 RU/s and 25 GB are free for the account's lifetime)</td>
+</tr>
+<tr>
+<td>Available to</td>
+<td>every subscription</td>
+<td><strong>one</strong> account per subscription, chosen at creation; your free tier may already be in use</td>
+</tr>
+<tr>
+<td>Regions</td>
+<td><strong>one region only</strong>; you can't add regions later</td>
+<td>as many as you like, each billed</td>
+</tr>
+<tr>
+<td>Good for</td>
+<td>development, tests, small or spiky traffic</td>
+<td>steady traffic, several regions, production</td>
+</tr>
+</tbody>
+</table></div>
+<p>Serverless works in any subscription and costs almost nothing for a lab that runs a few hundred requests. The
+trade-off is that it stays in one region; the <a href="#-stretch-goals">Stretch goals</a> show a second region on a separate,
+provisioned account.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az group create --name &quot;$RG&quot; --location &quot;$LOCATION&quot; \
+  --tags course=&quot;$COURSE_TAG&quot; lunch=12 --output table
+
+az cosmosdb create \
+  --name &quot;$ACCOUNT&quot; \
+  --resource-group &quot;$RG&quot; \
+  --kind GlobalDocumentDB \
+  --locations regionName=&quot;$LOCATION&quot; failoverPriority=0 isZoneRedundant=False \
+  --capabilities EnableServerless \
+  --default-consistency-level Session \
+  --output none
+</code></pre></div>
+<p><code>--kind GlobalDocumentDB</code> is the API for NoSQL (it's also the default). Creating an account takes about 3–10 minutes:
+a good moment to reread <em>Partitioning</em> in the Lunch 12 reading.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Portal path: <em>Home › Create a resource › Azure Cosmos DB › Azure Cosmos DB for NoSQL ›
+Create</em>. Pick resource group <code>rg-lunch12-&lt;suffix&gt;</code>, account name <code>cosmos-nusa-&lt;suffix&gt;</code>, your region, and
+<strong>Capacity mode: Serverless</strong>. Leave the other tabs at their defaults — then come back and continue with Task 2.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the account exists, speaks NoSQL, is serverless and uses Session consistency:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az cosmosdb show -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --query &quot;{api:kind, capabilities:capabilities[].name, \
+  consistency:consistencyPolicy.defaultConsistencyLevel, regions:locations[].locationName, \
+  endpoint:documentEndpoint}&quot; --output jsonc
+</code></pre></div>
+<p>Expect <code>&quot;api&quot;: &quot;GlobalDocumentDB&quot;</code>, <code>&quot;capabilities&quot;: [&quot;EnableServerless&quot;]</code>, <code>&quot;consistency&quot;: &quot;Session&quot;</code>, one region,
+and an endpoint that matches <code>$COSMOS_ENDPOINT</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--create-the-catalog-database-and-the-products-container" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Create the catalog database and the products container</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--create-the-catalog-database-and-the-products-container" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A <strong>database</strong> groups containers; a <strong>container</strong> holds the items and is where you choose the <strong>partition key</strong>, the
+property Cosmos DB hashes to decide where every item lives. Nusantara Retail browses its catalogue by category (every
+shop page is one category) and each category holds at most a few thousand products, far below the 20 GB a logical
+partition can hold. So <code>/category</code> is a good fit for the <em>catalogue</em>. It would be a poor key for the order history,
+where one category would collect millions of writes during the 12.12 sale; that container would use something like
+<code>/customerId</code> instead.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az cosmosdb sql database create \
+  --account-name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --name &quot;$DATABASE&quot; --output none
+
+az cosmosdb sql container create \
+  --account-name &quot;$ACCOUNT&quot; --resource-group &quot;$RG&quot; \
+  --database-name &quot;$DATABASE&quot; --name &quot;$CONTAINER&quot; \
+  --partition-key-path &quot;$PARTITION_KEY&quot; --output none
+</code></pre></div>
+<p>There is no <code>--throughput</code>: serverless containers have none to set. And the partition key is permanent. To change it
+later you would copy every item into a new container.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Portal path: <em>your Cosmos DB account › Data Explorer › New Container</em>. Database id:
+<strong>Create new</strong> <code>catalog</code>; container id <code>products</code>; partition key <code>/category</code> — then come back and continue with
+Task 3.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the container exists with the right partition key and default (consistent) indexing:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az cosmosdb sql container show -a &quot;$ACCOUNT&quot; -g &quot;$RG&quot; -d &quot;$DATABASE&quot; -n &quot;$CONTAINER&quot; \
+  --query &quot;{name:name, partitionKey:resource.partitionKey.paths[0], indexing:resource.indexingPolicy.indexingMode}&quot; \
+  --output jsonc
+</code></pre></div>
+<p>Expect <code>&quot;partitionKey&quot;: &quot;/category&quot;</code> and <code>&quot;indexing&quot;: &quot;consistent&quot;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--give-yourself-data-access-with-microsoft-entra-id" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Give yourself data access with Microsoft Entra ID</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--give-yourself-data-access-with-microsoft-entra-id" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Cosmos DB has two planes. The <strong>control plane</strong> (create accounts, containers, settings) uses ordinary Azure roles such
+as Contributor. The <strong>data plane</strong> (read and write <em>items</em>) uses Cosmos DB's own role system: being Owner of the
+subscription does <strong>not</strong> let you read a single product with your Entra identity. You need a data-plane role. There are
+two built-in ones; list them:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az cosmosdb sql role definition list -a &quot;$ACCOUNT&quot; -g &quot;$RG&quot; \
+  --query &quot;[].{role:roleName, id:name}&quot; --output table
+</code></pre></div>
+<p>You'll see <strong>Cosmos DB Built-in Data Reader</strong> and <strong>Cosmos DB Built-in Data Contributor</strong>. Give the contributor role to
+yourself, scoped to the whole account (<code>/</code>). You could also scope it to <code>/dbs/catalog</code> or to a single container:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ME=$(my_object_id)
+az cosmosdb sql role assignment create \
+  --account-name &quot;$ACCOUNT&quot; \
+  --resource-group &quot;$RG&quot; \
+  --scope &quot;/&quot; \
+  --principal-id &quot;$ME&quot; \
+  --role-definition-name &quot;$DATA_ROLE&quot; \
+  --output none
+</code></pre></div>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Note</span>The portal's <strong>Access control (IAM)</strong> page manages control-plane Azure roles. It doesn't show this data-plane
+assignment, which is why this task uses the CLI.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> one assignment for your object ID:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az cosmosdb sql role assignment list -a &quot;$ACCOUNT&quot; -g &quot;$RG&quot; \
+  --query &quot;[?principalId==&#x27;$ME&#x27;].{role:roleDefinitionId, scope:scope}&quot; --output table
+</code></pre></div>
+<p>The role column ends in <code>/sqlRoleDefinitions/00000000-0000-0000-0000-000000000002</code>, the built-in Data Contributor.
+New assignments can take a few minutes before requests succeed.</p>
+</div>
+<details class="plain">
+<summary><b>Fallback only:</b> your organisation blocks the assignment? Use an account key, and know what you give up.</summary>
+<p>If <code>role assignment create</code> fails with an authorisation error and you can't get the permission, the scripts also
+accept the account's primary key:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>export COSMOS_KEY=$(az cosmosdb keys list -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --query primaryMasterKey --output tsv)
+</code></pre></div>
+<p>The trade-off: a primary key is a shared secret with full read and write access to <strong>every</strong> database in the account.
+It doesn't record <em>who</em> used it, it never expires on its own, and anyone who sees it in a screenshot or your shell
+history has the whole catalogue. Rotating it breaks every app that uses it. An Entra identity is per person (or per
+managed identity for apps), can be scoped to one container, and is removed in one command. That's why production
+accounts often switch keys off entirely (see the stretch goals). When you finish, run <code>unset COSMOS_KEY</code>.</p>
+</details>
+</div></section><section class="lab-section" id="task-4--install-the-sdk-and-load-the-catalogue" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Install the SDK and load the catalogue</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--install-the-sdk-and-load-the-catalogue" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The two scripts in <code>app/</code> use the Azure Cosmos DB SDK for Python. <code>azure-identity</code> lets them reuse your Azure CLI
+sign-in, so there is no password or key in the code. Install both into your home directory:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>pip install --user azure-cosmos azure-identity
+</code></pre></div>
+<p><code>app/products.json</code> holds 30 products: five per category, each with the common fields (<code>id</code>, <code>category</code>, <code>name</code>,
+<code>price</code> in rupiah, <code>stock</code>) and an <code>attributes</code> object whose shape depends on the category. Load them:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>python3 app/load_products.py
+</code></pre></div>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Copy</button></div><pre><code>Writing 30 items to catalog/products (partition key /category)
+Signed in with: Microsoft Entra ID (your Azure CLI / Cloud Shell sign-in)
+
+  upsert p-coffee-001           [coffee]    x.xx RU
+  ...
+Done: 30 items written for ... RU (about ... RU per write).
+Items per logical partition (category): batik=5, coffee=5, crafts=5, snacks=5, spices=5, tea=5
+</code></pre></div>
+<p>Each write is an <strong>upsert</strong>, so running the script again overwrites the same 30 items instead of duplicating them.
+Notice that a write costs several RU, more than a read: by default Cosmos DB indexes <strong>every</strong> property of every item,
+so each write also updates the index. That's also why you never declared a schema or an index for the batik
+<code>motif</code> or the coffee <code>roast</code>.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open <em>Data Explorer › catalog › products › Items</em> to browse what you loaded. Open two items
+from different categories and compare their <code>attributes</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the container counts 30 items:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>python3 app/query_products.py count
+</code></pre></div>
+<p>A message ending in <code>HTTP 403</code> means the role from Task 3 hasn't taken effect yet: wait two minutes and run the
+loader again.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--point-read-single-partition-query-cross-partition-query" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Point read, single-partition query, cross-partition query</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--point-read-single-partition-query-cross-partition-query" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A Cosmos DB bill is mostly a sum of request charges, so how you <em>ask</em> for data matters as much as how much data you
+have. Run the three ways of finding coffee side by side:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>python3 app/query_products.py compare
+</code></pre></div>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Copy</button></div><pre><code>Operation                                      Scope             Items      RU
+---------------------------------------------- ----------------- ----- -------
+Point read  id=&#x27;p-coffee-001&#x27;, key=&#x27;coffee&#x27;    one item              1    1.00
+Query  WHERE c.category = &#x27;coffee&#x27;             single partition      5    x.xx
+Query  WHERE c.price &lt; 50000                   cross-partition      13    x.xx
+</code></pre></div>
+<p>The query charges depend on your data and SDK version (a few RU each). What they show:</p>
+<ul>
+<li><strong>Point read</strong> (id <strong>and</strong> partition key): Cosmos DB goes straight to one item without running the query engine.
+An item up to 1 KB costs 1 RU. It's the cheapest way to fetch anything, which is why good designs know both values.</li>
+<li><strong>Single-partition query</strong>: the partition key in the filter sends the query to one logical partition and its index.</li>
+<li><strong>Cross-partition query</strong>: with no partition key, the query <strong>fans out</strong> to every physical partition. The script
+prints how many your container has: just <strong>1</strong> at this size, so the extra cost is small. A big catalogue spread over
+dozens of physical partitions pays a few RU, and some latency, for every partition the query visits.</li>
+</ul>
+<p>Run each query on its own to see the details the script collects:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>python3 app/query_products.py read p-coffee-001 coffee
+python3 app/query_products.py query &quot;SELECT c.id, c.name, c.price FROM c WHERE c.price &lt; 50000&quot;
+python3 app/query_products.py query &quot;SELECT c.id, c.name, c.price FROM c WHERE c.category = &#x27;tea&#x27;&quot; --pk tea
+</code></pre></div>
+<p>Each query also prints <strong>Documents the engine had to load</strong> next to <strong>documents returned</strong>. Remember that pair; it's
+the key to the Break-and-fix exercise.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> In <em>Data Explorer › products › New SQL Query</em>, run <code>SELECT * FROM c WHERE c.category = 'coffee'</code>
+and open the <strong>Query Stats</strong> tab: it shows the request charge, the retrieved document count and the output document
+count.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> you can say, using your own numbers, why the point read is the cheapest, and what the script
+printed as the number of physical partitions.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--change-the-default-consistency-level" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Change the default consistency level</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--change-the-default-consistency-level" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The account's default consistency is <strong>Session</strong>: you always read your own writes, and reads are served by a single
+replica. <strong>Strong</strong> and <strong>Bounded staleness</strong> read from two replicas to guarantee their promise, so the same read costs
+about twice as much. Switch the default to Strong, which takes a minute or two:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az cosmosdb update -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --default-consistency-level Strong --output none
+python3 app/query_products.py read p-coffee-001 coffee
+</code></pre></div>
+<p>The first line now says <code>consistency: account default (Strong)</code> and the point read costs about <strong>2 RU</strong>. A client can
+also <em>relax</em> consistency for its own requests without touching the account:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>python3 app/query_products.py read p-coffee-001 coffee --consistency Eventual
+</code></pre></div>
+<p>Back to about <strong>1 RU</strong>. It only works in that direction: a client can choose the account default or anything weaker,
+never something stronger. Put the default back to Session, the right choice for a shop where every shopper must see
+their own basket:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az cosmosdb update -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --default-consistency-level Session --output none
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Portal path: <em>your Cosmos DB account › Settings › Default consistency</em> — pick a level and
+<strong>Save</strong>, then come back and run the same <code>read</code> commands.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the account is back on Session:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az cosmosdb show -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --query consistencyPolicy.defaultConsistencyLevel --output tsv
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A developer builds the search box on the <strong>coffee page</strong> of the web shop. It works, so it ships:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>python3 app/query_products.py query \
+  &quot;SELECT c.id, c.category, c.name, c.price FROM c WHERE CONTAINS(LOWER(c.name), &#x27;kopi&#x27;)&quot;
+</code></pre></div>
+<p>Look at the last lines of the output. The scope is <strong>cross-partition</strong>, the engine <strong>loaded all 30 documents</strong> to
+return 6, and one of the 6 is a snack (Dodol Kopi) that doesn't belong on the coffee page. With 30 products the
+waste is a few RU. Now give the catalogue 10 synthetic copies of every product (330 items) and run the same query
+again:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>python3 app/load_products.py --copies 10
+python3 app/query_products.py query \
+  &quot;SELECT c.id, c.category, c.name, c.price FROM c WHERE CONTAINS(LOWER(c.name), &#x27;kopi&#x27;)&quot;
+</code></pre></div>
+<p>The documents loaded and the RU grow with the <strong>whole catalogue</strong>, on every keystroke of every shopper. Your job: make
+the coffee search cheap, and make its cost grow only with the coffee category.</p>
+<details class="plain">
+<summary>Hint</summary>
+<p>Two separate problems. The query doesn't tell Cosmos DB which logical partition to search. And wrapping the property in
+<code>LOWER()</code> stops the index from helping, so every document has to be loaded and lower-cased. <code>CONTAINS</code> has a third
+argument for case-insensitive matching.</p>
+</details>
+<details class="plain">
+<summary>Fix</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>python3 app/query_products.py query \
+  &quot;SELECT c.id, c.category, c.name, c.price FROM c WHERE c.category = &#x27;coffee&#x27; AND CONTAINS(c.name, &#x27;kopi&#x27;, true)&quot; \
+  --pk coffee
+</code></pre></div>
+<p>The scope is now <strong>single partition</strong>, the documents loaded fall to the coffee products only, the request charge
+drops, and the snack is gone from the results. <code>LOWER()</code> and <code>UPPER()</code> can't use the index, so the engine must load
+every document. <code>CONTAINS(..., true)</code> does the case-insensitive match itself. If a search really must cover every
+category, store a lower-case copy of the name when you write the item and filter on that property instead. Microsoft's
+query-tuning guidance notes that the partition-key saving becomes large on big containers (around 100 GB or 30,000
+RU/s and up); the habit is worth having long before that.</p>
+</details>
+<p>The copies are harmless and <code>verify.sh</code> doesn't mind them. Clean-up removes them with everything else.</p>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. The script only reads: it
+counts the items through the same Python code you used, so the SDK from Task 4 must be installed.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes the resource group <code>rg-lunch12-&lt;suffix&gt;</code> and with it the account, its database, its items and the
+data-plane role assignment, which lives inside the account. Nothing was created outside the resource group.
+Deletion continues in the background for a few minutes. If you used the key fallback, also run <code>unset COSMOS_KEY</code>.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>az cosmosdb create</code> fails with <em>Sorry, we are currently experiencing high demand in Southeast Asia region…</em></td>
+<td>Not enough capacity in that region right now</td>
+<td>Repeat the command with another region, for example <code>regionName=eastasia</code> or <code>regionName=indonesiacentral</code>; the resource group can stay where it is</td>
+</tr>
+<tr>
+<td><code>az cosmosdb create</code> says the name is already in use</td>
+<td>Account names are global DNS names</td>
+<td><code>export LAB12_ACCOUNT=cosmos-nusa-&lt;something-unique&gt;</code>, run <code>source lab.env</code> again and repeat Task 1</td>
+</tr>
+<tr>
+<td>A script prints <em>Cosmos DB refused the request (HTTP 403)</em> with <em>does not have required RBAC permissions to perform action [Microsoft.DocumentDB/databaseAccounts/readMetadata]</em></td>
+<td>No data-plane role yet, or it hasn't taken effect</td>
+<td>Check Task 3's checkpoint; if the assignment is there, wait a few minutes and retry</td>
+</tr>
+<tr>
+<td><em>Could not get a Microsoft Entra token from the Azure CLI</em></td>
+<td>The CLI isn't signed in (running on your own PC), or the Cloud Shell session expired</td>
+<td>Run <code>az login</code> (PC) or restart Cloud Shell, then <code>source</code> the two files again</td>
+</tr>
+<tr>
+<td><em>The Azure Cosmos DB SDK for Python is not installed</em></td>
+<td>Task 4's <code>pip install</code> didn't run in this environment</td>
+<td><code>pip install --user azure-cosmos azure-identity</code></td>
+</tr>
+<tr>
+<td><code>pip</code> stops with <code>error: externally-managed-environment</code> (some Linux and macOS installs)</td>
+<td>Your Python is managed by the operating system</td>
+<td>Use a virtual environment: <code>python3 -m venv ~/.venv-lab12 &amp;&amp; source ~/.venv-lab12/bin/activate &amp;&amp; pip install azure-cosmos azure-identity</code></td>
+</tr>
+<tr>
+<td><em>Set COSMOS_ENDPOINT first</em></td>
+<td>New shell: the variables are gone</td>
+<td><code>cd</code> into the lab folder and run <code>source ../common/config.sh</code> and <code>source lab.env</code> again</td>
+</tr>
+<tr>
+<td><em>Not found (HTTP 404)</em> from <code>read</code></td>
+<td>Wrong id <strong>or</strong> wrong partition key, for example <code>read p-coffee-001 tea</code></td>
+<td>A point read needs both, spelled exactly; values are case-sensitive</td>
+</tr>
+<tr>
+<td>Free-tier stretch goal fails because the subscription already has a free-tier account</td>
+<td>Only one free-tier account per subscription</td>
+<td>Find it with <code>az cosmosdb list --query &quot;[?enableFreeTier].{name:name, rg:resourceGroup}&quot; --output table</code>, or skip the stretch goal (without the free tier it costs money every hour)</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li>
+<p><strong>A second region (💲 if your free tier is used up).</strong> Serverless accounts live in one region, so create a small
+<em>provisioned</em> account with two regions and one 400 RU/s container. Billing is RU/s × regions, so that's 800 RU/s,
+inside the free tier's 1,000 RU/s if it's still available in your subscription. Without the free tier it bills every
+hour until you delete it.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>GEO=&quot;cosmos-nusa-geo-${SUFFIX}&quot;
+az cosmosdb create -n &quot;$GEO&quot; -g &quot;$RG&quot; --enable-free-tier true --default-consistency-level Session \
+  --locations regionName=&quot;$LOCATION&quot; failoverPriority=0 isZoneRedundant=False \
+  --locations regionName=&quot;$SECONDARY_LOCATION&quot; failoverPriority=1 isZoneRedundant=False --output none
+az cosmosdb sql database create -a &quot;$GEO&quot; -g &quot;$RG&quot; -n &quot;$DATABASE&quot; --output none
+az cosmosdb sql container create -a &quot;$GEO&quot; -g &quot;$RG&quot; -d &quot;$DATABASE&quot; -n &quot;$CONTAINER&quot; -p &quot;$PARTITION_KEY&quot; \
+  --throughput 400 --output none
+az cosmosdb sql role assignment create -a &quot;$GEO&quot; -g &quot;$RG&quot; --scope &quot;/&quot; --principal-id &quot;$(my_object_id)&quot; \
+  --role-definition-name &quot;$DATA_ROLE&quot; --output none
+COSMOS_ENDPOINT=&quot;https://${GEO}.documents.azure.com:443/&quot; python3 app/load_products.py
+</code></pre></div>
+<p>Then open <em>Replicate data globally</em> in the portal to see both regions on the map. Delete the account when you're done
+(<code>az cosmosdb delete -n &quot;$GEO&quot; -g &quot;$RG&quot; --yes</code>), or let <code>cleanup.sh</code> remove it with the resource group.</p>
+</li>
+<li>
+<p><strong>Switch keys off.</strong> Make Entra ID the only way in, then prove a key no longer works:
+<code>az resource update -g &quot;$RG&quot; -n &quot;$ACCOUNT&quot; --resource-type &quot;Microsoft.DocumentDB/databaseAccounts&quot; --set properties.disableLocalAuth=true</code>.</p>
+</li>
+<li>
+<p><strong>Design the order history.</strong> In Data Explorer, create a container <code>orders</code> with a <em>hierarchical</em> partition key
+(<code>/storeId</code>, then <code>/orderMonth</code>) and write down which queries from the Lunch 12 reading it serves well and which it
+doesn't.</p>
+</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build the following, any way you like (portal, CLI, Bicep):</p>
+<ol>
+<li>A <strong>Cosmos DB for NoSQL</strong> account in <code>rg-lunch12-&lt;suffix&gt;</code> (name it <code>cosmos-nusa-&lt;suffix&gt;</code>) that is <strong>serverless</strong>,
+or provisioned with the <strong>free tier</strong>, and uses <strong>Session</strong> as its default consistency.</li>
+<li>A database <strong><code>catalog</code></strong> with a container <strong><code>products</code></strong> whose partition key is <strong><code>/category</code></strong>.</li>
+<li>Your own Entra identity holds <strong>Cosmos DB Built-in Data Contributor</strong> on the account (key access is a fallback that
+<code>verify.sh</code> notes but doesn't fail).</li>
+<li>At least <strong>20 products</strong> in the container. <code>app/load_products.py</code> loads 30.</li>
+<li>You can show, with request charges, a point read, a single-partition query and a cross-partition query
+(<code>app/query_products.py compare</code>).</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="11-relational-databases-basic.html"><small>← Previous lab</small>11 · Nusantara Retail&#x27;s orders database</a><a class="next" href="13-containers-basic.html"><small>Next lab →</small>13 · Package the storefront</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/12-cosmos-db/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

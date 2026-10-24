@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 26 · A Proper Private Line — Lunch 26: Hybrid Connectivity: VPN Gateway, ExpressRoute and Virtual WAN (Advanced) · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 26 · Hybrid Connectivity: VPN Gateway, ExpressRoute and Virtual WAN (Advanced). Forty stores upload their sales over the internet — and one upload failed three nights in a row. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/26-hybrid-connectivity.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/26-hybrid-connectivity.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/26-hybrid-connectivity.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/26-hybrid-connectivity.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 26 · A Proper Private Line — Lunch 26: Hybrid Connectivity: VPN Gateway, ExpressRoute and Virtual WAN (Advanced)">
+<meta property="og:description" content="Lunch 26 · Hybrid Connectivity: VPN Gateway, ExpressRoute and Virtual WAN (Advanced). Forty stores upload their sales over the internet — and one upload failed three nights in a row. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/26-hybrid-connectivity.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lunch" data-lunch="26" style="--c:#7b4ff0">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/lunches/26-hybrid-connectivity.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 26</span> Season 2 · 🌊 Part 5 · Deep dives</div>
+      <h1>A Proper Private Line</h1>
+      <div class="lunch-title">Lunch 26 · Hybrid Connectivity: VPN Gateway, ExpressRoute and Virtual WAN (Advanced)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+      <div class="chips">
+        <span class="chip advanced">Advanced</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 Beyond AZ-900</span>
+        <span class="chip cost">🔬 Lab · about 90 minutes · 💲💲💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="08-networking-basic.html" title="Don&#x27;t Overlap My Network">↩ 08</a><a class="chip" href="25-networking-advanced.html" title="Prove the Traffic Is Inspected">↩ 25</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 25 · Prove the Traffic Is Inspected, a hub-and-spoke network sends spoke-to-spoke traffic through an inspection point you control.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, happy"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director&#x27;s question · 86% ready</b>After this episode you can say: “We keep selling, and head office reaches Azure privately — with a plan B.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#field-notes">🗒️ Notes</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today&#x27;s menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-why-hybrid-and-the-three-families-of-connections">Why hybrid, and the three families of connections</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-vpn-gateway-encrypted-tunnels-over-the-internet">VPN Gateway: encrypted tunnels over the internet</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-vpn-gateway-skus-in-2026">VPN Gateway SKUs in 2026</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-expressroute-a-private-line-into-microsofts-network">ExpressRoute: a private line into Microsoft&#x27;s network</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-virtual-wan-hubs-for-many-sites">Virtual WAN: hubs for many sites</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-how-it-fits-together-for-nusantara-retail">How it fits together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Field notes</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/26-hybrid-connectivity.html">🔬 Open Lab 26</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today&#x27;s menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> between site-to-site VPN, point-to-site VPN, VNet-to-VNet, ExpressRoute and Virtual WAN for a requirement.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> how a route-based VPN gateway is built: GatewaySubnet, public IP, local network gateway, connection, IPsec/IKE, BGP and active-active.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Pick</strong> a current VPN Gateway SKU, and an ExpressRoute circuit SKU, billing model and resiliency level.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Plan</strong> non-overlapping address space for head office, forty stores, remote users and Azure.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 26</span>
+        <div class="story-body"><p>The new orders API runs in Azure on 10.40.0.0/16, but the warehouse system and the finance database still live in Pak
+Budi's server room at head office in Jakarta, on 10.0.0.0/16. Today the two talk through a public endpoint protected by
+an IP allow list that Pak Budi edits by hand. The forty stores upload the day's sales every night across the internet.
+During the last 12.12 sale, one store's upload failed three nights in a row, and nobody noticed until finance tried to
+close the month.</p>
+<p>Pak Budi wants &quot;a proper private line&quot;. Ibu Sari wants to know three things: is it private, what happens when the line
+goes down, and what will it cost every month?</p>
+<p>Today's question: <strong>which private path should connect head office and the stores to Azure — and how do you keep it up
+when one link fails?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-why-hybrid-and-the-three-families-of-connections" data-spy><span class="scene-no">Scene 1 of 6</span><h3>Why hybrid, and the three families of connections</h3><div class="prose"><p><strong>Hybrid networking</strong> joins networks you run yourself — head office, stores, a datacenter — to virtual networks in Azure,
+so that machines reach each other on private IP addresses as if they shared one network. Nusantara Retail needs it
+because migration is gradual: the warehouse system stays at head office for at least another year, while every new
+service lands in Azure.</p>
+<p>Azure offers three families of hybrid connectivity:</p>
+<ul>
+<li><strong>VPN Gateway</strong> builds encrypted tunnels across the public internet. It's quick to set up, cheap to start and works
+wherever there is an internet connection.</li>
+<li><strong>ExpressRoute</strong> is a private connection into Microsoft's network through a connectivity provider. It never crosses
+the public internet and performs predictably, but ordering one takes weeks.</li>
+<li><strong>Virtual WAN</strong> is a Microsoft-managed hub that combines VPN, ExpressRoute and virtual network connections at scale,
+for organisations with many sites.</li>
+</ul>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph HQ[&quot;Head office, Jakarta · 10.0.0.0/16&quot;]
+    fw[&quot;Pak Budi&#x27;s firewall&lt;br/&gt;(VPN device and router)&quot;]
+  end
+  laptop[&quot;Remote admin laptop&lt;br/&gt;(Azure VPN Client)&quot;]
+  stores[&quot;40 stores&lt;br/&gt;10.100.0.0/16&quot;]
+  subgraph AZ[&quot;Azure · hub VNet 10.40.0.0/16&quot;]
+    vpngw[&quot;VPN gateway&quot;]
+    ergw[&quot;ExpressRoute gateway&quot;]
+  end
+  fw == &quot;site-to-site VPN&lt;br/&gt;(IPsec over the internet)&quot; ==&gt; vpngw
+  fw == &quot;ExpressRoute circuit&lt;br/&gt;(private, via a provider)&quot; ==&gt; ergw
+  laptop -. &quot;point-to-site VPN&quot; .-&gt; vpngw
+  stores -- &quot;site-to-site VPN or SD-WAN&lt;br/&gt;(later: a Virtual WAN hub)&quot; --&gt; vpngw
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p><strong>Plan the addresses first.</strong> Every hybrid design breaks if two connected networks use the same addresses: no router
+can tell which 10.0.1.10 you mean. As in Lunch 08, pick ranges that will never collide and write them down before
+anyone builds anything. Nusantara Retail's plan:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Network</th>
+<th>Address space</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Head office (Jakarta)</td>
+<td>10.0.0.0/16</td>
+<td>Pak Budi's existing network; it can't change</td>
+</tr>
+<tr>
+<td>Azure hub and workloads</td>
+<td>10.40.0.0/16</td>
+<td>The gateway subnets live here</td>
+</tr>
+<tr>
+<td>Stores</td>
+<td>10.100.0.0/16</td>
+<td>One /24 per store (10.100.1.0/24 to 10.100.40.0/24), with room to grow</td>
+</tr>
+<tr>
+<td>Point-to-site clients</td>
+<td>172.16.200.0/24</td>
+<td>Addresses handed to VPN users' laptops</td>
+</tr>
+</tbody>
+</table></div>
+<p>If an overlap can't be avoided — say Nusantara Retail buys a company whose network also uses 10.0.0.0/16 — VPN Gateway
+can translate one side's addresses with NAT rules. Treat that as a last resort: it makes troubleshooting and DNS harder.</p>
+<p><strong>Plan name resolution, too.</strong> A working tunnel is only half the job; names must resolve on both sides. Azure's
+built-in DNS at 168.63.129.16 answers only from inside Azure virtual networks, so head-office servers can't query it
+across a VPN. The usual answer is <strong>Azure DNS Private Resolver</strong> in the hub (Lunch 25): its inbound endpoint lets Pak
+Budi's DNS servers forward lookups for Azure private zones into Azure, and its outbound endpoint, with a forwarding
+ruleset, sends lookups for head office's internal domain back to his DNS servers.</p>
+</div></article><article class="scene-card" id="2-vpn-gateway-encrypted-tunnels-over-the-internet" data-spy><span class="scene-no">Scene 2 of 6</span><h3>VPN Gateway: encrypted tunnels over the internet</h3><div class="prose"><p>A <strong>VPN gateway</strong> is a set of Microsoft-managed instances that Azure deploys into a special subnet of your virtual
+network, the <strong>GatewaySubnet</strong>. The name must be exactly <code>GatewaySubnet</code>, nothing else may live in it, and you must not
+attach a network security group to it. Microsoft recommends /27 or larger, which leaves room for later additions such
+as an ExpressRoute gateway alongside. The gateway gets a <strong>Standard public IP address</strong>: the address the on-premises
+device connects to.</p>
+<p>Two more resources complete a site-to-site setup:</p>
+<ul>
+<li>A <strong>local network gateway</strong> describes the other side: the public IP address of Pak Budi's VPN device and the address
+ranges behind it (10.0.0.0/16), or its BGP settings.</li>
+<li>A <strong>connection</strong> joins the virtual network gateway to the local network gateway and holds the authentication —
+usually a <strong>pre-shared key</strong> that both sides must know; certificate-based authentication is also available.</li>
+</ul>
+<p>Inside the tunnel, <strong>IKE</strong> (Internet Key Exchange) negotiates keys and <strong>IPsec</strong> encrypts every packet. Azure's
+default IPsec/IKE policies suit most devices, and you can set a custom policy when a security team requires specific
+algorithms.</p>
+<p><strong>How a tunnel comes up.</strong> First the two ends use IKE to prove that they share the same key (or trust each other's
+certificates) and to agree on algorithms; the result is an <em>IKE security association</em>. Over that protected channel
+they negotiate <em>IPsec security associations</em>, which carry the actual traffic, and they renew the keys on a schedule.
+Only when both phases succeed does the connection status change from <strong>Connecting</strong> to <strong>Connected</strong>. Most failed
+tunnels come from a mismatch: a different pre-shared key, algorithms the device doesn't accept, or address ranges that
+don't line up. Your first diagnostics are the connection status and its ingress and egress byte counters; for harder
+cases, Network Watcher's VPN troubleshoot and the gateway's packet capture show what each side proposed.</p>
+<p><strong>Route-based or policy-based?</strong> A <strong>route-based</strong> gateway sends any traffic that matches its routes into the tunnel; a
+<strong>policy-based</strong> gateway encrypts only traffic between fixed address pairs. Choose route-based: point-to-site, BGP,
+active-active and VNet-to-VNet all need it, and policy-based is offered only on the Basic SKU. An older firewall that
+speaks only policy-based VPN can still connect to a route-based gateway with <em>policy-based traffic selectors</em>.</p>
+<p><strong>Active-active and BGP.</strong> By default a gateway runs <strong>active-standby</strong>: one instance carries the tunnels and the other
+takes over during maintenance or a failure, with a short interruption. In <strong>active-active</strong> mode each instance has its
+own public IP and carries its own tunnel, so failover is much smoother; it's the recommended production setup. <strong>BGP</strong>
+(Border Gateway Protocol) lets the gateway and Pak Budi's router exchange routes automatically instead of you typing
+prefixes into the local network gateway, and it makes multiple tunnels and transit routing work. Azure VPN gateways use
+the private AS number 65515 unless you choose another.</p>
+<p><strong>One gateway for many VNets.</strong> In a hub-and-spoke network (Lunch 25), only the hub needs a gateway. Turn on <em>Allow
+gateway transit</em> on the hub's side of each peering and <em>Use remote gateways</em> on the spoke's side, and every spoke
+reaches head office through the hub's VPN or ExpressRoute gateway — one gateway to pay for and monitor. Azure adds the
+on-premises prefixes to every subnet's routes automatically, with <strong>virtual network gateway</strong> as the next hop; you'll
+see exactly such a route in the lab.</p>
+<p>Three kinds of VPN connection share the same gateway:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Connects</th>
+<th>Nusantara Retail use</th>
+<th>Authentication</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Site-to-site (S2S)</strong></td>
+<td>An on-premises network to a VNet, through a VPN device with a public IP</td>
+<td>Head office now, stores later</td>
+<td>Pre-shared key or certificates</td>
+<td>The device must be compatible; internet quality limits performance</td>
+</tr>
+<tr>
+<td><strong>Point-to-site (P2S)</strong></td>
+<td>One computer to a VNet, through a VPN client</td>
+<td>Pak Budi working from home; Rizky reaching a private VM</td>
+<td>Microsoft Entra ID, certificates or RADIUS</td>
+<td>Entra ID needs OpenVPN and the Azure VPN Client, and isn't available on the Basic SKU; the client pool must not overlap</td>
+</tr>
+<tr>
+<td><strong>VNet-to-VNet</strong></td>
+<td>Two virtual networks, through a gateway in each</td>
+<td>Encrypted links between regions; this lunch's lab</td>
+<td>Pre-shared key</td>
+<td>For Azure-to-Azure traffic, VNet peering (Lunch 25) is usually cheaper and faster</td>
+</tr>
+</tbody>
+</table></div>
+<p>Point-to-site with <strong>Microsoft Entra ID authentication</strong> is the modern choice for staff: people sign in with their
+normal account, so MFA and Conditional Access apply, and there are no client certificates to issue and revoke. The
+Azure VPN Client runs on Windows and macOS.</p>
+<p>Patience is part of the design. Creating a VPN gateway often takes <strong>45 minutes or more</strong>, and some changes, such as
+switching to active-active, take a while too. Plan gateway changes in advance; don't click and wait.</p>
+</div></article><article class="scene-card" id="3-vpn-gateway-skus-in-2026" data-spy><span class="scene-no">Scene 3 of 6</span><h3>VPN Gateway SKUs in 2026</h3><div class="prose"><p>The gateway <strong>SKU</strong> sets throughput, the number of tunnels and connections, and the features you get. The line-up
+changed recently, so older tutorials can mislead you:</p>
+<ul>
+<li>Since 1 November 2025 you can't create the old non-zonal <strong>VpnGw1–5</strong> SKUs. Existing ones move to their zonal
+equivalents, and the old SKUs are deprecated from 30 September 2026. The legacy Standard and HighPerformance SKUs went
+even earlier, on 30 September 2025.</li>
+<li>The <strong>AZ SKUs</strong>, <strong>VpnGw1AZ to VpnGw5AZ</strong>, are the ones to use for every new gateway. In a region with availability
+zones the gateway is zone-redundant; in a region without zones it is deployed regionally.</li>
+<li><strong>Basic</strong> still exists and isn't retiring, but it's for dev/test only: no BGP, no IKEv2 or OpenVPN for point-to-site,
+no RADIUS and no IPv6. It needs a Standard public IP and can only be created with PowerShell or the CLI.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>SKU</th>
+<th>Generation</th>
+<th>Site-to-site tunnels (max)</th>
+<th>Use it for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Basic</td>
+<td>1</td>
+<td>10</td>
+<td>Dev/test and proofs of concept only</td>
+</tr>
+<tr>
+<td>VpnGw1AZ</td>
+<td>1</td>
+<td>30</td>
+<td>Small production: one head office and a few branches</td>
+</tr>
+<tr>
+<td>VpnGw2AZ, VpnGw3AZ</td>
+<td>1 or 2</td>
+<td>30</td>
+<td>More throughput and more point-to-site users</td>
+</tr>
+<tr>
+<td>VpnGw4AZ, VpnGw5AZ</td>
+<td>2</td>
+<td>100</td>
+<td>Large estates; beyond 100 tunnels, use Virtual WAN</td>
+</tr>
+</tbody>
+</table></div>
+<p>At the time of writing, Microsoft's aggregate throughput benchmarks run from about 650 Mbps for VpnGw1AZ to 10 Gbps for
+VpnGw5AZ. They are benchmarks, not guarantees, and a single tunnel gets less, so check the SKU page and test with your
+own traffic. A gateway bills for every hour it exists, from the moment creation starts, whether or not traffic flows,
+and data leaving Azure is charged on top. There is no pause button: to stop paying, you delete the gateway.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span><strong>The CLI's default SKU is Basic.</strong> <code>az network vnet-gateway create</code> without <code>--sku</code> quietly creates a Basic gateway —
+no BGP, no Entra ID for point-to-site, dev/test support only. Always pass <code>--sku</code> (for example <code>VpnGw1AZ</code>). Two more
+classic mistakes: putting a network security group or a 0.0.0.0/0 route on the GatewaySubnet, and connecting networks
+whose address spaces overlap.</p>
+</aside>
+</div></article><article class="scene-card" id="4-expressroute-a-private-line-into-microsofts-network" data-spy><span class="scene-no">Scene 4 of 6</span><h3>ExpressRoute: a private line into Microsoft's network</h3><div class="prose"><p><strong>ExpressRoute</strong> connects your network to Microsoft through a <strong>connectivity provider</strong>, such as a telco or an
+exchange, at an <strong>ExpressRoute location</strong> (also called a peering location): a colocation facility where Microsoft's
+edge routers sit. Jakarta has several at the time of writing, including a Jakarta Metro option. Traffic goes from Pak
+Budi's router across the provider's network to Microsoft's edge, without touching the public internet.</p>
+<ul>
+<li>The <strong>circuit</strong> is the logical connection, identified by a <strong>service key</strong> — a GUID you hand to the provider, not a
+secret. Every circuit has two connections to two Microsoft edge routers for built-in redundancy, and routes are
+exchanged with BGP. Bandwidths through providers range from 50 Mbps to 10 Gbps.</li>
+<li><strong>Azure private peering</strong> reaches your virtual networks on private addresses through an <strong>ExpressRoute gateway</strong> in the
+VNet (ErGw1Az, ErGw2Az, ErGw3Az or the scalable ErGwScale). <strong>Microsoft peering</strong> reaches Microsoft's public services,
+such as Azure PaaS endpoints and, in specific scenarios, Microsoft 365, over public addresses you own.</li>
+<li><strong>Circuit SKUs:</strong> <strong>Local</strong> (only Azure regions near the peering location, data transfer included in the port price),
+<strong>Standard</strong> (all regions in the same geopolitical area) and <strong>Premium</strong> (worldwide, with more routes and more VNet
+links). Billing is <strong>metered</strong> (pay per GB going out) or <strong>unlimited</strong> (flat fee); you can switch from metered to
+unlimited but not back.</li>
+<li><strong>ExpressRoute Direct</strong> skips the provider: dual 10, 100 or 400 Gbps ports straight into Microsoft's network.</li>
+<li><strong>Global Reach</strong> links your own sites to each other through their circuits over Microsoft's backbone. <strong>FastPath</strong>
+sends traffic straight to the VMs, bypassing the gateway (it needs ErGw3Az or ErGwScale).</li>
+</ul>
+<p><strong>Ordering a circuit</strong> follows a fixed sequence. You create the circuit in Azure — provider, peering location,
+bandwidth, SKU and billing model — and receive its service key. The provider uses the key to provision its side, and
+the circuit's provider status changes to <em>Provisioned</em>. Then you (or the provider) configure Azure private peering with
+BGP, create an ExpressRoute gateway in the hub's GatewaySubnet, and link the virtual network to the circuit with a
+connection. Virtual networks in other subscriptions can be linked too, using an authorization that the circuit's owner
+creates.</p>
+<p><strong>Resiliency</strong> comes in three levels. <strong>Standard</strong> resiliency is one circuit at one location: two connections, but one
+building. <strong>High</strong> resiliency, <strong>ExpressRoute Metro</strong>, splits one circuit across two sites in the same city.
+<strong>Maximum</strong> resiliency uses two circuits at two different peering locations — Microsoft's recommendation for critical
+workloads. Many organisations also keep a <strong>site-to-site VPN as a backup</strong> path, because VPN and ExpressRoute gateways
+can coexist in the same virtual network.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  router[&quot;Head office router&lt;br/&gt;10.0.0.0/16&quot;]
+  router -- &quot;IPsec tunnel&quot; --&gt; isp[&quot;Local ISP&quot;]
+  isp --&gt; inet((&quot;Public internet&quot;))
+  inet --&gt; vpngw[&quot;VPN gateway&quot;]
+  router -- &quot;BGP over the circuit&quot; --&gt; prov[&quot;Connectivity provider&lt;br/&gt;(private line)&quot;]
+  prov --&gt; edge[&quot;Microsoft edge routers&lt;br/&gt;Jakarta peering location&quot;]
+  edge --&gt; ergw[&quot;ExpressRoute gateway&quot;]
+  vpngw --&gt; vnet[&quot;Azure VNet 10.40.0.0/16&quot;]
+  ergw --&gt; vnet
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span><strong>Private is not the same as encrypted.</strong> ExpressRoute keeps traffic off the internet, but it doesn't encrypt it by
+default. When data must be encrypted in transit, use TLS in the application, MACsec on ExpressRoute Direct, or an
+IPsec VPN over the private peering.</p>
+</aside>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Site-to-site VPN</th>
+<th>ExpressRoute</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Path</td>
+<td>Encrypted tunnel across the public internet</td>
+<td>Private connection through a provider; never on the internet</td>
+</tr>
+<tr>
+<td>Encryption</td>
+<td>IPsec, always</td>
+<td>Not by default (add TLS, MACsec or IPsec)</td>
+</tr>
+<tr>
+<td>Bandwidth</td>
+<td>Up to the gateway SKU's throughput, shared by all tunnels</td>
+<td>50 Mbps to 10 Gbps per circuit; up to 400 Gbps ports with Direct</td>
+</tr>
+<tr>
+<td>Latency and jitter</td>
+<td>Varies with the internet</td>
+<td>Predictable</td>
+</tr>
+<tr>
+<td>Time to set up</td>
+<td>Hours, plus 45 minutes or more for the gateway</td>
+<td>Weeks, while a provider provisions the circuit</td>
+</tr>
+<tr>
+<td>Cost model</td>
+<td>Gateway per hour, plus outbound data</td>
+<td>Circuit per month (plus data if metered), gateway per hour, provider fees</td>
+</tr>
+<tr>
+<td>Redundancy</td>
+<td>Active-active gateway, two on-premises devices</td>
+<td>Two connections per circuit; Metro or a second location for more</td>
+</tr>
+<tr>
+<td>Best for</td>
+<td>Getting started, small sites, a backup path</td>
+<td>Heavy, steady, business-critical traffic</td>
+</tr>
+</tbody>
+</table></div>
+</div></article><article class="scene-card" id="5-virtual-wan-hubs-for-many-sites" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Virtual WAN: hubs for many sites</h3><div class="prose"><p>Forty stores, a head office, remote staff and a growing number of virtual networks in two regions: with plain VPN
+gateways you would manage dozens of connections, local network gateways and peerings, and build transit routing
+yourself. <strong>Azure Virtual WAN</strong> turns that into a managed service. You create a <strong>virtual WAN</strong> and a <strong>virtual hub</strong> in
+each region you use. A hub is a Microsoft-managed virtual network with gateways for site-to-site VPN, point-to-site
+(called <em>User VPN</em>) and ExpressRoute, plus a router that provides <strong>any-to-any transit</strong>: store to head office, store to
+VNet, VNet to VNet. Hubs in the same virtual WAN connect to each other in a full mesh over Microsoft's backbone. A
+<strong>secured virtual hub</strong> adds Azure Firewall for central inspection, and SD-WAN partners can automate store connections,
+so a new store's router builds its own tunnel.</p>
+<p>Virtual WAN comes in two types. <strong>Basic</strong> supports site-to-site VPN only. <strong>Standard</strong> adds ExpressRoute, User VPN,
+transit between VNets and hubs, Azure Firewall and network virtual appliances. You can upgrade from Basic to Standard,
+but not back.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  subgraph vwan[&quot;Virtual WAN (Standard)&quot;]
+    hubid[&quot;Hub · Indonesia Central&lt;br/&gt;VPN, User VPN and ExpressRoute gateways&lt;br/&gt;hub router and Azure Firewall&quot;]
+    hubsea[&quot;Hub · Southeast Asia&quot;]
+    hubid &lt;== &quot;hub-to-hub over Microsoft&#x27;s backbone&quot; ==&gt; hubsea
+  end
+  s1[&quot;Store 1&quot;] --&gt; hubid
+  s2[&quot;Store 2&quot;] --&gt; hubid
+  s40[&quot;Store 40&quot;] --&gt; hubid
+  hq[&quot;Head office&lt;br/&gt;ExpressRoute plus VPN backup&quot;] --&gt; hubid
+  staff[&quot;Remote staff&lt;br/&gt;User VPN&quot;] --&gt; hubid
+  hubid --&gt; app[&quot;VNet · storefront and orders API&quot;]
+  hubsea --&gt; dr[&quot;VNet · disaster recovery copy&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Don't reach for gateways when two Azure virtual networks just need to talk: <strong>VNet peering</strong> (Lunch 25) is cheaper,
+faster and needs no gateway. Use VNet-to-VNet VPN only when you specifically want IPsec between them — or, as in this
+lunch's lab, to rehearse a site-to-site connection without real hardware.</p>
+</aside>
+</div></article><article class="scene-card" id="6-how-it-fits-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>How it fits together for Nusantara Retail</h3><div class="prose"><p>Your recommendation to Ibu Sari comes in three phases:</p>
+<ol>
+<li><strong>Now — site-to-site VPN.</strong> A VpnGw1AZ gateway in active-active mode in the hub VNet (10.40.0.0/16, Indonesia
+Central), BGP with Pak Budi's firewall, and point-to-site with Microsoft Entra ID for the IT team. It's live within
+days and costs gateway hours plus outbound data.</li>
+<li><strong>Next quarter — ExpressRoute for head office.</strong> A Standard circuit with unlimited data, from a Jakarta peering
+location to Indonesia Central, for the nightly warehouse synchronisation. The VPN stays as the backup path. If the
+business later needs more, ExpressRoute Metro or a second circuit at another location raises resiliency.</li>
+<li><strong>When the stores join — Virtual WAN Standard.</strong> Each store's SD-WAN box connects to the Indonesia Central hub, a
+secured hub inspects store traffic, and the address plan from section 1 keeps every store clear of head office and
+Azure.</li>
+</ol>
+<p>Ibu Sari's three questions now have answers. Private: the VPN encrypts traffic over the internet, and ExpressRoute stays
+off the internet (with encryption added where the data needs it). Resilient: active-active gateways, two connections
+per circuit and a VPN backup. Cost: mostly fixed hourly and monthly fees that you can estimate in the pricing calculator
+before signing anything.</p>
+<p>Whatever you build, watch it. VPN gateways publish metrics such as tunnel bandwidth and BGP peer status to Azure
+Monitor, so you can raise an alert the moment a tunnel drops (Lunch 16). ExpressRoute circuits report availability and
+throughput, and Connection Monitor can test the path end to end, from a VM in Azure to a server at head office. The
+store whose upload failed three nights running would have raised an alert on the first night.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>During the next 12.12 sale, head office's internet line drops for 30 minutes. With only the
+site-to-site VPN, what stops working? With ExpressRoute plus a VPN backup? And what would still fail if the whole
+head-office building lost power?</p>
+</aside>
+<p>In Lunch 27 you move from the network edge to the storefront itself, with Application Gateway, Front Door and Traffic
+Manager.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · A tunnel to head office, a private line and a hub for every store</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/26-hybrid-connectivity.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/26-hybrid-connectivity.html" title="Interactive demo: A tunnel to head office, a private line and a hub for every store" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/26-hybrid-connectivity/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>Nothing crosses until both sides agree: IKE negotiates first, then IPsec carries the traffic.</li>
+<li>The same packet takes two very different routes: across the public internet, or on the private ExpressRoute path.</li>
+<li>With a Virtual WAN hub, a store reaches head office and Azure through one managed router instead of a mesh of tunnels.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Pak Budi needs the warehouse server at head office to reach Azure privately by next week, on a modest budget. VPN or
+ExpressRoute?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>A site-to-site VPN to a route-based gateway with an AZ SKU (for example VpnGw1AZ). It needs only an internet
+connection and a compatible device, while ExpressRoute needs a provider to provision a circuit, which takes weeks.
+<em>Why:</em> VPN is the fast, low-commitment way to start; ExpressRoute can follow later.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Rizky must reach a VM's private IP address from home, signing in with his Entra ID account and MFA. What do you set
+up?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Point-to-site VPN with Microsoft Entra ID authentication (OpenVPN and the Azure VPN Client) on a non-Basic,
+route-based gateway, with a client address pool that overlaps nothing. <em>Why:</em> Entra ID authentication brings MFA and
+Conditional Access to the VPN, with no client certificates to manage.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>A colleague's script runs <code>az network vnet-gateway create --gateway-type Vpn --vpn-type RouteBased …</code> without
+<code>--sku</code>. A week later, enabling BGP fails. Why?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Without <code>--sku</code> the CLI creates a <strong>Basic</strong> gateway, and Basic doesn't support BGP. Create the gateway with an AZ SKU
+such as <code>--sku VpnGw1AZ</code>. <em>Why:</em> the CLI's default SKU is Basic, which is meant for dev/test only.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>The finance team asks whether traffic on the planned ExpressRoute circuit will be encrypted. What do you answer?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Not by default. ExpressRoute is a private path that never crosses the internet, but it isn't encrypted. Use TLS in the
+applications, MACsec on ExpressRoute Direct, or an IPsec VPN over the private peering. <em>Why:</em> private and encrypted
+are different properties.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Forty stores, head office, remote staff and VNets in two regions need any-to-any connectivity, with a firewall
+inspecting store traffic centrally. Basic or Standard Virtual WAN?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Standard. Basic supports site-to-site VPN only; Standard adds User VPN, ExpressRoute, transit between VNets and hubs,
+and Azure Firewall in a secured hub. <em>Why:</em> any-to-any transit and central inspection are Standard features.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Plan non-overlapping address space before you build any hybrid link — overlapping networks can't be routed.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>VPN Gateway builds IPsec tunnels over the internet: site-to-site for sites, point-to-site (ideally with Entra ID) for people, VNet-to-VNet between VNets. In production use route-based, AZ SKUs, active-active and BGP.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>Gateways take 45 minutes or more to create and bill every hour they exist; Basic is dev/test only and is the CLI's default SKU.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>ExpressRoute is a private, predictable connection through a provider — not encrypted by default. Choose Local, Standard or Premium, metered or unlimited, and design resiliency with Metro, a second location and a VPN backup.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Virtual WAN Standard gives you managed hubs with any-to-any transit for many branches; Basic does site-to-site only.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Field notes from Stefanus</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>An untested backup path is only a rumour.</strong> Whenever a design says &quot;VPN as backup for ExpressRoute&quot;, I ask two
+questions. First: when did we last fail over on purpose? I want a planned test in a quiet window — take the circuit
+out of service, watch the traffic move to the tunnel, confirm that the nightly sync still finishes, then move back.
+Second: how would we know we are running on the backup? A tunnel that quietly carries everything for weeks looks
+healthy on every dashboard, so I want an alert on the circuit itself, not just on the tunnel. Finally, I ask where
+the two paths physically meet. If both leave head office through the same router, the same power feed or the same
+cable trench, they are not two paths. They are one path with two invoices.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">More about the author →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>26</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Connect head office</h3>
+          <div class="prose"><p><code>setup.sh</code> builds two virtual networks — Nusantara Retail's Azure network (10.40.0.0/16) and a simulated head office
+(10.0.0.0/16) — each with a GatewaySubnet and a small VM, and starts creating two route-based <strong>VpnGw1AZ</strong> gateways.
+While they build (30–45 minutes, with a reading list to fill the time), you check that the networks can't reach each
+other yet. Then you create VNet-to-VNet connections in both directions with a shared key generated at run time, watch
+them reach <strong>Connected</strong>, send ping and HTTP traffic through the tunnel, and inspect the effective routes. An optional
+task compares the result with VNet peering. The gateways cost money every hour, so the lab ends with immediate cleanup.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 90 minutes</span><span class="chip cost">💲💲💲 noticeable charges while running</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/26-hybrid-connectivity.html">Start Lab 26 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/vpn-gateway/about-gateway-skus" target="_blank" rel="noopener"><b>Microsoft Learn: About gateway SKUs</b><span>Current VPN Gateway SKUs, tunnel counts, throughput benchmarks and features.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/vpn-gateway/gateway-sku-consolidation" target="_blank" rel="noopener"><b>Microsoft Learn: VPN Gateway SKU consolidation and migration</b><span>The move from non-zonal to AZ SKUs, with dates and FAQs.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/expressroute/expressroute-introduction" target="_blank" rel="noopener"><b>Microsoft Learn: What is Azure ExpressRoute?</b><span>Circuits, peering, SKUs, billing models, Direct and Global Reach.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/virtual-wan/virtual-wan-about" target="_blank" rel="noopener"><b>Microsoft Learn: What is Azure Virtual WAN?</b><span>Hubs, Basic versus Standard, and transit connectivity.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🔗</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Bridge Builder</h2>
+        <p class="muted">Connect on-premises networks to Azure.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“We keep selling, and head office reaches Azure privately — with a plan B.”</b></p>
+        <div class="teaser"><b>Next episode · 27</b><h4>&#x27; OR 1=1--</h4><p>Attack strings fill the logs, and shoppers in Makassar wait on Jakarta.</p><p style="margin-top:10px"><a href="27-load-balancing-advanced.html">Watch Episode 27 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="25-networking-advanced.html"><small>← Previous episode</small>25 · Prove the Traffic Is Inspected</a><a class="next" href="27-load-balancing-advanced.html"><small>Next episode →</small>27 · &#x27; OR 1=1--</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/26-hybrid-connectivity/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

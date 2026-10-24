@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 10 · Jumat Malam Dewi — Makan Siang 10: Aplikasi Web dengan Azure App Service · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 10 · Aplikasi Web dengan Azure App Service. Developer tidak direkrut untuk mem-patch server setiap Jumat malam. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/10-app-service.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/10-app-service.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/10-app-service.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/10-app-service.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 10 · Jumat Malam Dewi — Makan Siang 10: Aplikasi Web dengan Azure App Service">
+<meta property="og:description" content="Makan Siang 10 · Aplikasi Web dengan Azure App Service. Developer tidak direkrut untuk mem-patch server setiap Jumat malam. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/10-app-service.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="10" style="--c:#11935a">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/10-app-service.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 10</span> Season 1 · 🧩 Bagian 3 · Layanan platform dan data</div>
+      <h1>Jumat Malam Dewi</h1>
+      <div class="lunch-title">Makan Siang 10 · Aplikasi Web dengan Azure App Service</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 45 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="02-cloud-concepts.html" title="Sewa, Bukan Beli?">↩ 02</a><a class="chip" href="06-virtual-machines-basic.html" title="Kabur dari Pantry">↩ 06</a><a class="chip" href="09-load-balancing-basic.html" title="Dua Server, Satu Alamat">↩ 09</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 09 · Dua Server, Satu Alamat, sebuah Standard load balancer kini menjaga toko tetap buka saat satu server — atau satu zona penuh — gagal.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, lebih tenang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 39% siap</b>Setelah episode ini Anda bisa menjawab: “Server yang gagal tidak terasa oleh pelanggan, dan tidak ada lagi server yang perlu di-patch.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-platform-as-a-service-untuk-aplikasi-web">Platform as a service untuk aplikasi web</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-app-service-plan-komputasi-yang-anda-bayar">App Service plan: komputasi yang Anda bayar</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-memasukkan-kode-dan-mengatur-konfigurasi-dengan-benar">Memasukkan kode dan mengatur konfigurasi dengan benar</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-deployment-slot-dan-swap">Deployment slot dan swap</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-domain-keamanan-dan-jaringan-sekilas">Domain, keamanan, dan jaringan sekilas</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-app-service-atau-yang-lain-pilihan-nusantara-retail">App Service atau yang lain? Pilihan Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/10-app-service.html">🔬 Buka Lab 10</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> apa saja yang dijalankan Azure App Service untuk Anda, bagaimana sebuah request sampai ke kode Anda, dan apa yang tetap menjadi tugas Anda.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> tier App Service plan, serta menentukan kapan harus scale up dan kapan scale out.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Mengonfigurasi</strong> aplikasi dengan app setting dan merilisnya dengan aman melalui deployment slot dan swap.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membandingkan</strong> App Service dengan virtual machine, Azure Container Apps, dan Azure Static Web Apps untuk suatu beban kerja.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 10</span>
+        <div class="story-body"><p>Jumat, pukul 21.40. Dewi masih di kantor. Sejak Makan Siang 09, toko online berjalan di dua virtual machine
+(<em>komputer virtual</em>) di belakang load balancer, dan berhasil melewati kegagalan server pertamanya tanpa kehilangan satu
+penjualan pun. Harga yang harus dibayar adalah Jumat malamnya: patch Ubuntu di satu VM, keluarkan VM itu dari pool,
+update Python, perpanjang sertifikat, restart nginx, masukkan kembali, lalu ulangi di VM satunya. &quot;Saya ini developer,&quot;
+keluhnya, &quot;tapi waktu saya lebih banyak habis untuk mengurus server daripada menulis fitur checkout.&quot;</p>
+<p>Pada hari Senin, Ibu Sari menambahkan kekhawatiran kedua. Harbolnas, Hari Belanja Online Nasional setiap 12.12, tinggal
+delapan minggu lagi. Tahun lalu puncak lalu lintasnya berlangsung sekitar empat jam, dan Ibu Sari tidak mau membayar
+sepanjang tahun untuk server yang ukurannya disiapkan demi satu malam. Dewi juga ingin merilis halaman checkout baru
+sebelum promo itu, tanpa harus menutup toko untuk melakukannya.</p>
+<p>Pertanyaan hari ini: <strong>bisakah Azure menjalankan server web untuk kita, membesarkannya saat promo, dan membiarkan Dewi
+merilis kode baru tanpa downtime?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-platform-as-a-service-untuk-aplikasi-web" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Platform as a service untuk aplikasi web</h3><div class="prose"><p>Di Makan Siang 06 Anda menyewa sebuah virtual machine dan menjadi penanggung jawab atas semua yang ada di atas perangkat
+keras: sistem operasi, runtime bahasa pemrograman (mesin yang menjalankan kode, misalnya interpreter Python), server
+web, patch keamanan, dan rencana scaling. <strong>Azure App Service</strong> menggeser garis itu. App Service adalah <strong>platform as a
+service (PaaS)</strong> (<em>platform sebagai layanan</em>) untuk beban kerja HTTP: situs web, REST API (antarmuka yang dipanggil
+program lain lewat HTTP), dan back end (sisi server) untuk aplikasi mobile. Microsoft menjalankan dan mem-patch sistem
+operasi, runtime bahasa, dan front end web; Anda membawa kode dan konfigurasi. Anda tetap memegang data Anda, akses
+pengguna Anda, pengaturan aplikasi Anda, dan tentu saja, bug Anda. Penggeser <em>model tanggung jawab bersama</em> dari Makan
+Siang 02 sudah bergeser satu langkah besar ke kanan.</p>
+<p>Ibaratnya tempat tinggal. Menyewa VM seperti mengontrak rumah kosong: Anda sendiri yang memperbaiki genteng bocor,
+mengurus pompa air, dan memanggil tukang listrik. App Service seperti tinggal di kos eksklusif: pemiliknya mengurus
+bangunan, listrik, air, dan keamanan, sedangkan Anda cukup membawa koper berisi kode. Tetapi kamar Anda tetap urusan
+Anda: kalau pintunya dibiarkan terbuka, itu bukan salah pemilik kos.</p>
+<p>App Service menjalankan <strong>.NET, Java (Java SE, Tomcat, dan JBoss), Node.js, Python, dan PHP</strong> di Windows atau Linux.
+Python hanya berjalan di Linux. Jika stack Anda (kombinasi bahasa dan runtime) tidak ada di daftar, atau aplikasi Anda
+sudah dikemas sebagai image (paket berisi aplikasi beserta semua kebutuhannya), App Service juga bisa menjalankan
+<strong>custom container</strong> (<em>kontainer</em>). Platform ini mengenal setiap stack bawaannya: ketika Dewi men-deploy kode Python,
+App Service bisa menginstal paket-paket dari <code>requirements.txt</code> dan menjalankan aplikasinya dengan Gunicorn, sebuah
+server web untuk production, tanpa Dewi perlu menulis skrip startup.</p>
+<p>Bagaimana sebuah request sampai ke kode? Setiap region (<em>wilayah</em>) Azure menjalankan App Service di atas kelompok server
+yang besar. <strong>Front end</strong>—lapisan server terdepan milik App Service—menerima setiap request yang masuk untuk alamat
+aplikasi Anda, seperti <code>app-nusa-ab12c.azurewebsites.net</code> atau <code>www.nusantararetail.co.id</code>. (Aplikasi yang dibuat di
+portal mendapat nama default yang lebih panjang, berisi bagian acak dan nama region, sehingga tak seorang pun di luar
+organisasi Anda bisa membuat ulang nama itu.) Front end mengakhiri TLS (enkripsi di balik gembok HTTPS), memutuskan
+instance mana yang harus menangani request, lalu meneruskannya. <strong>Worker</strong> adalah virtual machine yang menjalankan kode
+Anda; worker yang dicadangkan khusus untuk Anda membentuk <strong>App Service plan</strong> Anda. Setiap worker yang menjalankan
+aplikasi Anda disebut <strong>instance</strong>. File yang Anda deploy disimpan di penyimpanan bersama, sehingga worker mana pun
+milik Anda bisa menjalankan aplikasi Anda. Sebuah <strong>deployment endpoint</strong> terpisah (<em>SCM site</em>, juga dikenal sebagai
+Kudu) menerima kode baru dari CLI, dari GitHub Actions, atau dari portal.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shopper[&quot;Browser pembeli&quot;] --&gt;|HTTPS| fe[&quot;Front end App Service&lt;br/&gt;terminasi TLS dan routing&quot;]
+  subgraph plan[&quot;App Service plan asp-nusa (Linux, S1, 2 instance)&quot;]
+    w1[&quot;Instance 1&lt;br/&gt;storefront&quot;]
+    w2[&quot;Instance 2&lt;br/&gt;storefront&quot;]
+  end
+  fe --&gt; w1
+  fe --&gt; w2
+  dev[&quot;Dewi: az webapp deploy&lt;br/&gt;atau GitHub Actions&quot;] --&gt; scm[&quot;Deployment endpoint&lt;br/&gt;SCM site&quot;]
+  scm --&gt; files[(&quot;Konten aplikasi bersama&quot;)]
+  files -.-&gt; w1
+  files -.-&gt; w2
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Anda tidak pernah login ke worker itu untuk mem-patch-nya. Ketika patch Python atau Ubuntu yang baru keluar,
+platform-lah yang menggulirkannya. Ketika perangkat keras sebuah worker rusak, platform memindahkan aplikasi Anda ke
+worker yang sehat. Itulah pertukarannya: Anda melepaskan kendali atas mesin, dan sebagai gantinya seluruh &quot;shift malam&quot;
+mengurus server pun lenyap.</p>
+<p>Pertukaran ini punya batas-batas yang perlu Anda ketahui sebelum memindahkan sebuah beban kerja. Aplikasi Anda hanya
+bisa dijangkau lewat HTTP dan HTTPS, bukan lewat port sembarang, jadi layanan yang mendengarkan di port TCP-nya sendiri
+lebih cocok ditempatkan di tempat lain. Anda tidak bisa menginstal paket sistem operasi ke dalam stack bawaan; jika
+aplikasi membutuhkannya, buatlah custom container. Pekerjaan latar belakang yang berjalan berjam-jam tidak cocok
+dijalankan di dalam sebuah request web: App Service punya WebJobs untuk tugas latar belakang, dan Makan Siang 14
+memperkenalkan Azure Functions untuk pekerjaan berbasis event (dipicu oleh kejadian, misalnya pesanan baru masuk). Dan
+platform tidak bisa memperbaiki query database yang lambat, kebocoran memori (<em>memory leak</em>), atau password yang
+ter-commit ke Git (tersimpan di riwayat kode). Semua itu tetap urusan Anda.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>TLS berakhir di front end, jadi kode Anda menerima HTTP biasa ditambah header <code>X-Forwarded-Proto</code> yang memberi tahu
+apakah pengunjung memakai HTTPS. Jangan menulis sendiri pengalihan dari HTTP ke HTTPS: aktifkan pengaturan <strong>HTTPS
+Only</strong> dan biarkan front end yang melakukannya.</p>
+</aside>
+</div></article><article class="scene-card" id="2-app-service-plan-komputasi-yang-anda-bayar" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>App Service plan: komputasi yang Anda bayar</h3><div class="prose"><p>Setiap aplikasi berjalan di dalam sebuah <strong>App Service plan</strong>. Plan menentukan region, sistem operasi, <strong>pricing tier</strong>
+(tingkatan harga), <strong>ukuran instance</strong>, dan <strong>jumlah instance</strong>. Beberapa aplikasi bisa berbagi satu plan, dan kalau
+begitu mereka juga berbagi instance-nya: toko online dan portal admin untuk staf bisa menumpang di dua worker yang sama.
+Aplikasi-aplikasi dalam satu plan di-scale bersama, karena scaling mengubah plan, bukan aplikasinya.</p>
+<p>Dari situ lahir aturan tagihan paling penting dalam makan siang ini: <strong>Anda membayar plan, bukan aplikasinya</strong>. Pada
+tier dedicated (mesin khusus untuk Anda, tidak dibagi dengan pelanggan lain), setiap instance ditagih per jam, entah
+aplikasi di atasnya sedang sibuk, menganggur, atau dihentikan. Tier Free memang gratis, dengan batasan yang ketat.
+Ibaratnya menyewa mobil beserta sopirnya per jam: argo berjalan selama mobil itu Anda sewa, tidak peduli berapa
+penumpangnya atau apakah mereka sedang tidur di jok belakang. Menurunkan satu penumpang tidak menghentikan argo; yang
+menghentikannya hanyalah mengembalikan mobil. Plan adalah mobilnya, aplikasi adalah penumpangnya. Tier juga menentukan
+fitur apa saja yang Anda dapatkan:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Komputasi</th>
+<th>Maks. instance</th>
+<th>Autoscale</th>
+<th>Deployment slot</th>
+<th>Custom domain dengan TLS</th>
+<th>Penggunaan umum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Free (F1)</strong></td>
+<td>Bersama (shared), 60 menit CPU per hari</td>
+<td>1</td>
+<td>Tidak</td>
+<td>Tidak</td>
+<td>Tidak (hanya <code>azurewebsites.net</code>)</td>
+<td>Belajar, demo singkat</td>
+</tr>
+<tr>
+<td><strong>Shared (D1)</strong></td>
+<td>Bersama, hanya Windows</td>
+<td>1</td>
+<td>Tidak</td>
+<td>Tidak</td>
+<td>Tidak ada TLS untuk custom domain</td>
+<td>Situs hobi yang mungil</td>
+</tr>
+<tr>
+<td><strong>Basic (B1–B3)</strong></td>
+<td>Dedicated</td>
+<td>3, manual</td>
+<td>Tidak</td>
+<td>Tidak</td>
+<td>Ya</td>
+<td>Dev/test, situs production kecil</td>
+</tr>
+<tr>
+<td><strong>Standard (S1–S3)</strong></td>
+<td>Dedicated</td>
+<td>10</td>
+<td>Ya</td>
+<td>5 per aplikasi</td>
+<td>Ya</td>
+<td>Sebagian besar aplikasi web production</td>
+</tr>
+<tr>
+<td><strong>Premium v3 dan v4</strong></td>
+<td>Dedicated, perangkat keras lebih cepat, opsi yang dioptimalkan untuk memori</td>
+<td>30</td>
+<td>Ya</td>
+<td>20 per aplikasi</td>
+<td>Ya</td>
+<td>Production yang sibuk, aplikasi yang lebih besar</td>
+</tr>
+<tr>
+<td><strong>Isolated v2</strong></td>
+<td>Dedicated, di dalam virtual network Anda sendiri (App Service Environment v3)</td>
+<td>100</td>
+<td>Ya</td>
+<td>20 per aplikasi</td>
+<td>Ya</td>
+<td>Isolasi jaringan yang ketat, skala sangat besar</td>
+</tr>
+</tbody>
+</table></div>
+<p>Angka-angka ini adalah batas yang dipublikasikan saat tulisan ini dibuat (Oktober 2026); periksa halaman batas (limits)
+App Service sebelum Anda merancang dengan berpatokan padanya. Dua baris layak dilihat dua kali untuk Nusantara Retail.
+Basic punya komputasi dedicated, tetapi tanpa <strong>deployment slot</strong> dan tanpa <strong>autoscale</strong>. Standard adalah tier pertama
+yang punya keduanya, itulah sebabnya Standard biasanya menjadi titik awal untuk toko production.</p>
+<p>Ada dua cara untuk mendapatkan tenaga lebih:</p>
+<ul>
+<li><strong>Scale up</strong> (vertikal): pindahkan plan ke ukuran yang lebih besar atau tier yang lebih tinggi, misalnya dari S1 ke S2
+atau ke P1v3. Setiap instance mendapat CPU dan memori lebih banyak, atau plan mendapat fitur tambahan. Anda tidak perlu
+men-deploy ulang apa pun, meskipun aplikasinya akan di-restart.</li>
+<li><strong>Scale out</strong> (horizontal): tambahkan instance berukuran sama, misalnya dari satu menjadi tiga. Anda bisa melakukannya
+secara manual (Basic ke atas), dengan aturan <strong>autoscale</strong> yang bereaksi terhadap metrik seperti CPU atau terhadap
+jadwal (Standard ke atas), atau, pada plan Premium v2, v3, dan v4, dengan <strong>automatic scaling</strong>, di mana platform yang
+memutuskan berdasarkan lalu lintas HTTP.</li>
+</ul>
+<p>Bayangkan antrean kasir minimarket menjelang Lebaran. Pemilik toko bisa mengganti mesin kasir dengan yang lebih cepat
+(scale up), atau membuka dua kasir tambahan yang sama persis (scale out). Cara kedua bisa terus ditambah selama masih
+ada meja, dan kasir tambahan bisa ditutup lagi setelah keramaian usai—kemampuan membesar dan menyusut sesuai kebutuhan
+inilah yang disebut <em>elastisitas</em>.</p>
+<p>Bagaimana memilih ukuran? Mulailah dari yang kecil, ukur CPU dan memori di bawah beban yang realistis, lalu sesuaikan;
+mengganti tier nanti cukup beberapa menit, bukan sebuah migrasi. Lingkungan development dan test bisa berbagi satu plan
+Basic. Production layak mendapat plan sendiri, agar uji coba yang sibuk tidak memperlambat toko. Plan yang berjalan
+sepanjang tahun bisa dibeli dengan diskon lewat reservation atau Azure savings plan for compute—keduanya berupa komitmen
+pemakaian jangka panjang dengan imbalan harga lebih murah (Makan Siang 19 membandingkan pilihan-pilihannya). Di region
+yang memiliki availability zone (<em>zona ketersediaan</em>) (Makan Siang 03), tier yang lebih tinggi juga bisa menyebarkan
+instance sebuah plan ke beberapa zona, sehingga kegagalan satu zona tidak menutup toko; periksa tier mana dan berapa
+jumlah instance minimum yang dibutuhkan zone redundancy di region Anda.</p>
+<p>Scale out hanya berjalan mulus jika aplikasinya <strong>stateless</strong> (tidak menyimpan status apa pun di server). Jika kode Dewi
+menyimpan keranjang belanja di memori proses server web, pembeli yang request berikutnya mendarat di instance lain akan
+melihat keranjang kosong. Status (<em>state</em>) seharusnya disimpan di database atau cache (Makan Siang 11 dan 12). App
+Service bisa &quot;menempelkan&quot; sebuah browser ke satu instance dengan cookie afinitas (<em>affinity cookie</em>), tetapi itu solusi
+tambal sulam, bukan desain.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Menghentikan (stop) sebuah web app (<em>aplikasi web</em>) <strong>tidak</strong> menghentikan tagihan. Instance milik plan tetap
+berjalan dan tetap ditagih sampai Anda menurunkan plan ke tier Free atau menghapusnya. Di lab, hapus seluruh
+resource group (<em>grup sumber daya</em>).</p>
+</aside>
+</div></article><article class="scene-card" id="3-memasukkan-kode-dan-mengatur-konfigurasi-dengan-benar" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Memasukkan kode dan mengatur konfigurasi dengan benar</h3><div class="prose"><p>Deploy berarti memindahkan hasil build kode Anda (kode yang sudah siap dijalankan) ke worker. App Service menawarkan
+beberapa jalur, dan semuanya berakhir di deployment endpoint yang sama:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Opsi</th>
+<th>Cara kerjanya</th>
+<th>Gunakan saat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>az webapp up</code></td>
+<td>Satu perintah yang membuat resource group, plan, dan aplikasi, men-zip folder saat ini, lalu men-deploy-nya</td>
+<td>Anda ingin deployment pertama yang cepat. Azure CLI 2.87 (Juni 2026) secara resmi menandainya deprecated (usang); perintah ini masih berjalan</td>
+</tr>
+<tr>
+<td><code>az webapp create</code> + <code>az webapp deploy</code></td>
+<td>Anda membuat resource secara eksplisit, lalu mengunggah paket zip. Dengan <code>SCM_DO_BUILD_DURING_DEPLOYMENT=true</code>, App Service menginstal dependensi Anda</td>
+<td>Skrip, lab, dan pipeline sederhana</td>
+</tr>
+<tr>
+<td>GitHub Actions atau Azure Pipelines</td>
+<td>Setiap push memicu build, test, dan deploy, idealnya ke slot staging</td>
+<td>Pengembangan dalam tim dan rilis yang bisa diulang</td>
+</tr>
+<tr>
+<td>Deployment Center</td>
+<td>Halaman portal yang menghubungkan repositori dan menuliskan workflow untuk Anda</td>
+<td>Penyiapan CI/CD (build dan deploy otomatis setiap kali kode berubah) pertama Anda, tanpa menulis YAML (format file konfigurasi workflow)</td>
+</tr>
+<tr>
+<td>Container image</td>
+<td>App Service menarik image dari Azure Container Registry atau registry lain (gudang penyimpanan image)</td>
+<td>Anda sudah mengirimkan aplikasi sebagai container</td>
+</tr>
+</tbody>
+</table></div>
+<p>Apa yang terjadi pada paket zip Python setelah diunggah? Jika build automation aktif, sistem build App Service membuat
+virtual environment (folder terisolasi berisi paket Python milik aplikasi) dan menjalankan <code>pip install</code> untuk semua
+yang tercantum di <code>requirements.txt</code>. Saat aplikasi dimulai, container Linux mencari proyek Django (<code>wsgi.py</code>) atau
+aplikasi Flask di <code>app.py</code> atau <code>application.py</code>, lalu menjalankan Gunicorn untuknya. Apa pun yang tidak biasa, seperti
+aplikasi FastAPI, membutuhkan startup command (perintah untuk menjalankan aplikasi) di general settings. Jika tidak
+menemukan apa-apa, container akan menyajikan halaman default — kejutan yang umum setelah deployment dari folder yang
+salah.</p>
+<p>Konfigurasi adalah separuh lainnya dari sebuah rilis. Kode toko online yang sama seharusnya bisa berjalan sebagai toko
+sungguhan di production dan sebagai toko uji coba di staging, jadi nilai-nilai yang berbeda antarlingkungan disimpan di
+luar kode:</p>
+<ul>
+<li><strong>App settings</strong> adalah pasangan nama–nilai yang diserahkan App Service kepada kode Anda sebagai <strong>environment
+variable</strong> (variabel lingkungan) saat aplikasi dimulai. Kode Python Dewi membaca <code>os.environ[&quot;STORE_NAME&quot;]</code>. Mengubah
+sebuah setting akan me-restart aplikasi, sehingga nilai baru berlaku dalam hitungan detik.</li>
+<li><strong>Connection strings</strong> adalah daftar terpisah untuk koneksi database, juga diekspos sebagai environment variable
+(dengan awalan yang menyebutkan jenis database-nya).</li>
+<li><strong>Key Vault references</strong> memungkinkan sebuah setting menunjuk ke secret (data rahasia, misalnya password) di Azure Key
+Vault alih-alih menyimpan secret itu sendiri. Nilainya berbentuk <code>@Microsoft.KeyVault(SecretUri=...)</code>, dan <strong>managed
+identity</strong> milik aplikasi—identitas yang dikelola Azure, sehingga aplikasi bisa membuktikan siapa dirinya tanpa
+password—membaca secret yang sebenarnya. Tak seorang pun perlu menempelkan password ke portal lagi (Makan Siang 15).</li>
+<li><strong>General settings</strong> memilih versi runtime, startup command, <strong>HTTPS Only</strong>, versi TLS minimum, <strong>Always On</strong> (Basic
+ke atas) yang menjaga aplikasi tetap termuat di antara request, dan path <strong>health check</strong> (alamat yang dipanggil App
+Service untuk memeriksa kesehatan setiap instance).</li>
+</ul>
+<p>Ketika terjadi masalah, App Service memberi Anda beberapa jendela untuk mengintip ke dalam aplikasi. <strong>Log stream</strong>
+menampilkan apa yang ditulis aplikasi ke konsolnya, secara langsung, di portal atau dengan <code>az webapp log tail</code>.
+<em>Diagnose and solve problems</em> menjalankan pemeriksaan siap pakai untuk crash, respons lambat, dan kesalahan
+konfigurasi. <strong>Application Insights</strong> merekam setiap request, panggilan ke dependensi, dan exception (error di dalam
+kode) untuk dianalisis kemudian; Makan Siang 16 dan 30 membahasnya lebih dalam.</p>
+</div></article><article class="scene-card" id="4-deployment-slot-dan-swap" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Deployment slot dan swap</h3><div class="prose"><p>Men-deploy langsung ke production punya dua masalah. Selama instance di-restart dan &quot;dipanaskan&quot; (<em>warm-up</em>) dengan kode
+baru, pelanggan pertama mendapat jawaban lambat atau error. Dan jika kode baru itu rusak, setiap pelanggan melihatnya
+sekaligus, dan satu-satunya cara &quot;membatalkannya&quot; adalah deployment berikutnya.</p>
+<p><strong>Deployment slot</strong> memecahkan keduanya. Slot adalah aplikasi hidup dengan host name (nama alamat web) sendiri, misalnya
+<code>app-nusa-ab12c-staging.azurewebsites.net</code>, yang berjalan di plan yang sama dan di <strong>instance yang sama</strong> dengan
+production. Slot tersedia mulai Standard (5 per aplikasi) serta Premium dan Isolated (20 per aplikasi). Slot tidak
+menambah biaya, tetapi memang memakai sebagian CPU dan memori milik plan. Dewi men-deploy versi 2 ke slot <code>staging</code>,
+mengujinya di alamatnya sendiri sementara pelanggan tetap berbelanja lewat versi 1, lalu meminta App Service melakukan
+<strong>swap</strong> (menukar) staging ke production:</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  autonumber
+  actor C as Pelanggan
+  participant P as Host name production
+  participant S as Slot staging
+  participant A as Platform App Service
+  C-&gt;&gt;P: Shop (belanja, dilayani v1)
+  Note over S: Dewi men-deploy v2 dan mengujinya di host name staging
+  A-&gt;&gt;S: Terapkan slot setting milik production, restart instance
+  A-&gt;&gt;S: Request warm-up ke setiap instance
+  S--&gt;&gt;A: Setiap instance menjawab
+  A-&gt;&gt;P: Alihkan routing: production kini melayani v2 yang sudah warm-up
+  C-&gt;&gt;P: Shop (belanja, dilayani v2, tidak ada request yang hilang)
+  Note over S: Staging kini berisi v1. Swap lagi untuk rollback
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Production tetap menyajikan kode lama sampai setiap instance staging selesai di-restart dengan setting production dan
+menjawab sebuah request warm-up. Baru setelah itu App Service mengalihkan routing, sehingga tidak ada request yang
+hilang. Jika bagian keuangan menemukan bug setengah jam kemudian, Dewi cukup melakukan swap lagi: versi sebelumnya masih
+ter-deploy di slot staging, jadi versi itu di-warm-up dan dikembalikan dalam satu atau dua menit, tanpa deploy ulang dan
+tanpa downtime. Untuk kehati-hatian ekstra, <strong>swap with preview</strong> berhenti sejenak setelah langkah setting, sehingga Anda
+bisa menguji staging dengan konfigurasi production sebelum menyelesaikan swap.</p>
+<p>Ibaratnya restoran dengan dua dapur. Koki menyiapkan menu baru di dapur cadangan dan mencicipinya dulu, sementara tamu
+tetap dilayani dari dapur utama. Begitu semua kompor di dapur cadangan sudah panas dan hidangannya siap, para pelayan
+cukup beralih mengambil pesanan dari sana. Kalau menu baru ternyata keasinan, pelayan kembali ke dapur lama—yang
+kompornya masih menyala.</p>
+<p>Apa yang ikut berpindah bersama kode saat swap, dan apa yang tetap tinggal di slot? App settings dan connection strings
+ikut berpindah, kecuali Anda menandainya sebagai <strong>deployment slot setting</strong> (sering disebut setting <em>sticky</em>, alias
+&quot;lengket&quot; pada slotnya). Begitulah caranya staging mempertahankan koneksi ke database uji cobanya sendiri: tandai
+sebagai sticky, maka koneksi itu tidak akan pernah sampai ke production. Beberapa hal selalu tinggal di slotnya,
+termasuk custom domain, sertifikat TLS, <strong>HTTPS Only</strong>, pengaturan scale, access restrictions, dan managed identity. Slot
+juga bisa menerima sebagian lalu lintas sungguhan, misalnya 10 persen pembeli, untuk menguji perubahan pada pengguna
+nyata sebelum swap penuh. Satu detail untuk Linux: auto swap, yang melakukan swap otomatis setelah setiap deployment ke
+sebuah slot, hanya tersedia untuk aplikasi Windows.</p>
+<p>Begini cara Dewi bisa merencanakan checkout baru untuk Harbolnas. Senin, pipeline men-deploy versi 2 ke staging. Selasa,
+tim menguji alamat staging, lalu mengarahkan 10 persen pembeli sungguhan ke sana selama sehari. Rabu malam, jauh sebelum
+promo dimulai, Dewi melakukan swap dan memantau tingkat error. Jika ada yang terlihat janggal, ia melakukan swap balik
+dalam satu menit. Selama promo berlangsung, tidak ada yang men-deploy apa pun: rilis paling aman adalah rilis yang
+selesai lebih awal.</p>
+</div></article><article class="scene-card" id="5-domain-keamanan-dan-jaringan-sekilas" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Domain, keamanan, dan jaringan sekilas</h3><div class="prose"><p>Toko online membutuhkan nama domainnya sendiri (custom domain) dan gembok HTTPS, sementara portal admin tidak boleh
+terbuka untuk seluruh internet. App Service punya satu blok bangunan untuk setiap kebutuhan itu:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Fitur</th>
+<th>Arah</th>
+<th>Apa yang Anda dapatkan</th>
+<th>Tier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTPS Only dan versi TLS minimum</td>
+<td>Masuk (inbound)</td>
+<td>Mengalihkan HTTP ke HTTPS dan menolak versi TLS lama</td>
+<td>Semua</td>
+</tr>
+<tr>
+<td>Custom domain dengan managed certificate</td>
+<td>Masuk</td>
+<td><code>www.nusantararetail.co.id</code> dengan sertifikat gratis yang diperpanjang otomatis (bukan wildcard, yaitu sertifikat untuk semua subdomain sekaligus)</td>
+<td>Basic ke atas</td>
+</tr>
+<tr>
+<td>Autentikasi bawaan (built-in authentication)</td>
+<td>Masuk</td>
+<td>Sign-in dengan Microsoft Entra ID (<em>ID Microsoft Entra</em>), Google, GitHub, dan lainnya sebelum request apa pun mencapai kode Anda</td>
+<td>Semua</td>
+</tr>
+<tr>
+<td>Access restrictions</td>
+<td>Masuk</td>
+<td>Mengizinkan atau menolak lalu lintas berdasarkan rentang IP, service tag, atau subnet</td>
+<td>Semua</td>
+</tr>
+<tr>
+<td>Private endpoint (<em>titik akhir privat</em>)</td>
+<td>Masuk</td>
+<td>Alamat IP privat di virtual network (<em>jaringan virtual</em>) Anda; akses publik bisa dimatikan</td>
+<td>Basic, Standard, Premium</td>
+</tr>
+<tr>
+<td>Virtual network integration</td>
+<td>Keluar (outbound)</td>
+<td>Aplikasi bisa menjangkau resource privat, seperti database di balik private endpoint</td>
+<td>Basic ke atas</td>
+</tr>
+<tr>
+<td>Managed identity</td>
+<td>Keluar</td>
+<td>Aplikasi mendapat identitas Entra ID-nya sendiri untuk memanggil Key Vault, Storage, atau SQL tanpa secret</td>
+<td>Semua</td>
+</tr>
+</tbody>
+</table></div>
+<p>Autentikasi bawaan, sering disebut &quot;Easy Auth&quot;, sangat praktis untuk portal admin yang khusus staf: dengan beberapa
+pengaturan, semua orang harus sign-in dengan akun Nusantara Retail mereka sebelum halaman pertama dimuat. Access
+restrictions bisa mengizinkan portal admin hanya dari alamat IP publik kantor pusat, atau mengizinkan toko online hanya
+melalui Azure Front Door (Makan Siang 27). Private endpoint dan virtual network integration akan muncul lagi di Makan
+Siang 25. Anda tidak perlu memakai semuanya di hari pertama, tetapi ada baiknya tahu bahwa setiap masalah sudah punya
+sakelarnya masing-masing.</p>
+</div></article><article class="scene-card" id="6-app-service-atau-yang-lain-pilihan-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>App Service atau yang lain? Pilihan Nusantara Retail</h3><div class="prose"><p>App Service bukan satu-satunya tempat untuk menjalankan situs web di Azure. Berikut perbandingannya dengan para
+tetangganya:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Virtual machine</th>
+<th>App Service</th>
+<th>Container Apps</th>
+<th>Static Web Apps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Yang Anda kelola</strong></td>
+<td>OS, runtime, server web, patch, desain scaling</td>
+<td>Kode, setting, ukuran plan dan jumlah instance</td>
+<td>Container image, aturan scale</td>
+<td>Kode front-end dan API kecil</td>
+</tr>
+<tr>
+<td><strong>Yang Anda deploy</strong></td>
+<td>Perangkat lunak yang diinstal di VM</td>
+<td>Paket kode atau container</td>
+<td>Container image (sebagai revision)</td>
+<td>File statis yang di-build dari repositori Git</td>
+</tr>
+<tr>
+<td><strong>Scaling</strong></td>
+<td>Scale set (Makan Siang 23)</td>
+<td>Instance dalam plan, autoscale</td>
+<td>Replika dari nol ke atas dengan aturan berbasis event</td>
+<td>Konten disajikan otomatis dari banyak lokasi di seluruh dunia</td>
+</tr>
+<tr>
+<td><strong>Yang Anda bayar</strong></td>
+<td>Jam VM dan disk</td>
+<td>Instance plan (tier Free untuk belajar)</td>
+<td>Resource yang dipakai per detik, atau workload profile dedicated</td>
+<td>Paket gratis atau paket Standard berbayar</td>
+</tr>
+<tr>
+<td><strong>Pilih jika</strong></td>
+<td>Anda butuh kendali penuh atas OS atau perangkat lunak lama</td>
+<td>Anda meng-host aplikasi web dan API pada stack yang didukung</td>
+<td>Anda menjalankan microservice, background worker, atau container berbasis event</td>
+<td>Anda menerbitkan single-page app dan situs statis</td>
+</tr>
+<tr>
+<td><strong>Contoh di Nusantara</strong></td>
+<td>Layanan lama yang menyinkronkan terminal POS (mesin kasir) di toko-toko</td>
+<td>Toko online dan portal admin</td>
+<td>Microservice inventaris dan rekomendasi (Makan Siang 13)</td>
+<td>Microsite promo 12.12</td>
+</tr>
+</tbody>
+</table></div>
+<p>Tiga pertanyaan menyelesaikan sebagian besar kasus. Apakah Anda butuh kendali atas sistem operasi, atau perangkat lunak
+yang hanya bisa diinstal di server? Pakai VM. Apakah sama sekali tidak ada kode di sisi server? Static Web Apps lebih
+sederhana dan lebih murah. Apakah beban kerjanya berupa sekumpulan container yang harus di-scale secara terpisah, mungkin
+sampai nol? Lihatlah Container Apps. Untuk aplikasi web klasik atau API dengan bahasa yang didukung, App
+Service biasanya menjadi jalan tersingkat menuju production.</p>
+<p>Untuk toko online, pilihannya adalah App Service di Linux dengan stack Python. Di production, Nusantara Retail akan
+memakai setidaknya tier Standard dengan dua instance atau lebih demi ketersediaan, sebuah aturan autoscale untuk
+Harbolnas, slot staging untuk setiap rilis, HTTPS Only dengan managed certificate di <code>www.nusantararetail.co.id</code>, dan Key
+Vault reference untuk secret. Data pelanggan harus tetap di Indonesia, jadi production akan berjalan di Indonesia
+Central (Jakarta), setelah dipastikan bahwa tier yang dipilih tersedia di sana. Lab memakai Southeast Asia, tempat semua
+tier tersedia.</p>
+<p>Memindahkan tier web tidak ikut memindahkan data. Database produk masih berada di server lama di samping pantry, dan itu
+tugas makan siang berikutnya: Azure SQL, di Makan Siang 11. Makan siang selanjutnya menambahkan container (13),
+serverless function (<em>fungsi</em>) untuk alur pemrosesan pesanan (14), dan pintu depan global dengan web application
+firewall di depan App Service (27).</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Kode Dewi saat ini menyimpan keranjang setiap pembeli di sebuah dictionary Python di dalam
+proses server web. Apa yang terjadi pada sebuah keranjang ketika autoscale menambahkan instance kedua, dan apa yang
+terjadi ketika Dewi melakukan swap versi baru ke production? Di mana keranjang itu seharusnya disimpan?</p>
+</aside>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Front end, scale out, dan swap slot tanpa downtime</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/10-app-service.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/10-app-service.html?lang=id" title="Demo interaktif: Front end, scale out, dan swap slot tanpa downtime" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/10-app-service/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Setiap request melewati front end terlebih dahulu; worker di plan Anda hanya menjalankan kode Anda.</li>
+<li>Autoscale menambahkan instance berukuran sama, dan front end langsung mulai memakainya.</li>
+<li>Slot staging berjalan di instance yang sama dengan production, dan swap baru terjadi setelah setiap instance selesai
+warm-up.</li>
+<li>Swap balik adalah tombol &quot;undo&quot;: versi sebelumnya masih ter-deploy di slot staging.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Toko online dan portal admin berbagi satu plan Standard S1 dengan dua instance. Untuk menghemat biaya selama akhir
+pekan, Dewi menghentikan aplikasi portal admin. Berapa banyak tagihannya turun?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Tidak turun sama sekali. Untuk berhemat, lakukan scale in atau scale down pada plan, atau pindahkan portal admin ke
+plan yang lebih murah — <em>alasannya:</em> Anda membayar instance milik plan, dan menghentikan satu aplikasi tetap
+membiarkan kedua instance berjalan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Ibu Sari menginginkan rilis tanpa downtime melalui slot staging dan scaling otomatis untuk Harbolnas, dengan harga
+serendah mungkin. Tier terendah mana yang menawarkan keduanya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Standard (misalnya S1) — <em>alasannya:</em> Standard adalah tier pertama yang memiliki deployment slot (lima per aplikasi)
+dan autoscale; Basic punya instance dedicated, tetapi tidak punya kedua fitur itu.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Setelah sebuah swap, toko online di production mulai menulis pesanan ke database <em>uji coba</em>. Apa yang salah, dan
+bagaimana Anda mencegahnya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Connection string database tidak ditandai sebagai deployment slot setting, sehingga ikut berpindah bersama kode saat
+swap. Cegah dengan menandai setting yang khas untuk tiap lingkungan sebagai slot setting — <em>alasannya:</em> setting yang
+ditandai seperti itu tetap tinggal di slotnya.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Rizky, sang kontraktor, menaruh password database di <code>app.py</code>. Dewi memindahkannya ke sebuah app setting. Kepala tim
+keamanan menyarankan Key Vault reference sebagai gantinya. Mengapa itu lebih baik lagi?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Dengan Key Vault reference, secret hanya tinggal di Key Vault, tempat aksesnya dikendalikan, dicatat, dan secret-nya
+dirotasi; aplikasi membacanya dengan managed identity miliknya — <em>alasannya:</em> app setting menyimpan secret itu
+sendiri, sehingga siapa pun yang bisa membaca konfigurasi aplikasi bisa membaca password-nya.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Microsite promo 12.12 milik tim marketing berupa HTML, CSS, dan JavaScript biasa yang dihasilkan oleh sebuah static
+site tool. Mereka ingin situs itu cepat bagi pembeli di seluruh Indonesia dan semurah mungkin. App Service, Container
+Apps, atau Static Web Apps?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Static Web Apps: layanan ini menyajikan file statis dari banyak lokasi yang dekat dengan pengunjung, punya paket
+gratis, dan membuat lingkungan pratinjau untuk setiap pull request — <em>alasannya:</em> tidak ada kode sisi server yang
+perlu di-host, jadi App Service akan berlebihan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>App Service adalah PaaS untuk aplikasi web dan API: Microsoft menjalankan OS, runtime, dan front end yang mengakhiri TLS; Anda memegang kode, setting, data, dan keputusan siapa yang mendapat akses.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Anda membayar App Service plan (tier × ukuran × jumlah instance), bukan aplikasinya. Menghentikan aplikasi tidak menghentikan tagihan, dan Free F1 hanya untuk belajar.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Scale up untuk instance yang lebih besar atau fitur yang lebih banyak; scale out untuk instance yang lebih banyak. Deployment slot dan autoscale dimulai dari tier Standard, dan scale out membutuhkan aplikasi yang stateless.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>App settings menjadi environment variable; secret tempatnya di Key Vault reference; nilai yang khas untuk tiap lingkungan sebaiknya menjadi slot setting yang sticky.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Deployment slot memungkinkan Anda menguji di perangkat keras production dan melakukan swap tanpa downtime, dan swap balik adalah rollback cepat yang tidak perlu deploy ulang.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Latih tombol &quot;undo&quot; sebelum Anda membutuhkannya.</strong> Swap pertama pada setiap aplikasi production baru selalu saya
+perlakukan sebagai gladi resik, bukan rilis: perubahan kecil yang tidak berbahaya saya taruh di staging, saya swap ke
+production, lalu langsung saya swap balik sambil mencatat waktunya. Dengan begitu tim melihat sendiri bahwa rollback
+benar-benar bekerja, dan setting yang seharusnya sticky ketahuan selagi taruhannya masih kecil. Dua kebiasaan membuat
+gladi ini mudah. Setiap aplikasi yang saya deploy menampilkan versinya dan nama instance yang melayani request di
+sebuah halaman kecil, jadi setelah swap atau scale out saya melihat fakta, bukan menebak-nebak. Dan menjelang promo
+besar seperti Harbolnas, saya menuliskan siapa yang boleh menekan <em>Swap</em> dan dalam kondisi apa, karena rollback yang
+harus menunggu rapat dulu sudah tidak bisa disebut cepat.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>10</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Memindahkan toko online ke PaaS</h3>
+          <div class="prose"><p>Anda akan men-deploy toko online Python milik Nusantara Retail ke App Service plan Linux pada tier Free dengan
+<code>az webapp up</code>, mengonfigurasi nama toko sebagai app setting, memaksa HTTPS, dan menyaksikan log stream. Setelah itu
+Anda sengaja menghapus sebuah setting yang wajib ada, membaca log untuk menemukan penyebabnya, lalu memperbaikinya. Di
+tantangan tambahan opsional, Anda pindah ke Standard, men-deploy versi 2 ke slot staging, lalu melakukan swap ke
+production sementara sebuah skrip memastikan tidak ada request yang gagal.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 45 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/10-app-service.html">Mulai Lab 10 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/app-service/overview-hosting-plans" target="_blank" rel="noopener"><b>Microsoft Learn: App Service plan di Azure</b><span>Cara plan ditagih, cara aplikasi berbagi plan, dan cara melakukan scaling.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/app-service/deploy-staging-slots" target="_blank" rel="noopener"><b>Microsoft Learn: Menyiapkan lingkungan staging di Azure App Service</b><span>Setiap langkah swap, setting sticky, dan pengaturan routing lalu lintas.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/app-service/configure-language-python" target="_blank" rel="noopener"><b>Microsoft Learn: Mengonfigurasi aplikasi Python Linux untuk Azure App Service</b><span>Build, startup command, dan log stream untuk aplikasi Python.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🚀</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Pilot Platform</h2>
+        <p class="muted">Jalankan aplikasi web tanpa mengurus server.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Server yang gagal tidak terasa oleh pelanggan, dan tidak ada lagi server yang perlu di-patch.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 11</b><h4>Cadangan Data Tiga Minggu Lalu</h4><p>Data pesanan masih tinggal di SQL Express, dijaga satu kata sandi bersama dan sebuah flashdisk.</p><p style="margin-top:10px"><a href="11-relational-databases-basic.html">Tonton Episode 11 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="09-load-balancing-basic.html"><small>← Episode sebelumnya</small>09 · Dua Server, Satu Alamat</a><a class="next" href="11-relational-databases-basic.html"><small>Episode berikutnya →</small>11 · Cadangan Data Tiga Minggu Lalu</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/10-app-service/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 20 · Sembilan belas makan siang penuh klik dalam satu file · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 20: Sembilan belas makan siang penuh klik dalam satu file. sekitar 50 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/20-infrastructure-as-code-bicep.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/20-infrastructure-as-code-bicep.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/20-infrastructure-as-code-bicep.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/20-infrastructure-as-code-bicep.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 20 · Sembilan belas makan siang penuh klik dalam satu file">
+<meta property="og:description" content="Lab Azure praktik 20: Sembilan belas makan siang penuh klik dalam satu file. sekitar 50 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/20-infrastructure-as-code-bicep.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="20" style="--c:#d98a00">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/20-infrastructure-as-code-bicep.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#d98a00">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 20</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>20</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Sembilan belas makan siang penuh klik dalam satu file</h1>
+        <p class="lab-story">🏪 <b>Episode 20 · Bangun Ulang Semua dalam Sejam?</b> — Seluruh desain hanya ada di ingatan orang, padahal ingatan tidak bisa di-redeploy. <a href="../lunches/20-infrastructure-as-code-bicep.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 50 menit</span>
+          <span class="chip cost">💲 gratis atau hampir gratis</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 9 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--membuat-resource-group-dan-mem-build-starter">Tugas 1 · Membuat resource group dan mem-build starter</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--menyelesaikan-keempat-latihan">Tugas 2 · Menyelesaikan keempat latihan</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--melihat-pratinjau-deployment-dengan-what-if">Tugas 3 · Melihat pratinjau deployment dengan what-if</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--men-deploy-lalu-men-deploy-file-yang-sama-lagi">Tugas 4 · Men-deploy, lalu men-deploy file yang sama lagi</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--mengubah-parameter-dan-melihat-what-if-berkata-modify">Tugas 5 · Mengubah parameter dan melihat what-if berkata &quot;modify&quot;</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--men-deploy-sebagai-deployment-stack-dengan-denydelete">Tugas 6 · Men-deploy sebagai deployment stack dengan DenyDelete</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--menghapus-stack-beserta-semua-isinya">Tugas 7 · Menghapus stack beserta semua isinya</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/20-infrastructure-as-code-bicep/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/20-infrastructure-as-code-bicep/solution/main.bicep" target="_blank" rel="noopener"><span>solution/main.bicep</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/20-infrastructure-as-code-bicep/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/20-infrastructure-as-code-bicep/starter/main.bicep" target="_blank" rel="noopener"><span>starter/main.bicep</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/20-infrastructure-as-code-bicep/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/20-infrastructure-as-code-bicep" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Selama sembilan belas makan siang, cloud Nusantara Retail tumbuh satu klik dan satu perintah demi satu. Kini Dewi ingin
+salinan test yang segar dari komponen dasar toko online setiap Senin dan tidak ada yang tersisa menyala pada hari Jumat,
+sedangkan Ibu Sari ingin yakin bahwa tidak ada yang menghapus produksi secara tidak sengaja. Di lab ini Anda
+menyelesaikan sebuah file Bicep yang menggambarkan sebuah storage account, sebuah virtual network dengan dua subnet dan
+sebuah network security group, serta sebuah Log Analytics workspace. Anda mengompilasinya, melihat pratinjaunya dengan
+what-if, men-deploy-nya, mengubah satu parameter, lalu men-deploy-nya lagi. Terakhir, Anda men-deploy file yang sama
+sebagai <strong>deployment stack</strong> yang menolak penghapusan — lalu menghapus semuanya sekaligus dengan menghapus stack
+tersebut.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  file[&quot;main.bicep&lt;br/&gt;parameter · resource · output&quot;] --&gt;|&quot;az bicep build&quot;| json[&quot;main.json&lt;br/&gt;template ARM&quot;]
+  file --&gt;|&quot;what-if · deploy · stack&quot;| rg
+  subgraph rg[&quot;rg-lunch20-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph vnet[&quot;vnet-nusa-iac · 10.20.0.0/16&quot;]
+      web[&quot;snet-web&lt;br/&gt;10.20.1.0/24&quot;]
+      app[&quot;snet-app&lt;br/&gt;10.20.2.0/24&quot;]
+    end
+    nsg[&quot;nsg-web&lt;br/&gt;izinkan TCP 80 masuk&quot;] --&gt; web
+    st[&quot;stiac&amp;lt;suffix&amp;gt;&lt;br/&gt;storage account&quot;]
+    log[&quot;log-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;Log Analytics workspace&quot;]
+  end
+  stack[&quot;stack-nusa-iac&lt;br/&gt;denyDelete&quot;] -.-&gt;|&quot;mengelola dan melindungi&quot;| rg
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>). Untuk
+Tugas 6 Anda memerlukan role <strong>Owner</strong> (atau Contributor ditambah <strong>Azure Deployment Stack Owner</strong>): membuat stack
+dengan deny settings memerlukan izin yang tidak dimiliki Contributor saja. Di subscription milik Anda sendiri, Anda
+adalah Owner.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang: Azure
+CLI dan Bicep CLI sudah tersedia di sana.</li>
+<li>Ambil file lab dan muat pengaturan bersama (baris <code>git clone</code> cukup dijalankan saat pertama kali saja):</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/20-infrastructure-as-code-bicep
+source ../common/config.sh
+RG=$(rg_name 20)
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab memakan biaya selama masih ada — sangat sedikit di sini, karena storage account yang kosong dan workspace
+yang tidak menerima data hampir tidak berbiaya. Selesaikan dengan bagian <strong>Bersihkan</strong>, meskipun Anda berhenti di
+tengah jalan.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–7 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--membuat-resource-group-dan-mem-build-starter" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Membuat resource group dan mem-build starter</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--membuat-resource-group-dan-mem-build-starter" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>File Bicep di-deploy <em>ke dalam</em> sebuah resource group, jadi buatlah resource group itu terlebih dahulu. Lalu buat
+salinan kerja Anda sendiri dari file starter dan kompilasi. Perintah <code>cp</code> cukup dijalankan sekali saja: menjalankannya
+lagi akan menimpa salinan Anda.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ensure_rg &quot;$RG&quot; 20
+cp starter/main.bicep main.bicep      # only the first time: this overwrites your copy
+az bicep build --file main.bicep
+ls main.*
+</code></pre></div>
+<p><code>az bicep build</code> melakukan transpile dari Bicep menjadi template ARM JSON, <code>main.json</code>, dan tidak mencetak apa pun jika
+tidak ada error atau warning (eksekusi pertama kali mungkin memasang Bicep CLI untuk Azure CLI, yang butuh beberapa
+detik). Buka <code>main.json</code> dengan <code>code main.json</code> dan gulir isinya — inilah yang diterima Resource Manager, sekaligus
+alasan mengapa Anda lebih suka menulis Bicep. Lalu baca <code>main.bicep</code> dari atas: empat <strong>parameter</strong> (<code>location</code> secara
+default memakai region resource group, <code>suffix</code> secara default memakai <code>uniqueString(resourceGroup().id)</code>), dua
+<strong>variabel</strong> (<code>allTags</code> menambahkan environment ke tag), sebuah <strong>storage account</strong> yang sudah selesai, dua <strong>output</strong>,
+dan empat blok <code>EXERCISE</code> untuk Anda kerjakan.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>az bicep build</code> selesai tanpa error, dan <code>ls main.*</code> menampilkan <code>main.bicep</code> dan <code>main.json</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--menyelesaikan-keempat-latihan" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Menyelesaikan keempat latihan</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--menyelesaikan-keempat-latihan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Buka salinan Anda di editor Cloud Shell dengan <code>code main.bicep</code> (<strong>Ctrl+S</strong> untuk menyimpan, <strong>Ctrl+Q</strong> untuk menutup),
+atau di VS Code dengan extension Bicep jika Anda menginginkan IntelliSense (saran otomatis saat mengetik). Tempel setiap
+blok di bawah ini tepat di bawah blok komentar <code>EXERCISE</code>-nya, lalu jalankan <code>az bicep build --file main.bicep</code> untuk
+memeriksa hasil kerja Anda setelah setiap latihan. Buntu? Bandingkan dengan <code>solution/main.bicep</code>.</p>
+<p><strong>Latihan 1 — network security group.</strong> Sebuah aturan adalah objek dengan nama dan <code>properties</code>-nya sendiri:</p>
+<div class="code" data-lang="bicep"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bicep</span><button class="copy-btn" type="button">Salin</button></div><pre><code>resource nsgWeb &#x27;Microsoft.Network/networkSecurityGroups@2024-05-01&#x27; = {
+  name: &#x27;nsg-web&#x27;
+  location: location
+  tags: allTags
+  properties: {
+    securityRules: [
+      {
+        name: &#x27;Allow-HTTP-From-Internet&#x27;
+        properties: {
+          priority: 100
+          direction: &#x27;Inbound&#x27;
+          access: &#x27;Allow&#x27;
+          protocol: &#x27;Tcp&#x27;
+          sourceAddressPrefix: &#x27;Internet&#x27;
+          sourcePortRange: &#x27;*&#x27;
+          destinationAddressPrefix: &#x27;*&#x27;
+          destinationPortRange: &#x27;80&#x27;
+        }
+      }
+    ]
+  }
+}
+</code></pre></div>
+<p><strong>Latihan 2 — virtual network.</strong> Definisikan subnet <em>di dalam</em> virtual network, seperti yang direkomendasikan
+dokumentasi, sehingga redeploy tidak pernah mencoba menghapusnya. <code>nsgWeb.id</code> adalah <strong>symbolic reference</strong> (rujukan
+simbolis): rujukan ini menciptakan dependensi, sehingga Bicep men-deploy NSG lebih dulu. <code>defaultOutboundAccess: false</code>
+membuat kedua subnet menjadi privat (tanpa akses internet keluar secara default).</p>
+<div class="code" data-lang="bicep"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bicep</span><button class="copy-btn" type="button">Salin</button></div><pre><code>resource vnet &#x27;Microsoft.Network/virtualNetworks@2024-05-01&#x27; = {
+  name: &#x27;vnet-nusa-iac&#x27;
+  location: location
+  tags: allTags
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        &#x27;10.20.0.0/16&#x27;
+      ]
+    }
+    subnets: [
+      {
+        name: &#x27;snet-web&#x27;
+        properties: {
+          addressPrefix: &#x27;10.20.1.0/24&#x27;
+          defaultOutboundAccess: false
+          networkSecurityGroup: {
+            id: nsgWeb.id
+          }
+        }
+      }
+      {
+        name: &#x27;snet-app&#x27;
+        properties: {
+          addressPrefix: &#x27;10.20.2.0/24&#x27;
+          defaultOutboundAccess: false
+        }
+      }
+    ]
+  }
+}
+</code></pre></div>
+<p><strong>Latihan 3 — Log Analytics workspace.</strong> Interpolasi string (<code>${suffix}</code>) membentuk nama yang sama di setiap redeploy ke
+resource group ini:</p>
+<div class="code" data-lang="bicep"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bicep</span><button class="copy-btn" type="button">Salin</button></div><pre><code>resource logs &#x27;Microsoft.OperationalInsights/workspaces@2023-09-01&#x27; = {
+  name: &#x27;log-nusa-${suffix}&#x27;
+  location: location
+  tags: allTags
+  properties: {
+    sku: {
+      name: &#x27;PerGB2018&#x27;
+    }
+    retentionInDays: 30
+  }
+}
+</code></pre></div>
+<p><strong>Latihan 4 — output.</strong> Output mengembalikan nilai kepada Anda atau ke langkah berikutnya dalam sebuah pipeline. Jangan
+pernah meng-output sebuah secret:</p>
+<div class="code" data-lang="bicep"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bicep</span><button class="copy-btn" type="button">Salin</button></div><pre><code>output vnetId string = vnet.id
+output webSubnetId string = vnet.properties.subnets[0].id
+output logAnalyticsWorkspaceId string = logs.id
+</code></pre></div>
+<p>Build sekali lagi dan hitung apa saja yang kini dideklarasikan oleh file:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az bicep build --file main.bicep
+grep -c &#x27;^resource &#x27; main.bicep
+grep -c &#x27;^output &#x27; main.bicep
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Bekerja di VS Code dengan extension Bicep? Arahkan kursor ke <code>nsgWeb.id</code> untuk melihat tipenya, dan buka <strong>Bicep
+visualizer</strong> (ikon di kanan atas editor) untuk melihat dependensi antara NSG dan virtual network digambarkan untuk
+Anda.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> build tidak mencetak error, dan kedua perintah <code>grep</code> mencetak <code>4</code> (resource) dan <code>5</code> (output).</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--melihat-pratinjau-deployment-dengan-what-if" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Melihat pratinjau deployment dengan what-if</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--melihat-pratinjau-deployment-dengan-what-if" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sebelum ada yang berubah di Azure, mintalah pratinjau. What-if mengompilasi file, mengirimnya ke Resource Manager, dan
+membandingkannya dengan apa yang sudah ada — tidak ada yang dibuat.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az deployment group what-if \
+  --resource-group &quot;$RG&quot; \
+  --template-file main.bicep
+</code></pre></div>
+<p>Setiap resource ditandai <code>+</code> (dibuat), dengan properti yang akan dimilikinya tercantum di bawahnya. Baris terakhir
+adalah ringkasannya:</p>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Resource changes: 4 to create.
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> what-if mencantumkan <code>nsg-web</code>, <code>vnet-nusa-iac</code>, sebuah workspace <code>log-nusa-…</code>, dan sebuah storage
+account <code>stiac…</code>, semuanya dengan <code>+</code>, dan ringkasannya berbunyi &quot;4 to create&quot;.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--men-deploy-lalu-men-deploy-file-yang-sama-lagi" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Men-deploy, lalu men-deploy file yang sama lagi</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--men-deploy-lalu-men-deploy-file-yang-sama-lagi" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sekarang deploy sungguhan. Deployment yang diberi nama mudah ditemukan nanti di riwayat deployment resource group.
+Prosesnya sekitar satu sampai dua menit.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az deployment group create \
+  --resource-group &quot;$RG&quot; \
+  --name lab20-main \
+  --template-file main.bicep \
+  --query &quot;properties.outputs&quot; \
+  --output jsonc
+</code></pre></div>
+<p>Hasilnya adalah kelima output dari file Anda. Sekarang lihat apa saja yang dibuat dan bagaimana tag-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az resource list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{name:name, type:type, costCenter:tags.costCenter, environment:tags.environment}&quot; \
+  --output table
+</code></pre></div>
+<p>Inilah inti kode deklaratif: jalankan what-if lagi, lalu deploy lagi.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az deployment group what-if --resource-group &quot;$RG&quot; --template-file main.bicep
+az deployment group create --resource-group &quot;$RG&quot; --name lab20-main-again --template-file main.bicep --output none
+az deployment group list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{name:name, state:properties.provisioningState, timestamp:properties.timestamp}&quot; --output table
+</code></pre></div>
+<p>What-if kini menandai resource dengan <code>=</code> (tidak berubah). Deployment kedua berhasil dan tidak mengubah apa pun:
+file-nya <strong>idempoten</strong>. What-if bisa menampilkan <strong>noise</strong> — misalnya <code>~</code> pada virtual network untuk properti yang diisi
+Azure dengan nilai default — jadi bacalah baris-baris propertinya, jangan hanya ringkasannya.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Buka <em>Resource groups › rg-lunch20-&lt;suffix&gt; › Settings › Deployments</em>. Setiap deployment
+menyimpan template, nilai parameter, dan output-nya.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> empat resource, masing-masing dengan <code>costCenter = retail-lab</code> dan <code>environment = lab</code>, serta dua
+deployment (<code>lab20-main</code> dan <code>lab20-main-again</code>) dengan status <code>Succeeded</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--mengubah-parameter-dan-melihat-what-if-berkata-modify" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Mengubah parameter dan melihat what-if berkata &quot;modify&quot;</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--mengubah-parameter-dan-melihat-what-if-berkata-modify" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Dewi ingin salinan ini ditandai sebagai lingkungan test. Anda tidak menyentuh resource-nya — Anda mengubah input-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az deployment group what-if \
+  --resource-group &quot;$RG&quot; \
+  --template-file main.bicep \
+  --parameters environment=test
+</code></pre></div>
+<p>Sekarang setiap resource ditandai <code>~</code> (diubah), dan perubahannya tercantum di bawahnya:</p>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Salin</button></div><pre><code>~ tags.environment: &quot;lab&quot; =&gt; &quot;test&quot;
+</code></pre></div>
+<p>Deploy perubahan itu, dan biarkan CLI menampilkan hasil what-if sekali lagi lalu bertanya sebelum men-deploy. Jawab <code>y</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az deployment group create \
+  --resource-group &quot;$RG&quot; \
+  --name lab20-environment-test \
+  --template-file main.bicep \
+  --parameters environment=test \
+  --confirm-with-what-if
+</code></pre></div>
+<p>Decorator <code>@allowed</code> juga melindungi input: coba <code>--parameters environment=dev</code> dengan what-if, dan Resource Manager
+menolak nilai itu sebelum ada yang berubah.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>az resource list --resource-group &quot;$RG&quot; --query &quot;[].tags.environment&quot; --output tsv</code> mencetak
+<code>test</code> sebanyak empat kali.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--men-deploy-sebagai-deployment-stack-dengan-denydelete" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Men-deploy sebagai deployment stack dengan DenyDelete</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--men-deploy-sebagai-deployment-stack-dengan-denydelete" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Deployment biasa melupakan resource-nya begitu selesai. <strong>Deployment stack</strong> mengingatnya, bisa menghapus apa yang
+keluar dari file, dan bisa melindunginya dengan <strong>deny settings</strong>. Deploy file yang sama sebagai stack. Resource-nya
+sudah ada, jadi stack cukup mengambil alih. Prosesnya sekitar dua menit:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az stack group create \
+  --name stack-nusa-iac \
+  --resource-group &quot;$RG&quot; \
+  --template-file main.bicep \
+  --parameters environment=test \
+  --action-on-unmanage deleteResources \
+  --deny-settings-mode denyDelete \
+  --yes \
+  --output none
+
+az stack group show --name stack-nusa-iac --resource-group &quot;$RG&quot; \
+  --query &quot;{state: provisioningState, denySettings: denySettings.mode, managedResources: resources[].id}&quot; \
+  --output jsonc
+</code></pre></div>
+<p><code>--action-on-unmanage deleteResources</code> berarti: hapus sebuah resource saat ia keluar dari file atau saat stack dihapus.
+<code>--deny-settings-mode denyDelete</code> memasang <strong>deny assignment</strong> (aturan larangan yang mengalahkan izin dari role) pada
+setiap managed resource. Sekarang berperanlah sebagai seseorang yang ingin &quot;merapikan&quot; storage account:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>STORAGE=$(az storage account list --resource-group &quot;$RG&quot; --query &quot;[0].name&quot; --output tsv)
+az storage account delete --name &quot;$STORAGE&quot; --resource-group &quot;$RG&quot; --yes
+</code></pre></div>
+<p>Penghapusan itu ditolak dengan error seperti ini, meskipun Anda seorang Owner:</p>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Salin</button></div><pre><code>(DenyAssignmentAuthorizationFailed) The client &#x27;…&#x27; with object id &#x27;…&#x27; has permission to perform action
+&#x27;Microsoft.Storage/storageAccounts/delete&#x27; on scope &#x27;…&#x27;; however, the access is denied because of the deny
+assignment with name &#x27;…&#x27; and Id &#x27;…&#x27; at scope &#x27;…&#x27;.
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Buka <em>Resource groups › rg-lunch20-&lt;suffix&gt; › Settings › Deployment stacks ›
+stack-nusa-iac</em> untuk melihat managed resource dan deny settings, serta <em>Access control (IAM) › Deny assignments</em>
+untuk melihat assignment yang dibuat stack. Coba juga hapus storage account dari sana.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> stack menampilkan <code>denyDelete</code> dan mencantumkan resource Anda sebagai managed, dan storage account
+masih ada setelah penghapusan yang gagal. <strong>Sekarang jalankan <code>bash verify.sh</code></strong> (lihat
+<a href="#-verifikasi-hasil-kerja-anda">Verifikasi hasil kerja Anda</a>) — Tugas 7 menghapus semua yang diperiksanya.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--menghapus-stack-beserta-semua-isinya" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Menghapus stack beserta semua isinya</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--menghapus-stack-beserta-semua-isinya" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Ketika minggu pengujian selesai, satu perintah menghapus stack, deny assignment-nya, dan setiap resource yang
+dikelolanya. Prosesnya beberapa menit:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az stack group delete \
+  --name stack-nusa-iac \
+  --resource-group &quot;$RG&quot; \
+  --action-on-unmanage deleteResources \
+  --yes
+
+az resource list --resource-group &quot;$RG&quot; --output table
+</code></pre></div>
+<p>Resource group kini kosong — tetapi file-nya masih menggambarkan semuanya. Jalankan lagi perintah
+<code>az stack group create</code> dari Tugas 6 jika Anda ingin melihat seluruh lingkungan kembali dalam beberapa menit, lalu hapus
+stack-nya lagi.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>az resource list</code> tidak mencetak apa pun dan
+<code>az stack group list --resource-group &quot;$RG&quot; --output table</code> tidak menampilkan stack apa pun.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Salah ketik pada symbolic name adalah kesalahan Bicep yang paling umum — sekaligus yang paling murah untuk ditangkap. Di
+<code>main.bicep</code> Anda, ubah rujukan NSG di virtual network dari <code>nsgWeb.id</code> menjadi <code>nsgWbe.id</code>, simpan, lalu build:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az bicep build --file main.bicep
+</code></pre></div>
+<p><strong>Gejala:</strong> build gagal sebelum Azure melihat apa pun, dengan error yang menyebut file, baris, dan kolomnya:</p>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Salin</button></div><pre><code>main.bicep(…) : Error BCP082: The name &quot;nsgWbe&quot; does not exist in the current context. Did you mean &quot;nsgWeb&quot;?
+</code></pre></div>
+<details class="plain"><summary>Petunjuk dan perbaikan</summary>
+<p>Error ini menyangkut <strong>symbolic name</strong> — nama yang dipakai file untuk NSG — bukan nama resource Azure <code>nsg-web</code>. Ubah
+<code>nsgWbe</code> kembali menjadi <code>nsgWeb</code> lalu build lagi: tidak ada output berarti tidak ada error. Di VS Code, extension Bicep
+menggarisbawahi salah ketik saat Anda mengetik dan menawarkan perbaikannya. Jika sebuah nama tidak cukup mirip dengan
+symbol yang ada, Anda akan mendapat <code>BCP057: The name &quot;…&quot; does not exist in the current context.</code> sebagai gantinya.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Jalankan ini di akhir <strong>Tugas 6</strong>, selagi stack masih ada:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan harus menunjukkan <strong>PASS</strong>. Skrip ini memastikan adanya storage account, virtual network dengan
+<code>snet-web</code> (dengan NSG yang mengizinkan port 80 masuk) dan <code>snet-app</code>, Log Analytics workspace, tag <code>costCenter</code> dan
+<code>environment</code> di setiap resource, serta deployment stack dengan <code>denyDelete</code> dan <code>deleteResources</code> yang mengelola
+storage account. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu diulang. Sudah menyelesaikan Tugas 7?
+Jalankan lagi perintah <code>az stack group create</code> dari Tugas 6, lalu verifikasi.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Skrip ini menghapus deployment stack yang masih tersisa di <code>rg-lunch20-&lt;suffix&gt;</code> beserta resource yang dikelolanya
+(kalau tidak, deny assignment akan memblokir penghapusan), lalu menghapus resource group-nya. Penghapusan berlanjut di
+latar belakang selama beberapa menit. Log Analytics workspace tetap bisa dipulihkan selama 14 hari (soft delete) tanpa
+biaya; <code>main.bicep</code> dan <code>main.json</code> lokal Anda hanyalah file di dalam clone Anda.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Error BCP018: Expected the &quot;}&quot; character at this location.</code></td>
+<td>Kurung kurawal atau kurung siku yang hilang atau berlebih setelah menempel kode</td>
+<td>Bandingkan bloknya dengan <code>solution/main.bicep</code>; setiap <code>{</code> dan <code>[</code> butuh pasangannya</td>
+</tr>
+<tr>
+<td><code>BCP037: The property &quot;adressPrefix&quot; is not allowed on objects of type …</code></td>
+<td>Nama properti salah eja</td>
+<td>Perbaiki ejaannya; pesannya mencantumkan properti yang diizinkan</td>
+</tr>
+<tr>
+<td><code>Error BCP082</code> atau <code>BCP057: The name &quot;…&quot; does not exist in the current context.</code></td>
+<td>Salah ketik pada symbolic name, atau latihan yang merujuk resource yang belum Anda tambahkan</td>
+<td>Lihat <strong>Rusak lalu perbaiki</strong>; tambahkan latihan secara berurutan</td>
+</tr>
+<tr>
+<td><code>az: 'stack' is not in the 'az' command group.</code></td>
+<td>Azure CLI versi lama (deployment stack memerlukan versi 2.61 atau lebih baru)</td>
+<td>Gunakan Cloud Shell, atau jalankan <code>az upgrade</code></td>
+</tr>
+<tr>
+<td><code>does not have authorization to perform action 'Microsoft.Resources/deploymentStacks/manageDenySetting/action'</code></td>
+<td>Anda Contributor, bukan Owner</td>
+<td>Minta role <strong>Owner</strong> atau <strong>Azure Deployment Stack Owner</strong> pada resource group, atau gunakan <code>--deny-settings-mode none</code> dan cukup ikuti bacaannya</td>
+</tr>
+<tr>
+<td><code>StorageAccountAlreadyTaken</code></td>
+<td>Orang lain memakai nama storage account yang sama — hanya mungkin terjadi jika Anda memberikan <code>suffix</code> sendiri</td>
+<td>Hapus parameter <code>suffix</code>, atau pilih sufiks yang lebih tidak umum</td>
+</tr>
+<tr>
+<td><code>(InvalidTemplate) Deployment template validation failed: 'The provided value 'dev' for the template parameter 'environment' is not valid.</code></td>
+<td>Nilai yang tidak tercantum di <code>@allowed</code></td>
+<td>Gunakan <code>lab</code>, <code>test</code>, atau <code>prod</code></td>
+</tr>
+<tr>
+<td>What-if menampilkan <code>~</code> untuk virtual network padahal Anda tidak mengubah apa pun</td>
+<td><strong>Noise</strong> what-if: Azure mengisi sebuah nilai default</td>
+<td>Baca baris-baris propertinya; jika itu nilai default yang tidak pernah Anda atur, sebenarnya tidak ada yang berubah</td>
+</tr>
+<tr>
+<td>Menghapus storage account di Tugas 6 <em>berhasil</em></td>
+<td>Stack dibuat tanpa deny settings, atau Anda menghapus sebelum stack selesai dibuat</td>
+<td>Buat ulang stack dengan <code>--deny-settings-mode denyDelete</code> (Tugas 6)</td>
+</tr>
+<tr>
+<td><code>cleanup.sh</code> atau <code>az group delete</code> gagal dengan <code>DenyAssignmentAuthorizationFailed</code></td>
+<td>Stack dengan deny settings masih melindungi resource di grup itu</td>
+<td>Hapus stack terlebih dahulu (Tugas 7); <code>cleanup.sh</code> melakukannya untuk Anda — jalankan lagi</td>
+</tr>
+<tr>
+<td><code>(ResourceGroupNotFound) Resource group 'rg-lunch20-…' could not be found.</code></td>
+<td>Tugas 1 terlewat, atau <code>cleanup.sh</code> sudah dijalankan</td>
+<td>Jalankan <code>ensure_rg &quot;$RG&quot; 20</code> dari Tugas 1</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>Pindahkan pengaturan test ke file parameter: buat <code>main.test.bicepparam</code> berisi <code>using 'main.bicep'</code> dan
+<code>param environment = 'test'</code>, lalu deploy dengan <code>--parameters main.test.bicepparam</code>.</li>
+<li>Hapus resource Log Analytics workspace dari <code>main.bicep</code>, lalu jalankan lagi perintah <code>az stack group create</code> dari
+Tugas 6. Karena <code>deleteResources</code>, stack menghapus workspace yang sudah keluar dari file. Dengan <code>detachAll</code>,
+workspace itu akan tetap ada sebagai resource yang tidak dikelola.</li>
+<li>Tambahkan sebuah tag secara manual (<code>az tag update --resource-id &lt;id&gt; --operation Merge --tags owner=rizky</code>) —
+DenyDelete masih mengizinkan penulisan — lalu deploy ulang stack dan saksikan file yang menang: tag tambahan itu
+hilang.</li>
+<li>Buat beberapa blob container dengan loop (<code>[for name in containerNames: …]</code>) sebagai child resource dari storage
+account.</li>
+<li>Ganti storage account dengan Azure Verified Module untuk storage account
+(<code>br/public:avm/res/storage/storage-account:&lt;version&gt;</code>); cari versi terbarunya di
+<a href="https://azure.github.io/Azure-Verified-Modules/" target="_blank" rel="noopener">indeks module</a>.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep) — meskipun lab ini memang tentang
+mengerjakannya dengan Bicep:</p>
+<ol>
+<li>Satu file Bicep yang di-deploy ke <code>rg-lunch20-&lt;suffix&gt;</code>, dengan parameter untuk lokasi (default: region resource
+group), sufiks nama (default: <code>uniqueString(resourceGroup().id)</code>), environment (<code>lab</code>, <code>test</code>, atau <code>prod</code>), dan tag.
+Tanpa region yang di-hard-code.</li>
+<li>Sebuah storage account StorageV2 Standard_LRS; sebuah virtual network dengan subnet <code>snet-web</code> dan <code>snet-app</code>, di
+mana <code>snet-web</code> memakai network security group yang mengizinkan TCP 80 masuk dari internet; dan sebuah Log Analytics
+workspace.</li>
+<li>Setiap resource diberi tag <code>costCenter=retail-lab</code> dan <code>environment=&lt;the environment parameter&gt;</code>.</li>
+<li>Output untuk nama storage account, ID virtual network, ID subnet web, dan ID workspace (tidak diperiksa oleh
+<code>verify.sh</code>).</li>
+<li>Deploy sebagai deployment stack dengan deny settings mode <code>denyDelete</code> dan action on unmanage <code>deleteResources</code>, lalu
+tunjukkan bahwa penghapusan storage account ditolak.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code> selagi stack masih ada. Buntu? Intip <code>solution/main.bicep</code> dan <code>solution.sh</code>, atau
+beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="19-cost-management.html"><small>← Lab sebelumnya</small>19 · Temukan pemborosan buatan Anda sendiri</a><a class="next" href="21-core-capstone.html"><small>Lab berikutnya →</small>21 · Proyek capstone</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/20-infrastructure-as-code-bicep/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

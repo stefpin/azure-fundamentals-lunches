@@ -1,5 +1,7 @@
 # Hands-on labs
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 Every lunch has an **independent lab** that you do on your own time, at your own pace. Read the matching lunch first;
 then build, break, fix and verify in your own Azure subscription.
 

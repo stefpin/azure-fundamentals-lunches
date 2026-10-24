@@ -1,5 +1,7 @@
 # Lunch 14 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — choosing a Functions hosting plan, a function that turns
 > an HTTP request into a queue message, a burst of orders in Live metrics, and a Logic App run whose steps you can
 > open one by one. The animation can only simulate these.

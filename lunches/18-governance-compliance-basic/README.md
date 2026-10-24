@@ -1,9 +1,12 @@
 # Lunch 18 · Governance and Compliance (Basic): Azure Policy, Locks, Tags and Microsoft Purview
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 4:** Secure, operate and govern
 > **Time:** 60 minutes · **Prerequisite lunches:** 04, 05
 > **AZ-900 skill area:** Describe Azure management and governance
 > **Lab:** [Lab 18 · Keep data in the right place](../../labs/18-governance-compliance-basic/README.md) — about 45 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -366,6 +369,16 @@ What to watch for:
   policy.
 - Microsoft Purview governs and protects the data itself; the Service Trust Portal and the Microsoft Privacy Statement
   answer the auditor and the lawyer; Azure Blueprints is retired, so use policy plus deployment stacks.
+
+## 🗒️ Field notes from Stefanus
+
+> **Every Deny needs a door.** For each Deny rule in a governance design, I ask: *who owns it, and what does a
+> developer do at five on a Friday afternoon when it blocks something legitimate?* If the answer is "open a ticket and
+> wait", people find a way around the rule, usually with broader permissions or a test subscription nobody governs. So
+> every Deny assignment gets a non-compliance message that says what to do instead, a named owner, and an exemption
+> path with an expiry date. I keep tags just as lean: four that drive real decisions beat twenty that end up filled
+> with "tbd". And my rule for locks is simple: CanNotDelete on whatever you cannot rebuild from code, such as
+> databases and storage accounts that hold data, and ReadOnly almost never.
 
 ## 🔬 Your lab: Keep data in the right place
 

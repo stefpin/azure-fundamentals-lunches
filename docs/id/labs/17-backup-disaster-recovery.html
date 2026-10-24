@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 17 · Latihan pemulihan data · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 17: Latihan pemulihan data. 60–90 menit, sebagian besar menunggu backup pertama, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/17-backup-disaster-recovery.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/17-backup-disaster-recovery.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/17-backup-disaster-recovery.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/17-backup-disaster-recovery.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 17 · Latihan pemulihan data">
+<meta property="og:description" content="Lab Azure praktik 17: Latihan pemulihan data. 60–90 menit, sebagian besar menunggu backup pertama, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/17-backup-disaster-recovery.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="17" style="--c:#d98a00">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/17-backup-disaster-recovery.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#d98a00">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 17</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>17</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Latihan pemulihan data</h1>
+        <p class="lab-story">🏪 <b>Episode 17 · Ransomware di Surabaya</b> — Sebuah usaha tetangga kehilangan segalanya karena penyerang menghapus cadangannya lebih dulu — pernahkah kita benar-benar menguji pemulihan? <a href="../lunches/17-backup-disaster-recovery.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ 60–90 menit, sebagian besar menunggu backup pertama</span>
+          <span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 9 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--berkenalan-dengan-file-pesanan">Tugas 1 · Berkenalan dengan file pesanan</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--membuat-recovery-services-vault">Tugas 2 · Membuat Recovery Services vault</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--melihat-soft-delete-lalu-mencoba-mematikannya">Tugas 3 · Melihat soft delete, lalu mencoba mematikannya</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--melindungi-vm-dengan-defaultpolicy">Tugas 4 · Melindungi VM dengan DefaultPolicy</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--backup-sekarang-dan-manfaatkan-waktu-tunggu-dengan-baik">Tugas 5 · Backup sekarang, dan manfaatkan waktu tunggu dengan baik</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--menghilangkan-file-pesanan">Tugas 6 · Menghilangkan file pesanan</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--me-restore-file-dari-recovery-point">Tugas 7 · Me-restore file dari recovery point</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/17-backup-disaster-recovery/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/17-backup-disaster-recovery/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/17-backup-disaster-recovery/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/17-backup-disaster-recovery/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>7 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/17-backup-disaster-recovery/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/17-backup-disaster-recovery/vm/check-orders.sh" target="_blank" rel="noopener"><span>vm/check-orders.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/17-backup-disaster-recovery/vm/recover-orders.sh" target="_blank" rel="noopener"><span>vm/recover-orders.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/17-backup-disaster-recovery/vm/write-orders.sh" target="_blank" rel="noopener"><span>vm/write-orders.sh</span><small>2 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/17-backup-disaster-recovery" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Pak Budi sudah mengaku belum pernah me-restore apa pun, jadi Andalah yang akan menjalankan latihan restore pertama
+Nusantara Retail. <code>setup.sh</code> membuat <code>vm-orders</code>, sebuah VM Ubuntu kecil di subnet privat, tanpa IP publik dan tanpa
+akses internet. VM ini menyimpan ekspor pesanan harian <code>/data/orders.csv</code> beserta sidik jari (fingerprint) file
+tersebut. Anda akan membuat <strong>Recovery Services vault</strong>, melihat perlindungan soft delete yang tidak bisa Anda matikan,
+melindungi VM dengan <strong>DefaultPolicy</strong>, dan mengambil backup on-demand (sesuai permintaan, tanpa menunggu jadwal).
+Setelah itu Anda menghapus file pesanan, persis seperti yang akan dilakukan skrip yang ceroboh atau seorang penyerang,
+lalu mengembalikannya: me-restore disk VM dari recovery point, memasangnya ke VM, menyalin file-nya, dan membuktikan
+bahwa file itu identik dengan aslinya. Terakhir, Anda berperan sebagai penyerang yang menghapus cadangan, lalu
+mengembalikan cadangan itu juga.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  you[&quot;Anda di Cloud Shell&quot;] --&gt;|&quot;az vm run-command&lt;br/&gt;(tanpa SSH, tanpa IP publik)&quot;| vm
+  subgraph rg[&quot;rg-lunch17-&amp;lt;suffix&amp;gt;&quot;]
+    vm[&quot;vm-orders&lt;br/&gt;/data/orders.csv&quot;] --&gt;|&quot;DefaultPolicy&lt;br/&gt;snapshot, lalu salinan ke vault&quot;| rsv[&quot;Recovery Services vault&lt;br/&gt;rsv-nusa · soft delete selalu aktif&quot;]
+    rsv --&gt;|&quot;restore disks&quot;| disk[(&quot;OS disk hasil restore&quot;)]
+    disk --&gt;|&quot;dipasang sebagai data disk,&lt;br/&gt;file disalin kembali&quot;| vm
+    st[(&quot;staging storage account&lt;br/&gt;stnusarestore&amp;lt;suffix&amp;gt;&quot;)]
+  end
+  rsv -. &quot;template restore&quot; .-&gt; st
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Sebuah subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang. Anda
+membutuhkan Azure CLI 2.75 atau yang lebih baru, dan Cloud Shell selalu memilikinya; periksa dengan
+<code>az version --query '&quot;azure-cli&quot;'</code>.</li>
+<li>Ambil file lab, lalu muat pengaturan bersama dan nama-nama resource lab ini. <code>lab.env</code> juga mendefinisikan <code>vm_run</code>,
+sebuah helper yang menjalankan perintah di dalam VM:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/17-backup-disaster-recovery
+source ../common/config.sh
+source lab.env
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya. Prosesnya sekitar 5 menit:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<p><code>setup.sh</code> mendaftarkan resource provider Recovery Services, lalu membuat jaringan, VM (<code>$VM_SIZE</code>, karena Azure Backup
+membutuhkan minimal 2 vCPU dan memori 1 GB), dan file pesanannya. Skrip ini tidak pernah menimpa file tersebut, dan
+menolak membuatnya ulang setelah file itu hilang. Mengembalikannya adalah tugas Anda.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Cloud Shell mengakhiri sesi setelah sekitar 20 menit tanpa aktivitas, dan variabel Anda ikut hilang bersamanya; hal
+ini penting di lab yang banyak menunggu. Jika itu terjadi, <code>cd</code> kembali ke folder lab dan jalankan lagi kedua baris
+<code>source</code> (lewati <code>git clone</code>). Tidak ada yang hilang di Azure.</p>
+</aside>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>VM, disk-disknya, dan backup yang dilindungi menimbulkan sedikit biaya setiap jam selama masih ada. Selesaikan dengan
+bagian <strong>Bersihkan</strong> dalam sesi yang sama, meskipun Anda berhenti di tengah jalan. Pembersihan butuh beberapa menit,
+karena backup harus dihapus sebelum vault-nya.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–7 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--berkenalan-dengan-file-pesanan" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Berkenalan dengan file pesanan</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--berkenalan-dengan-file-pesanan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><code>vm-orders</code> tidak punya IP publik dan tidak punya akses internet, jadi Anda tidak bisa masuk lewat SSH. Sebagai
+gantinya, <strong>Run Command</strong> mengirim skrip melalui Azure VM agent, dan cara ini tetap berfungsi bahkan pada VM yang
+tertutup rapat seperti ini. Lihat file dan sidik jarinya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>vm_run &quot;head -n 4 /data/orders.csv; wc -l /data/orders.csv; cat /var/lib/nusa/orders.sha256&quot;
+</code></pre></div>
+<p>File itu berisi satu baris header dan 50 pesanan. Sidik jarinya adalah hash SHA-256 dari seluruh isi file. Jika satu
+karakter saja berubah, hash-nya ikut berubah, dan dengan cara itulah Anda akan membuktikan bahwa file hasil restore
+adalah file aslinya. Ibaratnya sidik jari manusia: dua orang bisa mirip wajahnya, tetapi sidik jarinya pasti berbeda.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> skrip pemeriksa bersama melaporkan bahwa file itu utuh:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>vm_run @vm/check-orders.sh
+</code></pre></div>
+<p>Seharusnya muncul sebuah baris yang diawali <code>ORDERS_OK</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--membuat-recovery-services-vault" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Membuat Recovery Services vault</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--membuat-recovery-services-vault" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Vault menyimpan cadangan, di luar VM yang dilindunginya. Vault harus berada di <strong>region yang sama dengan VM</strong>.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup vault create --resource-group &quot;$RG&quot; --name &quot;$VAULT&quot; --location &quot;$LOCATION&quot; --output none
+</code></pre></div>
+<p>Secara default, vault baru menyimpan backup dalam mode geo-redundant (GRS), dan pengaturan ini hanya bisa diubah
+<strong>sebelum backup pertama</strong>. Lab tidak membutuhkan salinan di region kedua, jadi jadikan vault ini locally redundant:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup vault backup-properties set --resource-group &quot;$RG&quot; --name &quot;$VAULT&quot; \
+  --backup-storage-redundancy LocallyRedundant --output none
+</code></pre></div>
+<p>Di lingkungan produksi, Anda akan memilih zone-redundant storage, atau GRS dengan Cross Region Restore bila region-nya
+punya pasangan. Indonesia Central tidak punya pasangan, jadi GRS tidak ditawarkan di sana.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Jalur portal: <em>Home › Create a resource › Recovery Services vault</em>: resource group
+<code>rg-lunch17-&lt;suffix&gt;</code>, nama <code>rsv-nusa</code>, region Anda. Lalu buka <em>vault tersebut › Properties › Backup configuration ›
+Update</em> dan pilih <strong>Locally-redundant</strong> — setelah itu kembali ke sini dan lanjutkan ke Tugas 3.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> vault sudah ada dan bersifat locally redundant:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup vault show -g &quot;$RG&quot; -n &quot;$VAULT&quot; \
+  --query &quot;{name:name, region:location, redundancy:properties.redundancySettings.standardTierStorageRedundancy}&quot; \
+  --output jsonc
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-3--melihat-soft-delete-lalu-mencoba-mematikannya" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Melihat soft delete, lalu mencoba mematikannya</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--melihat-soft-delete-lalu-mencoba-mematikannya" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Dulu, panduan lab biasanya mematikan soft delete pada tahap ini, supaya pembersihan bisa langsung menghapus vault.
+Cobalah sendiri, dan temukan mengapa cara itu tidak lagi berhasil. Pertama, lihat pengaturan keamanan vault:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup vault show -g &quot;$RG&quot; -n &quot;$VAULT&quot; --query &quot;properties.securitySettings&quot; --output jsonc
+</code></pre></div>
+<p>Cari <code>softDeleteSettings</code>: <code>softDeleteState</code> bernilai <code>AlwaysON</code> atau <code>Enabled</code>, dan <code>softDeleteRetentionPeriodInDays</code>
+bernilai <code>14</code>. Anda juga akan melihat <code>immutabilitySettings</code> (<code>Disabled</code>) dan <code>multiUserAuthorization</code> (<code>Disabled</code>),
+dua lapisan lain dari bacaan. Sekarang coba matikan soft delete, seperti yang akan dilakukan penyerang yang mencuri
+kata sandi admin:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup vault backup-properties set -g &quot;$RG&quot; -n &quot;$VAULT&quot; --soft-delete-feature-state Disable
+</code></pre></div>
+<p>Perintah itu gagal. <strong>Secure by default</strong> mewajibkan soft delete di Recovery Services vault: portal, PowerShell, REST,
+dan Azure CLI 2.75 atau yang lebih baru semuanya menolak mematikannya. Itulah tepatnya yang Anda inginkan di produksi.
+Backup yang dihapus tetap bisa dipulihkan setidaknya selama 14 hari tanpa biaya tambahan, sehingga penyerang tidak bisa
+menghancurkannya dalam satu kali serangan. Konsekuensinya untuk lab: pembersihan akan meninggalkan backup yang
+dihapus dan vault-nya dalam status soft-deleted, lalu Azure menghapusnya secara permanen (purge) dengan sendirinya
+setelah 14 hari.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Jika perintah itu <strong>berhasil</strong> (CLI versi lama, atau region tempat penegakan ini belum aktif), segera nyalakan lagi
+soft delete: <code>az backup vault backup-properties set -g &quot;$RG&quot; -n &quot;$VAULT&quot; --soft-delete-feature-state Enable</code>.
+Latihan Rusak lalu perbaiki membutuhkannya, dan vault produksi harus selalu mempertahankannya.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Anda bisa menyebutkan nilai <code>softDeleteState</code> untuk vault Anda, dan menjelaskan mengapa percobaan
+mematikannya adalah fitur, bukan bug.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--melindungi-vm-dengan-defaultpolicy" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Melindungi VM dengan DefaultPolicy</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--melindungi-vm-dengan-defaultpolicy" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Setiap vault dilengkapi sebuah policy VM bawaan bernama <code>DefaultPolicy</code>. Bacalah dulu sebelum Anda memakainya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup policy show -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; --name &quot;$POLICY&quot; \
+  --query &quot;{frequency:properties.schedulePolicy.scheduleRunFrequency, time:properties.schedulePolicy.scheduleRunTimes[0], keepDailyDays:properties.retentionPolicy.dailySchedule.retentionDuration.count, instantRestoreDays:properties.instantRpRetentionRangeInDays}&quot; \
+  --output jsonc
+</code></pre></div>
+<p>Satu backup per hari, masing-masing disimpan 30 hari, dengan snapshot yang disimpan di samping disk selama 2 hari agar
+restore berjalan cepat. Itu berarti RPO hingga 24 jam: cukup untuk ekspor harian, tetapi tidak untuk database pesanan
+(Makan Siang 17, bagian 1). Aktifkan untuk VM; prosesnya butuh satu atau dua menit:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup protection enable-for-vm -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; --vm &quot;$VM&quot; --policy-name &quot;$POLICY&quot; --output none
+</code></pre></div>
+<p>Azure menambahkan ekstensi backup ke VM melalui VM agent. Tidak ada yang perlu dipasang dan tidak ada port yang perlu
+dibuka.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Jalur portal: <em>vm-orders › Backup + disaster recovery › Backup</em>. VM ini memakai Trusted Launch
+(default untuk VM baru), dan untuk VM seperti itu portal hanya menawarkan policy <strong>Enhanced</strong>. Policy Standard
+seperti DefaultPolicy diterapkan ke VM Trusted Launch melalui CLI (2.73 atau yang lebih baru), PowerShell, atau REST.
+Policy Enhanced juga bisa dipakai untuk sisa lab ini; <code>verify.sh</code> hanya akan mencatat bahwa policy-nya berbeda.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> VM sudah menjadi backup item di vault, dengan DefaultPolicy:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup item list -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; --backup-management-type AzureIaasVM \
+  --query &quot;[].{vm:properties.friendlyName, state:properties.protectionState, policy:properties.policyName}&quot; --output table
+</code></pre></div>
+<p>Seharusnya statusnya <code>IRPending</code> (&quot;initial backup pending&quot;, artinya backup awal masih menunggu) sampai backup pertama
+selesai, lalu <code>Protected</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--backup-sekarang-dan-manfaatkan-waktu-tunggu-dengan-baik" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Backup sekarang, dan manfaatkan waktu tunggu dengan baik</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--backup-sekarang-dan-manfaatkan-waktu-tunggu-dengan-baik" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Backup terjadwal baru akan berjalan nanti malam. Sebuah latihan tidak bisa menunggu selama itu, jadi mulailah backup
+on-demand dan simpan nama job-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>JOB=$(az backup protection backup-now -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; \
+  --container-name &quot;$VM&quot; --item-name &quot;$VM&quot; --backup-management-type AzureIaasVM \
+  --query name --output tsv)
+echo &quot;Backup job: $JOB&quot;
+</code></pre></div>
+<p>Job ini punya dua fase. <strong>Take Snapshot</strong> biasanya selesai dalam 5–15 menit, dan fase ini sudah menghasilkan recovery
+point yang bisa Anda pakai untuk restore (instant restore). <strong>Transfer data to vault</strong> menyalin data ke dalam vault;
+untuk pertama kalinya sering butuh 20–60 menit, kadang lebih lama. Periksa kemajuannya kapan saja:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup job show -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; --name &quot;$JOB&quot; \
+  --query &quot;{status:properties.status, duration:properties.duration, phases:properties.extendedInfo.tasksList[].{phase:taskId, status:status}}&quot; \
+  --output jsonc
+</code></pre></div>
+<p><strong>Sambil menunggu</strong> (setiap butir butuh 5–10 menit):</p>
+<ul>
+<li>Baca ulang bagian 3 dari <a href="../lunches/17-backup-disaster-recovery.html">bacaan Makan Siang 17</a> dan gambar
+ketiga lapisan perlindungan dari ingatan.</li>
+<li>Buka vault di portal: <em>Backup items</em>, <em>Backup jobs › View details</em> (perhatikan kedua fasenya), dan hub
+<strong>Resiliency</strong>, yang menampilkan semua item yang Anda lindungi di satu tempat.</li>
+<li>Baca <a href="https://learn.microsoft.com/azure/backup/secure-by-default" target="_blank" rel="noopener">Aman secara default dengan soft delete untuk Azure Backup</a>
+untuk melihat apa yang terjadi pada backup yang dihapus, dan pada vault yang dihapus.</li>
+<li>Tuliskan RPO dan RTO untuk satu sistem yang Anda kenal, di kantor atau di rumah, beserta susunan Azure termurah yang
+bisa memenuhinya.</li>
+</ul>
+<p>Anda tidak perlu menunggu fase transfer selesai. Begitu <strong>satu recovery point</strong> sudah ada, Anda bisa melanjutkan:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup recoverypoint list -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; --container-name &quot;$VM&quot; --item-name &quot;$VM&quot; \
+  --backup-management-type AzureIaasVM \
+  --query &quot;[].{name:name, time:properties.recoveryPointTime, type:properties.recoveryPointType}&quot; --output table
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> daftar itu menampilkan setidaknya satu recovery point. Jangan mulai Tugas 6 sebelum itu terjadi:
+file yang dihapus sebelum snapshot adalah file yang tidak bisa Anda kembalikan.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--menghilangkan-file-pesanan" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Menghilangkan file pesanan</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--menghilangkan-file-pesanan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sekarang tibalah sore yang buruk itu: sebuah skrip bersih-bersih dengan path yang salah menghapus file ekspor.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>vm_run &quot;rm -f /data/orders.csv; ls -l /data&quot;
+vm_run @vm/check-orders.sh
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>check-orders.sh</code> melaporkan <code>ORDERS_MISSING</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--me-restore-file-dari-recovery-point" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Me-restore file dari recovery point</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--me-restore-file-dari-recovery-point" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Me-restore seluruh VM akan ikut memutar balik semua hal lain di dalamnya, padahal hanya satu file yang hilang. Sebagai
+gantinya, Anda <strong>me-restore OS disk</strong> dari recovery point sebagai managed disk baru, memasangnya ke VM sebagai data
+disk tambahan, menyalin file-nya kembali, lalu melepas disk itu dan menghapusnya. Jalur ini tidak membutuhkan akses
+internet di VM. File Recovery di portal membutuhkannya, seperti dijelaskan di bagian tantangan tambahan.</p>
+<p><strong>7a · Sebuah staging storage account.</strong> Job restore menuliskan sebuah template deployment di sana. Storage account
+(<em>akun penyimpanan</em>) ini harus berada di region yang sama dengan vault:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage account create -g &quot;$RG&quot; -n &quot;$STAGING&quot; -l &quot;$LOCATION&quot; \
+  --sku Standard_LRS --kind StorageV2 --min-tls-version TLS1_2 --output none
+</code></pre></div>
+<p><strong>7b · Me-restore OS disk dari recovery point terbaru.</strong> Proses ini butuh sekitar 5–15 menit selama snapshot-nya masih
+tersedia:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>RP=$(az backup recoverypoint list -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; -c &quot;$VM&quot; -i &quot;$VM&quot; \
+  --backup-management-type AzureIaasVM --query &quot;sort_by(@, &amp;properties.recoveryPointTime)[-1].name&quot; --output tsv)
+RJOB=$(az backup restore restore-disks -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; -c &quot;$VM&quot; -i &quot;$VM&quot; \
+  --rp-name &quot;$RP&quot; --storage-account &quot;$STAGING&quot; --target-resource-group &quot;$RG&quot; \
+  --restore-only-osdisk true --query name --output tsv)
+az backup job wait -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; --name &quot;$RJOB&quot; --timeout 3600
+az backup job show -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; --name &quot;$RJOB&quot; --query properties.status --output tsv
+</code></pre></div>
+<p><strong>7c · Memasang disk hasil restore ke VM.</strong> Disk hasil restore adalah disk terbaru yang tidak terpasang (unattached) di
+resource group:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>DISK=$(az disk list -g &quot;$RG&quot; --query &quot;sort_by([?diskState==&#x27;Unattached&#x27;], &amp;timeCreated)[-1].name&quot; --output tsv)
+echo &quot;Restored disk: $DISK&quot;
+az vm disk attach -g &quot;$RG&quot; --vm-name &quot;$VM&quot; --name &quot;$DISK&quot; --lun 0 --output none
+</code></pre></div>
+<p><strong>7d · Menyalin file kembali.</strong> <code>vm/recover-orders.sh</code> mencari sistem file hasil restore: label-nya sama dengan sistem
+file yang sedang aktif, tetapi tidak di-mount. Skrip ini me-mount-nya dalam mode read-only, menyalin <code>orders.csv</code>
+kembali, melepas mount-nya, lalu memeriksa sidik jarinya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>vm_run @vm/recover-orders.sh
+</code></pre></div>
+<p><strong>7e · Melepas dan menghapus disk hasil restore.</strong> Jangan me-restart VM selama disk itu masih terpasang: dua disk dengan
+label sistem file yang sama bisa membingungkan proses boot.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm disk detach -g &quot;$RG&quot; --vm-name &quot;$VM&quot; --name &quot;$DISK&quot; --output none
+az disk delete -g &quot;$RG&quot; -n &quot;$DISK&quot; --yes --no-wait
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Jalur portal: <em>vm-orders › Backup + disaster recovery › Backup › Restore VM</em>: pilih recovery
+point, <strong>Create new › Restore disks</strong>, resource group <code>rg-lunch17-&lt;suffix&gt;</code>, dan staging account tadi. Lalu pasang
+disk itu di <em>vm-orders › Settings › Disks › Attach existing disks</em>, dan kembali ke sini untuk langkah 7d dan 7e.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> langkah 7d mencetak <code>RESTORE_OK</code>, dan pemeriksaan bersama sepakat:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>vm_run @vm/check-orders.sh
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Mainkan peran penyerang dari cerita Makan Siang 17. Dengan akun admin curian, Anda menghentikan perlindungan <strong>dan
+menghapus semua data backup</strong>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup protection disable -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; -c &quot;$VM&quot; -i &quot;$VM&quot; \
+  --backup-management-type AzureIaasVM --delete-backup-data true --yes
+</code></pre></div>
+<p>Sekarang lihat apa yang tersisa, lalu jalankan pemeriksaannya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup item list -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; --backup-management-type AzureIaasVM \
+  --query &quot;[].{vm:properties.friendlyName, state:properties.protectionState, softDeleted:properties.isScheduledForDeferredDelete}&quot; \
+  --output table
+bash verify.sh
+</code></pre></div>
+<p>Item itu berstatus <code>ProtectionStopped</code> dan ditandai sebagai soft-deleted, dan <code>verify.sh</code> gagal pada pemeriksaan
+perlindungan. Tanpa soft delete, setiap recovery point kini sudah lenyap. Tugas Anda: kembalikan data backup itu dan
+mulai lagi perlindungan dengan DefaultPolicy.</p>
+<details class="plain">
+<summary>Petunjuk</summary>
+<p>Item yang soft-deleted bisa di-<strong>undelete</strong> selama 14 hari. Undelete mengembalikan item ke status &quot;stop protection,
+retain data&quot;, sehingga recovery point-nya kembali, tetapi tanpa jadwal. Setelah itu, <strong>resume</strong> (lanjutkan)
+perlindungan dengan sebuah policy.</p>
+</details>
+<details class="plain">
+<summary>Perbaikan</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az backup protection undelete -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; -c &quot;$VM&quot; -i &quot;$VM&quot; \
+  --backup-management-type AzureIaasVM --workload-type VM
+az backup protection resume -g &quot;$RG&quot; --vault-name &quot;$VAULT&quot; -c &quot;$VM&quot; -i &quot;$VM&quot; \
+  --backup-management-type AzureIaasVM --policy-name &quot;$POLICY&quot;
+bash verify.sh
+</code></pre></div>
+<p>Di produksi, Anda akan membuat perintah pertama si penyerang jauh lebih sulit. <strong>Multi-user authorization</strong> akan
+mewajibkan persetujuan di Resource Guard milik tim keamanan sebelum perlindungan bisa dihentikan dengan penghapusan
+data, dan <strong>immutable vault yang locked</strong> akan menolak menghapus recovery point sebelum masa simpannya habis.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu
+Anda ulangi. Skrip ini hanya membaca, tetapi menjalankan <code>vm/check-orders.sh</code> di dalam VM, jadi beri waktu sekitar satu
+menit.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Dalam urusan backup, urutan itu penting, dan skrip ini mengikutinya:</p>
+<ol>
+<li>Jika Anda membuat vault menjadi immutable (tantangan tambahan) selagi masih unlocked, skrip ini mematikan
+immutability.</li>
+<li>Skrip menghentikan perlindungan dan menghapus data backup. Dengan soft delete, data itu pindah ke status
+soft-deleted.</li>
+<li>Skrip menghapus snapshot instant restore milik <code>vm-orders</code>. Azure Backup menyimpannya di resource group bernama
+<code>AzureBackupRG_&lt;region&gt;_1</code> (atau yang mirip) <em>di luar</em> resource group lab, dan snapshot yang soft-deleted tetap
+menimbulkan biaya, jadi skrip menghapusnya secara eksplisit.</li>
+<li>Skrip menghapus vault. Vault yang hanya berisi item soft-deleted akan masuk ke status soft-deleted juga, tanpa
+biaya, dan Azure membersihkannya secara permanen setelah 14 hari.</li>
+<li>Skrip menghapus <code>rg-lunch17-&lt;suffix&gt;</code>: VM, disk, jaringan, dan staging account.</li>
+</ol>
+<p>Penghapusan berlanjut di latar belakang selama beberapa menit.
+<code>az backup deleted-vault list --location &quot;$LOCATION&quot;</code> menampilkan vault yang soft-deleted sampai Azure membersihkannya.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setup.sh</code> atau <code>vm_run</code> gagal dengan pesan <em>Run command extension execution is in progress. Please wait for completion before invoking a run command.</em></td>
+<td>Run Command sebelumnya masih berjalan</td>
+<td>Tunggu satu menit lalu jalankan lagi; jalankan <code>vm_run</code> satu per satu</td>
+</tr>
+<tr>
+<td><code>enable-for-vm</code> menolak policy, dengan pesan yang menyebut Trusted Launch atau policy Enhanced</td>
+<td>Azure CLI lebih lama dari 2.73, yang tidak bisa menerapkan policy Standard ke VM Trusted Launch</td>
+<td>Gunakan Cloud Shell atau jalankan <code>az upgrade</code>; atau buat policy Enhanced di portal lalu pakai policy itu</td>
+</tr>
+<tr>
+<td><code>backup-properties set --backup-storage-redundancy</code> gagal</td>
+<td>Vault sudah menyimpan backup, jadi redundansinya sudah terkunci</td>
+<td>Pertahankan redundansi yang ada untuk lab ini; untuk vault baru, atur sebelum backup pertama</td>
+</tr>
+<tr>
+<td><code>backup-now</code> ditolak setelah beberapa kali percobaan dalam sehari</td>
+<td>Sebuah VM mengizinkan satu backup terjadwal dan tiga backup on-demand per hari, dengan maksimal sembilan percobaan on-demand per 24 jam (UTC)</td>
+<td>Tunggu hari UTC berikutnya, atau pakai recovery point yang sudah Anda miliki</td>
+</tr>
+<tr>
+<td>Job backup tetap <em>InProgress</em> lebih dari satu jam</td>
+<td>Transfer pertama ke vault menyalin setiap blok yang terpakai</td>
+<td>Normal. Anda hanya membutuhkan fase snapshot: lanjutkan begitu <code>recoverypoint list</code> menampilkan sebuah titik</td>
+</tr>
+<tr>
+<td><code>recover-orders.sh</code> mencetak <em>RESTORE_FAILED: no unmounted disk with a restored root file system was found</em></td>
+<td>Disk hasil restore belum terpasang, atau disk yang salah yang terpasang</td>
+<td>Periksa langkah 7c: <code>az vm show -g &quot;$RG&quot; -n &quot;$VM&quot; --query &quot;storageProfile.dataDisks[].name&quot;</code> seharusnya mencantumkan disk hasil restore</td>
+</tr>
+<tr>
+<td><code>recover-orders.sh</code> mencetak <em>the recovery point has no /data/orders.csv</em></td>
+<td>Recovery point yang Anda restore lebih tua daripada file-nya</td>
+<td>Restore recovery point terbaru; jika semua titik lebih tua daripada file itu, jalankan lagi Tugas 5 sebelum menghapus apa pun</td>
+</tr>
+<tr>
+<td>Job restore langsung gagal</td>
+<td>Staging account berada di region yang berbeda dari vault, atau merupakan akun premium</td>
+<td>Buat akun Standard general-purpose v2 di <code>$LOCATION</code> (langkah 7a)</td>
+</tr>
+<tr>
+<td><code>cleanup.sh</code> melaporkan <em>Vault cannot be deleted as there are existing resources within the vault.</em></td>
+<td>Job penghapusan data belum selesai</td>
+<td>Jalankan lagi <code>bash cleanup.sh</code> beberapa menit kemudian; aman untuk diulang</td>
+</tr>
+<tr>
+<td><code>cleanup.sh</code> melaporkan <em>Recovery Services vault cannot be deleted as there are backup items in soft deleted state in the vault.</em></td>
+<td>Perilaku vault versi lama, dari masa sebelum ada vault yang soft-deleted</td>
+<td>Biarkan vault-nya (data soft-deleted tidak dikenai biaya selama 14 hari) dan jalankan lagi <code>bash cleanup.sh</code> setelah 14 hari</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li><strong>File Recovery, cara portal.</strong> <em>vm-orders › Backup › File Recovery</em> mengunduh sebuah skrip yang memasang recovery
+point melalui iSCSI di mesin tempat Anda menjalankannya. Mesin itu membutuhkan akses internet keluar (outbound) ke
+Azure Backup, sesuatu yang sengaja tidak dimiliki <code>vm-orders</code>. Cobalah di VM Linux yang punya akses keluar, lalu
+gunakan <strong>Unmount disks</strong> setelah selesai.</li>
+<li><strong>Jadikan vault immutable, tetapi biarkan tetap unlocked.</strong> <code>az backup vault update -g &quot;$RG&quot; -n &quot;$VAULT&quot; --immutability-state Unlocked</code>, lalu coba kurangi retensi DefaultPolicy di portal dan saksikan permintaan itu
+ditolak. Jangan pernah memilih <strong>Locked</strong> di lab: pilihan itu tidak bisa dibatalkan, dan pembersihan tidak akan bisa
+menghapus data sebelum masa simpannya habis.</li>
+<li><strong>Ukur RTO Anda.</strong> Catat waktu Tugas 6 dan 7 dari awal sampai akhir, lalu perkirakan berapa lama restore yang sama
+untuk disk 500 GB, dan apa yang akan berubah jika memakai Site Recovery.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep), dimulai dari <code>bash setup.sh</code>:</p>
+<ol>
+<li>Sebuah <strong>Recovery Services vault</strong> di <code>rg-lunch17-&lt;suffix&gt;</code>, di region yang sama dengan VM, dengan penyimpanan
+<strong>locally redundant</strong> dan soft delete dalam keadaan <strong>aktif</strong>.</li>
+<li><code>vm-orders</code> <strong>dilindungi</strong> oleh vault tersebut dengan <strong>DefaultPolicy</strong> (policy Enhanced akan dicatat, tetapi tetap
+diterima).</li>
+<li>Setidaknya <strong>satu recovery point</strong> untuk VM itu.</li>
+<li><code>/data/orders.csv</code> dihapus <strong>setelah</strong> recovery point itu ada, lalu <strong>di-restore darinya</strong>, sehingga
+<code>vm/check-orders.sh</code> melaporkan <code>ORDERS_OK</code>.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="16-monitoring-basic.html"><small>← Lab sebelumnya</small>16 · Tahu lebih dulu daripada pelanggan</a><a class="next" href="18-governance-compliance-basic.html"><small>Lab berikutnya →</small>18 · Menjaga data tetap di tempat yang benar</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/17-backup-disaster-recovery/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

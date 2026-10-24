@@ -1,0 +1,166 @@
+{
+  "page": {
+    "doc_title": "Lunch 29 · Containers (Advanced): Azure Kubernetes Service — Interactive demo",
+    "kicker": "Lunch 29 · Containers (Advanced) · Interactive demo",
+    "title": "Say what you want, and Kubernetes keeps it true",
+    "lede": "Follow Nusantara Retail's storefront Deployment on an AKS cluster: three replicas spread over three availability zones, a node failure the cluster heals by itself, the Horizontal Pod Autoscaler at the 12.12 sale, and a rolling update with a rollback. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "An AKS cluster with one node in each of three availability zones runs the storefront Deployment",
+    "svgDesc": "On the left, Rizky's kubectl talks to the AKS control plane, a board compares the Deployment's desired and actual state, and a Horizontal Pod Autoscaler watches CPU. In the Azure region, a LoadBalancer Service at the top sends shoppers' requests to storefront pods on three nodes, one per availability zone, and each node has room for two pods. Callouts explain each event."
+  },
+  "steps": [
+    {
+      "title": "Many services, one cluster",
+      "text": "Dewi's team has split the shop into services, and a loyalty vendor ships a Helm chart that needs real Kubernetes. Rizky has built an AKS cluster in Southeast Asia with one node in each of three availability zones. Ibu Sari's conditions: the shop must survive a broken server and the 12.12 crowd, and nobody should have to babysit it."
+    },
+    {
+      "title": "Azure runs the control plane",
+      "text": "AKS splits the work. Azure runs and patches the control plane: the API server that every kubectl command goes to, the etcd database, the scheduler and the controllers. On the Free tier it costs nothing but has no financially backed SLA. The nodes are virtual machines in your subscription that run the kubelet and containerd, and you pay for them by the hour."
+    },
+    {
+      "title": "Declare the desired state",
+      "text": "Rizky applies a manifest: a Deployment named storefront with three replicas of image v1, each requesting 50 millicores of CPU and 64 MiB of memory. He never says which node to use. The API server stores this desired state in etcd. A controller compares it with reality, finds zero pods where three are wanted, and creates three pod objects."
+    },
+    {
+      "title": "The scheduler spreads pods across zones",
+      "text": "The scheduler picks a node for each new pod. Any node has room for such small requests, and a topology spread constraint in the pod template asks for an even spread across zones, so each zone gets one pod. The kubelet on each node pulls the image and starts the container. A pod counts as ready only when its readiness probe answers.",
+      "set": {
+        "t-actual": "ready: 3 of 3"
+      }
+    },
+    {
+      "title": "One address in front of moving pods",
+      "text": "A Service of type LoadBalancer gives the pods one stable address. AKS adds a rule and a public IP address to the cluster's Azure load balancer in the node resource group, and the Service spreads requests over the ready pods in all three zones. Pods come and go with new IP addresses, but the Service keeps track of them, so shoppers never notice."
+    },
+    {
+      "title": "A node fails in zone 3",
+      "text": "At 14:05 the virtual machine in zone 3 stops responding. Within about a minute Kubernetes marks the node NotReady and its pod as not ready, so the Service stops sending it requests. The shop stays open on the two other pods, with less spare capacity. Look at the board: the desired state still says three. Only the actual state has changed.",
+      "set": {
+        "t-n3": "NotReady ✗",
+        "t-p3s": "down ✗",
+        "t-actual": "ready: 2 of 3"
+      }
+    },
+    {
+      "title": "Controllers replace the lost pod",
+      "text": "Pods on an unreachable node get five minutes to recover. Then Kubernetes evicts them, and the controller counts two running pods where three are wanted. It creates one more, the scheduler places it on a healthy node in zone 1, and as soon as its readiness probe passes, actual state matches desired state again. Nobody had to be paged.",
+      "set": {
+        "t-actual": "ready: 3 of 3"
+      }
+    },
+    {
+      "title": "The 12.12 crowd arrives",
+      "text": "Auto-repair has rebooted node 3, and it is Ready again, but empty: Kubernetes does not move running pods back on its own. Then the 12.12 sale starts, and the three pods average 100% of their CPU request. The Horizontal Pod Autoscaler checks every 15 seconds, compares that with its 50% target, and calculates ceil(3 × 100 ÷ 50) = 6 pods.",
+      "set": {
+        "t-n3": "Ready · repaired",
+        "t-shop": "12.12 sale: 10× the traffic",
+        "t-hpa": "CPU 100% · target 50%"
+      }
+    },
+    {
+      "title": "The HPA adds three pods",
+      "text": "The HPA does not start pods itself. It raises the Deployment's desired replica count from three to six, and the controllers create three new pods. The scheduler puts them where the spread is thinnest: two on the repaired node in zone 3 and one in zone 2. They start in seconds because the nodes have room, and average CPU falls back towards the target.",
+      "set": {
+        "t-desired": "desired: 6 × v1 (HPA)",
+        "t-actual": "ready: 6 of 6",
+        "t-hpa": "CPU 50% · 6 pods"
+      }
+    },
+    {
+      "title": "Rolling update: one pod at a time",
+      "text": "After the sale, the HPA waited out its five-minute stabilization window and went back to three pods. Now the team ships v2. With maxSurge 1 and maxUnavailable 0, the Deployment first adds one v2 pod. It gets no requests until its readiness probe passes; only then is one v1 pod removed, and the cycle repeats for the next pod.",
+      "set": {
+        "t-desired": "desired: 3 × v2",
+        "t-actual": "ready: 3 v1 + 0 v2",
+        "t-hpa": "CPU 15% · 3 pods",
+        "t-shop": "sale over: a normal day"
+      }
+    },
+    {
+      "title": "Rollout complete, shop never closed",
+      "text": "Three cycles later every pod runs v2, and the shop never closed: at least three ready pods stayed behind the Service the whole time. Kubernetes keeps the old ReplicaSet at zero pods, which is what makes a rollback fast. The same pattern protects you when AKS drains nodes during an upgrade, as long as you run several replicas and a PodDisruptionBudget.",
+      "set": {
+        "t-pv2s": "ready",
+        "t-p2": "v2",
+        "t-p5": "v2",
+        "t-actual": "ready: 3 of 3 (v2)"
+      }
+    },
+    {
+      "title": "A typo in the image tag",
+      "text": "Next, Rizky sets a tag that does not exist: v99. The new pod cannot pull its image; its status switches between ErrImagePull and ImagePullBackOff, and kubectl describe shows the reason in its events. Because maxUnavailable is 0, no v2 pod is removed while the new one is not ready, so the rollout simply stalls and shoppers notice nothing.",
+      "set": {
+        "t-dev": "kubectl set image …:v99",
+        "t-desired": "desired: 3 × v99",
+        "t-actual": "ready: 3 v2 + 0 v99",
+        "t-pbad": "v99 ✗",
+        "t-pbads": "no image"
+      }
+    },
+    {
+      "title": "Roll back, and your turn",
+      "text": "kubectl rollout undo switches the Deployment back to the previous ReplicaSet, the broken pod is deleted, and the desired state is three v2 pods again. The recap: you declare what you want, Kubernetes keeps reconciling, zones and replicas absorb failures, the HPA turns load into replicas, readiness probes make updates safe, and Azure runs the control plane for you.",
+      "tip": "In Lab 29 you build a small AKS cluster with Azure CNI Overlay, deploy the storefront with probes, requests and limits, delete a pod and watch it come back, scale with an HPA, roll out a change, and repair an ImagePullBackOff with kubectl describe.",
+      "set": {
+        "t-dev": "kubectl rollout undo",
+        "t-desired": "desired: 3 × v2",
+        "t-actual": "ready: 3 of 3 (v2)"
+      }
+    }
+  ],
+  "svg": [
+    "Azure region · Southeast Asia",
+    "Zone 1",
+    "Zone 2",
+    "Zone 3",
+    "Rizky · kubectl",
+    "kubectl apply -f k8s/",
+    "AKS control plane",
+    "managed by Azure · Free tier",
+    "API server · etcd",
+    "scheduler · controllers",
+    "Deployment storefront",
+    "desired: 3 × v1",
+    "ready: 0 of 3",
+    "Autoscaler (HPA)",
+    "target: 50% of CPU request",
+    "CPU 20% · 3 pods",
+    "Shoppers",
+    "normal afternoon",
+    "Service storefront · LoadBalancer",
+    "public IP · only ready pods get requests",
+    "node 1",
+    "Ready",
+    "Standard_D2s_v5",
+    "node 2",
+    "node 3",
+    "v1",
+    "ready",
+    "v2",
+    "starting",
+    "v99",
+    "deployment.yaml · the desired state",
+    "replicas: 3 · image: storefront:v1",
+    "requests: cpu 50m · memory 64Mi",
+    "The new version and how to roll it out",
+    "image: storefront:v2",
+    "maxSurge: 1 · maxUnavailable: 0",
+    "One wrong character",
+    "image: storefront:v99",
+    "That tag does not exist in the registry.",
+    "Node 3 is NotReady, so its pod is marked not ready and the Service skips it.",
+    "Kubernetes waits five minutes before evicting the pod, in case the node returns.",
+    "Node auto-repair: AKS reboots a node that stays NotReady for five minutes,",
+    "then reimages or redeploys it if needed. That can take up to an hour.",
+    "No room on any node? The new pods wait in Pending, and the cluster autoscaler",
+    "adds a node in a few minutes. Honest CPU and memory requests make this work.",
+    "kubectl describe pod storefront-… (Events)",
+    "Failed to pull image \"…/storefront:v99\": not found",
+    "Back-off pulling image → ImagePullBackOff",
+    "Readiness gate: the Service sends requests to the v2 pod only after its readiness",
+    "probe passes. Then one v1 pod stops, and the next v2 pod starts.",
+    "AKS upgrades drain one node at a time. A PodDisruptionBudget with minAvailable: 2",
+    "stops a drain from evicting more storefront pods than the shop can spare.",
+    "kubectl rollout undo deployment/storefront -n nusa",
+    "Back to the previous ReplicaSet: three v2 pods, and the broken pod is gone."
+  ]
+}

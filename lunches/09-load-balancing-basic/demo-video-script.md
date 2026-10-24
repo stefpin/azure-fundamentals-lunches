@@ -1,5 +1,7 @@
 # Lunch 09 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — creating a Standard load balancer in the portal and
 > watching backend health change when a server fails, which the animation can only simulate.
 > **Length target:** 5–6 minutes (short videos keep attention; split anything longer).

@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 10 · Dewi&#x27;s Friday Nights — Lunch 10: Web Apps with Azure App Service · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 10 · Web Apps with Azure App Service. Patching servers every Friday night is not what a developer was hired for. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/10-app-service.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/10-app-service.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/10-app-service.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/10-app-service.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 10 · Dewi&#x27;s Friday Nights — Lunch 10: Web Apps with Azure App Service">
+<meta property="og:description" content="Lunch 10 · Web Apps with Azure App Service. Patching servers every Friday night is not what a developer was hired for. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/10-app-service.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lunch" data-lunch="10" style="--c:#11935a">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/lunches/10-app-service.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 10</span> Season 1 · 🧩 Part 3 · Platform services &amp; data</div>
+      <h1>Dewi&#x27;s Friday Nights</h1>
+      <div class="lunch-title">Lunch 10 · Web Apps with Azure App Service</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure architecture and services</span>
+        <span class="chip cost">🔬 Lab · about 45 minutes · 💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="02-cloud-concepts.html" title="Rent, Don&#x27;t Buy?">↩ 02</a><a class="chip" href="06-virtual-machines-basic.html" title="Escape from the Pantry">↩ 06</a><a class="chip" href="09-load-balancing-basic.html" title="Two Servers, One Address">↩ 09</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 09 · Two Servers, One Address, a Standard load balancer now keeps the shop open when a server — or a whole zone — fails.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, calmer"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director&#x27;s question · 39% ready</b>After this episode you can say: “A server failure goes unnoticed, and there are no servers left to patch.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#field-notes">🗒️ Notes</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today&#x27;s menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-platform-as-a-service-for-web-apps">Platform as a service for web apps</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-app-service-plans-the-compute-you-pay-for">App Service plans: the compute you pay for</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-getting-code-in-and-configuration-right">Getting code in and configuration right</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-deployment-slots-and-swaps">Deployment slots and swaps</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-domains-security-and-networking-at-a-glance">Domains, security and networking at a glance</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-app-service-or-something-else-nusantara-retails-choice">App Service or something else? Nusantara Retail&#x27;s choice</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Field notes</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/10-app-service.html">🔬 Open Lab 10</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today&#x27;s menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> what Azure App Service runs for you, how a request reaches your code, and what stays your job.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> an App Service plan tier, and decide when to scale up and when to scale out.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Configure</strong> an app with app settings and release it safely through a deployment slot and a swap.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Compare</strong> App Service with virtual machines, Azure Container Apps and Azure Static Web Apps for a given workload.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 10</span>
+        <div class="story-body"><p>Friday, 21:40. Dewi is still in the office. Since Lunch 09 the storefront runs on two virtual machines behind a load
+balancer, and it survived its first server failure without a single lost sale. The price is her Friday nights: patch
+Ubuntu on one VM, take it out of the pool, update Python, renew the certificate, restart nginx, put it back, repeat on
+the other one. &quot;I'm a developer,&quot; she sighs, &quot;and I spend more time looking after servers than writing the checkout.&quot;</p>
+<p>On Monday, Ibu Sari adds a second worry. Harbolnas, Indonesia's 12.12 online shopping day, is eight weeks away. Last
+year the traffic peak lasted about four hours, and she doesn't want to pay all year for servers sized for one evening.
+Dewi also wants to release a new checkout page before the sale, without taking the shop offline to do it.</p>
+<p>Today's question: <strong>can Azure run the web servers for us, grow them for the sale, and let Dewi ship new code with no
+downtime?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-platform-as-a-service-for-web-apps" data-spy><span class="scene-no">Scene 1 of 6</span><h3>Platform as a service for web apps</h3><div class="prose"><p>In Lunch 06 you rented a virtual machine and became responsible for everything above the hardware: the operating
+system, the language runtime, the web server, security patches and the scaling plan. <strong>Azure App Service</strong> moves that
+line. It is a <strong>platform as a service (PaaS)</strong> for HTTP workloads: websites, REST APIs and mobile back ends. Microsoft
+runs and patches the operating system, the language runtimes and the web front ends; you bring code and configuration.
+You still own your data, your users' access, your app's settings and, of course, your bugs. The shared-responsibility
+slider from Lunch 02 has moved one big step to the right.</p>
+<p>App Service runs <strong>.NET, Java (Java SE, Tomcat and JBoss), Node.js, Python and PHP</strong> on Windows or Linux. Python runs
+on Linux only. If your stack isn't on the list, or you already package the app as an image, App Service also runs a
+<strong>custom container</strong>. The platform knows each built-in stack: when Dewi deploys Python code, App Service can install
+the packages from <code>requirements.txt</code> and start the app with Gunicorn, a production web server, without her writing a
+startup script.</p>
+<p>How does a request reach the code? Each Azure region runs App Service on large groups of servers. <strong>Front ends</strong> take
+every incoming request for your app's address, such as <code>app-nusa-ab12c.azurewebsites.net</code> or
+<code>www.nusantararetail.co.id</code>. (Apps created in the portal get a longer default name that includes a random part and the
+region, so nobody outside your organization can ever recreate it.) They terminate TLS, decide which instance should
+handle the request and forward it.
+<strong>Workers</strong> are the virtual machines that run your code; the ones reserved for you form your <strong>App Service plan</strong>.
+Your deployed files live on shared storage, so any of your workers can start your app. A separate <strong>deployment
+endpoint</strong> (the <em>SCM site</em>, also known as Kudu) accepts new code from the CLI, from GitHub Actions or from the portal.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shopper[&quot;Shopper&#x27;s browser&quot;] --&gt;|HTTPS| fe[&quot;App Service front ends&lt;br/&gt;TLS termination and routing&quot;]
+  subgraph plan[&quot;App Service plan asp-nusa (Linux, S1, 2 instances)&quot;]
+    w1[&quot;Instance 1&lt;br/&gt;storefront&quot;]
+    w2[&quot;Instance 2&lt;br/&gt;storefront&quot;]
+  end
+  fe --&gt; w1
+  fe --&gt; w2
+  dev[&quot;Dewi: az webapp deploy&lt;br/&gt;or GitHub Actions&quot;] --&gt; scm[&quot;Deployment endpoint&lt;br/&gt;SCM site&quot;]
+  scm --&gt; files[(&quot;Shared app content&quot;)]
+  files -.-&gt; w1
+  files -.-&gt; w2
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>You never sign in to those workers to patch them. When a new Python or Ubuntu patch is out, the platform rolls it out.
+When a worker's hardware fails, the platform moves your app to a healthy one. That is the trade: you give up control
+over the machine, and in return the whole night shift of server care disappears.</p>
+<p>The trade has edges you should know before you move a workload. Your app is reachable over HTTP and HTTPS only, not on
+arbitrary ports, so a service that listens on its own TCP port belongs elsewhere. You can't install operating-system
+packages into the built-in stacks; if the app needs them, build a custom container. Work that runs for hours in the
+background doesn't belong in a web request: App Service has WebJobs for background tasks, and Lunch 14 introduces
+Azure Functions for event-driven jobs. And the platform can't fix a slow database query, a memory leak or a password
+committed to Git. Those stay yours.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>TLS ends at the front ends, so your code receives plain HTTP plus an <code>X-Forwarded-Proto</code> header that says whether the
+visitor used HTTPS. Don't write your own HTTP-to-HTTPS redirect: switch on the <strong>HTTPS Only</strong> setting and let the
+front ends do it.</p>
+</aside>
+</div></article><article class="scene-card" id="2-app-service-plans-the-compute-you-pay-for" data-spy><span class="scene-no">Scene 2 of 6</span><h3>App Service plans: the compute you pay for</h3><div class="prose"><p>Every app runs in an <strong>App Service plan</strong>. The plan defines the region, the operating system, the <strong>pricing tier</strong>,
+the <strong>instance size</strong> and the <strong>number of instances</strong>. Several apps can share one plan, and then they share its
+instances: the storefront and the staff admin portal could sit on the same two workers. Apps in a plan scale together,
+because scaling changes the plan, not the app.</p>
+<p>That gives the most important billing rule of this lunch: <strong>you pay for the plan, not for the apps</strong>. In the dedicated
+tiers, each instance is billed per hour whether the apps on it are busy, idle or stopped. The Free tier is free, with
+strict limits. The tier also decides which features you get:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Compute</th>
+<th>Max instances</th>
+<th>Autoscale</th>
+<th>Deployment slots</th>
+<th>Custom domain with TLS</th>
+<th>Typical use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Free (F1)</strong></td>
+<td>Shared, 60 CPU minutes a day</td>
+<td>1</td>
+<td>No</td>
+<td>No</td>
+<td>No (<code>azurewebsites.net</code> only)</td>
+<td>Learning, quick demos</td>
+</tr>
+<tr>
+<td><strong>Shared (D1)</strong></td>
+<td>Shared, Windows only</td>
+<td>1</td>
+<td>No</td>
+<td>No</td>
+<td>No TLS for custom domains</td>
+<td>Tiny hobby sites</td>
+</tr>
+<tr>
+<td><strong>Basic (B1–B3)</strong></td>
+<td>Dedicated</td>
+<td>3, manual</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>Dev/test, small production sites</td>
+</tr>
+<tr>
+<td><strong>Standard (S1–S3)</strong></td>
+<td>Dedicated</td>
+<td>10</td>
+<td>Yes</td>
+<td>5 per app</td>
+<td>Yes</td>
+<td>Most production web apps</td>
+</tr>
+<tr>
+<td><strong>Premium v3 and v4</strong></td>
+<td>Dedicated, faster hardware, memory-optimized options</td>
+<td>30</td>
+<td>Yes</td>
+<td>20 per app</td>
+<td>Yes</td>
+<td>Busy production, larger apps</td>
+</tr>
+<tr>
+<td><strong>Isolated v2</strong></td>
+<td>Dedicated, inside your own virtual network (App Service Environment v3)</td>
+<td>100</td>
+<td>Yes</td>
+<td>20 per app</td>
+<td>Yes</td>
+<td>Strict network isolation, very large scale</td>
+</tr>
+</tbody>
+</table></div>
+<p>The numbers are the published limits at the time of writing (October 2026); check the App Service limits page before
+you design around them. Two rows deserve a second look for Nusantara Retail. Basic has dedicated compute but no
+<strong>deployment slots</strong> and no <strong>autoscale</strong>. Standard is the first tier with both, which is why it's the usual starting
+point for a production shop.</p>
+<p>There are two ways to get more power:</p>
+<ul>
+<li><strong>Scale up</strong> (vertical): move the plan to a bigger size or a higher tier, for example from S1 to S2 or to P1v3. Each
+instance gets more CPU and memory, or the plan gains features. You don't redeploy anything, though the apps restart.</li>
+<li><strong>Scale out</strong> (horizontal): add instances of the same size, for example from one to three. You can do it by hand
+(Basic and up), with <strong>autoscale</strong> rules that react to metrics such as CPU or to a schedule (Standard and up), or, on
+Premium v2, v3 and v4 plans, with <strong>automatic scaling</strong>, where the platform decides based on HTTP traffic.</li>
+</ul>
+<p>How do you pick a size? Start small, measure CPU and memory under realistic load, then adjust; changing the tier later
+takes minutes, not a migration. Development and test environments can share one Basic plan. Production deserves its
+own plan, so that a busy test run can't slow the shop down. A plan that runs all year can be bought at a discount with
+reservations or the Azure savings plan for compute (Lunch 19 compares the options). In regions with availability zones
+(Lunch 03), higher tiers can also spread a plan's instances across zones, so one zone failure doesn't close the shop;
+check which tiers and minimum instance counts zone redundancy needs in your region.</p>
+<p>Scale out only works smoothly if the app is <strong>stateless</strong>. If Dewi's code kept shopping carts in the memory of the web
+server process, a shopper whose next request lands on another instance would see an empty cart. State belongs in a
+database or a cache (Lunches 11 and 12). App Service can pin a browser to one instance with an affinity cookie, but
+that's a crutch, not a design.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>Stopping a web app does <strong>not</strong> stop the bill. The plan's instances keep running and keep being charged until you
+scale the plan down to the Free tier or delete it. In the labs, delete the whole resource group.</p>
+</aside>
+</div></article><article class="scene-card" id="3-getting-code-in-and-configuration-right" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Getting code in and configuration right</h3><div class="prose"><p>Deploying means getting a build of your code onto the workers. App Service offers several routes, and they all end at
+the same deployment endpoint:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>How it works</th>
+<th>Use it when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>az webapp up</code></td>
+<td>One command that creates the group, plan and app, zips the current folder and deploys it</td>
+<td>You want a quick first deployment. Azure CLI 2.87 (June 2026) formally deprecated it; it still runs</td>
+</tr>
+<tr>
+<td><code>az webapp create</code> + <code>az webapp deploy</code></td>
+<td>You create the resources explicitly, then upload a zip package. With <code>SCM_DO_BUILD_DURING_DEPLOYMENT=true</code>, App Service installs your dependencies</td>
+<td>Scripts, labs and simple pipelines</td>
+</tr>
+<tr>
+<td>GitHub Actions or Azure Pipelines</td>
+<td>Every push builds, tests and deploys, ideally to a staging slot</td>
+<td>Team development and repeatable releases</td>
+</tr>
+<tr>
+<td>Deployment Center</td>
+<td>A portal page that connects a repository and writes the workflow for you</td>
+<td>Your first CI/CD setup, without writing YAML</td>
+</tr>
+<tr>
+<td>Container image</td>
+<td>App Service pulls an image from Azure Container Registry or another registry</td>
+<td>You already ship the app as a container</td>
+</tr>
+</tbody>
+</table></div>
+<p>What happens to a Python zip package after upload? If build automation is on, App Service's build system creates a
+virtual environment and runs <code>pip install</code> for everything in <code>requirements.txt</code>. When the app starts, the Linux
+container looks for a Django project (<code>wsgi.py</code>) or a Flask app in <code>app.py</code> or <code>application.py</code> and starts Gunicorn
+for it. Anything unusual, such as a FastAPI app, needs a startup command in the general settings. If it finds nothing,
+it serves a default page, which is a common surprise after a deployment from the wrong folder.</p>
+<p>Configuration is the other half of a release. The same storefront code should run as the real shop in production and
+as a test shop in staging, so values that differ between environments live outside the code:</p>
+<ul>
+<li><strong>App settings</strong> are name–value pairs that App Service hands to your code as <strong>environment variables</strong> when it
+starts. Dewi's Python code reads <code>os.environ[&quot;STORE_NAME&quot;]</code>. Changing a setting restarts the app, so the new value
+takes effect within seconds.</li>
+<li><strong>Connection strings</strong> are a separate list for database connections, also exposed as environment variables (with a
+prefix that names the database type).</li>
+<li><strong>Key Vault references</strong> let a setting point at a secret in Azure Key Vault instead of holding the secret. The value
+looks like <code>@Microsoft.KeyVault(SecretUri=...)</code>, and the app's <strong>managed identity</strong> reads the real secret. Nobody
+needs to paste a password into the portal again (Lunch 15).</li>
+<li><strong>General settings</strong> pick the runtime version, the startup command, <strong>HTTPS Only</strong>, the minimum TLS version,
+<strong>Always On</strong> (Basic and up), which keeps the app loaded between requests, and a <strong>health check</strong> path.</li>
+</ul>
+<p>When something goes wrong, App Service gives you several windows into the app. The <strong>log stream</strong> shows what the app
+writes to its console, live, in the portal or with <code>az webapp log tail</code>. <em>Diagnose and solve problems</em> runs ready-made
+checks for crashes, slow responses and configuration mistakes. <strong>Application Insights</strong> records every request,
+dependency call and exception for later analysis; Lunches 16 and 30 go deeper.</p>
+</div></article><article class="scene-card" id="4-deployment-slots-and-swaps" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Deployment slots and swaps</h3><div class="prose"><p>Deploying straight into production has two problems. While the instances restart and warm up with the new code, the
+first customers get slow answers or errors. And if the new code is broken, every customer sees it at once, and the
+&quot;undo&quot; is another deployment.</p>
+<p>A <strong>deployment slot</strong> solves both. A slot is a live app with its own host name, for example
+<code>app-nusa-ab12c-staging.azurewebsites.net</code>, that runs in the same plan on the <strong>same instances</strong> as production. Slots
+come with Standard (5 per app) and Premium and Isolated (20 per app). They cost nothing extra, but they do use some of
+the plan's CPU and memory. Dewi deploys version 2 to the <code>staging</code> slot, tests it on its own address while customers
+keep buying through version 1, and then asks App Service to <strong>swap</strong> staging into production:</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  autonumber
+  actor C as Customers
+  participant P as Production host name
+  participant S as Staging slot
+  participant A as App Service platform
+  C-&gt;&gt;P: Shop (served by v1)
+  Note over S: Dewi deploys v2 and tests it on the staging host name
+  A-&gt;&gt;S: Apply production&#x27;s slot settings, restart instances
+  A-&gt;&gt;S: Warm-up request to every instance
+  S--&gt;&gt;A: Every instance answers
+  A-&gt;&gt;P: Switch routing: production now serves the warmed v2
+  C-&gt;&gt;P: Shop (served by v2, no requests dropped)
+  Note over S: Staging now holds v1. Swap again to roll back
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Production keeps serving the old code until every staging instance has restarted with production's settings and
+answered a warm-up request. Only then does App Service switch the routing, so no request is dropped. If finance spots a
+bug half an hour later, Dewi swaps again: the previous version is still deployed in the staging slot, so it is warmed
+up and switched back in a minute or two, with no redeployment and no downtime. For extra caution, a <strong>swap with
+preview</strong> pauses after the settings step so you can test staging with the production configuration before you
+complete the swap.</p>
+<p>What travels with the code during a swap, and what stays with the slot? App settings and connection strings travel,
+unless you mark them as <strong>deployment slot settings</strong> (often called <em>sticky</em> settings). That is how staging keeps its own
+test database connection: mark it sticky, and it never ends up in production. Some things always stay with the slot,
+including custom domain names, TLS certificates, <strong>HTTPS Only</strong>, scale settings, access restrictions and managed
+identities. Slots can also take a share of live traffic, such as 10 percent of shoppers, for testing a change on real
+users before a full swap. One Linux detail: auto swap, which swaps automatically after every deployment to a slot, is
+available for Windows apps only.</p>
+<p>Here's how Dewi could plan the new checkout for Harbolnas. On Monday, the pipeline deploys version 2 to staging. On
+Tuesday, the team tests the staging address and then routes 10 percent of real shoppers to it for a day. On Wednesday
+night, well before the sale, Dewi swaps and watches the error rate. If anything looks wrong, she swaps back within a
+minute. During the sale itself nobody deploys anything: the safest release is the one you finish early.</p>
+</div></article><article class="scene-card" id="5-domains-security-and-networking-at-a-glance" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Domains, security and networking at a glance</h3><div class="prose"><p>The storefront needs its own name and an HTTPS padlock, and the admin portal must not be open to the whole internet.
+App Service has a building block for each:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Direction</th>
+<th>What it gives you</th>
+<th>Tiers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HTTPS Only and minimum TLS version</td>
+<td>Inbound</td>
+<td>Redirects HTTP to HTTPS and refuses old TLS versions</td>
+<td>All</td>
+</tr>
+<tr>
+<td>Custom domain with a managed certificate</td>
+<td>Inbound</td>
+<td><code>www.nusantararetail.co.id</code> with a free, auto-renewed certificate (not wildcard)</td>
+<td>Basic and up</td>
+</tr>
+<tr>
+<td>Built-in authentication</td>
+<td>Inbound</td>
+<td>Sign-in with Microsoft Entra ID, Google, GitHub and others before any request reaches your code</td>
+<td>All</td>
+</tr>
+<tr>
+<td>Access restrictions</td>
+<td>Inbound</td>
+<td>Allow or deny traffic by IP range, service tag or subnet</td>
+<td>All</td>
+</tr>
+<tr>
+<td>Private endpoint</td>
+<td>Inbound</td>
+<td>A private IP address in your virtual network; public access can be switched off</td>
+<td>Basic, Standard, Premium</td>
+</tr>
+<tr>
+<td>Virtual network integration</td>
+<td>Outbound</td>
+<td>The app can reach private resources, such as a database behind a private endpoint</td>
+<td>Basic and up</td>
+</tr>
+<tr>
+<td>Managed identity</td>
+<td>Outbound</td>
+<td>The app gets its own Entra ID identity to call Key Vault, Storage or SQL without secrets</td>
+<td>All</td>
+</tr>
+</tbody>
+</table></div>
+<p>Built-in authentication, often called &quot;Easy Auth&quot;, is handy for the staff-only admin portal: with a few settings,
+everyone must sign in with their Nusantara Retail account before the first page loads. Access restrictions could allow
+the admin portal only from head office's public IP address, or allow the storefront only through Azure Front Door
+(Lunch 27). Private endpoints and virtual network integration come back in Lunch 25. You don't need all of these on
+day one, but it helps to know that each problem already has a switch.</p>
+</div></article><article class="scene-card" id="6-app-service-or-something-else-nusantara-retails-choice" data-spy><span class="scene-no">Scene 6 of 6</span><h3>App Service or something else? Nusantara Retail's choice</h3><div class="prose"><p>App Service isn't the only place to run a website in Azure. Here's how it compares with its neighbours:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Virtual machines</th>
+<th>App Service</th>
+<th>Container Apps</th>
+<th>Static Web Apps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>You manage</strong></td>
+<td>OS, runtime, web server, patches, scaling design</td>
+<td>Code, settings, plan size and count</td>
+<td>Container images, scale rules</td>
+<td>Front-end code and small APIs</td>
+</tr>
+<tr>
+<td><strong>You deploy</strong></td>
+<td>Software installed on a VM</td>
+<td>A code package or a container</td>
+<td>A container image (as revisions)</td>
+<td>Static files built from a Git repository</td>
+</tr>
+<tr>
+<td><strong>Scaling</strong></td>
+<td>Scale sets (Lunch 23)</td>
+<td>Instances in a plan, autoscale</td>
+<td>Replicas from zero upwards with event-driven rules</td>
+<td>Content served from many locations worldwide, automatically</td>
+</tr>
+<tr>
+<td><strong>You pay for</strong></td>
+<td>VM hours and disks</td>
+<td>Plan instances (Free tier for learning)</td>
+<td>Resources used per second, or dedicated workload profiles</td>
+<td>A free plan or a paid Standard plan</td>
+</tr>
+<tr>
+<td><strong>Pick it when</strong></td>
+<td>You need full OS control or legacy software</td>
+<td>You host web apps and APIs on a supported stack</td>
+<td>You run microservices, background workers or event-driven containers</td>
+<td>You publish single-page apps and static sites</td>
+</tr>
+<tr>
+<td><strong>Nusantara example</strong></td>
+<td>A legacy service that syncs the stores' POS terminals</td>
+<td>The storefront and the admin portal</td>
+<td>Inventory and recommendation microservices (Lunch 13)</td>
+<td>The 12.12 promotion microsite</td>
+</tr>
+</tbody>
+</table></div>
+<p>Three questions settle most cases. Do you need control of the operating system, or software that only installs on a
+server? Then use a VM. Is there no server-side code at all? Then Static Web Apps is simpler and cheaper. Is the
+workload a set of containers that should scale independently, possibly down to zero? Then look at Container Apps. For
+a classic web app or API on a supported language, App Service is usually the shortest path to production.</p>
+<p>For the storefront, the choice is App Service on Linux with the Python stack. In production, Nusantara Retail would
+use at least the Standard tier with two or more instances for availability, an autoscale rule for Harbolnas, a staging
+slot for every release, HTTPS Only with a managed certificate on <code>www.nusantararetail.co.id</code>, and Key Vault references
+for secrets. Customer data must stay in Indonesia, so production would run in Indonesia Central (Jakarta), after
+checking that the chosen tier is offered there. The labs use Southeast Asia, where every tier is available.</p>
+<p>Moving the web tier doesn't move the data. The product database still sits on the old server next to the pantry, and
+that's next lunch's job: Azure SQL, in Lunch 11. Later lunches add containers (13), serverless functions for the
+order pipeline (14) and a global front door with a web application firewall in front of App Service (27).</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>Dewi's current code keeps each shopper's cart in a Python dictionary inside the web server
+process. What happens to a cart when autoscale adds a second instance, and what happens when Dewi swaps a new version
+into production? Where should the cart live instead?</p>
+</aside>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Front ends, scale-out and a zero-downtime slot swap</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/10-app-service.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/10-app-service.html" title="Interactive demo: Front ends, scale-out and a zero-downtime slot swap" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/10-app-service/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>Every request passes the front ends first; the workers in your plan only run your code.</li>
+<li>Autoscale adds instances of the same size, and the front ends start using them straight away.</li>
+<li>The staging slot runs on the same instances as production, and the swap happens only after every instance is warm.</li>
+<li>Swapping back is the undo button: the previous version is still deployed in the staging slot.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>The storefront and the admin portal share one Standard S1 plan with two instances. To save money over the weekend,
+Dewi stops the admin portal app. How much does the bill drop?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>It doesn't drop at all. You pay for the plan's instances, and stopping one app leaves both instances running. To
+save money, scale the plan in or down, or move the admin portal to a cheaper plan.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Ibu Sari wants zero-downtime releases through a staging slot and automatic scaling for Harbolnas, at the lowest
+possible price. Which is the lowest tier that offers both?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Standard (for example S1). It's the first tier with deployment slots (five per app) and autoscale; Basic has
+dedicated instances but neither feature.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>After a swap, the production storefront starts writing orders into the <em>test</em> database. What went wrong, and how do
+you prevent it?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The database connection string wasn't marked as a deployment slot setting, so it travelled with the code during the
+swap. Mark environment-specific settings as slot settings so that they stay with their slot.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Rizky, the contractor, put the database password in <code>app.py</code>. Dewi moves it to an app setting. The security lead
+suggests a Key Vault reference instead. Why is that better still?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>With a Key Vault reference, the secret lives only in Key Vault, where access is controlled, logged and rotated; the
+app reads it with its managed identity. An app setting holds the secret itself, so anyone who can read the app's
+configuration can read the password.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Marketing's 12.12 promotion microsite is plain HTML, CSS and JavaScript generated by a static site tool. They want it
+fast for shoppers all over Indonesia and as cheap as possible. App Service, Container Apps or Static Web Apps?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Static Web Apps: it serves static files from many locations close to the visitors, has a free plan and creates
+preview environments for pull requests. There is no server-side code to host, so App Service would be overkill.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>App Service is PaaS for web apps and APIs: Microsoft runs the OS, the runtimes and the TLS-terminating front ends; you own the code, the settings, the data and who gets access.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>You pay for the App Service plan (tier × size × instances), not for the apps. Stopping an app doesn't stop the bill, and Free F1 is for learning only.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>Scale up for bigger instances or more features; scale out for more instances. Deployment slots and autoscale start at the Standard tier, and scaling out needs a stateless app.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>App settings become environment variables; secrets belong in Key Vault references; environment-specific values should be sticky slot settings.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Deployment slots let you test on production hardware and swap with no downtime, and swapping back is a quick rollback that needs no redeployment.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Field notes from Stefanus</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Rehearse the undo button before you need it.</strong> The first swap I run on a new production app is a rehearsal, not a
+release: I put a harmless change in staging, swap it into production, swap it straight back and time both moves.
+That proves to the team that rollback really works, and it flushes out the settings that should have been sticky
+while the stakes are still low. Two habits make the rehearsal easy. Every app I deploy shows its version and the
+instance that served the request on a small page, so after a swap or a scale-out I see facts instead of guessing.
+And before a big sale I write down who may press <em>Swap</em> and what makes them press it, because a rollback that waits
+for a meeting is no longer quick.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">More about the author →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>10</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Move the storefront to PaaS</h3>
+          <div class="prose"><p>You'll deploy Nusantara Retail's Python storefront to a Linux App Service plan on the Free tier with <code>az webapp up</code>,
+configure the store name as an app setting, force HTTPS and watch the log stream. Then you delete a required setting on
+purpose, read the logs to find the cause, and fix it. In the optional stretch you move to Standard, deploy version 2 to
+a staging slot and swap it into production while a script checks that no request fails.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 45 minutes</span><span class="chip cost">💲 free or close to free</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/10-app-service.html">Start Lab 10 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/app-service/overview-hosting-plans" target="_blank" rel="noopener"><b>Microsoft Learn: Azure App Service plans</b><span>How plans are billed, how apps share them and how to scale them.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/app-service/deploy-staging-slots" target="_blank" rel="noopener"><b>Microsoft Learn: Set up staging environments in Azure App Service</b><span>Every step of a swap, sticky settings and traffic routing.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/app-service/configure-language-python" target="_blank" rel="noopener"><b>Microsoft Learn: Configure a Linux Python app for Azure App Service</b><span>The build, the startup command and the log stream for Python apps.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🚀</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Platform Pilot</h2>
+        <p class="muted">Run web apps without managing servers.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“A server failure goes unnoticed, and there are no servers left to patch.”</b></p>
+        <div class="teaser"><b>Next episode · 11</b><h4>The Three-Week-Old Backup</h4><p>The orders still live on SQL Express, guarded by a shared password and a USB drive.</p><p style="margin-top:10px"><a href="11-relational-databases-basic.html">Watch Episode 11 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="09-load-balancing-basic.html"><small>← Previous episode</small>09 · Two Servers, One Address</a><a class="next" href="11-relational-databases-basic.html"><small>Next episode →</small>11 · The Three-Week-Old Backup</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/10-app-service/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

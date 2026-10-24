@@ -1,0 +1,148 @@
+{
+  "page": {
+    "doc_title": "Lunch 26 · Hybrid Connectivity — Interactive demo",
+    "kicker": "Lunch 26 · Hybrid Connectivity · Interactive demo",
+    "title": "A tunnel to head office, a private line and a hub for every store",
+    "lede": "Watch a site-to-site VPN tunnel form, carry encrypted traffic and break on a mismatched key; compare it with ExpressRoute's private path; then connect forty stores through a Virtual WAN hub. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "Head office connecting to Azure: a site-to-site VPN tunnel, an ExpressRoute private path and a Virtual WAN hub",
+    "svgDesc": "First scene: Nusantara Retail's head office in Jakarta (10.0.0.0/16) with a warehouse server, a VPN device and an edge router; the public internet in the middle; and the Azure hub virtual network (10.40.0.0/16) with a GatewaySubnet holding a VPN gateway and an ExpressRoute gateway, plus the Orders API. An IPsec tunnel forms through the internet, carries encrypted traffic, fails when the shared keys differ and works again. Then traffic takes a private ExpressRoute path through a provider and Microsoft's edge at a Jakarta peering location, with the VPN as backup. Panels show the connection status and the effective route for head office. Second scene: a Virtual WAN hub in Indonesia Central connecting stores, head office, remote staff, the storefront VNet and a second hub in Southeast Asia, followed by three recap cards."
+  },
+  "steps": [
+    {
+      "title": "Head office meets the cloud",
+      "text": "Every night the warehouse server at head office in Jakarta sends the day's stock movements to the Orders API in Azure. Pak Budi refuses to open either server to the internet, and he's right. Both sides use private addresses: 10.0.0.0/16 at head office, 10.40.0.0/16 in Azure. Today a packet from Azure to 10.0.1.20 is simply dropped, because the only matching route, 10.0.0.0/8, has the next hop None."
+    },
+    {
+      "title": "A gateway in GatewaySubnet",
+      "text": "In Azure, a VPN gateway lives in a dedicated subnet named GatewaySubnet: /27 or larger, and never with an NSG. A VpnGw1AZ gateway is zone-redundant and uses a Standard public IP. At head office, Pak Budi's firewall is the VPN device. A local network gateway tells Azure the firewall's public IP and the ranges behind it, and a connection ties both ends together with a shared key."
+    },
+    {
+      "title": "IKE: proving the shared key",
+      "text": "Once the connection exists, the two ends start talking IKE, the Internet Key Exchange. They agree on encryption algorithms and prove to each other that they hold the same pre-shared key, without ever sending the key itself. The result is an IKE security association. Over it they create IPsec security associations for the actual traffic. Until both phases succeed, the status reads Connecting.",
+      "set": {
+        "t-conn": "Status: Connecting (IKE)"
+      }
+    },
+    {
+      "title": "Connected: encrypted packets flow",
+      "text": "Both phases succeed and the status turns Connected. The firewall encrypts each packet from the warehouse server, wraps it in IPsec and sends it across the internet, which sees only traffic between two public IP addresses. The VPN gateway decrypts it and delivers it to the Orders API. Azure also adds a route on its own: 10.0.0.0/16 now points to the virtual network gateway.",
+      "set": {
+        "t-conn": "Status: Connected · IPsec",
+        "lbl-tunnel": "IPsec tunnel · encrypted",
+        "t-route": "10.0.0.0/16 → VirtualNetworkGateway"
+      }
+    },
+    {
+      "title": "One wrong key, no tunnel",
+      "text": "A month later Rizky rotates the key on the firewall but forgets the Azure side. At the next negotiation authentication fails, no security associations form, and the status drops to NotConnected. Packets now stop at the edge of the missing tunnel. Most failed tunnels come from a mismatch like this one: the key, the encryption algorithms or the address ranges on the two sides don't agree.",
+      "set": {
+        "t-conn": "Status: NotConnected · key mismatch",
+        "lbl-tunnel": "no tunnel: the keys differ"
+      }
+    },
+    {
+      "title": "Fixed, but the internet varies",
+      "text": "The fix is one matching key on both sides, generated at random and stored somewhere safe, such as Key Vault. The tunnel is back. Yet at month-end the nightly sync crawls: the tunnel rides the public internet, so latency and throughput change with every provider along the way. Ibu Sari asks for something more predictable before the warehouse moves even more data to Azure.",
+      "set": {
+        "t-conn": "Status: Connected",
+        "lbl-tunnel": "IPsec tunnel · encrypted",
+        "t-inet": "busy: latency varies"
+      }
+    },
+    {
+      "title": "ExpressRoute: a private path",
+      "text": "ExpressRoute takes a different road. A connectivity provider links head office's edge router to Microsoft's edge routers at a Jakarta peering location, and the two sides exchange routes with BGP. Azure private peering carries the traffic to an ExpressRoute gateway in the same GatewaySubnet as the VPN gateway. The traffic never touches the public internet, so latency stays predictable.",
+      "set": {
+        "t-inet": "shared, best effort"
+      }
+    },
+    {
+      "title": "Private is not the same as encrypted",
+      "text": "Careful with one assumption: ExpressRoute is private, but it isn't encrypted by default. When data must be encrypted in transit, use TLS in the application, MACsec on ExpressRoute Direct ports, or an IPsec VPN over the private peering. Circuits through a provider run from 50 Mbps to 10 Gbps, and ordering one takes weeks while the provider sets up its side."
+    },
+    {
+      "title": "The VPN stays as backup",
+      "text": "Nusantara Retail keeps the site-to-site VPN after ExpressRoute arrives: both gateways can share the GatewaySubnet, and Azure prefers the ExpressRoute routes while the circuit is up. When the provider has an outage, the circuit's BGP routes are withdrawn and traffic falls back to the encrypted tunnel. Slower, but the warehouse keeps syncing. For more resiliency, add ExpressRoute Metro or a second circuit.",
+      "set": {
+        "t-conn": "Status: Connected · backup in use",
+        "lbl-tunnel": "IPsec tunnel · backup path"
+      }
+    },
+    {
+      "title": "Forty stores, one hub",
+      "text": "Next year the forty stores join. With plain gateways that means dozens of tunnels, local network gateways and peerings, plus routing between them that you build yourself. Azure Virtual WAN turns it into a managed service: a virtual hub per region, with gateways for site-to-site VPN, user VPN and ExpressRoute, and a hub router. Each store's SD-WAN box connects to the Indonesia Central hub."
+    },
+    {
+      "title": "Any-to-any through the hub",
+      "text": "The hub router of a Standard virtual WAN provides any-to-any transit: a store reaches head office and the storefront VNet, and remote staff connect with user VPN and their Microsoft Entra ID account. Hubs in the same virtual WAN are meshed over Microsoft's backbone, so the disaster recovery copy behind the Southeast Asia hub is reachable too. The Basic type supports site-to-site VPN only."
+    },
+    {
+      "title": "Pick the path that fits",
+      "text": "Three tools, three jobs. A site-to-site VPN is encrypted, quick to start and the natural backup. ExpressRoute gives a private, predictable path for heavy, steady traffic, with encryption added where the data needs it. Virtual WAN manages hubs and transit once many sites join. Whatever you choose, plan the address ranges first: overlapping networks can't be connected without NAT.",
+      "tip": "In Lab 26 you build two VPN gateways, connect them with a shared key generated at run time and send traffic through the tunnel — then delete everything the same day."
+    }
+  ],
+  "svg": [
+    "Head office · Jakarta",
+    "Pak Budi · 10.0.0.0/16",
+    "Azure hub VNet",
+    "10.40.0.0/16 · Indonesia Central",
+    "GatewaySubnet · no NSG",
+    "Public internet",
+    "shared, best effort",
+    "IKE: agree and authenticate",
+    "Warehouse server",
+    "VPN device",
+    "firewall · public IP",
+    "Edge router",
+    "BGP over the circuit",
+    "Provider network",
+    "private circuit",
+    "Microsoft edge",
+    "Jakarta peering location",
+    "VPN gateway",
+    "VpnGw1AZ · zone-redundant",
+    "ExpressRoute gateway",
+    "ErGw1Az · private peering",
+    "Orders API",
+    "snet-app · 10.40.1.0/24",
+    "encrypt it: TLS, MACsec or IPsec",
+    "Site-to-site connection",
+    "local network gateway: HQ public IP + 10.0.0.0/16",
+    "Status: not created",
+    "Effective routes · snet-app",
+    "traffic to head office, 10.0.1.20",
+    "10.0.0.0/8 → None (dropped)",
+    "Virtual WAN · Standard",
+    "one managed hub per region · hubs meshed over Microsoft's backbone",
+    "Store 1 · Medan",
+    "SD-WAN box · VPN",
+    "Store 2 · Surabaya",
+    "+ 37 more stores",
+    "Store 40 · Makassar",
+    "Head office",
+    "ExpressRoute + VPN backup",
+    "Virtual hub",
+    "Indonesia Central",
+    "S2S · User VPN · ExpressRoute",
+    "hub router: any-to-any",
+    "Remote staff",
+    "User VPN · Entra ID",
+    "VNet · storefront",
+    "orders API and web",
+    "Hub · Southeast Asia",
+    "disaster recovery VNet",
+    "Site-to-site VPN",
+    "encrypted tunnel over the internet",
+    "live in hours · pay per gateway hour",
+    "start here, keep it as the backup",
+    "ExpressRoute",
+    "private path, predictable latency",
+    "weeks to order · encrypt it yourself",
+    "for heavy, steady traffic",
+    "Virtual WAN",
+    "managed hubs for many sites",
+    "any-to-any transit (Standard)",
+    "when the forty stores join"
+  ]
+}

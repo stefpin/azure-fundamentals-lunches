@@ -1,8 +1,11 @@
 # Lab 22 · Passwordless pipelines and least privilege
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 22 · Identity and Access (Advanced)](../../lunches/22-identity-access-advanced/README.md)
 > **Time:** about 50 minutes · **Cost:** 💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 > [!CAUTION]
 > **Use your own tenant and subscription.** This lab creates a custom role, a group and an app registration. You need

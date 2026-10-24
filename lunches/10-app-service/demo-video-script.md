@@ -1,5 +1,7 @@
 # Lunch 10 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — one command that turns a folder of Python into a running
 > web app, configuration without code changes, a fault found in the log stream, and a staging slot swapped into
 > production while a poller watches. The animation can only simulate these.

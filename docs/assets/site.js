@@ -8,6 +8,12 @@
   var C = window.COURSE || { lunches: [], parts: [], levels: [], specialBadges: [] };
   var doc = document, root = doc.documentElement, body = doc.body;
   var ROOT = body.getAttribute('data-root') || '';
+  var PL = C.lang || 'en', U = C.ui || {};
+  function t(k, v) {
+    var s = U[k] == null ? k : U[k];
+    return v ? String(s).replace(/\{(\w+)\}/g, function (m, x) { return v[x] != null ? v[x] : m; }) : s;
+  }
+  try { localStorage.setItem('azlunch.lang', PL); } catch (e) { /* storage blocked */ }
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var $ = function (s, el) { return (el || doc).querySelector(s); };
   var $$ = function (s, el) { return Array.prototype.slice.call((el || doc).querySelectorAll(s)); };
@@ -120,8 +126,8 @@
     var pct = Math.round(doneCount() / Math.max(1, C.lunches.length) * 100);
     $$('[data-hud-ring]').forEach(function (r) { r.style.setProperty('--p', pct); });
     var x = xp(), lv = level(x);
-    $$('[data-hud-text]').forEach(function (t) { t.textContent = x + ' XP · ' + lv.name; });
-    $$('[data-hud-title]').forEach(function (t) { t.setAttribute('title', doneCount() + ' of ' + C.lunches.length + ' lunches · ' + x + ' XP · ' + lv.name); });
+    $$('[data-hud-text]').forEach(function (el) { el.textContent = t('hud', { xp: x, level: lv.name }); });
+    $$('[data-hud-title]').forEach(function (el) { el.setAttribute('title', t('hudTitle', { done: doneCount(), total: C.lunches.length, xp: x, level: lv.name })); });
   }
   var mt = $('[data-menu-toggle]');
   if (mt) mt.addEventListener('click', function () { var nl = $('.nav-links'); var open = nl.classList.toggle('open'); mt.setAttribute('aria-expanded', open ? 'true' : 'false'); });
@@ -187,7 +193,7 @@
     codeEl.innerHTML = highlight(raw, lang);
     var btn = $('.copy-btn', box);
     if (btn) btn.addEventListener('click', function () {
-      var done = function () { btn.textContent = 'Copied ✓'; btn.classList.add('copied'); setTimeout(function () { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1600); };
+      var done = function () { btn.textContent = t('copied'); btn.classList.add('copied'); setTimeout(function () { btn.textContent = t('copy'); btn.classList.remove('copied'); }, 1600); };
       if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(raw).then(done, function () { fallbackCopy(raw); done(); });
       else { fallbackCopy(raw); done(); }
     });
@@ -221,7 +227,7 @@
     };
     if (mermaidLib) { go(mermaidLib); return; }
     import(MERMAID).then(function (mod) { go(mod.default); }).catch(function () {
-      nodes.forEach(function (n) { n.classList.add('mermaid-failed'); var c = n.closest('figure'); if (c && !$('figcaption', c)) { var f = doc.createElement('figcaption'); f.textContent = 'Diagram source (the diagram renderer could not be loaded).'; c.appendChild(f); } });
+      nodes.forEach(function (n) { n.classList.add('mermaid-failed'); var c = n.closest('figure'); if (c && !$('figcaption', c)) { var f = doc.createElement('figcaption'); f.textContent = t('mermaidFail'); c.appendChild(f); } });
     });
   }
   function rerenderMermaid() {
@@ -235,7 +241,7 @@
   function openModal(html) {
     var m = $('#modal');
     if (!m) { m = doc.createElement('div'); m.id = 'modal'; m.className = 'modal'; m.setAttribute('role', 'dialog'); m.setAttribute('aria-modal', 'true'); body.appendChild(m); }
-    m.innerHTML = '<div class="modal-card">' + html + '<button class="btn btn-sm close" data-close aria-label="Close">✕</button></div>';
+    m.innerHTML = '<div class="modal-card">' + html + '<button class="btn btn-sm close" data-close aria-label="' + esc(t('close')) + '">✕</button></div>';
     m.classList.add('open');
     var close = function () { m.classList.remove('open'); doc.removeEventListener('keydown', onKey); };
     var onKey = function (e) { if (e.key === 'Escape') close(); };
@@ -260,8 +266,8 @@
     var who = $('[data-who]');
     var rd = readiness();
     var lines = [
-      { who: 'Ibu Sari · The director', text: (C.director || {}).question || '' },
-      { who: 'You · ' + (rd.lunch ? 'after Episode ' + rd.lunch.n : 'on day one'), text: rd.answer }
+      { who: (function () { var c = (C.cast || [])[0] || {}; return (c.name || 'Ibu Sari') + ' · ' + (c.role || ''); })(), text: (C.director || {}).question || '' },
+      { who: t('you') + ' · ' + (rd.lunch ? t('afterEp', { n: rd.lunch.n }) : t('dayOne')), text: rd.answer }
     ];
     if (reduceMotion) { who.textContent = lines[1].who; bubble.textContent = lines[1].text; }
     else {
@@ -282,8 +288,8 @@
   $$('[data-continue]').forEach(function (a) {
     var nl = nextLunch();
     if (doneCount() === 0) return;
-    if (nl) { a.href = lunchUrl(nl); a.innerHTML = '▶ Continue: Episode ' + nl.n; }
-    else { a.href = ROOT + 'labs/32-advanced-capstone-challenge.html'; a.innerHTML = '🌟 Take the season finale'; }
+    if (nl) { a.href = lunchUrl(nl); a.textContent = t('continueEp', { n: nl.n }); }
+    else { a.href = ROOT + 'labs/32-advanced-capstone-challenge.html'; a.textContent = t('finaleGo'); }
   });
 
   // 60-minute clock
@@ -293,11 +299,11 @@
     var pick = function (i) {
       segs.forEach(function (s, k) { s.classList.toggle('active', k === i); });
       items.forEach(function (s, k) { s.classList.toggle('active', k === i); });
-      if (center && items[i]) { center.textContent = items[i].getAttribute('data-min') + ' min'; centerSub.textContent = items[i].getAttribute('data-name'); }
+      if (center && items[i]) { center.textContent = t('min', { m: items[i].getAttribute('data-min') }); centerSub.textContent = items[i].getAttribute('data-name'); }
     };
     segs.forEach(function (s, i) { s.addEventListener('mouseenter', function () { pick(i); }); s.addEventListener('click', function () { pick(i); }); });
     items.forEach(function (s, i) { s.addEventListener('mouseenter', function () { pick(i); }); s.addEventListener('focus', function () { pick(i); }); });
-    clock.addEventListener('mouseleave', function () { segs.forEach(function (s) { s.classList.remove('active'); }); items.forEach(function (s) { s.classList.remove('active'); }); if (center) { center.textContent = '60 min'; centerSub.textContent = 'one lunch'; } });
+    clock.addEventListener('mouseleave', function () { segs.forEach(function (s) { s.classList.remove('active'); }); items.forEach(function (s) { s.classList.remove('active'); }); if (center) { center.textContent = t('clockCenter'); centerSub.textContent = t('clockSub'); } });
   }
 
   // director gauge (landing + lunchbox)
@@ -314,9 +320,9 @@
     if ('IntersectionObserver' in window) { var o = new IntersectionObserver(function (es) { if (es[0].isIntersecting) { apply(); o.disconnect(); } }); o.observe(g); } else apply();
   });
   $$('[data-director-answer]').forEach(function (el) { el.textContent = '“' + readiness().answer + '”'; });
-  $$('[data-director-when]').forEach(function (el) { var r = readiness(); el.textContent = r.lunch ? 'Your answer after Episode ' + r.lunch.n + ' · ' + r.lunch.ep : 'Your answer today, before Episode 01'; });
+  $$('[data-director-when]').forEach(function (el) { var r = readiness(); el.textContent = r.lunch ? t('answerAfter', { n: r.lunch.n, ep: r.lunch.ep }) : t('answerToday'); });
   $$('[data-answer-log]').forEach(function (el) {
-    el.innerHTML = C.lunches.map(function (l) { var p = partOf[l.part] || {}; return '<span class="' + (S.done[l.n] ? 'on' : '') + '" style="--c:' + p.color + '" title="Episode ' + l.n + '"></span>'; }).join('');
+    el.innerHTML = C.lunches.map(function (l) { var p = partOf[l.part] || {}; return '<span class="' + (S.done[l.n] ? 'on' : '') + '" style="--c:' + p.color + '" title="' + esc(t('episodeN', { n: l.n })) + '"></span>'; }).join('');
   });
 
   // metro map
@@ -324,8 +330,8 @@
   var tip;
   function showTip(l, el) {
     if (!tip) { tip = doc.createElement('div'); tip.className = 'metro-tip'; body.appendChild(tip); }
-    var st = S.done[l.n] ? '✓ Finished' : (nextLunch() === l ? '● Up next' : '○ Not started');
-    tip.innerHTML = '<span class="t-meta">Episode ' + l.n + ' · ' + esc((partOf[l.part] || {}).name || '') + ' · ' + st + '</span><b>' + esc(l.ep) + '</b>' + esc(l.title) + '<br><span style="opacity:.8">' + esc(l.hook) + '</span>';
+    var st = S.done[l.n] ? t('finished') : (nextLunch() === l ? t('upNext') : t('notStarted'));
+    tip.innerHTML = '<span class="t-meta">' + esc(t('episodeN', { n: l.n })) + ' · ' + esc((partOf[l.part] || {}).name || '') + ' · ' + st + '</span><b>' + esc(l.ep) + '</b>' + esc(l.title) + '<br><span style="opacity:.8">' + esc(l.hook) + '</span>';
     var r = el.getBoundingClientRect(); tip.classList.add('show');
     var x = Math.min(innerWidth - 316, Math.max(8, r.left + r.width / 2 - 150)), y = r.top - tip.offsetHeight - 14;
     if (y < 70) y = r.bottom + 14;
@@ -336,7 +342,7 @@
     if (!metroHost) return;
     var w = metroHost.clientWidth, vertical = w < 700, NS = 'http://www.w3.org/2000/svg';
     var cur = nextLunch(), stops = C.lunches.slice();
-    if (C.finale) stops.push({ n: '32', slug: C.finale.slug, ep: C.finale.ep, title: 'Advanced capstone challenge', hook: C.finale.hook, station: C.finale.station, part: 5, finale: true });
+    if (C.finale) stops.push({ n: '32', slug: C.finale.slug, ep: C.finale.ep, title: t('capstone'), hook: C.finale.hook, station: C.finale.station, part: 5, finale: true });
     var pos = [], W, H;
     if (!vertical) {
       W = 1160; H = 665;
@@ -350,7 +356,7 @@
       stops.forEach(function (s, i) { pos.push({ x: 40, y: 40 + i * 62, row: i, i: 0 }); });
     }
     var svg = doc.createElementNS(NS, 'svg'); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('class', 'metro'); svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label', 'Journey map: ' + doneCount() + ' of ' + C.lunches.length + ' lunches finished');
+    svg.setAttribute('aria-label', t('journeyAria', { done: doneCount(), total: C.lunches.length }));
     var html = '';
     function seg(a, b) {
       if (a.y === b.y || vertical) return 'M' + a.x + ',' + a.y + ' L' + b.x + ',' + b.y;
@@ -375,14 +381,14 @@
       var ly = vertical ? q.y + 5 : (above ? q.y - 26 : q.y + 38), lx2 = vertical ? q.x + 30 : q.x, la = vertical ? 'start' : 'middle';
       var label = vertical ? (s.n + ' · ' + s.ep) : s.station;
       html += '<g class="station' + (done ? ' done' : '') + (isCur ? ' current' : '') + '" style="--c:' + p.color + '" data-i="' + i + '">' +
-        '<a href="' + url + '" aria-label="Episode ' + s.n + ': ' + esc(s.ep) + (done ? ' (finished)' : '') + '">' +
+        '<a href="' + url + '" aria-label="' + esc(t('stationAria', { n: s.n, ep: s.ep }) + (done ? t('finishedSuffix') : '')) + '">' +
         '<circle class="halo" cx="' + q.x + '" cy="' + q.y + '" r="16"/>' +
         '<circle class="dot" cx="' + q.x + '" cy="' + q.y + '" r="' + (s.finale ? 17 : 14) + '" stroke="' + p.color + '"/>' +
         '<text class="num" x="' + q.x + '" y="' + (q.y + 4) + '" text-anchor="middle">' + (s.finale ? '★' : (done ? '✓' : +s.n)) + '</text>' +
         '<text class="lbl" x="' + lx2 + '" y="' + ly + '" text-anchor="' + la + '">' + esc(label) + '</text></a></g>';
       if (isCur) {
         var fy = vertical ? q.y - 8 : q.y - 64, fx = vertical ? W - 116 : q.x - 52;
-        if (!vertical) html += '<g class="flag"><rect class="here-bg" x="' + fx + '" y="' + fy + '" rx="10" width="104" height="22"/><text class="here" x="' + (fx + 52) + '" y="' + (fy + 15) + '" text-anchor="middle">YOU ARE HERE</text></g>';
+        if (!vertical) html += '<g class="flag"><rect class="here-bg" x="' + fx + '" y="' + fy + '" rx="10" width="104" height="22"/><text class="here" x="' + (fx + 52) + '" y="' + (fy + 15) + '" text-anchor="middle">' + esc(t('here')) + '</text></g>';
       }
     });
     svg.innerHTML = '<defs></defs>' + html;
@@ -394,7 +400,7 @@
       a.addEventListener('mouseleave', hideTip); a.addEventListener('blur', hideTip);
     });
     var pb = $('[data-metro-bar]'); if (pb) pb.style.inlineSize = (doneCount() / C.lunches.length * 100) + '%';
-    var pt = $('[data-metro-text]'); if (pt) pt.textContent = doneCount() + ' / ' + C.lunches.length + ' lunches';
+    var pt = $('[data-metro-text]'); if (pt) pt.textContent = t('metroText', { done: doneCount(), total: C.lunches.length });
   }
   if (metroHost) { drawMetro(); var rz; addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(drawMetro, 150); }); addEventListener('scroll', hideTip, { passive: true }); }
 
@@ -423,10 +429,11 @@
     var lim = +host.getAttribute('data-badges') || 999, list = badgeList();
     host.innerHTML = list.slice(0, lim).map(function (b) {
       return '<div class="badge-tile' + (b.got ? '' : ' locked') + '" title="' + esc(b.desc) + '"><span class="medal" aria-hidden="true">' + b.icon + '</span>' + esc(b.name) +
-        '<span class="when">' + (b.got ? (b.got > 1 ? 'Earned ' + new Date(b.got).toLocaleDateString() : 'Earned') : (b.n ? 'Episode ' + b.n : 'Locked')) + '</span></div>';
+        '<span class="when">' + (b.got ? (b.got > 1 ? esc(t('earnedOn', { date: new Date(b.got).toLocaleDateString(PL) })) : esc(t('earned'))) : (b.n ? esc(t('episodeN', { n: b.n })) : esc(t('locked')))) + '</span>' +
+        (b.got ? '<button class="share-in" type="button" data-share-badge="' + esc(b.id) + '" title="' + esc(t('share')) + '" aria-label="' + esc(t('share') + ': ' + b.name) + '">in</button>' : '') + '</div>';
     }).join('');
   });
-  $$('[data-badge-count]').forEach(function (el) { var l = badgeList(); el.textContent = l.filter(function (b) { return b.got; }).length + ' of ' + l.length; });
+  $$('[data-badge-count]').forEach(function (el) { var l = badgeList(); el.textContent = t('ofTotal', { got: l.filter(function (b) { return b.got; }).length, total: l.length }); });
 
   /* ======================================================= EPISODE PAGE */
   var N = body.getAttribute('data-lunch');
@@ -453,15 +460,15 @@
       b.setAttribute('aria-pressed', S.obj[N][i] ? 'true' : 'false'); b.textContent = '✓';
       b.addEventListener('click', function () {
         var on = !S.obj[N][i]; S.obj[N][i] = on ? 1 : 0; b.setAttribute('aria-pressed', on ? 'true' : 'false'); save();
-        if (on) xpToast(5, 'You can do this now');
+        if (on) xpToast(5, t('canDo'));
       });
     });
     // pause-and-think
     $$('.callout.think').forEach(function (c, i) {
       var key = N + '-' + i, btn = doc.createElement('button');
       btn.className = 'btn btn-sm think-btn'; c.appendChild(btn);
-      var paint = function () { var on = !!S.think[key]; c.classList.toggle('thought', on); btn.textContent = on ? '✓ Thought about it' : '💭 I have thought about it'; };
-      btn.addEventListener('click', function () { var on = !S.think[key]; S.think[key] = on ? 1 : 0; save(); paint(); if (on) xpToast(5, 'Good thinking'); });
+      var paint = function () { var on = !!S.think[key]; c.classList.toggle('thought', on); btn.textContent = on ? t('thought') : t('think'); };
+      btn.addEventListener('click', function () { var on = !S.think[key]; S.think[key] = on ? 1 : 0; save(); paint(); if (on) xpToast(5, t('goodThinking')); });
       paint();
     });
     // quiz
@@ -471,8 +478,8 @@
       var g = S.quiz[N], graded = Object.keys(g).length, right = Object.keys(g).filter(function (k) { return g[k] === 1; }).length;
       if (ring) { ring.style.setProperty('--p', Math.round(right / Math.max(1, qcards.length) * 100)); }
       if (scoreText) scoreText.textContent = right + '/' + qcards.length;
-      if (scoreNote) scoreNote.textContent = graded < qcards.length ? 'Answer in your head, reveal, then be honest with yourself.' :
-        (right === qcards.length ? 'Perfect score! 🎯 You are ready for the lab.' : right >= 3 ? 'Solid. Re-read the scenes behind the ones you missed.' : 'Worth a second look — the takeaways below will help.');
+      if (scoreNote) scoreNote.textContent = graded < qcards.length ? t('quizNote') :
+        (right === qcards.length ? t('quizPerfect') : right >= 3 ? t('quizSolid') : t('quizAgain'));
     };
     qcards.forEach(function (card) {
       var k = card.getAttribute('data-q'), rb = $('.reveal-btn', card);
@@ -480,14 +487,14 @@
         var v = S.quiz[N][k]; card.classList.toggle('right', v === 1); card.classList.toggle('wrong', v === 0);
         $$('.grade button', card).forEach(function (b) { b.setAttribute('aria-pressed', String(+b.getAttribute('data-grade') === v)); });
       };
-      if (S.quiz[N][k] !== undefined) { card.classList.add('open'); rb.textContent = 'Hide answer'; }
-      rb.addEventListener('click', function () { var o = card.classList.toggle('open'); rb.textContent = o ? 'Hide answer' : 'Reveal answer'; rb.setAttribute('aria-expanded', o ? 'true' : 'false'); });
+      if (S.quiz[N][k] !== undefined) { card.classList.add('open'); rb.textContent = t('hide'); }
+      rb.addEventListener('click', function () { var o = card.classList.toggle('open'); rb.textContent = o ? t('hide') : t('reveal'); rb.setAttribute('aria-expanded', o ? 'true' : 'false'); });
       $$('.grade button', card).forEach(function (b) {
         b.addEventListener('click', function () {
           var v = +b.getAttribute('data-grade'), was = S.quiz[N][k]; S.quiz[N][k] = v; save(); paint(); paintScore();
-          if (v === 1 && was !== 1) xpToast(20, 'Correct answer');
+          if (v === 1 && was !== 1) xpToast(20, t('correct'));
           if (v === 0) { card.classList.remove('wiggle'); void card.offsetWidth; card.classList.add('wiggle'); }
-          var g = S.quiz[N]; if (Object.keys(g).length === qcards.length && Object.keys(g).every(function (x) { return g[x] === 1; }) && was !== 1) { confetti(90); toast('🎯 Perfect score!'); }
+          var g = S.quiz[N]; if (Object.keys(g).length === qcards.length && Object.keys(g).every(function (x) { return g[x] === 1; }) && was !== 1) { confetti(90); toast(esc(t('perfect'))); }
         });
       });
       paint();
@@ -497,10 +504,10 @@
     $$('[data-pin]').forEach(function (b) {
       var i = b.getAttribute('data-pin'), text = $('p', b.closest('.tk')).textContent;
       var has = function () { return S.notes.some(function (x) { return x.n === N && String(x.i) === i; }); };
-      var paint = function () { var on = has(); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.textContent = on ? '📌 Pinned' : '📌 Pin to notebook'; };
+      var paint = function () { var on = has(); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.textContent = on ? t('pinned') : t('pin'); };
       b.addEventListener('click', function () {
         if (has()) S.notes = S.notes.filter(function (x) { return !(x.n === N && String(x.i) === i); });
-        else { S.notes.push({ n: N, i: i, text: text, t: Date.now() }); xpToast(5, 'Saved to your notebook'); }
+        else { S.notes.push({ n: N, i: i, text: text, t: Date.now() }); xpToast(5, t('savedNote')); }
         save(); paint();
       });
       paint();
@@ -510,14 +517,14 @@
     if (th) {
       var fsBtn = $('[data-fullscreen]', th), frame = $('iframe', th);
       if (fsBtn) fsBtn.addEventListener('click', function () {
-        var on = th.classList.toggle('fullscreen'); fsBtn.textContent = on ? '✕ Exit theatre' : '⤢ Theatre mode'; body.style.overflow = on ? 'hidden' : '';
+        var on = th.classList.toggle('fullscreen'); fsBtn.textContent = on ? t('exitTheatre') : t('theatre'); body.style.overflow = on ? 'hidden' : '';
       });
       doc.addEventListener('keydown', function (e) { if (e.key === 'Escape' && th.classList.contains('fullscreen')) fsBtn.click(); });
       var watch = setInterval(function () {
         try {
           var d = frame.contentWindow && frame.contentWindow.__lunchDemo;
           if (d && d.steps && d.current() === d.steps.length - 1 && !S.demo[N]) {
-            S.demo[N] = Date.now(); save(); xpToast(30, 'Demo watched to the end 🎬'); clearInterval(watch);
+            S.demo[N] = Date.now(); save(); xpToast(30, t('demoDone')); clearInterval(watch);
             $$('.rail a[href="#demo"]').forEach(function (a) { a.parentElement.classList.add('seen'); });
           }
         } catch (e) { clearInterval(watch); }
@@ -528,7 +535,7 @@
     var paintFinish = function () {
       var d = !!S.done[N];
       if (finishBox) finishBox.classList.toggle('done', d);
-      $$('[data-finish]').forEach(function (b) { b.innerHTML = d ? '✓ Lunch finished' : b.getAttribute('data-label'); });
+      $$('[data-finish]').forEach(function (b) { b.innerHTML = d ? esc(t('lunchDone')) : b.getAttribute('data-label'); });
       $$('[data-undo]').forEach(function (u) { u.hidden = !d; });
     };
     $$('[data-finish]').forEach(function (b) {
@@ -540,20 +547,22 @@
         save(); paintFinish();
         var after = badgeList().filter(function (x) { return x.got && before.indexOf(x.id) < 0; });
         var nl = C.lunches[C.lunches.indexOf(L) + 1];
-        var teaser = nl ? '<div class="teaser"><b>Next episode · ' + nl.n + '</b><h4>' + esc(nl.ep) + '</h4><p>' + esc(nl.hook) + '</p><p style="margin-top:10px"><a class="btn btn-warm btn-sm" href="' + lunchUrl(nl) + '">Watch Episode ' + nl.n + ' →</a></p></div>'
-          : '<div class="teaser"><b>Season finale</b><h4>' + esc(C.finale.ep) + '</h4><p>' + esc(C.finale.hook) + '</p><p style="margin-top:10px"><a class="btn btn-warm btn-sm" href="' + labUrl(C.finale.slug) + '">Take the challenge →</a></p></div>';
+        var teaser = nl ? '<div class="teaser"><b>' + esc(t('nextEp', { n: nl.n })) + '</b><h4>' + esc(nl.ep) + '</h4><p>' + esc(nl.hook) + '</p><p style="margin-top:10px"><a class="btn btn-warm btn-sm" href="' + lunchUrl(nl) + '">' + esc(t('watchEp', { n: nl.n })) + '</a></p></div>'
+          : '<div class="teaser"><b>' + esc(t('seasonFinale')) + '</b><h4>' + esc(C.finale.ep) + '</h4><p>' + esc(C.finale.hook) + '</p><p style="margin-top:10px"><a class="btn btn-warm btn-sm" href="' + labUrl(C.finale.slug) + '">' + esc(t('takeChallenge')) + '</a></p></div>';
         var extra = after.filter(function (x) { return x.special; }).map(function (x) { return '<span class="chip ok">' + x.icon + ' ' + esc(x.name) + '</span>'; }).join(' ');
-        openModal('<div class="medal-xl" aria-hidden="true">' + L.badge.icon + '</div><p class="kicker" style="justify-content:center;margin-top:14px">Badge unlocked</p>' +
+        openModal('<div class="medal-xl" aria-hidden="true">' + L.badge.icon + '</div><p class="kicker" style="justify-content:center;margin-top:14px">' + esc(t('badgeUnlocked')) + '</p>' +
           '<h2 style="margin:.1em 0">' + esc(L.badge.name) + '</h2><p class="muted">' + esc(L.badge.desc) + '</p>' +
           (first ? '<div class="xp">+100 XP</div>' : '') + (extra ? '<div class="chips" style="justify-content:center">' + extra + '</div>' : '') +
-          '<p style="margin:14px 0 0;font-weight:700">' + esc('Now you could tell Ibu Sari: “' + L.answer + '”') + '</p>' + teaser);
+          '<p style="margin:14px 0 0;font-weight:700">' + esc(t('tellSari', { answer: L.answer })) + '</p>' +
+          '<p style="margin:12px 0 0"><button class="btn btn-sm btn-linkedin" type="button" data-share-badge="l' + esc(L.n) + '"><span class="in" aria-hidden="true">in</span> ' + esc(t('share')) + '</button></p>' + teaser);
         if (first) confetti(200);
       });
     });
-    $$('[data-undo]').forEach(function (u) { u.addEventListener('click', function (e) { e.preventDefault(); delete S.done[N]; save(); paintFinish(); toast('Marked as not finished'); }); });
+    $$('[data-undo]').forEach(function (u) { u.addEventListener('click', function (e) { e.preventDefault(); delete S.done[N]; save(); paintFinish(); toast(esc(t('notFinished'))); }); });
     paintFinish();
     // lunch timer
-    var SEGS = [[5, 'Scenario', '#menu'], [30, 'Reading', '#reading'], [45, 'Demo', '#demo'], [50, 'Knowledge check', '#quiz'], [55, 'Takeaways & lab', '#takeaways'], [60, 'Buffer — finish your lunch', '#finish']];
+    var SN = U.segs || ['Scenario', 'Reading', 'Demo', 'Knowledge check', 'Takeaways & lab', 'Buffer — finish your lunch'];
+    var SEGS = [[5, SN[0], '#menu'], [30, SN[1], '#reading'], [45, SN[2], '#demo'], [50, SN[3], '#quiz'], [55, SN[4], '#takeaways'], [60, SN[5], '#finish']];
     var timerEl = $('.timer'), tTime = timerEl && $('.t-time', timerEl), tSeg = timerEl && $('.t-seg', timerEl), tRing = timerEl && $('.t-ring', timerEl), tick = null, lastSeg = -1;
     var startTimer = function (from) {
       S.timer[N] = from; save(); timerEl.classList.add('on'); clearInterval(tick); lastSeg = -1;
@@ -562,13 +571,13 @@
         tTime.textContent = (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
         tRing.style.setProperty('--p', Math.min(100, el / 36));
         var minute = el / 60, si = 0; while (si < SEGS.length - 1 && minute >= SEGS[si][0]) si++;
-        tSeg.textContent = left <= 0 ? 'Lunch is over 🍵' : 'Now: ' + SEGS[si][1];
-        if (si !== lastSeg) { if (lastSeg !== -1) toast('⏱ Time for ' + SEGS[si][1].toLowerCase() + ' — <a style="color:var(--mango)" href="' + SEGS[si][2] + '">jump there</a>', 5000); lastSeg = si; }
+        tSeg.textContent = left <= 0 ? t('lunchOver') : t('now', { seg: SEGS[si][1] });
+        if (si !== lastSeg) { if (lastSeg !== -1) toast(esc(t('timeFor', { seg: SEGS[si][1].toLowerCase() })) + ' — <a style="color:var(--mango)" href="' + SEGS[si][2] + '">' + esc(t('jump')) + '</a>', 5000); lastSeg = si; }
         if (left <= 0) clearInterval(tick);
       };
       upd(); tick = setInterval(upd, 1000);
     };
-    $$('[data-timer-start]').forEach(function (b) { b.addEventListener('click', function () { startTimer(Date.now()); toast('🍱 Lunch started. Enjoy — 60 minutes on the clock.'); }); });
+    $$('[data-timer-start]').forEach(function (b) { b.addEventListener('click', function () { startTimer(Date.now()); toast(esc(t('lunchStarted'))); }); });
     var stopBtn = timerEl && $('[data-timer-stop]', timerEl);
     if (stopBtn) stopBtn.addEventListener('click', function () { clearInterval(tick); delete S.timer[N]; save(); timerEl.classList.remove('on'); });
     if (timerEl && S.timer[N] && Date.now() - S.timer[N] < 3600 * 1000 * 1.5) startTimer(S.timer[N]);
@@ -580,8 +589,8 @@
     var tcards = $$('.tcard', tgrid), costF = 'all', partF = 'all', q2 = '';
     tcards.forEach(function (c) {
       var n = c.getAttribute('data-n'), st = S.labs[n] || {}, el = $('.status', c), tasks = Object.keys(st.tasks || {}).length;
-      if (st.done) { el.textContent = st.cleaned ? '✓ Done · cleaned up' : '✓ Done'; el.className = 'status st-done'; }
-      else if (tasks) { el.textContent = '◐ In progress · ' + tasks + ' task' + (tasks > 1 ? 's' : '') + ' done'; el.className = 'status st-progress'; }
+      if (st.done) { el.textContent = st.cleaned ? t('labDoneClean') : t('labDone'); el.className = 'status st-done'; }
+      else if (tasks) { el.textContent = t('inProgress', { n: tasks }).replace('(s)', tasks > 1 ? 's' : ''); el.className = 'status st-progress'; }
     });
     var applyT = function () {
       tcards.forEach(function (c) {
@@ -611,34 +620,35 @@
       var done = 0;
       taskBtns.forEach(function (b) {
         var id = b.getAttribute('data-task'), on = !!st.tasks[id]; if (on) done++;
-        b.setAttribute('aria-pressed', String(on)); b.textContent = on ? '✓ Done' : 'Mark done';
+        b.setAttribute('aria-pressed', String(on)); b.textContent = on ? t('taskDone') : t('markDone');
         var sec = b.closest('.lab-section'); if (!sec) return;
         sec.classList.toggle('is-done', on);
         $$('.rail a[href="#' + sec.id + '"]').forEach(function (a) { a.parentElement.classList.toggle('seen', on); });
       });
       var pb2 = $('[data-task-bar]'); if (pb2) pb2.style.inlineSize = (taskBtns.length ? done / taskBtns.length * 100 : 0) + '%';
-      var pt2 = $('[data-task-text]'); if (pt2) pt2.textContent = done + ' of ' + taskBtns.length + ' tasks';
+      var pt2 = $('[data-task-text]'); if (pt2) pt2.textContent = t('tasksOf', { done: done, total: taskBtns.length });
       var ban = $('.cleanup-banner'); if (ban) ban.classList.toggle('show', done > 0 && !st.cleaned && !!$('[data-cleanup]'));
     };
     taskBtns.forEach(function (b) {
       b.addEventListener('click', function () {
-        var id = b.getAttribute('data-task'); if (st.tasks[id]) delete st.tasks[id]; else { st.tasks[id] = Date.now(); xpToast(15, 'Task complete'); }
+        var id = b.getAttribute('data-task'); if (st.tasks[id]) delete st.tasks[id]; else { st.tasks[id] = Date.now(); xpToast(15, t('taskComplete')); }
         save(); paintTasks();
       });
     });
     $$('[data-cleanup]').forEach(function (b) {
-      var paint = function () { b.setAttribute('aria-pressed', String(!!st.cleaned)); b.textContent = st.cleaned ? '✓ Cleaned up — nothing left running' : '🧹 I ran cleanup.sh'; };
-      b.addEventListener('click', function () { if (st.cleaned) delete st.cleaned; else { st.cleaned = Date.now(); xpToast(25, 'Clean plate'); } save(); paint(); paintTasks(); });
+      var paint = function () { b.setAttribute('aria-pressed', String(!!st.cleaned)); b.textContent = st.cleaned ? t('cleaned') : t('cleanup'); };
+      b.addEventListener('click', function () { if (st.cleaned) delete st.cleaned; else { st.cleaned = Date.now(); xpToast(25, t('cleanPlate')); } save(); paint(); paintTasks(); });
       paint();
     });
     $$('[data-lab-complete]').forEach(function (b) {
-      var paint = function () { b.textContent = st.done ? '✓ Lab complete' : b.getAttribute('data-label'); };
+      var paint = function () { b.textContent = st.done ? t('labComplete') : b.getAttribute('data-label'); };
       b.setAttribute('data-label', b.textContent);
       b.addEventListener('click', function () {
         var first = !st.done; if (first) st.done = Date.now(); save(); paint();
         if (first) { confetti(180); var fin = LN === '32';
-          openModal('<div class="medal-xl" aria-hidden="true">' + (fin ? C.finale.badge.icon : '🧪') + '</div><p class="kicker" style="justify-content:center;margin-top:14px">Lab complete</p><h2>' + (fin ? esc(C.finale.badge.name) : 'Hands-on win') + '</h2><div class="xp">+150 XP</div>' +
-            (st.cleaned ? '<p>And you cleaned up. Ibu Sari approves. 🧹</p>' : '<p><b>One last thing:</b> run <code>bash cleanup.sh</code> so nothing keeps costing money.</p>')); }
+          openModal('<div class="medal-xl" aria-hidden="true">' + (fin ? C.finale.badge.icon : '🧪') + '</div><p class="kicker" style="justify-content:center;margin-top:14px">' + esc(t('labCompleteK')) + '</p><h2>' + (fin ? esc(C.finale.badge.name) : esc(t('handsOn'))) + '</h2><div class="xp">+150 XP</div>' +
+            (st.cleaned ? '<p>' + esc(t('cleanedNote')) + '</p>' : '<p>' + t('cleanupNote') + '</p>') +
+            (fin ? '<p style="margin-top:12px"><button class="btn btn-sm btn-linkedin" type="button" data-share-badge="finale"><span class="in" aria-hidden="true">in</span> ' + esc(t('share')) + '</button></p>' : '')); }
       });
       paint();
     });
@@ -677,7 +687,7 @@
     var x = xp(), lv = level(x);
     var setText = function (sel, v) { $$(sel).forEach(function (el) { el.textContent = v; }); };
     setText('[data-level-name]', lv.name); setText('[data-xp]', x + ' XP');
-    setText('[data-xp-next]', lv.next ? (lv.next.xp - x) + ' XP to “' + lv.next.name + '”' : 'Top level reached. Legendary.');
+    setText('[data-xp-next]', lv.next ? t('xpTo', { n: lv.next.xp - x, name: lv.next.name }) : t('topLevel'));
     var xb = $('[data-xp-bar]'); if (xb) setTimeout(function () { xb.style.inlineSize = (lv.next ? (x - lv.at) / (lv.next.xp - lv.at) * 100 : 100) + '%'; }, 200);
     var icons = ['🌱', '🧑‍💻', '🛠️', '☁️', '🚀', '🏗️', '👑']; setText('[data-level-icon]', icons[Math.min(icons.length - 1, lv.idx)]);
     setText('[data-k-lunches]', doneCount() + '/' + C.lunches.length); setText('[data-k-labs]', labsDone() + '/32');
@@ -688,31 +698,31 @@
     var nb = $('[data-notebook]');
     var paintNotes = function () {
       if (!nb) return;
-      if (!S.notes.length) { nb.innerHTML = '<div class="empty">Your notebook is empty. Pin key takeaways at the end of any lunch and they will appear here.</div>'; return; }
+      if (!S.notes.length) { nb.innerHTML = '<div class="empty">' + esc(t('nbEmpty')) + '</div>'; return; }
       var sorted = S.notes.slice().sort(function (a, b) { return a.n === b.n ? a.i - b.i : a.n < b.n ? -1 : 1; });
       nb.innerHTML = sorted.map(function (x, k) {
         var l = byN[x.n] || {}; var p = partOf[l.part] || {};
-        return '<div class="note-item" style="--c:' + p.color + '"><span class="n">EP ' + esc(x.n) + '</span><div>' + esc(x.text) + '<br><a class="muted" style="font-size:.8rem" href="' + (l.slug ? lunchUrl(l) : '#') + '">' + esc(l.ep || '') + '</a></div><button class="btn btn-sm" data-unpin="' + k + '" aria-label="Remove note">✕</button></div>';
+        return '<div class="note-item" style="--c:' + p.color + '"><span class="n">EP ' + esc(x.n) + '</span><div>' + esc(x.text) + '<br><a class="muted" style="font-size:.8rem" href="' + (l.slug ? lunchUrl(l) : '#') + '">' + esc(l.ep || '') + '</a></div><button class="btn btn-sm" data-unpin="' + k + '" aria-label="' + esc(t('removeNote')) + '">✕</button></div>';
       }).join('');
       $$('[data-unpin]', nb).forEach(function (b) { b.addEventListener('click', function () { var it = sorted[+b.getAttribute('data-unpin')]; S.notes = S.notes.filter(function (y) { return y !== it; }); save(); paintNotes(); }); });
     };
     paintNotes();
     var asMd = function () {
-      return '# My Azure lunch notebook\n\n' + S.notes.slice().sort(function (a, b) { return a.n < b.n ? -1 : a.n > b.n ? 1 : a.i - b.i; }).map(function (x) { var l = byN[x.n] || {}; return '- **Episode ' + x.n + ' · ' + (l.ep || '') + ':** ' + x.text; }).join('\n') + '\n';
+      return '# ' + t('nbTitle') + '\n\n' + S.notes.slice().sort(function (a, b) { return a.n < b.n ? -1 : a.n > b.n ? 1 : a.i - b.i; }).map(function (x) { var l = byN[x.n] || {}; return '- **' + t('episodeN', { n: x.n }) + ' · ' + (l.ep || '') + ':** ' + x.text; }).join('\n') + '\n';
     };
-    var cpy = $('[data-notes-copy]'); if (cpy) cpy.addEventListener('click', function () { (navigator.clipboard ? navigator.clipboard.writeText(asMd()) : Promise.reject()).then(function () { toast('Copied as Markdown ✓'); }, function () { fallbackCopy(asMd()); toast('Copied ✓'); }); });
+    var cpy = $('[data-notes-copy]'); if (cpy) cpy.addEventListener('click', function () { (navigator.clipboard ? navigator.clipboard.writeText(asMd()) : Promise.reject()).then(function () { toast(esc(t('copiedMd'))); }, function () { fallbackCopy(asMd()); toast(esc(t('copied'))); }); });
     var dl = function (name, text, type) { var a = doc.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: type })); a.download = name; body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500); };
     var dln = $('[data-notes-download]'); if (dln) dln.addEventListener('click', function () { dl('azure-lunch-notebook.md', asMd(), 'text/markdown'); });
     // certificate
     var nameIn = $('[data-cert-name]'), cert = $('.cert');
     var paintCert = function () {
       if (!cert) return;
-      var nm = (S.name || '').trim() || 'Your name here', all = doneCount() === C.lunches.length;
+      var nm = (S.name || '').trim() || t('certName'), all = doneCount() === C.lunches.length;
       setText('[data-c-name]', nm);
-      setText('[data-c-title]', all ? 'Certificate of Completion' : 'Certificate of Progress');
-      setText('[data-c-body]', all ? 'has completed all ' + C.lunches.length + ' lunches of Azure Fundamentals: One Lunch at a Time — from the pantry server to governance at scale.'
-        : 'has completed ' + doneCount() + ' of ' + C.lunches.length + ' lunches of Azure Fundamentals: One Lunch at a Time, and earned ' + x + ' XP as a ' + lv.name.toLowerCase() + '.');
-      setText('[data-c-date]', new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }));
+      setText('[data-c-title]', all ? t('certDone') : t('certProgress'));
+      setText('[data-c-body]', all ? t('certBodyDone', { total: C.lunches.length })
+        : t('certBodyProgress', { done: doneCount(), total: C.lunches.length, xp: x, level: lv.name.toLowerCase() }));
+      setText('[data-c-date]', new Date().toLocaleDateString(PL, { year: 'numeric', month: 'long', day: 'numeric' }));
       setText('[data-c-medals]', badgeList().filter(function (b) { return b.got; }).map(function (b) { return b.icon; }).slice(0, 14).join(' ') || '🍱');
     };
     if (nameIn) { nameIn.value = S.name || ''; nameIn.addEventListener('input', function () { S.name = nameIn.value.slice(0, 60); save(); paintCert(); }); }
@@ -722,10 +732,50 @@
     var ex = $('[data-export]'); if (ex) ex.addEventListener('click', function () { dl('azure-lunch-progress.json', JSON.stringify(S, null, 2), 'application/json'); });
     var im = $('[data-import]'); if (im) im.addEventListener('change', function () {
       var f = im.files && im.files[0]; if (!f) return; var rdr = new FileReader();
-      rdr.onload = function () { try { var d = JSON.parse(rdr.result); if (!d || typeof d !== 'object' || !d.done) throw new Error('bad'); var b2 = blank(); for (var k2 in b2) { if (!(k2 in d)) d[k2] = b2[k2]; } S = d; save(); location.reload(); } catch (e) { toast('That file does not look like a progress export.'); } };
+      rdr.onload = function () { try { var d = JSON.parse(rdr.result); if (!d || typeof d !== 'object' || !d.done) throw new Error('bad'); var b2 = blank(); for (var k2 in b2) { if (!(k2 in d)) d[k2] = b2[k2]; } S = d; save(); location.reload(); } catch (e) { toast(esc(t('badFile'))); } };
       rdr.readAsText(f);
     });
-    var rs = $('[data-reset]'); if (rs) rs.addEventListener('click', function () { if (confirm('Reset all progress, badges and notes in this browser?')) { S = blank(); save(); location.reload(); } });
+    var rs = $('[data-reset]'); if (rs) rs.addEventListener('click', function () { if (confirm(t('resetConfirm'))) { S = blank(); save(); location.reload(); } });
+  }
+
+  /* ======================================================= SHARE, LANGUAGE, VISITS */
+  function copyText(text) {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(text).catch(function () { fallbackCopy(text); }); return; }
+    } catch (e) { /* fall through */ }
+    fallbackCopy(text);
+  }
+  function shareLinkedIn(kind, text) {
+    var page = (C.pages || '') + '/' + PL + '/share/' + kind + '.html';
+    copyText(text);
+    toast(esc(t('shareCopied')), 6000);
+    window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(page), '_blank', 'noopener');
+  }
+  doc.addEventListener('click', function (e) {
+    var b = e.target.closest && e.target.closest('[data-share-badge], [data-share-cert]');
+    if (!b) return;
+    e.preventDefault(); e.stopPropagation();
+    var home = (C.pages || '') + '/' + PL + '/';
+    if (b.hasAttribute('data-share-cert')) {
+      var all = doneCount() === C.lunches.length;
+      shareLinkedIn(all ? 'certificate-complete' : 'certificate', all ? t('shareCertDone', { url: home }) : t('shareCert', { done: doneCount(), url: home }));
+      return;
+    }
+    var id = b.getAttribute('data-share-badge'), badge = badgeList().filter(function (x) { return x.id === id; })[0];
+    if (badge) shareLinkedIn('badge-' + id, t('shareBadge', { name: badge.name, icon: badge.icon, url: home }));
+  });
+  $$('[data-lang-switch]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      try { localStorage.setItem('azlunch.lang', a.getAttribute('data-lang-switch')); } catch (e) { /* ignore */ }
+      if (location.hash) a.setAttribute('href', a.getAttribute('href').split('#')[0] + location.hash);
+    });
+  });
+  var vis = $('[data-visits]');
+  if (vis && C.goat && window.fetch) {
+    fetch('https://' + C.goat + '.goatcounter.com/counter/TOTAL.json', { credentials: 'omit' })
+      .then(function (r) { if (!r.ok) throw new Error('no count'); return r.json(); })
+      .then(function (d) { var n = d && (d.count || d.count_unique); if (n) { $('[data-visits-n]', vis).textContent = n; vis.hidden = false; } })
+      .catch(function () { /* counter is optional */ });
   }
 
   updateHud();

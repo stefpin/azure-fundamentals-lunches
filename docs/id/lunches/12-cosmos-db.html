@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 12 · Tabel 140 Kolom — Makan Siang 12: NoSQL dengan Azure Cosmos DB (Dasar) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 12 · NoSQL dengan Azure Cosmos DB (Dasar). Setiap jenis produk baru berarti satu lagi perubahan skema hingga larut malam. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/12-cosmos-db.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/12-cosmos-db.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/12-cosmos-db.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/12-cosmos-db.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 12 · Tabel 140 Kolom — Makan Siang 12: NoSQL dengan Azure Cosmos DB (Dasar)">
+<meta property="og:description" content="Makan Siang 12 · NoSQL dengan Azure Cosmos DB (Dasar). Setiap jenis produk baru berarti satu lagi perubahan skema hingga larut malam. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/12-cosmos-db.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="12" style="--c:#11935a">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/12-cosmos-db.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 12</span> Season 1 · 🧩 Bagian 3 · Layanan platform dan data</div>
+      <h1>Tabel 140 Kolom</h1>
+      <div class="lunch-title">Makan Siang 12 · NoSQL dengan Azure Cosmos DB (Dasar)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 45 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Siapa yang Bikin server-baru-final2?">↩ 04</a><a class="chip" href="05-identity-access-basic.html" title="Kasih Saja Password Saya">↩ 05</a><a class="chip" href="11-relational-databases-basic.html" title="Cadangan Data Tiga Minggu Lalu">↩ 11</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 11 · Cadangan Data Tiga Minggu Lalu, data pesanan kini tinggal di Azure SQL, dengan sign-in khusus Entra dan cadangan otomatis.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, lebih tenang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 46% siap</b>Setelah episode ini Anda bisa menjawab: “Gangguan tidak terasa, pesanan bisa dipulihkan, dan katalog bisa di-scale sesuai kebutuhan.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-nosql-dalam-satu-halaman-model-data-dan-api-cosmos-db">NoSQL dalam satu halaman: model data dan API Cosmos DB</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-account-container-dan-request-unit">Account, container, dan request unit</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-partisi-satu-keputusan-yang-tidak-bisa-dibatalkan">Partisi: satu keputusan yang tidak bisa dibatalkan</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-mendunia-region-dan-lima-consistency-level">Mendunia: region dan lima consistency level</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-merangkai-semuanya-untuk-nusantara-retail">Merangkai semuanya untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/12-cosmos-db.html">🔬 Buka Lab 12</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> empat model data NoSQL dan <strong>memilih</strong> API Azure Cosmos DB yang tepat untuk sebuah beban kerja.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menguraikan</strong> bagaimana account, database, container, dan item saling terkait, serta bagaimana request unit ditagih pada pengaturan provisioned, autoscale, serverless, dan free tier.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> partition key yang menyebarkan data dan trafik secara merata, serta <strong>mengenali</strong> hot partition sebelum menimbulkan masalah.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membandingkan</strong> lima consistency level (tingkat konsistensi) dan <strong>memutuskan</strong> kapan Cosmos DB — bukan Azure SQL — menjadi rumah yang tepat untuk data Anda.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 12</span>
+        <div class="story-body"><p>Dewi meletakkan selembar hasil cetak di meja Anda: tabel <code>Products</code> dari database toko online. Tabel itu punya 140 kolom, dan di sebagian besar baris, lebih dari seratus kolomnya kosong. Kopi butuh tingkat sangrai (roast level) dan tingkat gilingan, batik butuh jenis bahan dan tabel ukuran, keranjang rotan yang baru butuh dimensi. Setiap jenis produk baru berarti satu perubahan skema lagi, satu migrasi larut malam lagi, dan — biasanya — satu bug lagi.</p>
+<p>Tim pemasaran menginginkan aplikasi mobile sebelum promo 12.12, saat trafik katalog bisa melonjak dua puluh kali lipat dalam satu jam. Ibu Sari punya dua pertanyaan sendiri: bisakah kita membayar hanya untuk apa yang benar-benar dipakai pembeli, dan bisakah pelanggan di Medan dan Makassar membuka halaman secepat pelanggan di Jakarta?</p>
+<p>Pesanan dan pembayaran boleh tetap di Azure SQL dari Makan Siang 11 — keduanya membutuhkan aturan relasional. Katalog lain lagi ceritanya. Pertanyaan hari ini: <strong>di mana sebaiknya katalog yang bentuknya berubah setiap minggu, dan harus tetap cepat saat lonjakan hari promo, ditempatkan?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 5 adegan</span></div>
+      
+      <article class="scene-card" id="1-nosql-dalam-satu-halaman-model-data-dan-api-cosmos-db" data-spy><span class="scene-no">Adegan 1 dari 5</span><h3>NoSQL dalam satu halaman: model data dan API Cosmos DB</h3><div class="prose"><p>Database relasional menyimpan baris-baris data di dalam tabel dengan skema tetap, menggabungkan (join) tabel saat query dijalankan, dan membungkus perubahan dalam transaksi yang bisa menyentuh banyak tabel sekaligus. Model ini sangat cocok untuk pesanan dan urusan uang. Namun, model ini kurang nyaman ketika setiap data ingin punya bentuk sendiri, atau ketika satu server tidak lagi sanggup mengimbangi beban. Bayangkan satu formulir pendaftaran yang wajib diisi oleh semua barang di toko: kopi terpaksa mengosongkan kolom &quot;ukuran baju&quot;, batik mengosongkan kolom &quot;tingkat sangrai&quot;. Itulah tabel 140 kolom milik Dewi.</p>
+<p><strong>NoSQL</strong> (&quot;not only SQL&quot; — bukan hanya SQL) melonggarkan sebagian aturan itu demi fleksibilitas dan skala. Database NoSQL biasanya menawarkan skema yang fleksibel, scale-out horizontal (menambah kapasitas dengan menambah banyak mesin, bukan memperbesar satu mesin), serta baca-tulis yang sangat cepat berdasarkan kunci. Sebagai gantinya, Anda kehilangan sebagian besar kemampuan join, dan cakupan transaksi menjadi lebih sempit. NoSQL tidak &quot;lebih baik&quot; daripada relasional; ia hanya menawarkan kumpulan kompromi yang berbeda. Ada empat <strong>model data</strong> yang umum:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Model data</th>
+<th>Bentuk datanya</th>
+<th>Contoh di Nusantara Retail</th>
+<th>API Cosmos DB</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Dokumen</strong></td>
+<td>Dokumen JSON yang menjelaskan dirinya sendiri; masing-masing boleh membawa field sendiri</td>
+<td>Kopi dengan tingkat sangrai di samping kemeja batik dengan ukurannya</td>
+<td>API for NoSQL, API for MongoDB</td>
+</tr>
+<tr>
+<td><strong>Key-value</strong> (kunci-nilai)</td>
+<td>Sebuah nilai yang diambil dengan satu kunci unik</td>
+<td>Keranjang belanja yang dicari berdasarkan ID keranjangnya</td>
+<td>API for Table (dan point read di API mana pun)</td>
+</tr>
+<tr>
+<td><strong>Column-family</strong> (keluarga kolom)</td>
+<td>Baris lebar yang kolomnya boleh berbeda-beda, dikelompokkan ke dalam keluarga kolom</td>
+<td>Data sensor jumlah pengunjung per toko, per menit</td>
+<td>API for Apache Cassandra</td>
+</tr>
+<tr>
+<td><strong>Graf</strong></td>
+<td>Vertex (benda) yang dihubungkan oleh edge (hubungan)</td>
+<td>&quot;Pembeli yang membeli kopi juga membeli…&quot;</td>
+<td>API for Apache Gremlin</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Azure Cosmos DB</strong> adalah database NoSQL milik Azure yang dikelola penuh. Microsoft yang menjalankan server, replika, patch, dan backup-nya; Anda mendapat pengindeksan otomatis, replikasi ke region sebanyak yang Anda mau, serta komitmen latensi: baca dan tulis di bawah 10 ms pada persentil ke-99 — artinya 99 dari 100 permintaan selesai dalam waktu kurang dari 10 milidetik (dengan pengecualian untuk strong consistency di beberapa region, yang dibahas di bagian 4).</p>
+<p>Anda memilih sebuah <strong>API</strong> (Application Programming Interface — &quot;bahasa&quot; yang dipakai aplikasi untuk berbicara dengan database) saat membuat account, dan pilihan itu tidak bisa diubah kemudian. API menentukan protokol komunikasi (wire protocol), driver, dan bahasa query yang dipakai aplikasi Anda:</p>
+<ul>
+<li><strong>API for NoSQL</strong> — API asli (native) Cosmos DB: item JSON (format teks berisi pasangan nama dan nilai), bahasa query yang mirip SQL, dan fitur-fitur baru (seperti vector search) yang selalu hadir paling awal. Inilah pilihan bawaan untuk aplikasi baru.</li>
+<li><strong>API for MongoDB</strong> — berbicara dengan protokol MongoDB, sehingga aplikasi dan tool Mongo yang sudah ada bisa pindah dengan sedikit perubahan. Penawaran MongoDB berbasis vCore menjadi produk terpisah pada November 2025: <strong>Azure DocumentDB</strong>.</li>
+<li><strong>API for Apache Cassandra</strong> dan <strong>API for Apache Gremlin</strong> — untuk aplikasi Cassandra (CQL) dan aplikasi graf yang sudah ada.</li>
+<li><strong>API for Table</strong> — API key-value untuk aplikasi yang ditulis untuk Azure Table Storage dan membutuhkan kecepatan atau jangkauan global yang lebih besar.</li>
+</ul>
+<p><strong>Azure Cosmos DB for PostgreSQL</strong> masih muncul di materi-materi lama. Layanan ini sedang menuju pensiun dan deployment baru sudah diblokir; untuk kebutuhan PostgreSQL terdistribusi, Microsoft kini mengarahkan ke elastic cluster di Azure Database for PostgreSQL.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Mulai dari nol? Pilih <strong>API for NoSQL</strong>. API lainnya ada terutama untuk memindahkan aplikasi yang sudah ada tanpa harus menulis ulang. Seluruh isi makan siang ini dan lab-nya memakai API for NoSQL.</p>
+</aside>
+</div></article><article class="scene-card" id="2-account-container-dan-request-unit" data-spy><span class="scene-no">Adegan 2 dari 5</span><h3>Account, container, dan request unit</h3><div class="prose"><p>Cosmos DB mengatur semuanya dalam empat tingkat:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  ACC[&quot;Account: cosmos-nusa-xxxxx&lt;br/&gt;API, region, konsistensi bawaan, capacity mode&quot;]
+  ACC --&gt; DB1[&quot;Database: catalog&quot;]
+  ACC --&gt; DB2[&quot;Database: shopping&quot;]
+  DB1 --&gt; C1[&quot;Container: products&lt;br/&gt;partition key /category&quot;]
+  DB1 --&gt; C2[&quot;Container: reviews&lt;br/&gt;partition key /productId&quot;]
+  DB2 --&gt; C3[&quot;Container: carts&lt;br/&gt;partition key /cartId, TTL 7 hari&quot;]
+  C1 --&gt; I1[&quot;Item: p-coffee-001&lt;br/&gt;kategori coffee, roast medium&quot;]
+  C1 --&gt; I2[&quot;Item: p-batik-002&lt;br/&gt;kategori batik, ukuran M L XL&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<ul>
+<li><strong>Account</strong> adalah resource tingkat teratas dengan nama yang unik secara global dan endpoint (alamat yang dipanggil aplikasi) miliknya sendiri (<code>https://&lt;account&gt;.documents.azure.com</code>). Region, API, consistency level bawaan, dan capacity mode adalah pengaturan di tingkat account.</li>
+<li><strong>Database</strong> adalah ruang nama (namespace) yang mengelompokkan container. Secara opsional, database bisa membagi throughput — kapasitas pemrosesan per detik — di antara container-container-nya.</li>
+<li><strong>Container</strong> adalah unit skala. Anda memilih <strong>partition key</strong>-nya saat membuatnya, dan container menyimpan kebijakan pengindeksan (indexing policy) serta <strong>time to live (TTL)</strong> opsional, yang menghapus item secara otomatis setelah jangka waktu tertentu — sempurna untuk keranjang belanja yang ditinggalkan. (Jangan tertukar dengan container aplikasi di Makan Siang 13; container di Cosmos DB adalah wadah data.)</li>
+<li><strong>Item</strong> adalah satu dokumen JSON berukuran hingga 2 MB. Setiap item wajib memiliki <code>id</code>, yang harus unik di dalam nilai partition key-nya. Item dalam container yang sama tidak harus punya field yang sama: kopi dan kemeja batik bisa tinggal berdampingan.</li>
+</ul>
+<p>Setiap operasi dikenai biaya dalam <strong>request unit (RU)</strong>, satu &quot;mata uang&quot; tunggal yang memadukan CPU, memori, dan I/O. Membaca satu item berukuran 1 KB berdasarkan <code>id</code> dan partition key-nya — disebut <strong>point read</strong> — berbiaya 1 RU. Operasi tulis lebih mahal, karena setiap penulisan juga memperbarui indeks. Biaya sebuah query bergantung pada seberapa banyak data yang harus disentuhnya. Query yang sama atas data yang sama selalu berbiaya sama, dan setiap respons melaporkan biayanya, sehingga Anda bisa mengukur alih-alih menebak. Ibaratnya pulsa telepon: setiap panggilan dan SMS memotong pulsa sesuai tarifnya, dan setelah setiap transaksi Anda bisa melihat berapa yang terpotong.</p>
+<p>Karena itu, perencanaan kapasitas berubah menjadi latihan spreadsheet, bukan tebak-tebakan perangkat keras. Misalkan toko online melayani 300 halaman produk per detik (masing-masing satu point read, sekitar 1 RU) dan 100 halaman kategori per detik (masing-masing satu query, katakanlah 3 RU setelah Anda mengukurnya). Totalnya 300 + 300 = 600 RU/s (RU per detik) untuk pembacaan. Tambahkan operasi tulis dari pembaruan stok, bulatkan ke atas untuk menghadapi promo, dan Anda mendapat angka untuk di-provision — atau alasan untuk memilih serverless selama trafik masih kecil.</p>
+<p>Cara Anda membayar RU bergantung pada <strong>capacity mode</strong> (mode kapasitas) yang Anda pilih untuk account:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Yang Anda bayar</th>
+<th>Cocok untuk</th>
+<th>Perlu diwaspadai</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Provisioned, manual</strong></td>
+<td>RU/s yang Anda pesan, per jam (minimal 400 RU/s per container)</td>
+<td>Trafik yang stabil dan mudah diprediksi</td>
+<td>Anda membayar kapasitas yang menganggur; permintaan di atas kapasitas itu dibatasi (throttled) dengan HTTP 429</td>
+</tr>
+<tr>
+<td><strong>Provisioned, autoscale</strong></td>
+<td>RU/s tertinggi yang terpakai setiap jam, antara 10% dan 100% dari batas maksimum yang Anda tetapkan</td>
+<td>Trafik yang naik-turun tajam, seperti promo 12.12</td>
+<td>Batas bawahnya 10% dari maksimum, bahkan saat menganggur</td>
+</tr>
+<tr>
+<td><strong>Serverless</strong></td>
+<td>Hanya RU yang Anda konsumsi, ditambah penyimpanan</td>
+<td>Pengembangan, pengujian, trafik rendah atau sesekali melonjak</td>
+<td>Hanya satu region; biaya berubah-ubah mengikuti pemakaian, jadi pantau meterannya</td>
+</tr>
+<tr>
+<td><strong>Free tier</strong> (diskon untuk provisioned)</td>
+<td>Gratis untuk 1.000 RU/s dan 25 GB pertama, selama account itu ada</td>
+<td>Belajar dan aplikasi produksi kecil</td>
+<td>Satu account free tier per subscription, dipilih saat pembuatan; tidak tersedia untuk serverless</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ketika sebuah permintaan membutuhkan RU/s lebih banyak daripada yang dimiliki container, Cosmos DB menjawab dengan HTTP 429 &quot;request rate too large&quot;, dan SDK (pustaka pemrograman resmi untuk aplikasi Anda) mencoba lagi setelah jeda singkat. Sesekali mendapat 429 itu normal; 429 yang terus-menerus berarti Anda membutuhkan throughput lebih besar atau desain yang lebih baik.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Provisioned throughput ditagih <strong>di setiap region</strong> milik account: 1.000 RU/s di tiga region berarti 3.000 RU/s di tagihan. Selain itu, karena free tier hanya satu account per subscription dan hanya bisa dinyalakan saat pembuatan, sangat mudah &quot;menghabiskannya&quot; untuk eksperimen yang terlupakan. Periksa dulu sebelum membuat account: portal akan membuat opsi itu berwarna abu-abu jika sudah terpakai.</p>
+</aside>
+</div></article><article class="scene-card" id="3-partisi-satu-keputusan-yang-tidak-bisa-dibatalkan" data-spy><span class="scene-no">Adegan 3 dari 5</span><h3>Partisi: satu keputusan yang tidak bisa dibatalkan</h3><div class="prose"><p>Cosmos DB melakukan scaling dengan membagi sebuah container ke banyak mesin, dan <strong>partition key</strong> (kunci partisi) menentukan cara pembagiannya. Semua item dengan nilai partition key yang sama membentuk satu <strong>logical partition</strong> (partisi logis): misalnya semua produk kopi, jika kuncinya <code>/category</code>. Sebuah logical partition dapat menampung hingga 20 GB, dan ia juga menjadi batas transaksi — sebuah stored procedure (prosedur yang disimpan dan dijalankan di dalam database) atau transactional batch hanya bisa mengubah item yang memiliki nilai partition key yang sama.</p>
+<p>Di balik layar, Cosmos DB menghitung hash (semacam &quot;sidik jari&quot; berupa angka) dari setiap nilai kunci, lalu menempatkan logical partition ke <strong>physical partition</strong> (partisi fisik), yaitu kumpulan replika (replica set) yang benar-benar mengerjakan tugasnya. Anda tidak pernah mengelola physical partition; Cosmos DB memecahnya sendiri seiring bertambahnya data dan throughput. Yang perlu Anda ketahui adalah batas atasnya: satu physical partition melayani hingga 10.000 RU/s dan 50 GB, sehingga satu logical partition tidak akan pernah bisa memakai lebih dari itu. <strong>Hot partition</strong> adalah satu nilai kunci yang menerima trafik jauh lebih banyak daripada yang lain. Ia menabrak batas atas dan dibatasi (throttled), sementara partisi-partisi lain menganggur.</p>
+<p>Ibaratnya gudang Nusantara Retail: setiap barang diberi label kategori (partition key), barang berlabel sama disimpan di rak yang sama (logical partition), dan setiap petugas gudang menjaga beberapa rak sekaligus (physical partition). Jika hampir semua pesanan meminta barang dari satu rak, petugas rak itu kewalahan sementara rekan-rekannya menganggur — itulah hot partition.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  W[&quot;Pesanan promo 12.12&lt;br/&gt;partition key /storeId&quot;] --&gt; H{&quot;hash dari storeId&quot;}
+  H --&gt;|&quot;ONLINE: sebagian besar penulisan&quot;| L1[&quot;Logical partition ONLINE&quot;]
+  H --&gt;|&quot;JKT-01&quot;| L2[&quot;Logical partition JKT-01&quot;]
+  H --&gt;|&quot;SBY-01&quot;| L3[&quot;Logical partition SBY-01&quot;]
+  L1 --&gt; P1[&quot;Physical partition A&lt;br/&gt;di batas atasnya: HTTP 429&quot;]
+  L2 --&gt; P2[&quot;Physical partition B&lt;br/&gt;sebagian besar menganggur&quot;]
+  L3 --&gt; P2
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Partition key yang baik memiliki rentang nilai yang lebar, menyebarkan penyimpanan dan permintaan secara merata, tidak pernah berubah untuk sebuah item, dan muncul sebagai filter kesamaan (&quot;sama dengan&quot;) di query-query yang paling sering Anda jalankan. Metode praktisnya: mulailah dari query, bukan dari data. Tulis lima permintaan yang paling sering dibuat aplikasi Anda, catat property mana yang menjadi filter di masing-masing permintaan, lalu cari property yang paling sering muncul. Jika tidak ada satu property pun yang cocok, Anda bisa membuat <strong>synthetic key</strong> (kunci sintetis) dengan menggabungkan dua nilai, misalnya <code>JKT-01|2026-12-12</code>. Berikut kandidat-kandidat milik Nusantara Retail:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Container</th>
+<th>Kandidat kunci</th>
+<th>Putusan</th>
+<th>Alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>products</td>
+<td><code>/category</code></td>
+<td>✅ Cocok untuk katalog</td>
+<td>Beberapa ribu item, jauh lebih sering dibaca daripada ditulis, dan sebagian besar halaman menanyakan &quot;semua barang di kategori ini&quot;. Nilainya sedikit, jadi awasi kategori &quot;promo&quot; selama masa promo.</td>
+</tr>
+<tr>
+<td>products</td>
+<td><code>/id</code></td>
+<td>⚠️ Mungkin</td>
+<td>Sebarannya sempurna dan point read-nya murah, tetapi setiap halaman kategori menjadi cross-partition query.</td>
+</tr>
+<tr>
+<td>orders</td>
+<td><code>/storeId</code></td>
+<td>❌ Hot partition</td>
+<td>Hanya 41 nilai, dan toko online menerima sebagian besar pesanan; riwayat satu toko juga terus tumbuh mendekati batas 20 GB.</td>
+</tr>
+<tr>
+<td>orders</td>
+<td><code>/orderDate</code></td>
+<td>❌ Hot partition</td>
+<td>Setiap penulisan hari ini jatuh ke nilai tanggal hari ini — anti-pattern klasik.</td>
+</tr>
+<tr>
+<td>orders</td>
+<td><code>/orderId</code></td>
+<td>✅ Bagus untuk penulisan</td>
+<td>Menyebarkan penulisan dengan sempurna dan mendukung point read berdasarkan nomor pesanan, tetapi halaman &quot;pesanan saya&quot; harus bertanya ke setiap partisi.</td>
+</tr>
+<tr>
+<td>orders</td>
+<td><code>/customerId</code></td>
+<td>✅ Paling cocok</td>
+<td>Kardinalitasnya tinggi (nilai uniknya sangat banyak) dan cocok dengan halaman &quot;pesanan saya&quot;. Jika segelintir pembeli korporat tumbuh sangat besar, gunakan hierarchical key.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Jika sebuah query menyertakan partition key, Cosmos DB mengirimkannya ke satu physical partition saja. Jika tidak, query itu menjadi <strong>cross-partition query</strong> (query lintas partisi) yang menyebar ke setiap physical partition, menambah kira-kira 2–3 RU per partisi ditambah latensi ekstra. Di container kecil dengan satu physical partition, Anda nyaris tidak merasakannya; dengan lima puluh partisi, setiap pencarian menanggung overhead lima puluh kali lipat.</p>
+<p>Partition key sebuah container tidak bisa diubah di tempat: Anda harus membuat container baru dan menyalin datanya ke sana (container copy job bisa membantu). Jika satu tingkat tidak cukup, <strong>hierarchical partition key</strong> (partition key bertingkat) memungkinkan Anda menggabungkan hingga tiga tingkat, misalnya <code>/customerId</code> lalu <code>/orderId</code>.</p>
+</div></article><article class="scene-card" id="4-mendunia-region-dan-lima-consistency-level" data-spy><span class="scene-no">Adegan 4 dari 5</span><h3>Mendunia: region dan lima consistency level</h3><div class="prose"><p>Menambahkan region ke account Cosmos DB cukup dengan satu klik atau satu perintah. Setiap region menyimpan salinan lengkap data, aplikasi Anda membaca dari region terdekat, dan RU/s provisioned berlaku di setiap region. Secara bawaan, satu region menerima penulisan dan region lainnya melayani pembacaan; dengan <strong>multi-region writes</strong>, setiap region menerima penulisan dan Cosmos DB menyelesaikan pembaruan yang saling bertentangan — secara bawaan, penulisan terakhirlah yang menang (last write wins). Service-managed failover (pengalihan yang dikelola layanan) dapat menjadikan region lain sebagai region tulis jika region penulisan mengalami gangguan.</p>
+<p>Replikasi antar-region berjalan secara asinkron (tanpa saling menunggu), sehingga hukum fisika memaksa Anda memilih: seberapa segar data yang dibaca harus dijamin, dan berapa besar latensi serta biaya yang rela Anda tanggung untuk itu? Cosmos DB memberi Anda lima <strong>consistency level</strong> (tingkat konsistensi), dari yang terkuat hingga terlemah:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Janji kepada pembaca</th>
+<th>Penggunaan di Nusantara Retail</th>
+<th>Harga dari janji itu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Strong</strong></td>
+<td>Selalu membaca penulisan terbaru yang sudah di-commit (dipastikan tersimpan)</td>
+<td>Jumlah stok untuk kemeja batik terakhir dalam flash sale</td>
+<td>Pembacaan memakan kira-kira dua kali lipat RU; antar-region, setiap penulisan menunggu semua region; tidak boleh digabung dengan multi-region writes</td>
+</tr>
+<tr>
+<td><strong>Bounded staleness</strong></td>
+<td>Tertinggal paling banyak K versi atau T detik</td>
+<td>Dasbor promo langsung yang boleh tertinggal hingga satu menit</td>
+<td>Pembacaan memakan kira-kira dua kali lipat RU</td>
+</tr>
+<tr>
+<td><strong>Session</strong> (bawaan)</td>
+<td>Di dalam satu sesi, Anda selalu membaca penulisan Anda sendiri, sesuai urutannya</td>
+<td>Dewi mengubah harga dan langsung melihat perubahannya</td>
+<td>Biayanya sama dengan level yang lebih lemah</td>
+</tr>
+<tr>
+<td><strong>Consistent prefix</strong></td>
+<td>Tidak pernah melihat penulisan dalam urutan yang salah, tetapi bisa tertinggal</td>
+<td>Linimasa status sebuah pesanan</td>
+<td>Pembacaan dari satu replika</td>
+</tr>
+<tr>
+<td><strong>Eventual</strong></td>
+<td>Tanpa jaminan urutan; replika-replika akhirnya akan sama seiring waktu</td>
+<td>Penghitung jumlah tayangan produk dan &quot;suka&quot;</td>
+<td>Paling murah dan paling cepat</td>
+</tr>
+</tbody>
+</table></div>
+<p>Bayangkan Dewi mengumumkan harga baru di grup WhatsApp keluarga besar. Dewi langsung melihat pesannya sendiri (itulah <em>session</em>), sementara saudara di Medan mungkin baru menerimanya beberapa detik kemudian (<em>eventual</em>), dan pesan-pesan selalu tiba berurutan meski kadang terlambat (<em>consistent prefix</em>). <em>Strong</em> ibarat aturan bahwa pesan baru dianggap terkirim setelah semua anggota grup menerimanya: selalu segar, tetapi pengirimnya harus menunggu.</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant D as Dewi (aplikasi admin)
+  participant J as Indonesia Central (region tulis)
+  participant S as Southeast Asia (region baca)
+  participant P as Pembeli di Singapura
+  D-&gt;&gt;J: Ubah harga kopi menjadi Rp 89.000
+  J--&gt;&gt;D: Penulisan di-commit
+  J--)S: Replicate (asinkron)
+  P-&gt;&gt;S: Baca harganya
+  Note over P,S: Eventual mungkin masih menampilkan Rp 99.000. Session menampilkan harga baru hanya untuk sesi Dewi. Strong tidak pernah menampilkan harga lama, tetapi penulisannya menunggu kedua region.
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Level bawaan diatur di tingkat account, dan Anda bisa mengubahnya kapan saja. Sebuah client kemudian boleh meminta level yang lebih lemah untuk permintaannya sendiri, tetapi tidak pernah level yang lebih kuat. Session menjadi bawaan karena cocok untuk sebagian besar aplikasi: pengguna selalu melihat perubahannya sendiri, sementara pembacaan tetap semurah dan secepat eventual.</p>
+<p>Konsistensi juga memengaruhi pemulihan bencana (disaster recovery). Jika sebuah region hilang seluruhnya, penulisan yang belum sempat direplikasi ikut hilang bersamanya. Dokumentasi Microsoft menyebut jendela kehilangan itu di bawah 15 menit untuk session, consistent prefix, dan eventual pada account multi-region, dan nol untuk strong — itulah tepatnya alasan strong consistency membuat setiap penulisan menunggu region lain. Account multi-region juga menaikkan SLA (Service Level Agreement, jaminan ketersediaan tertulis dari Microsoft), hingga 99,999% tergantung konfigurasinya. Makan Siang 17 menyebut jendela ini sebagai <strong>recovery point objective</strong> (RPO) — batas data yang boleh hilang, diukur dalam satuan waktu.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Saat flash sale 12.12, harga sebuah kemeja batik turun tepat pukul 00.00. Pembeli di Singapura dilayani dari replika Southeast Asia. Apakah harga lama selama beberapa detik masih bisa diterima, atau setiap pembeli harus langsung melihat harga baru? Level mana yang akan Anda pilih — dan berapa harganya?</p>
+</aside>
+</div></article><article class="scene-card" id="5-merangkai-semuanya-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 5 dari 5</span><h3>Merangkai semuanya untuk Nusantara Retail</h3><div class="prose"><p>Tiga fitur lagi membuat Cosmos DB menyenangkan untuk digunakan:</p>
+<ul>
+<li><strong>Pengindeksan otomatis.</strong> Secara bawaan, setiap property dari setiap item diindeks, sehingga field baru seperti <code>roastLevel</code> langsung bisa di-query begitu muncul — tanpa perlu merancang indeks. Untuk menghemat RU pada container yang banyak ditulis, Anda bisa mengecualikan path (jalur property) yang tidak pernah Anda pakai sebagai filter.</li>
+<li><strong>Change feed.</strong> Setiap container menyimpan catatan berurutan dari setiap penambahan dan pembaruan item (berurutan per partition key). Sebuah Azure Function (Makan Siang 14) bisa bereaksi terhadapnya: memperbarui indeks pencarian, atau memberi tahu pembeli yang menunggu bahwa batik yang tadinya habis sudah tersedia lagi. Secara bawaan, penghapusan tidak muncul di sana; mode yang ikut mencatat penghapusan membutuhkan continuous backup.</li>
+<li><strong>Backup bawaan.</strong> Setiap account di-backup secara otomatis. Mode periodik bawaan membuat full backup setiap empat jam dan menyimpan dua yang terbaru; mode continuous menambahkan point-in-time restore untuk 7 atau 30 hari terakhir. Makan Siang 17 merangkai semua ini ke dalam rencana pemulihan bencana.</li>
+</ul>
+<p>Jadi, database mana yang sebaiknya dipakai Nusantara Retail? Keduanya — masing-masing untuk hal yang paling dikuasainya:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Pilih <strong>Azure SQL</strong> jika…</th>
+<th>Pilih <strong>Azure Cosmos DB</strong> jika…</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Datanya relasional secara alami: pesanan, pembayaran, faktur</td>
+<td>Bentuk datanya beragam: katalog, profil, keranjang belanja</td>
+</tr>
+<tr>
+<td>Anda butuh join, laporan, dan transaksi lintas banyak tabel</td>
+<td>Anda membaca dan menulis berdasarkan kunci dengan kecepatan sangat tinggi</td>
+</tr>
+<tr>
+<td>Satu region (ditambah salinan untuk pemulihan bencana) sudah cukup</td>
+<td>Pengguna di beberapa benua butuh pembacaan lokal, atau penulisan lokal</td>
+</tr>
+<tr>
+<td>Tim Anda sudah terbiasa berpikir dalam T-SQL</td>
+<td>Anda ingin throughput yang elastis, dari serverless hingga jutaan RU/s</td>
+</tr>
+</tbody>
+</table></div>
+<p>Desain yang akan Anda bangun di lab: sebuah account Cosmos DB for NoSQL dengan database <code>catalog</code> dan container <code>products</code> yang dipartisi berdasarkan <code>/category</code>. Toko online Dewi membaca halaman kategori dengan satu single-partition query (query satu partisi) dan halaman produk dengan satu point read. Lingkungan pengembangan memakai <strong>serverless</strong>, karena biayanya nyaris nol saat menganggur; lingkungan produksi akan pindah ke <strong>autoscale</strong> sebelum promo, dengan batas atas yang ditentukan dari RU hasil pengukuran. Aplikasi melakukan autentikasi dengan Microsoft Entra ID (<em>ID Microsoft Entra</em>) dan sebuah data-plane role Cosmos DB — role untuk mengakses data, bukan untuk mengelola resource (Makan Siang 05 dan Makan Siang 15) — bukan dengan account key.</p>
+<p>Lingkungan produksi akan berada di <strong>Indonesia Central</strong> demi residensi data. Nama dan harga produk bukan data pribadi, sehingga sebuah region baca di Southeast Asia boleh melayani pembeli di luar negeri — tetapi keranjang belanja yang menyimpan ID pelanggan perlu dicek dulu aturan residensinya.</p>
+<p>Sebelum mulai membangun, belajarlah dari kesalahan yang paling sering dibuat tim pada aplikasi Cosmos DB pertama mereka:</p>
+<ul>
+<li><strong>Menjalankan setiap halaman sebagai <code>SELECT *</code> lintas semua partisi.</strong> Cara ini berhasil di hari pertama dengan 30 item, lalu makin lambat dan makin mahal setiap kali produk bertambah. Point read dan single-partition query menjaga biayanya tetap datar.</li>
+<li><strong>Menempelkan account key ke file konfigurasi.</strong> Satu key membuka setiap database di dalam account, dan key itu tidak pernah kedaluwarsa. Gunakan Microsoft Entra ID dengan data-plane role, dan matikan autentikasi berbasis key begitu tidak ada lagi yang membutuhkannya.</li>
+<li><strong>Membuat database dan container dari kode aplikasi.</strong> Perlakukan keduanya sebagai infrastruktur: buat dengan CLI atau Bicep (Makan Siang 20), dan berikan aplikasi sebuah data role yang bisa membaca dan menulis item, tetapi tidak bisa mengubah bentuk account.</li>
+<li><strong>Lupa memasang TTL.</strong> Keranjang yang ditinggalkan dan sesi yang kedaluwarsa akan menumpuk dan memakan biaya penyimpanan selamanya, kecuali TTL menghapusnya.</li>
+<li><strong>Membiarkan provisioned throughput menyala di container uji yang menganggur.</strong> 400 RU/s ditagih setiap jam, dipakai atau tidak; serverless atau free tier lebih ramah untuk anggaran pengembangan.</li>
+</ul>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Partition key dan consistency level di Azure Cosmos DB</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/12-cosmos-db.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/12-cosmos-db.html?lang=id" title="Demo interaktif: Partition key dan consistency level di Azure Cosmos DB" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/12-cosmos-db/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Bagaimana partition key menentukan tempat mendaratnya setiap item, dan mengapa satu nilai kunci yang sibuk berubah menjadi hot partition.</li>
+<li>Perbedaan antara query yang menyebutkan partition key-nya dan query yang terpaksa bertanya ke setiap partisi.</li>
+<li>Apa yang dilihat pembeli di Singapura di bawah eventual, session, dan strong consistency — dan berapa harga setiap pilihan.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi menambahkan jenis produk baru hampir setiap minggu, masing-masing dengan atributnya sendiri. Tim sedang memulai layanan baru dari nol. API Cosmos DB mana yang sebaiknya mereka pilih?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>API for NoSQL.</strong> API ini menyimpan item JSON tanpa skema tetap, mengindeks property baru secara otomatis, dan mendapat fitur baru paling awal; API lainnya terutama ada untuk memindahkan aplikasi MongoDB, Cassandra, Gremlin, atau Table yang sudah ada.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Sebuah container <code>orders</code> dipartisi berdasarkan <code>/storeId</code>. Selama promo 12.12, penulisan untuk toko online gagal dengan HTTP 429, padahal total RU/s container masih jauh dari habis. Apa yang terjadi, dan apa yang akan Anda ubah?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Hot partition.</strong> Satu nilai kunci (toko online) menerima sebagian besar penulisan dan menabrak batas atas per partisi, sementara partisi lain menganggur. Buat ulang container dengan kunci berkardinalitas tinggi seperti <code>/customerId</code> (atau hierarchical key) lalu salin datanya, karena partition key tidak bisa diubah di tempat.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Subscription lab Anda sudah punya account Cosmos DB free tier dari eksperimen lama. Anda menginginkan account berumur pendek untuk lab 45 menit yang biayanya nyaris nol. Apa yang Anda pilih?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Account serverless.</strong> Free tier terbatas satu account per subscription dan tidak bisa ditambahkan belakangan, sedangkan serverless hanya menagih request unit yang benar-benar Anda konsumsi ditambah penyimpanan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Dewi harus selalu langsung melihat perubahan harga yang ia buat sendiri; pembeli lain boleh sedikit tertinggal. Consistency level mana yang paling murah tetapi tetap memenuhi kebutuhan itu?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Session</strong>, level bawaan. Session menjamin read-your-own-writes (Anda selalu membaca penulisan Anda sendiri) di dalam satu sesi sambil tetap membaca dari satu replika, sehingga pembacaan tidak menanggung RU dua kali lipat seperti strong atau bounded staleness.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Tim keuangan membutuhkan laporan akhir bulan yang menggabungkan (join) data pembayaran, faktur, dan pengembalian dana, dengan transaksi yang memperbarui ketiganya sekaligus. Cosmos DB atau Azure SQL?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Azure SQL.</strong> Datanya relasional dan membutuhkan join serta transaksi lintas banyak tabel; di Cosmos DB, transaksi terbatas pada item yang berbagi satu nilai partition key yang sama.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Cosmos DB adalah database NoSQL yang dikelola penuh; pilih <strong>API for NoSQL</strong> untuk aplikasi baru, karena API tidak bisa diubah setelah account dibuat.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Semuanya berbiaya <strong>request unit</strong>: point read 1 KB bernilai 1 RU, dan Anda membayarnya melalui kapasitas provisioned, autoscale, atau serverless — ditambah satu account free tier per subscription.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p><strong>Partition key</strong> adalah pintu satu arah: pilih property dengan banyak nilai, yang menyebarkan trafik secara merata dan muncul di query-query yang paling sering, atau Anda akan menciptakan hot partition.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Lima <strong>consistency level</strong> menukar kesegaran data dengan latensi dan biaya; <strong>session</strong> adalah level bawaan dan jawaban yang tepat untuk sebagian besar aplikasi.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Gunakan Cosmos DB untuk data yang fleksibel, cepat, dan terdistribusi global seperti katalog dan keranjang belanja, dan simpan data relasional yang sarat transaksi seperti pesanan dan pembayaran di <strong>Azure SQL</strong>.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Baca struknya di setiap request.</strong> Cosmos DB mencantumkan harga setiap operasi di dalam responsnya, dan saya
+memperlakukan angka itu seperti struk belanja. Sejak sprint pertama, saya meminta tim mencatat request charge di
+samping nama setiap query. Dalam design review, pertanyaan saya selalu sama: dari lima query tersibuk Anda, mana yang
+makin mahal ketika datanya bertambah? Point read berbiaya sama, baik untuk tiga puluh item maupun tiga puluh juta,
+dan query satu partisi hanya tumbuh seiring partisinya sendiri. Pencarian lintas partisi tumbuh seiring semuanya, dan
+di account uji yang kecil dengan satu physical partition, ia bersembunyi dengan sempurna. Karena itu saya menguji
+dengan data yang bentuknya mirip hari promo, bukan data demo, lalu membandingkan jumlah dokumen yang dimuat dengan
+yang dikembalikan. Begitu kedua angka itu mulai menjauh, tagihan biasanya segera menyusul.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>12</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Katalog produk yang siap tumbuh</h3>
+          <div class="prose"><p>Anda akan membangun katalog Nusantara Retail di account Cosmos DB for NoSQL serverless, memberi diri Anda akses data dengan Microsoft Entra ID alih-alih key, memuat 30 produk dengan skrip Python kecil, lalu membandingkan biaya RU antara point read, single-partition query, dan cross-partition query. Anda akan menggandakan biaya sebuah pembacaan dengan mengubah consistency level, lalu memperbaiki query pencarian yang mahal dengan menambahkan partition key.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 45 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/12-cosmos-db.html">Mulai Lab 12 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/cosmos-db/partitioning" target="_blank" rel="noopener"><b>Microsoft Learn: Partisi dan penskalaan horizontal di Azure Cosmos DB</b><span>Logical partition dan physical partition, anti-pattern, serta strategi partition key yang dibandingkan berdampingan.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/cosmos-db/consistency-levels" target="_blank" rel="noopener"><b>Microsoft Learn: Consistency level di Azure Cosmos DB</b><span>Jaminan persis di balik setiap level, termasuk quorum read (pembacaan dari beberapa replika sekaligus) dan RPO dari setiap pilihan.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/cosmos-db/request-units" target="_blank" rel="noopener"><b>Microsoft Learn: Request Unit di Azure Cosmos DB</b><span>Apa saja yang memengaruhi biaya RU dan bagaimana setiap capacity mode menagihnya.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🌐</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Pawang Katalog</h2>
+        <p class="muted">Modelkan dan partisi data NoSQL.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Gangguan tidak terasa, pesanan bisa dipulihkan, dan katalog bisa di-scale sesuai kebutuhan.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 13</b><h4>Di Laptop Saya Jalan, Kok</h4><p>Kalimat paling mahal di kantor.</p><p style="margin-top:10px"><a href="13-containers-basic.html">Tonton Episode 13 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="11-relational-databases-basic.html"><small>← Episode sebelumnya</small>11 · Cadangan Data Tiga Minggu Lalu</a><a class="next" href="13-containers-basic.html"><small>Episode berikutnya →</small>13 · Di Laptop Saya Jalan, Kok</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/12-cosmos-db/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

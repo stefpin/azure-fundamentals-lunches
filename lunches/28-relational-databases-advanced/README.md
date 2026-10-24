@@ -1,9 +1,12 @@
 # Lunch 28 · Relational Databases (Advanced)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Deep-dive month · **Level:** Advanced · **Part 5:** Deep dives
 > **Time:** 60 minutes · **Prerequisite lunches:** 11, 17
 > **AZ-900 skill area:** Beyond AZ-900
 > **Lab:** [Lab 28 · Orders that survive a regional outage](../../labs/28-relational-databases-advanced/README.md) — about 60 minutes · cost 💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -205,8 +208,9 @@ less good data you throw away — another reason to keep auditing on.
 **Long-term retention** (LTR) keeps selected weekly, monthly and yearly full backups for up to 10 years — the answer to
 finance's month-end request. **Backup storage redundancy** decides where the backup files live: locally redundant (LRS),
 zone-redundant (ZRS), geo-redundant (GRS, the default) or geo-zone-redundant (GZRS). Only GRS and GZRS make geo-restore
-possible. You cannot change it later on Basic or Hyperscale databases, the free offer supports LRS only, and not
-every option exists in every region — check yours.
+possible. You can change it later, but only future backups
+use the new setting (it can take up to 48 hours); the free offer supports LRS only, and not every option exists in
+every region — check yours.
 
 | Problem | First tool to reach for |
 |---|---|
@@ -372,6 +376,15 @@ What to watch for:
 - Replication copies mistakes too — point-in-time restore (1–35 days) and long-term retention (up to 10 years) are the undo button, and you cannot run PITR on a geo-secondary.
 - Secure a database in layers: network (private endpoints), identity (Entra-only), data (TDE, Always Encrypted, masking, row-level security) and detection (auditing, Defender for SQL).
 - Scale and tune with vCores, elastic pools, Hyperscale, read scale-out, Query Store and automatic tuning; PostgreSQL and MySQL flexible servers offer zone-redundant HA and read replicas.
+
+## 🗒️ Field notes from Stefanus
+
+> **A failover group is a decision, not a feature.** In design reviews I ask two questions about every failover group.
+> First: who decides to fail over at two in the morning, and who is their deputy? With the customer-managed policy,
+> Azure waits for a human, so that human needs a name, a runbook and the authority to act. Second: which connection
+> strings still contain a server name? I search the app settings for `database.windows.net`; every hit that is not a
+> listener name will break on the first failover. Then I test the undo button the same way: once a quarter, I ask the
+> team to restore yesterday's database to a new name and time it. A backup you have never restored is only a hope.
 
 ## 🔬 Your lab: Orders that survive a regional outage
 

@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 16 · Pelanggan Tahu Duluan — Makan Siang 16: Pemantauan (Dasar): Azure Monitor, Alert, Service Health, dan Advisor · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 16 · Pemantauan (Dasar): Azure Monitor, Alert, Service Health, dan Advisor. Instagram sudah ramai membahas toko yang lambat empat puluh menit sebelum Anda menyadarinya. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/16-monitoring-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/16-monitoring-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/16-monitoring-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/16-monitoring-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 16 · Pelanggan Tahu Duluan — Makan Siang 16: Pemantauan (Dasar): Azure Monitor, Alert, Service Health, dan Advisor">
+<meta property="og:description" content="Makan Siang 16 · Pemantauan (Dasar): Azure Monitor, Alert, Service Health, dan Advisor. Instagram sudah ramai membahas toko yang lambat empat puluh menit sebelum Anda menyadarinya. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/16-monitoring-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="16" style="--c:#d98a00">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/16-monitoring-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 16</span> Season 1 · 🛡️ Bagian 4 · Keamanan, operasional, dan tata kelola</div>
+      <h1>Pelanggan Tahu Duluan</h1>
+      <div class="lunch-title">Makan Siang 16 · Pemantauan (Dasar): Azure Monitor, Alert, Service Health, dan Advisor</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan manajemen dan tata kelola Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 45 menit · 💲💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Siapa yang Bikin server-baru-final2?">↩ 04</a><a class="chip" href="06-virtual-machines-basic.html" title="Kabur dari Pantry">↩ 06</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 15 · Password di Dalam File Zip, secret kini tersimpan di Key Vault, aplikasi masuk dengan managed identity, dan pertahanan disusun berlapis.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, lebih tenang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 58% siap</b>Setelah episode ini Anda bisa menjawab: “Kita tahu dalam hitungan menit saat ada yang rusak — biasanya sebelum pelanggan tahu.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-azure-monitor-satu-platform-empat-pertanyaan">Azure Monitor: satu platform, empat pertanyaan</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-metrik-dan-log-dua-jenis-barang-bukti">Metrik dan log: dua jenis barang bukti</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-alert-dari-sinyal-ke-ponsel-seseorang">Alert: dari sinyal ke ponsel seseorang</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-masalah-azure-atau-masalah-kita-service-health-resource-health-dan-advisor">Masalah Azure atau masalah kita? Service Health, Resource Health, dan Advisor</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-lihat-datanya-lalu-satukan-semuanya-untuk-nusantara-retail">Lihat datanya, lalu satukan semuanya untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/16-monitoring-basic.html">🔬 Buka Lab 16</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> apa yang dikumpulkan Azure Monitor dengan sendirinya (metrik platform dan activity log) dan apa yang harus Anda aktifkan sendiri (resource log, data guest dari dalam sistem operasi VM, dan telemetri aplikasi).</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membandingkan</strong> metrik dan log, lalu memilih yang tepat untuk pertanyaan seperti &quot;Apakah CPU sedang sibuk?&quot; dan &quot;Siapa yang menghentikan VM ini?&quot;.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> antara metric alert, log search alert, dan activity log alert, serta <strong>merancang</strong> action group yang menjangkau orang yang tepat.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membedakan</strong> halaman status Azure, Service Health, dan Resource Health, serta <strong>menggunakan</strong> lima kategori rekomendasi Azure Advisor.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 16</span>
+        <div class="story-body"><p>Jumat, pukul 19.40. Flash sale kemeja batik sedang ramai-ramainya, dan layanan checkout toko online masih berjalan di
+satu VM Azure. Pukul 19.52, seorang pelanggan menulis di Instagram: <em>&quot;Website super lambat, checkout gagal terus&quot;</em>.
+Empat puluh komentar kemudian, pukul 20.30, seseorang dari tim marketing meneruskan tangkapan layarnya kepada Anda. Anda
+membuka portal: CPU VM itu sudah mentok di dekat 100% selama empat puluh menit.</p>
+<p>Sabtu pagi, checkout mati lagi. Kali ini VM-nya ternyata dihentikan, dan di grup chat tim semua orang, termasuk Rizky
+si kontraktor, kompak menjawab <em>&quot;bukan saya&quot;</em>. Pak Budi bertanya-tanya apakah Azure sendiri sedang mengalami gangguan.</p>
+<p>Senin, Ibu Sari punya dua pertanyaan untuk Anda: &quot;Kenapa pelanggan kita tahu lebih dulu daripada kita? Dan lain kali,
+seberapa cepat Anda bisa memberi tahu saya <em>apa</em> yang terjadi dan <em>siapa</em> pelakunya?&quot;</p>
+<p>Hari ini Anda merancang sistem peringatan dini untuk Nusantara Retail — dan mempelajari di mana Azure menyimpan barang
+buktinya.</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 5 adegan</span></div>
+      
+      <article class="scene-card" id="1-azure-monitor-satu-platform-empat-pertanyaan" data-spy><span class="scene-no">Adegan 1 dari 5</span><h3>Azure Monitor: satu platform, empat pertanyaan</h3><div class="prose"><p>Ketika ada yang tidak beres di produksi, Anda butuh jawaban cepat untuk empat pertanyaan:</p>
+<ul>
+<li><strong>Apakah berjalan?</strong> Ketersediaan (availability): apakah pelanggan bisa menjangkau toko sama sekali?</li>
+<li><strong>Apakah berjalan dengan baik?</strong> Performa: CPU, memori, waktu respons, tingkat error.</li>
+<li><strong>Apa yang berubah, dan siapa yang mengubahnya?</strong> Audit: perubahan ukuran (resize), penghentian, aturan yang terhapus.</li>
+<li><strong>Masalahnya di pihak kita atau di Azure?</strong> Kesehatan platform: insiden di region (<em>wilayah</em>), atau pemeliharaan
+terencana.</li>
+</ul>
+<p><strong>Azure Monitor</strong> adalah layanan Azure yang mengumpulkan, menyimpan, menganalisis, dan menindaklanjuti data pemantauan
+(monitoring). Layanan ini menghimpun data dari resource (<em>sumber daya</em>) Azure, dari sistem operasi di dalam VM
+(<em>komputer virtual</em>) Anda, dari aplikasi Anda, dan dari subscription (<em>langganan</em>) itu sendiri. Untuk bagian
+platformnya, tidak ada yang perlu di-deploy: setiap subscription sudah memilikinya. Alert (<em>pemberitahuan</em>),
+Application Insights, Service Health alert, dan banyak halaman &quot;insights&quot; di portal adalah fitur yang dibangun di atas
+satu platform ini.</p>
+<p>Di portal, semuanya berada di bawah <strong>Monitor</strong>: Metrics, Logs, Alerts, Activity log, Service Health, Workbooks, dan
+halaman-halaman insights. Sebagian besar resource juga menampilkan potongan data yang sama di menunya sendiri: halaman
+<strong>Metrics</strong>, <strong>Alerts</strong>, dan <strong>Activity log</strong> milik sebuah VM hanyalah tampilan Monitor yang difilter untuk VM itu saja.</p>
+<p>Pelajaran paling berguna bagi pemula: sebagian data pemantauan <strong>dikumpulkan otomatis dan gratis</strong>, sedangkan data
+lainnya harus <strong>diaktifkan</strong> dulu, dan biasanya mulai berbayar begitu data itu masuk ke sebuah workspace.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Dikumpulkan otomatis?</th>
+<th>Disimpan selama</th>
+<th>Biaya pengumpulan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Metrik platform (CPU, jaringan, disk)</td>
+<td>Ya, biasanya setiap menit</td>
+<td>93 hari</td>
+<td>Tidak dikenai biaya</td>
+</tr>
+<tr>
+<td>Activity log (operasi control plane)</td>
+<td>Ya</td>
+<td>90 hari</td>
+<td>Tidak dikenai biaya</td>
+</tr>
+<tr>
+<td>Resource log (operasi di dalam sebuah resource)</td>
+<td>Tidak: perlu diagnostic setting</td>
+<td>tergantung tujuannya</td>
+<td>ditagih di tempat tujuan</td>
+</tr>
+<tr>
+<td>Log dan performance counter dari guest OS</td>
+<td>Tidak: perlu Azure Monitor Agent (Makan Siang 30)</td>
+<td>sesuai retensi workspace</td>
+<td>ditagih per GB yang diserap (ingested)</td>
+</tr>
+<tr>
+<td>Telemetri aplikasi (permintaan, error)</td>
+<td>Tidak: perlu Application Insights</td>
+<td>sesuai retensi workspace</td>
+<td>ditagih per GB yang diserap</td>
+</tr>
+</tbody>
+</table></div>
+<p>Diagram berikut menunjukkan gambaran besarnya. Data masuk dari kiri, mendarat di salah satu dari tiga tempat
+penyimpanan, lalu dimanfaatkan di kanan.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph Sources[&quot;Sumber data&quot;]
+    R[Resource Azure&lt;br/&gt;VM, storage, SQL]
+    G[Guest OS&lt;br/&gt;di dalam VM]
+    A[Aplikasi Anda]
+    S[Subscription&lt;br/&gt;Azure Resource Manager]
+  end
+  subgraph Stores[&quot;Penyimpanan Azure Monitor&quot;]
+    M[(Metrics&lt;br/&gt;deret waktu)]
+    L[(Log Analytics&lt;br/&gt;workspace)]
+    AL[(Activity log)]
+  end
+  subgraph Use[&quot;Pemanfaatan&quot;]
+    E[Metrics explorer]
+    Q[Log Analytics · KQL]
+    V[Workbooks · dashboard · Grafana]
+    AR[Alert rule] --&gt; AG[Action group&lt;br/&gt;email · SMS · webhook]
+  end
+  R -- otomatis --&gt; M
+  R -- diagnostic setting --&gt; L
+  G -- agent + rule --&gt; L
+  A -- Application Insights --&gt; L
+  S -- otomatis --&gt; AL
+  M --&gt; E
+  M --&gt; AR
+  L --&gt; Q
+  L --&gt; V
+  L --&gt; AR
+  AL --&gt; AR
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Mulailah setiap investigasi dengan data yang gratis. Buka VM di portal dan lihat tab <strong>Monitoring</strong> atau
+<strong>Metrics</strong>-nya: riwayat CPU, disk, dan jaringan selama berminggu-minggu sudah tersedia, tanpa satu pengaturan pun
+diubah.</p>
+</aside>
+</div></article><article class="scene-card" id="2-metrik-dan-log-dua-jenis-barang-bukti" data-spy><span class="scene-no">Adegan 2 dari 5</span><h3>Metrik dan log: dua jenis barang bukti</h3><div class="prose"><p><strong>Metrik</strong> (metrics) adalah angka yang diukur pada interval yang teratur. Setiap nilai punya cap waktu (timestamp) dan
+milik satu resource, dan sebagian metrik punya <strong>dimensi</strong> (dimensions), yaitu label tambahan seperti nama disk atau nama
+API, sehingga Anda bisa memecah sebuah grafik. Metrik disimpan di database deret waktu (time series) yang dirancang untuk
+kecepatan, sehingga sangat cocok untuk grafik dan untuk alert yang harus terpicu dalam hitungan menit.</p>
+<p>Setiap kali membaca metrik, Anda juga memilih <strong>agregasi</strong> (cara merangkum banyak sampel menjadi satu angka) untuk
+setiap rentang waktu (time grain): <strong>Average</strong>, <strong>Minimum</strong>, <strong>Maximum</strong>, <strong>Sum</strong> (di portal disebut Total), atau
+<strong>Count</strong>. Agregasi mengubah cerita. Bayangkan VM toko online melonjak ke CPU 100% selama sepuluh detik setiap menit,
+lalu menganggur di antaranya. Untuk setiap menit, nilai maksimumnya 100%, rata-ratanya sekitar 20%, dan minimumnya
+mendekati nol. Ketiga angka itu benar; masing-masing menjawab pertanyaan yang berbeda.</p>
+<p>Untuk VM, metrik platform seperti <em>Percentage CPU</em>, <em>Network In Total</em>, dan <em>Disk Read Bytes</em> diukur oleh host Azure
+(server fisik tempat VM berjalan), dari luar sistem operasi, sehingga tetap berfungsi walaupun tidak ada apa pun yang
+terpasang di dalam VM. Hal yang tidak terlihat dari host, seperti ruang kosong di dalam file system, pemakaian per proses,
+dan log sistem, membutuhkan Azure Monitor Agent, yang akan Anda temui di Makan Siang 30. Metrics explorer menampilkan
+grafik hingga 30 hari sekaligus; geser grafiknya untuk menjangkau data yang lebih lama, dalam batas 93 hari.</p>
+<p><strong>Log</strong> adalah catatan: baris-baris dengan banyak kolom. Satu baris log bisa berbunyi &quot;GET /checkout mengembalikan 500
+dalam 2,3 detik&quot; atau &quot;pengguna dewi@nusantara membaca secret db-password&quot;. Log disimpan dalam tabel di sebuah <strong>Log
+Analytics workspace</strong> dan ditelusuri dengan <strong>Kusto Query Language (KQL)</strong>, bahasa kueri khusus untuk data seperti ini.
+Log lebih kaya daripada metrik dan bisa menjawab <em>yang mana</em>, <em>siapa</em>, dan <em>mengapa</em>, tetapi Anda membayar untuk setiap
+gigabyte yang dikirim dan disimpan, dan log biasanya tiba beberapa detik hingga beberapa menit setelah kejadiannya.</p>
+<p>Ibaratnya sebuah warung. Metrik itu seperti angka di meteran listrik token PLN: satu angka yang terus diperbarui dan
+cepat dibaca, tetapi tidak bisa menjelaskan alat mana yang menyedot listrik. Log lebih mirip buku kas warung: baris demi
+baris mencatat siapa membeli apa, kapan, dan berapa. Isinya jauh lebih lengkap, tetapi butuh waktu untuk ditulis dan
+dibaca, dan bukunya makin lama makin tebal.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Metrik</th>
+<th>Log</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bentuk</td>
+<td>angka dari waktu ke waktu</td>
+<td>baris dengan banyak kolom</td>
+</tr>
+<tr>
+<td>Contoh</td>
+<td>Percentage CPU = 87 pada pukul 19.41</td>
+<td>&quot;GET /checkout mengembalikan 500 pada pukul 19.41.07&quot;</td>
+</tr>
+<tr>
+<td>Kesegaran data</td>
+<td>mendekati real time</td>
+<td>biasanya beberapa detik hingga beberapa menit</td>
+</tr>
+<tr>
+<td>Dijelajahi dengan</td>
+<td>Metrics explorer</td>
+<td>Log Analytics (KQL)</td>
+</tr>
+<tr>
+<td>Pertanyaan yang cocok</td>
+<td>&quot;Apakah CPU sedang tinggi saat ini?&quot;</td>
+<td>&quot;Permintaan mana yang gagal, dan mengapa?&quot;</td>
+</tr>
+<tr>
+<td>Jenis alert</td>
+<td>metric alert</td>
+<td>log search alert</td>
+</tr>
+<tr>
+<td>Biaya</td>
+<td>metrik platform gratis</td>
+<td>bayar per GB yang diserap dan disimpan</td>
+</tr>
+</tbody>
+</table></div>
+<p>Dua sumber data khusus layak dilihat lebih dekat.</p>
+<p><strong>Activity log</strong> (log aktivitas) mencatat setiap operasi <strong>control plane</strong> (operasi untuk mengelola resource itu
+sendiri) di sebuah subscription: membuat, memperbarui, menghapus, menyalakan, menghentikan, dan mengubah ukuran
+resource, menetapkan peran, dan sebagainya. Setiap entri berisi waktu, operasi, status, resource, dan <strong>caller</strong>,
+yaitu pengguna atau service principal yang mengajukan permintaan itu. Activity log juga mengumpulkan event Service
+Health dan Resource Health, aktivasi alert, aksi autoscale (penskalaan otomatis), rekomendasi Advisor, alert dari
+Defender for Cloud (<em>Microsoft Defender untuk Cloud</em>), dan aksi Azure Policy. Activity log aktif secara default,
+gratis, dan disimpan selama 90 hari, dan entrinya tidak bisa diubah atau dihapus; justru karena itulah auditor
+memercayainya. Operasi yang hanya membaca, seperti membuka halaman sebuah VM, biasanya tidak dicatat. Jika Anda butuh
+lebih dari 90 hari, atau ingin menelusurinya dengan KQL, ekspor activity log ke sebuah workspace dengan diagnostic
+setting.</p>
+<p><strong>Resource log</strong> menggambarkan apa yang terjadi <em>di dalam</em> sebuah resource, yaitu di <strong>data plane</strong>. Membaca secret dari
+Key Vault, mengunduh sebuah blob (file di Blob storage), atau menjalankan kueri di database adalah operasi data plane;
+operasi seperti ini tidak pernah muncul di activity log. Resource log tidak dikumpulkan sampai Anda membuat <strong>diagnostic
+setting</strong> pada resource tersebut. Diagnostic setting menentukan kategori log (atau grup kategori seperti <em>audit</em> atau
+<em>allLogs</em>) dan tujuannya: Log Analytics workspace untuk kueri dan alert, storage account (<em>akun penyimpanan</em>) untuk
+arsip jangka panjang yang murah, Event Hubs untuk mengalirkan data ke alat lain seperti SIEM (sistem pemantauan
+keamanan), atau solusi mitra yang didukung. Setting yang sama juga bisa mengirim metrik platform ke workspace, misalnya
+agar tersimpan lebih dari 93 hari.</p>
+<p>Bayangkan sebuah kompleks perumahan. Activity log adalah buku tamu di pos satpam: siapa masuk, siapa membongkar pagar,
+siapa mengganti gembok, semuanya tercatat otomatis dan tidak bisa dihapus. Namun, buku tamu itu tidak tahu apa yang
+terjadi di dalam rumah. Untuk itu, Anda harus memasang CCTV sendiri di dalam rumah, dan itulah peran resource log yang
+diaktifkan lewat diagnostic setting.</p>
+<p>Berikut sekilas rasa KQL untuk menelusuri activity log yang sudah diekspor. Anda akan mempelajari bahasa ini dengan
+benar di Makan Siang 30.</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>AzureActivity
+| where OperationNameValue has &quot;deallocate&quot;
+| project TimeGenerated, Caller, ResourceGroup, ActivityStatusValue
+</code></pre></div>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Resource log <strong>nonaktif</strong> secara default. Tim biasanya baru menyadarinya saat insiden: auditor bertanya siapa yang
+membaca kata sandi database dari Key Vault Selasa lalu, dan tidak ada apa pun yang bisa ditunjukkan. Ingat
+pembagiannya: activity log memberi tahu siapa yang <em>mengubah vault</em>; hanya resource log yang memberi tahu siapa yang
+<em>membaca secret</em>. Buat diagnostic setting saat Anda membuat resource, atau biarkan Azure Policy mewajibkannya (Makan
+Siang 18 dan 31).</p>
+</aside>
+</div></article><article class="scene-card" id="3-alert-dari-sinyal-ke-ponsel-seseorang" data-spy><span class="scene-no">Adegan 3 dari 5</span><h3>Alert: dari sinyal ke ponsel seseorang</h3><div class="prose"><p>Sebuah <strong>alert rule</strong> (aturan alert) punya empat bagian:</p>
+<ol>
+<li><strong>Scope</strong> (cakupan) — apa yang diawasi: satu resource, beberapa resource, sebuah resource group (<em>grup sumber daya</em>),
+atau sebuah subscription.</li>
+<li><strong>Condition</strong> (kondisi) — sinyal dan logikanya, misalnya &quot;rata-rata Percentage CPU lebih besar dari 70&quot;.</li>
+<li><strong>Actions</strong> (tindakan) — satu atau beberapa <strong>action group</strong> yang dijalankan saat rule terpicu (fired).</li>
+<li><strong>Details</strong> (detail) — nama, deskripsi, dan <strong>severity</strong> (tingkat keparahan) dari Sev0 (kritis) hingga Sev4
+(verbose, sekadar informasi rinci).</li>
+</ol>
+<p>Ketika kondisinya terpenuhi, Azure Monitor membuat sebuah <strong>alert</strong>, yaitu satu kejadian yang bisa Anda lihat, akui
+(acknowledge), dan tutup di halaman Alerts, lalu menjalankan action group yang terpasang. Alert disimpan selama 30 hari.
+Setiap alert membawa dua kolom status: <em>monitor condition</em> (Fired atau Resolved), yang diatur oleh Azure, dan <em>alert
+state</em> (New, Acknowledged, atau Closed), yang diatur oleh tim Anda selama menangani masalahnya.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Jenis alert</th>
+<th>Yang diawasi</th>
+<th>Contoh rule di Nusantara</th>
+<th>Perilaku</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Metric alert</td>
+<td>sebuah metrik, dievaluasi setiap 1–60 menit</td>
+<td>&quot;CPU rata-rata di atas 70% selama 5 menit&quot;</td>
+<td>stateful (mengingat status) secara default: terpicu sekali, lalu resolved dengan sendirinya saat kondisinya hilang</td>
+</tr>
+<tr>
+<td>Log search alert</td>
+<td>hasil kueri KQL yang dijalankan sesuai jadwal</td>
+<td>&quot;Lebih dari 5 checkout gagal dalam 10 menit&quot;</td>
+<td>stateful secara default; bisa dibuat stateless</td>
+</tr>
+<tr>
+<td>Activity log alert</td>
+<td>event baru di activity log yang cocok dengan kondisi</td>
+<td>&quot;Sebuah VM di grup produksi di-deallocate&quot;</td>
+<td>stateless (tidak mengingat status): terpicu untuk setiap event yang cocok</td>
+</tr>
+</tbody>
+</table></div>
+<p>Service Health alert dan Resource Health alert juga termasuk activity log alert. Nanti di kursus ini Anda juga akan
+bertemu smart detection (deteksi anomali otomatis) di Application Insights dan Prometheus alert untuk kontainer
+(Prometheus adalah sistem pemantauan open source yang populer).</p>
+<p>Perhatikan baik-baik kondisi sebuah metric alert, karena kebanyakan alert yang rusak, rusaknya di sini. &quot;Average
+Percentage CPU lebih besar dari 70, window 5 menit, frequency 1 menit&quot; artinya: setiap menit, ambil sampel lima menit
+terakhir (window), hitung rata-ratanya, lalu bandingkan hasilnya dengan 70. Ganti satu kata saja, maknanya ikut berubah:</p>
+<ul>
+<li><strong>Maximum</strong> selama 5 menit: &quot;kapan saja dalam periode itu&quot; — peka, dan berisik kalau CPU sering melonjak sebentar.</li>
+<li><strong>Average</strong> selama 5 menit: &quot;secara rata-rata&quot; — pilihan default yang masuk akal untuk CPU.</li>
+<li><strong>Minimum</strong> selama 1 jam: &quot;<em>sepanjang</em> satu jam penuh&quot; — begitu ketat sehingga krisis 15 menit tidak akan pernah
+memicunya.</li>
+</ul>
+<p>Ibaratnya alarm banjir yang baru berbunyi kalau air setinggi lutut bertahan selama satu jam penuh tanpa surut sedetik
+pun: banjir kiriman yang merendam garasi selama 15 menit tidak akan pernah membunyikannya.</p>
+<p>Window yang lebih panjang meredam lonjakan tetapi lambat bereaksi; window yang lebih pendek cepat bereaksi tetapi bisa
+flapping (bolak-balik terpicu dan pulih). Jika beban Anda punya ritme harian, <strong>dynamic thresholds</strong> mempelajari seperti
+apa kondisi normal untuk setiap jam dan memicu alert pada nilai yang tidak biasa, bukan pada angka tetap.</p>
+<p><strong>Action group</strong> adalah daftar bernama yang bisa dipakai ulang, berisi <em>siapa yang diberi tahu</em> dan <em>apa yang
+dijalankan</em>. Notifikasinya mencakup email, SMS, panggilan suara, push notification ke aplikasi seluler Azure, dan email
+ke semua orang yang memegang peran Azure Resource Manager (seperti Owner) di subscription. Aksinya mencakup webhook,
+Azure Functions, Logic Apps, runbook Automation, Event Hubs, dan konektor IT service management (ITSM). Satu action group
+bisa melayani banyak rule. Batas laju (rate limit) bawaan melindungi orang dari banjir notifikasi: pada saat tulisan ini
+dibuat, sebuah alamat email menerima paling banyak 100 email alert per jam dari satu region, dan sebuah nomor telepon
+paling banyak satu SMS setiap lima menit. Aktifkan <strong>common alert schema</strong> agar setiap otomatisasi menerima bentuk
+payload (isi pesan) yang sama, apa pun jenis alert-nya.</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant VM as vm-nusa-web
+  participant MS as Penyimpanan metrik
+  participant AR as Alert rule (avg CPU di atas 70, 5 menit)
+  participant AG as Action group
+  participant OC as Engineer piket
+  VM-&gt;&gt;MS: Percentage CPU setiap menit
+  loop setiap menit
+    AR-&gt;&gt;MS: rata-rata 5 menit terakhir?
+  end
+  Note over AR: 84 di atas 70, jadi alert berstatus Fired (Sev 2)
+  AR-&gt;&gt;AG: jalankan action
+  AG-&gt;&gt;OC: email dan SMS
+  Note over AR: kemudian, 31 di bawah 70, jadi alert berstatus Resolved
+  AR-&gt;&gt;AG: jalankan action lagi
+  AG-&gt;&gt;OC: email Resolved
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Dua alat lagi membuat alerting tetap manusiawi. <strong>Alert processing rules</strong> (dulu disebut action rules) mengubah apa yang
+terjadi setelah alert terpicu: aturan ini bisa meredam notifikasi selama jendela pemeliharaan terencana, misalnya Sabtu
+pukul 01.00–03.00 saat Rizky menambal (patch) VM, atau menambahkan action group ke setiap alert di sebuah subscription.
+Aturan ini tidak memengaruhi Service Health alert. Dan disiplin <strong>severity</strong> itu penting: kalau semuanya Sev0, berarti
+tidak ada yang benar-benar Sev0.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Alert rule tanpa action group hanya muncul di halaman Alerts di portal — tidak ada yang menerima email. Selalu pasang
+action group, dan arahkan ke kotak surat bersama (shared mailbox) atau jadwal piket on-call, bukan ke satu orang yang
+mungkin sedang cuti.</p>
+</aside>
+<p>Alert rule yang baik punya empat kebiasaan yang sama. Setiap rule bisa <strong>ditindaklanjuti</strong> (actionable: penerimanya tahu
+apa yang harus dilakukan), memakai <strong>severity yang tepat</strong>, menjangkau <strong>penerima yang tepat</strong>, dan sudah <strong>diuji</strong>.
+Tombol <em>Test action group</em> di portal mengirim notifikasi contoh, sehingga Anda tahu bahwa email-nya masuk ke folder spam
+pada hari Selasa yang tenang, bukan di tengah insiden.</p>
+<p>Metrik platform memang gratis, tetapi tidak semua alert rule gratis: metric alert rule dan log search alert rule dikenai
+biaya bulanan kecil per deret waktu (time series) yang dipantau atau per rule, dan satu subscription bisa menampung
+paling banyak 100 activity log alert rule. Periksa halaman harga Azure Monitor sebelum Anda membuat ratusan rule.</p>
+</div></article><article class="scene-card" id="4-masalah-azure-atau-masalah-kita-service-health-resource-health-dan-advisor" data-spy><span class="scene-no">Adegan 4 dari 5</span><h3>Masalah Azure atau masalah kita? Service Health, Resource Health, dan Advisor</h3><div class="prose"><p>Azure memberi Anda tiga sudut pandang tentang kesehatannya sendiri, dari yang paling luas hingga yang paling sempit:</p>
+<ul>
+<li><strong>Halaman status Azure</strong> (Azure status page) adalah tampilan publik dan global untuk insiden yang dampaknya luas.
+Halaman ini tidak tahu apa-apa tentang subscription Anda.</li>
+<li><strong>Service Health</strong> bersifat personal: melaporkan layanan dan region yang <em>Anda</em> pakai. Isinya: <strong>service issue</strong>
+(insiden yang sedang terjadi), <strong>planned maintenance</strong> (pemeliharaan terencana), <strong>health advisory</strong> (perubahan yang
+membutuhkan tindakan Anda, seperti fitur yang akan dipensiunkan), dan <strong>security advisory</strong> (pemberitahuan keamanan),
+lengkap dengan kabar terbaru selama insiden dan analisis akar masalah (root-cause analysis) sesudahnya.</li>
+<li><strong>Resource Health</strong> melihat satu resource, misalnya VM ini atau database ini, dan melaporkan <strong>Available</strong>,
+<strong>Unavailable</strong>, <strong>Degraded</strong>, atau <strong>Unknown</strong>, lengkap dengan alasannya (misalnya <em>platform initiated</em>, dipicu oleh
+platform, versus <em>user initiated</em>, dipicu oleh pengguna) dan riwayatnya.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Halaman status Azure</th>
+<th>Service Health</th>
+<th>Resource Health</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cakupan</td>
+<td>seluruh Azure, semua region</td>
+<td>layanan dan region milik subscription Anda</td>
+<td>satu resource</td>
+</tr>
+<tr>
+<td>Menjawab</td>
+<td>&quot;Apakah ada gangguan besar?&quot;</td>
+<td>&quot;Apakah ada insiden atau pemeliharaan Azure yang memengaruhi layanan yang saya pakai?&quot;</td>
+<td>&quot;Apakah resource <em>ini</em> sehat, dan kalau tidak, mengapa?&quot;</td>
+</tr>
+<tr>
+<td>Dipersonalisasi</td>
+<td>tidak</td>
+<td>ya</td>
+<td>ya</td>
+</tr>
+<tr>
+<td>Alert</td>
+<td>tidak ada</td>
+<td>Service Health alert</td>
+<td>Resource Health alert</td>
+</tr>
+<tr>
+<td>Contoh di Nusantara</td>
+<td>mengecek saat terjadi gangguan besar yang ramai diberitakan</td>
+<td>&quot;Virtual Machines in Southeast Asia: service issue&quot;</td>
+<td>&quot;vm-nusa-web: Unavailable, user initiated&quot;</td>
+</tr>
+</tbody>
+</table></div>
+<p>Bayangkan listrik di rumah Anda padam. Halaman status Azure itu seperti berita nasional tentang pemadaman besar.
+Service Health seperti pemberitahuan PLN untuk gardu di wilayah Anda. Resource Health seperti memeriksa MCB (sakelar
+pengaman) di rumah sendiri: turun karena Anda menyalakan terlalu banyak alat (user initiated), atau karena aliran dari
+PLN memang terputus (platform initiated)?</p>
+<p>Gunakan ketiganya bersama-sama, dari yang sempit ke yang luas. Mulailah dari Resource Health pada resource yang
+bermasalah: unavailability yang <em>user-initiated</em> mengarahkan Anda ke activity log; yang <em>platform-initiated</em> mengarahkan
+Anda ke Service Health. Setiap subscription layak punya <strong>Service Health alert</strong>, yaitu activity log alert dengan cakupan
+subscription, difilter untuk region dan layanan yang Anda pedulikan (Southeast Asia dan Indonesia Central untuk
+Nusantara Retail), dan tersambung ke sebuah action group. Tambahkan <strong>Resource Health alert</strong> untuk resource yang
+kritis, seperti VM toko online dan database pesanan.</p>
+<p><strong>Azure Advisor</strong> adalah konsultan gratis di portal. Advisor menganalisis konfigurasi dan pemakaian Anda, lalu memberikan
+rekomendasi yang dipersonalisasi dalam lima kategori:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kategori</th>
+<th>Yang dicari</th>
+<th>Contoh di Nusantara</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Reliability (keandalan)</td>
+<td>risiko ketahanan dan kelangsungan layanan</td>
+<td>&quot;Gunakan availability zone (<em>zona ketersediaan</em>) untuk VM toko online&quot;; &quot;aktifkan cadangan (backup)&quot;</td>
+</tr>
+<tr>
+<td>Security (keamanan)</td>
+<td>kelemahan, diambil dari Microsoft Defender for Cloud</td>
+<td>&quot;Tutup port manajemen pada VM yang terhubung ke internet&quot;</td>
+</tr>
+<tr>
+<td>Performance (performa)</td>
+<td>resource yang membatasi kecepatan</td>
+<td>tier disk atau database yang terlalu kecil untuk bebannya</td>
+</tr>
+<tr>
+<td>Cost (biaya)</td>
+<td>pemborosan dan peluang penghematan</td>
+<td>&quot;Sesuaikan ukuran atau matikan VM yang jarang terpakai&quot;; reservasi untuk workload yang stabil</td>
+</tr>
+<tr>
+<td>Operational excellence (keunggulan operasional)</td>
+<td>kerapian proses dan deployment</td>
+<td>&quot;Buat Azure Service Health alert&quot;</td>
+</tr>
+</tbody>
+</table></div>
+<p>Anda bisa menunda (postpone) atau mengabaikan (dismiss) sebuah rekomendasi dengan alasan tertentu, memantau kemajuan
+dengan <strong>Advisor score</strong>, dan menerima alert saat muncul rekomendasi baru. Saran biaya dari Advisor menjadi bahan Makan
+Siang 19, dan saran keamanannya adalah daftar yang sama dengan yang Anda lihat di Defender for Cloud pada Makan Siang
+15. Satu keanehan bagi penulis skrip: Azure CLI dan API masih menyebut kategori reliability sebagai <em>HighAvailability</em>.</p>
+</div></article><article class="scene-card" id="5-lihat-datanya-lalu-satukan-semuanya-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 5 dari 5</span><h3>Lihat datanya, lalu satukan semuanya untuk Nusantara Retail</h3><div class="prose"><p>Data yang tidak bisa Anda lihat tidak ada gunanya pada pukul 20.00 di hari Jumat. Azure menyediakan beberapa cara untuk
+melihatnya:</p>
+<ul>
+<li><strong>Metrics explorer</strong> untuk grafik cepat dari satu atau beberapa metrik, yang bisa Anda sematkan (pin) ke <strong>Azure
+dashboard</strong>.</li>
+<li><strong>Workbooks</strong> — laporan interaktif yang memadukan teks, grafik metrik, dan kueri log, dengan parameter seperti &quot;pilih
+sebuah VM&quot;.</li>
+<li><strong>Azure Monitor dashboards with Grafana</strong> (Grafana adalah alat dasbor open source yang populer), yang sudah tersedia
+di portal tanpa biaya tambahan, dan <strong>Azure Managed Grafana</strong>, layanan berbayar untuk tim yang juga butuh sumber
+data di luar Azure, alerting Grafana, atau laporan terjadwal.</li>
+<li><strong>Insights</strong> — tampilan siap pakai seperti VM insights dan Application Insights.</li>
+</ul>
+<p><strong>Application Insights</strong> layak dikenalkan hari ini, karena masalah hari Jumat itu sebenarnya masalah aplikasi.
+Application Insights adalah fitur application performance monitoring (pemantauan performa aplikasi) milik Azure
+Monitor: ia mencatat setiap permintaan ke toko online, berapa lama prosesnya, apakah gagal, dependensi mana (database,
+API pembayaran) yang dipanggil, dan exception (galat program) apa saja yang muncul. Fitur ini juga bisa menjalankan
+<strong>availability test</strong> yang memanggil situs Anda dari beberapa lokasi di seluruh dunia. Resource Application Insights
+yang baru menyimpan datanya di Log Analytics workspace, dan Anda menambahkannya dengan autoinstrumentation (pemasangan
+otomatis tanpa mengubah kode) atau pustaka OpenTelemetry (standar terbuka untuk mengumpulkan telemetri). Makan Siang
+30 membahasnya secara mendalam.</p>
+<p>Inilah paket awal (starter kit) yang akan Anda usulkan kepada Ibu Sari:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  subgraph rg[&quot;Resource group produksi&quot;]
+    VM[&quot;vm-nusa-web&quot;]
+  end
+  MA[&quot;Metric alert&lt;br/&gt;avg CPU di atas 70% · 5 menit · Sev 2&quot;] --&gt; AG
+  AA[&quot;Activity log alert&lt;br/&gt;VM di-deallocate atau dihapus · Sev 1&quot;] --&gt; AG
+  SH[&quot;Service Health alert&lt;br/&gt;Southeast Asia dan Indonesia Central&quot;] --&gt; AG
+  RH[&quot;Resource Health alert&lt;br/&gt;VM toko online unavailable&quot;] --&gt; AG
+  AG[&quot;Action group ag-nusa-oncall&lt;br/&gt;kotak surat on-call dan ponsel piket&quot;]
+  VM -.-&gt; MA
+  VM -.-&gt; AA
+  VM -.-&gt; RH
+  ADV[&quot;Tinjauan Advisor&lt;br/&gt;setiap Senin&quot;] -.-&gt; rg
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<ol>
+<li>Sebuah action group, <code>ag-nusa-oncall</code>, yang mengirim email ke kotak surat on-call tim TI dan SMS ke ponsel piket.</li>
+<li>Metric alert pada VM toko online: CPU rata-rata di atas 70% selama lima menit, Sev 2.</li>
+<li>Activity log alert: VM mana pun di resource group produksi yang di-deallocate atau dihapus, Sev 1.</li>
+<li>Service Health alert untuk insiden dan pemeliharaan di region yang dipakai Nusantara Retail.</li>
+<li>Resource Health alert untuk VM toko online.</li>
+<li>Diagnostic setting pada Key Vault dan database pesanan, sehingga pertanyaan &quot;siapa membaca apa&quot; bisa dijawab.</li>
+<li>Sepuluh menit setiap Senin bersama Advisor.</li>
+</ol>
+<p>Dengan semua ini, cerita Jumat berikutnya akan berbeda. Ponsel piket bergetar sekitar lima menit setelah CPU mulai naik,
+jauh sebelum Instagram heboh. Hari Sabtu, activity log menyebutkan nama orang yang menghentikan VM, Resource Health
+memberinya label <em>user initiated</em>, dan Service Health memastikan Azure baik-baik saja. Itulah jawaban untuk dua
+pertanyaan Ibu Sari: Anda akan tahu lebih dulu, dan Anda akan tahu penyebabnya.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Pukul 02.10, Resource Health menampilkan VM toko online sebagai <em>Unavailable — user
+initiated</em>, dan Service Health tidak menunjukkan insiden apa pun di Southeast Asia. Ke mana Anda mencari berikutnya
+untuk mengetahui siapa pelakunya, dan jenis alert apa yang akan membangunkan Anda pukul 02.01, bukan pukul 08.00?</p>
+</aside>
+<p><strong>Pendalaman:</strong> <a href="30-monitoring-advanced.html">Makan Siang 30 · Pemantauan (Lanjutan): Log Analytics, KQL, dan Application Insights</a> membahas secara
+mendalam desain Log Analytics workspace, Azure Monitor Agent, KQL, dan Application Insights.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Tahu lebih dulu daripada pelanggan: alert, activity log, dan kesehatan layanan</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/16-monitoring-basic.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/16-monitoring-basic.html?lang=id" title="Demo interaktif: Tahu lebih dulu daripada pelanggan: alert, activity log, dan kesehatan layanan" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/16-monitoring-basic/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Bagaimana metrik berubah menjadi alert: rule merata-ratakan CPU selama lima menit, terpicu sekali, mengirim email ke
+engineer piket, lalu belakangan mengirim pesan &quot;Resolved&quot;.</li>
+<li>Mengapa rule buatan Rizky tidak pernah terpicu: agregasi dan window mengubah arti &quot;CPU tinggi&quot;.</li>
+<li>Bagaimana activity log menyebutkan caller yang men-deallocate VM, dan bagaimana activity log alert melaporkannya dalam
+hitungan menit.</li>
+<li>Perbedaan cakupan antara Service Health (layanan dan region Anda) dan Resource Health (satu resource).</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi ingin menerima email dalam beberapa menit setiap kali CPU VM toko online bertahan di atas 80% selama lima menit.
+Jenis alert apa yang sebaiknya ia buat, dan dengan agregasi apa?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Metric alert</strong> pada <em>Percentage CPU</em> dengan agregasi <strong>Average</strong> dan window 5 menit. <em>alasannya:</em> metrik platform
+masuk otomatis setiap menit, sehingga metric alert bereaksi cepat tanpa agent atau workspace apa pun.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Sabtu lalu VM toko online dihentikan dan di-deallocate. Ibu Sari ingin tahu nama pelakunya sebelum makan siang. Di
+mana Anda mencarinya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Di <strong>activity log</strong> (kategori Administrative): filter berdasarkan operasi <em>Deallocate Virtual Machine</em>, lalu baca
+kolom <strong>Caller</strong>. <em>alasannya:</em> setiap operasi control plane dicatat otomatis, lengkap dengan caller-nya, selama 90
+hari.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Seorang auditor bertanya pengguna mana saja yang mengunduh PDF faktur dari Blob storage minggu lalu. Storage account
+itu sudah ada selama setahun dengan pengaturan default. Bisakah Anda menjawabnya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Tidak bisa.</strong> Unduhan adalah operasi data plane, yang hanya dicatat di <strong>resource log</strong>, dan resource log baru
+dikumpulkan setelah Anda membuat <strong>diagnostic setting</strong>. Buat sekarang agar pertanyaan serupa bisa dijawab lain kali.
+<em>alasannya:</em> activity log mencakup perubahan di control plane, bukan pembacaan data.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Rizky membuat alert: &quot;Minimum Percentage CPU lebih besar dari 70 selama 1 jam&quot;. Selama lonjakan flash sale 15 menit,
+CPU bertahan di 100%, tetapi alert itu tidak pernah terpicu. Mengapa, dan kondisi apa yang lebih baik?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Minimum selama satu jam</strong> hanya terpicu jika CPU bertahan di atas 70% <em>sepanjang</em> jam itu, sehingga lonjakan 15
+menit tidak akan pernah memenuhinya. Gunakan <strong>Average selama 5 menit</strong> (dievaluasi setiap menit). <em>alasannya:</em>
+agregasi dan window menentukan arti &quot;tinggi&quot;.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>VM toko online tidak bisa dijangkau. Resource Health menyatakan <em>Unavailable — platform initiated</em>, dan Service
+Health menampilkan service issue yang sedang aktif untuk Virtual Machines di Southeast Asia. Masalah siapa ini, dan
+apa yang harus Anda lakukan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Ini <strong>masalah platform Azure</strong>, bukan perubahan yang dibuat tim Anda. Ikuti kabar terbaru insidennya di <strong>Service
+Health</strong>, jalankan rencana pemulihan Anda (Makan Siang 17), dan pastikan ada <strong>Service Health alert</strong> agar Anda yang
+pertama tahu jika insiden berikutnya terjadi. <em>alasannya:</em> unavailability yang platform-initiated ditambah masalah
+regional yang sedang aktif menunjuk ke Azure, bukan ke konfigurasi Anda.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Metrik platform dan activity log dikumpulkan otomatis dan gratis; resource log, data guest OS, dan telemetri aplikasi harus diaktifkan dulu dan ditagih di tempat data itu mendarat.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Metrik menjawab &quot;berapa banyak, saat ini?&quot; dengan cepat dan murah; log menjawab &quot;apa, yang mana, siapa, dan mengapa?&quot; dengan KQL.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Alert rule = scope + condition + action group + severity. Agregasi dan window menentukan apakah rule itu pernah terpicu, dan action group menentukan apakah ada yang mendengarnya.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Activity log memberi tahu siapa mengubah apa; Resource Health memberi tahu apakah satu resource sehat dan mengapa; Service Health memberi tahu tentang insiden dan pemeliharaan Azure di layanan dan region Anda.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Azure Advisor memberikan rekomendasi gratis yang dipersonalisasi dalam lima kategori, yaitu keandalan (reliability), keamanan, performa, biaya, dan keunggulan operasional, jadi jadikan peninjauannya sebuah kebiasaan.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Alert yang diabaikan tak lebih dari alarm mobil di parkiran mal.</strong> Semua orang mendengarnya meraung, tetapi tidak
+ada yang menoleh. Supaya alert saya tidak bernasib sama, sebelum membuat alert rule saya menulis deskripsinya sebagai
+pesan untuk orang yang akan membacanya tengah malam: apa artinya, apa yang pertama kali harus dicek, dan kapan harus
+eskalasi. Kalau kalimat itu tidak bisa saya tulis, rule-nya belum siap, atau tempatnya memang di dashboard, bukan di
+kotak masuk orang. Sebulan sekali, sebelum alert-alert itu hilang dari halaman Alerts, saya menyisir semua yang pernah
+terpicu: yang tidak ditindaklanjuti siapa pun saya setel ulang, saya turunkan severity-nya, atau saya hapus. Dan saya
+tidak pernah memercayai action group yang belum diuji dari ujung ke ujung, langsung di ponsel orang yang sedang
+piket.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>16</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Tahu lebih dulu daripada pelanggan</h3>
+          <div class="prose"><p>Anda akan membangun sistem peringatan dini pertama Nusantara Retail di sekitar sebuah VM toko online yang kecil: action
+group yang mengirim email kepada Anda, metric alert CPU yang Anda picu sendiri dengan Run Command, activity log alert yang
+menangkap VM yang di-deallocate, dan Service Health alert untuk subscription Anda. Setelah itu Anda akan menjawab &quot;siapa
+pelakunya?&quot; dari activity log, meninjau rekomendasi Advisor, dan memperbaiki alert rule rusak yang tidak pernah terpicu.
+Inilah pengaturan yang dibutuhkan setiap subscription produksi sejak hari pertama.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 45 menit</span><span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/16-monitoring-basic.html">Mulai Lab 16 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/azure-monitor/alerts/alerts-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Gambaran umum alert Azure Monitor</b><span>Jenis-jenis alert, alert stateful versus stateless, dan bagaimana rule, processing rule, serta action group saling terhubung.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-monitor/fundamentals/activity-log" target="_blank" rel="noopener"><b>Microsoft Learn: Activity log di Azure Monitor</b><span>Apa yang dicatat, berapa lama disimpan, dan cara mengekspornya ke workspace.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/service-health/overview" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Azure Service Health?</b><span>Status Azure, Service Health, dan Resource Health secara berdampingan.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/advisor/advisor-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Pengantar Azure Advisor</b><span>Lima kategori rekomendasi dan cara menindaklanjutinya.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">📈</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Peringatan Dini</h2>
+        <p class="muted">Kirim alert sebelum pelanggan sadar ada masalah.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Kita tahu dalam hitungan menit saat ada yang rusak — biasanya sebelum pelanggan tahu.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 17</b><h4>Ransomware di Surabaya</h4><p>Sebuah usaha tetangga kehilangan segalanya karena penyerang menghapus cadangannya lebih dulu — pernahkah kita benar-benar menguji pemulihan?</p><p style="margin-top:10px"><a href="17-backup-disaster-recovery.html">Tonton Episode 17 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="15-security-essentials.html"><small>← Episode sebelumnya</small>15 · Password di Dalam File Zip</a><a class="next" href="17-backup-disaster-recovery.html"><small>Episode berikutnya →</small>17 · Ransomware di Surabaya</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/16-monitoring-basic/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 16 · Know before customers do · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 16: Know before customers do. about 45 minutes, cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/16-monitoring-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/16-monitoring-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/16-monitoring-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/16-monitoring-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 16 · Know before customers do">
+<meta property="og:description" content="Hands-on Azure lab 16: Know before customers do. about 45 minutes, cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/16-monitoring-basic.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lab" data-lab="16" style="--c:#d98a00">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/labs/16-monitoring-basic.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#d98a00">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 16</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>16</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Know before customers do</h1>
+        <p class="lab-story">🏪 <b>Episode 16 · Customers Knew First</b> — Instagram noticed the slowdown forty minutes before you did. <a href="../lunches/16-monitoring-basic.html">Read the lunch</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ about 45 minutes</span>
+          <span class="chip cost">💲💲 small charges while running</span>
+          <span class="chip">Difficulty ★☆☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 9 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--see-what-azure-already-collects">Task 1 · See what Azure already collects</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--create-an-action-group-that-emails-you">Task 2 · Create an action group that emails you</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--create-the-cpu-metric-alert">Task 3 · Create the CPU metric alert</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--make-the-cpu-sweat-and-catch-the-alert">Task 4 · Make the CPU sweat and catch the alert</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--hear-about-azures-problems-a-service-health-alert">Task 5 · Hear about Azure&#x27;s problems: a Service Health alert</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--who-stopped-the-shop--an-activity-log-alert-and-a-query">Task 6 · &quot;Who stopped the shop?&quot; — an activity log alert and a query</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--ask-advisor-for-a-second-opinion">Task 7 · Ask Advisor for a second opinion</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/cpu-load.sh" target="_blank" rel="noopener"><span>cpu-load.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/16-monitoring-basic" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Last Friday Nusantara Retail's customers noticed a slow shop before anyone at head office did, and on Saturday nobody
+could say who had stopped the storefront VM. In this lab you build the early-warning system that fixes both problems.
+<code>setup.sh</code> gives you a small storefront VM. You add an action group that emails you, a CPU metric alert, an activity
+log alert that catches a deallocated VM, and a Service Health alert for your subscription. Then you make the CPU sweat
+on purpose and receive the alert, answer &quot;who did it?&quot; from the activity log, ask Advisor for advice, and repair a
+colleague's alert rule that never fires.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch16-&amp;lt;suffix&amp;gt;&quot;]
+    VM[&quot;vm-nusa-web&lt;br/&gt;storefront VM&quot;]
+    MA[&quot;alert-cpu-high&lt;br/&gt;metric alert&quot;]
+    DA[&quot;alert-vm-deallocated&lt;br/&gt;activity log alert&quot;]
+    SH[&quot;alert-service-health&lt;br/&gt;activity log alert&quot;]
+    AG[&quot;ag-nusa-oncall&lt;br/&gt;action group&quot;]
+  end
+  SUB[(&quot;Your subscription&lt;br/&gt;Service Health events&quot;)]
+  VM -- Percentage CPU --&gt; MA
+  VM -- activity log --&gt; DA
+  SUB --&gt; SH
+  MA --&gt; AG
+  DA --&gt; AG
+  SH --&gt; AG
+  AG -- email --&gt; YOU[&quot;Your inbox&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install.</li>
+<li>An email address you can read on your phone during the lab (a personal address is fine).</li>
+<li>Get the lab files and load the shared settings:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/16-monitoring-basic
+source ../common/config.sh
+RG=$(rg_name 16)
+export ALERT_EMAIL=&quot;you@example.com&quot;     # change this to your own address
+</code></pre></div>
+<ul>
+<li>Create the starting point — one small Linux VM with no inbound ports open. It takes about 3–5 minutes:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist. Finish with the <strong>Clean up</strong> section, even if you stop halfway.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Cloud Shell disconnects after about 20 minutes without typing. If that happens, reconnect and reload the variables:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>cd ~/azure-fundamentals-lunches/labs/16-monitoring-basic &amp;&amp; source ../common/config.sh
+RG=$(rg_name 16); export ALERT_EMAIL=&quot;you@example.com&quot;
+VM_ID=$(az vm show -g &quot;$RG&quot; -n vm-nusa-web --query id -o tsv)
+AG_ID=$(az monitor action-group show -g &quot;$RG&quot; -n ag-nusa-oncall --query id -o tsv 2&gt;/dev/null)
+</code></pre></div>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–7 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--see-what-azure-already-collects" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">See what Azure already collects</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--see-what-azure-already-collects" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Before you build anything, look at the data you get for free: platform metrics and the activity log. No agent, no
+workspace, no settings.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>VM_ID=$(az vm show --resource-group &quot;$RG&quot; --name vm-nusa-web --query id --output tsv)
+
+# Which CPU metrics does a VM publish?
+az monitor metrics list-definitions --resource &quot;$VM_ID&quot; \
+  --query &quot;[?contains(name.value, &#x27;CPU&#x27;)].{metric:name.value, unit:unit, aggregation:primaryAggregationType}&quot; \
+  --output table
+
+# The last hour of CPU in 5-minute buckets
+az monitor metrics list --resource &quot;$VM_ID&quot; --metric &quot;Percentage CPU&quot; \
+  --interval PT5M --aggregation Average Maximum \
+  --query &quot;value[0].timeseries[0].data[].{time:timeStamp, avg:average, max:maximum}&quot; \
+  --output table
+
+# Who created the VM? The activity log already knows.
+az monitor activity-log list --resource-group &quot;$RG&quot; --offset 2h \
+  --query &quot;[?operationName.value==&#x27;Microsoft.Compute/virtualMachines/write&#x27;].{time:eventTimestamp, caller:caller, status:status.value}&quot; \
+  --output table
+</code></pre></div>
+<p>You'll notice metrics such as <em>CPU Credits Remaining</em>: <code>$VM_SIZE_SMALL</code> is a burstable B-series size, which can run at
+full speed only while it has CPU credits. A new VM starts with enough credits for this lab.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open the VM, then <em>Monitoring › Metrics</em> and pick <em>Percentage CPU</em>; switch the aggregation
+between Avg and Max and watch the line change. Then open <em>Activity log</em> in the VM's menu.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> you see <em>Percentage CPU</em> in the definitions, a column of low CPU values (the VM is idle), and one or
+more activity log rows for <code>virtualMachines/write</code> with <strong>your</strong> account as the caller.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--create-an-action-group-that-emails-you" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Create an action group that emails you</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--create-an-action-group-that-emails-you" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>An action group is the &quot;who to tell&quot; list. One group can serve many alert rules, so you create it first.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az monitor action-group create \
+  --resource-group &quot;$RG&quot; \
+  --name ag-nusa-oncall \
+  --short-name nusaoncall \
+  --action email oncall-email &quot;$ALERT_EMAIL&quot; usecommonalertschema \
+  --output none
+
+AG_ID=$(az monitor action-group show --resource-group &quot;$RG&quot; --name ag-nusa-oncall --query id --output tsv)
+
+az monitor action-group show --resource-group &quot;$RG&quot; --name ag-nusa-oncall \
+  --query &quot;{enabled:enabled, shortName:groupShortName, receivers:emailReceivers[].{name:name, status:status, commonSchema:useCommonAlertSchema}}&quot; \
+  --output yaml
+</code></pre></div>
+<ul>
+<li><code>--short-name</code> (up to 12 characters) appears in SMS messages.</li>
+<li><code>--action email &lt;receiver-name&gt; &lt;address&gt; usecommonalertschema</code> adds one email receiver that uses the common alert
+schema.</li>
+<li>Alert emails come from Microsoft no-reply addresses (for example <code>azure-noreply@microsoft.com</code>). If you use a work
+mailbox with strict filters, add that sender to your safe list.</li>
+</ul>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Monitor › Alerts › Action groups › Create</em>. After saving, open the group and select
+<strong>Test action group</strong> to send yourself a sample email — the best way to discover spam-folder problems early.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>enabled: true</code> and one receiver named <code>oncall-email</code> with status <code>Enabled</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--create-the-cpu-metric-alert" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Create the CPU metric alert</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--create-the-cpu-metric-alert" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Now the rule: &quot;every minute, average the last five minutes of CPU; if it's above 70%, fire a Sev 2 alert and run the
+action group&quot;.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az monitor metrics alert create \
+  --resource-group &quot;$RG&quot; \
+  --name alert-cpu-high \
+  --scopes &quot;$VM_ID&quot; \
+  --condition &quot;avg Percentage CPU &gt; 70&quot; \
+  --window-size 5m \
+  --evaluation-frequency 1m \
+  --severity 2 \
+  --action &quot;$AG_ID&quot; \
+  --description &quot;Storefront VM: average CPU above 70% for 5 minutes&quot; \
+  --output none
+
+az monitor metrics alert show --resource-group &quot;$RG&quot; --name alert-cpu-high \
+  --query &quot;{enabled:enabled, severity:severity, window:windowSize, every:evaluationFrequency, metric:criteria.allOf[0].metricName, aggregation:criteria.allOf[0].timeAggregation, operator:criteria.allOf[0].operator, threshold:criteria.allOf[0].threshold, autoResolve:autoMitigate}&quot; \
+  --output yaml
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--condition &quot;avg Percentage CPU &gt; 70&quot;</code></td>
+<td>aggregation (<code>avg</code>), metric name, operator and threshold</td>
+</tr>
+<tr>
+<td><code>--window-size 5m</code></td>
+<td>the lookback period: how much data each evaluation looks at</td>
+</tr>
+<tr>
+<td><code>--evaluation-frequency 1m</code></td>
+<td>how often the rule runs</td>
+</tr>
+<tr>
+<td><code>--severity 2</code></td>
+<td>Sev 0 is critical, Sev 4 is verbose</td>
+</tr>
+<tr>
+<td><code>--action &quot;$AG_ID&quot;</code></td>
+<td>which action group to run when it fires</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> VM › <em>Alerts</em> › <em>Create</em> › <em>Alert rule</em>. Signal <em>Percentage CPU</em>, threshold <em>Static</em>,
+aggregation <em>Average</em>, operator <em>Greater than</em>, value <em>70</em>, check every <em>1 minute</em>, lookback period <em>5 minutes</em>. Pick
+<code>ag-nusa-oncall</code> on the <em>Actions</em> tab.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the output shows <code>enabled: true</code>, <code>window: PT5M</code>, <code>every: PT1M</code>, <code>aggregation: Average</code>,
+<code>operator: GreaterThan</code> and <code>threshold: 70.0</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-4--make-the-cpu-sweat-and-catch-the-alert" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Make the CPU sweat and catch the alert</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--make-the-cpu-sweat-and-catch-the-alert" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Time to test the alarm. You'll run a tiny script <strong>inside</strong> the VM with <strong>Run Command</strong> — no SSH, no open ports, no
+packages installed. Take a look at it first:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>cat cpu-load.sh
+</code></pre></div>
+<p>It starts one busy loop per vCPU, wrapped in <code>timeout</code>, so the load stops by itself. Start 15 minutes of load:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke \
+  --resource-group &quot;$RG&quot; \
+  --name vm-nusa-web \
+  --command-id RunShellScript \
+  --scripts @cpu-load.sh \
+  --parameters 15 \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Run Command takes 20–60 seconds to return. Then watch the CPU climb (run it again every couple of minutes):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az monitor metrics list --resource &quot;$VM_ID&quot; --metric &quot;Percentage CPU&quot; \
+  --interval PT1M --offset 20m --aggregation Average \
+  --query &quot;value[0].timeseries[0].data[].{time:timeStamp, avg:average}&quot; \
+  --output table
+</code></pre></div>
+<p>Expect CPU near 100% within two or three minutes, and the alert email about 5–10 minutes after you started the load.
+While you wait, re-read section 3 of the lunch, or open <em>Monitor › Alerts</em> in the portal and filter on your resource
+group to watch the alert appear.</p>
+<p>When the email has arrived, you can stop the load early instead of waiting for the timer:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-nusa-web --command-id RunShellScript \
+  --scripts @cpu-load.sh --parameters stop --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>A few minutes after CPU drops, the rule resolves itself and sends a second, &quot;Resolved&quot; email — metric alerts are
+stateful.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> VM › <em>Operations › Run command › RunShellScript</em>, paste the contents of <code>cpu-load.sh</code> and
+replace <code>${1:-10}</code> with the number of minutes. The output appears in the portal when the script returns.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> an email from Azure Monitor mentioning <code>alert-cpu-high</code> and Sev 2 is in your inbox, and the alert
+appears under <em>Monitor › Alerts</em> with monitor condition <strong>Fired</strong> (later <strong>Resolved</strong>).</p>
+</div>
+</div></section><section class="lab-section" id="task-5--hear-about-azures-problems-a-service-health-alert" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Hear about Azure's problems: a Service Health alert</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--hear-about-azures-problems-a-service-health-alert" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Service Health alerts tell you when Azure publishes an incident, planned maintenance or an advisory that affects the
+services you use. The rule is an activity log alert. It is <em>stored</em> in your lab resource group (so the clean-up removes
+it) but its <em>scope</em> is the whole subscription.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>SUB_ID=$(az account show --query id --output tsv)
+
+az monitor activity-log alert create \
+  --resource-group &quot;$RG&quot; \
+  --name alert-service-health \
+  --scope &quot;/subscriptions/$SUB_ID&quot; \
+  --condition category=ServiceHealth \
+  --action-group &quot;$AG_ID&quot; \
+  --description &quot;Azure service issues, planned maintenance and advisories for this subscription&quot; \
+  --output none
+
+az monitor activity-log alert show --resource-group &quot;$RG&quot; --name alert-service-health \
+  --query &quot;{enabled:enabled, location:location, scope:scopes[0], condition:condition.allOf}&quot; --output yaml
+</code></pre></div>
+<p>Don't expect an email today: it fires only when Azure publishes a Service Health event that affects you.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Service Health › Health alerts › Create service health alert</em> lets you tick the services,
+regions and event types (service issue, planned maintenance, health advisory, security advisory) instead of
+listening to everything. That's what you'd do in production.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>enabled: true</code>, <code>location: Global</code>, the scope is <code>/subscriptions/&lt;your-subscription-id&gt;</code> and the
+condition contains <code>category</code> equals <code>ServiceHealth</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--who-stopped-the-shop--an-activity-log-alert-and-a-query" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">&quot;Who stopped the shop?&quot; — an activity log alert and a query</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--who-stopped-the-shop--an-activity-log-alert-and-a-query" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>First the alarm: an activity log alert that fires whenever a VM in this resource group is deallocated.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>RG_ID=$(az group show --name &quot;$RG&quot; --query id --output tsv)
+
+az monitor activity-log alert create \
+  --resource-group &quot;$RG&quot; \
+  --name alert-vm-deallocated \
+  --scope &quot;$RG_ID&quot; \
+  --condition &quot;category=Administrative and operationName=Microsoft.Compute/virtualMachines/deallocate/action and status=Succeeded&quot; \
+  --action-group &quot;$AG_ID&quot; \
+  --description &quot;A VM in this resource group was deallocated&quot; \
+  --output none
+</code></pre></div>
+<p>Now play Rizky and stop the VM. This also stops the compute meter, which is good for your budget:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm deallocate --resource-group &quot;$RG&quot; --name vm-nusa-web
+</code></pre></div>
+<p>Then answer Ibu Sari's question from the activity log. New entries can take a few minutes to appear, so repeat the
+command if the table is empty:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az monitor activity-log list --resource-group &quot;$RG&quot; --offset 1h \
+  --query &quot;[?operationName.value==&#x27;Microsoft.Compute/virtualMachines/deallocate/action&#x27;].{time:eventTimestamp, caller:caller, status:status.value}&quot; \
+  --output table
+</code></pre></div>
+<p>The alert email usually arrives within a few minutes; activity log alerts can take up to about 20 minutes.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Monitor › Activity log</em>, filter on the resource group and the operation <em>Deallocate Virtual
+Machine</em>, and open an entry: the <strong>Summary</strong> shows <em>Event initiated by</em>. Then open the VM's <em>Help › Resource health</em>:
+it shows the VM as unavailable because a user stopped it — &quot;us&quot;, not Azure.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the table lists the deallocate operation with <strong>your</strong> account as the caller and a <code>Succeeded</code>
+row, and an email for <code>alert-vm-deallocated</code> arrives.</p>
+</div>
+</div></section><section class="lab-section" id="task-7--ask-advisor-for-a-second-opinion" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">Ask Advisor for a second opinion</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--ask-advisor-for-a-second-opinion" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Advisor reviews your subscription for free. List its recommendations, then filter by category:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az advisor recommendation list \
+  --query &quot;[].{category:category, impact:impact, problem:shortDescription.problem, resource:impactedValue}&quot; \
+  --output table
+
+az advisor recommendation list --category Cost --output table
+</code></pre></div>
+<p>The CLI's categories are <code>HighAvailability</code> (shown as Reliability in the portal), <code>Security</code>, <code>Performance</code>, <code>Cost</code> and
+<code>OperationalExcellence</code>. Advisor analyses resources periodically, so a brand-new VM may take up to a day to get
+recommendations; what you see now may concern other resources in your subscription, or the list may be empty.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Search for <strong>Advisor</strong>. The overview shows the five categories and your <strong>Advisor score</strong>. Open
+a recommendation to see the affected resources and the <em>Postpone</em> and <em>Dismiss</em> options.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the command runs without errors. Note one recommendation (if any) and its category. An empty list
+is a valid result in a fresh subscription.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Rizky copied the CPU alert for the operations team, &quot;with fewer false alarms&quot;. Create his rule exactly as he did:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az monitor metrics alert create \
+  --resource-group &quot;$RG&quot; \
+  --name alert-cpu-rizky \
+  --scopes &quot;$VM_ID&quot; \
+  --condition &quot;min Percentage CPU &gt; 70&quot; \
+  --window-size 1h \
+  --evaluation-frequency 15m \
+  --severity 3 \
+  --action &quot;$AG_ID&quot; \
+  --description &quot;Rizky&#x27;s CPU alert&quot; \
+  --output none
+</code></pre></div>
+<p><strong>Symptom:</strong> during a 15-minute flash sale at 100% CPU, <code>alert-cpu-high</code> fires but <code>alert-cpu-rizky</code> never does. You
+don't need to run the load again to prove it: look at what each rule would have seen during your Task 4 spike.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code># Hourly view: what Rizky&#x27;s rule evaluates
+az monitor metrics list --resource &quot;$VM_ID&quot; --metric &quot;Percentage CPU&quot; \
+  --interval PT1H --offset 3h --aggregation Minimum Average Maximum \
+  --query &quot;value[0].timeseries[0].data[].{hour:timeStamp, min:minimum, avg:average, max:maximum}&quot; \
+  --output table
+
+# 5-minute view: the windows where the good rule saw an average above 70
+az monitor metrics list --resource &quot;$VM_ID&quot; --metric &quot;Percentage CPU&quot; \
+  --interval PT5M --offset 3h --aggregation Average \
+  --query &quot;value[0].timeseries[0].data[?average &gt; \`70\`].{time:timeStamp, avg:average}&quot; \
+  --output table
+</code></pre></div>
+<details class="plain"><summary>Hint: why does it never fire, and how do you fix it?</summary>
+<p>Two choices make the rule blind:</p>
+<ul>
+<li><strong>Minimum</strong> means &quot;the lowest value in the window&quot;. For the minimum to exceed 70, the CPU must stay above 70% for the
+<em>entire</em> window.</li>
+<li>A <strong>one-hour window</strong> means the whole hour. Your spike lasted 15 minutes, so the hourly minimum stayed low (look at
+the <code>min</code> column) — even the hourly average stayed far below 70.</li>
+</ul>
+<p>You can't switch the aggregation of an existing condition with a simple flag, so replace the rule (or simply delete it:
+<code>alert-cpu-high</code> already covers this case, and duplicate rules mean duplicate emails):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az monitor metrics alert delete --resource-group &quot;$RG&quot; --name alert-cpu-rizky
+
+az monitor metrics alert create \
+  --resource-group &quot;$RG&quot; \
+  --name alert-cpu-rizky \
+  --scopes &quot;$VM_ID&quot; \
+  --condition &quot;avg Percentage CPU &gt; 70&quot; \
+  --window-size 5m \
+  --evaluation-frequency 1m \
+  --severity 3 \
+  --action &quot;$AG_ID&quot; \
+  --description &quot;Rizky&#x27;s CPU alert, fixed: average over 5 minutes&quot; \
+  --output none
+</code></pre></div>
+<p>Want proof? Start the VM (<code>az vm start -g &quot;$RG&quot; -n vm-nusa-web</code>), run Task 4's load again for 10 minutes, and watch both
+rules fire. Deallocate the VM again afterwards.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. Set <code>ALERT_EMAIL</code> before
+running it to also check the receiver's address.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes resource group <code>rg-lunch16-&lt;suffix&gt;</code> and everything in it: the VM, its disk, network interface, public IP,
+network security group and virtual network, the action group and all four alert rules — including the Service Health
+alert, which lives in the resource group even though it watches the subscription. Nothing is created outside the
+resource group. Deletion continues in the background for a few minutes. Fired alerts stay visible for up to 30 days and
+activity log entries for 90 days; they cost nothing.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>(ResourceGroupNotFound) Resource group 'rg-lunch16-…' could not be found.</code></td>
+<td><code>setup.sh</code> hasn't run, or this Cloud Shell has a different random suffix</td>
+<td>run <code>bash setup.sh</code>; check the suffix with <code>cat ~/.azlunches-suffix</code></td>
+</tr>
+<tr>
+<td>No alert email 15 minutes after starting the load</td>
+<td>the email is in a spam folder, the receiver was unsubscribed, or CPU never passed 70%</td>
+<td>check junk mail; run the Task 2 <code>show</code> command — if the receiver's status isn't <code>Enabled</code>, run <code>az monitor action-group enable-receiver --resource-group &quot;$RG&quot; --action-group-name ag-nusa-oncall --name oncall-email</code>; check the CPU values from Task 4</td>
+</tr>
+<tr>
+<td>CPU stays around 10–20% while the load runs</td>
+<td>the burstable VM has used its CPU credits and is held at its baseline</td>
+<td>check the <em>CPU Credits Remaining</em> metric; stop the load, wait, and try a shorter run — or use a larger size by setting <code>VM_SIZE_SMALL</code> before <code>setup.sh</code></td>
+</tr>
+<tr>
+<td><code>(Conflict) Run command extension execution is in progress. Please wait for completion before invoking a run command.</code></td>
+<td>Run Command runs one script at a time</td>
+<td>wait a minute and try again</td>
+</tr>
+<tr>
+<td>Run Command runs for minutes and returns nothing</td>
+<td>the VM is still booting, or it can't reach Azure over HTTPS to return the output</td>
+<td>wait two minutes after creating or starting the VM; make sure the VM still has its public IP (it provides outbound access)</td>
+</tr>
+<tr>
+<td>The deallocate alert hasn't arrived after 10 minutes</td>
+<td>activity log events can take up to about 20 minutes to reach alerting</td>
+<td>wait, then check the rule's condition with the Task 6 query and <code>az monitor activity-log alert show</code></td>
+</tr>
+<tr>
+<td><code>az advisor recommendation list</code> prints nothing</td>
+<td>Advisor hasn't analysed the new resources yet</td>
+<td>that's normal; try <code>az advisor recommendation list --refresh</code> or look again tomorrow in the portal</td>
+</tr>
+<tr>
+<td>An error about the combination of window size and frequency</td>
+<td>some lookback and frequency combinations aren't allowed</td>
+<td>use the values in this guide (5 minutes and 1 minute)</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li><strong>Resource Health alert:</strong> create an activity log alert with <code>--condition category=ResourceHealth</code> and
+<code>--scope &quot;$VM_ID&quot;</code>, then deallocate and start the VM and compare the email with the Task 6 one.</li>
+<li><strong>Quiet hours:</strong> in <em>Monitor › Alerts › Alert processing rules</em>, create a rule that suppresses notifications for
+your resource group during a weekly maintenance window, and test it with Task 4.</li>
+<li><strong>Dynamic threshold:</strong> create a second CPU rule with <code>--condition &quot;avg Percentage CPU &gt; dynamic medium 2 of 4&quot;</code> and
+read how Azure learns the normal pattern.</li>
+<li><strong>SMS:</strong> add an SMS receiver with <code>az monitor action-group update --add-action sms …</code> (check that your country is
+supported first).</li>
+<li><strong>Longer memory:</strong> export the activity log to a Log Analytics workspace (<em>Monitor › Activity log › Export Activity
+Logs</em>) and query the <code>AzureActivity</code> table — a preview of Lunch 30.</li>
+<li><strong>A one-page view:</strong> pin the CPU chart to an Azure dashboard, or open <em>Monitor › Dashboards with Grafana</em> and explore
+the prebuilt VM dashboard.</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Run <code>bash setup.sh</code> to get resource group <code>rg-lunch16-&lt;suffix&gt;</code> with the VM <code>vm-nusa-web</code>. Then build the following, any
+way you like (portal, CLI, Bicep), in that resource group:</p>
+<ol>
+<li>An action group named <code>ag-nusa-oncall</code> with at least one email receiver.</li>
+<li>A metric alert named <code>alert-cpu-high</code> on <code>vm-nusa-web</code>: <strong>Average</strong> <em>Percentage CPU</em> <strong>greater than 70</strong> over a
+<strong>5-minute</strong> window, enabled, wired to the action group.</li>
+<li>An activity log alert named <code>alert-service-health</code>, stored in the resource group, <strong>scoped to your whole
+subscription</strong>, for the <strong>ServiceHealth</strong> category, wired to the action group.</li>
+<li>An activity log alert named <code>alert-vm-deallocated</code> that fires when a VM in the resource group is <strong>deallocated</strong>,
+wired to the action group.</li>
+<li>Prove it works: receive the CPU alert email under load, and the deallocate email after stopping the VM.</li>
+<li>If you create Rizky's rule (<code>alert-cpu-rizky</code>), make it use the <strong>Average</strong> aggregation and a window of <strong>15 minutes
+or less</strong> — or delete it.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="15-security-essentials.html"><small>← Previous lab</small>15 · Get the password out of the config file</a><a class="next" href="17-backup-disaster-recovery.html"><small>Next lab →</small>17 · The restore drill</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/16-monitoring-basic/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 17 · Ransomware in Surabaya — Lunch 17: Backup and Disaster Recovery (Basic) · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 17 · Backup and Disaster Recovery (Basic). A neighbour lost everything because the attackers deleted the backups first. Have we ever tested a restore? A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/17-backup-disaster-recovery.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/17-backup-disaster-recovery.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/17-backup-disaster-recovery.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/17-backup-disaster-recovery.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 17 · Ransomware in Surabaya — Lunch 17: Backup and Disaster Recovery (Basic)">
+<meta property="og:description" content="Lunch 17 · Backup and Disaster Recovery (Basic). A neighbour lost everything because the attackers deleted the backups first. Have we ever tested a restore? A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/17-backup-disaster-recovery.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lunch" data-lunch="17" style="--c:#d98a00">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/lunches/17-backup-disaster-recovery.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 17</span> Season 1 · 🛡️ Part 4 · Secure, operate &amp; govern</div>
+      <h1>Ransomware in Surabaya</h1>
+      <div class="lunch-title">Lunch 17 · Backup and Disaster Recovery (Basic)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 Beyond AZ-900 (reliability in practice)</span>
+        <span class="chip cost">🔬 Lab · 60–90 minutes · 💲💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="03-global-infrastructure.html" title="Where Does the Shop Live?">↩ 03</a><a class="chip" href="06-virtual-machines-basic.html" title="Escape from the Pantry">↩ 06</a><a class="chip" href="07-storage-basic.html" title="The USB Drive Goes Home on Fridays">↩ 07</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 16 · Customers Knew First, alerts reach you before customers notice, and the activity log answers &quot;who did it?&quot;.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, happy"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director&#x27;s question · 62% ready</b>After this episode you can say: “Even if someone deletes everything, we restore — and we have practised it.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#field-notes">🗒️ Notes</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today&#x27;s menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-high-availability-backup-and-disaster-recovery-are-three-different-jobs">High availability, backup and disaster recovery are three different jobs</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-azure-backup-vaults-policies-and-restores">Azure Backup: vaults, policies and restores</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-protecting-the-backups-themselves">Protecting the backups themselves</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-azure-site-recovery-a-standby-copy-in-another-region">Azure Site Recovery: a standby copy in another region</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-disaster-recovery-for-a-region-without-a-pair">Disaster recovery for a region without a pair</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Field notes</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/17-backup-disaster-recovery.html">🔬 Open Lab 17</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today&#x27;s menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Tell apart</strong> high availability, backup and disaster recovery, and <strong>set</strong> RPO and RTO targets that a director can sign off.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> between a Recovery Services vault and a Backup vault, and <strong>explain</strong> backup policies, instant restore and the restore options for a VM.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> how soft delete, immutable vaults and multi-user authorization keep backups alive when an attacker holds an admin password.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Describe</strong> how Azure Site Recovery fails a VM over to another region, and <strong>plan</strong> disaster recovery for a region without a pair, such as Indonesia Central.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 17</span>
+        <div class="story-body"><p>On Monday morning, Pak Budi forwards a news story: nine days ago, a retail chain in Surabaya was hit by
+ransomware.
+The attackers didn't just encrypt the servers. They first signed in with a stolen administrator password and deleted
+the backups. The chain's web shop is still offline today.</p>
+<p>Ibu Sari calls a meeting. &quot;We moved the storefront to Azure,&quot; she says, &quot;so we're safe, right?&quot; Dewi points out that
+the orders database is zone-redundant. Pak Budi remembers configuring &quot;the backup job&quot; on the old server in 2019 and
+admits he has never tried a restore. Then someone from finance asks the question nobody can answer: if the whole
+Indonesia Central region went dark tomorrow, where would the shop run, and would the law even let customer data go
+there?</p>
+<p>Today's question: <strong>how much data can Nusantara Retail afford to lose, how quickly must it be back, and which Azure
+services deliver those two numbers, even when the attacker or the region itself is the problem?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 5 scenes</span></div>
+      
+      <article class="scene-card" id="1-high-availability-backup-and-disaster-recovery-are-three-different-jobs" data-spy><span class="scene-no">Scene 1 of 5</span><h3>High availability, backup and disaster recovery are three different jobs</h3><div class="prose"><p>People use these three terms as if they meant the same thing. They solve different problems, and a plan needs all
+three.</p>
+<ul>
+<li><strong>High availability (HA)</strong> keeps a service running through small, common failures: a disk, a server, a rack, a
+whole datacenter. You build it with redundancy <em>inside</em> one region: two VMs behind a load balancer (Lunch 09),
+zone-redundant storage (Lunch 07), a zone-redundant database. Failover is automatic and takes seconds.</li>
+<li><strong>Backup</strong> is a copy of your data <em>at a point in time</em>, kept apart from the original so you can go back. It is the
+only one of the three that protects you from yourself: an accidental deletion, a corrupted file, a bad deployment or
+ransomware. High availability copies a mistake to every replica within milliseconds.</li>
+<li><strong>Disaster recovery (DR)</strong> brings a whole service back in <em>another place</em> when the primary location is lost or
+unusable, for example after a region-wide outage. You keep a replica in a second region (or a second zone) and
+<strong>fail over</strong> to it.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>What goes wrong</th>
+<th>High availability</th>
+<th>Backup</th>
+<th>Disaster recovery</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The host under <code>vm-web-1</code> fails</td>
+<td>✅ the second VM keeps serving</td>
+<td>too slow for this</td>
+<td>not needed</td>
+</tr>
+<tr>
+<td>Dewi's clean-up script deletes the product photos</td>
+<td>❌ the deletion is replicated</td>
+<td>✅ restore yesterday's copy</td>
+<td>❌ the replica deletes them too</td>
+</tr>
+<tr>
+<td>Ransomware encrypts the orders server</td>
+<td>❌</td>
+<td>✅ if the attacker couldn't destroy the backups</td>
+<td>⚠️ only from a recovery point older than the attack, within a short window</td>
+</tr>
+<tr>
+<td>A region-wide outage hits Indonesia Central</td>
+<td>❌ every zone in the region is affected</td>
+<td>⚠️ only if a copy lives in another region, and slowly</td>
+<td>✅ fail over to the second region</td>
+</tr>
+</tbody>
+</table></div>
+<p>Two numbers drive every decision in this lunch. The <strong>recovery point objective (RPO)</strong> is the most data you can afford
+to lose, measured in time. An RPO of 24 hours means you accept losing up to a day of changes, and that's exactly what a
+nightly backup gives you. The <strong>recovery time objective (RTO)</strong> is the longest the service may be down, from the moment
+it breaks until customers can use it again.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  b[&quot;Mon 22:00&lt;br/&gt;last good backup&quot;] --&gt;|&quot;RPO: 17 hours of orders at risk&quot;| x[&quot;Tue 15:00&lt;br/&gt;ransomware strikes&quot;]
+  x --&gt;|&quot;RTO: 4 hours offline&quot;| ok[&quot;Tue 19:00&lt;br/&gt;storefront back online&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>RPO and RTO are business decisions, not technical ones, and smaller numbers cost more. They also differ per system,
+so Nusantara Retail sets them system by system. Ibu Sari signed off on these:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>System</th>
+<th>RPO</th>
+<th>RTO</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Orders and payments (Azure SQL)</td>
+<td>5 minutes</td>
+<td>1 hour</td>
+<td>every lost order is lost revenue and an angry customer</td>
+</tr>
+<tr>
+<td>Storefront web servers</td>
+<td>24 hours</td>
+<td>4 hours</td>
+<td>they hold no unique data and can be rebuilt</td>
+</tr>
+<tr>
+<td>Product catalogue (Cosmos DB)</td>
+<td>4 hours</td>
+<td>4 hours</td>
+<td>can be rebuilt from supplier spreadsheets, slowly</td>
+</tr>
+<tr>
+<td>Daily order exports on <code>vm-orders</code></td>
+<td>24 hours</td>
+<td>8 hours</td>
+<td>regenerated every night, but finance needs them at month-end</td>
+</tr>
+</tbody>
+</table></div>
+<p>Where do the real numbers come from? Your <em>achieved</em> RPO is the gap between recovery points, plus any delay before a
+point is safely stored: with one backup a night at 22:00, a failure at 21:30 the next evening loses 23½ hours of
+changes. Your <em>achieved</em> RTO is the sum of four steps: noticing the problem, deciding to recover, the recovery itself,
+and checking that everything works. Teams usually plan only the third step, but the first two often take longest,
+especially at 3 a.m. on a public holiday.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Ask the business &quot;what does one hour of downtime cost us?&quot; and &quot;what does losing one hour of orders cost us?&quot;
+Those two prices tell you how much it's worth spending to shrink the RTO and the RPO.</p>
+</aside>
+</div></article><article class="scene-card" id="2-azure-backup-vaults-policies-and-restores" data-spy><span class="scene-no">Scene 2 of 5</span><h3>Azure Backup: vaults, policies and restores</h3><div class="prose"><p><strong>Azure Backup</strong> is a managed service: there's no backup server to patch and no tape to rotate. It keeps your backups
+in a <strong>vault</strong>, a separate Azure resource with its own access control, outside the resource it protects. There are two
+kinds:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Recovery Services vault</th>
+<th>Backup vault</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Protects</td>
+<td>Azure VMs, SQL Server and SAP HANA running in VMs, Azure Files shares, and on-premises servers (through the MARS agent, MABS or DPM)</td>
+<td>Newer workloads, such as Azure Blobs, Azure Disks, Azure Database for PostgreSQL flexible server and AKS</td>
+</tr>
+<tr>
+<td>Also hosts</td>
+<td>Azure Site Recovery</td>
+<td>—</td>
+</tr>
+<tr>
+<td>In Lab 17</td>
+<td>✅ VM backup</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<p>You manage both from the portal's <strong>Resiliency</strong> hub (formerly Azure Business Continuity Center), which shows
+what is protected, and what isn't, across vaults, subscriptions and regions.</p>
+<p>A <strong>backup policy</strong> says when to back up and how long to keep each <strong>recovery point</strong>. For VMs, the built-in
+<strong>DefaultPolicy</strong> takes one backup a day and keeps each daily point for 30 days. Policies can add weekly, monthly and
+yearly points kept for years. <strong>Standard</strong> policies back up once a day; <strong>Enhanced</strong> policies can back up as often as
+every four hours and are required for newer disk types such as Premium SSD v2 and Ultra Disk.</p>
+<p>A VM backup happens in two phases. First, the Backup extension on the VM takes a <strong>snapshot</strong> of its disks:
+application-consistent on Windows, file-system consistent on Linux. That snapshot is usable at once, which is called
+<strong>instant restore</strong>: DefaultPolicy keeps snapshots next to the disks for two days (a Standard policy allows one to
+five), so a recent restore takes minutes. Second, the data is copied into the vault (the <strong>vault tier</strong>), the
+isolated long-term copy. The first backup copies every used block and can take an hour or more; later ones copy only
+the changes. You pay a monthly fee per protected instance, which depends on its size, plus the vault storage its
+recovery points use; instant-restore snapshots are billed like ordinary disk snapshots.</p>
+<p>A vault's storage can be locally, zone- or geo-redundant (GRS by default), and you can change that only before the
+first backup. A GRS vault can also enable <strong>Cross Region Restore</strong>, which restores from the copy in the <em>paired</em>
+region. Microsoft notes that the worst-case RPO there can reach 36 hours.</p>
+<p>When you need the data back, you pick a recovery point and one of these options:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Restore option</th>
+<th>What you get</th>
+<th>Typical use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create a new VM</td>
+<td>a VM built from the recovery point, in the same region</td>
+<td>the original is gone, or you want a copy side by side</td>
+</tr>
+<tr>
+<td>Restore disks</td>
+<td>managed disks, plus a template, in a resource group you choose</td>
+<td>customise the new VM, or attach a disk to an existing VM and copy files out</td>
+</tr>
+<tr>
+<td>Replace existing</td>
+<td>the VM's disks swapped for the recovery point's</td>
+<td>roll a whole VM back (once the vault copy has finished)</td>
+</tr>
+<tr>
+<td>File Recovery</td>
+<td>the recovery point's disks mounted as drives by a script you download</td>
+<td>a few files, without restoring the whole VM</td>
+</tr>
+<tr>
+<td>Cross Region Restore</td>
+<td>a VM or disks in the paired region, from the vault copy</td>
+<td>the primary region is unavailable (GRS vaults only)</td>
+</tr>
+</tbody>
+</table></div>
+<p>For a single lost file, restoring a whole VM is overkill. <strong>File Recovery</strong> gives you a script that mounts the
+recovery point's disks over iSCSI on a machine you choose, and that machine needs outbound network access to Azure
+Backup, which a locked-down server often doesn't have. The alternative is the one you'll use in the lab: <strong>restore
+disks</strong>, attach the restored disk to a VM as an extra data disk, copy the files you need, then detach and delete the
+disk. It needs no internet access from the VM, and it shows you exactly where your data lives.</p>
+<p>Not everything needs a vault. Many platform services back themselves up. <strong>Azure SQL Database</strong> takes automatic
+backups and can restore to any point in time within its retention window (seven days by default). <strong>Azure Cosmos DB</strong>
+takes periodic backups or, with continuous backup, restores to any point in the last 7 or 30 days. <strong>Blob Storage</strong>
+offers soft delete, versioning and point-in-time restore (Lunch 07). Check what each service gives you by default and
+whether that default matches its RPO.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>Geo-redundant storage is not a backup. It replicates your mistakes too: a blob that Dewi deletes in Indonesia is
+deleted in the secondary copy moments later. Only a separate, point-in-time copy lets you go back.</p>
+</aside>
+</div></article><article class="scene-card" id="3-protecting-the-backups-themselves" data-spy><span class="scene-no">Scene 3 of 5</span><h3>Protecting the backups themselves</h3><div class="prose"><p>Attackers know that backups are your way back, so modern ransomware goes after them first, usually with a stolen
+administrator account. Azure Backup answers with three layers.</p>
+<p><strong>Soft delete</strong> means deleted backup data isn't really gone. It moves into a <em>soft-deleted</em> state for 14 days by
+default (you can extend that to 180), and you can <strong>undelete</strong> it during that time. Under <strong>secure by default</strong>, soft
+delete is always on for Recovery Services vaults: it can't be switched off, it also applies to the vault itself
+(deleting a vault makes it soft-deleted), and the first 14 days cost nothing extra.</p>
+<p>An <strong>immutable vault</strong> blocks any operation that would destroy recovery points before they expire, such as deleting
+backup data or shortening retention. While immutability is <em>unlocked</em> you can still turn it off; once it's <em>locked</em>,
+it can never be undone, so lock it only after testing.</p>
+<p><strong>Multi-user authorization (MUA)</strong> stops one person, or one stolen account, from carrying out critical operations
+alone. Operations such as disabling immutability or stopping protection with data deletion need an extra permission
+on a <strong>Resource Guard</strong>, a separate resource owned by the security team, ideally in another subscription. A backup
+administrator has to request time-limited access, for example through Privileged Identity Management, before the
+operation goes through.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>What it stops</th>
+<th>Can an attacker turn it off?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Soft delete</td>
+<td>deleted backups disappearing for good, for 14–180 days</td>
+<td>no: secure by default keeps it on</td>
+</tr>
+<tr>
+<td>Immutable vault</td>
+<td>early deletion of recovery points, shorter retention</td>
+<td>unlocked: an admin can; locked: nobody can</td>
+</tr>
+<tr>
+<td>Multi-user authorization</td>
+<td>one account performing critical operations alone</td>
+<td>only with approval on the Resource Guard</td>
+</tr>
+</tbody>
+</table></div>
+<p>The idea behind all three layers is old: keep at least one copy of your data that the accounts running production
+can't destroy. Backup administrators call it the 3-2-1 rule: three copies, on two kinds of storage, one of them
+somewhere else. In Azure terms, the vault is already separate from the VM; soft delete and immutability make deletion
+slow and visible, and MUA puts a second person between an attacker and the last copy.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  atk[&quot;Attacker with a&lt;br/&gt;stolen admin account&quot;] --&gt;|&quot;deletes backup data&quot;| sd[&quot;Soft-deleted for 14 days&lt;br/&gt;you undelete it&quot;]
+  atk --&gt;|&quot;shortens retention&quot;| imm[&quot;Blocked by the&lt;br/&gt;immutable vault&quot;]
+  atk --&gt;|&quot;stops protection, deletes data&quot;| mua[&quot;Needs approval on the&lt;br/&gt;Resource Guard (security team)&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Add the basics on top: give people the narrowest built-in role (Backup Reader, Backup Operator or Backup
+Contributor), and turn on Azure Monitor alerts for failed jobs and deleted backup data, so someone notices on day one,
+not on day fifteen.</p>
+</div></article><article class="scene-card" id="4-azure-site-recovery-a-standby-copy-in-another-region" data-spy><span class="scene-no">Scene 4 of 5</span><h3>Azure Site Recovery: a standby copy in another region</h3><div class="prose"><p>Restoring from backup can take hours, which is too slow for a storefront with a one-hour RTO. <strong>Azure Site Recovery
+(ASR)</strong> replicates VMs continuously to another region, or to another zone of the same region, and orchestrates the
+switch.</p>
+<p>When you enable replication, Site Recovery installs the <strong>Mobility service extension</strong> on the VM. Every disk write is
+sent to a <strong>cache storage account</strong> in the source region and then shipped to replica managed disks in the target
+region. Site Recovery creates <strong>crash-consistent</strong> recovery points every five minutes, a fixed setting, and
+<strong>app-consistent</strong> ones only if you set a frequency (off by default). It keeps recovery points for one day unless you
+change the policy. Unlike backup, replication needs outbound connectivity from the VM.</p>
+<p>The most important button is <strong>Test failover</strong>. It boots copies of the VMs from a recovery point into an isolated
+network, without stopping replication or touching production, so you can rehearse and then clean up. A real
+<strong>failover</strong> starts the VMs in the target region. You then <strong>re-protect</strong> them (replicate in the reverse direction)
+and later <strong>fail back</strong>. <strong>Recovery plans</strong> group VMs and start them in order, the database first, then the app tier,
+then the web tier, with scripts or manual steps in between. You pay a per-VM Site Recovery charge plus the target
+storage. The replica VMs don't run, and don't bill compute, until you fail over.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph idc[&quot;Indonesia Central (primary)&quot;]
+    vm[&quot;Storefront VM&lt;br/&gt;Mobility service&quot;] --&gt; cache[(&quot;cache storage&quot;)]
+  end
+  subgraph sea[&quot;Southeast Asia (target)&quot;]
+    disks[(&quot;replica disks&lt;br/&gt;recovery points every 5 min&quot;)]
+    test[&quot;Test failover&lt;br/&gt;isolated VNet&quot;]
+    live[&quot;Failover:&lt;br/&gt;VMs start here&quot;]
+  end
+  cache --&gt;|&quot;continuous replication&quot;| disks
+  disks -.-&gt; test
+  disks ==&gt; live
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Azure Backup</th>
+<th>Azure Site Recovery</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Question it answers</td>
+<td>&quot;Give me yesterday's data back.&quot;</td>
+<td>&quot;Run this service somewhere else, now.&quot;</td>
+</tr>
+<tr>
+<td>RPO you can expect</td>
+<td>hours: daily, or every 4 hours with Enhanced</td>
+<td>minutes: recovery points every 5 minutes</td>
+</tr>
+<tr>
+<td>RTO you can expect</td>
+<td>hours: restore, then rebuild</td>
+<td>minutes to an hour: start the replicas</td>
+</tr>
+<tr>
+<td>History kept</td>
+<td>days to years</td>
+<td>hours to days (one day by default)</td>
+</tr>
+<tr>
+<td>Against deletion and ransomware</td>
+<td>✅ with soft delete, immutability and MUA</td>
+<td>only within its short recovery-point window</td>
+</tr>
+</tbody>
+</table></div>
+<p>Most production services need both: Site Recovery for a fast RTO, and Backup for the long memory.</p>
+</div></article><article class="scene-card" id="5-disaster-recovery-for-a-region-without-a-pair" data-spy><span class="scene-no">Scene 5 of 5</span><h3>Disaster recovery for a region without a pair</h3><div class="prose"><p>Nusantara Retail's production will run in <strong>Indonesia Central</strong>, in Jakarta, to keep customer data in the country.
+The region has three availability zones but <strong>no paired region</strong>, and that changes the plan:</p>
+<ol>
+<li><strong>Zones are high availability, not disaster recovery.</strong> Spreading VMs and databases across zones survives a
+datacenter failure, but not an event that takes down the whole region.</li>
+<li><strong>Features that depend on a pair aren't available.</strong> Geo-redundant storage, geo-redundant backup vaults and Cross
+Region Restore need a paired region. Backups in Indonesia Central stay in the region, on locally or zone-redundant
+storage, unless you copy them somewhere else yourself.</li>
+<li><strong>You choose the secondary region, explicitly.</strong> Many services replicate between any two regions: Site Recovery
+for VMs, failover groups for Azure SQL, extra regions for Cosmos DB and object replication for Blob Storage.</li>
+</ol>
+<p>Choosing that secondary is a business decision as well as a technical one. It should be far enough away that one
+event can't hit both regions, and close enough for acceptable latency. It must offer the services and VM sizes you
+replicate, with enough capacity. It also has to satisfy <strong>data residency</strong>. Indonesia's Personal Data Protection Law
+(Law No. 27 of 2022) allows personal data to be transferred abroad only under conditions, such as an equivalent level
+of protection in the destination country, appropriate safeguards, or the person's consent. Nusantara's legal team
+must approve before any customer data is replicated to Singapore. This lunch explains the technology; it isn't legal
+advice. Southeast Asia, in Singapore, is the natural candidate: close, with three zones and a broad set of services.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>High availability in Indonesia Central</th>
+<th>Backup</th>
+<th>Disaster recovery to Southeast Asia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Storefront VMs</td>
+<td>spread across zones behind a load balancer</td>
+<td>Azure Backup, daily, zone-redundant vault</td>
+<td>Site Recovery, with a test failover twice a year</td>
+</tr>
+<tr>
+<td>Orders database (Azure SQL)</td>
+<td>zone-redundant database</td>
+<td>automatic point-in-time backups</td>
+<td>failover group</td>
+</tr>
+<tr>
+<td>Catalogue (Cosmos DB)</td>
+<td>zone redundancy</td>
+<td>continuous backup</td>
+<td>Southeast Asia as a second region</td>
+</tr>
+<tr>
+<td>Product photos (Blob Storage)</td>
+<td>zone-redundant storage</td>
+<td>soft delete and versioning</td>
+<td>object replication to an account in Southeast Asia</td>
+</tr>
+</tbody>
+</table></div>
+<p>Most failed recoveries fail for boring reasons. Watch out for these:</p>
+<ul>
+<li><strong>Backups nobody has restored.</strong> The first restore happens during the incident, under pressure, and fails on a
+missing permission or a forgotten step.</li>
+<li><strong>One set of keys for everything.</strong> Backups managed by the same admin accounts as production fall together with
+production. Separate the roles and add MUA.</li>
+<li><strong>Forgotten dependencies.</strong> The VMs fail over, but the DNS name, the Key Vault, the firewall rules or the
+certificates still point at the primary region.</li>
+<li><strong>No capacity in the secondary.</strong> The VM sizes or quota you need aren't available in the target region on the day
+everyone else is failing over too. Check quotas in advance.</li>
+<li><strong>A plan only one person understands.</strong> If the runbook lives in Pak Budi's head, the RTO depends on his holidays.</li>
+</ul>
+<p>Finally, <strong>test your restores</strong>. A backup you have never restored is a hope, not a plan. Nusantara Retail will
+restore one file and one VM every month and run a test failover twice a year. Each drill measures the real RTO against
+the target, and the runbook records who decides to fail over and how customers are told. An RTO is a guess until a
+drill has timed it, and Lab 17 is your first drill.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>Indonesia Central has three availability zones, and every Nusantara service could be
+zone-redundant there. Would that be enough to answer finance's question from this morning?</p>
+</aside>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · RPO, RTO, protected backups and a second region</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/17-backup-disaster-recovery.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/17-backup-disaster-recovery.html" title="Interactive demo: RPO, RTO, protected backups and a second region" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/17-backup-disaster-recovery/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>How the time since the last recovery point becomes the data you lose (RPO), and the time to recover becomes the
+downtime (RTO).</li>
+<li>What happens when an attacker deletes the backups, and which layer saves them.</li>
+<li>How Site Recovery keeps a standby copy in a second region, and why the test failover runs in an isolated network.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi's clean-up script deleted 2,000 product photos from a storage account that uses geo-redundant storage. Does
+the copy in the secondary region save her?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>No.</strong> Geo-redundant storage replicates the deletion as well. She needs a point-in-time protection such as blob
+soft delete, versioning or a backup, which keeps the old data instead of mirroring the change.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Ibu Sari accepts losing at most 4 hours of data and being down at most 1 hour for a VM-based service. Which number
+is the RPO, which is the RTO, and does a daily VM backup with DefaultPolicy meet them?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>RPO 4 hours, RTO 1 hour, and no.</strong> A daily backup can lose up to 24 hours, and rebuilding from a backup rarely
+takes under an hour. An Enhanced policy (every 4 hours) fixes the RPO; Site Recovery or high availability fixes
+the RTO.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>An attacker with a stolen admin account deletes every backup item in a Recovery Services vault. What happens to
+the data, and what should the team do?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>It's soft-deleted, not gone.</strong> Secure-by-default soft delete keeps it for 14 days or more. The team undeletes the
+items, resumes protection, and adds multi-user authorization so the next attempt needs approval on a Resource
+Guard.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Which vault type do you need for Azure VMs and Azure Files shares, and which one for operational backup of Azure
+Blobs?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>A Recovery Services vault for VMs and Azure Files; a Backup vault for Blobs.</strong> The Backup vault covers newer
+workloads such as Blobs, Disks, PostgreSQL flexible server and AKS.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>The team wants the orders VM in Indonesia Central to survive a region-wide outage. Someone suggests a geo-redundant
+backup vault with Cross Region Restore. Why won't that work, and what would you propose instead?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Indonesia Central has no paired region</strong>, and geo-redundant vaults and Cross Region Restore depend on one.
+Choose a secondary region explicitly, such as Southeast Asia if the legal team approves the data transfer, and
+replicate with Site Recovery.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p><strong>High availability</strong> survives component and zone failures, <strong>backup</strong> lets you go back in time, and <strong>disaster recovery</strong> moves the service to another region: plan all three.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Set <strong>RPO</strong> (how much data you can lose) and <strong>RTO</strong> (how long you can be down) per system, and let those numbers choose the technology.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p><strong>Azure Backup</strong> keeps recovery points in a vault (a Recovery Services vault for VMs). Policies set frequency and retention, and instant restore makes recent restores fast.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p><strong>Soft delete</strong> (always on), <strong>immutable vaults</strong> and <strong>multi-user authorization</strong> keep backups recoverable even when an admin account is compromised.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p><strong>Site Recovery</strong> gives minute-level RPO in another region. For a nonpaired region like Indonesia Central you choose the secondary region yourself, weigh data residency, and <strong>test</strong> with drills.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Field notes from Stefanus</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Ask who can delete the last copy.</strong> In design reviews I ask one question about every backup: <em>which accounts
+could destroy the last copy of this data, and are they the same accounts that run production?</em> If they are, one
+stolen password takes out the system and its way back together. So I want multi-user authorization with the
+Resource Guard in a subscription the production admins can't touch, and alerts on deleted backup data that reach
+someone outside the team. Then I ask how quickly we would honestly notice an attack; if it could take longer than
+14 days, I extend soft-delete retention. And the person who runs the restore drill is never the person who designed
+the backup: a runbook that only its author can follow is a single point of failure with a name.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">More about the author →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>17</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>The restore drill</h3>
+          <div class="prose"><p>You'll run Nusantara Retail's first restore drill on your own time. A script creates a small VM with an orders file.
+You protect the VM in a Recovery Services vault, look at the soft-delete settings you can't switch off, and trigger a
+backup while you read. Then you &quot;lose&quot; the file and restore it from a recovery point by restoring a disk and copying
+the file back. Finally, you play the attacker who deletes the backups, and get them back.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ 60–90 minutes</span><span class="chip cost">💲💲 small charges while running</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/17-backup-disaster-recovery.html">Start Lab 17 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/backup/secure-by-default" target="_blank" rel="noopener"><b>Microsoft Learn: Secure by default with soft delete for Azure Backup</b><span>What is soft-deleted, for how long, what it costs, and how vault deletion behaves now.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/backup/backup-azure-arm-restore-vms" target="_blank" rel="noopener"><b>Microsoft Learn: How to restore Azure VM data in Azure portal</b><span>Every restore option, with its requirements and limits.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/site-recovery/azure-to-azure-architecture" target="_blank" rel="noopener"><b>Microsoft Learn: Azure to Azure disaster recovery architecture</b><span>How Site Recovery replicates, which defaults it uses and what network access it needs.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/reliability/regions-paired" target="_blank" rel="noopener"><b>Microsoft Learn: Azure region pairs and nonpaired regions</b><span>Which regions have a pair, and how to design for those that don't.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🛟</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Restore Drill Survivor</h2>
+        <p class="muted">Back up, restore and plan for disaster.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“Even if someone deletes everything, we restore — and we have practised it.”</b></p>
+        <div class="teaser"><b>Next episode · 18</b><h4>A Storage Account in West Europe</h4><p>Untagged resources, data in the wrong region, and nothing stopped anyone.</p><p style="margin-top:10px"><a href="18-governance-compliance-basic.html">Watch Episode 18 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="16-monitoring-basic.html"><small>← Previous episode</small>16 · Customers Knew First</a><a class="next" href="18-governance-compliance-basic.html"><small>Next episode →</small>18 · A Storage Account in West Europe</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/17-backup-disaster-recovery/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

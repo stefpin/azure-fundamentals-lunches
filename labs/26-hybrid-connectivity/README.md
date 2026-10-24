@@ -1,8 +1,11 @@
 # Lab 26 · Connect head office
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 26 · Hybrid Connectivity: VPN Gateway, ExpressRoute and Virtual WAN](../../lunches/26-hybrid-connectivity/README.md)
 > **Time:** about 90 minutes, including 30–45 minutes of waiting for the gateways · **Cost:** 💲💲💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★★
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by `setup.sh`.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

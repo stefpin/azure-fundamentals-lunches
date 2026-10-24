@@ -1,5 +1,7 @@
 # Lunch 27 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — an Application Gateway's listeners, path rules and
 > backend health, a WAF policy switched to Prevention mode blocking a real request, and a Traffic Manager failover seen
 > through DNS — which the animation can only simulate.

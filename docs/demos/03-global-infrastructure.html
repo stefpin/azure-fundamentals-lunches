@@ -307,7 +307,7 @@ svg .wire.dashed{stroke-dasharray:7 6}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/03-global-infrastructure.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/03-global-infrastructure.html" data-href-id="../id/lunches/03-global-infrastructure.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -576,10 +576,119 @@ svg .wire.dashed{stroke-dasharray:7 6}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 03 · Infrastruktur global Azure — Demo interaktif",
+   "kicker": "Makan Siang 03 · Infrastruktur global · Demo interaktif",
+   "title": "Dari bola dunia ke satu pusat data",
+   "lede": "Perbesar tampilan dari geografi ke sebuah region, availability zone, dan pusat datanya, saksikan satu zona gagal, lalu bandingkan region yang punya pasangan dengan region yang tidak punya. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Memperbesar tampilan dari bola dunia ke sebuah region Azure, availability zone, dan pusat datanya",
+   "svgDesc": "Bola dunia yang disederhanakan menampilkan geografi Asia Pacific dan Indonesia dengan region Southeast Asia, East Asia, dan Indonesia Central. Kamera memperbesar Indonesia Central, yang punya tiga availability zone berisi pusat data, sebuah public IP zone-redundant, web server zonal, dan salinan storage zone-redundant. Zona 1 gagal, web server kedua di zona 2 menjaga toko tetap buka, lalu kamera memperkecil tampilan lagi untuk membandingkan pasangan region Southeast Asia dan East Asia dengan Indonesia Central, yang tidak punya pasangan."
+  },
+  "steps": [
+   {
+    "title": "Satu server di sebelah pantri",
+    "text": "Toko online Nusantara Retail masih berjalan di satu server fisik, di ruangan sebelah pantri kantor Jakarta. Kalau listrik ruangan itu padam, toko ikut tutup. Azure menyebar kapasitasnya ke banyak region di seluruh dunia, dan setiap region dibangun dari beberapa pusat data. Mari kita perbesar langkah demi langkah, dari seluruh planet sampai ke satu gedung, lalu lihat apa yang terjadi saat sebagian di antaranya gagal."
+   },
+   {
+    "title": "Geografi: di mana data boleh tinggal",
+    "text": "Perbesar ke Asia. Azure mengelompokkan region ke dalam geografi, dan setiap geografi adalah batas residensi data, yaitu batas tempat data boleh disimpan. Southeast Asia (Singapura) dan East Asia (Hong Kong) ada di geografi Asia Pacific. Indonesia Central punya geografinya sendiri: Indonesia. Jika undang-undang atau kontrak mewajibkan data pelanggan tetap di Indonesia, tepi geografi itulah garis yang tidak boleh Anda lewati."
+   },
+   {
+    "title": "Sebuah region: Indonesia Central",
+    "text": "Region adalah sekumpulan pusat data di satu wilayah metropolitan, yang terhubung oleh jaringan cepat berlatensi rendah. Indonesia Central di Jakarta dibuka pada 27 Mei 2025. Region ini punya tiga availability zone tetapi tidak punya region pasangan, seperti yang kini ditunjukkan labelnya. Region Southeast Asia di Singapura letaknya dekat dan juga punya tiga zona. Anda memilih region setiap kali membuat sebagian besar resource.",
+    "set": {
+     "t-jkt": "Indonesia Central · 3 zona · tanpa pasangan"
+    }
+   },
+   {
+    "title": "Di dalam region: tiga zona",
+    "text": "Buka region-nya, dan Anda akan menemukan availability zone. Setiap zona adalah kelompok pusat data terpisah dengan listrik, pendingin, dan jaringannya sendiri. Zona-zona itu berjarak beberapa kilometer, sehingga kebakaran atau banjir di satu zona semestinya tidak menjalar ke zona lain, tetapi cukup dekat untuk waktu bolak-balik sekitar dua milidetik. Setiap region yang menyediakan zona punya minimal tiga zona."
+   },
+   {
+    "title": "Zona terdiri atas pusat data",
+    "text": "Lihat lebih dekat: setiap zona berisi satu pusat data atau lebih, yaitu gedung sungguhan yang penuh server dan switch. Di sini zona 2 hanya punya satu gedung, sedangkan zona 1 dan 3 masing-masing punya dua. Nomor zona yang Anda lihat adalah label logis untuk subscription Anda, jadi zona 1 Anda bisa jadi gedung yang berbeda dengan zona 1 milik rekan Anda di subscription lain."
+   },
+   {
+    "title": "Resource zonal dan zone-redundant",
+    "text": "Sekarang tempatkan resource toko. vm-web-1 bersifat zonal: Anda mematoknya ke zona 1, jadi VM itu tinggal di tepat satu zona. Standard public IP bersifat zone-redundant, jadi Azure menyebarnya ke ketiga zona. Storage account memakai zone-redundant storage (ZRS), yang menyimpan salinan sinkron dari setiap penulisan di setiap zona."
+   },
+   {
+    "title": "Hari biasa: lalu lintas dan salinan",
+    "text": "Di hari biasa, pembeli menuju public IP, permintaannya mendarat di vm-web-1, dan gambar produk baru ditulis ke storage. Setiap penulisan disalin ke ketiga zona sebelum Azure mengonfirmasinya, jadi tidak ada zona yang memegang satu-satunya salinan. Semuanya tampak sehat, tetapi perhatikan bahwa seluruh pekerjaan komputasi dikerjakan oleh satu zona saja."
+   },
+   {
+    "title": "Zona 1 padam",
+    "text": "Sekarang zona 1 kehilangan listrik. Public IP yang zone-redundant tetap menjawab, dan storage account tetap melayani data dari salinan di zona 2 dan 3. Tetapi vm-web-1 bersifat zonal dan hanya tinggal di zona 1, jadi VM itu mati, dan bersamanya seluruh toko. Bagian yang zone-redundant selamat; satu-satunya bagian yang zonal tidak.",
+    "set": {
+     "t-vm1": "mati ✗"
+    }
+   },
+   {
+    "title": "Solusi: sebar komputasi ke beberapa zona",
+    "text": "Solusinya adalah berhenti bergantung pada satu zona. Jalankan web server kedua, vm-web-2, di zona 2, lalu pasang Standard load balancer dengan frontend zone-redundant di depan keduanya. Saat zona 1 gagal, lalu lintas tinggal mengalir ke zona 2. Dua VM zonal di zona yang berbeda membuat lapisan web menjadi zone-resilient. Anda akan membangun persis ini di Makan Siang 09.",
+    "set": {
+     "t-pip": "load balancer · frontend zone-redundant"
+    }
+   },
+   {
+    "title": "Region pair: Singapura dan Hong Kong",
+    "text": "Zona tidak membantu jika seluruh region hilang, jadi mari perkecil tampilan lagi. Microsoft memasangkan sebagian region: Southeast Asia berpasangan dengan East Asia. Sebuah pasangan mendapat pembaruan terencana yang digilir satu region demi satu region, prioritas pemulihan saat gangguan meluas, dan tetap berada di satu geografi. Segelintir layanan, seperti geo-redundant storage, bisa menyalin data ke pasangannya. Aplikasi Anda sendiri tidak pernah disalin otomatis."
+   },
+   {
+    "title": "Tanpa pasangan? Anda yang memilih",
+    "text": "Indonesia Central tidak punya pasangan, seperti banyak region yang lebih baru. Anda tetap punya pilihan. Simpan semuanya di Indonesia: sebar ke tiga zona dan simpan backup di region itu. Atau pilih region kedua sendiri, misalnya Southeast Asia, sekitar 17 milidetik jauhnya menurut pengukuran Microsoft pada Juli 2026, lalu bangun replikasinya sendiri, selama aturan data Anda mengizinkan data keluar dari Indonesia."
+   },
+   {
+    "title": "Rangkuman: pilih dengan sengaja",
+    "text": "Rangkuman: geografi menentukan residensi data, region menentukan lokasi dan layanan, zona melindungi dari kegagalan setingkat gedung, dan sebuah pasangan atau region kedua pilihan Anda melindungi dari hilangnya satu region. Patok resource zonal dengan sengaja, utamakan opsi zone-redundant untuk komponen bersama, dan jangan pernah berasumsi bahwa region pair menyalin data Anda.",
+    "tip": "Di Lab 03, Anda menampilkan daftar region, pasangan, dan pemetaan zona dengan CLI, membuat Standard public IP yang zonal dan yang zone-redundant, lalu membandingkan storage LRS dengan ZRS."
+   }
+  ],
+  "svg": {
+   "Azure global infrastructure (simplified, not to scale)": "Infrastruktur global Azure (disederhanakan, tidak sesuai skala)",
+   "Asia Pacific geography": "Geografi Asia Pacific",
+   "Indonesia geography": "Geografi Indonesia",
+   "Today: one server": "Kini: satu server",
+   "next to the pantry": "di sebelah pantri",
+   "single point of failure": "titik kegagalan tunggal",
+   "Region pair gives you": "Manfaat region pair",
+   "Staggered updates": "Pembaruan bergiliran",
+   "Recovery priority": "Prioritas pemulihan",
+   "Same geography": "Geografi yang sama",
+   "NOT: copies of your data": "BUKAN: salinan data Anda",
+   "NOT: automatic failover": "BUKAN: failover otomatis",
+   "No pair": "Tanpa pair",
+   "Your DR choice": "Pilihan DR Anda",
+   "No pair? Your choices": "Tanpa pasangan? Opsi:",
+   "A: 3 zones + backups,": "A: 3 zona + backup,",
+   "all inside Indonesia": "semua di dalam Indonesia",
+   "B: your own 2nd region;": "B: region kedua sendiri;",
+   "you build the copies": "salinannya Anda bangun",
+   "and check data rules": "dan cek aturan data",
+   "Zone 1": "Zona 1",
+   "Zone 2": "Zona 2",
+   "Zone 3": "Zona 3",
+   "Shoppers": "Pembeli",
+   "zone 1 only": "hanya zona 1",
+   "zone 2 only": "hanya zona 2",
+   "ZRS copy": "Salinan ZRS",
+   "Every zone has its own": "Tiap zona: listrik,",
+   "power, cooling and": "pendingin, jaringan",
+   "network, km apart": "sendiri; berjarak km"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -595,6 +704,119 @@ svg .wire.dashed{stroke-dasharray:7 6}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -714,7 +936,7 @@ svg .wire.dashed{stroke-dasharray:7 6}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -749,7 +971,7 @@ svg .wire.dashed{stroke-dasharray:7 6}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -762,7 +984,7 @@ svg .wire.dashed{stroke-dasharray:7 6}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -783,7 +1005,7 @@ svg .wire.dashed{stroke-dasharray:7 6}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -791,7 +1013,7 @@ svg .wire.dashed{stroke-dasharray:7 6}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

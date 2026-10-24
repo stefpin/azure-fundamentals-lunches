@@ -1,9 +1,12 @@
 # Lunch 08 · Virtual Networking (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 2:** Core infrastructure
 > **Time:** 60 minutes · **Prerequisite lunches:** 01, 06
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 08 · Build Nusantara Retail's network](../../labs/08-networking-basic/README.md) — about 50 minutes · cost 💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -368,6 +371,16 @@ What to watch for:
   out, usually a NAT gateway. An NSG allow is permission, not a path.
 - Azure DNS hosts public zones (delegate them at your registrar), and Network Watcher — IP flow verify, effective
   security rules, next hop, VNet flow logs — turns guessing into evidence.
+
+## 🗒️ Field notes from Stefanus
+
+> **Every "temporary" rule needs an owner and an end date.** In network reviews I read the NSG rules from the lowest
+> number up, exactly as Azure does, and for every allow rule I ask: *who asked for this, and when can it go?* If nobody
+> knows, it is a candidate for deletion. My habit is to name rules after their intent, such as
+> `Allow-Web-To-App-8080`, and to put the requester and a review date in the rule's description, because the "just for
+> a week" rules are the ones that quietly survive for years. And when something doesn't connect, I don't touch a
+> single rule until IP flow verify or the effective security rules have told me which rule decided. Editing rules on a
+> hunch is how the next sneaky deny is born.
 
 ## 🔬 Your lab: Build Nusantara Retail's network
 

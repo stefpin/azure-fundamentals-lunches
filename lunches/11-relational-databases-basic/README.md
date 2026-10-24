@@ -1,9 +1,12 @@
 # Lunch 11 · Relational Databases (Basic): Azure SQL
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 3:** Platform services and data
 > **Time:** 60 minutes · **Prerequisite lunches:** 02, 05
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 11 · Nusantara Retail's orders database](../../labs/11-relational-databases-basic/README.md) — about 45 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -243,7 +246,7 @@ encrypted at rest with **transparent data encryption** (TDE) using a service-man
 
 ### 5. Built-in backups and the tools you will use
 
-Ibu Sari's USB drive can finally retire. Azure SQL Database backs up every database automatically: a full backup
+Pak Budi's USB drive can finally retire. Azure SQL Database backs up every database automatically: a full backup
 every week, a differential backup every 12 or 24 hours, and a transaction log backup about every 10 minutes. Together
 they allow **point-in-time restore** (PITR) to any moment inside the retention window — 7 days by default, adjustable
 from 1 to 35 days (Basic tier: up to 7). A restore always creates a new database next to the original, so you can
@@ -371,6 +374,16 @@ What to watch for:
 - The vCore model (General Purpose, Business Critical, Hyperscale) is the flexible default; serverless with auto-pause and the free offer make small and development databases close to free.
 - Every connection passes the gateway and the server firewall before authentication: allow specific IP addresses only, and use Microsoft Entra-only authentication so no shared passwords exist.
 - Backups, point-in-time restore, high availability and encryption are built in; query with the portal Query editor, VS Code with the MSSQL extension, or sqlcmd.
+
+## 🗒️ Field notes from Stefanus
+
+> **A backup you have never restored is only a rumour.** Automatic backups are the best thing about Azure SQL Database,
+> and the easiest to take for granted. So in the first week of every new database I restore it on purpose: I pick a
+> moment from yesterday, run a point-in-time restore next to the original, count the rows and time how long it takes.
+> That small drill answers questions no diagram can: how long a restore of this size really takes, who has the
+> permissions to start one, and how the application gets pointed at the restored copy, which always has a new name. I
+> write the answers into the runbook while they are fresh. When something goes wrong at a bad hour, nobody should be
+> reading the documentation for the first time.
 
 ## 🔬 Your lab: Nusantara Retail's orders database
 

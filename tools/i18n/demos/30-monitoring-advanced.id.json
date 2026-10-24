@@ -1,0 +1,120 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 30 · Mengapa checkout lambat pada hari Jumat? — Demo interaktif",
+    "kicker": "Makan Siang 30 · Pemantauan (Lanjutan) · Demo interaktif",
+    "title": "Mengapa checkout lambat pada hari Jumat? Satu workspace, tiga pipa, satu query",
+    "lede": "Telemetri dari sebuah VM (agent dan data collection rule), Blob storage (diagnostic setting), dan sebuah web app (Application Insights) mengalir ke satu Log Analytics workspace, lalu pipeline KQL mengubah baris-baris data menjadi grafik dan alert. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Pipa-pipa telemetri Nusantara Retail menuju workspace log-nusa, dan query KQL yang menjadi grafik dan alert",
+    "svgDesc": "Di sebelah kiri, sumber-sumbernya: pembeli, web app storefront, VM order job, dan Blob storage. Di kolom kedua, para pengumpul: availability test, Application Insights, Azure Monitor Agent dengan data collection rule, dan diagnostic setting. Semuanya mengisi tabel-tabel di Log Analytics workspace log-nusa. Di bagian bawah, pipeline KQL menyaring dan meringkas AppRequests; di sebelah kanan, grafik hasilnya, log search alert, dan engineer on-call."
+  },
+  "steps": [
+    {
+      "title": "Jumat 19.05: lambat, dan tak ada yang tahu sebabnya",
+      "text": "Sedang ada flash sale hari Jumat. Checkout tiba-tiba butuh empat detik dan pembeli meninggalkan keranjangnya, tetapi alert CPU dari Makan Siang 16 tetap diam: tidak ada server di atas 50%. Dewi mencurigai gambar produk di Blob storage, Pak Budi mencurigai VM order job, dan Rizky mencurigai penyedia pembayaran. Masing-masing punya firasat dan layar yang berbeda. Tidak ada yang punya bukti.",
+      "set": {
+        "t-app": "checkout: 4 detik",
+        "t-shop": "keranjang ditinggalkan"
+      }
+    },
+    {
+      "title": "Satu ruang bukti",
+      "text": "Hari Senin, Pak Budi membuat satu Log Analytics workspace, log-nusa, di Southeast Asia. Setiap sumber akan menulis ke tabelnya sendiri di sana, pada Analytics plan dengan retention 30 hari. Satu workspace, bukan tiga layar, berarti satu query bisa menjajarkan web app, VM, dan storage berdampingan. Sekarang bukti-bukti itu butuh jalan masuk.",
+      "set": {
+        "t-app": "checkout: 0,3 detik",
+        "t-shop": "melihat-lihat, Senin"
+      }
+    },
+    {
+      "title": "Pipa 1: agent dan data collection rule",
+      "text": "Di VM order job, Azure Monitor Agent masuk dengan managed identity milik VM. Sendirian, ia tidak mengumpulkan apa pun. Sebuah data collection rule yang di-associate dengan VM memberitahunya apa yang dikumpulkan dan ke mana mengirimnya: Syslog level Warning ke atas, serta counter CPU, memori, disk, dan jaringan setiap 60 detik. Datanya mendarat di tabel Syslog, Perf, dan Heartbeat."
+    },
+    {
+      "title": "Rule hemat Rizky membuang petunjuk",
+      "text": "Untuk memangkas tagihan log, Rizky mengubah rule agar hanya mengumpulkan level Error ke atas. Agent kini membuang setiap warning di VM sebelum dikirim, termasuk pesan order job \"payment API slow, retry 3 of 5\". Menyaring di sumber adalah cara termurah untuk berhemat, tetapi data yang tidak pernah dikumpulkan tidak bisa di-query belakangan.",
+      "set": {
+        "t-dcr": "Syslog Error+ saja ✗",
+        "t-tvm": "tak ada warning masuk"
+      }
+    },
+    {
+      "title": "Diperbaiki, lalu tunggu beberapa menit",
+      "text": "Pak Budi mengembalikan Warning ke dalam rule. Agent menerima perubahan itu dalam hitungan menit, dan warning baru kembali mengalir; yang terbuang di antaranya hilang untuk selamanya. Ingat jamnya: agent, rule, atau diagnostic setting yang benar-benar baru biasanya butuh lima sampai lima belas menit sebelum baris pertamanya muncul di workspace.",
+      "set": {
+        "t-dcr": "Syslog Warning+ · Perf 60 s",
+        "t-tvm": "warning dan counter"
+      }
+    },
+    {
+      "title": "Pipa 2: diagnostic setting untuk platform log",
+      "text": "Blob storage mencatat setiap pembacaan, penulisan, dan request yang gagal, tetapi tidak menyimpan apa pun sampai Anda mengalirkannya. Diagnostic setting pada blob service mengirim category group allLogs ke log-nusa, ke tabel StorageBlobLogs. Kini gambar produk milik Dewi tercatat. Diagnostic setting hidup lebih lama daripada resource-nya, jadi hapuslah saat resource-nya dihapus, dan gunakan Azure Policy dalam skala besar."
+    },
+    {
+      "title": "Pipa 3: Application Insights",
+      "text": "Storefront mendapat Application Insights tanpa perubahan kode: autoinstrumentation App Service, yang dibangun di atas OpenTelemetry, mengumpulkan request, dependency, exception, dan log ke AppRequests, AppTraces, dan tabel-tabel saudaranya di workspace yang sama. Sebuah standard availability test memanggil toko dari lima lokasi setiap lima menit, jadi Anda tahu toko bisa dijangkau dari luar bahkan saat tidak ada yang berbelanja."
+    },
+    {
+      "title": "Query dimulai dari sebuah tabel",
+      "text": "Saatnya bertanya. Query KQL dimulai dari sebuah tabel dan mengalirkan baris-barisnya melalui operator, dari kiri ke kanan, seperti ban berjalan di pabrik. AppRequests menyimpan setiap request yang dilayani storefront hari ini: 48.210 baris. Tidak ada yang sanggup membaca baris sebanyak itu, jadi setiap operator berikutnya hanya menyisakan apa yang menjawab pertanyaan Ibu Sari."
+    },
+    {
+      "title": "where: saring sejak awal",
+      "text": "where yang pertama menyisakan hari Jumat pukul 18.00 sampai 21.00 dan hanya request yang namanya memuat term checkout: 1.420 baris. Saring berdasarkan waktu lebih dulu; itulah potongan yang termurah dan tercepat. Operator has mencocokkan kata utuh dengan memakai indeks, sedangkan contains mencari setiap potongan teks dan lebih lambat."
+    },
+    {
+      "title": "summarize: ember waktu dan persentil",
+      "text": "Summarize mengelompokkan baris ke dalam bin lima menit dan menghitung median serta persentil ke-95 dari durasinya: 36 baris, satu per bin. Persentil, bukan rata-rata: rata-rata 620 milidetik bisa menyembunyikan satu dari dua puluh pembeli yang menunggu hampir tiga detik. Ekor yang lambat itulah yang dikeluhkan pelanggan."
+    },
+    {
+      "title": "render: grafik yang menjawab Ibu Sari",
+      "text": "Render menggambar 36 baris itu sebagai time chart. Persentil ke-95 melonjak dari sekitar 400 milidetik menjadi 2,8 detik pada pukul 19.05, sementara median tetap cepat. AppDependencies menunjukkan sebabnya: panggilan ke penyedia pembayaran butuh 2,4 detik. Perf dan StorageBlobLogs tetap datar, jadi VM dan gambar produk dinyatakan bersih. Rizky benar."
+    },
+    {
+      "title": "Query yang sama menjadi alert",
+      "text": "Query yang menemukan masalah kini menjaganya. Sebuah log search alert berjalan setiap lima menit atas sepuluh menit terakhir, menghitung checkout yang lebih lambat dari satu detik, dan berbunyi jika jumlahnya lebih dari tiga. Window-nya lebih panjang daripada frekuensinya, jadi baris yang datang terlambat tetap terhitung. Action group mengirim email ke engineer on-call sebelum pelanggan menyadarinya.",
+      "set": {
+        "t-alert-state": "Fired · Sev 3",
+        "t-inbox": "1 alert: checkout lambat"
+      }
+    },
+    {
+      "title": "Rangkuman: bukti, bukan firasat",
+      "text": "Satu workspace, tiga pipa: agent dengan data collection rule untuk VM, diagnostic setting untuk storage, dan Application Insights untuk aplikasi. Pipeline KQL menyaring sejak awal, meringkas dengan persentil, dan menggambar grafik, lalu query yang sama menjadi alert. Menjelang 12.12, Nusantara Retail berdebat dengan data, bukan dengan firasat.",
+      "tip": "Di Lab 30 Anda membangun ketiga pipa, menjawab sepuluh pertanyaan KQL bernilai, membuat log search alert, dan memperbaiki data collection rule milik Rizky.",
+      "set": {
+        "t-alert-state": "Status: OK",
+        "t-inbox": "Kotak masuk: sepi"
+      }
+    }
+  ],
+  "svg": {
+    "Analytics plan · 30 days": "Analytics plan · 30 hari",
+    "KQL in Log Analytics": "KQL di Log Analytics",
+    "Shoppers": "Pembeli",
+    "flash sale, Friday 19:00": "flash sale, Jumat 19.00",
+    "Storefront web app": "Web app storefront",
+    "checkout: 0.3 seconds": "checkout: 0,3 detik",
+    "order jobs · Linux": "order job · Linux",
+    "product images": "gambar produk",
+    "5 locations · every 5 min": "5 lokasi · tiap 5 menit",
+    "built on OpenTelemetry": "berbasis OpenTelemetry",
+    "requests, logs, errors": "request, log, error",
+    "warnings and counters": "warning dan counter",
+    "reads, writes, 404s": "baca, tulis, 404",
+    "every request": "setiap request",
+    "of the day": "hari ini",
+    "48,210 rows": "48.210 baris",
+    "Fri 18:00–21:00": "Jum 18.00–21.00",
+    "1,420 rows": "1.420 baris",
+    "p50, p95 of duration": "p50, p95 durasi",
+    "by 5-minute bin": "per bin 5 menit",
+    "36 rows": "36 baris",
+    "1 chart": "1 grafik",
+    "Checkout p95 (ms)": "p95 checkout (ms)",
+    "1,000 ms": "1.000 ms",
+    "p50 ≈ 250 ms · p95 ≈ 2,800 ms": "p50 ≈ 250 ms · p95 ≈ 2.800 ms",
+    "every 5 min · last 10 min": "tiap 5 mnt · 10 mnt terakhir",
+    "slow checkouts > 3": "checkout lambat > 3",
+    "On-call engineer": "Engineer on-call",
+    "Inbox: quiet": "Kotak masuk: sepi"
+  }
+}

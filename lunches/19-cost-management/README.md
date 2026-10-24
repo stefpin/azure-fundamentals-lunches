@@ -1,9 +1,12 @@
 # Lunch 19 · Cost Management (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 4:** Secure, operate and govern
 > **Time:** 60 minutes · **Prerequisite lunches:** 04 and 18 recommended (06 helps)
 > **AZ-900 skill area:** Describe Azure management and governance
 > **Lab:** [Lab 19 · Find the waste you made yourself](../../labs/19-cost-management/README.md) — about 40 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -339,6 +342,16 @@ What to watch for:
   Spot for interruptible work, Hybrid Benefit and dev/test pricing for licences and non-production.
 - **Budgets are alarms, not brakes.** Combine tags, cost analysis, budgets with 50/80/100 percent alerts, Advisor and a
   regular orphan hunt — the FinOps loop of inform, optimize and operate.
+
+## 🗒️ Field notes from Stefanus
+
+> **Every resource needs an owner and an end date.** When I review a subscription, I don't start with the biggest line
+> on the bill; I start with the lines nobody can explain. Big costs usually have someone ready to defend them. The quiet
+> ones — a disk, an IP address, a plan left over from last quarter's proof of concept — belong to nobody, and that is
+> exactly why they survive. My rule: nothing temporary is created without an `owner` tag and an `expiresOn` tag,
+> enforced by Azure Policy rather than good intentions. Once a month I sort by that date and send each owner a short
+> list. People rarely defend a resource that carries their own name; they delete it. And when someone says "keep it,
+> just in case", I ask one question: could we rebuild it from code in ten minutes?
 
 ## 🔬 Your lab: Find the waste you made yourself
 

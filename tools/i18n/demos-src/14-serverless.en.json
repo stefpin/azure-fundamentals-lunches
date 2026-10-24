@@ -1,0 +1,120 @@
+{
+  "page": {
+    "doc_title": "Lunch 14 · Serverless: Azure Functions, Logic Apps and Event Grid — Interactive demo",
+    "kicker": "Lunch 14 · Serverless: Azure Functions, Logic Apps and Event Grid · Interactive demo",
+    "title": "From photo upload to thumbnail, and a workflow that runs itself",
+    "lede": "Watch an uploaded photo become an event, a function scale out for a burst and back to zero, a failed event land safely in a dead-letter container, and a Logic App run light up step by step. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Event-driven thumbnails with Event Grid and Azure Functions, and a Logic App workflow",
+    "svgDesc": "Top: the marketing team uploads photos to Blob storage; Event Grid delivers each BlobCreated event to a function app on the Flex Consumption plan, which writes thumbnails and scales from zero to eight instances and back; a failing event ends in a dead-letter container. Bottom: a Consumption Logic App with a recurrence trigger, an HTTP call to a function, a condition, and Outlook and Teams connectors."
+  },
+  "steps": [
+    {
+      "title": "A VM that waits all day",
+      "text": "Every night, Nusantara Retail's marketing team uploads hundreds of product photos to Blob storage. Today a small VM wakes up, finds the new files and resizes them into thumbnails. It works for about twenty minutes and idles for the rest of the day, while its bill keeps running around the clock. Let's replace it with something that only runs when there's work."
+    },
+    {
+      "title": "The serverless parts",
+      "text": "Three building blocks replace the VM. Blob storage publishes an event whenever a file is created. Event Grid delivers that event to every subscriber, here a function. The function app runs on the Flex Consumption plan and has zero instances right now, which also means zero compute cost. A second container, thumbnails, receives the results."
+    },
+    {
+      "title": "One photo, one event",
+      "text": "A designer uploads kopi-toraja.jpg. The storage account doesn't send the photo anywhere. It publishes a small event that describes what happened: a blob was created, in this container, with this name and size. Event Grid checks the subscription's filter, which wants only JPEG files in product-images, and pushes the event to the function within moments."
+    },
+    {
+      "title": "The function wakes up",
+      "text": "No instance was running, so the platform allocates one and loads the code: a cold start of a second or two. The function reads the photo, resizes it and hands the result to an output binding, which writes it to the thumbnails container. You pay for those few seconds of execution time and memory, not for the hours in between.",
+      "set": {
+        "t-inst": "1 instance"
+      }
+    },
+    {
+      "title": "Burst: 300 photos at once",
+      "text": "The 12.12 catalogue arrives: three hundred photos in a few minutes. Event Grid delivers the events in parallel, and Flex Consumption adds instances quickly to keep up, but never more than the maximum instance count you set. Every photo gets its own execution, and the thumbnails are ready within minutes, without anyone resizing a server.",
+      "set": {
+        "t-inst": "8 instances"
+      }
+    },
+    {
+      "title": "Back to zero",
+      "text": "When the uploads stop, idle instances are removed one after another until none are left. The app has scaled to zero, and so has the compute bill. The next photo will meet a cold start again. For a nightly batch that's fine. For a checkout function you could keep an always-ready instance warm and pay a small baseline for it.",
+      "set": {
+        "t-inst": "0 instances"
+      }
+    },
+    {
+      "title": "A photo that breaks the code",
+      "text": "A corrupt file named catalogue-cover.jpg arrives. The function throws an error, so the delivery fails. Event Grid doesn't give up at once: it retries with growing pauses, in case the problem was temporary. But this file will never resize, however often it's retried. Without a plan, it would either keep failing for hours or disappear without anyone noticing.",
+      "set": {
+        "t-inst": "1 instance"
+      }
+    },
+    {
+      "title": "Dead-lettered, not lost",
+      "text": "When the retries run out, Event Grid moves the event to a dead-letter container instead of dropping it, and an alert tells Dewi (Lunch 16). She finds the file name in the dead-lettered event, checks the photo and adds a guard to the code, which now skips unreadable images and logs them. Every other photo was processed normally.",
+      "set": {
+        "t-inst": "0 instances"
+      }
+    },
+    {
+      "title": "Meanwhile, a workflow",
+      "text": "Not every job needs code. Finance wants a stock report every morning, so Dewi builds a Consumption Logic App in the designer: a Recurrence trigger at seven o'clock, an HTTP action that calls a small stock-report function, a condition, and connectors for Outlook and Teams. There are no servers or SDKs to manage, and billing is per executed action."
+    },
+    {
+      "title": "Trigger and HTTP light up",
+      "text": "At 07:00 the recurrence trigger fires and a run begins. The HTTP action calls the stock-report function, which wakes up on Flex Consumption, reads the stock levels and returns them as JSON. The run history records each step's inputs, outputs and duration, so finance can see exactly what happened, one step at a time.",
+      "set": {
+        "t-la-1": "✓ fired 07:00",
+        "t-la-2": "✓ 200 OK · 0.4 s"
+      }
+    },
+    {
+      "title": "Condition and connectors",
+      "text": "The condition finds three products below ten units, so the yes branch runs. The Office 365 Outlook connector emails the store manager, and the Teams connector posts the list to the stores channel, both through connections that were signed in once and saved. If Teams had a hiccup, the action's retry policy would simply try again.",
+      "set": {
+        "t-la-3": "✓ true: 3 SKUs",
+        "t-la-4": "✓ sent",
+        "t-la-5": "✓ posted"
+      }
+    },
+    {
+      "title": "Recap",
+      "text": "Events say that something happened, and Event Grid pushes them to subscribers. Functions run your code for each event, scale out for bursts and fall back to zero. Failed events are retried and dead-lettered, never silently lost. Logic Apps joins connectors into workflows you can read step by step. Together, they replace servers that wait all day.",
+      "tip": "In Lab 14 you build the order side of this design: an HTTP-triggered function on Flex Consumption that queues orders through an output binding, plus a Consumption Logic App that sends a heartbeat order every 15 minutes."
+    }
+  ],
+  "svg": [
+    "Event-driven thumbnails",
+    "Function app",
+    "Flex Consumption",
+    "0 instances",
+    "Logic App · morning stock check",
+    "waiting",
+    "Marketing",
+    "uploads photos",
+    "Blob storage",
+    "product-images",
+    "Event Grid",
+    "BlobCreated event",
+    "thumbnails",
+    "Dead-letter",
+    "storage container",
+    "instance 1",
+    "instance 2",
+    "instance 3",
+    "instance 4",
+    "instance 5",
+    "instance 6",
+    "instance 7",
+    "instance 8",
+    "Recurrence",
+    "every day 07:00",
+    "HTTP",
+    "call stock function",
+    "Condition",
+    "any SKU below 10?",
+    "Outlook",
+    "email the manager",
+    "Teams",
+    "post to #stores"
+  ]
+}

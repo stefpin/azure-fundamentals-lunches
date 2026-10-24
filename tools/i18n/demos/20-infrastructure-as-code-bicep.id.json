@@ -1,0 +1,133 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 20 · Infrastructure as Code dengan Bicep — Demo interaktif",
+    "kicker": "Makan Siang 20 · Infrastructure as Code dengan Bicep · Demo interaktif",
+    "title": "Dari satu file menjadi satu lingkungan utuh: tulis, pratinjau, deploy, lindungi, bangun ulang",
+    "lede": "Saksikan sebuah file Bicep terbentuk, lihat what-if memprediksi setiap perubahan, dan bangun ulang lingkungan test Nusantara Retail dari nol. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "File Bicep yang di-deploy melalui Azure Resource Manager ke sebuah resource group, dengan pratinjau what-if, deployment stack, dan pembangunan ulang",
+    "svgDesc": "Di kiri, file Bicep bernama main.bicep ditulis blok demi blok, dan di bawahnya panel what-if mencantumkan perubahan yang diprediksi. Di tengah, Azure Resource Manager menerima file tersebut. Di kanan, sebuah resource group terisi network security group, virtual network dengan dua subnet, storage account, dan Log Analytics workspace. Deployment stack dengan DenyDelete memblokir penghapusan manual, lalu lingkungan itu dihapus dan dibangun ulang dari file yang sama."
+  },
+  "steps": [
+    {
+      "title": "Sembilan belas makan siang penuh klik",
+      "text": "Selama sembilan belas makan siang, lingkungan Azure Nusantara Retail tumbuh satu klik portal dan satu perintah CLI demi satu. Tidak ada yang bisa membangunnya ulang dengan persis, dan tidak ada yang tahu apa yang diubah Rizky pukul 23.00 tadi malam. Infrastructure as code menyelesaikannya: Anda menuliskan lingkungan dalam sebuah file, meninjaunya seperti kode aplikasi, lalu membiarkan Azure Resource Manager membuat kenyataan sesuai dengan file."
+    },
+    {
+      "title": "Mulai dari parameter",
+      "text": "File Bicep diawali dengan input. Parameter seperti location dan environment memungkinkan satu file melayani test maupun produksi, dan location secara default mengikuti region resource group itu sendiri. Sebuah variabel menyusun set tag sekali saja, sehingga setiap resource membawa tag costCenter dan environment tanpa copy-paste. Decorator seperti @allowed membatasi nilai yang boleh diterima sebuah parameter."
+    },
+    {
+      "title": "Deklarasikan jaringannya",
+      "text": "Berikutnya deklarasi resource: sebuah network security group dan sebuah virtual network dengan dua subnet. Setiap resource punya symbolic name, jenis, dan versi API. Karena subnet web merujuk ke nsg.id, Bicep tahu bahwa security group harus ada lebih dulu. Di sebelah kanan, resource yang direncanakan tampil samar, karena belum ada apa pun di Azure."
+    },
+    {
+      "title": "Penyimpanan, log, dan output",
+      "text": "Nama storage account menggabungkan sebuah awalan dengan uniqueString dari ID resource group, sehingga unik di seluruh Azure tetapi identik di setiap eksekusi. Sebuah Log Analytics workspace ikut masuk ke file, dan sebuah output mengembalikan nama storage account kepada Anda atau ke langkah pipeline berikutnya. Seluruh lingkungan kini muat dalam satu layar kode."
+    },
+    {
+      "title": "Pratinjau dengan what-if",
+      "text": "Sebelum menyentuh apa pun, mintalah what-if kepada Resource Manager. File dikompilasi menjadi template ARM JSON lalu dibandingkan dengan apa yang sudah ada, dan hasilnya berupa diff. Tanda plus berarti dibuat. Empat resource akan dibuat dan tidak ada hal lain yang tersentuh — persis yang ingin dilihat peninjau dalam sebuah pull request.",
+      "set": {
+        "t-wi1": "+ Microsoft.Network/networkSecurityGroups/nsg-web",
+        "t-wi2": "+ Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+        "t-wi3": "+ Microsoft.Storage/storageAccounts/stiac…",
+        "t-wi4": "+ Microsoft.OperationalInsights/workspaces/log-…",
+        "t-wi-sum": "Resource changes: 4 to create."
+      }
+    },
+    {
+      "title": "Deploy: Resource Manager membangunnya",
+      "text": "Sekarang deploy. File dikirim ke Azure Resource Manager, yang memvalidasinya, menentukan urutan dari dependensi, lalu memanggil setiap resource provider. Storage account dan workspace dibuat secara paralel, sementara subnet menunggu security group-nya. Beberapa menit kemudian, resource group sudah sama persis dengan file, termasuk tag-nya.",
+      "set": {
+        "t-status": "4 resource · sesuai dengan file",
+        "t-tags": "tag: costCenter, environment=lab"
+      }
+    },
+    {
+      "title": "Redeploy: tidak ada yang berubah",
+      "text": "Jalankan file yang sama lagi dan tidak ada yang berubah, karena deployment deklaratif bersifat idempoten: Resource Manager membandingkan kondisi yang diinginkan dengan kondisi sebenarnya dan hanya bertindak pada perbedaannya. Karena itu redeploy aman dilakukan setelah eksekusi yang gagal, setelah kecelakaan di portal, atau setiap malam, sekadar untuk membuktikan bahwa lingkungan masih sesuai dengan file.",
+      "set": {
+        "t-wi1": "= Microsoft.Network/networkSecurityGroups/nsg-web",
+        "t-wi2": "= Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+        "t-wi3": "= Microsoft.Storage/storageAccounts/stiac…",
+        "t-wi4": "= Microsoft.OperationalInsights/workspaces/log-…",
+        "t-wi-sum": "Resource changes: 4 no change."
+      }
+    },
+    {
+      "title": "Ubah satu parameter: modify",
+      "text": "Dewi ingin salinan ini diberi label lingkungan test. Ubah satu parameter, jalankan what-if lagi, dan setiap resource mendapat tilde: modify, alias diubah. Baris detailnya menunjukkan tag environment berubah dari lab menjadi test. Waspadai juga noise: what-if kadang mencantumkan nilai default yang diisi Azure, padahal sebenarnya tidak ada yang berubah. Lalu deploy.",
+      "set": {
+        "t-code-env": "param env string = 'test'",
+        "t-wi1": "~ Microsoft.Network/networkSecurityGroups/nsg-web",
+        "t-wi2": "~ Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+        "t-wi3": "~ Microsoft.Storage/storageAccounts/stiac…",
+        "t-wi4": "~ Microsoft.OperationalInsights/workspaces/log-…",
+        "t-wi-sum": "Resource changes: 4 to modify.",
+        "t-wi-note": "~ tags.environment: \"lab\" => \"test\"",
+        "t-wi-noise": "Baca diff-nya: nilai default bisa tampil sebagai noise.",
+        "t-tags": "tag: costCenter, environment=test",
+        "t-status": "Di-redeploy · hanya tag yang berubah"
+      }
+    },
+    {
+      "title": "Lindungi dengan deployment stack",
+      "text": "Sekarang deploy file yang sama sebagai deployment stack. Stack mengingat resource mana saja yang dikelolanya dan menerapkan deny settings. Dengan DenyDelete, tidak ada yang bisa menghapus managed resource, bahkan seorang Owner, kecuali ia tercantum di daftar pengecualian stack yang pendek. Jika kelak sebuah resource hilang dari file, stack bisa melepasnya (detach) atau menghapusnya.",
+      "set": {
+        "t-status": "Dikelola stack · DenyDelete",
+        "t-wi-note": "",
+        "t-wi-noise": ""
+      }
+    },
+    {
+      "title": "Penghapusan manual ditolak",
+      "text": "Pukul 23.00 Rizky mencoba menghapus storage account. Permintaannya sampai ke Resource Manager, yang menemukan deny assignment milik stack lalu menolaknya dengan DenyAssignmentAuthorizationFailed. Resource lock juga akan memblokirnya, tetapi deny settings adalah milik stack: datang bersama deployment, bisa mengecualikan identitas pipeline, dan hilang saat stack dihapus."
+    },
+    {
+      "title": "Dihapus dari file, dihapus dari Azure",
+      "text": "Dewi memutuskan salinan test tidak butuh workspace, lalu menghapusnya dari file. Deployment incremental biasa akan membiarkan workspace itu tertinggal. Stack ini diatur untuk menghapus resource yang tidak lagi dikelola, jadi pratinjaunya menunjukkan tanda minus dan pembaruannya menghapus workspace. Inilah pengganti mode deployment complete yang lama, yang sedang dihentikan Microsoft secara bertahap.",
+      "set": {
+        "t-wi1": "= Microsoft.Network/networkSecurityGroups/nsg-web",
+        "t-wi2": "= Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+        "t-wi3": "= Microsoft.Storage/storageAccounts/stiac…",
+        "t-wi4": "- Microsoft.OperationalInsights/workspaces/log-…",
+        "t-wi-sum": "Pratinjau stack: 1 dihapus, 3 tidak berubah"
+      }
+    },
+    {
+      "title": "Jumat: hapus stack-nya",
+      "text": "Jumat sore, tim menghapus stack beserta resource-nya. Satu perintah kemudian resource group sudah kosong, jadi tidak ada yang ditagih selama akhir pekan. Tidak ada yang gugup, karena semua yang penting tersimpan di file Bicep dan di Git, bukan di ingatan seseorang tentang klik portal berbulan-bulan lalu.",
+      "set": {
+        "t-status": "Resource group kosong · tak ada tagihan",
+        "t-tags": "tag: tidak ada, tanpa resource"
+      }
+    },
+    {
+      "title": "Senin: file sama, hasil sama",
+      "text": "Senin, pipeline men-deploy file yang sama sebagai stack lagi, dan lingkungan kembali dalam hitungan menit, identik sampai ke tag-nya. Itulah janji infrastructure as code: bisa diulang, bisa ditinjau, dan bisa dipulihkan. Di capstone nanti, Anda akan men-deploy seluruh platform inti Nusantara Retail dengan cara ini, dari file Bicep yang modular.",
+      "tip": "Di Lab 20 Anda melengkapi main.bicep starter, menjalankan what-if, men-deploy, mengubah sebuah parameter, melindungi hasilnya dengan stack DenyDelete, menyaksikan penghapusan gagal, lalu menghapus semuanya dengan menghapus stack.",
+      "set": {
+        "t-wi1": "+ Microsoft.Network/networkSecurityGroups/nsg-web",
+        "t-wi2": "+ Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+        "t-wi3": "+ Microsoft.Storage/storageAccounts/stiac…",
+        "t-wi4": "",
+        "t-wi-sum": "Resource changes: 3 to create.",
+        "t-status": "Dibangun ulang dari file dalam hitungan menit",
+        "t-tags": "tag: costCenter, environment=test"
+      }
+    }
+  ],
+  "svg": {
+    "abbreviated · full file in Lab 20": "versi ringkas · file lengkap di Lab 20",
+    "+ create ~ modify - delete = no change": "+ buat ~ ubah - hapus = tidak berubah",
+    "no preview yet": "belum ada pratinjau",
+    "validates · orders · deploys": "validasi · urutkan · deploy",
+    "tags: none yet": "tag: belum ada",
+    "Empty resource group": "Resource group kosong",
+    "10.20.0.0/16 · 2 subnets": "10.20.0.0/16 · 2 subnet",
+    "allow TCP 80": "izinkan TCP 80",
+    "storage · uniqueString": "penyimpanan · uniqueString",
+    "Rizky · 23:00": "Rizky · 23.00",
+    "deletes the storage account": "menghapus storage account"
+  }
+}

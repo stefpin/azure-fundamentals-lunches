@@ -1,5 +1,7 @@
 # Lunch 04 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the part an animation cannot show: finding your way
 > through management groups, subscriptions and resource groups in the portal, reading a resource ID, and working with
 > tags, locks and Resource Graph Explorer.

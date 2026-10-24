@@ -1,9 +1,12 @@
 # Lunch 26 · Hybrid Connectivity: VPN Gateway, ExpressRoute and Virtual WAN (Advanced)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Deep-dive month · **Level:** Advanced · **Part 5:** Deep dives
 > **Time:** 60 minutes · **Prerequisite lunches:** 08 (Virtual Networking, Basic), 25 (Virtual Networking, Advanced)
 > **AZ-900 skill area:** Beyond AZ-900
 > **Lab:** [Lab 26 · Connect head office](../../labs/26-hybrid-connectivity/README.md) — about 90 minutes including gateway creation · cost 💲💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -387,6 +390,16 @@ What to watch for:
 - ExpressRoute is a private, predictable connection through a provider — not encrypted by default. Choose Local,
   Standard or Premium, metered or unlimited, and design resiliency with Metro, a second location and a VPN backup.
 - Virtual WAN Standard gives you managed hubs with any-to-any transit for many branches; Basic does site-to-site only.
+
+## 🗒️ Field notes from Stefanus
+
+> **An untested backup path is only a rumour.** Whenever a design says "VPN as backup for ExpressRoute", I ask two
+> questions. First: when did we last fail over on purpose? I want a planned test in a quiet window — take the circuit
+> out of service, watch the traffic move to the tunnel, confirm that the nightly sync still finishes, then move back.
+> Second: how would we know we are running on the backup? A tunnel that quietly carries everything for weeks looks
+> healthy on every dashboard, so I want an alert on the circuit itself, not just on the tunnel. Finally, I ask where
+> the two paths physically meet. If both leave head office through the same router, the same power feed or the same
+> cable trench, they are not two paths. They are one path with two invoices.
 
 ## 🔬 Your lab: Connect head office
 

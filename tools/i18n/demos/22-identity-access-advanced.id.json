@@ -1,0 +1,119 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 22 · Tanpa secret tersimpan, tanpa admin permanen — Demo interaktif",
+    "kicker": "Makan Siang 22 · Identitas dan Akses (Lanjutan) · Demo interaktif",
+    "title": "Tanpa secret tersimpan, tanpa admin permanen",
+    "lede": "Saksikan workflow GitHub Actions menukar token OpenID Connect yang berumur pendek dengan access token Azure melalui federated credential, lalu ikuti aktivasi Privileged Identity Management dari eligible hingga kedaluwarsa. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Workload identity federation dari GitHub Actions ke Azure, dan linimasa aktivasi PIM",
+    "svgDesc": "Di kiri atas, sebuah job GitHub Actions dan provider OpenID Connect milik GitHub. Di bawahnya, Microsoft Entra ID dengan app registration dan federated credential-nya. Di kanan atas, Azure Resource Manager dan resource group rg-storefront yang berisi web app App Service dan database Azure SQL. Di bagian bawah, mula-mula claim dari token, lalu sebuah linimasa ketika Pak Budi mengaktifkan role Owner yang eligible selama dua jam hingga kedaluwarsa."
+  },
+  "steps": [
+    {
+      "title": "Malam rilis, secret kedaluwarsa",
+      "text": "Jumat, pukul 23.00, dan pipeline rilis Nusantara Retail gagal. Job deployment sign-in ke Azure dengan client secret yang disimpan di GitHub, dan secret itu kedaluwarsa kemarin. Secret seperti ini bisa kedaluwarsa, bocor ke log dan screenshot, dan harus ada orang yang ingat untuk merotasinya. Bisakah pipeline menjangkau Azure tanpa menyimpan secret sama sekali?"
+    },
+    {
+      "title": "Ganti secret dengan kepercayaan",
+      "text": "Anda mendaftarkan sebuah aplikasi di Microsoft Entra ID, dan service principal-nya mendapat Contributor hanya di rg-storefront, tidak lebih. Alih-alih secret, Anda menambahkan federated credential: percayai token yang issuer-nya GitHub Actions, subject-nya branch main dari repository ini, dan audience-nya api://AzureADTokenExchange. Lalu Anda menghapus secret yang lama."
+    },
+    {
+      "title": "Job meminta token ke GitHub",
+      "text": "Pada push berikutnya ke main, workflow berjalan. YAML-nya memberikan permissions: id-token: write, yang memungkinkan job meminta identity token. Action azure/login meminta token yang ditujukan untuk Microsoft Entra ID kepada provider OpenID Connect milik GitHub. Tidak ada rahasia yang disimpan di repository maupun di pengaturannya.",
+      "set": {
+        "t-ghperm": "permissions: id-token: write"
+      }
+    },
+    {
+      "title": "Token singkat yang ditandatangani",
+      "text": "Provider GitHub menandatangani JSON Web Token yang hanya hidup beberapa menit, bukan berbulan-bulan. Claim-nya menjelaskan job tersebut: issuer-nya token.actions.githubusercontent.com, subject-nya menyebut repository dan branch, dan audience-nya menyatakan bahwa token ini untuk pertukaran token Azure. Siapa pun bisa membaca claim ini; hanya GitHub yang bisa menandatanganinya."
+    },
+    {
+      "title": "Tukarkan di Microsoft Entra ID",
+      "text": "azure/login mengirim token GitHub ke Microsoft Entra ID sebagai client assertion, bersama client ID aplikasi dan tenant ID. Kedua ID itu bukan rahasia; keduanya hanya menyebut aplikasi yang ingin diperankan oleh job. Token GitHub yang ditandatangani itulah bukti bahwa job memang diizinkan."
+    },
+    {
+      "title": "Entra ID memeriksa kepercayaan",
+      "text": "Entra ID mengambil public signing key milik GitHub melalui OpenID Connect discovery dan memverifikasi tanda tangannya. Lalu ia membandingkan claim dengan federated credential: issuer, subject, dan audience harus cocok persis, dan wildcard tidak diizinkan, jadi main berarti main. Semuanya cocok, sehingga pemeriksaan berubah hijau.",
+      "set": {
+        "t-chk": "tanda tangan ✓ issuer ✓ subject ✓"
+      }
+    },
+    {
+      "title": "Access token Azure dikembalikan",
+      "text": "Entra ID menerbitkan access token untuk service principal aplikasi dan mengembalikannya ke job, yang kini bertindak sebagai workload identity tersebut. Token itu kedaluwarsa dengan sendirinya, tidak ada kata sandi yang bisa dicuri, dan MFA wajib di Azure tidak berlaku untuk workload identity, sehingga otomatisasi tanpa pengawasan tetap berjalan."
+    },
+    {
+      "title": "Deploy dengan hak akses minimum",
+      "text": "Job memanggil Azure Resource Manager dengan access token itu. Azure RBAC memeriksa role service principal: Contributor, tetapi hanya di rg-storefront. Build toko online yang baru ter-deploy dan versi 1.5 mulai tayang. Bahkan jika pipeline ini dibobol, penyerang hanya menjangkau satu resource group, bukan seluruh subscription.",
+      "set": {
+        "t-web": "menjalankan versi 1.5 ✓"
+      }
+    },
+    {
+      "title": "Branch tak tepercaya ditolak",
+      "text": "Seseorang menjalankan workflow dari branch bernama feature/discount. GitHub menerbitkan token yang sah, tetapi subject-nya berakhiran refs/heads/feature/discount. Tidak ada federated credential yang cocok dengan subject itu, jadi Entra ID menolak pertukaran dengan error AADSTS700213 dan tidak menerbitkan apa pun. Deployment tidak pernah dimulai, ditandai dengan warna merah.",
+      "set": {
+        "t-tsub": "sub: repo:nusantara-retail/storefront:ref:refs/heads/feature/discount",
+        "t-chk": "subject ✗ tidak cocok"
+      }
+    },
+    {
+      "title": "Manusia juga butuh akses just-in-time",
+      "text": "Pipeline sudah beres. Bagaimana dengan manusia? Pak Budi sesekali membutuhkan Owner di rg-storefront-prod. Dengan Privileged Identity Management, ia hanya eligible: tidak ada akses yang terus melekat, tidak ada yang bisa dimanfaatkan penyerang selagi ia tidur. Assignment eligible, aktivasi, dan kedaluwarsa membutuhkan lisensi Microsoft Entra ID P2 atau ID Governance.",
+      "set": {
+        "t-tsub": "sub: repo:nusantara-retail/storefront:ref:refs/heads/main",
+        "t-chk": "menunggu token"
+      }
+    },
+    {
+      "title": "Aktivasi: MFA, alasan, persetujuan",
+      "text": "Pukul 09.00, sebuah insiden membutuhkan bantuannya. Pak Budi membuka PIM dan meminta role Owner selama dua jam, masih dalam batas maksimum yang diizinkan administratornya. Ia menyelesaikan MFA dan mengetik justifikasi INC-2041. Karena role ini memerlukan persetujuan, Ibu Sari menyetujui permintaan itu, seperti tampak di atas linimasa.",
+      "set": {
+        "t-budi": "PIM: aktivasi diminta"
+      }
+    },
+    {
+      "title": "Aktif selama dua jam",
+      "text": "Assignment Owner kini aktif, dan Azure RBAC memperlakukannya seperti role assignment lainnya. PIM memberi tahu orang-orang yang tepat dan mencatat siapa mengaktifkan apa, kapan, dan mengapa, sehingga audit dan access review punya bukti. Jika pekerjaan selesai lebih cepat, Pak Budi bisa menonaktifkan role itu sendiri.",
+      "set": {
+        "t-budi": "PIM: Owner aktif"
+      }
+    },
+    {
+      "title": "Kedaluwarsa: kembali eligible",
+      "text": "Pukul 11.00 aktivasi itu kedaluwarsa dan assignment Owner hilang dengan sendirinya. Pak Budi kembali eligible, tanpa akses yang terus melekat. Gabungkan kedua gagasan ini: pipeline yang memakai federated credential alih-alih secret, dan manusia yang memakai role just-in-time alih-alih Owner permanen.",
+      "tip": "Lab 22 membangun federated credential, custom role Nusantara VM Operator, dan managed identity dengan data role. Conditional Access dan PIM hadir sebagai tur portal terpandu, karena keduanya membutuhkan lisensi P1 atau P2.",
+      "set": {
+        "t-budi": "PIM: eligible lagi"
+      }
+    }
+  ],
+  "svg": {
+    "GitHub Actions job": "Job GitHub Actions",
+    "deploy.yml · push to main": "deploy.yml · push ke main",
+    "needs to deploy to Azure": "perlu deploy ke Azure",
+    "GitHub OIDC provider": "Provider OIDC GitHub",
+    "signs short-lived tokens": "menandatangani token sesaat",
+    "valid for minutes only": "hanya berlaku beberapa menit",
+    "+ service principal · no secret": "+ service principal · tanpa secret",
+    "waiting for a token": "menunggu token",
+    "Azure access token": "Access token Azure",
+    "short-lived · for the app": "sesaat · untuk aplikasi",
+    "RBAC: Contributor on rg-storefront only": "RBAC: Contributor hanya di rg-storefront",
+    "running version 1.4": "menjalankan versi 1.4",
+    "untouched by this deployment": "tidak tersentuh deployment ini",
+    "The old way: a client secret in GitHub": "Cara lama: client secret di GitHub",
+    "expires · can leak · someone must rotate it": "kedaluwarsa · bisa bocor · harus ada yang merotasi",
+    "OIDC token signed by GitHub · iss: token.actions.githubusercontent.com · aud: api://AzureADTokenExchange": "Token OIDC ditandatangani GitHub · iss: token.actions.githubusercontent.com · aud: api://AzureADTokenExchange",
+    "head-office IT": "TI kantor pusat",
+    "PIM: eligible for Owner": "PIM: eligible untuk Owner",
+    "on rg-storefront-prod": "di rg-storefront-prod",
+    "no access": "tanpa akses",
+    "09:00 activate": "09.00 aktivasi",
+    "MFA + reason": "MFA + alasan",
+    "active · 2 hours": "active · 2 jam",
+    "11:00 expires": "11.00 kedaluwarsa",
+    "back to eligible": "kembali eligible",
+    "approved by Ibu Sari ✓": "disetujui Ibu Sari ✓"
+  }
+}

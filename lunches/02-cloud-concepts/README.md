@@ -1,9 +1,12 @@
 # Lunch 02 · Cloud Concepts (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 1:** Foundations
 > **Time:** 60 minutes · **Prerequisite lunches:** 01
 > **AZ-900 skill area:** Describe cloud concepts
 > **Lab:** [Lab 02 · Make the business case](../../labs/02-cloud-concepts/README.md) — about 40 minutes · cost 💲 (no Azure resources created)
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -213,16 +216,16 @@ The **shared responsibility model** says who looks after each layer in each serv
 | Your data | You | You | You | You |
 | Settings and configuration | You | You | You | You |
 | Identities and access | You | You | You | You |
-| Devices (laptops, phones) | You | You | You | Shared |
-| Applications | You | You | Shared | Shared |
+| Devices (laptops, phones) | You | You | You | You |
+| Applications | You | You | Shared | Microsoft |
 | Network controls | You | You | Shared | Microsoft |
 | Operating system | You | You | Microsoft | Microsoft |
 | Physical hosts | You | Microsoft | Microsoft | Microsoft |
 | Physical network and datacenter | You | Microsoft | Microsoft | Microsoft |
 
 Read the table from the bottom up: each step from on-premises to SaaS hands more layers to Microsoft. Now read the top
-three rows. They never move. Whatever the service type, Nusantara Retail decides who can sign in, enforces MFA,
-classifies customer data and configures each service securely. A provider can run a flawless platform while you still
+four rows. They never move. Whatever the service type, Nusantara Retail decides who can sign in, enforces MFA,
+classifies customer data, configures each service securely and looks after its own laptops and phones. A provider can run a flawless platform while you still
 leak data through one weak password.
 
 The "Shared" cells are where most real incidents happen, because each side assumes the other is looking. In PaaS,
@@ -320,7 +323,7 @@ run?
 What to watch for:
 
 - As the slider moves from on-premises to IaaS, PaaS and SaaS, count how many layers each side owns.
-- The three layers at the top of the stack never change owner.
+- The four layers at the top of the stack never change owner.
 - With a fixed server, capacity is either wasted or too small; watch what happens on 12.12.
 - Elastic capacity follows the demand curve up and back down, and the bill follows it too.
 
@@ -376,9 +379,19 @@ What to watch for:
 - Public, private, hybrid and multicloud describe where workloads run and who owns the hardware; Azure Arc brings
   servers and clusters outside Azure under Azure management.
 - IaaS, PaaS and SaaS hand more of the stack to the provider, and serverless goes furthest for event-driven code. Your
-  data, settings and identities always stay yours.
+  data, settings, identities and devices always stay yours.
 - High availability, scalability, elasticity, reliability, predictability, security, governance and manageability are
   benefits you design for. They do not happen just because something runs in the cloud.
+
+## 🗒️ Field notes from Stefanus
+
+> **An SLA is a refund policy, not an insurance policy.** When a design document says "99.99%", I ask two questions.
+> First: 99.99% of what? I list every service a customer request passes through and multiply their SLAs, because a
+> chain of services is weaker than its weakest link. Second: what happens when the provider misses the target? The
+> answer is a service credit, a percentage of that one service's monthly fee, and only if you claim it. It does not
+> cover the sales lost on 12.12, or the customers who never came back. So I read each SLA as a commitment for one
+> component, never as the availability of the whole shop. The business target, such as "no more than 22 minutes of
+> downtime a month", is mine to design for, and to test.
 
 ## 🔬 Your lab: Make the business case
 

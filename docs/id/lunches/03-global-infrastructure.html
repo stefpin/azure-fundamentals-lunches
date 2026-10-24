@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 03 · Toko Kita Tinggal di Mana? — Makan Siang 03: Infrastruktur Global Azure: Region, Availability Zone, dan Region Pair (Dasar) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 03 · Infrastruktur Global Azure: Region, Availability Zone, dan Region Pair (Dasar). Jakarta atau Singapura — dan apa jadinya kalau gedung itu sedang apes? Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/03-global-infrastructure.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/03-global-infrastructure.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/03-global-infrastructure.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/03-global-infrastructure.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 03 · Toko Kita Tinggal di Mana? — Makan Siang 03: Infrastruktur Global Azure: Region, Availability Zone, dan Region Pair (Dasar)">
+<meta property="og:description" content="Makan Siang 03 · Infrastruktur Global Azure: Region, Availability Zone, dan Region Pair (Dasar). Jakarta atau Singapura — dan apa jadinya kalau gedung itu sedang apes? Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/03-global-infrastructure.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="03" style="--c:#1665d8">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/03-global-infrastructure.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 03</span> Season 1 · 🧱 Bagian 1 · Fondasi</div>
+      <h1>Toko Kita Tinggal di Mana?</h1>
+      <div class="lunch-title">Makan Siang 03 · Infrastruktur Global Azure: Region, Availability Zone, dan Region Pair (Dasar)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 35 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="01-before-you-begin.html" title="Ruang Sebelah Pantry">↩ 01</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 02 · Sewa, Bukan Beli?, konsep IaaS, PaaS, dan SaaS — serta siapa bertanggung jawab atas apa — sudah Anda jelaskan dalam bahasa uang dan risiko.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-0"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, berkeringat"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 7% siap</b>Setelah episode ini Anda bisa menjawab: “Hari ini masih berhari-hari, tetapi di Azure satu pusat data bisa gagal total tanpa menghentikan kita.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-dari-satu-gedung-ke-satu-geografi">Dari satu gedung ke satu geografi</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-availability-zone-gedung-gedung-terpisah-di-dalam-satu-region">Availability zone: gedung-gedung terpisah di dalam satu region</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-resource-zonal-zone-redundant-dan-nonzonal">Resource zonal, zone-redundant, dan nonzonal</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-region-pair-region-tanpa-pasangan-dan-sovereign-cloud">Region pair, region tanpa pasangan, dan sovereign cloud</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-memilih-region-untuk-nusantara-retail">Memilih region untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/03-global-infrastructure.html">🔬 Buka Lab 03</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> bagaimana pusat data (datacenter), availability zone (<em>zona ketersediaan</em>), region (<em>wilayah</em>), dan geografi saling berkaitan, serta dari jenis kegagalan apa setiap tingkat melindungi Anda.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membandingkan</strong> resource (<em>sumber daya</em>) zonal, zone-redundant, dan nonzonal (regional), lalu memilih perilaku yang tepat untuk web server, alamat IP publik, dan storage account (<em>akun penyimpanan</em>).</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Mendeskripsikan</strong> apa yang diberikan region pair (<em>pasangan wilayah</em>), apa yang tidak, dan cara merencanakan region yang tidak punya pasangan, seperti Indonesia Central.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> region untuk sebuah workload (beban kerja, yaitu aplikasi beserta semua komponen pendukungnya) dengan menimbang residensi data, latensi, ketersediaan layanan dan SKU, harga, availability zone, serta opsi pemulihan bencana (disaster recovery).</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 03</span>
+        <div class="story-body"><p>Business case minggu lalu disambut baik. Kini Ibu Sari mengajukan pertanyaan lanjutan yang sangat
+praktis: <em>&quot;Kalau toko kita pindah ke Azure, sebenarnya tokonya tinggal di mana? Jakarta? Singapura? Lalu bagaimana kalau
+gedungnya sedang ketiban sial, seperti pantri kita waktu atapnya bocor?&quot;</em></p>
+<p>Seperti biasa, semua orang langsung punya pendapat. Dewi ingin region yang paling dekat, karena halaman checkout terasa
+lambat di jaringan seluler. Tim keuangan pernah mendengar bahwa layanan yang sama bisa berbeda harganya di negara lain.
+Pak Budi mengingatkan bahwa database pelanggan menyimpan nama, nomor telepon, dan alamat pengiriman para pembeli di
+Indonesia, dan tim legal ingin data itu tetap berada di Indonesia.</p>
+<p>Anda membuka daftar region Azure dan langsung disambut puluhan nama, jumlah zona, pasangan region, dan catatan kaki.
+Sebelum ada yang membuat satu pun resource produksi, Anda perlu jawaban yang jelas untuk sang direktur: <strong>region mana
+yang sebaiknya dipakai Nusantara Retail, dan bagaimana toko tetap hidup jika satu gedung, atau bahkan seluruh region,
+mengalami gangguan?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 5 adegan</span></div>
+      
+      <article class="scene-card" id="1-dari-satu-gedung-ke-satu-geografi" data-spy><span class="scene-no">Adegan 1 dari 5</span><h3>Dari satu gedung ke satu geografi</h3><div class="prose"><p>Azure bukanlah satu komputer raksasa di satu tempat. Azure adalah armada <strong>pusat data</strong> yang tersebar di seluruh dunia:
+gedung-gedung berisi server, perangkat penyimpanan, dan perangkat jaringan, masing-masing dengan pasokan listrik, sistem
+pendingin, dan pengamanan fisiknya sendiri. Anda tidak pernah memilih pusat data secara langsung. Azure mengelompokkan
+pusat data ke dalam unit yang lebih besar, dan Anda memilih di antara unit-unit itu.</p>
+<p><strong>Region</strong> adalah sekumpulan pusat data di satu wilayah metropolitan, yang saling terhubung oleh jaringan cepat
+berlatensi rendah. Latensi adalah waktu tempuh data dari satu titik ke titik lain; makin rendah latensinya, makin cepat sebuah
+aplikasi terasa. Saat Anda membuat virtual machine (<em>komputer virtual</em>), storage account, atau database, Anda hampir
+selalu memilih region, dan resource itu akan tinggal di sana. Setiap region punya nama tampilan untuk manusia dan nama
+teknis untuk script: <em>Indonesia Central</em> ditulis <code>indonesiacentral</code>, <em>Southeast Asia</em> ditulis <code>southeastasia</code>.
+Dokumentasi Microsoft mencantumkan lebih dari 70 region saat tulisan ini dibuat (Oktober 2026), dan region baru terus
+bermunculan. Indonesia Central di Jakarta dibuka pada 27 Mei 2025.</p>
+<p><strong>Geografi</strong> (geography) adalah kelompok berisi satu region atau lebih yang membentuk batas residensi data, biasanya
+sebuah negara atau pasar seperti Indonesia, Jepang, atau Eropa. Residensi data berarti aturan tentang di mana data
+secara fisik boleh disimpan. Setiap region menjadi anggota tepat satu geografi. Detail ini lebih penting daripada
+kelihatannya. Southeast Asia (Singapura) dan East Asia (Hong Kong) termasuk geografi <em>Asia Pacific</em>, sedangkan
+Indonesia Central termasuk geografi <em>Indonesia</em>. Jika Nusantara Retail wajib menyimpan data pelanggan di dalam
+Indonesia, batas geografi inilah garis yang tidak boleh dilewati.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  G1[&quot;Geografi: Indonesia&lt;br/&gt;(batas residensi data)&quot;] --&gt; R1[&quot;Region: Indonesia Central&lt;br/&gt;Jakarta · indonesiacentral&quot;]
+  G2[&quot;Geografi: Asia Pacific&lt;br/&gt;(batas residensi data)&quot;] --&gt; R2[&quot;Region: Southeast Asia&lt;br/&gt;Singapura · southeastasia&quot;]
+  G2 --&gt; R3[&quot;Region: East Asia&lt;br/&gt;Hong Kong · eastasia&quot;]
+  R1 --&gt; Z1[&quot;Availability zone 1&quot;]
+  R1 --&gt; Z2[&quot;Availability zone 2&quot;]
+  R1 --&gt; Z3[&quot;Availability zone 3&quot;]
+  Z1 --&gt; D1[&quot;Pusat data&quot;]
+  Z1 --&gt; D2[&quot;Pusat data&quot;]
+  Z2 --&gt; D3[&quot;Pusat data&quot;]
+  Z3 --&gt; D4[&quot;Pusat data&quot;]
+  Z3 --&gt; D5[&quot;Pusat data&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Ada segelintir layanan yang bersifat <strong>nonregional</strong>: Anda sama sekali tidak men-deploy-nya ke sebuah region.
+Microsoft Entra ID, Azure DNS, Azure Front Door, dan Azure Traffic Manager berjalan di banyak region sekaligus, sehingga
+hilangnya satu region tidak ikut menjatuhkan layanan tersebut. Sebagian besar yang Anda bangun dalam kursus ini bersifat
+regional, artinya keputusan memilih region akan Anda ambil berulang kali.</p>
+<p>Dua catatan praktis sebelum kita masuk lebih dalam. Pertama, tidak semua region terbuka untuk semua pelanggan: beberapa
+region dibatasi untuk skenario tertentu, misalnya pemulihan bencana di dalam negeri, dan aksesnya harus diminta
+terlebih dahulu. Kedua, layanan yang sama belum tentu tersedia di setiap region, dan region baru sering kali dibuka
+dengan katalog layanan yang lebih kecil daripada region yang sudah lama beroperasi. Bagian 5 menunjukkan cara
+memeriksanya sebelum Anda memutuskan.</p>
+<p>Anda akan menjumpai region di tiga tempat. Dropdown region di portal mengelompokkannya per geografi, sehingga Singapura
+muncul sebagai &quot;(Asia Pacific) Southeast Asia&quot;. Perintah Azure CLI <code>az account list-locations</code> menampilkan setiap region
+yang bisa dilihat subscription (<em>langganan</em>) Anda, lengkap dengan geografi, lokasi fisik, region pasangan, dan detail
+zonanya. Terakhir, daftar region di dokumentasi Microsoft menampilkan fakta yang sama untuk semua orang, termasuk
+region yang belum bisa Anda akses.</p>
+</div></article><article class="scene-card" id="2-availability-zone-gedung-gedung-terpisah-di-dalam-satu-region" data-spy><span class="scene-no">Adegan 2 dari 5</span><h3>Availability zone: gedung-gedung terpisah di dalam satu region</h3><div class="prose"><p><strong>Availability zone</strong> adalah kelompok terpisah berisi satu pusat data atau lebih di dalam sebuah region, dengan pasokan
+listrik, pendingin, dan jaringan yang berdiri sendiri. Zona-zona itu sengaja dibuat berjauhan, biasanya terpisah
+beberapa kilometer dan umumnya berjarak tidak lebih dari sekitar 100 kilometer satu sama lain, sehingga pemadaman listrik,
+kebakaran, atau banjir lokal di satu zona semestinya tidak menghentikan zona lainnya. Namun zona-zona itu juga sengaja
+dibuat cukup dekat: Microsoft menargetkan waktu bolak-balik (round trip) antarzona di bawah kira-kira dua milidetik.
+Itu cukup cepat untuk menyalin data antarzona secara sinkron, yaitu sebelum sebuah penulisan data dikonfirmasi.</p>
+<p>Bayangkan sebuah usaha roti di Jakarta yang punya tiga dapur produksi: di Jakarta Utara, Jakarta Selatan, dan Jakarta
+Timur. Masing-masing punya sambungan listrik, genset, dan saluran air sendiri. Kalau dapur di Jakarta Utara kebanjiran,
+dua dapur lainnya tetap memanggang roti, dan karena jaraknya masih satu kota, adonan bisa dikirim ke mana saja dengan
+cepat. Tiga dapur itulah availability zone; kota Jakarta adalah region-nya.</p>
+<p>Region yang menyediakan zona memiliki minimal tiga zona, dan beberapa punya lebih banyak (East US 2 punya empat saat
+tulisan ini dibuat). Southeast Asia, East Asia, dan Indonesia Central masing-masing punya tiga. Sebagian region,
+kebanyakan yang lebih tua atau lebih kecil, sama sekali tidak punya zona. Bahkan di region yang punya zona pun, layanan,
+tier (tingkatan layanan), atau ukuran VM tertentu mungkin belum mendukung zona di sana, jadi selalu periksa dulu sebelum Anda merancang
+dengan mengandalkannya.</p>
+<p>Zona melindungi Anda dari lebih dari sekadar bencana. Microsoft berupaya meluncurkan pembaruan platform ke satu zona
+dalam satu waktu di sebuah region, sehingga workload yang berjalan di beberapa zona tetap melayani saat salah satu
+zonanya sedang diperbarui. Zona juga membatasi dampak kegagalan yang lebih kecil, misalnya satu rak server atau satu
+cluster (sekelompok server yang bekerja bersama) yang mati, sehingga bagian lain workload Anda tetap berjalan.</p>
+<p>Ada satu detail halus yang mengejutkan hampir semua orang. Saat Anda memilih &quot;zona 1&quot;, yang Anda pilih sebenarnya adalah
+<strong>zona logis</strong> (logical zone). Azure memetakan zona logis ke zona fisik secara terpisah untuk setiap subscription, tepat
+pada saat subscription itu dibuat. Karena itu, zona 1 di subscription Anda bisa jadi gedung yang berbeda dengan zona 1
+di subscription rekan Anda. Ibaratnya dua perusahaan yang menyewa gudang di kawasan pergudangan yang sama: bangunan yang
+oleh perusahaan pertama disebut &quot;Gudang 1&quot; bisa saja disebut &quot;Gudang 3&quot; oleh perusahaan kedua. Anda bisa melihat
+pemetaan milik Anda sendiri dengan <code>az account list-locations</code>, dan itulah yang akan Anda lakukan di lab.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Jangan pernah berasumsi bahwa &quot;zona 1&quot; berarti gedung yang sama di dua subscription yang berbeda. Jika Anda membagi
+sebuah workload ke beberapa subscription dan peduli di zona fisik mana setiap bagiannya mendarat, periksa dulu
+pemetaan zona logis ke zona fisik untuk kedua subscription itu.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Saat tulisan ini dibuat, dokumentasi availability zone dari Microsoft menyatakan bahwa Azure tidak menagih biaya
+transfer data antar-availability zone di region yang sama. Menyebarkan workload ke beberapa zona membuat Anda
+membayar instans tambahannya, bukan lalu lintas di antara zona. Periksa halaman harga terbaru sebelum Anda
+memasukkan hal ini ke dalam business case.</p>
+</aside>
+</div></article><article class="scene-card" id="3-resource-zonal-zone-redundant-dan-nonzonal" data-spy><span class="scene-no">Adegan 3 dari 5</span><h3>Resource zonal, zone-redundant, dan nonzonal</h3><div class="prose"><p>Region yang punya zona tidak otomatis membuat resource Anda tangguh. Yang menentukan adalah bagaimana setiap resource
+memanfaatkan zona-zona itu. Layanan Azure menunjukkan tiga perilaku:</p>
+<ul>
+<li>Resource <strong>zonal</strong> dipatok ke satu zona yang Anda pilih. Virtual machine beserta managed disk-nya (disk yang dikelola
+Azure untuk VM itu) yang dibuat dengan <code>--zone 1</code> bersifat zonal. Resource zonal terlindung dari masalah di zona lain,
+tetapi nasibnya terikat pada zonanya sendiri: jika zona 1 padam, VM itu ikut padam.</li>
+<li>Resource <strong>zone-redundant</strong> disebar atau direplikasi ke beberapa zona oleh layanan itu sendiri. Contohnya: Standard
+public IP (alamat IP publik yang bisa dihubungi dari internet) yang dibuat sebagai zone-redundant, storage account
+yang memakai <strong>zone-redundant storage (ZRS)</strong>, frontend dari Standard load balancer (penyeimbang beban yang membagi
+lalu lintas ke beberapa server), serta database seperti Azure SQL Database atau Azure Cosmos DB yang redundansi
+zonanya diaktifkan. Saat sebuah zona gagal, Microsoft yang melakukan failover untuk Anda, yaitu mengalihkan layanan
+ke zona-zona yang tersisa.</li>
+<li>Resource <strong>nonzonal</strong>, disebut juga resource <strong>regional</strong>, tidak dikonfigurasi untuk zona, entah karena region-nya
+memang tidak punya zona atau karena tidak ada yang memilihnya. Azure bisa menempatkannya di zona mana pun, dan Anda
+tidak bisa menentukan zona yang mana. Jika zona itu mengalami gangguan, resource tersebut bisa ikut mati.</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Perilaku</th>
+<th>Siapa yang memilih zona</th>
+<th>Bertahan saat satu zona hilang?</th>
+<th>Contoh</th>
+<th>Cocok untuk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zonal</td>
+<td>Anda (zona 1, 2, atau 3)</td>
+<td>Hanya jika Anda sendiri menjalankan salinannya di zona lain</td>
+<td>VM, managed disk, public IP zonal</td>
+<td>Beberapa VM yang disebar ke berbagai zona; komponen yang sangat sering saling berkomunikasi dan ingin Anda tempatkan berdampingan</td>
+</tr>
+<tr>
+<td>Zone-redundant</td>
+<td>Layanannya, di beberapa zona</td>
+<td>Ya, Azure yang menangani failover</td>
+<td>Storage ZRS, public IP zone-redundant, frontend load balancer, database zone-redundant</td>
+<td>Komponen bersama yang harus tetap berfungsi</td>
+</tr>
+<tr>
+<td>Nonzonal (regional)</td>
+<td>Tidak ada; Azure yang menempatkan</td>
+<td>Tidak dijamin</td>
+<td>Resource yang dibuat tanpa pengaturan zona; apa pun di region tanpa zona</td>
+<td>Dev dan test, atau saat lapisan lain sudah menangani ketahanannya</td>
+</tr>
+</tbody>
+</table></div>
+<p>Storage membuat perbedaannya terasa nyata. <strong>Locally redundant storage (LRS)</strong> menyimpan tiga salinan data Anda di
+dalam satu pusat data: murah, dan cukup untuk data yang bisa Anda buat ulang, tetapi masalah yang melanda seluruh pusat
+data bisa membuat ketiga salinan itu tidak bisa diakses sekaligus. ZRS menulis setiap perubahan ke salinan di tiga zona
+atau lebih sebelum mengonfirmasi penulisan itu, sehingga satu zona utuh bisa hilang tanpa kehilangan data maupun
+ketersediaan. Makan Siang 07 membahas semua opsi redundansi untuk storage.</p>
+<p>Ibaratnya menyimpan fotokopi ijazah. LRS seperti menaruh tiga lembar fotokopi di satu lemari: rapi dan murah, tetapi
+kalau rumahnya kebanjiran, ketiganya basah bersamaan. ZRS seperti menitipkan fotokopi itu di rumah tiga saudara di
+kecamatan yang berbeda, dan Anda baru tenang setelah ketiganya mengabari bahwa titipan sudah diterima.</p>
+<p>Desain yang tetap bertahan saat zona mana pun hilang disebut <strong>zone-resilient</strong>. Ada dua cara untuk mencapainya:
+gunakan layanan zone-redundant, atau jalankan beberapa instans zonal di zona yang berbeda di belakang sesuatu yang
+membagi lalu lintas, misalnya load balancer. Pola kedua inilah yang akan Anda pakai untuk melindungi web server
+Nusantara Retail di Makan Siang 09.</p>
+<p>Ada dua kesalahan yang sebaiknya Anda hindari sejak hari pertama. Yang pertama adalah menyalin script yang menulis
+<code>--zone 1</code> untuk setiap VM: hasilnya sepasang server yang katanya memiliki ketersediaan tinggi (high
+availability), padahal keduanya tinggal di zona yang sama dan akan tumbang bersama. Sebarkan resource zonal dengan
+sengaja, dan ingat bahwa VM zonal menyimpan managed disk-nya di zona yang sama. Yang kedua adalah menganggap redundansi
+zona sebagai cadangan (backup). ZRS melindungi Anda dari perangkat keras yang rusak dan gedung yang hilang, bukan dari
+ulah manusia: jika seseorang menghapus atau menimpa sebuah file, perubahan itu diterapkan ke setiap salinan di setiap
+zona dalam sekejap. Kembali ke fotokopi ijazah tadi: kalau Anda berpesan &quot;tolong sobek fotokopinya&quot; kepada ketiga
+saudara, ketiganya akan patuh. Risiko itu ditangani oleh backup, soft delete (data yang terhapus masih bisa dipulihkan selama periode tertentu), dan
+versioning (versi lama sebuah file tetap disimpan); semuanya dibahas di Makan Siang 17 dan 24.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shoppers([&quot;Pembeli&quot;]) --&gt; pip
+  subgraph region[&quot;Region dengan tiga availability zone&quot;]
+    pip[&quot;Standard public IP&lt;br/&gt;zone-redundant&quot;]
+    subgraph z1[&quot;Zona 1&quot;]
+      vm1[&quot;vm-web-1&lt;br/&gt;zonal&quot;]
+      c1[(&quot;Salinan ZRS 1&quot;)]
+    end
+    subgraph z2[&quot;Zona 2&quot;]
+      vm2[&quot;vm-web-2&lt;br/&gt;zonal&quot;]
+      c2[(&quot;Salinan ZRS 2&quot;)]
+    end
+    subgraph z3[&quot;Zona 3&quot;]
+      c3[(&quot;Salinan ZRS 3&quot;)]
+    end
+  end
+  pip --&gt; vm1
+  pip --&gt; vm2
+  vm1 --&gt; c1
+  vm2 --&gt; c2
+  c1 -. salinan sinkron .-&gt; c2
+  c2 -. salinan sinkron .-&gt; c3
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p><strong>Melihat lebih dekat Standard public IP.</strong> Public IP menunjukkan mengapa Anda perlu membaca nilai bawaan (default)
+dengan teliti. Public IP dengan SKU (varian produk) Basic sudah dipensiunkan pada 30 September 2025, sehingga setiap public IP baru
+adalah Standard. Standard public IP bisa zonal (dibuat dengan <code>--zone 1</code>) atau zone-redundant (dibuat dengan
+<code>--zone 1 2 3</code>). Lalu bagaimana dengan yang dibuat tanpa pengaturan zona sama sekali? Di region yang punya
+availability zone, Microsoft kini memperlakukannya sebagai zone-redundant: semua Standard IP yang dulunya nonzonal di
+region berzona telah dijadikan zone-redundant, dan IP yang menampilkan zona 1, 2, dan 3 berperilaku sama dengan IP yang
+tidak menampilkan zona sama sekali. Di region tanpa zona, setiap public IP bersifat nonzonal. Dua aturan lagi
+melengkapi gambarannya: pengaturan zona sebuah IP tidak bisa diubah setelah dibuat, dan IP zone-redundant hanya bisa
+dibuat di region yang ketiga zonanya sudah aktif. Di lab, Anda akan membuat ketiga variannya dan membandingkan properti
+<code>zones</code> masing-masing. Menuliskan zona secara eksplisit di script membuat niat Anda jelas bagi orang berikutnya yang
+membacanya.</p>
+</div></article><article class="scene-card" id="4-region-pair-region-tanpa-pasangan-dan-sovereign-cloud" data-spy><span class="scene-no">Adegan 4 dari 5</span><h3>Region pair, region tanpa pasangan, dan sovereign cloud</h3><div class="prose"><p>Zona melindungi Anda di dalam sebuah region. Untuk kejadian langka ketika seluruh region hilang, Azure punya gagasan
+kedua: <strong>region pair</strong>. Microsoft memasangkan sebagian region dengan region mitra, biasanya di geografi yang sama dan
+cukup jauh sehingga satu bencana kecil kemungkinannya menghantam keduanya. Anda tidak bisa memilih pasangan sendiri;
+Microsoft yang menentukannya. Southeast Asia dan East Asia adalah satu pasangan.</p>
+<p>Ibaratnya dua kantor cabang bank yang &quot;dijodohkan&quot; oleh kantor pusat: jadwal renovasi keduanya tidak pernah dibuat
+bersamaan, dan jika terjadi bencana besar, salah satunya didahulukan untuk buka kembali. Namun berkas nasabah di cabang
+pertama tidak otomatis difotokopi ke cabang kedua; urusan itu tetap harus Anda atur sendiri.</p>
+<p>Jika region Anda punya pasangan dan Anda memakai pasangan itu sebagai region sekunder, Anda mendapat beberapa
+keuntungan dari platform, dan ada baiknya Anda tahu persis di mana batas keuntungan itu:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Yang diberikan region pair</th>
+<th>Yang <strong>tidak</strong> diberikan region pair</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pembaruan berurutan:</strong> Microsoft menggilir pembaruan platform terencana di kedua region, sehingga pembaruan yang bermasalah kecil kemungkinannya mengenai keduanya sekaligus.</td>
+<td>Salinan VM, database, atau file Anda. Tidak ada yang direplikasi kecuali Anda menyalakan fitur yang melakukannya.</td>
+</tr>
+<tr>
+<td><strong>Prioritas pemulihan:</strong> dalam gangguan langka yang melanda seluruh geografi, salah satu region dari setiap pasangan diprioritaskan untuk dipulihkan.</td>
+<td>Failover otomatis untuk workload Anda. Itu harus Anda rancang, bangun, dan uji sendiri.</td>
+</tr>
+<tr>
+<td><strong>Residensi data:</strong> hampir setiap pasangan tetap berada di dalam satu geografi. Brazil South, yang dipasangkan dengan South Central US, adalah pengecualian yang terkenal.</td>
+<td>Kebebasan memilih mitra. Pasangannya ditetapkan oleh Microsoft.</td>
+</tr>
+<tr>
+<td>Target siap pakai untuk segelintir layanan yang punya replikasi bawaan ke region pasangan, seperti geo-redundant storage (GRS).</td>
+<td>Jaminan bahwa layanan yang Anda pakai mendukung replikasi berbasis pasangan sama sekali.</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Region pair bukanlah backup. Membuat resource di Southeast Asia tidak menyalinnya ke East Asia. Hanya fitur yang
+Anda nyalakan, seperti GRS untuk storage account atau geo-replica untuk database, yang memindahkan data ke region
+lain. Itu pun, failover akun GRS yang dikelola Microsoft hanya terjadi dalam situasi katastrofik, jadi rencanakan dan
+uji failover Anda sendiri, entah region Anda punya pasangan atau tidak.</p>
+</aside>
+<p><strong>Region tanpa pasangan.</strong> Banyak region yang lebih baru sama sekali tidak punya pasangan dan mengandalkan availability
+zone sebagai perlindungan utamanya. Di Asia Pasifik, contohnya Indonesia Central, Malaysia West, dan New Zealand North.
+&quot;Tanpa pasangan&quot; tidak berarti &quot;tanpa pemulihan bencana&quot;. Artinya, Anda sendiri yang memilih region kedua dan
+menyiapkan replikasi dengan fitur yang bisa bekerja di antara dua region mana pun, seperti geo-replica database, object
+replication di storage, Azure Site Recovery untuk VM, atau backup yang disalin ke region lain. Yang hilang hanyalah
+kemudahan yang mengandaikan adanya pasangan: geo-redundant storage klasik, misalnya, mereplikasi ke region pasangan,
+sehingga tidak tersedia di region yang tidak punya pasangan. Makan Siang 17 menyusun rencana pemulihan untuk situasi
+persis seperti ini.</p>
+<p><strong>Sovereign cloud.</strong> Di samping cloud Azure global, Microsoft menjalankan instans terpisah untuk kebutuhan hukum dan
+regulasi khusus: <strong>Azure Government</strong> untuk lembaga pemerintah Amerika Serikat beserta mitranya, dan <strong>Azure operated by
+21Vianet</strong> di Tiongkok. Dalam materi ujian AZ-900, region semacam ini disebut sovereign region (<em>wilayah berdaulat</em>).
+Keduanya punya region sendiri, endpoint untuk login dan manajemen sendiri, dan sering kali katalog layanan yang lebih
+kecil. Nusantara Retail tidak akan pernah membutuhkannya, tetapi keberadaannya menjelaskan mengapa &quot;Azure&quot; bisa
+terlihat berbeda di pasar lain, dan mengapa script yang ditulis untuk Azure global belum tentu bisa berjalan di sana
+tanpa diubah.</p>
+</div></article><article class="scene-card" id="5-memilih-region-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 5 dari 5</span><h3>Memilih region untuk Nusantara Retail</h3><div class="prose"><p>Memilih region adalah keputusan desain, bukan nilai bawaan yang Anda terima begitu saja di dropdown. Ibaratnya mencari
+kos: Anda tidak asal mengambil kamar pertama yang ditawarkan. Anda menimbang jaraknya ke kantor, harga sewanya,
+fasilitasnya, apakah daerahnya langganan banjir, dan ke mana Anda bisa menumpang kalau terjadi sesuatu. Region pun
+ditimbang dengan cara serupa. Telusuri enam faktor yang sama setiap kali, dan tuliskan jawabannya agar engineer
+berikutnya memahami alasannya:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Faktor</th>
+<th>Pertanyaan yang perlu diajukan</th>
+<th>Cara memeriksa</th>
+<th>Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Residensi data dan kepatuhan (compliance)</td>
+<td>Apakah data harus tetap berada di satu negara atau satu geografi?</td>
+<td>Geografi region di daftar region; tim legal atau tim kepatuhan Anda</td>
+<td>Data pelanggan sebaiknya tetap di Indonesia, jadi arahnya ke Indonesia Central</td>
+</tr>
+<tr>
+<td>Latensi</td>
+<td>Di mana penggunanya, dan seberapa jauh region-nya?</td>
+<td>Uji dari lokasi pengguna Anda; Microsoft juga menerbitkan statistik latensi antar-region</td>
+<td>Pembeli tersebar di seluruh Indonesia, jadi Jakarta adalah region terdekat</td>
+</tr>
+<tr>
+<td>Ketersediaan layanan dan SKU</td>
+<td>Apakah region itu menyediakan setiap layanan, tier, dan ukuran VM yang Anda butuhkan?</td>
+<td>Halaman products-by-region, <code>az provider show</code>, dan <code>az vm list-skus</code></td>
+<td>Periksa setiap layanan terlebih dahulu; Southeast Asia punya katalog terlengkap di sekitar kita</td>
+</tr>
+<tr>
+<td>Harga</td>
+<td>Apakah hal yang sama lebih mahal atau lebih murah di region ini?</td>
+<td>Pricing calculator (<em>kalkulator harga</em>) dengan setiap kandidat region dipilih</td>
+<td>Bandingkan Jakarta dan Singapura untuk SKU yang benar-benar akan Anda pakai</td>
+</tr>
+<tr>
+<td>Availability zone</td>
+<td>Bisakah workload disebar ke beberapa zona?</td>
+<td>Daftar region, dan pemetaan zona di CLI</td>
+<td>Kedua region punya tiga zona</td>
+</tr>
+<tr>
+<td>Opsi pemulihan bencana</td>
+<td>Adakah pasangan, dan region kedua mana yang bisa Anda pakai?</td>
+<td>Daftar region pair dan panduan keandalan (reliability guide) setiap layanan</td>
+<td>Indonesia Central tidak punya pasangan, jadi rencananya Anda susun sendiri</td>
+</tr>
+</tbody>
+</table></div>
+<p>Jarak berpengaruh pada baris terakhir itu. Dalam statistik waktu bolak-balik antar-region yang diterbitkan Microsoft
+(nilai median selama 30 hari yang berakhir pada 30 Juli 2026), Indonesia Central dan Southeast Asia berjarak sekitar 16
+sampai 17 milidetik, sedangkan Indonesia Central ke East Asia sekitar 47 milidetik. Angka-angka itu menggambarkan lalu
+lintas di dalam jaringan Microsoft; yang dirasakan seorang pembeli di Makassar juga bergantung pada operator seluler
+yang ia pakai. Itulah sebabnya Anda perlu mengukur dari lokasi pengguna yang sebenarnya.</p>
+<p>Harga juga perlu dicermati dengan sama telitinya. Selisih kecil per jam bisa menjadi jumlah yang lumayan untuk server
+yang menyala sebulan penuh, dan region kedua menambah biaya lebih dari sekadar resource-nya sendiri: lalu lintas
+replikasi antar-region muncul di tagihan sebagai biaya transfer data. Hitung harga seluruh desain di pricing
+calculator, termasuk region pemulihannya, sebelum Anda menjanjikan angka kepada Ibu Sari.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  A[&quot;Workload baru&quot;] --&gt; B{&quot;Apakah data harus tetap di&lt;br/&gt;satu negara atau geografi?&quot;}
+  B -- Ya --&gt; C[&quot;Saring region di dalam geografi itu&quot;]
+  B -- Tidak --&gt; D[&quot;Saring region yang dekat dengan pengguna&quot;]
+  C --&gt; E{&quot;Apakah layanan, SKU,&lt;br/&gt;dan zona yang dibutuhkan tersedia?&quot;}
+  D --&gt; E
+  E -- Tidak --&gt; F[&quot;Coret region itu atau ubah desainnya&quot;]
+  E -- Ya --&gt; G{&quot;Apakah region itu punya pasangan?&quot;}
+  G -- Ya --&gt; H[&quot;Manfaatkan pasangan itu untuk fitur berbasis pasangan&lt;br/&gt;dan tetap rancang failover sendiri&quot;]
+  G -- Tidak --&gt; I[&quot;Pilih region pemulihan sendiri,&lt;br/&gt;atau andalkan zona plus backup di region itu&quot;]
+  H --&gt; J[&quot;Bandingkan harga, lalu putuskan dan dokumentasikan&quot;]
+  I --&gt; J
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Untuk Nusantara Retail, jawabannya mulai terbentuk. Produksi berjalan di <strong>Indonesia Central</strong>, tersebar di ketiga
+zonanya: layanan zone-redundant di mana pun tersedia, dan beberapa VM zonal di bagian desain yang memang membutuhkan
+VM. Backup tetap berada di region itu. Boleh tidaknya salinan kedua disimpan di luar Indonesia, dengan Southeast Asia
+sebagai kandidat yang paling jelas, adalah pertanyaan untuk tim legal, bukan untuk Anda putuskan sendiri. Sementara
+itu, lab-lab di kursus ini memakai <strong>Southeast Asia</strong>, karena region itu punya tiga zona, sebuah pasangan, dan katalog
+layanan terlengkap di sekitar kita; Anda bisa memindahkan lab mana pun ke <code>indonesiacentral</code> dengan mengatur
+<code>LOCATION</code>.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Ibu Sari bertanya, &quot;Kalau seluruh region Jakarta mati, apakah kita akan kehilangan data
+pelanggan?&quot; Dengan rencana di atas, apa jawaban jujur Anda, dan satu keputusan mana yang akan mengubah jawaban itu?</p>
+</aside>
+<p>Di makan siang berikutnya, Anda akan melihat satu tingkat di atas region: bagaimana subscription, resource group, dan
+Azure Resource Manager menata semua yang Anda buat, di mana pun resource itu tinggal.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Dari bola dunia ke satu pusat data</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/03-global-infrastructure.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/03-global-infrastructure.html?lang=id" title="Demo interaktif: Dari bola dunia ke satu pusat data" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/03-global-infrastructure/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Bagaimana kamera memperbesar tampilan dari bola dunia ke sebuah geografi, sebuah region, tiga zonanya, dan akhirnya
+pusat data di dalam satu zona, serta dari apa setiap tingkat melindungi Anda.</li>
+<li>Saat zona 1 gagal: resource mana yang tetap berfungsi (zone-redundant) dan mana yang ikut mati bersama zonanya (zonal).</li>
+<li>Bagaimana desainnya berubah ketika web server kedua berjalan di zona lain.</li>
+<li>Perbedaan antara Southeast Asia, yang punya pasangan, dan Indonesia Central, yang tidak punya.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi membuat satu-satunya web server dengan <code>--zone 2</code> dan tidak ada apa pun di zona lain. Kemudian zona 2 kehilangan
+listrik. Apa yang terjadi pada toko, dan apa nama untuk jenis resource seperti ini?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>VM itu bersifat <strong>zonal</strong>, jadi ia ikut mati bersama zona 2 dan toko offline sampai zona itu pulih. <em>alasannya:</em>
+resource zonal berbagi nasib dengan zonanya; agar bertahan, jalankan VM kedua di zona lain di belakang load balancer.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Foto produk disimpan di Southeast Asia dengan zone-redundant storage (ZRS). Apakah foto-foto itu terlindungi jika
+seluruh region Southeast Asia tidak bisa diakses?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Tidak. ZRS menyimpan salinan di beberapa zona dalam <strong>satu</strong> region; gangguan yang melanda seluruh region membutuhkan
+salinan di region lain, misalnya geo-zone-redundant storage ke East Asia atau replikasi buatan Anda sendiri. <em>alasannya:</em> zona
+melindungi dari hilangnya satu zona, bukan seluruh region.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Seorang rekan berkata: &quot;Kita di Southeast Asia, yang berpasangan dengan East Asia, jadi VM kita otomatis failover ke
+Hong Kong.&quot; Benarkah begitu?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Tidak. Pasangan memberi pembaruan berurutan, prioritas pemulihan, dan residensi data, tetapi tidak pernah menyalin
+atau melakukan failover untuk VM Anda; Anda membutuhkan sesuatu seperti Azure Site Recovery dan rencana yang sudah
+diuji. <em>alasannya:</em> hanya fitur yang Anda nyalakan yang memanfaatkan pasangan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Tim legal memutuskan bahwa data pelanggan harus tetap berada di Indonesia. Region mana yang Anda pilih, dan seperti
+apa pemulihan bencananya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Indonesia Central, tersebar di ketiga zonanya, dengan backup yang disimpan di region itu; salinan apa pun ke region
+lain, seperti Southeast Asia, akan keluar dari Indonesia, sehingga butuh persetujuan tim legal. <em>alasannya:</em> region
+itu tidak punya pasangan, dan geografi adalah batas residensi data.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Anda membuat Standard public IP di Southeast Asia tanpa pengaturan zona apa pun, dan <code>az network public-ip show</code>
+tidak menampilkan zona. Apakah IP itu zonal, zone-redundant, atau nonzonal?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Zone-redundant. Di region yang punya availability zone, Standard public IP yang dibuat tanpa zona diperlakukan
+sebagai zone-redundant; hanya di region tanpa zona, IP itu menjadi nonzonal. <em>alasannya:</em> Microsoft telah menjadikan
+semua Standard IP yang dulunya nonzonal sebagai zone-redundant, jadi tetapkan zona secara eksplisit bila Anda ingin
+niat Anda terlihat jelas.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p><strong>Geografi</strong> adalah batas residensi data, <strong>region</strong> adalah sekumpulan pusat data di satu wilayah metropolitan, dan <strong>availability zone</strong> adalah kelompok pusat data terpisah dengan listrik, pendingin, dan jaringannya sendiri.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Zona hanya membantu jika resource Anda memanfaatkannya: resource <strong>zonal</strong> berbagi nasib dengan zonanya, resource <strong>zone-redundant</strong> bertahan saat satu zona gagal, dan resource <strong>nonzonal</strong> tidak memberi jaminan apa pun.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p><strong>Region pair</strong> memberi pembaruan berurutan, prioritas pemulihan, dan residensi data, tetapi tidak pernah mereplikasi atau melakukan failover workload Anda secara otomatis.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Region <strong>tanpa pasangan</strong>, seperti Indonesia Central, mengandalkan zona; untuk bencana yang melanda seluruh region, Anda sendiri yang memilih region kedua dan menyiapkan replikasinya, jika aturan data Anda mengizinkan.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Pilih region berdasarkan <strong>residensi, latensi, ketersediaan layanan dan SKU, harga, zona, dan opsi DR</strong>, lalu verifikasi masing-masing dengan dokumentasi atau CLI sebelum Anda membangun.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Sebut dulu gangguannya, baru pilih region-nya.</strong> Sebelum ada yang membuka dropdown region, saya selalu bertanya:
+<em>gangguan apa yang harus bisa dilewati desain ini — satu rak server, satu gedung, atau satu region utuh?</em> Setelah
+itu, setiap kotak di diagram arsitektur wajib diberi label: zonal, zone-redundant, atau nonzonal. Kotak tanpa label
+adalah tempat kejutan bersembunyi, biasanya berupa sepasang VM yang katanya &quot;tahan gangguan&quot; padahal sama-sama
+dibuat dengan <code>--zone 1</code>. Untuk tingkat region, aturan saya sama singkatnya: kalau tidak ada yang bisa menyebut nama
+fitur yang menyalin data ke region lain, berarti salinan itu memang tidak ada, entah region-nya punya pasangan atau
+tidak. Terakhir, saya mengukur latensi dari ponsel yang memakai jaringan seluler seperti milik pengguna sungguhan,
+bukan hanya dari Cloud Shell. Cloud Shell berjalan di dalam pusat data Azure, jadi ia tidak bisa merasakan sinyal di
+HP para pembeli.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>03</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Menjelajahi region dan zona</h3>
+          <div class="prose"><p>Pada waktu luang Anda sendiri, Anda akan memakai Azure CLI untuk menampilkan daftar region beserta geografi dan
+pasangannya, menemukan pemetaan zona logis ke zona fisik di subscription Anda, dan memeriksa ukuran VM mana yang
+mendukung zona. Setelah itu, Anda membuat tiga Standard public IP, yaitu zonal, zone-redundant, dan &quot;tanpa zona&quot;, lalu
+membandingkannya, serta membangun storage account LRS dan ZRS berdampingan. Lab ini mengubah kosakata hari ini menjadi
+hal-hal yang sudah Anda lihat dengan mata kepala sendiri, nyaris tanpa biaya.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 35 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/03-global-infrastructure.html">Mulai Lab 03 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/reliability/regions-overview" target="_blank" rel="noopener"><b>Apa itu region Azure?</b><span>Geografi, region, layanan nonregional, dan faktor-faktor yang disarankan Microsoft untuk memilih region.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/reliability/availability-zones-overview" target="_blank" rel="noopener"><b>Apa itu availability zone?</b><span>Dukungan zonal dan zone-redundant, zona logis dan fisik, serta daftar terbaru region yang punya zona.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/reliability/regions-paired" target="_blank" rel="noopener"><b>Region pair Azure dan region tanpa pasangan</b><span>Daftar lengkap pasangan, pengecualian yang asimetris, dan region yang tidak punya pasangan.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/networking/azure-network-latency" target="_blank" rel="noopener"><b>Statistik latensi round-trip jaringan Azure</b><span>Latensi median antar-region Azure, berguna saat Anda memilih region pemulihan.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🌏</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Pemandu Region</h2>
+        <p class="muted">Pilih region dan zona dengan percaya diri.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Hari ini masih berhari-hari, tetapi di Azure satu pusat data bisa gagal total tanpa menghentikan kita.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 04</b><h4>Siapa yang Bikin server-baru-final2?</h4><p>Tiga minggu eksperimen tanpa aturan penamaan, dan tidak ada yang tahu mana saja yang milik toko.</p><p style="margin-top:10px"><a href="04-resource-hierarchy-basic.html">Tonton Episode 04 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="02-cloud-concepts.html"><small>← Episode sebelumnya</small>02 · Sewa, Bukan Beli?</a><a class="next" href="04-resource-hierarchy-basic.html"><small>Episode berikutnya →</small>04 · Siapa yang Bikin server-baru-final2?</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/03-global-infrastructure/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

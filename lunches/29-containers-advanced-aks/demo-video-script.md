@@ -1,5 +1,7 @@
 # Lunch 29 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the part an animation cannot show: a real AKS cluster
 > and its node resource group, `kubectl` talking to the API server, a deleted pod replaced within seconds, a rolling
 > update that never drops a request, and the Horizontal Pod Autoscaler adding pods under real load.

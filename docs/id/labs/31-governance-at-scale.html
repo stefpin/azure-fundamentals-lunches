@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 31 · Tata kelola untuk seluruh perusahaan · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 31: Tata kelola untuk seluruh perusahaan. sekitar 60 menit, termasuk 15–25 menit menunggu Azure Policy, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/31-governance-at-scale.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/31-governance-at-scale.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/31-governance-at-scale.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/31-governance-at-scale.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 31 · Tata kelola untuk seluruh perusahaan">
+<meta property="og:description" content="Lab Azure praktik 31: Tata kelola untuk seluruh perusahaan. sekitar 60 menit, termasuk 15–25 menit menunggu Azure Policy, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/31-governance-at-scale.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="31" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/31-governance-at-scale.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 31</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>31</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Tata kelola untuk seluruh perusahaan</h1>
+        <p class="lab-story">🏪 <b>Episode 31 · Tujuh Subscription dan Satu Merger</b> — Pagar pengaman yang melindungi satu subscription tidak akan selamat dari merger. <a href="../lunches/31-governance-at-scale.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 60 menit, termasuk 15–25 menit menunggu Azure Policy</span>
+          <span class="chip cost">💲 gratis atau hampir gratis</span>
+          <span class="chip">Tingkat kesulitan ★★★</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 11 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--melihat-titik-awal-dan-menemukan-definisi-bawaan">Tugas 1 · Melihat titik awal dan menemukan definisi bawaan</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--membangun-hierarki-management-group">Tugas 2 · Membangun hierarki management group</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--opsional-jalur-b-memindahkan-subscription-lab-anda-ke-corp">Tugas 3 · (Opsional, Jalur B) Memindahkan subscription lab Anda ke Corp</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--membuat-initiative-dari-file-policy-as-code">Tugas 4 · Membuat initiative dari file policy-as-code</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--menetapkan-initiative--dengan-aman">Tugas 5 · Menetapkan initiative — dengan aman</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--meremediasi-resource-group-corp">Tugas 6 · Meremediasi resource group corp</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--memberi-sandbox-sebuah-waiver-berbatas-waktu">Tugas 7 · Memberi sandbox sebuah Waiver berbatas waktu</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-8--membaca-kepatuhan-dalam-skala-besar-dengan-resource-graph">Tugas 8 · Membaca kepatuhan dalam skala besar dengan Resource Graph</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-9--mengekspor-tata-kelola-sebagai-kode">Tugas 9 · Mengekspor tata kelola sebagai kode</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/.gitignore" target="_blank" rel="noopener"><span>.gitignore</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>8 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/lab-vars.sh" target="_blank" rel="noopener"><span>lab-vars.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/policy/nusa-baseline/policyset.definitions.json" target="_blank" rel="noopener"><span>policy/nusa-baseline/policyset.definitions.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/policy/nusa-baseline/policyset.parameters.json" target="_blank" rel="noopener"><span>policy/nusa-baseline/policyset.parameters.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/policy/scope-test/policy.rules.json" target="_blank" rel="noopener"><span>policy/scope-test/policy.rules.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>15 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>7 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/31-governance-at-scale" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Ibu Sari menginginkan aturan yang sama di setiap subscription (<em>langganan</em>) yang kelak dimiliki Nusantara Retail. Anda
+akan membangun hierarki Azure landing zone versi mini yang terdiri atas <strong>management group</strong> (<em>grup manajemen</em>), lalu
+menulis sebuah <strong>initiative</strong> kustom (paket beberapa policy) sebagai kode, berisi lokasi yang diizinkan, tag <code>costCenter</code>
+yang wajib, dan tag yang sama yang diwarisi dari resource group (<em>grup sumber daya</em>). Anda akan menetapkannya dengan cara
+yang aman (<strong>DoNotEnforce</strong> lebih dulu, dengan sebuah <strong>managed identity</strong>), memperbaiki resource yang sudah ada dengan
+<strong>remediation task</strong>, memberi eksperimen sandbox milik Dewi sebuah <strong>Waiver</strong> berbatas waktu, membaca kepatuhan lintas
+scope dengan <strong>Azure Resource Graph</strong>, lalu mengekspor semuanya sebagai file policy-as-code. Memindahkan subscription
+Anda ke dalam hierarki bersifat opsional (Jalur B) dan sepenuhnya bisa dibatalkan.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  root[&quot;Tenant root group&quot;] --&gt; nusa[&quot;mg-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;intermediate root&lt;br/&gt;(Jalur B: initiative disimpan di sini)&quot;]
+  nusa --&gt; plat[&quot;mg-nusa-platform-&amp;lt;suffix&amp;gt;&quot;]
+  nusa --&gt; lz[&quot;mg-nusa-landingzones-&amp;lt;suffix&amp;gt;&lt;br/&gt;(Jalur B: ditetapkan di sini)&quot;]
+  lz --&gt; corp[&quot;mg-nusa-corp-&amp;lt;suffix&amp;gt;&quot;]
+  corp -. &quot;Hanya Jalur B: Tugas 3&quot; .-&gt; sub([&quot;subscription Anda&lt;br/&gt;(Jalur A: initiative disimpan dan ditetapkan di sini)&quot;])
+  sub --&gt; rgc[&quot;rg-lunch31-corp-&amp;lt;suffix&amp;gt;&lt;br/&gt;costCenter=CC-2001&lt;br/&gt;remediasi memperbaiki 2 resource lama&quot;]
+  sub --&gt; rgs[&quot;rg-lunch31-sandbox-&amp;lt;suffix&amp;gt;&lt;br/&gt;eksperimen di luar region yang diizinkan&lt;br/&gt;exemption Waiver, 30 hari&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li><strong>Tenant Anda sendiri.</strong> Management group adalah objek yang berlaku untuk seluruh tenant. Kerjakan lab ini hanya di
+tenant Microsoft Entra yang Anda kendalikan — misalnya tenant yang terbentuk saat Anda membuat akun gratis — dan di
+subscription tempat Anda berperan sebagai <strong>Owner</strong>. Jangan pernah menjalankannya di tenant milik perusahaan tempat Anda
+bekerja, dan jangan pernah memindahkan subscription perusahaan. Jika organisasi Anda menyediakan tenant sandbox untuk
+belajar, tanyakan dulu kepada administratornya.</li>
+<li>Di tenant baru, pengguna mana pun bisa membuat management group. Jika pengaturan hierarki tenant Anda mewajibkan
+otorisasi, Tugas 2 akan gagal dengan <code>AuthorizationFailed</code> — gunakan tenant lain.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu diinstal.</li>
+<li>Ambil file lab, lalu muat pengaturan bersama dan nama-nama khusus lab ini:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/31-governance-at-scale
+source ../common/config.sh
+source lab-vars.sh        # resource groups, management group names, policy names, Path A/B
+echo &quot;Path $LAB31_PATH | corp RG: $CORP_RG | sandbox RG: $SANDBOX_RG | intermediate root: $MG_ROOT&quot;
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya — dua resource group berisi resource &quot;lama&quot; tanpa tag (sekitar 2–3 menit). Skrip akan menampilkan
+tenant dan subscription Anda, lalu meminta Anda mengonfirmasi bahwa keduanya memang milik Anda:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Lab ini nyaris tanpa biaya (sebuah storage account kosong dan dua network security group), tetapi lab ini membuat objek
+<strong>di luar</strong> resource group: management group, initiative, policy assignment, exemption, dan role assignment. Selalu
+akhiri dengan bagian <strong>Bersihkan</strong> — <code>cleanup.sh</code> menghapus semuanya dengan urutan yang benar, dan memindahkan
+subscription Anda kembali jika tadi Anda memindahkannya.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Cloud Shell melupakan variabel Anda saat sesinya habis (timeout). Kembali ke folder lab dan jalankan lagi
+<code>source ../common/config.sh &amp;&amp; source lab-vars.sh</code>. Lakukan hal yang sama setelah Tugas 3: variabelnya kemudian beralih
+ke Jalur B.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–9 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Kedua mode berjalan di salah satu dari dua jalur (skrip lab menyebutnya <em>Path A</em> dan <em>Path B</em>). Tentukan pilihan Anda
+sebelum Tugas 3:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Jalur A (default)</th>
+<th>Jalur B (opsional)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Subscription Anda</td>
+<td>tetap di tempatnya</td>
+<td>pindah ke <code>mg-nusa-corp-&lt;suffix&gt;</code> di Tugas 3</td>
+</tr>
+<tr>
+<td>Initiative disimpan di</td>
+<td>subscription Anda</td>
+<td>intermediate root <code>mg-nusa-&lt;suffix&gt;</code></td>
+</tr>
+<tr>
+<td>Initiative ditetapkan di</td>
+<td>subscription Anda</td>
+<td><code>mg-nusa-landingzones-&lt;suffix&gt;</code> — subscription Anda mewarisinya</td>
+</tr>
+<tr>
+<td>Yang Anda pelajari</td>
+<td>semuanya, kecuali pewarisan sungguhan melalui management group</td>
+<td>pola landing zone yang lengkap: simpan di atas, tetapkan di landing zones, warisi ke bawah</td>
+</tr>
+<tr>
+<td>Yang Anda butuhkan</td>
+<td>Owner pada subscription</td>
+<td>Owner pada subscription, di tenant milik Anda</td>
+</tr>
+<tr>
+<td>Cara membatalkan</td>
+<td>tidak ada yang perlu dibatalkan</td>
+<td><code>cleanup.sh</code> memindahkan subscription kembali ke induk aslinya</td>
+</tr>
+</tbody>
+</table></div>
+<p>Mengapa berbeda? Sebuah definisi hanya bisa ditetapkan di scope tempat ia disimpan atau di bawahnya. Selama subscription
+Anda berada di luar <code>mg-nusa-&lt;suffix&gt;</code>, initiative yang disimpan di management group itu tidak bisa menjangkaunya,
+sehingga Jalur A menyimpan initiative di dalam subscription itu sendiri.</p>
+</div></section><section class="lab-section" id="tugas-1--melihat-titik-awal-dan-menemukan-definisi-bawaan" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Melihat titik awal dan menemukan definisi bawaan</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--melihat-titik-awal-dan-menemukan-definisi-bawaan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Mulailah dengan melihat apa yang akan Anda atur, lalu temukan tiga definisi bawaan (built-in) yang akan dipakai ulang oleh
+initiative.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for rg in &quot;$CORP_RG&quot; &quot;$SANDBOX_RG&quot;; do
+  echo &quot;== $rg  (resource group costCenter: $(az group show --name &quot;$rg&quot; --query tags.costCenter --output tsv))&quot;
+  az resource list --resource-group &quot;$rg&quot; \
+    --query &quot;[].{name:name, type:type, location:location, costCenter:tags.costCenter}&quot; --output table
+done
+
+lookup_builtin_ids     # from lab-vars.sh: looks the definitions up by display name, never by GUID
+printf &#x27;%s\n&#x27; &quot;$ALLOWED_LOCATIONS_ID&quot; &quot;$REQUIRE_TAG_ID&quot; &quot;$INHERIT_TAG_ID&quot;
+</code></pre></div>
+<p>Grup corp membawa tag <code>costCenter=CC-2001</code>, tetapi storage account dan network security group di dalamnya tidak. Grup
+sandbox sama sekali tidak punya tag, dan network security group-nya berada di <code>$SECONDARY_LOCATION</code> — di luar region yang
+nanti diizinkan oleh baseline.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tiga resource lama dengan kolom <code>costCenter</code> yang kosong, dan tiga ID yang diawali
+<code>/providers/Microsoft.Authorization/policyDefinitions/</code>. Jika ada ID yang kosong, jalankan lagi <code>lookup_builtin_ids</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--membangun-hierarki-management-group" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Membangun hierarki management group</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--membangun-hierarki-management-group" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Anda akan membuat potongan terkecil dari hierarki Azure landing zone yang masih memperlihatkan polanya: sebuah
+intermediate root di bawah tenant root group, sebuah grup Platform, sebuah grup Landing zones, dan Corp di bawahnya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az account management-group create --name &quot;$MG_ROOT&quot; --display-name &quot;Nusantara Retail (lab $SUFFIX)&quot;
+az account management-group create --name &quot;$MG_PLATFORM&quot; --display-name &quot;Platform&quot; --parent &quot;$MG_ROOT&quot;
+az account management-group create --name &quot;$MG_LZ&quot; --display-name &quot;Landing zones&quot; --parent &quot;$MG_ROOT&quot;
+az account management-group create --name &quot;$MG_CORP&quot; --display-name &quot;Corp&quot; --parent &quot;$MG_LZ&quot;
+</code></pre></div>
+<p>Beberapa hal yang perlu Anda ketahui selagi perintahnya berjalan:</p>
+<ul>
+<li><code>--name</code> adalah <strong>ID</strong> management group. ID ini tidak pernah bisa diubah; nama tampilannya bisa. Itulah sebabnya lab ini
+menambahkan suffix Anda ke setiap ID.</li>
+<li>Management group yang paling pertama di sebuah tenant bisa butuh waktu hingga 15 menit untuk muncul. Jika pembuatan grup
+anak gagal dengan pesan &quot;not found&quot;, tunggu satu menit lalu jalankan lagi baris tersebut.</li>
+<li>Anda otomatis menjadi <strong>Owner</strong> dari setiap management group yang Anda buat, dan itulah yang memungkinkan Anda menyimpan
+dan menetapkan policy di sana.</li>
+<li>Landing zone yang sesungguhnya punya lebih banyak grup (Security, Management, Connectivity, dan Identity di bawah
+Platform; Online dan Local di samping Corp; Sandboxes; Decommissioned). Makan Siang 31 menjelaskan masing-masing.</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for mg in &quot;$MG_ROOT&quot; &quot;$MG_PLATFORM&quot; &quot;$MG_LZ&quot; &quot;$MG_CORP&quot;; do
+  echo &quot;$mg  -&gt;  parent: $(mg_parent &quot;$mg&quot;)&quot;
+done
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Lokasinya di portal: <em>Home › Management groups › + Create</em>. Lalu pilih <strong>Tenant root group</strong> dan
+buka pohonnya untuk melihat keempat grup Anda — portal menampilkan hierarki lebih jelas daripada perintah apa pun.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> induk dari intermediate root adalah ID tenant Anda (tenant root group); platform dan landing zones
+menunjuk ke <code>mg-nusa-&lt;suffix&gt;</code>; corp menunjuk ke <code>mg-nusa-landingzones-&lt;suffix&gt;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--opsional-jalur-b-memindahkan-subscription-lab-anda-ke-corp" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">(Opsional, Jalur B) Memindahkan subscription lab Anda ke Corp</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--opsional-jalur-b-memindahkan-subscription-lab-anda-ke-corp" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Lewati tugas ini untuk Jalur A. Untuk Jalur B, baca bagian ini dulu.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Memindahkan subscription mengubah policy dan role assignment mana yang berlaku untuk <strong>semua isinya</strong>, dan Azure bisa
+butuh hingga 30 menit untuk mencerminkan hierarki baru di semua tempat. Lakukan hanya dengan subscription lab Anda
+sendiri di tenant Anda sendiri.
+Di tenant pribadi, subscription biasanya berada langsung di bawah tenant root group, sehingga memindahkannya keluar lalu
+kembali tidak memerlukan izin tambahan.</p>
+</aside>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code># 1. Where does the subscription live now? (The tenant root group&#x27;s ID is your tenant ID.)
+ORIGINAL_PARENT=$(az graph query --graph-query &quot;resourcecontainers
+  | where type =~ &#x27;microsoft.resources/subscriptions&#x27; and subscriptionId == &#x27;$SUB_ID&#x27;
+  | project parent = tostring(properties.managementGroupAncestorsChain[0].name)&quot; \
+  --query &quot;data[0].parent&quot; --output tsv)
+echo &quot;Current parent: ${ORIGINAL_PARENT:-$TENANT_ID}&quot;
+
+# 2. Move it into Corp
+az account management-group subscription add --name &quot;$MG_CORP&quot; --subscription &quot;$SUB_ID&quot;
+
+# 3. Remember the original parent for cleanup.sh, then reload the lab variables (they switch to Path B)
+echo &quot;${ORIGINAL_PARENT:-$TENANT_ID}&quot; &gt; &quot;$LAB31_STATE_FILE&quot;
+source lab-vars.sh &amp;&amp; echo &quot;Path $LAB31_PATH: assign at $ASSIGN_SCOPE&quot;
+</code></pre></div>
+<p>Jika <code>az graph</code> meminta Anda memasang ekstensi <code>resource-graph</code>, jawab ya (<code>setup.sh</code> biasanya sudah memasangnya).</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>az account management-group subscription show --name &quot;$MG_CORP&quot; --subscription &quot;$SUB_ID&quot; --query displayName --output tsv</code>
+mencetak nama subscription Anda, dan <code>echo $LAB31_PATH</code> mencetak <code>B</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--membuat-initiative-dari-file-policy-as-code" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Membuat initiative dari file policy-as-code</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--membuat-initiative-dari-file-policy-as-code" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Buka dua file di <code>policy/nusa-baseline/</code>. Keduanya mengikuti tata letak dari panduan policy-as-code Microsoft:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>cat policy/nusa-baseline/policyset.definitions.json   # the three member policies
+cat policy/nusa-baseline/policyset.parameters.json    # the initiative&#x27;s own parameters
+</code></pre></div>
+<p>Setiap anggota punya <strong>reference ID</strong> pendek (<code>allowedLocations</code>, <code>requireCostCenterTag</code>, <code>inheritCostCenterTag</code>) dan
+meneruskan sebuah parameter initiative ke policy-nya — <code>[parameters('allowedLocations')]</code> menjadi <code>listOfAllowedLocations</code>
+milik definisi bawaan. ID definisinya masih berupa placeholder (penanda tempat), karena kursus ini tidak pernah menuliskan
+GUID secara langsung: isi placeholder itu dengan ID yang Anda cari di Tugas 1, lalu buat initiative-nya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>mkdir -p generated
+sed -e &quot;s#__ALLOWED_LOCATIONS_ID__#${ALLOWED_LOCATIONS_ID}#&quot; \
+    -e &quot;s#__REQUIRE_TAG_ID__#${REQUIRE_TAG_ID}#&quot; \
+    -e &quot;s#__INHERIT_TAG_ID__#${INHERIT_TAG_ID}#&quot; \
+    policy/nusa-baseline/policyset.definitions.json &gt; generated/policyset.definitions.json
+
+az policy set-definition create --name &quot;$INITIATIVE&quot; $INITIATIVE_SCOPE_FLAG \
+  --display-name &quot;Nusantara baseline&quot; \
+  --description &quot;Allowed locations, a required costCenter tag, and the costCenter tag inherited from the resource group.&quot; \
+  --definitions ./generated/policyset.definitions.json \
+  --params ./policy/nusa-baseline/policyset.parameters.json
+</code></pre></div>
+<p><code>$INITIATIVE_SCOPE_FLAG</code> kosong pada Jalur A (initiative disimpan di subscription Anda) dan berisi
+<code>--management-group mg-nusa-&lt;suffix&gt;</code> pada Jalur B (disimpan di intermediate root, sehingga setiap grup di bawahnya bisa
+memakainya).</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong>
+<code>az policy set-definition show --name &quot;$INITIATIVE&quot; $INITIATIVE_SCOPE_FLAG --query &quot;policyDefinitions[].policyDefinitionReferenceId&quot;</code>
+menampilkan ketiga reference ID. Jika perintah itu mengatakan initiative tidak ditemukan, jalankan <code>source lab-vars.sh</code> —
+variabel jalurnya mungkin sudah tidak sesuai.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--menetapkan-initiative--dengan-aman" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Menetapkan initiative — dengan aman</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--menetapkan-initiative--dengan-aman" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Tetapkan initiative sekali saja, di puncak dari apa yang Anda atur: subscription Anda (Jalur A) atau grup landing zones
+(Jalur B). Dua pilihan berikut membuat assignment ini aman sekaligus berguna.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az policy assignment create --name &quot;$ASSIGNMENT&quot; --display-name &quot;Nusantara baseline (Lab 31)&quot; \
+  --scope &quot;$ASSIGN_SCOPE&quot; --policy-set-definition &quot;$INITIATIVE_ID&quot; \
+  --params &quot;{ &#x27;allowedLocations&#x27;: { &#x27;value&#x27;: [ &#x27;$LOCATION&#x27; ] }, &#x27;tagName&#x27;: { &#x27;value&#x27;: &#x27;costCenter&#x27; } }&quot; \
+  --enforcement-mode DoNotEnforce \
+  --mi-system-assigned --location &quot;$LOCATION&quot; \
+  --identity-scope &quot;$CORP_RG_ID&quot; --role Contributor
+</code></pre></div>
+<ul>
+<li><strong><code>--enforcement-mode DoNotEnforce</code></strong> — Azure mengevaluasi dan melaporkan kepatuhan, tetapi tidak menolak atau mengubah
+apa pun saat resource dibuat atau diperbarui. Remediation task tetap berfungsi. Inilah ring pertama dari rollout yang
+aman.</li>
+<li><strong><code>--mi-system-assigned --location</code></strong> — policy Modify di dalam initiative membutuhkan managed identity (identitas yang
+dikelola Azure) untuk mengubah resource. <code>--identity-scope</code> dan <code>--role</code> memberinya role <strong>Contributor</strong> (role yang
+diminta definisi bawaan) hanya pada grup corp. Di produksi, Anda akan memberikannya di semua tempat yang harus ditulisi
+remediasi, biasanya scope assignment.</li>
+</ul>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Pada Jalur A, assignment ini mencakup <strong>seluruh subscription</strong> Anda. Dalam mode DoNotEnforce ia hanya melapor, itulah
+sebabnya Anda mungkin melihat resource dari lab lain tercantum sebagai tidak patuh. Jangan mengubahnya ke enforcement
+<code>Default</code>: policy tag wajib kemudian akan menolak setiap resource tanpa tag di subscription itu, termasuk milik lab lain.
+Bagian tantangan tambahan menunjukkan cara aman untuk mencoba enforcement.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> assignment melaporkan <code>DoNotEnforce</code> dan sebuah identitas system-assigned, dan identitas itu memegang
+sebuah role di grup corp:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az policy assignment show --name &quot;$ASSIGNMENT&quot; --scope &quot;$ASSIGN_SCOPE&quot; \
+  --query &quot;{mode:enforcementMode, identity:identity.type, locations:parameters.allowedLocations.value}&quot;
+PID=$(az policy assignment show --name &quot;$ASSIGNMENT&quot; --scope &quot;$ASSIGN_SCOPE&quot; --query identity.principalId --output tsv)
+az role assignment list --scope &quot;$CORP_RG_ID&quot; --query &quot;[?principalId==&#x27;$PID&#x27;].roleDefinitionName&quot; --output tsv
+</code></pre></div>
+<p>Jika perintah terakhir tidak mencetak apa pun, tunggu satu menit (identitas baru butuh waktu untuk tereplikasi) lalu
+berikan role itu sendiri:
+<code>az role assignment create --assignee-object-id &quot;$PID&quot; --assignee-principal-type ServicePrincipal --role Contributor --scope &quot;$CORP_RG_ID&quot;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--meremediasi-resource-group-corp" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Meremediasi resource group corp</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--meremediasi-resource-group-corp" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Assignment tidak menyentuh resource yang sudah ada dengan sendirinya. Yang melakukannya adalah <strong>remediation task</strong> —
+untuk satu policy Modify atau DeployIfNotExists dalam satu waktu, jadi untuk initiative Anda menyebutkan reference ID
+anggotanya. <code>ReEvaluateCompliance</code> membuat task memeriksa resource saat itu juga, alih-alih menunggu pemindaian kepatuhan
+berikutnya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az policy remediation create --name &quot;$REMEDIATION&quot; --resource-group &quot;$CORP_RG&quot; \
+  --policy-assignment &quot;$ASSIGNMENT_ID&quot; --definition-reference-id inheritCostCenterTag \
+  --resource-discovery-mode ReEvaluateCompliance
+
+# Run this every minute or so until the state is Succeeded (usually 5–15 minutes)
+az policy remediation show --name &quot;$REMEDIATION&quot; --resource-group &quot;$CORP_RG&quot; \
+  --query &quot;{state:provisioningState, deployments:deploymentStatus}&quot;
+
+az resource list --resource-group &quot;$CORP_RG&quot; --query &quot;[].{name:name, costCenter:tags.costCenter}&quot; --output table
+</code></pre></div>
+<p>Sambil menunggu, pikirkan sandbox-nya: mengapa task ini tidak akan pernah menyentuhnya? (Resource group-nya tidak punya
+tag <code>costCenter</code> untuk diwarisi, dan identitasnya tidak punya role di sana.)</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> status remediasi adalah <code>Succeeded</code>, dan <code>stcorp&lt;suffix&gt;</code> maupun <code>nsg-corp-legacy</code> kini menampilkan
+<code>CC-2001</code>. Jika statusnya <code>Succeeded</code> tetapi tag-nya belum ada, resource tersebut belum dievaluasi — buat task kedua
+dengan <code>--name</code> lain, misalnya <code>&quot;${REMEDIATION}-2&quot;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--memberi-sandbox-sebuah-waiver-berbatas-waktu" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Memberi sandbox sebuah Waiver berbatas waktu</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--memberi-sandbox-sebuah-waiver-berbatas-waktu" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Eksperimen Dewi melanggar dua aturan: lokasinya di <code>$SECONDARY_LOCATION</code> dan tidak punya tag <code>costCenter</code>. Ibu Sari
+menerima risiko itu selama 30 hari, sementara integrasi dengan mitra diuji. Itulah <strong>Waiver</strong>: risiko yang diterima, terlihat
+di laporan kepatuhan sebagai <em>Exempt</em> (dikecualikan), dengan tanggal berakhir dan jejak dokumen yang jelas.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>EXPIRES=$(date -u -d &#x27;+30 days&#x27; &#x27;+%Y-%m-%dT%H:%M:%SZ&#x27;)
+az policy exemption create --name &quot;$EXEMPTION&quot; --resource-group &quot;$SANDBOX_RG&quot; \
+  --policy-assignment &quot;$ASSIGNMENT_ID&quot; --exemption-category Waiver --expires-on &quot;$EXPIRES&quot; \
+  --display-name &quot;Sandbox experiment in $SECONDARY_LOCATION (NUSA-1042)&quot; \
+  --description &quot;Dewi tests a partner integration for 30 days. Risk accepted by Ibu Sari.&quot; \
+  --metadata &quot;{requestedBy:Dewi,approvedBy:&#x27;Ibu Sari&#x27;,ticketRef:NUSA-1042}&quot;
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Gunakan <strong>Mitigated</strong> alih-alih Waiver ketika tujuan policy sudah terpenuhi dengan cara lain. Untuk mengecualikan sebuah
+scope dari sebagian anggota initiative saja, tambahkan <code>--policy-definition-reference-ids</code> dengan reference ID mereka.
+Dan ketika sebuah exemption kedaluwarsa, Azure tidak menghapusnya — resource-nya hanya kembali tampil sebagai tidak
+patuh.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong>
+<code>az policy exemption list --resource-group &quot;$SANDBOX_RG&quot; --query &quot;[].{name:name, category:exemptionCategory, expires:expiresOn}&quot; --output table</code>
+menampilkan satu Waiver yang kedaluwarsa dalam 30 hari.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-8--membaca-kepatuhan-dalam-skala-besar-dengan-resource-graph" data-kind="task"><h2><span class="task-tag">Tugas 8</span><span class="title">Membaca kepatuhan dalam skala besar dengan Resource Graph</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-8--membaca-kepatuhan-dalam-skala-besar-dengan-resource-graph" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Minta Azure mengevaluasi kedua grup lab sekarang juga, alih-alih menunggu siklus terjadwal berikutnya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az policy state trigger-scan --resource-group &quot;$CORP_RG&quot; --no-wait
+az policy state trigger-scan --resource-group &quot;$SANDBOX_RG&quot; --no-wait
+
+# Repeat until both numbers are above zero (often 5–10 minutes)
+for rg in &quot;$CORP_RG&quot; &quot;$SANDBOX_RG&quot;; do
+  echo &quot;$rg: $(az policy state list --resource-group &quot;$rg&quot; --filter &quot;policyAssignmentName eq &#x27;$ASSIGNMENT&#x27;&quot; --query &quot;length(@)&quot; --output tsv) records&quot;
+done
+</code></pre></div>
+<p>Sekarang kueri kepatuhan seperti yang dilakukan tim platform — lintas semua subscription yang bisa Anda baca, dalam satu
+permintaan. Resource Graph bisa tertinggal beberapa menit dari perintah di atas.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code># 1. The initiative&#x27;s results by member policy and state
+az graph query --graph-query &quot;policyresources
+  | where type == &#x27;microsoft.policyinsights/policystates&#x27;
+  | where tostring(properties.policyAssignmentName) == &#x27;$ASSIGNMENT&#x27;
+  | summarize resources = count() by policy = tostring(properties.policyDefinitionReferenceId), state = tostring(properties.complianceState)
+  | order by policy asc&quot; --query data --output table
+
+# 2. Which lab resources are still non-compliant, and why?
+az graph query --graph-query &quot;policyresources
+  | where type == &#x27;microsoft.policyinsights/policystates&#x27;
+  | where tostring(properties.policyAssignmentName) == &#x27;$ASSIGNMENT&#x27;
+  | where tostring(properties.complianceState) == &#x27;NonCompliant&#x27;
+  | where tolower(tostring(properties.resourceId)) contains &#x27;/resourcegroups/rg-lunch31-&#x27;
+  | project resource = extract(&#x27;[^/]+$&#x27;, 0, tostring(properties.resourceId)), policy = tostring(properties.policyDefinitionReferenceId)&quot; \
+  --query data --output table
+
+# 3. Every exemption you can see, with its category and end date
+az graph query --graph-query &quot;policyresources
+  | where type == &#x27;microsoft.authorization/policyexemptions&#x27;
+  | project name, resourceGroup, category = tostring(properties.exemptionCategory), expiresOn = tostring(properties.expiresOn)&quot; \
+  --query data --output table
+
+# 4. Where each of your subscriptions sits in the hierarchy
+az graph query --graph-query &quot;resourcecontainers
+  | where type == &#x27;microsoft.resources/subscriptions&#x27;
+  | project subscription = name, parent = tostring(properties.managementGroupAncestorsChain[0].displayName)&quot; \
+  --query data --output table
+</code></pre></div>
+<p>Pada Jalur B, tambahkan <code>--management-groups &quot;$MG_ROOT&quot;</code> ke query mana pun untuk membatasinya ke hierarki lab, dan coba
+<code>az policy state summarize --management-group &quot;$MG_LZ&quot;</code> untuk rangkuman di scope management group.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> resource corp berstatus <code>Compliant</code> untuk ketiga anggota, query 2 tidak menampilkan apa pun dari grup
+corp, query 3 menampilkan <code>sandbox-waiver</code> sebagai Waiver, dan query 4 menampilkan subscription Anda di bawah <strong>Corp</strong>
+(Jalur B) atau tenant root group (Jalur A). Resource sandbox tampil sebagai <code>Exempt</code> setelah dievaluasi ulang.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-9--mengekspor-tata-kelola-sebagai-kode" data-kind="task"><h2><span class="task-tag">Tugas 9</span><span class="title">Mengekspor tata kelola sebagai kode</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-9--mengekspor-tata-kelola-sebagai-kode" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Semua yang Anda klik atau ketik seharusnya tinggal di Git, ditinjau, lalu di-deploy oleh pipeline. Ekspor kondisi yang
+diinginkan (desired state) — hanya properti yang akan Anda rawat sendiri, bukan properti baca-saja yang ditambahkan Azure —
+dalam tata letak policy-as-code:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>OUT=&quot;exported/$INITIATIVE&quot;
+mkdir -p &quot;$OUT/exemptions.$ASSIGNMENT&quot;
+az policy set-definition show --name &quot;$INITIATIVE&quot; $INITIATIVE_SCOPE_FLAG \
+  --query &quot;{name:name, displayName:displayName, description:description, parameters:parameters, policyDefinitions:policyDefinitions}&quot; \
+  --output json &gt; &quot;$OUT/policyset.json&quot;
+az policy assignment show --name &quot;$ASSIGNMENT&quot; --scope &quot;$ASSIGN_SCOPE&quot; \
+  --query &quot;{name:name, displayName:displayName, scope:scope, policyDefinitionId:policyDefinitionId, enforcementMode:enforcementMode, parameters:parameters, nonComplianceMessages:nonComplianceMessages, identityType:identity.type, location:location}&quot; \
+  --output json &gt; &quot;$OUT/assign.$ASSIGNMENT.json&quot;
+az policy exemption show --name &quot;$EXEMPTION&quot; --resource-group &quot;$SANDBOX_RG&quot; \
+  --query &quot;{name:name, displayName:displayName, exemptionCategory:exemptionCategory, expiresOn:expiresOn, policyAssignmentId:policyAssignmentId, metadata:metadata}&quot; \
+  --output json &gt; &quot;$OUT/exemptions.$ASSIGNMENT/$EXEMPTION.json&quot;
+find exported -type f | sort
+</code></pre></div>
+<p>Di tim sungguhan, file-file ini masuk ke repositori di samping <code>policy/nusa-baseline/</code>, dan sebuah pipeline dengan
+identitasnya sendiri yang men-deploy-nya. Di sini <code>generated/</code> dan <code>exported/</code> sengaja dicantumkan di <code>.gitignore</code> milik
+lab: keduanya berisi ID subscription Anda, yang tidak pantas masuk ke repositori publik.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tiga file — <code>policyset.json</code>, <code>assign.nusa-baseline.json</code>, dan
+<code>exemptions.nusa-baseline/sandbox-waiver.json</code> — dan file assignment menampilkan <code>&quot;enforcementMode&quot;: &quot;DoNotEnforce&quot;</code>.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Rizky menyimpan sebuah policy audit baru di management group <strong>Corp</strong> dan ingin menetapkannya ke seluruh grup <strong>Landing
+zones</strong>. Cobalah:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az policy definition create --name &quot;$SCOPE_TEST&quot; --management-group &quot;$MG_CORP&quot; \
+  --display-name &quot;Lab 31 scope test: audit storage without costCenter&quot; \
+  --mode Indexed --rules ./policy/scope-test/policy.rules.json
+
+az policy assignment create --name &quot;$SCOPE_TEST&quot; --scope &quot;$MG_PREFIX/$MG_LZ&quot; \
+  --policy &quot;$MG_PREFIX/$MG_CORP/providers/Microsoft.Authorization/policyDefinitions/$SCOPE_TEST&quot;
+</code></pre></div>
+<p>Definisinya berhasil dibuat, tetapi assignment-nya gagal dengan error yang menyatakan definisi policy berada <strong>di luar
+scope</strong> (out of scope — definisi hanya bisa dipakai di scope tempat ia disimpan atau di bawahnya). Kata-kata persisnya bisa
+berbeda antarversi.</p>
+<details class="plain"><summary>Petunjuk dan perbaikan</summary>
+<p>Definisinya tinggal <em>di bawah</em> scope yang Anda tuju. Simpan definisi itu di grup Landing zones (atau lebih tinggi),
+tetapkan salinan tersebut, lalu hapus salinan yang tersimpan terlalu rendah. Policy ini hanya mengaudit, jadi tidak
+mengubah apa pun.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az policy definition create --name &quot;$SCOPE_TEST&quot; --management-group &quot;$MG_LZ&quot; \
+  --display-name &quot;Lab 31 scope test: audit storage without costCenter&quot; \
+  --mode Indexed --rules ./policy/scope-test/policy.rules.json
+az policy assignment create --name &quot;$SCOPE_TEST&quot; --scope &quot;$MG_PREFIX/$MG_LZ&quot; \
+  --policy &quot;$MG_PREFIX/$MG_LZ/providers/Microsoft.Authorization/policyDefinitions/$SCOPE_TEST&quot;
+az policy definition delete --name &quot;$SCOPE_TEST&quot; --management-group &quot;$MG_CORP&quot;
+</code></pre></div>
+<p>Ini aturan yang sama yang menentukan Jalur A vs Jalur B, dan alasan desain landing zone menyimpan definisi bersama di
+intermediate root. <code>cleanup.sh</code> menghapus assignment dan definisinya.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menyatakan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu Anda
+ulangi. <code>verify.sh</code> berfungsi untuk kedua jalur dan tidak mengubah apa pun.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Urutannya penting, dan skrip ini mengikutinya: exemption, lalu role assignment milik identitas dan policy assignment, lalu
+initiative dan definisi, lalu subscription Anda dipindahkan kembali ke induk aslinya (Jalur B), lalu management group —
+anak lebih dulu — dan terakhir resource group <code>rg-lunch31-corp-&lt;suffix&gt;</code> dan <code>rg-lunch31-sandbox-&lt;suffix&gt;</code> serta folder
+<code>generated/</code> dan <code>exported/</code>. Jika Azure masih melihat anak di bawah sebuah management group (tampilan hierarkinya bisa
+tertinggal setelah pemindahan), skrip akan mencoba lagi; jika skrip menyerah, tunggu beberapa menit lalu jalankan lagi.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AuthorizationFailed</code> … <code>Microsoft.Management/managementGroups/write</code> di Tugas 2</td>
+<td>tenant Anda mewajibkan otorisasi untuk membuat management group, atau tenant itu adalah tenant kantor</td>
+<td>gunakan tenant milik Anda sendiri; jangan meminta hak di tenant perusahaan hanya demi lab ini</td>
+</tr>
+<tr>
+<td>Management group anak gagal dengan &quot;not found&quot; tepat setelah induknya dibuat</td>
+<td>management group pertama di sebuah tenant bisa butuh hingga 15 menit; hierarkinya bersifat <em>eventually consistent</em> (baru konsisten setelah beberapa saat)</td>
+<td>tunggu satu menit lalu jalankan lagi perintah yang sama</td>
+</tr>
+<tr>
+<td><code>AuthorizationFailed</code> saat memindahkan subscription di Tugas 3</td>
+<td>Anda membutuhkan Owner pada subscription serta akses tulis pada induk saat ini maupun induk baru (tenant root group adalah pengecualiannya)</td>
+<td>tetap di Jalur A, atau gunakan tenant Anda sendiri</td>
+</tr>
+<tr>
+<td><code>InvalidCreatePolicyAssignmentRequest</code> … out of scope</td>
+<td>definisi disimpan di bawah scope assignment (tugas Rusak lalu perbaiki, atau initiative Jalur A yang ditetapkan ke management group)</td>
+<td>simpan definisi di scope yang Anda tuju atau di atasnya</td>
+</tr>
+<tr>
+<td><code>PolicyDefinitionNotFound</code> saat membuat initiative</td>
+<td>placeholder belum diganti (variabel dari Tugas 1 kosong saat Anda menjalankan <code>sed</code>)</td>
+<td>jalankan <code>lookup_builtin_ids</code>, ulangi perintah <code>sed</code>, lalu buat initiative lagi</td>
+</tr>
+<tr>
+<td>CLI tidak bisa membaca <code>--definitions</code> atau <code>--params</code></td>
+<td>penanganan path file berbeda antarversi CLI</td>
+<td>berikan isinya secara langsung: <code>--definitions &quot;$(cat generated/policyset.definitions.json)&quot;</code></td>
+</tr>
+<tr>
+<td><code>PrincipalNotFound</code> saat role diberikan di Tugas 5</td>
+<td>managed identity yang baru dibuat belum tereplikasi di Microsoft Entra ID</td>
+<td>tunggu satu menit, lalu jalankan perintah <code>az role assignment create</code> dari pemeriksaan Tugas 5</td>
+</tr>
+<tr>
+<td>Remediasi <code>Failed</code>, atau <code>Succeeded</code> dengan nol deployment</td>
+<td>identitas tidak punya role di grup corp, atau resource belum dievaluasi (pada Jalur B, hierarki baru bisa butuh waktu untuk berlaku)</td>
+<td>perbaiki role-nya, tunggu beberapa menit, lalu buat remediation task baru dengan <code>--name</code> lain</td>
+</tr>
+<tr>
+<td><code>az policy exemption create</code> menolak scope tepat setelah pemindahan pada Jalur B</td>
+<td>tampilan hierarki Azure yang tersimpan di cache masih menempatkan resource group di luar assignment</td>
+<td>tunggu beberapa menit; atau tambahkan <code>--assignment-scope-validation DoNotValidate</code></td>
+</tr>
+<tr>
+<td><code>az graph query</code> tidak mengembalikan status policy apa pun</td>
+<td>Resource Graph masih tertinggal, atau belum ada evaluasi yang selesai</td>
+<td>jalankan pemindaian di Tugas 8, tunggu beberapa menit, lalu kueri lagi</td>
+</tr>
+<tr>
+<td><code>'graph' is misspelled or not recognized</code></td>
+<td>ekstensi Resource Graph belum terpasang</td>
+<td><code>az extension add --name resource-graph</code></td>
+</tr>
+<tr>
+<td><code>cleanup.sh</code> tidak bisa menghapus management group</td>
+<td>sebuah anak atau subscription masih terpasang menurut tampilan Azure yang tersimpan di cache</td>
+<td>tunggu beberapa menit, lalu jalankan lagi <code>bash cleanup.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li><strong>Enforcement ring 1.</strong> Tetapkan initiative yang sama untuk kedua kalinya di resource group corp dengan
+<code>--enforcement-mode Default</code> (beri nama <code>nusa-ring1</code>, scope <code>&quot;$CORP_RG_ID&quot;</code>, parameter yang sama, ditambah
+<code>--mi-system-assigned --location &quot;$LOCATION&quot;</code>). Setelah sekitar lima menit, coba buat storage account di
+<code>$SECONDARY_LOCATION</code> di grup tersebut dan baca error <code>RequestDisallowedByPolicy</code>-nya. Sisa subscription Anda tetap dalam
+mode hanya-melapor. <code>cleanup.sh</code> juga menghapus assignment ini.</li>
+<li><strong>Exemption Mitigated.</strong> Kecualikan hanya <code>nsg-corp-legacy</code> dari <code>requireCostCenterTag</code> dengan
+<code>--exemption-category Mitigated --scope &lt;its resource ID&gt; --policy-definition-reference-ids requireCostCenterTag</code>,
+lalu bandingkan tampilannya di query 3.</li>
+<li><strong>Lihat pengaturan hierarki.</strong> <code>az account management-group hierarchy-settings list --name &quot;$TENANT_ID&quot;</code> menunjukkan
+apakah tenant Anda punya default management group untuk subscription baru dan apakah pembuatan grup memerlukan
+otorisasi. Mengubahnya berdampak pada seluruh tenant, jadi di sini cukup dibaca saja.</li>
+<li><strong>Deploy sebagai stack.</strong> Tulis ulang assignment dalam Bicep dan deploy dengan <code>az stack mg create</code> di grup landing
+zones (Makan Siang 20 membahas deployment stacks). Setelah selesai, hapus stack-nya dengan
+<code>--action-on-unmanage deleteAll</code>.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep), setelah menjalankan <code>bash setup.sh</code>:</p>
+<ol>
+<li>Management group <code>mg-nusa-&lt;suffix&gt;</code> (di bawah tenant root group), <code>mg-nusa-platform-&lt;suffix&gt;</code> dan
+<code>mg-nusa-landingzones-&lt;suffix&gt;</code> (keduanya di bawah <code>mg-nusa-&lt;suffix&gt;</code>), serta <code>mg-nusa-corp-&lt;suffix&gt;</code> (di bawah
+landing zones).</li>
+<li>Sebuah initiative kustom yang berisi definisi bawaan <em>Allowed locations</em>, <em>Require a tag on resources</em>, dan <em>Inherit a
+tag from the resource group if missing</em>, dengan parameter initiative untuk lokasi yang diizinkan dan nama tag —
+disimpan di subscription Anda (Jalur A) atau di <code>mg-nusa-&lt;suffix&gt;</code> (Jalur B, dengan subscription Anda dipindahkan ke
+corp).</li>
+<li>Sebuah assignment initiative tersebut ke subscription Anda (Jalur A) atau ke <code>mg-nusa-landingzones-&lt;suffix&gt;</code> (Jalur B):
+lokasi yang diizinkan = hanya <code>$LOCATION</code>, nama tag <code>costCenter</code>, enforcement mode DoNotEnforce, dan managed identity
+yang memegang Contributor di <code>rg-lunch31-corp-&lt;suffix&gt;</code>.</li>
+<li>Sebuah remediation task yang berhasil di <code>rg-lunch31-corp-&lt;suffix&gt;</code>, yang setelahnya membuat kedua resource lama membawa
+<code>costCenter=CC-2001</code>.</li>
+<li>Sebuah exemption <strong>Waiver</strong> pada <code>rg-lunch31-sandbox-&lt;suffix&gt;</code> untuk assignment tersebut, yang kedaluwarsa dalam 30
+hari.</li>
+<li>Catatan kepatuhan untuk assignment tersebut di grup corp.</li>
+<li>Assignment yang diekspor sebagai <code>exported/&lt;initiative&gt;/assign.&lt;assignment&gt;.json</code> di folder lab.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> (<code>MOVE_SUBSCRIPTION=yes bash solution.sh</code> menjalankan Jalur B)
+atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="30-monitoring-advanced.html"><small>← Lab sebelumnya</small>30 · Mengapa checkout lambat pada hari Jumat?</a><a class="next" href="32-advanced-capstone-challenge.html"><small>Lab berikutnya →</small>32 · Nusantara Retail melangkah ke produksi</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/31-governance-at-scale/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

@@ -1,8 +1,11 @@
 # Lab 06 · Your first web server VM
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 06 · Virtual Machines (Basic)](../../lunches/06-virtual-machines-basic/README.md)
 > **Time:** about 45 minutes · **Cost:** 💲💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★☆☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 
@@ -154,7 +157,7 @@ curl -s -H Metadata:true "http://169.254.169.254/metadata/instance/compute/vmSiz
 exit
 ```
 
-The last command asks the **Instance Metadata Service** — a special address every Azure VM can reach — which size
+The `curl` command asks the **Instance Metadata Service** — a special address every Azure VM can reach — which size
 it is running on.
 
 > ✅ **Checkpoint:** your prompt changed to `azureuser@vm-web-1` while connected; `lsblk` showed one disk of about

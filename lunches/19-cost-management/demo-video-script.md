@@ -1,5 +1,7 @@
 # Lunch 19 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Cost Management experience — cost analysis grouped by service, resource group and tag, an
 > orphan hunt in Resource Graph Explorer, Advisor's cost tab and creating a budget — the parts the animation can only simulate.
 > **Length target:** about 5 minutes 45 seconds.

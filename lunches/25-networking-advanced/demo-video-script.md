@@ -1,5 +1,7 @@
 # Lunch 25 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the part an animation cannot show: Connected peerings,
 > a user-defined route winning in the effective routes, Network Watcher naming the next hop, a hub VM that really
 > forwards packets, and a private endpoint name resolving to a private IP.

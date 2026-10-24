@@ -1,9 +1,12 @@
 # Lunch 21 · Core Capstone: Putting It All Together (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 4:** Secure, operate and govern
 > **Time:** 60 minutes · **Prerequisite lunches:** 01–20 (the whole core month; this lunch recaps what you need)
 > **AZ-900 skill area:** All three — Describe cloud concepts · Describe Azure architecture and services · Describe Azure management and governance
 > **Lab:** [Lab 21 · Capstone project](../../labs/21-core-capstone/README.md) — about 2–3 hours, can be split · cost 💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -358,6 +361,16 @@ What to watch for:
   recovery solve different problems, and Indonesia Central's missing pair means you choose and prepare the DR region yourself.
 - AZ-900 weighs cloud concepts at 25–30%, architecture and services at 35–40%, and management and governance at 30–35%;
   the free practice assessment shows where to revise, and the deep-dive month takes every topic further.
+
+## 🗒️ Field notes from Stefanus
+
+> **A number without a drill date is a guess.** When someone shows me an RTO and RPO table, I ask one question per
+> row: *when did we last prove this, and who held the stopwatch?* If the answer is "never", I write "untested" next to
+> the number, in the same font size. My rule is that every failure scenario gets its own row, its own owner and its own
+> next drill date — a zone failure can be rehearsed in an afternoon, a point-in-time restore in a lunch break. And I
+> always hunt for the dependency nobody listed: a policy that blocks the recovery region, a secret only one person can
+> read, a DNS record nobody owns. Recovery plans seldom break on the big steps; they break on the small permission
+> nobody granted before the bad day.
 
 ## 🔬 Your lab: Capstone project
 

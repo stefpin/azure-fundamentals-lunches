@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 08 · Don&#x27;t Overlap My Network — Lunch 08: Virtual Networking (Basic) · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 08 · Virtual Networking (Basic). Pak Budi&#x27;s 10.0.0.0/16 must never clash — and Rizky wants SSH open to the whole internet. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/08-networking-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/08-networking-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/08-networking-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/08-networking-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 08 · Don&#x27;t Overlap My Network — Lunch 08: Virtual Networking (Basic)">
+<meta property="og:description" content="Lunch 08 · Virtual Networking (Basic). Pak Budi&#x27;s 10.0.0.0/16 must never clash — and Rizky wants SSH open to the whole internet. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/08-networking-basic.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lunch" data-lunch="08" style="--c:#e2482f">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/lunches/08-networking-basic.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 08</span> Season 1 · 🏗️ Part 2 · Core infrastructure</div>
+      <h1>Don&#x27;t Overlap My Network</h1>
+      <div class="lunch-title">Lunch 08 · Virtual Networking (Basic)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure architecture and services</span>
+        <span class="chip cost">🔬 Lab · about 50 minutes · 💲💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="01-before-you-begin.html" title="The Room Next to the Pantry">↩ 01</a><a class="chip" href="06-virtual-machines-basic.html" title="Escape from the Pantry">↩ 06</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 07 · The USB Drive Goes Home on Fridays, photos, invoices and price lists now live in redundant storage, on the right access tier.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-1"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, worried"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director&#x27;s question · 27% ready</b>After this episode you can say: “Minutes to rebuild — and the app tier can&#x27;t even be seen from the internet.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#field-notes">🗒️ Notes</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today&#x27;s menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-virtual-networks-and-address-plans">Virtual networks and address plans</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-subnets-network-interfaces-and-ip-addresses">Subnets, network interfaces and IP addresses</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-network-security-groups-priorities-defaults-and-first-match-wins">Network security groups: priorities, defaults and first match wins</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-outbound-access-private-subnets-and-explicit-egress">Outbound access: private subnets and explicit egress</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-names-and-diagnostics-azure-dns-and-network-watcher">Names and diagnostics: Azure DNS and Network Watcher</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-how-it-fits-together-for-nusantara-retail">How it fits together for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Field notes</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/08-networking-basic.html">🔬 Open Lab 08</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today&#x27;s menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> how a virtual network, its address space and its subnets fit together, and read CIDR notation without a calculator.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Plan</strong> an IP address scheme for Nusantara Retail that will never collide with the head-office network.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Predict</strong> whether a packet is allowed by network security groups, using priorities, default rules, service tags and application security groups.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> an explicit outbound method for a private subnet, and explain why new virtual networks no longer reach the internet by default.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Use</strong> Azure DNS and Network Watcher to publish names and to troubleshoot traffic with evidence instead of guesses.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 08</span>
+        <div class="story-body"><p>Tuesday, 12:05. The storefront VM from Lunch 06 is running, and Dewi already wants more. &quot;The website and the order
+logic shouldn't live on the same exposed machine. Give me a web tier that shoppers can reach and an app tier nobody on
+the internet can even see.&quot;</p>
+<p>Pak Budi arrives with a printed diagram, slightly yellow with age. &quot;Head office has used 10.0.0.0/16 for twelve years.
+One day we will connect to Azure. If you pick the same addresses, nothing will route — and I will not be the one
+renumbering forty stores.&quot; Before he leaves, Rizky the contractor sends a chat message: could you open SSH &quot;from
+anywhere, just for a week&quot;? Ibu Sari only wants to know whether all this will be safer than the server next to the
+pantry.</p>
+<p>Today you design the network the storefront will live in. How do you give it private, well-planned addresses where
+only the traffic you intend can flow — in and out?</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-virtual-networks-and-address-plans" data-spy><span class="scene-no">Scene 1 of 6</span><h3>Virtual networks and address plans</h3><div class="prose"><p>A <strong>virtual network (VNet)</strong> is a private network that you define inside one Azure region. Everything you place in it
+— VMs, internal load balancers, private endpoints — gets a private IP address from ranges you choose, and nothing
+outside can reach in unless you allow it. A VNet stretches across all the availability zones of its region, so a web
+server in zone 1 can talk to an app server in zone 3 without extra setup. The VNet itself is free; you pay for what runs
+inside it and for some kinds of traffic.</p>
+<p>The ranges a VNet may use are its <strong>address space</strong>, written in <strong>CIDR notation</strong> (Classless Inter-Domain Routing).
+CIDR looks scarier than it is. An IPv4 address has 32 bits. The number after the slash says how many of those bits are
+fixed — the network part. The remaining bits are yours to hand out. So <code>10.20.0.0/16</code> fixes the first 16 bits (<code>10.20</code>)
+and leaves 16 bits free: 2¹⁶ = 65,536 addresses, from <code>10.20.0.0</code> to <code>10.20.255.255</code>. Every time the number after the
+slash grows by one, the block halves.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>CIDR block</th>
+<th style="text-align:right">Addresses</th>
+<th style="text-align:right">Usable in an Azure subnet</th>
+<th>Typical use at Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/16</td>
+<td style="text-align:right">65,536</td>
+<td style="text-align:right">(split into subnets)</td>
+<td>One VNet per environment</td>
+</tr>
+<tr>
+<td>/24</td>
+<td style="text-align:right">256</td>
+<td style="text-align:right">251</td>
+<td>A tier such as the web servers</td>
+</tr>
+<tr>
+<td>/26</td>
+<td style="text-align:right">64</td>
+<td style="text-align:right">59</td>
+<td>Dedicated subnets for Azure Bastion or a firewall</td>
+</tr>
+<tr>
+<td>/27</td>
+<td style="text-align:right">32</td>
+<td style="text-align:right">27</td>
+<td>A small tier with a handful of VMs</td>
+</tr>
+<tr>
+<td>/29</td>
+<td style="text-align:right">8</td>
+<td style="text-align:right">3</td>
+<td>The smallest subnet Azure allows</td>
+</tr>
+</tbody>
+</table></div>
+<p>Pick address spaces from the private ranges defined in RFC 1918: <code>10.0.0.0/8</code>, <code>172.16.0.0/12</code> and <code>192.168.0.0/16</code>.
+Azure also treats the shared range <code>100.64.0.0/10</code> as private. A few ranges are off limits, such as <code>127.0.0.0/8</code>
+(loopback), <code>169.254.0.0/16</code> (link-local), <code>224.0.0.0/4</code> (multicast) and the platform address <code>168.63.129.16</code>.</p>
+<p>The most important planning rule is <strong>no overlap</strong>. Two networks with overlapping ranges can't be peered (Lunch 25) or
+joined with a VPN (Lunch 26), and renumbering a running network usually means rebuilding it. Pak Budi's head office
+already owns <code>10.0.0.0/16</code>, so the storefront must live elsewhere. A sensible plan reserves a block per purpose, with
+room to grow:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  corp[&quot;Nusantara Retail address plan · 10.0.0.0/8&quot;]
+  corp --&gt; ho[&quot;10.0.0.0/16 · Head office (Pak Budi)&quot;]
+  corp --&gt; st[&quot;10.1.0.0/16 · 40 stores, one /24 each&quot;]
+  corp --&gt; shop[&quot;10.20.0.0/16 · Storefront VNet (this lunch)&quot;]
+  corp --&gt; hub[&quot;10.30.0.0/16 to 10.32.0.0/16 · Hub and spokes (Lunch 25)&quot;]
+  corp --&gt; dr[&quot;10.40.0.0/16 · Reserved for a second region&quot;]
+  shop --&gt; web[&quot;10.20.1.0/24 · snet-web&quot;]
+  shop --&gt; app[&quot;10.20.2.0/24 · snet-app&quot;]
+  shop --&gt; spare[&quot;10.20.3.0 and up · free for later tiers&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>A /16 for a storefront that needs two small subnets today looks generous, but private addresses cost nothing and
+running out costs a weekend. Write the plan down — a shared spreadsheet is fine — before anyone creates a VNet.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Production for Nusantara Retail would run in Indonesia Central for data residency, while the labs use Southeast Asia.
+A VNet lives in exactly one region, so plan address blocks for the whole company, not per region. A second region can
+then be connected later without a clash.</p>
+</aside>
+</div></article><article class="scene-card" id="2-subnets-network-interfaces-and-ip-addresses" data-spy><span class="scene-no">Scene 2 of 6</span><h3>Subnets, network interfaces and IP addresses</h3><div class="prose"><p>A <strong>subnet</strong> is a slice of the VNet's address space, such as <code>10.20.1.0/24</code> for the web tier. Subnets are where you
+attach security rules, route tables and NAT gateways, so they are your main tool for separating tiers. Plan one subnet
+per role, not one per VM.</p>
+<p>Azure keeps <strong>five addresses in every subnet</strong> for itself. In <code>10.20.1.0/24</code>:</p>
+<ul>
+<li><code>10.20.1.0</code> — the network address;</li>
+<li><code>10.20.1.1</code> — the default gateway that Azure provides;</li>
+<li><code>10.20.1.2</code> and <code>10.20.1.3</code> — used to map Azure DNS into the virtual network;</li>
+<li><code>10.20.1.255</code> — the broadcast address (Azure doesn't support broadcast, but the address stays reserved).</li>
+</ul>
+<p>So the first VM in that subnet gets <code>10.20.1.4</code>, and a /24 holds 251 resources, not 256. Some services need a
+<strong>dedicated subnet</strong> with a fixed name, for example <code>GatewaySubnet</code> for VPN gateways, <code>AzureBastionSubnet</code> and
+<code>AzureFirewallSubnet</code>. Leave room for them now: you can only resize a subnet while nothing is deployed in it.</p>
+<p>A VM connects to a subnet through a <strong>network interface (NIC)</strong>, which is a separate Azure resource. The NIC holds the
+VM's <strong>private IP address</strong>, assigned from the subnet either dynamically (Azure picks the next free one) or statically
+(you pick). Either way the address stays with the NIC until you delete it, so &quot;dynamic&quot; doesn't mean it changes on
+reboot. The NIC is also where a public IP, a NIC-level network security group and application security group
+membership are attached.</p>
+<p>A <strong>public IP address</strong> is its own resource too. Only the <strong>Standard SKU</strong> matters today: Basic SKU public IPs were
+retired on September 30, 2025. Standard public IPs use static allocation and are <strong>secure by default</strong> — they accept no
+inbound traffic until a network security group allows it. That is good news when Rizky asks for &quot;SSH from anywhere&quot;. A
+public IP is billed while it exists, even when nothing uses it, so delete the ones you no longer need.</p>
+<p>Inside the VNet, names just work. <strong>Azure-provided DNS</strong>, reached at <code>168.63.129.16</code>, lets <code>vm-web</code> look up <code>vm-app</code> by
+host name with no setup. You meet public DNS zones in section 5 and private DNS zones in Lunch 25.</p>
+</div></article><article class="scene-card" id="3-network-security-groups-priorities-defaults-and-first-match-wins" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Network security groups: priorities, defaults and first match wins</h3><div class="prose"><p>A <strong>network security group (NSG)</strong> is a list of allow and deny rules for traffic entering or leaving a subnet or a NIC.
+Each rule has a <strong>priority</strong> between 100 and 4096, a source and a destination (an IP address, a CIDR block, a service
+tag or an application security group), ports, a protocol and an action. NSGs are <strong>stateful</strong>: if a rule lets a request
+in, the reply goes back out automatically, and the other way round.</p>
+<p>Every NSG also contains six <strong>default rules</strong>. You can't delete them, only override them with lower-numbered rules:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th style="text-align:right">Priority</th>
+<th>Name</th>
+<th>Direction</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">65000</td>
+<td>AllowVnetInBound</td>
+<td>Inbound</td>
+<td>Allow from VirtualNetwork to VirtualNetwork</td>
+</tr>
+<tr>
+<td style="text-align:right">65001</td>
+<td>AllowAzureLoadBalancerInBound</td>
+<td>Inbound</td>
+<td>Allow health probes from AzureLoadBalancer</td>
+</tr>
+<tr>
+<td style="text-align:right">65500</td>
+<td>DenyAllInBound</td>
+<td>Inbound</td>
+<td>Deny everything else</td>
+</tr>
+<tr>
+<td style="text-align:right">65000</td>
+<td>AllowVnetOutBound</td>
+<td>Outbound</td>
+<td>Allow from VirtualNetwork to VirtualNetwork</td>
+</tr>
+<tr>
+<td style="text-align:right">65001</td>
+<td>AllowInternetOutBound</td>
+<td>Outbound</td>
+<td>Allow to Internet</td>
+</tr>
+<tr>
+<td style="text-align:right">65500</td>
+<td>DenyAllOutBound</td>
+<td>Outbound</td>
+<td>Deny everything else</td>
+</tr>
+</tbody>
+</table></div>
+<p>Read that table twice. By default, VMs in a VNet can talk to each other freely, may start connections to the internet
+(if a path exists — see section 4), and receive nothing from the internet.</p>
+<p><strong>Evaluation is simple and strict.</strong> Azure sorts the rules by priority, lowest number first, and checks them one by
+one. The <strong>first rule that matches</strong> the packet decides, and evaluation stops. A deny at priority 200 beats an allow at
+300, even when the allow is more specific. That's why &quot;allow 8080 from the web tier, deny the rest of the VNet&quot; needs
+the allow at a lower number than the deny.</p>
+<p>You can attach an NSG to a <strong>subnet</strong>, to a <strong>NIC</strong>, or to both. When both exist, a packet must pass both:</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  inet[&quot;Packet from the internet&quot;] --&gt; s1{&quot;Subnet NSG&lt;br/&gt;inbound rules&quot;}
+  s1 -- &quot;deny&quot; --&gt; x1[&quot;Dropped&quot;]
+  s1 -- &quot;allow&quot; --&gt; n1{&quot;NIC NSG&lt;br/&gt;inbound rules&quot;}
+  n1 -- &quot;deny&quot; --&gt; x2[&quot;Dropped&quot;]
+  n1 -- &quot;allow&quot; --&gt; vm[&quot;vm-web&quot;]
+  vm --&gt; n2{&quot;NIC NSG&lt;br/&gt;outbound&quot;} --&gt; s2{&quot;Subnet NSG&lt;br/&gt;outbound&quot;} --&gt; out[&quot;Leaves the subnet&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Inbound, the subnet NSG goes first and the NIC NSG second; outbound, it's the reverse. A missing allow at either level
+blocks the traffic. Most teams prefer subnet NSGs only: one place to read, one place to audit. Remember that a quick
+<code>az vm create</code> or portal wizard may add a NIC-level NSG for you — a classic source of &quot;I opened the port and it's still
+closed&quot;.</p>
+<p>Two features keep rule sets short and readable. <strong>Service tags</strong> are Microsoft-maintained names for groups of
+addresses: <code>Internet</code>, <code>VirtualNetwork</code>, <code>AzureLoadBalancer</code>, <code>Storage</code>, <code>Sql</code>, <code>AzureCloud</code>, and regional variants
+such as <code>Storage.SoutheastAsia</code>. You write <code>Internet</code> instead of thousands of prefixes, and Microsoft keeps the list
+current. <strong>Application security groups (ASGs)</strong> let you name a role: put the NICs of all web servers into <code>asg-web</code>,
+then write &quot;allow <code>asg-web</code> to the app subnet on 8080&quot;. When Dewi adds a third web server, she adds its NIC to the group
+and no rule changes. All NICs in one ASG must sit in the same VNet.</p>
+<p>Finally, Azure can show the <strong>effective security rules</strong> of a NIC — the merged view of subnet and NIC rules, with
+service tags and ASGs expanded into real addresses. When in doubt, read those rather than your own notes.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>The three NSG mistakes we see most: opening SSH or RDP to <code>Any</code> &quot;temporarily&quot; (use Azure Bastion or Run Command
+instead), placing a deny rule at a lower number than the allow it was meant to complement, and forgetting a NIC-level
+NSG that silently blocks what the subnet NSG allows. IP flow verify (section 5) names the exact rule that decided.</p>
+</aside>
+</div></article><article class="scene-card" id="4-outbound-access-private-subnets-and-explicit-egress" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Outbound access: private subnets and explicit egress</h3><div class="prose"><p>For years, a VM without a public IP could still reach the internet. Azure quietly gave it a <strong>default outbound
+access</strong> address that Microsoft owned and could change at any time. Convenient, but implicit, unpredictable and at odds
+with Zero Trust.</p>
+<p>That default is going away for new networks. Virtual networks created with API versions released after <strong>March 31,
+2026</strong> default to <strong>private subnets</strong> — subnets without default outbound internet access — and the Azure portal
+already creates subnets that way. Existing VNets are not changed. In a private subnet a VM can still reach other
+resources in the VNet and use Azure DNS, but it can't reach public endpoints until you give it an <strong>explicit outbound
+method</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Use it when</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>NAT gateway</strong> on the subnet</td>
+<td>Most cases: every VM in the subnet shares one or more static public IPs you own</td>
+<td>Billed per hour and per GB processed; one NAT gateway per subnet; never accepts inbound connections</td>
+</tr>
+<tr>
+<td><strong>Public IP on the VM's NIC</strong></td>
+<td>A single VM that must also be reachable from the internet</td>
+<td>Opens a way in as well as out; lock it down with an NSG</td>
+</tr>
+<tr>
+<td><strong>Load balancer outbound rules</strong></td>
+<td>The VMs already sit in a Standard public load balancer's backend pool (Lunch 09)</td>
+<td>More settings to manage, such as SNAT port allocation</td>
+</tr>
+<tr>
+<td><strong>Firewall or appliance via a route</strong></td>
+<td>All outbound traffic must be inspected and logged centrally (Lunch 25)</td>
+<td>You pay for the appliance and must route traffic through it</td>
+</tr>
+</tbody>
+</table></div>
+<p>The <strong>NAT gateway</strong> is the method Microsoft recommends for most cases. You attach it to a subnet and give it one or
+more Standard public IPs (up to 16) or a public IP prefix. Every VM in that subnet then uses those addresses for
+outbound connections — no route table needed. Replies come back; unsolicited inbound connections never do. Because the
+outbound address is static, Nusantara Retail's payment provider can add it to an allow list. A <strong>Standard</strong> NAT gateway
+runs in a single zone; the <strong>StandardV2</strong> SKU is zone-redundant and needs StandardV2 public IPs. A NAT gateway also
+takes precedence: new outbound connections from its subnet use it, even from VMs that have their own public IP.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>An NSG rule that <em>allows</em> outbound traffic doesn't create a <em>path</em>. <code>AllowInternetOutBound</code> is in every NSG, yet a VM
+in a private subnet without a NAT gateway or public IP still can't reach the internet. When outbound fails, check the
+path as well as the rules. If you switch an existing subnet between private and non-private, stop (deallocate) and
+start its VMs so the change applies to them.</p>
+</aside>
+</div></article><article class="scene-card" id="5-names-and-diagnostics-azure-dns-and-network-watcher" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Names and diagnostics: Azure DNS and Network Watcher</h3><div class="prose"><p><strong>Azure DNS</strong> hosts DNS zones on Microsoft's global name servers. A <strong>public DNS zone</strong> holds the records for a domain
+you own, such as <code>nusantararetail.co.id</code>. When you create the zone, Azure assigns it four name servers with names like
+<code>ns1-01.azure-dns.com</code> and <code>ns2-01.azure-dns.net</code>. The zone only becomes visible on the internet after you <strong>delegate</strong>
+the domain: you update its NS records at your domain registrar so they point to those four servers. Until then you can
+still test by asking an Azure name server directly with <code>nslookup</code> — exactly what the lab does.</p>
+<p>Inside a zone you create <strong>record sets</strong>: <code>A</code> maps a name to an IPv4 address, <code>AAAA</code> to IPv6, <code>CNAME</code> makes one name an
+alias of another, <code>MX</code> handles mail and <code>TXT</code> holds verification strings. Each has a <strong>time to live (TTL)</strong> that tells
+resolvers how long to cache the answer: keep it short, such as 300 seconds, while things change. An <strong>alias record</strong>
+can point straight at an Azure resource such as a public IP, and follows it if the address changes.</p>
+<p>Name resolution <em>inside</em> a VNet is a separate setting. By default a VNet uses <strong>Azure-provided name resolution</strong>: VMs
+send queries to <code>168.63.129.16</code>, which answers for VM host names in the same VNet and resolves public internet names
+too. You can switch a VNet to <strong>custom DNS servers</strong> instead — for example Pak Budi's head-office domain
+controllers once a VPN exists. VMs pick up the change when they renew their DHCP lease, so plan a restart. Note that
+Azure-provided resolution doesn't cross VNet boundaries: names in a peered VNet need a private DNS zone or your own DNS
+servers.</p>
+<p>Two related ideas return later in the course. <strong>Private DNS zones</strong> hold names that only your VNets can resolve. And
+PaaS services such as Azure Storage have <strong>public endpoints</strong> on the internet by default; a <strong>private endpoint</strong> gives
+such a service a private IP address inside your VNet instead. Lunches 24 and 25 put both to work.</p>
+<p>When traffic misbehaves, reach for <strong>Azure Network Watcher</strong>. Azure enables it automatically in each region where you
+create a VNet, and its tools answer precise questions:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>IP flow verify</strong></td>
+<td>Is this packet allowed to or from my VM, and which NSG rule decided?</td>
+</tr>
+<tr>
+<td><strong>NSG diagnostics</strong></td>
+<td>The same question for VMs, scale sets and application gateways, with service tags as sources</td>
+</tr>
+<tr>
+<td><strong>Effective security rules</strong></td>
+<td>What is the merged rule set on this NIC right now?</td>
+</tr>
+<tr>
+<td><strong>Next hop</strong></td>
+<td>Where will Azure send a packet for this destination?</td>
+</tr>
+<tr>
+<td><strong>Connection troubleshoot</strong></td>
+<td>Can this VM open a connection to that VM, address or URL, and where does it fail?</td>
+</tr>
+<tr>
+<td><strong>Packet capture</strong></td>
+<td>What exactly is on the wire?</td>
+</tr>
+<tr>
+<td><strong>Flow logs</strong></td>
+<td>Which flows were allowed or denied over time? Use <strong>VNet flow logs</strong>: NSG flow logs can no longer be created and retire on September 30, 2027.</td>
+</tr>
+</tbody>
+</table></div>
+</div></article><article class="scene-card" id="6-how-it-fits-together-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>How it fits together for Nusantara Retail</h3><div class="prose"><p>Here is the network you will build in the lab, and the one Dewi will deploy the storefront into:</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shopper[&quot;Shopper&#x27;s browser&quot;] --&gt;|&quot;HTTP 80&quot;| pip[&quot;Standard public IP&lt;br/&gt;www record in Azure DNS&quot;]
+  subgraph vnet[&quot;vnet-nusa-shop · 10.20.0.0/16&quot;]
+    subgraph web[&quot;snet-web · 10.20.1.0/24 · nsg-web&quot;]
+      vmweb[&quot;vm-web&lt;br/&gt;member of asg-web&quot;]
+    end
+    subgraph app[&quot;snet-app · 10.20.2.0/24 · nsg-app · private&quot;]
+      vmapp[&quot;vm-app&lt;br/&gt;no public IP&quot;]
+    end
+  end
+  pip --&gt; vmweb
+  vmweb --&gt;|&quot;TCP 8080 only&quot;| vmapp
+  vmapp --&gt;|&quot;outbound&quot;| nat[&quot;NAT gateway&lt;br/&gt;static public IP&quot;]
+  nat --&gt; ext[&quot;Payment provider and updates&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Walk a few packets through it. A shopper's HTTP request reaches <code>vm-web</code> because <code>nsg-web</code> allows TCP 80 from the
+<code>Internet</code> service tag to <code>asg-web</code>. Rizky's SSH attempt from a café hits the same NSG, matches nothing before
+<code>DenyAllInBound</code>, and is dropped; for the occasional fix he uses Run Command instead. <code>vm-web</code> calls the app tier on
+port 8080 and passes <code>nsg-app</code>'s rule at priority 100. Any other port from inside the VNet hits a deny at priority 4000,
+long before the default <code>AllowVnetInBound</code> at 65000 is reached. <code>vm-app</code> has no public IP and sits in a private subnet,
+so its only way out is the NAT gateway, with one predictable address. Shoppers find the site through the <code>www</code> and
+<code>shop</code> records in Azure DNS. And when something breaks, IP flow verify tells you which rule to blame.</p>
+<p>Ibu Sari's question was whether this is safer than the pantry server. The honest answer: the internet now sees one port
+on one machine, the app tier is invisible from outside, and every exception is a written rule with a name and a
+priority.</p>
+<p>The finance team will ask what it costs. The VNet, subnets, NSGs and ASGs are free. You pay for the VMs, for each
+public IP while it exists, for the NAT gateway (per hour plus per GB it processes), for the DNS zone (per zone per month
+plus queries) and for data leaving Azure. None of these numbers belong in a slide deck from memory — put the design
+into the pricing calculator, and delete lab resources the moment you finish.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>Suppose Dewi had built the storefront VNet on <code>10.0.0.0/16</code> because the address looked familiar.
+Everything works today. What breaks on the day Pak Budi connects head office to Azure, and what would the fix cost?</p>
+</aside>
+<p>In the next lunch you put two web servers behind a Standard load balancer so the shop survives a server failure. Ready
+for peering, routing and private endpoints? Continue with <a href="25-networking-advanced.html">Lunch 25 · Virtual Networking (Advanced)</a>.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · Who gets in, who gets out: the NSG rule evaluator</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/08-networking-basic.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/08-networking-basic.html" title="Interactive demo: Who gets in, who gets out: the NSG rule evaluator" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/08-networking-basic/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>The order of the gates: on the way in, the subnet NSG is checked before the NIC NSG, and both must allow.</li>
+<li>The rule evaluator: the lowest number is checked first, and the first match ends the evaluation.</li>
+<li>The private app tier: its NSG allows outbound internet traffic, yet nothing leaves until a NAT gateway appears.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi needs a subnet for about 20 VMs and wants a little headroom. Is a /27 big enough?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Yes. A /27 has 32 addresses; Azure reserves 5, which leaves 27 for VMs. <em>Why:</em> Azure always keeps the first four
+addresses and the last address of every subnet.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Rizky says: &quot;The NIC NSG on <code>vm-web</code> allows SSH from my IP, but I still can't connect.&quot; The subnet NSG has only an
+HTTP allow rule plus the defaults. What is happening?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The subnet NSG is evaluated first for inbound traffic. Nothing there allows TCP 22, so <code>DenyAllInBound</code> (65500) drops
+the packet before the NIC NSG is consulted. <em>Why:</em> a packet must be allowed at every level it meets. (The better fix
+is not to open SSH at all — use Run Command or Azure Bastion.)</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p><code>nsg-app</code> contains <em>200 Deny-VNet-Inbound</em> (source VirtualNetwork, any port) and <em>300 Allow-Web-8080</em> (source
+<code>asg-web</code>, port 8080). The web servers can't reach the app on 8080. What do you change?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Give the allow a lower number than the deny — for example 100 for the allow and 4000 for the deny. <em>Why:</em> rules are
+checked from the lowest number up, and the first match wins, so the deny currently matches first.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>In October 2026 you create a new VNet with the Azure CLI. <code>vm-app</code> has no public IP and its NSG has only the default
+rules, yet it can't download updates. What is the recommended fix?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Attach a NAT gateway with a Standard public IP to the app subnet. <em>Why:</em> new VNets use private subnets without
+default outbound access, and <code>AllowInternetOutBound</code> only permits traffic — it doesn't create a path to the internet.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>You created the zone <code>nusantararetail.co.id</code> in Azure DNS with a <code>www</code> record. <code>nslookup www.nusantararetail.co.id    ns1-03.azure-dns.com</code> works, but customers get &quot;can't find&quot;. What's missing?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Delegation: at the domain registrar, set the domain's NS records to the four Azure DNS name servers of the zone.
+<em>Why:</em> resolvers on the internet only ask the name servers that the parent zone points them to.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Plan addresses for the whole company first: private RFC 1918 ranges with no overlap with head office (<code>10.0.0.0/16</code>) or future networks, because renumbering later means rebuilding.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>Every subnet gives five addresses to Azure, so the first VM gets <code>.4</code>; leave room for dedicated subnets such as <code>AzureBastionSubnet</code>.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>NSG rules run from priority 100 to 4096 and the first match wins; default rules sit at 65000 and above. Inbound, the subnet NSG comes before the NIC NSG, and both must allow. Service tags and ASGs keep rules short.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Standard public IPs are closed until an NSG opens them, and new VNets get private subnets: give them an explicit way out, usually a NAT gateway. An NSG allow is permission, not a path.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Azure DNS hosts public zones (delegate them at your registrar), and Network Watcher — IP flow verify, effective security rules, next hop, VNet flow logs — turns guessing into evidence.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Field notes from Stefanus</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Every &quot;temporary&quot; rule needs an owner and an end date.</strong> In network reviews I read the NSG rules from the lowest
+number up, exactly as Azure does, and for every allow rule I ask: <em>who asked for this, and when can it go?</em> If nobody
+knows, it is a candidate for deletion. My habit is to name rules after their intent, such as
+<code>Allow-Web-To-App-8080</code>, and to put the requester and a review date in the rule's description, because the &quot;just for
+a week&quot; rules are the ones that quietly survive for years. And when something doesn't connect, I don't touch a
+single rule until IP flow verify or the effective security rules have told me which rule decided. Editing rules on a
+hunch is how the next sneaky deny is born.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">More about the author →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>08</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Build Nusantara Retail&#x27;s network</h3>
+          <div class="prose"><p>You build the storefront network end to end: a VNet with private web and app subnets, NSGs and an application
+security group, a public web VM and a private app VM, and a NAT gateway that gives the app tier a predictable way out.
+You prove each rule with real traffic and with IP flow verify, publish <code>www</code> and <code>shop</code> names in a public DNS zone, and
+then break the app tier with a sneaky higher-priority deny rule — and find it.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 50 minutes</span><span class="chip cost">💲💲 small charges while running</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/08-networking-basic.html">Start Lab 08 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/virtual-network/network-security-groups-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Azure network security groups overview</b><span>Rule properties, the default rules and platform considerations on one page.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/nat-gateway/nat-overview" target="_blank" rel="noopener"><b>Microsoft Learn: What is Azure NAT Gateway?</b><span>SKUs, limits, timers and how NAT gateway ranks against other outbound methods.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/network-watcher/network-watcher-overview" target="_blank" rel="noopener"><b>Microsoft Learn: What is Azure Network Watcher?</b><span>Every diagnostic tool, with links to quickstarts.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/dns/dns-getstarted-cli" target="_blank" rel="noopener"><b>Microsoft Learn: Quickstart — create an Azure DNS zone and record using Azure CLI</b><span>The same zone-and-nslookup flow as the lab.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🛡️</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>Network Planner</h2>
+        <p class="muted">Plan address spaces and filter traffic.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“Minutes to rebuild — and the app tier can&#x27;t even be seen from the internet.”</b></p>
+        <div class="teaser"><b>Next episode · 09</b><h4>Two Servers, One Address</h4><p>A perfectly good twin server sits idle while shoppers can only find one.</p><p style="margin-top:10px"><a href="09-load-balancing-basic.html">Watch Episode 09 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="07-storage-basic.html"><small>← Previous episode</small>07 · The USB Drive Goes Home on Fridays</a><a class="next" href="09-load-balancing-basic.html"><small>Next episode →</small>09 · Two Servers, One Address</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/08-networking-basic/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

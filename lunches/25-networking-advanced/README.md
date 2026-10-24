@@ -1,9 +1,12 @@
 # Lunch 25 · Virtual Networking (Advanced)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Deep-dive month · **Level:** Advanced · **Part 5:** Deep dives
 > **Time:** 60 minutes · **Prerequisite lunches:** 08 (Virtual Networking, Basic)
 > **AZ-900 skill area:** Beyond AZ-900
 > **Lab:** [Lab 25 · Hub and spoke for Nusantara Retail](../../labs/25-networking-advanced/README.md) — about 60 minutes · cost 💲💲 (optional Azure Firewall path 💲💲💲)
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -377,6 +380,16 @@ What to watch for:
   DDoS Protection adds paid protection on top of the free baseline.
 - Private endpoints only work when DNS does: public name → privatelink CNAME → private zone `A` record → private IP.
   Link the zones to every VNet that needs them, and use DNS Private Resolver for hybrid resolution.
+
+## 🗒️ Field notes from Stefanus
+
+> **Narrate the packet, both ways.** In every hub-and-spoke review I ask one person to walk a single packet from the
+> storefront to the back office out loud: which route table sends it to the hub, which firewall rule lets it through,
+> which peering setting accepts it on the other side — and then the same for the reply. The moment someone says "and
+> then it just gets there", I have found the part that nobody owns. I want next-hop output from both VMs in the change
+> ticket, not a diagram. And when someone tells me a private endpoint "is blocked", I don't touch the firewall first:
+> I run nslookup from the VM that fails. If the answer is a public IP, the problem is DNS, and no firewall rule will
+> fix it.
 
 ## 🔬 Your lab: Hub and spoke for Nusantara Retail
 

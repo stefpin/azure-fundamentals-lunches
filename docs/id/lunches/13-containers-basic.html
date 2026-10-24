@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 13 · Di Laptop Saya Jalan, Kok — Makan Siang 13: Containers (Dasar): Container Registry, Container Instances, dan Container Apps · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 13 · Containers (Dasar): Container Registry, Container Instances, dan Container Apps. Kalimat paling mahal di kantor. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/13-containers-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/13-containers-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/13-containers-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/13-containers-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 13 · Di Laptop Saya Jalan, Kok — Makan Siang 13: Containers (Dasar): Container Registry, Container Instances, dan Container Apps">
+<meta property="og:description" content="Makan Siang 13 · Containers (Dasar): Container Registry, Container Instances, dan Container Apps. Kalimat paling mahal di kantor. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/13-containers-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="13" style="--c:#11935a">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/13-containers-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 13</span> Season 1 · 🧩 Bagian 3 · Layanan platform dan data</div>
+      <h1>Di Laptop Saya Jalan, Kok</h1>
+      <div class="lunch-title">Makan Siang 13 · Containers (Dasar): Container Registry, Container Instances, dan Container Apps</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 45 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="02-cloud-concepts.html" title="Sewa, Bukan Beli?">↩ 02</a><a class="chip" href="10-app-service.html" title="Jumat Malam Dewi">↩ 10</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 12 · Tabel 140 Kolom, katalog produk kini tinggal di Cosmos DB, dipartisi agar siap di-scale menghadapi serbuan 12.12.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, lebih tenang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 48% siap</b>Setelah episode ini Anda bisa menjawab: “Gangguan tidak terasa, dan kontainer yang sama berjalan persis sama di mana pun.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-container-dalam-satu-gambar">Container dalam satu gambar</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-image-tag-dan-azure-container-registry">Image, tag, dan Azure Container Registry</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-azure-container-instances-satu-container-sekarang-juga">Azure Container Instances: satu container, sekarang juga</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-azure-container-apps-aplikasi-serverless-yang-bisa-menyusut-hingga-nol">Azure Container Apps: aplikasi serverless yang bisa menyusut hingga nol</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-memilih-tempat-container-anda-berjalan">Memilih tempat container Anda berjalan</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-bagaimana-semuanya-menyatu-untuk-nusantara-retail">Bagaimana semuanya menyatu untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/13-containers-basic.html">🔬 Buka Lab 13</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Menjelaskan apa bedanya container (<em>kontainer</em>) dengan virtual machine (<em>komputer virtual</em>), dan mengapa sebuah image membuat deployment selalu bisa diulang dengan hasil yang sama.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Menjelaskan image, tag, digest, dan registry, serta memilih tier dan metode sign-in Azure Container Registry.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Menjelaskan cara Azure Container Apps memakai environment, revision, ingress, dan scale rule, termasuk kemampuan menyusut hingga nol (scale to zero).</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Memilih antara Azure Container Instances, Azure Container Apps, Azure Kubernetes Service, dan App Service untuk sebuah beban kerja container.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 13</span>
+        <div class="story-body"><p>Dewi baru saja menulis ulang halaman produk toko online, dan di laptopnya halaman-halaman itu melesat secepat kilat. Di
+server uji, halaman yang sama justru crash: server itu memakai runtime Python yang lebih lama dan tidak punya salah satu
+library pengolah gambar. Kalimat &quot;di laptop saya jalan, kok&quot; kini menjadi kalimat paling mahal di kantor. Pak Budi
+menghabiskan malam-malamnya mencocokkan versi library satu per satu, sementara Rizky, sang kontraktor, ingin
+&quot;masukkan saja semuanya ke Kubernetes&quot;.</p>
+<p>Ibu Sari punya kekhawatiran lain. Saat promo Harbolnas 12.12, trafik melonjak sepuluh kali lipat selama beberapa jam;
+sebaliknya, pukul tiga pagi pada hari Selasa biasa hampir tidak ada yang berbelanja. Ia tidak mau membayar server
+seukuran musim promo sepanjang tahun. Ada pula job malam yang mengimpor harga dari pemasok selama sepuluh menit, lalu
+menganggur sepanjang sisa hari.</p>
+<p>Hari ini Anda menjawab dua pertanyaan. Bagaimana mengemas toko online sekali saja agar berjalan sama persis di mana pun?
+Dan layanan Azure mana yang sebaiknya menjalankan kemasan itu, agar kita membayar untuk pembeli yang datang, bukan untuk
+server yang menganggur?</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-container-dalam-satu-gambar" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Container dalam satu gambar</h3><div class="prose"><p><strong>Container</strong> adalah sebuah proses yang sedang berjalan dan membawa sendiri kode aplikasi, runtime, dan library-nya,
+terpisah dari semua proses lain di mesin yang sama. Berbeda dengan virtual machine, container tidak membawa kernel
+sistem operasinya sendiri. Kernel adalah inti sistem operasi, bagian yang mengatur CPU, memori, dan file. Semua
+container di satu host memakai bersama kernel milik host tersebut, dan kernel itu sendirilah yang memasang pagar di
+antara mereka: setiap container hanya melihat file dan prosesnya sendiri, dan hanya boleh memakai CPU dan memori yang
+dijatahkan kepadanya.</p>
+<p>Ibaratnya rumah kontrakan dan kos-kosan. Virtual machine seperti mengontrak satu rumah utuh: fondasi, dapur, dan
+meteran listriknya milik sendiri. Container seperti kamar kos: setiap penghuni punya kamar berkunci dengan perabotnya
+sendiri (aplikasi dan library-nya), tetapi semua kamar berdiri di atas fondasi yang sama dan memakai listrik serta air
+dari gedung yang sama (kernel host). Pemilik kos, yaitu kernel, memastikan tidak ada penghuni yang bisa masuk ke kamar
+orang lain atau memakai listrik melebihi jatahnya.</p>
+<p>Satu pilihan desain itu menjelaskan hampir semua perbedaan yang akan Anda temui. VM harus mem-boot seluruh sistem
+operasi, sehingga butuh beberapa menit untuk menyala dan image disk-nya berukuran gigabyte. Container cukup menjalankan
+sebuah proses, sehingga siap dalam hitungan detik, dan kemasannya sering kali hanya berukuran puluhan atau ratusan
+megabyte. Di perangkat keras yang sama, jauh lebih banyak container yang muat dibandingkan VM. Itulah sebabnya penyedia
+cloud bisa menyewakan container kepada Anda per detik.</p>
+<p>Kemasan yang Anda kirimkan disebut <strong>container image</strong>: sistem file berlapis yang hanya bisa dibaca (read-only),
+ditambah sedikit metadata, misalnya perintah yang harus dijalankan dan environment variable bawaannya. Cara membangun
+image itu Anda tuliskan dalam sebuah file teks bernama <strong>Dockerfile</strong>. Setiap instruksi menambahkan satu <strong>layer</strong>
+(lapisan), dan layer disimpan dalam cache serta bisa dipakai bersama. Karena itu, perubahan kode biasanya hanya
+membangun ulang dan mengunggah layer teratas yang tipis, bukan runtime di bawahnya.</p>
+<div class="code" data-lang="dockerfile"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>Dockerfile</span><button class="copy-btn" type="button">Salin</button></div><pre><code>FROM python:3.12-slim                  # base layer: OS libraries and the Python runtime
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt    # dependency layer, rebuilt only when requirements change
+COPY . .                               # your code: the layer that changes most often
+EXPOSE 8080                            # documents the port; it does not open anything by itself
+CMD [&quot;gunicorn&quot;, &quot;--bind&quot;, &quot;0.0.0.0:8080&quot;, &quot;app:app&quot;]
+</code></pre></div>
+<p>Cara mudah mengingat bedanya: image itu ibarat paket masak (meal kit) yang masih tersegel, dengan semua bahan sudah
+ditakar; <strong>container</strong> adalah paket itu setelah dimasak dan dihidangkan. Masak paket yang sama di seratus dapur, dan
+hasilnya tetap hidangan yang sama. Itulah persis yang dibutuhkan Dewi. Laptopnya, environment uji, dan production
+semuanya menjalankan image yang sama, sehingga &quot;di laptop saya jalan&quot; berubah menjadi &quot;di dalam image jalan&quot;.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  subgraph VMS[&quot;Virtual machine&quot;]
+    direction TB
+    A1[&quot;Aplikasi A + library&quot;] --&gt; G1[&quot;Kernel OS tamu&quot;]
+    A2[&quot;Aplikasi B + library&quot;] --&gt; G2[&quot;Kernel OS tamu&quot;]
+    G1 --&gt; HV[&quot;Hypervisor di host&quot;]
+    G2 --&gt; HV
+  end
+  subgraph CTS[&quot;Container&quot;]
+    direction TB
+    C1[&quot;Container A: aplikasi + library&quot;] --&gt; K[&quot;Kernel OS host yang dipakai bersama&quot;]
+    C2[&quot;Container B: aplikasi + library&quot;] --&gt; K
+    C3[&quot;Container C: aplikasi + library&quot;] --&gt; K
+  end
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Virtual machine (Makan Siang 06)</th>
+<th>Container</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Apa yang divirtualisasi</td>
+<td>Perangkat keras; setiap VM menjalankan kernel OS-nya sendiri</td>
+<td>Sistem operasi; semua container memakai bersama kernel host</td>
+</tr>
+<tr>
+<td>Waktu menyala yang umum</td>
+<td>Beberapa menit</td>
+<td>Beberapa detik</td>
+</tr>
+<tr>
+<td>Ukuran kemasan yang umum</td>
+<td>Gigabyte</td>
+<td>Megabyte hingga beberapa ratus megabyte</td>
+</tr>
+<tr>
+<td>Cara memperbarui</td>
+<td>Menambal (patch) OS tamu dan aplikasi yang sedang berjalan di tempat</td>
+<td>Membangun image baru lalu mengganti container-nya</td>
+</tr>
+<tr>
+<td>Tempat data (state) disimpan</td>
+<td>Sering kali di disk VM</td>
+<td>Di luar container: database, storage, atau volume yang di-mount</td>
+</tr>
+<tr>
+<td>Cocok untuk</td>
+<td>Lift-and-shift, kendali penuh atas OS, perangkat lunak lama (legacy)</td>
+<td>API, front end web, microservice, job singkat</td>
+</tr>
+</tbody>
+</table></div>
+<p>Dari sini lahir dua kebiasaan. Pertama, perlakukan container sebagai barang sekali pakai: jangan pernah &quot;memperbaiki&quot;
+container yang sedang berjalan secara manual, karena container pengganti berikutnya tidak akan membawa perbaikan Anda.
+Ubahlah image-nya. Kedua, simpan data di luar container, yaitu di Azure SQL, Azure Cosmos DB, atau Azure Storage
+(Makan Siang 07, 11, dan 12), supaya kehilangan sebuah container tidak pernah berarti kehilangan pesanan.</p>
+</div></article><article class="scene-card" id="2-image-tag-dan-azure-container-registry" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Image, tag, dan Azure Container Registry</h3><div class="prose"><p><strong>Registry</strong> adalah tempat menyimpan dan membagikan image, semacam gudang image. Di dalamnya, sebuah <strong>repository</strong>
+menampung versi-versi dari satu image (misalnya <code>storefront</code>), dan setiap versi membawa satu atau beberapa <strong>tag</strong>
+seperti <code>v1</code> atau <code>2026.10.23</code>. Setiap image juga punya <strong>digest</strong>, yaitu hash SHA-256 dari isinya. Hash adalah semacam
+sidik jari digital yang dihitung dari isi file: ubah satu byte saja, sidik jarinya ikut berubah. Tag adalah label yang
+bisa dipindah; digest tidak pernah berubah. Referensi image yang lengkap dibaca seperti alamat:
+<code>acrnusa12345.azurecr.io/storefront:v1</code> berarti login server, repository, dan tag.</p>
+<p>Bayangkan rak di minimarket. Tag itu seperti papan &quot;PROMO MINGGU INI&quot; yang digantung di rak: minggu depan papan yang
+sama bisa dipindah ke barang lain. Digest lebih mirip barcode yang tercetak di kemasan: ia menempel pada isinya dan
+tidak bisa dipindah ke barang lain.</p>
+<p>Registry publik menyimpan image yang boleh ditarik (pull) siapa saja: Docker Hub, GitHub Container Registry, dan
+Microsoft Artifact Registry (<code>mcr.microsoft.com</code>), tempat Microsoft menerbitkan image-nya sendiri, termasuk contoh
+aplikasi web yang akan Anda pakai di lab. Image buatan Anda sendiri sebaiknya disimpan di registry privat. <strong>Azure
+Container Registry (ACR)</strong> adalah registry privat terkelola milik Azure: ia berada di subscription (<em>langganan</em>) dan
+region (<em>wilayah</em>) Anda, dekat dengan layanan yang menarik image darinya, dan menyimpan container image, Helm chart
+(paket aplikasi untuk Kubernetes), serta artefak OCI (Open Container Initiative, standar terbuka untuk format container)
+lainnya di balik sign-in Microsoft Entra ID (<em>ID Microsoft Entra</em>).</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Penyimpanan yang disertakan</th>
+<th>Yang menonjol</th>
+<th>Pakai saat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Basic</td>
+<td>10 GiB</td>
+<td>API dan sign-in Entra ID yang sama dengan tier lain; throughput paling rendah</td>
+<td>Belajar, lab, tim kecil</td>
+</tr>
+<tr>
+<td>Standard</td>
+<td>100 GiB</td>
+<td>Penyimpanan dan throughput lebih besar, anonymous pull, artifact cache rule</td>
+<td>Sebagian besar beban kerja production</td>
+</tr>
+<tr>
+<td>Premium</td>
+<td>500 GiB</td>
+<td>Geo-replication, private endpoint, customer-managed key, aturan jaringan, connected registry</td>
+<td>Beberapa region, jaringan privat, data yang diatur regulasi</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ketiga tier itu secara default bersifat zone-redundant (datanya disalin ke beberapa zona) di region yang memiliki
+availability zone (<em>zona ketersediaan</em>), dan Anda bisa mengganti tier di kemudian hari tanpa downtime (turun dari
+Premium berarti Anda harus melepas dulu fitur-fitur yang hanya ada di Premium). Penyimpanan di atas jatah yang
+disertakan ditagih per GiB, jadi hapuslah tag lama yang tidak lagi Anda perlukan.</p>
+<p>Ada tiga cara memasukkan image ke ACR:</p>
+<ul>
+<li><strong>Push</strong> image yang Anda bangun secara lokal dengan Docker: <code>az acr login</code>, lalu <code>docker push</code>.</li>
+<li><strong>Import</strong> image dari registry lain dengan <code>az acr import</code>. Penyalinannya terjadi di dalam Azure, jadi Anda sama
+sekali tidak memerlukan Docker. Cara inilah yang dipakai di lab.</li>
+<li><strong>Build di cloud</strong> dengan <strong>ACR Tasks</strong>: <code>az acr build</code> mengunggah folder kode sumber Anda dan membangun image-nya di
+Azure. Tasks juga bisa membangun ulang secara otomatis setiap kali Anda melakukan commit ke Git atau ketika base image
+mendapat patch keamanan.</li>
+</ul>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Saat tulisan ini dibuat (Oktober 2026), eksekusi ACR Tasks dihentikan sementara untuk subscription yang memakai kredit
+gratis Azure; build akan gagal dengan <code>TasksOperationsNotAllowed</code>. Karena itulah lab mengimpor image publik dan
+menjadikan build di cloud sebagai tambahan opsional. Periksa dokumentasi ACR Tasks untuk status terbarunya.</p>
+</aside>
+<p>Siapa yang boleh menarik image? Manusia melakukan sign-in dengan Entra ID (<code>az acr login</code>). Layanan Azure sebaiknya
+memakai <strong>managed identity</strong>, yaitu identitas yang dibuat dan dikelola Azure untuk sebuah layanan, yang memegang role
+<strong>AcrPull</strong> pada registry, sehingga tidak ada kata sandi di mana pun. ACR juga punya <strong>admin user</strong>, yaitu satu username
+dan kata sandi yang dipakai bersama; fitur ini nonaktif secara default dan sebaiknya tetap nonaktif, kecuali untuk
+eksperimen singkat. Mode penetapan role yang lebih baru, &quot;RBAC Registry + ABAC Repository Permissions&quot;, memungkinkan Anda
+membatasi akses hingga ke masing-masing repository (RBAC adalah role-based access control atau <em>kontrol akses berbasis
+peran</em>, sedangkan ABAC adalah kontrol akses berbasis atribut). Microsoft menyatakan mode ini akan menjadi default; dalam
+mode itu, role AcrPull versi lama diabaikan dan Anda menetapkan role Container Registry Repository Reader sebagai
+gantinya.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  DEV[&quot;Dewi: Dockerfile + kode&quot;] --&gt;|&quot;docker build atau az acr build&quot;| IMG[&quot;Image storefront:v1&quot;]
+  IMG --&gt;|&quot;push atau az acr import&quot;| ACR[(&quot;Azure Container Registry&quot;)]
+  ACR --&gt;|&quot;pull dengan managed identity&quot;| ACI[&quot;Container Instances&quot;]
+  ACR --&gt;|&quot;pull dengan managed identity&quot;| ACA[&quot;Container Apps&quot;]
+  ACR --&gt;|&quot;pull dengan kubelet identity&quot;| AKS[&quot;AKS - Makan Siang 29&quot;]
+  ACR --&gt;|&quot;pull dengan managed identity&quot;| APP[&quot;App Service&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Satu catatan tentang tag <code>latest</code>: itu hanya nama bawaan, bukan jaminan bahwa image-nya yang paling baru. Gunakan tag
+yang eksplisit saat men-deploy, seperti <code>v1</code> atau sebuah tanggal, agar Anda selalu tahu apa yang sedang berjalan dan
+bisa kembali (roll back) ke tag sebelumnya dalam hitungan detik.</p>
+</div></article><article class="scene-card" id="3-azure-container-instances-satu-container-sekarang-juga" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Azure Container Instances: satu container, sekarang juga</h3><div class="prose"><p><strong>Azure Container Instances (ACI)</strong> adalah jalan terpendek dari sebuah image menuju container yang berjalan. Anda cukup
+menyebutkan image-nya, jumlah core CPU dan memori, port, serta (opsional) sebuah <strong>DNS name label</strong>. Beberapa detik
+kemudian, container sudah menjawab di <code>label.region.azurecontainer.io</code>. Anda tidak pernah melihat VM ataupun cluster,
+dan Anda membayar per detik untuk CPU dan memori yang dialokasikan selama container berjalan.</p>
+<p>Unit yang Anda deploy disebut <strong>container group</strong>: satu atau beberapa container di host yang sama yang berbagi
+jaringan, volume penyimpanan, dan siklus hidup, mirip pod di Kubernetes. Group yang berisi lebih dari satu container
+tersedia untuk container Linux; pasangan yang umum adalah aplikasi ditambah container pembantu kecil yang mengirimkan
+log. Setiap
+group diisolasi di tingkat hypervisor, sehingga tetangga di perangkat keras yang sama tidak bisa mengintip ke dalamnya.</p>
+<p><strong>Restart policy</strong> (kebijakan restart) memberi tahu ACI apa yang harus dilakukan ketika prosesnya berhenti. <code>Always</code>,
+nilai default-nya, cocok untuk web server. <code>OnFailure</code> hanya mencoba lagi bila terjadi error. <code>Never</code> cocok untuk
+pekerjaan yang berjalan sampai selesai, seperti impor harga malam hari milik Nusantara Retail: job berjalan sepuluh
+menit, keluar, dan meteran biaya pun berhenti.</p>
+<p>Operasional sehari-harinya juga ringkas. <code>az container logs</code> menampilkan apa yang dicetak oleh proses,
+<code>az container attach</code> mengalirkan output itu secara langsung, dan <code>az container exec</code> membuka shell di dalam container
+yang sedang berjalan ketika Anda perlu melihat-lihat. Pengaturan dikirim sebagai environment variable; yang sensitif
+ditandai sebagai secure agar tersembunyi dari properti resource. Anda juga bisa me-mount share Azure Files bila container
+memerlukan file yang harus tetap ada setelah container itu hilang. Ada dua batasan yang sering menjebak: ACI hanya
+menjalankan image x64 (AMD64), jadi image yang di-build khusus untuk ARM di laptop tidak akan bisa start; dan image yang
+sangat besar memperlambat setiap start karena harus ditarik terlebih dahulu.</p>
+<p>ACI sengaja dibuat sederhana, dan kesederhanaan itu juga menjadi batasannya. ACI tidak melakukan autoscale, tidak
+membagi beban (load balancing) di antara beberapa salinan, dan tidak punya revision maupun sertifikat terkelola; untuk
+menjalankan lima salinan, Anda harus membuat lima container group. Alamat IP publik sebuah group bisa berubah setelah
+restart, jadi selalu gunakan nama DNS-nya. Untuk menarik image dari ACR privat, ACI memerlukan user-assigned managed
+identity (identitas yang Anda buat sebagai resource tersendiri) yang memegang AcrPull; ACI tidak bisa memakai
+system-assigned identity (identitas yang melekat pada satu resource dan ikut terhapus bersamanya) untuk menarik image.</p>
+<p>Beberapa opsi yang lebih baru dibangun di atas mesin yang sama: <strong>Spot container</strong> menjalankan pekerjaan yang boleh
+diinterupsi dengan harga diskon, <strong>confidential container</strong> melindungi data selama berada di memori, <strong>NGroups</strong> menjaga
+sekumpulan container group yang saling terkait tetap berjalan dengan rolling upgrade di beberapa zona, dan <strong>virtual
+node</strong> memungkinkan cluster AKS &quot;meluberkan&quot; pod ke ACI saat beban memuncak. Bagi Nusantara Retail, ACI cocok untuk
+impor harga, uji cepat image dari vendor, atau build agent yang berumur pendek.</p>
+</div></article><article class="scene-card" id="4-azure-container-apps-aplikasi-serverless-yang-bisa-menyusut-hingga-nol" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Azure Container Apps: aplikasi serverless yang bisa menyusut hingga nol</h3><div class="prose"><p><strong>Azure Container Apps</strong> menjalankan aplikasi web, API, background worker, dan job dari container image di atas
+platform serverless, artinya Anda sama sekali tidak mengurus server. Di balik layar, layanan ini memakai Kubernetes dan
+proyek open source (KEDA untuk penskalaan berbasis event, Envoy untuk ingress, dan Dapr untuk komponen dasar
+microservice), tetapi Anda tidak pernah diminta untuk mengelola, meng-upgrade, atau bahkan melihat API Kubernetes.</p>
+<p>Ada empat komponen dasar yang penting:</p>
+<ul>
+<li><strong>Environment</strong> (lingkungan) adalah batas aman yang mengelilingi sekelompok aplikasi. Aplikasi dalam satu environment
+berbagi satu virtual network (<em>jaringan virtual</em>) dan satu workspace Log Analytics, serta bisa saling memanggil
+berdasarkan nama. Jenis default-nya adalah <strong>workload profiles environment</strong>, yang menyediakan profil serverless
+<strong>Consumption</strong> ditambah profil <strong>Dedicated</strong> opsional dengan perangkat keras yang dicadangkan khusus.</li>
+<li><strong>Container app</strong> adalah aplikasi Anda. Konfigurasinya (ingress, secret, sign-in ke registry, revision mode) berlaku
+untuk seluruh aplikasi.</li>
+<li><strong>Revision</strong> adalah snapshot template aplikasi yang tidak bisa diubah (immutable): image, environment variable, CPU
+dan memori, serta scale rule. Mengubah apa pun di template akan membuat revision baru; mengubah ingress, secret, atau
+pembagian trafik tidak.</li>
+<li><strong>Replica</strong> adalah satu salinan revision yang sedang berjalan. Replica datang dan pergi mengikuti naik-turunnya beban.</li>
+</ul>
+<p><strong>Ingress</strong> adalah pintu masuk yang menerbitkan aplikasi Anda ke luar. External ingress memberinya alamat HTTPS publik
+di <code>azurecontainerapps.io</code>, lengkap dengan sertifikat yang diurus untuk Anda; internal ingress membuatnya hanya bisa
+dijangkau dari dalam environment atau virtual network Anda. Anda juga menyatakan <strong>target port</strong>: port tempat proses
+Anda mendengarkan (listen) di dalam container. Ibaratnya alamat di kompleks perumahan: ingress adalah gerbang kompleks,
+target port adalah nomor rumahnya. Kurir yang lolos gerbang tetapi mengetuk nomor rumah yang salah tetap tidak akan
+bertemu penghuninya.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Kesalahan paling umum pada deployment pertama adalah target port yang salah. Jika image mendengarkan di port 80
+tetapi Anda mengatur 8080, platform tidak bisa menjangkau aplikasi Anda: revision tidak pernah menjadi sehat
+(healthy) dan setiap request gagal. <code>EXPOSE</code> di Dockerfile hanyalah dokumentasi, jadi periksa dokumentasi image-nya
+dan atur target port agar cocok.</p>
+</aside>
+<p>Setiap revision diskalakan di antara jumlah replica minimum dan maksimum, secara default 0 dan 10 (saat tulisan ini
+dibuat, Anda bisa mengatur hingga 1.000). <strong>Scale rule</strong> (aturan penskalaan) menentukan kapan replica ditambah:
+<strong>HTTP rule</strong> memantau jumlah request bersamaan (concurrent) per replica (default 10), TCP rule memantau koneksi, dan
+custom rule bisa memakai scaler KEDA apa pun, misalnya panjang antrean Service Bus. Hitungannya sederhana: 45 request
+bersamaan dengan target 10 menghasilkan ceil(45 ÷ 10) = 5 replica (ceil berarti pembulatan ke atas), dengan batas atas
+sesuai maksimum yang Anda tetapkan.</p>
+<p>Bayangkan kasir supermarket. Manajer membuka satu kasir untuk setiap sepuluh pembeli yang mengantre, paling banyak lima
+kasir. Saat toko sepi di tengah malam, semua kasir ditutup dan tidak ada yang digaji hanya untuk berdiri menunggu.</p>
+<p>Dengan minimum nol, aplikasi yang sepi akan menyusut hingga nol replica setelah masa tenang (cool-down, default 300
+detik) dan tidak dikenai biaya compute selama &quot;tidur&quot;. Konsekuensinya adalah <strong>cold start</strong>: request pertama setelah
+masa sepi harus menunggu beberapa detik sementara sebuah replica dinyalakan. Dalam bahasa supermarket tadi: pembeli
+pertama setelah semua kasir tutup harus menunggu sebentar sampai seorang kasir datang dan menyalakan mesinnya. Aplikasi
+production yang harus menjawab seketika mengatur minimum satu atau dua; replica yang menganggur pada jumlah minimum itu
+ditagih dengan tarif idle yang lebih rendah.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph ENV[&quot;Environment Container Apps&quot;]
+    ING[&quot;Ingress (Envoy)&quot;] --&gt;|&quot;80% request&quot;| R1[&quot;Revision v1&quot;]
+    ING --&gt;|&quot;20% request&quot;| R2[&quot;Revision v2&quot;]
+    R1 --&gt; P1((&quot;replica&quot;))
+    R1 --&gt; P2((&quot;replica&quot;))
+    R2 --&gt; P3((&quot;replica&quot;))
+  end
+  USERS[&quot;Pembeli&quot;] --&gt;|HTTPS| ING
+  KEDA[&quot;Scale rule KEDA&quot;] -.-&gt;|&quot;tambah atau kurangi replica&quot;| R1
+  KEDA -.-&gt; R2
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p><strong>Revision mode</strong> mengatur cara rilis. Dalam mode <strong>single</strong> (default), revision baru mengambil alih begitu siap,
+sehingga pembaruan berlangsung tanpa downtime. Dalam mode <strong>multiple</strong>, beberapa revision tetap aktif dan Anda membagi
+trafik berdasarkan persentase, misalnya 80% ke v1 yang sudah terbukti dan 20% ke v2 yang baru (disebut canary release),
+lalu menaikkannya ke 100% setelah Anda yakin. Mode labels, yang masih berstatus preview saat tulisan ini dibuat,
+menambahkan label bernama seperti <code>staging</code>.</p>
+<p>Ibaratnya rumah makan yang mencoba resep rendang baru: mula-mula resep itu disajikan ke dua dari sepuluh meja saja.
+Kalau tamu suka, semua meja mendapat resep baru; kalau ada yang mengeluh, resep lama kembali dipakai tanpa membuat
+seisi rumah makan kacau.</p>
+<p>Dua fitur lain layak Anda kenal namanya. <strong>Dapr</strong> adalah sidecar opsional, yaitu proses pendamping yang berjalan di
+samping aplikasi Anda, yang memberi kode Anda API standar untuk panggilan antarlayanan, pengiriman pesan
+publish-subscribe, dan penyimpanan state, sehingga kode tidak terikat pada satu message broker tertentu. <strong>Jobs</strong>
+menjalankan container sampai selesai, baik sesuai permintaan, terjadwal, maupun saat event datang, sehingga menjadi
+pilihan kedua untuk impor harga malam hari.</p>
+<p>Pada plan Consumption, Anda membayar per detik untuk vCPU dan memori yang dipakai replica, ditambah biaya kecil per
+sejuta request. Setiap subscription mendapat jatah gratis bulanan (saat tulisan ini dibuat: 180.000 vCPU-detik,
+360.000 GiB-detik, dan 2 juta request; satu vCPU-detik berarti satu CPU virtual terpakai selama satu detik), dan itulah
+sebabnya lab ini hampir tidak memakan biaya.</p>
+</div></article><article class="scene-card" id="5-memilih-tempat-container-anda-berjalan" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Memilih tempat container Anda berjalan</h3><div class="prose"><p>Image yang sama bisa berjalan di empat layanan Azure yang berbeda. Bedanya terletak pada seberapa banyak platform yang
+Anda dapatkan, dan seberapa banyak platform yang harus Anda urus sendiri.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Container Instances</th>
+<th>Container Apps</th>
+<th>Azure Kubernetes Service</th>
+<th>App Service (Web App for Containers)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gambaran sederhananya</td>
+<td>Satu container group, sesuai permintaan</td>
+<td>Aplikasi dan job serverless</td>
+<td>Cluster Kubernetes terkelola milik Anda sendiri</td>
+<td>Web hosting terkelola yang menjalankan image Anda</td>
+</tr>
+<tr>
+<td>Yang Anda urus</td>
+<td>Setiap container group</td>
+<td>Aplikasi, revision, dan scale rule</td>
+<td>Node, upgrade, add-on, dan objek Kubernetes (lebih sedikit dengan AKS Automatic)</td>
+<td>App Service plan dan pengaturan aplikasi</td>
+</tr>
+<tr>
+<td>Penskalaan</td>
+<td>Tidak ada bawaan; buat lebih banyak group</td>
+<td>Otomatis berdasarkan HTTP, TCP, atau event, hingga nol</td>
+<td>Autoscaler pod dan node yang Anda konfigurasi</td>
+<td>Manual atau autoscale pada plan; tidak bisa menyusut hingga nol</td>
+</tr>
+<tr>
+<td>Yang Anda bayar</td>
+<td>Per detik vCPU dan memori</td>
+<td>Per detik pemakaian ditambah request (dengan jatah gratis), atau profil Dedicated</td>
+<td>VM node, ditambah biaya pada tier Standard dan Premium</td>
+<td>Instance plan, sibuk ataupun menganggur</td>
+</tr>
+<tr>
+<td>API Kubernetes</td>
+<td>Tidak</td>
+<td>Tidak</td>
+<td>Ya</td>
+<td>Tidak</td>
+</tr>
+<tr>
+<td>Paling cocok untuk</td>
+<td>Job, uji cepat, build agent, kapasitas tambahan saat lonjakan</td>
+<td>Microservice, API, worker berbasis event, aplikasi yang sering menganggur</td>
+<td>Tim platform, Helm chart dan operator, kendali yang sangat detail</td>
+<td>Aplikasi web klasik yang menginginkan deployment slot dan sign-in bawaan</td>
+</tr>
+</tbody>
+</table></div>
+<p>Bacalah tabel itu dari kiri ke kanan sebagai &quot;makin banyak kendali, makin besar tanggung jawab&quot;. Mulailah dari layanan
+paling sederhana yang memenuhi kebutuhan. Untuk sebagian besar beban kerja container baru milik Nusantara Retail,
+jawabannya adalah Container Apps.</p>
+<p>Pindahlah ke <strong>AKS</strong> (Makan Siang 29) ketika Anda membutuhkan API Kubernetes itu sendiri: vendor mengirimkan perangkat
+lunaknya sebagai Helm chart dengan operator khusus, Anda memerlukan agent di setiap node (DaemonSet), Anda ingin kendali
+presisi atas perangkat keras node atau service mesh, atau tim platform akan menjalankan banyak aplikasi untuk banyak
+tim di satu cluster bersama. Pilih <strong>App Service</strong> (Makan Siang 10) ketika aplikasinya berupa situs web klasik dan Anda
+lebih menghargai deployment slot, autentikasi bawaan, dan custom domain daripada kendali di tingkat container; container
+di sini hanyalah format kemasan Anda. Function (<em>fungsi</em>) berbasis event juga bisa berjalan di dalam container, dan itu
+dibahas di Makan Siang 14.</p>
+</div></article><article class="scene-card" id="6-bagaimana-semuanya-menyatu-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Bagaimana semuanya menyatu untuk Nusantara Retail</h3><div class="prose"><p>Inilah rencana yang Anda bawa kembali kepada Ibu Sari:</p>
+<ul>
+<li><strong>Satu registry.</strong> Sebuah ACR bernama <code>acrnusa…</code> menyimpan semua image. Lab memakai Basic; production dimulai dengan
+Standard dan baru pindah ke Premium jika tim membutuhkan private endpoint (<em>titik akhir privat</em>) atau region kedua.
+Image diberi tag versi yang eksplisit, layanan menarik image dengan managed identity, dan admin user tetap nonaktif.</li>
+<li><strong>Toko online di Container Apps.</strong> External ingress dengan target port yang benar, sebuah HTTP scale rule, dan batas
+maksimum yang diukur untuk promo 12.12. Environment uji memakai minimum nol agar hemat; production memakai minimum
+satu atau dua, menerima biaya idle yang kecil supaya pembeli pertama di pagi hari tidak pernah menunggu.</li>
+<li><strong>Rilis yang lebih aman.</strong> Multiple revision mode memungkinkan Dewi mengirim 20% pembeli ke versi baru, memantau
+tingkat error-nya, lalu menaikkannya ke 100%, atau mengembalikannya ke 0% dalam hitungan detik.</li>
+<li><strong>Impor harga malam hari.</strong> Job Container Apps yang terjadwal, atau ACI dengan restart policy <code>Never</code>. Cara mana pun
+yang dipilih, tagihannya hanya untuk sepuluh menit, bukan dua puluh empat jam.</li>
+<li><strong>Data tetap di luar.</strong> Pesanan tetap di Azure SQL dan katalog di Cosmos DB; secret pindah ke Key Vault di Makan
+Siang 15. Container bisa diganti kapan saja tanpa kehilangan apa pun.</li>
+</ul>
+<p>Aturan residensi data (di negara mana data boleh disimpan) tetap berlaku. Production akan berjalan di Indonesia Central
+(Jakarta), sedangkan lab memakai Southeast Asia karena ketersediaan layanannya paling luas. Sebelum memutuskan,
+pastikan setiap layanan dan fitur yang Anda perlukan tersedia di region pilihan Anda.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Aplikasi toko online memiliki minimum nol replica. Pukul 07.00, sebuah notifikasi push
+mendatangkan 2.000 pembeli dalam satu menit. Apa yang terjadi pada beberapa request pertama, satu pengaturan apa yang
+akan Anda ubah untuk production, dan berapa biaya yang timbul dari perubahan itu?</p>
+</aside>
+<p>➡️ <strong>Untuk pendalaman:</strong> <a href="29-containers-advanced-aks.html">Makan Siang 29 · Containers (Lanjutan): Azure Kubernetes Service</a>
+membawa image yang sama ke cluster Kubernetes yang lengkap.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Build sekali, jalankan di mana saja, menyusut hingga nol</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/13-containers-basic.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/13-containers-basic.html?lang=id" title="Demo interaktif: Build sekali, jalankan di mana saja, menyusut hingga nol" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/13-containers-basic/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Image yang sama berpindah dari laptop Dewi ke registry, lalu ke dua layanan berbeda, tanpa berubah sedikit pun.</li>
+<li>Penghitung replica bergerak 0 → 1 → 5 → 0 seiring pembeli datang dan pergi, dan request pertama yang menanggung
+cold start.</li>
+<li>Pembagian 80/20 memerlukan dua revision yang aktif, sedangkan target port yang salah merusak semua revision sekaligus.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Container impor harga milik seorang vendor berjalan sekitar sepuluh menit setiap malam, lalu berhenti. Layanan mana
+yang paling sederhana dan cocok, dan pengaturan apa yang membuat tagihannya berhenti saat pekerjaan selesai?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Azure Container Instances dengan restart policy <code>Never</code> (job Container Apps yang terjadwal juga bisa) — <em>alasannya:</em>
+ACI menagih per detik selama container group berjalan, jadi job sepuluh menit hanya dibayar sepuluh menit.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Anda men-deploy sebuah container app dengan target port 80, tetapi web server di dalam image mendengarkan di port
+8080. Apa yang Anda lihat, dan bagaimana memperbaikinya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Revision tidak pernah menjadi sehat dan request gagal. Perbaikannya, atur target port ingress ke 8080 —
+<em>alasannya:</em> ingress meneruskan request ke port yang tidak didengarkan oleh siapa pun, padahal target port harus
+sama dengan port tempat proses mendengarkan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Ibu Sari bertanya berapa biaya container app toko online pada pukul 03.00 ketika tidak ada yang berbelanja.
+Minimumnya nol replica. Apa jawaban Anda?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Biaya compute-nya nol — <em>alasannya:</em> tanpa request, revision menyusut hingga nol replica, dan pada plan Consumption
+nol replica tidak dikenai biaya compute. Konsekuensinya adalah cold start beberapa detik bagi pembeli pertama setelah
+masa sepi.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Nusantara Retail ingin registry-nya hanya bisa dijangkau melalui private endpoint dan direplikasi ke region kedua.
+Tier ACR mana yang dibutuhkan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Premium — <em>alasannya:</em> private endpoint dan geo-replication adalah fitur khusus Premium; Basic dan Standard tidak
+menyediakan keduanya.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Dewi mengubah toko online ke multiple revision mode lalu men-deploy v2. Semenit kemudian, semua pembeli melihat v2,
+bukan hanya 20% dari mereka. Mengapa, dan apa yang sebaiknya ia lakukan lain kali?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Trafik belum dikunci ke v1 sebelum deployment — <em>alasannya:</em> aturan trafik masih mengirim 100% ke revision terbaru,
+dan v2 menjadi revision terbaru. Lain kali, kunci 100% trafik ke v1 sebelum men-deploy v2, uji v2 di URL
+revision-nya sendiri, lalu atur pembagian 80/20.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Container image mengemas aplikasi beserta dependensinya dalam layer yang tidak bisa diubah; build sekali, jalankan image yang sama di mana pun, dan deploy tag yang eksplisit, bukan <code>latest</code>.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Azure Container Registry adalah registry privat Anda: Basic untuk belajar, Standard untuk sebagian besar production, Premium untuk geo-replication dan private endpoint. Layanan menarik image dengan managed identity, dan admin user tetap nonaktif.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Azure Container Instances menjalankan container group dalam hitungan detik dengan tagihan per detik, tetapi tanpa autoscaling atau load balancing; ideal untuk job dan uji cepat.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Azure Container Apps menambahkan environment, revision yang tidak bisa diubah, ingress HTTPS, scale rule hingga nol, dan pembagian trafik, tanpa Kubernetes yang perlu Anda kelola. Pastikan target port-nya benar.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Pilih platform paling ringan yang memenuhi kebutuhan: Container Instances, lalu Container Apps, lalu AKS untuk API Kubernetes yang lengkap; App Service bila yang Anda jalankan hanyalah sebuah situs web.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Perbaiki resepnya, bukan masakannya.</strong> Aturan saya soal container itu sederhana: apa pun yang saya temukan saat
+membuka shell di dalam container yang sedang berjalan harus masuk ke Dockerfile hari itu juga. Shell itu untuk
+melihat-lihat, bukan untuk memperbaiki, karena replica berikutnya lahir dari image dan tidak ingat satu pun perubahan
+manual Anda. Warung yang sambalnya keasinan tidak cukup mengakali satu piring; resepnya yang harus dibetulkan.
+Dalam design review, saya selalu bertanya: apa yang hilang kalau container ini lenyap sekarang juga? Jawaban
+yang saya cari hanya satu: &quot;tidak ada&quot;. Foto unggahan di folder lokal, keranjang belanja di memori, atau log yang tak
+pernah keluar dari container berarti ada yang salah tempat. Satu lagi: baca Dockerfile seteliti Anda membaca kode.
+Kata sandi yang pernah disalin ke layer awal tetap bisa dibaca siapa pun yang bisa menarik image itu, walaupun
+instruksi berikutnya menghapus filenya.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>13</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Mengemas toko online</h3>
+          <div class="prose"><p>Anda akan membuat registry privat lalu mengimpor sebuah image web contoh ke dalamnya, menjalankan image itu dalam
+hitungan detik di Container Instances, kemudian men-deploy-nya ke Container Apps dengan menarik image dari registry
+Anda memakai managed identity, bukan kata sandi. Anda akan mengirim trafik yang cukup untuk melihat replica bertambah
+dari nol ke lima lalu kembali lagi, merilis revision kedua ke 20% request, dan memperbaiki target port yang rusak.
+Inilah semua yang dibutuhkan Nusantara Retail agar berhenti berkata &quot;di laptop saya jalan, kok&quot;.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 45 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/13-containers-basic.html">Mulai Lab 13 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/container-apps/compare-options" target="_blank" rel="noopener"><b>Microsoft Learn: Membandingkan Container Apps dengan opsi container Azure lainnya</b><span>Panduan Microsoft sendiri tentang kapan memilih setiap layanan.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/container-apps/scale-app" target="_blank" rel="noopener"><b>Microsoft Learn: Mengatur aturan penskalaan di Azure Container Apps</b><span>Semua jenis rule, nilai default-nya, dan cara keputusan penskalaan diambil.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/container-registry/container-registry-skus" target="_blank" rel="noopener"><b>Microsoft Learn: Fitur dan batasan SKU Azure Container Registry</b><span>Tabel tier terkini, batasannya, dan cara mengganti tier.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/container-instances/container-instances-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Azure Container Instances?</b><span>Container group, Spot container dan confidential container, NGroups, serta virtual node.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">📦</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Siap Kirim</h2>
+        <p class="muted">Kemas dan jalankan kontainer di Azure.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Gangguan tidak terasa, dan kontainer yang sama berjalan persis sama di mana pun.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 14</b><h4>Saat API Kurir Lemot</h4><p>Satu mitra yang lambat tidak boleh ikut memperlambat setiap checkout.</p><p style="margin-top:10px"><a href="14-serverless.html">Tonton Episode 14 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="12-cosmos-db.html"><small>← Episode sebelumnya</small>12 · Tabel 140 Kolom</a><a class="next" href="14-serverless.html"><small>Episode berikutnya →</small>14 · Saat API Kurir Lemot</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/13-containers-basic/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

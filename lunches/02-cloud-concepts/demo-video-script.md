@@ -1,5 +1,7 @@
 # Lunch 02 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the part an animation cannot show: using the Azure
 > pricing calculator to compare a VM-based (IaaS) design with a PaaS design for Nusantara Retail's storefront.
 > **Length target:** 5½ minutes (short videos keep attention; split anything longer).

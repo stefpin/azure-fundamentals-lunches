@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 26 · Menghubungkan kantor pusat · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 26: Menghubungkan kantor pusat. sekitar 90 menit, termasuk 30–45 menit menunggu gateway, biaya 💲💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/26-hybrid-connectivity.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/26-hybrid-connectivity.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/26-hybrid-connectivity.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/26-hybrid-connectivity.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 26 · Menghubungkan kantor pusat">
+<meta property="og:description" content="Lab Azure praktik 26: Menghubungkan kantor pusat. sekitar 90 menit, termasuk 30–45 menit menunggu gateway, biaya 💲💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/26-hybrid-connectivity.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="26" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/26-hybrid-connectivity.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 26</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>26</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Menghubungkan kantor pusat</h1>
+        <p class="lab-story">🏪 <b>Episode 26 · Jalur Privat yang Layak</b> — Empat puluh toko mengunggah data penjualan lewat internet — dan satu unggahan gagal tiga malam berturut-turut. <a href="../lunches/26-hybrid-connectivity.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 90 menit, termasuk 30–45 menit menunggu gateway</span>
+          <span class="chip cost">💲💲💲 biaya yang terasa selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★★</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 10 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--menjelajahi-jaringan-selagi-gateway-dibangun">Tugas 1 · Menjelajahi jaringan selagi gateway dibangun</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--membaca-sambil-menunggu-3045-menit">Tugas 2 · Membaca sambil menunggu (30–45 menit)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--memeriksa-gateway-yang-sudah-jadi">Tugas 3 · Memeriksa gateway yang sudah jadi</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--membuat-koneksi-dengan-shared-key-yang-dibuat-saat-runtime">Tugas 4 · Membuat koneksi dengan shared key yang dibuat saat runtime</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--menyaksikan-tunnel-aktif">Tugas 5 · Menyaksikan tunnel aktif</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--mengirim-lalu-lintas-melalui-tunnel">Tugas 6 · Mengirim lalu lintas melalui tunnel</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--membaca-rute-yang-ditambahkan-azure">Tugas 7 · Membaca rute yang ditambahkan Azure</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-8-opsional--membandingkan-dengan-vnet-peering">Tugas 8 (opsional) · Membandingkan dengan VNet peering</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/26-hybrid-connectivity/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/26-hybrid-connectivity/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>7 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/26-hybrid-connectivity/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/26-hybrid-connectivity/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/26-hybrid-connectivity" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Pak Budi ingin kantor pusat di Jakarta (10.0.0.0/16) bisa menjangkau jaringan Azure milik Nusantara Retail
+(10.40.0.0/16) melalui link privat yang terenkripsi, alih-alih membuka server ke internet. Tidak ada yang bisa
+mengirimkan appliance VPN ke meja Anda, jadi <code>setup.sh</code> <strong>menyimulasikan kantor pusat dengan virtual network kedua</strong>
+yang punya VPN gateway sendiri: Azure memerankan kedua sisi. Anda menghubungkan kedua gateway <strong>route-based VpnGw1AZ</strong>
+dengan <strong>koneksi VNet-to-VNet</strong> di kedua arah, yang dilindungi oleh <strong>shared key yang dibuat saat runtime</strong>. Lalu Anda
+menyaksikan statusnya mencapai <strong>Connected</strong>, membuktikan bahwa <code>vm-azure-1</code> dan <code>vm-hq-1</code> saling berkomunikasi pada
+alamat IP privat melalui tunnel, dan membaca rute yang ditambahkan Azure. Tugas opsional membandingkan hasilnya dengan
+VNet peering.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch26-&amp;lt;suffix&amp;gt;&quot;]
+    subgraph hq[&quot;vnet-nusa-hq 10.0.0.0/16 · kantor pusat simulasi&quot;]
+      vmhq[&quot;vm-hq-1&lt;br/&gt;10.0.1.10 · tanpa IP publik&quot;]
+      gwhq[&quot;vgw-nusa-hq · VpnGw1AZ&lt;br/&gt;GatewaySubnet 10.0.255.0/27&quot;]
+    end
+    subgraph az[&quot;vnet-nusa-azure 10.40.0.0/16 · Azure&quot;]
+      vmaz[&quot;vm-azure-1&lt;br/&gt;10.40.1.10 · tanpa IP publik&quot;]
+      gwaz[&quot;vgw-nusa-azure · VpnGw1AZ&lt;br/&gt;GatewaySubnet 10.40.255.0/27&quot;]
+    end
+  end
+  vmhq --- gwhq
+  vmaz --- gwaz
+  gwhq &lt;--&gt;|&quot;tunnel IPsec/IKE · con-hq-to-azure + con-azure-to-hq · shared key&quot;| gwaz
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<aside class="callout caution" data-icon="🛑">
+<p><span class="callout-title">Hati-hati</span><strong>💲💲💲 — argo mulai berjalan saat <code>setup.sh</code> memulai pembuatan gateway.</strong> VPN gateway ditagih untuk setiap jam
+keberadaannya, ada atau tidak ada lalu lintas, dan lab ini menjalankan dua gateway (ditambah IP publiknya dan dua VM
+kecil). Kerjakan lab dalam sekali duduk, jangan pernah membiarkannya berjalan semalaman, dan jalankan
+<code>bash cleanup.sh</code> begitu <code>verify.sh</code> lulus — atau begitu Anda memutuskan untuk berhenti. Untuk angka pastinya,
+hitung harga gateway <strong>VpnGw1AZ</strong> untuk region Anda di
+<a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">Azure pricing calculator</a>.</p>
+</aside>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Sebuah subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>).
+Peran Contributor pada subscription sudah cukup: lab ini tidak membuat role assignment apa pun.</li>
+<li>Sekitar dua jam yang bisa Anda pakai untuk menuntaskan apa yang Anda mulai. Sebagian besar waktu menunggu terjadi di
+awal.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu diinstal.</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/26-hybrid-connectivity
+source ../common/config.sh
+RG=$(rg_name 26)
+PSK_FILE=&quot;$HOME/.azlunches-lab26-psk&quot;
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya. Skrip ini butuh sekitar 5 menit:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<p><code>setup.sh</code> membangun dua &quot;lokasi&quot; di dalam satu resource group. Masing-masing mendapat virtual network dengan
+<strong>GatewaySubnet</strong> (/27, tanpa network security group) dan subnet workload dengan NSG, sebuah VM <code>$VM_SIZE_SMALL</code> kecil
+<strong>tanpa IP publik</strong> yang menjalankan web server mungil, dan sebuah <strong>IP publik Standard</strong> yang zone-redundant.
+Terakhir, skrip ini <strong>memulai</strong> pembuatan gateway route-based <strong>VpnGw1AZ</strong> di masing-masing jaringan dengan
+<code>--no-wait</code>. Skripnya selesai, tetapi gateway terus dibangun di Azure selama <strong>30–45 menit atau lebih</strong>, bahkan jika
+Anda menutup Cloud Shell. Catat suffix yang dicetak oleh skrip.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab menimbulkan biaya selama masih ada. Akhiri dengan bagian <strong>Bersihkan</strong>, meskipun Anda berhenti di tengah
+jalan — dan meskipun gateway masih dalam proses pembuatan.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–7 di bawah (Tugas 8 bersifat opsional)</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>jalankan <code>setup.sh</code>, baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+<p>Atur waktu Anda seperti ini:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Jam</th>
+<th>Anda</th>
+<th>Azure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0:00</td>
+<td>jalankan <code>setup.sh</code> (sekitar 5 menit)</td>
+<td>membuat jaringan dan VM, memulai pembuatan kedua gateway</td>
+</tr>
+<tr>
+<td>0:05</td>
+<td>Tugas 1: menjelajahi jaringan yang baru setengah jadi</td>
+<td>gateway sedang dibangun</td>
+</tr>
+<tr>
+<td>0:15</td>
+<td>Tugas 2: membaca sambil menunggu</td>
+<td>gateway sedang dibangun</td>
+</tr>
+<tr>
+<td>sekitar 0:50</td>
+<td>Tugas 3–7 (dan Tugas 8 yang opsional)</td>
+<td>gateway siap; tunnel aktif dalam hitungan menit</td>
+</tr>
+<tr>
+<td>sekitar 1:25</td>
+<td><code>verify.sh</code>, lalu <code>cleanup.sh</code></td>
+<td>menghapus semuanya di latar belakang (10–20 menit)</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--menjelajahi-jaringan-selagi-gateway-dibangun" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Menjelajahi jaringan selagi gateway dibangun</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--menjelajahi-jaringan-selagi-gateway-dibangun" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Lihat apa saja yang sudah ada sebelum tunnel-nya ada — nanti Anda akan membandingkannya dengan hasil akhir.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vnet-gateway list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{gateway:name, sku:sku.name, generation:vpnGatewayGeneration, type:vpnType, state:provisioningState}&quot; \
+  --output table
+
+az network vnet subnet list --resource-group &quot;$RG&quot; --vnet-name vnet-nusa-azure \
+  --query &quot;[].{subnet:name, prefix:addressPrefix || addressPrefixes[0], nsg:networkSecurityGroup.id}&quot; \
+  --output table
+</code></pre></div>
+<p>Sekarang coba jangkau kantor pusat dari VM Azure. Run Command menjalankan skrip di dalam VM melalui VM agent, jadi Anda
+tidak memerlukan SSH atau IP publik. Eksekusi pertama butuh satu atau dua menit.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-azure-1 \
+  --command-id RunShellScript --scripts &quot;ping -c 3 -W 2 10.0.1.10&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Terakhir, lihat rute yang dipakai network interface <code>vm-azure-1</code>. Ini butuh waktu hingga satu menit.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>NIC_AZ=$(az vm show --resource-group &quot;$RG&quot; --name vm-azure-1 \
+  --query &quot;networkProfile.networkInterfaces[0].id&quot; --output tsv)
+az network nic show-effective-route-table --ids &quot;$NIC_AZ&quot; --output table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Home › Virtual network gateways</em> menampilkan kedua gateway selagi dibangun. Untuk rute, buka
+<em>vm-azure-1 › Networking</em>, pilih network interface, lalu pilih <strong>Effective routes</strong>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> kedua gateway menunjukkan <strong>VpnGw1AZ</strong>, <strong>Generation1</strong>, <strong>RouteBased</strong>, dan state
+<strong>Updating</strong>. GatewaySubnet (10.40.255.0/27) tidak punya NSG; <code>snet-app</code> punya. Ping melaporkan <code>100% packet loss</code>.
+Route table berisi <code>10.40.0.0/16</code> dengan next hop <strong>VnetLocal</strong> dan <code>10.0.0.0/8</code> dengan next hop <strong>None</strong> — Azure
+<em>membuang</em> lalu lintas untuk rentang privat yang tidak punya rute lebih baik, dan itulah persis yang terjadi pada ping
+Anda.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--membaca-sambil-menunggu-3045-menit" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Membaca sambil menunggu (30–45 menit)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--membaca-sambil-menunggu-3045-menit" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Setiap gateway sebenarnya adalah sepasang instance yang dikelola Microsoft, yang ditempatkan Azure di GatewaySubnet Anda,
+disebar ke beberapa availability zone, lalu dikonfigurasi — satu aktif, satu siaga (standby). Semua itu butuh waktu,
+itulah sebabnya perubahan gateway sungguhan selalu direncanakan dan tidak pernah dikerjakan &quot;sebentar saja&quot;. Periksa
+kemajuannya kira-kira setiap sepuluh menit:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vnet-gateway list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{gateway:name, state:provisioningState}&quot; --output table
+</code></pre></div>
+<p>Manfaatkan waktunya dengan baik. Setiap bacaan di bawah ini butuh 5–10 menit:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Baca</th>
+<th>Cari</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/vpn-gateway/about-gateway-skus" target="_blank" rel="noopener">Tentang SKU VPN Gateway</a></td>
+<td>batas tunnel dan benchmark throughput VpnGw1AZ, serta alasan SKU non-AZ dihentikan</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/vpn-gateway/vpn-gateway-howto-vnet-vnet-cli" target="_blank" rel="noopener">Menghubungkan VNet dengan koneksi VNet-to-VNet (Azure CLI)</a></td>
+<td>langkah-langkah yang diotomatiskan <code>setup.sh</code> dan yang akan Anda kerjakan di Tugas 4; bedanya dengan site-to-site</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/virtual-network/virtual-networks-udr-overview" target="_blank" rel="noopener">Perutean lalu lintas virtual network</a></td>
+<td>rute <strong>None</strong> dari Tugas 1, longest prefix match, dan rute mana yang menang jika dua rute punya prefix yang sama</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/expressroute/expressroute-introduction" target="_blank" rel="noopener">Apa itu Azure ExpressRoute?</a></td>
+<td>dua jenis peering, dan mengapa circuit privat berperilaku lebih dapat diprediksi daripada internet</td>
+</tr>
+<tr>
+<td><a href="https://learn.microsoft.com/azure/virtual-wan/virtual-wan-about" target="_blank" rel="noopener">Apa itu Azure Virtual WAN?</a></td>
+<td>Basic vs Standard, dan kapan empat puluh toko membuat hub terkelola menjadi desain yang lebih sederhana</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Catatan</span>Cloud Shell tertutup setelah sekitar <strong>20 menit tanpa input</strong>. Itu tidak memengaruhi gateway — gateway dibangun di
+Azure, bukan di shell Anda. Saat kembali, muat ulang pengaturan Anda:
+<code>cd ~/azure-fundamentals-lunches/labs/26-hybrid-connectivity &amp;&amp; source ../common/config.sh &amp;&amp; RG=$(rg_name 26) &amp;&amp; PSK_FILE=&quot;$HOME/.azlunches-lab26-psk&quot;</code>.
+Di sesi Cloud Shell ephemeral (tanpa storage), clone repositori lagi dan atur <code>SUFFIX=&lt;the suffix you wrote down&gt;</code> — isi dengan suffix yang Anda catat tadi — sebelum Anda menjalankan <code>source</code> untuk memuat pengaturan.</p>
+</aside>
+<p>Jika Anda lebih suka menunggu daripada memeriksa berulang-ulang, <code>az network vnet-gateway wait --resource-group &quot;$RG&quot; --name vgw-nusa-hq --created --timeout 4500</code> akan selesai ketika gateway itu mencapai <strong>Succeeded</strong> — tetapi biarkan
+tab tetap aktif supaya Cloud Shell tidak kehabisan waktu (time out).</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> kedua gateway menunjukkan <strong>Succeeded</strong>. Jika salah satunya menunjukkan <strong>Failed</strong>, lihat
+Pemecahan masalah.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--memeriksa-gateway-yang-sudah-jadi" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Memeriksa gateway yang sudah jadi</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--memeriksa-gateway-yang-sudah-jadi" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for gw in vgw-nusa-azure vgw-nusa-hq; do
+  az network vnet-gateway show --resource-group &quot;$RG&quot; --name &quot;$gw&quot; \
+    --query &quot;{name:name, state:provisioningState, sku:sku.name, generation:vpnGatewayGeneration, vpnType:vpnType, activeActive:activeActive, asn:bgpSettings.asn}&quot; \
+    --output table
+done
+
+az network public-ip list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{name:name, address:ipAddress, sku:sku.name, zones:to_string(zones)}&quot; --output table
+</code></pre></div>
+<p>Yang sedang Anda lihat:</p>
+<ul>
+<li><strong>VpnGw1AZ, Generation1</strong> — SKU zone-redundant yang paling kecil (hingga 30 tunnel site-to-site). Gateway baru wajib
+memakai SKU AZ; VpnGw1–5 non-zonal yang lama tidak bisa dibuat lagi.</li>
+<li><strong>activeActive False</strong> — mode default <em>active-standby</em>: satu instance membawa tunnel dan instance lainnya mengambil
+alih saat pemeliharaan atau kegagalan, setelah gangguan singkat. Gateway produksi biasanya berjalan active-active.</li>
+<li><strong>asn 65515</strong> — nomor autonomous system (ASN) BGP default. Lab ini tidak memakai BGP; tantangan tambahan memakainya.</li>
+<li><strong>Alamat IP publik</strong> adalah alamat yang akan dihubungi perangkat kantor pusat sungguhan — dan yang akan diizinkan Pak
+Budi melewati firewall-nya.</li>
+</ul>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> kedua gateway berstatus <strong>Succeeded</strong>, <strong>VpnGw1AZ</strong>, <strong>Generation1</strong>, <strong>RouteBased</strong>, dengan
+<code>activeActive</code> <strong>False</strong> dan ASN <strong>65515</strong>. Kedua IP publik berjenis <strong>Standard</strong> dengan zona <code>[&quot;1&quot;,&quot;2&quot;,&quot;3&quot;]</code> (atau
+<code>null</code> jika Anda menjalankan <code>setup.sh</code> dengan <code>PIP_ZONES=&quot;&quot;</code> di region tanpa availability zone).</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--membuat-koneksi-dengan-shared-key-yang-dibuat-saat-runtime" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Membuat koneksi dengan shared key yang dibuat saat runtime</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--membuat-koneksi-dengan-shared-key-yang-dibuat-saat-runtime" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Kedua ujung tunnel IPsec harus memegang <strong>pre-shared key</strong> yang sama. Buat key yang kuat di dalam file yang hanya bisa
+dibaca oleh Anda, sehingga key itu tidak pernah muncul di layar maupun di riwayat perintah Anda:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>[[ -s &quot;$PSK_FILE&quot; ]] || ( umask 077; openssl rand -hex 24 &gt; &quot;$PSK_FILE&quot; )
+ls -l &quot;$PSK_FILE&quot;
+</code></pre></div>
+<p><code>openssl rand -hex 24</code> menghasilkan 48 karakter heksadesimal (192 bit acak); isinya hanya huruf dan angka, yang
+diterima oleh setiap perangkat VPN. Sekarang buat satu koneksi di masing-masing gateway. Link VNet-to-VNet selalu punya
+dua bagian, dan keduanya harus membawa key yang sama:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vpn-connection create --resource-group &quot;$RG&quot; --name con-azure-to-hq --location &quot;$LOCATION&quot; \
+  --vnet-gateway1 vgw-nusa-azure --vnet-gateway2 vgw-nusa-hq \
+  --shared-key &quot;$(cat &quot;$PSK_FILE&quot;)&quot; --output none
+
+az network vpn-connection create --resource-group &quot;$RG&quot; --name con-hq-to-azure --location &quot;$LOCATION&quot; \
+  --vnet-gateway1 vgw-nusa-hq --vnet-gateway2 vgw-nusa-azure \
+  --shared-key &quot;$(cat &quot;$PSK_FILE&quot;)&quot; --output none
+</code></pre></div>
+<p>Dengan koneksi VNet-to-VNet, Azure mengisi ruang alamat sisi seberang untuk Anda. Untuk kantor pusat yang sungguhan,
+Anda justru akan membuat <strong>local network gateway</strong> (IP publik Pak Budi dan 10.0.0.0/16), menghubungkannya dengan
+<code>--local-gateway2</code>, lalu mengetik key yang sama ke perangkat VPN miliknya — tantangan tambahan memberi Anda kesempatan
+untuk melatihnya.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Virtual network gateways › vgw-nusa-azure › Settings › Connections › + Add</em>, connection type
+<strong>VNet-to-VNet</strong>, gateway kedua <code>vgw-nusa-hq</code>, lalu lakukan hal yang sama untuk arah sebaliknya. Untuk menempelkan
+key tanpa mencetaknya di terminal, buka file tersebut di editor Cloud Shell: <code>code &quot;$PSK_FILE&quot;</code>.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>az network vpn-connection list --resource-group &quot;$RG&quot; --query &quot;[].{name:name, type:connectionType, state:provisioningState}&quot; --output table</code>
+menampilkan <code>con-azure-to-hq</code> dan <code>con-hq-to-azure</code>, keduanya <strong>Vnet2Vnet</strong> dan <strong>Succeeded</strong>. <code>ls -l</code> menunjukkan
+file key sebagai <code>-rw-------</code>. Siapa pun yang punya hak cukup atas sebuah koneksi bisa membaca kembali key-nya dari
+Azure (<code>az network vpn-connection shared-key show</code>), jadi perlakukan akses ke koneksi seperti akses ke sebuah rahasia.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--menyaksikan-tunnel-aktif" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Menyaksikan tunnel aktif</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--menyaksikan-tunnel-aktif" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Gateway kini menjalankan <strong>IKE</strong>: keduanya menyepakati algoritma enkripsi dan saling membuktikan bahwa mereka mengetahui
+key yang sama tanpa pernah mengirimkannya. Lalu mereka menyiapkan <strong>IPsec security association</strong>, dan sejak saat itu
+setiap paket di antara kedua jaringan berjalan terenkripsi. Periksa statusnya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for con in con-azure-to-hq con-hq-to-azure; do
+  az network vpn-connection show --resource-group &quot;$RG&quot; --name &quot;$con&quot; \
+    --query &quot;{name:name, status:connectionStatus, protocol:connectionProtocol, bytesIn:ingressBytesTransferred, bytesOut:egressBytesTransferred}&quot; \
+    --output table
+done
+</code></pre></div>
+<p>Ulangi setiap 30 detik sampai keduanya menunjukkan <strong>Connected</strong> — biasanya dalam beberapa menit. Atau biarkan CLI yang
+menunggu untuk Anda:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vpn-connection wait --resource-group &quot;$RG&quot; --name con-hq-to-azure \
+  --custom &quot;connectionStatus==&#x27;Connected&#x27;&quot; --interval 20 --timeout 900
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> kedua koneksi menunjukkan <strong>Connected</strong> dengan protokol <strong>IKEv2</strong>. Anda mungkin melihat <code>Unknown</code>
+atau <code>Connecting</code> lebih dulu — itu normal. Penghitung byte masih kecil sampai Anda mengirim lalu lintas di Tugas 6.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--mengirim-lalu-lintas-melalui-tunnel" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Mengirim lalu lintas melalui tunnel</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--mengirim-lalu-lintas-melalui-tunnel" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Dari Azure ke kantor pusat — ping, lalu minta halaman health dari web server kantor pusat:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-azure-1 \
+  --command-id RunShellScript \
+  --scripts &quot;ping -c 4 -W 2 10.0.1.10; curl -s --max-time 5 http://10.0.1.10/health&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Dan sebaliknya, dari kantor pusat ke Azure, kali ini mengambil halaman beranda:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-hq-1 \
+  --command-id RunShellScript \
+  --scripts &quot;ping -c 4 -W 2 10.40.1.10; curl -s --max-time 5 http://10.40.1.10/&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>Tidak ada satu pun NSG yang punya aturan kustom, tetapi lalu lintasnya tetap bisa masuk. Aturan default
+<strong>AllowVnetInBound</strong> mengizinkan lalu lintas dari service tag <strong>VirtualNetwork</strong>, dan tag itu mencakup rentang alamat yang
+terhubung melalui VPN gateway. Di produksi Anda akan memperketatnya: seluruh jaringan Pak Budi tidak perlu bisa
+menjangkau setiap server di Azure.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> kedua ping melaporkan <code>0% packet loss</code> (dengan round trip beberapa milidetik). Perintah pertama
+diakhiri dengan <code>ok</code>; perintah kedua mencetak halaman HTML kecil yang bertuliskan <em>Served by <strong>vm-azure-1</strong></em>.
+Jalankan lagi perulangan dari Tugas 5: penghitung byte sudah bertambah.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--membaca-rute-yang-ditambahkan-azure" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Membaca rute yang ditambahkan Azure</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--membaca-rute-yang-ditambahkan-azure" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>NIC_AZ=$(az vm show --resource-group &quot;$RG&quot; --name vm-azure-1 \
+  --query &quot;networkProfile.networkInterfaces[0].id&quot; --output tsv)
+az network nic show-effective-route-table --ids &quot;$NIC_AZ&quot; --output table
+</code></pre></div>
+<p>Bandingkan dengan Tugas 1. Ada rute baru untuk <strong>10.0.0.0/16</strong> yang sumber dan next hop-nya sama-sama
+<strong>VirtualNetworkGateway</strong>. Rute lama <code>10.0.0.0/8 → None</code> masih ada, tetapi Azure memakai <strong>longest prefix match</strong>
+(prefix terpanjang yang cocok menang): untuk 10.0.1.10, rute /16 lebih spesifik daripada rute /8, sehingga paket
+dikirim ke gateway alih-alih dibuang. Semua alamat lain di 10.0.0.0/8 tetap dibuang.</p>
+<p>Sekarang periksa sendiri sisi seberangnya: ambil network interface <code>vm-hq-1</code> dengan cara yang sama, lalu lihat rutenya.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> di <code>vm-azure-1</code>, <code>10.0.0.0/16</code> berstatus <strong>Active</strong> dengan next hop type
+<strong>VirtualNetworkGateway</strong>. Di <code>vm-hq-1</code>, rute padanannya adalah untuk <code>10.40.0.0/16</code>. Anda tidak menambahkan route
+table ataupun rute statis apa pun: gateway-lah yang melakukannya, dan gateway akan memperbarui rute secara otomatis
+jika salah satu ruang alamat berubah.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-8-opsional--membandingkan-dengan-vnet-peering" data-kind="task"><h2><span class="task-tag">Tugas 8 (opsional)</span><span class="title">Membandingkan dengan VNet peering</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-8-opsional--membandingkan-dengan-vnet-peering" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Kedua &quot;lokasi&quot; ini sebenarnya adalah virtual network Azure, dan di antara jaringan Azure, <strong>VNet peering</strong> biasanya alat
+yang lebih tepat: tanpa gateway, tanpa beban enkripsi, latensi lebih rendah, dan Anda membayar per GB, bukan per jam
+gateway. Buat peering di antara keduanya selagi VPN masih aktif, lalu lihat jalur mana yang dipilih Azure:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vnet peering create --resource-group &quot;$RG&quot; --name peer-azure-to-hq \
+  --vnet-name vnet-nusa-azure --remote-vnet vnet-nusa-hq --allow-vnet-access true --output none
+az network vnet peering create --resource-group &quot;$RG&quot; --name peer-hq-to-azure \
+  --vnet-name vnet-nusa-hq --remote-vnet vnet-nusa-azure --allow-vnet-access true --output none
+
+az network nic show-effective-route-table --ids &quot;$NIC_AZ&quot; --output table
+az vm run-command invoke --resource-group &quot;$RG&quot; --name vm-azure-1 \
+  --command-id RunShellScript --scripts &quot;ping -c 4 -W 2 10.0.1.10&quot; \
+  --query &quot;value[0].message&quot; --output tsv
+</code></pre></div>
+<p>CLI membutuhkan <code>--allow-vnet-access true</code> ditulis secara eksplisit — nilai default flag ini adalah <code>false</code>. Peering
+hanya berfungsi jika kedua arahnya ada.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> kini ada dua rute untuk <code>10.0.0.0/16</code>. Rute <strong>virtual network peering</strong> berstatus <em>Active</em> dan
+rute gateway berstatus <em>Invalid</em>: Azure lebih memilih system route untuk peering, bahkan dibandingkan rute gateway
+untuk prefix yang sama. Bandingkan nilai <code>time=</code> pada ping dengan Tugas 6 — biasanya sedikit lebih rendah.</p>
+</div>
+<p>Hapus peering itu sebelum melanjutkan — <code>verify.sh</code> memeriksa bahwa lalu lintas memakai tunnel:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vnet peering delete --resource-group &quot;$RG&quot; --vnet-name vnet-nusa-azure --name peer-azure-to-hq
+az network vnet peering delete --resource-group &quot;$RG&quot; --vnet-name vnet-nusa-hq --name peer-hq-to-azure
+</code></pre></div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Alasan paling umum sebuah tunnel sungguhan tidak pernah aktif adalah <strong>pre-shared key yang tidak cocok</strong> — seseorang
+salah mengetiknya di perangkat, atau hanya merotasinya di satu sisi. Beri bagian kantor pusat sebuah key yang berbeda:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vpn-connection shared-key update --resource-group &quot;$RG&quot; \
+  --connection-name con-hq-to-azure --value &quot;NotTheRightKey123&quot; --output none
+</code></pre></div>
+<p>Jalankan perulangan status dari Tugas 5 selama beberapa menit berikutnya, lalu ulangi ping pertama dari Tugas 6.</p>
+<p><strong>Gejala:</strong> koneksi keluar dari status <strong>Connected</strong> (Anda mungkin melihat <code>Connecting</code> atau <code>NotConnected</code>) dan ping
+melaporkan <code>100% packet loss</code>. Tidak ada hal lain yang berubah — gateway, rute, dan NSG semuanya baik-baik saja.</p>
+<details class="plain"><summary>Petunjuk: apa yang salah, dan perbaikannya</summary>
+<p>Selama IKE, setiap sisi membuktikan bahwa ia mengetahui key-nya. Key-nya berbeda, sehingga autentikasi gagal dan tidak
+ada IPsec security association yang terbentuk; tanpa itu, tidak ada lalu lintas yang bisa mengalir. Pasang kembali key
+yang benar di bagian kantor pusat:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vpn-connection shared-key update --resource-group &quot;$RG&quot; \
+  --connection-name con-hq-to-azure --value &quot;$(cat &quot;$PSK_FILE&quot;)&quot; --output none
+</code></pre></div>
+<p>Dalam beberapa menit, kedua koneksi kembali <strong>Connected</strong> dan ping berhasil. Dengan perangkat sungguhan, Anda akan
+membandingkan log IKE perangkat tersebut dengan sisi Azure; <strong>VPN troubleshoot</strong> di Network Watcher memberi tahu Anda
+jika penyebabnya adalah kegagalan autentikasi.</p>
+<p>Jika status masih <strong>Connected</strong> sekitar lima menit setelah Anda memasang key yang salah, security association yang lama
+masih hidup. Paksa negosiasi baru dengan <code>az network vnet-gateway reset --resource-group &quot;$RG&quot; --name vgw-nusa-hq</code>
+(butuh beberapa menit), lalu saksikan kegagalannya muncul.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan harus menyatakan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu Anda
+ulangi. Skrip ini membaca effective routes dan menjalankan uji ping serta HTTP kecil di dalam setiap VM melalui Run
+Command, jadi butuh 2–3 menit. Hapus dulu peering opsional dari Tugas 8.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Skrip ini meminta konfirmasi (atur <code>ASSUME_YES=1</code> untuk melewati pertanyaan itu). Skrip menghapus resource group
+<code>rg-lunch26-&lt;suffix&gt;</code> — gateway, koneksi, IP publik, VM, disk, dan jaringan — serta menghapus file shared key
+<code>~/.azlunches-lab26-psk</code>. Tidak ada yang dibuat di luar resource group.</p>
+<p>Menghapus gateway butuh waktu, sering 10–20 menit, dan <strong>penagihan baru berhenti ketika gateway sudah hilang</strong>.
+Setengah jam kemudian, pastikan tidak ada yang tersisa:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az group list --tag lunch=26 --output table
+</code></pre></div>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>State sebuah gateway <strong>Failed</strong></td>
+<td>Pembuatannya terkena error platform yang bersifat sementara</td>
+<td><code>az network vnet-gateway delete --resource-group &quot;$RG&quot; --name &lt;gateway&gt;</code>, lalu jalankan <code>bash setup.sh</code> lagi — skrip hanya membuat ulang yang belum ada</td>
+</tr>
+<tr>
+<td><code>setup.sh</code> gagal saat membuat gateway karena SKU</td>
+<td>Anda mengatur <code>VPN_SKU</code> ke SKU non-AZ seperti <code>VpnGw1</code>, yang tidak bisa dibuat lagi</td>
+<td>Jalankan lagi tanpa <code>VPN_SKU</code>, atau gunakan <code>VpnGw2AZ</code>–<code>VpnGw5AZ</code></td>
+</tr>
+<tr>
+<td><code>vpn-connection create</code> gagal dengan <code>AnotherOperationInProgress</code> atau menyatakan gateway belum siap</td>
+<td>Sebuah gateway masih dibangun atau sedang diperbarui</td>
+<td>Tunggu sampai kedua gateway menunjukkan <strong>Succeeded</strong> (Tugas 2), lalu coba lagi</td>
+</tr>
+<tr>
+<td>Sebuah koneksi tetap <code>Connecting</code> atau <code>NotConnected</code> lebih dari 10 menit</td>
+<td>Kedua bagian memakai shared key yang berbeda</td>
+<td>Atur keduanya ke key di <code>$PSK_FILE</code> dengan <code>shared-key update</code> (lihat Rusak lalu perbaiki)</td>
+</tr>
+<tr>
+<td><code>$PSK_FILE</code> hilang setelah Cloud Shell di-restart, padahal koneksinya ada</td>
+<td>File itu berada di sesi ephemeral</td>
+<td>Pulihkan key ke file baru: <code>( umask 077; az network vpn-connection shared-key show --resource-group &quot;$RG&quot; --connection-name con-azure-to-hq --query value --output tsv &gt; &quot;$PSK_FILE&quot; )</code></td>
+</tr>
+<tr>
+<td>Status <strong>Connected</strong>, tetapi ping melaporkan <code>100% packet loss</code></td>
+<td>Sebuah VM sedang berhenti, peering opsional hanya dihapus di satu sisi, atau aturan NSG kustom memblokir lalu lintas</td>
+<td>Periksa power state dengan <code>az vm get-instance-view</code>, effective routes (Tugas 7), dan aturan NSG; hapus sisa peering</td>
+</tr>
+<tr>
+<td><code>(Conflict) Run command extension execution is in progress</code></td>
+<td>Run Command lain masih berjalan di VM yang sama</td>
+<td>Tunggu sampai selesai, lalu coba lagi — satu skrip per VM dalam satu waktu</td>
+</tr>
+<tr>
+<td><code>verify.sh</code> melaporkan next hop selain <strong>VirtualNetworkGateway</strong></td>
+<td>Peering opsional dari Tugas 8 masih terpasang</td>
+<td>Hapus kedua peering (akhir Tugas 8) dan jalankan <code>verify.sh</code> lagi</td>
+</tr>
+<tr>
+<td>Cloud Shell time out saat menunggu</td>
+<td>20 menit tanpa input</td>
+<td>Buka lagi, muat ulang pengaturan (lihat catatan di Tugas 2), lalu jalankan ulang perintahnya; gateway tetap dibangun</td>
+</tr>
+<tr>
+<td><code>az group list --tag lunch=26</code> masih menampilkan group itu lama setelah pembersihan</td>
+<td>Penghapusan gateway berjalan lambat</td>
+<td>Tunggu 15 menit lagi; jika group masih ada, jalankan <code>bash cleanup.sh</code> lagi</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>
+<p><strong>Latih setup site-to-site yang sesungguhnya.</strong> Setelah <code>verify.sh</code> lulus, hapus kedua koneksi VNet-to-VNet dan
+gambarkan masing-masing sisi sebagai lokasi &quot;on-premises&quot; dengan <strong>local network gateway</strong> — persis seperti yang akan
+Anda lakukan untuk perangkat Pak Budi:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vpn-connection delete --resource-group &quot;$RG&quot; --name con-azure-to-hq
+az network vpn-connection delete --resource-group &quot;$RG&quot; --name con-hq-to-azure
+HQ_IP=$(az network public-ip show --resource-group &quot;$RG&quot; --name pip-vgw-nusa-hq --query ipAddress --output tsv)
+AZ_IP=$(az network public-ip show --resource-group &quot;$RG&quot; --name pip-vgw-nusa-azure --query ipAddress --output tsv)
+az network local-gateway create --resource-group &quot;$RG&quot; --name lgw-nusa-hq \
+  --gateway-ip-address &quot;$HQ_IP&quot; --local-address-prefixes 10.0.0.0/16
+az network local-gateway create --resource-group &quot;$RG&quot; --name lgw-nusa-azure \
+  --gateway-ip-address &quot;$AZ_IP&quot; --local-address-prefixes 10.40.0.0/16
+az network vpn-connection create --resource-group &quot;$RG&quot; --name con-s2s-azure-to-hq \
+  --vnet-gateway1 vgw-nusa-azure --local-gateway2 lgw-nusa-hq --shared-key &quot;$(cat &quot;$PSK_FILE&quot;)&quot;
+az network vpn-connection create --resource-group &quot;$RG&quot; --name con-s2s-hq-to-azure \
+  --vnet-gateway1 vgw-nusa-hq --local-gateway2 lgw-nusa-azure --shared-key &quot;$(cat &quot;$PSK_FILE&quot;)&quot;
+</code></pre></div>
+<p>Connection type kini <strong>IPsec</strong>, dan Anda sendiri yang memelihara address prefix-nya. Untuk perangkat sungguhan, menu
+<strong>Download configuration</strong> di portal pada koneksi seperti ini menghasilkan contoh konfigurasi untuk perangkat VPN yang
+umum dipakai.</p>
+</li>
+<li>
+<p><strong>Intip IKE:</strong> <code>az network vpn-connection list-ike-sas --resource-group &quot;$RG&quot; --name con-azure-to-hq</code> (sebuah perintah
+preview) menampilkan IKE security association yang dinegosiasikan, termasuk algoritma enkripsi dan integritasnya.</p>
+</li>
+<li>
+<p><strong>Coba BGP:</strong> beri kedua gateway ASN privat yang berbeda (<code>az network vnet-gateway update --asn 65010</code>, dan 65020 pada
+gateway yang satunya), aktifkan BGP di kedua koneksi (<code>az network vpn-connection update --enable-bgp true</code>), lalu
+bandingkan <code>az network vnet-gateway list-learned-routes</code> sebelum dan sesudahnya. Setiap pembaruan gateway bisa
+memakan waktu lama, jadi lakukan ini hanya jika anggaran Anda memungkinkan tambahan satu jam.</p>
+</li>
+<li>
+<p><strong>Hitung harga pilihan-pilihan ini untuk Ibu Sari:</strong> di <a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">pricing calculator</a>,
+bandingkan biaya sebulan untuk satu gateway VpnGw1AZ, sebuah circuit ExpressRoute 50 Mbps dengan gateway ErGw1Az, dan
+sebuah hub Virtual WAN dengan satu scale unit site-to-site VPN. Mana yang akan Anda usulkan untuk satu kantor pusat?
+Untuk empat puluh toko?</p>
+</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Jalankan <code>bash setup.sh</code>, lalu bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep):</p>
+<ol>
+<li><code>vnet-nusa-azure</code> (10.40.0.0/16) dan <code>vnet-nusa-hq</code> (10.0.0.0/16) masing-masing punya <code>GatewaySubnet</code> berukuran /27
+atau lebih besar (<code>setup.sh</code> yang membuatnya; jangan ubah rencana alamatnya).</li>
+<li><code>vgw-nusa-azure</code> dan <code>vgw-nusa-hq</code> adalah VPN gateway <strong>route-based</strong> dengan <strong>SKU AZ</strong>, dalam state <strong>Succeeded</strong>,
+masing-masing dengan IP publik <strong>Standard</strong> yang zone-redundant (dibuat oleh <code>setup.sh</code>; Anda cukup menunggunya).</li>
+<li>Dua koneksi <strong>VNet-to-VNet</strong>, <code>con-azure-to-hq</code> dan <code>con-hq-to-azure</code>, memakai shared key yang sama, yang <strong>dibuat
+saat runtime</strong> — tidak pernah diketik, dicetak, atau di-commit.</li>
+<li>Kedua koneksi berstatus <strong>Connected</strong>.</li>
+<li>Network interface <code>vm-azure-1</code> merutekan <strong>10.0.0.0/16</strong> ke <strong>virtual network gateway</strong> (tanpa peering yang
+terpasang).</li>
+<li><code>vm-azure-1</code> dan <code>vm-hq-1</code> bisa saling ping dan mengambil halaman <code>/health</code> satu sama lain, di kedua arah.</li>
+<li>Anda bisa menjelaskan mengapa GatewaySubnet tidak punya NSG dan mengapa NSG tidak memerlukan aturan baru (tidak
+diperiksa oleh skrip).</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu. <strong>Setelah itu, jalankan
+<code>bash cleanup.sh</code>.</strong></p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="25-networking-advanced.html"><small>← Lab sebelumnya</small>25 · Hub-and-spoke untuk Nusantara Retail</a><a class="next" href="27-load-balancing-advanced.html"><small>Lab berikutnya →</small>27 · Melindungi dan merutekan toko online</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/26-hybrid-connectivity/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

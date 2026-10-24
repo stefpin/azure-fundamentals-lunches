@@ -1,5 +1,7 @@
 # Syllabus — Azure Fundamentals: One Lunch at a Time
 
+🇮🇩 [Baca dalam Bahasa Indonesia](SYLLABUS.id.md)
+
 This is the detailed outline of every lunch: what the reading covers, what the interactive demo shows, and what the
 independent lab builds. The course has **31 lunches** in two "months":
 

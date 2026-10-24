@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 06 · VM web server pertama Anda · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 06: VM web server pertama Anda. sekitar 45 menit, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/06-virtual-machines-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/06-virtual-machines-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/06-virtual-machines-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/06-virtual-machines-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 06 · VM web server pertama Anda">
+<meta property="og:description" content="Lab Azure praktik 06: VM web server pertama Anda. sekitar 45 menit, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/06-virtual-machines-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="06" style="--c:#e2482f">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/06-virtual-machines-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#e2482f">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 06</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>06</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">VM web server pertama Anda</h1>
+        <p class="lab-story">🏪 <b>Episode 06 · Kabur dari Pantry</b> — Kipas angin meja di depan server bukanlah strategi — saatnya memindahkan toko dari mesin itu. <a href="../lunches/06-virtual-machines-basic.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 45 menit</span>
+          <span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★☆☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 10 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--buat-vm">Tugas 1 · Buat VM</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--terhubung-dengan-ssh-dari-cloud-shell">Tugas 2 · Terhubung dengan SSH dari Cloud Shell</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--pasang-nginx-dan-terbitkan-halaman-nusantara-retail">Tugas 3 · Pasang nginx dan terbitkan halaman Nusantara Retail</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--buka-port-80">Tugas 4 · Buka port 80</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--tambahkan-dan-mount-data-disk">Tugas 5 · Tambahkan dan mount data disk</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--resize-vm">Tugas 6 · Resize VM</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--jadwalkan-auto-shutdown">Tugas 7 · Jadwalkan auto-shutdown</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-8--stopped-versus-deallocated">Tugas 8 · Stopped versus deallocated</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/06-virtual-machines-basic/app/index.html" target="_blank" rel="noopener"><span>app/index.html</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/06-virtual-machines-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/06-virtual-machines-basic/mount-data-disk.sh" target="_blank" rel="noopener"><span>mount-data-disk.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/06-virtual-machines-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/06-virtual-machines-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>6 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/06-virtual-machines-basic" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Toko online Nusantara Retail mendapat rumah pertamanya di Azure: sebuah virtual machine Ubuntu Server 24.04 LTS bernama
+<code>vm-web-1</code> yang menjalankan nginx dan menyajikan halaman Nusantara Retail ke internet. Lalu lintas masuk melalui Standard
+public IP dan melewati network security group yang hanya mengizinkan SSH dan HTTP. Foto produk mendapat data disk sendiri
+berukuran 8 GiB, yang di-mount di <code>/datadrive</code>. Anda akan me-resize VM, menjadwalkan auto-shutdown harian, dan membuktikan
+kepada tim keuangan power state mana yang menghentikan tagihan compute.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  you[&quot;Anda · Cloud Shell&quot;] --&gt;|&quot;SSH 22&quot;| pip
+  shopper[&quot;Browser pembeli&quot;] --&gt;|&quot;HTTP 80&quot;| pip
+  subgraph rg[&quot;rg-lunch06-&amp;lt;suffix&amp;gt;&quot;]
+    pip[&quot;pip-web-1&lt;br/&gt;Standard public IP&quot;] --&gt; nic
+    nsg[&quot;nsg-web&lt;br/&gt;izinkan 22, izinkan 80&quot;] -.- nic
+    subgraph vnet[&quot;vnet-nusa-web 10.20.0.0/16&quot;]
+      subgraph snet[&quot;snet-web 10.20.1.0/24&quot;]
+        nic[&quot;NIC&quot;]
+      end
+    end
+    nic --&gt; vm[&quot;vm-web-1&lt;br/&gt;Ubuntu 24.04 · nginx&quot;]
+    vm --- os[(&quot;osdisk-web-1&quot;)]
+    vm --- data[(&quot;disk-web-1-data&lt;br/&gt;/datadrive&quot;)]
+    sched[&quot;Jadwal&lt;br/&gt;auto-shutdown&quot;] -.- vm
+  end
+  vm --&gt;|&quot;update apt melalui&lt;br/&gt;public IP-nya sendiri&quot;| mirror[&quot;Mirror paket Ubuntu&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu diinstal.</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/06-virtual-machines-basic
+source ../common/config.sh
+RG=$(rg_name 06)
+VM=vm-web-1
+echo &quot;Resource group: $RG · region: $LOCATION · size: $VM_SIZE · image: $VM_IMAGE&quot;
+</code></pre></div>
+<ul>
+<li>Lab ini membutuhkan kuota regional sebanyak <strong>2 vCPU</strong>. Jika Anda tidak yakin size-nya ditawarkan untuk Anda, jalankan
+<code>bash ../common/check-environment.sh</code> terlebih dahulu.</li>
+<li>Tidak perlu <code>setup.sh</code>: Anda membangun semuanya sendiri.</li>
+</ul>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab dikenai biaya selama masih ada. Selesaikan dengan bagian <strong>Bersihkan</strong>, bahkan jika Anda berhenti di tengah jalan.</p>
+</aside>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Cloud Shell terputus setelah sekitar 20 menit tanpa input dan melupakan variabel Anda. Jika itu terjadi, <code>cd</code> kembali
+ke folder lab dan jalankan lagi baris <code>source</code>, <code>RG=</code>, dan <code>VM=</code> — serta <code>IP=</code> dari Tugas 2.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–8 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca <a href="#-ringkasan-tantangan">Ringkasan tantangan</a> saja, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--buat-vm" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Buat VM</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--buat-vm" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Satu perintah membuat VM <em>beserta</em> semua resource yang dibutuhkannya. Anda memberi nama setiap resource supaya resource group
+tetap mudah dibaca, dan Anda memilih rentang jaringan (10.20.0.0/16) yang tidak akan pernah bentrok dengan 10.0.0.0/16 milik
+kantor pusat.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ensure_rg &quot;$RG&quot; 06
+
+az vm create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$VM&quot; \
+  --location &quot;$LOCATION&quot; \
+  --image &quot;$VM_IMAGE&quot; \
+  --size &quot;$VM_SIZE&quot; \
+  --admin-username &quot;$ADMIN_USER&quot; \
+  --generate-ssh-keys \
+  --vnet-name vnet-nusa-web --vnet-address-prefix 10.20.0.0/16 \
+  --subnet snet-web --subnet-address-prefix 10.20.1.0/24 \
+  --nsg nsg-web \
+  --public-ip-address pip-web-1 --public-ip-sku Standard \
+  --os-disk-name osdisk-web-1 --storage-sku StandardSSD_LRS \
+  --output table
+</code></pre></div>
+<p>Prosesnya memakan waktu satu sampai tiga menit. Inilah fungsi opsi-opsi yang kurang jelas:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Opsi</th>
+<th>Gunanya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--image &quot;$VM_IMAGE&quot;</code></td>
+<td><code>Ubuntu2404</code> adalah alias CLI untuk Ubuntu Server 24.04 LTS (Gen2, sehingga Trusted Launch aktif secara default)</td>
+</tr>
+<tr>
+<td><code>--size &quot;$VM_SIZE&quot;</code></td>
+<td><code>Standard_B2ats_v2</code>: 2 vCPU burstable dan memori 1 GiB — cukup untuk nginx</td>
+</tr>
+<tr>
+<td><code>--generate-ssh-keys</code></td>
+<td>Membuat <code>~/.ssh/id_rsa</code> dan <code>~/.ssh/id_rsa.pub</code> di Cloud Shell jika belum ada, lalu memasang public key di VM. Tidak ada kata sandi yang ditetapkan</td>
+</tr>
+<tr>
+<td><code>--nsg nsg-web</code></td>
+<td>Membuat network security group pada NIC milik VM. Untuk Linux, CLI menambahkan satu aturan inbound: SSH (22) dari mana saja</td>
+</tr>
+<tr>
+<td><code>--public-ip-sku Standard</code></td>
+<td>Public IP Basic sudah dipensiunkan. IP Standard bersifat statis dan tertutup sampai NSG mengizinkan lalu lintas</td>
+</tr>
+<tr>
+<td><code>--storage-sku StandardSSD_LRS</code></td>
+<td>OS disk Standard SSD membuat lab tetap murah. Production akan memakai Premium SSD (Makan Siang 06, bagian 3)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sekarang lihat apa yang benar-benar dibuat:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az resource list --resource-group &quot;$RG&quot; --query &quot;[].{type:type, name:name}&quot; --output table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Home › Virtual machines › Create › Azure virtual machine.</em> Di tab <strong>Basics</strong>: resource group Anda,
+name <code>vm-web-1</code>, region Anda, <em>No infrastructure redundancy required</em>, security type <em>Trusted launch</em>, image <em>Ubuntu
+Server 24.04 LTS – x64 Gen2</em>, size <em>Standard_B2ats_v2</em>, authentication <em>SSH public key</em> dengan source <em>Use existing
+public key</em> (tempel output <code>cat ~/.ssh/id_rsa.pub</code> dari Cloud Shell), username <code>azureuser</code>, inbound port <em>SSH
+(22)</em>. Di tab <strong>Disks</strong>: <em>Standard SSD</em>. Di tab <strong>Networking</strong>: buat virtual network <code>vnet-nusa-web</code> (10.20.0.0/16) dengan
+subnet <code>snet-web</code> (10.20.1.0/24) dan public IP baru. Lalu <strong>Review + create</strong>. Portal memberi nama yang berbeda untuk
+beberapa resource (misalnya <code>vm-web-1-nsg</code>); itu tidak masalah — pemeriksaan menemukannya melalui VM.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> daftar resource menampilkan enam resource: sebuah virtual machine, sebuah disk, sebuah network interface,
+sebuah network security group, sebuah public IP address, dan sebuah virtual network (ditambah VM extension apa pun yang
+otomatis ditambahkan oleh policy di subscription Anda). Pastikan VM sedang berjalan:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm show -d -g &quot;$RG&quot; -n &quot;$VM&quot; \
+  --query &quot;{power:powerState, size:hardwareProfile.vmSize, publicIp:publicIps, privateIp:privateIps}&quot; -o table
+</code></pre></div>
+</div>
+<p>Penasaran dengan perubahan outbound yang dibahas di bacaan? Tanyakan ke subnet-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vnet subnet show -g &quot;$RG&quot; --vnet-name vnet-nusa-web -n snet-web --query defaultOutboundAccess -o tsv
+</code></pre></div>
+<p><code>false</code> berarti private subnet: tidak ada akses outbound default. Hasil kosong berarti jaringannya dibuat dengan default yang
+lebih lama. Apa pun hasilnya, VM Anda bisa menjangkau internet, karena punya public IP sendiri — metode outbound yang
+<em>eksplisit</em>.</p>
+</div></section><section class="lab-section" id="tugas-2--terhubung-dengan-ssh-dari-cloud-shell" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Terhubung dengan SSH dari Cloud Shell</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--terhubung-dengan-ssh-dari-cloud-shell" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>SSH adalah cara Anda mengelola server Linux ini dari jauh. Private key Anda sudah ada di Cloud Shell, jadi tidak ada yang
+perlu diketik kecuali <code>yes</code> pada kali pertama.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>IP=$(az vm show -d -g &quot;$RG&quot; -n &quot;$VM&quot; --query publicIps -o tsv)
+echo &quot;Public IP: $IP&quot;
+ssh &quot;$ADMIN_USER@$IP&quot;
+</code></pre></div>
+<p>Jawab <code>yes</code> untuk pertanyaan host key (semacam sidik jari server yang diminta SSH untuk Anda percayai). Sekarang Anda berada
+<em>di dalam</em> VM. Lihat-lihat sebentar, lalu keluar:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>uname -r                                   # the kernel Azure booted from the image
+lsblk -o NAME,SIZE,TYPE,MOUNTPOINTS        # disks the VM can see
+curl -s -H Metadata:true &quot;http://169.254.169.254/metadata/instance/compute/vmSize?api-version=2021-02-01&amp;format=text&quot;; echo
+exit
+</code></pre></div>
+<p>Perintah <code>curl</code> di bagian akhir bertanya ke <strong>Instance Metadata Service</strong> — alamat khusus yang bisa dijangkau setiap VM
+Azure — sedang berjalan di size apa VM tersebut.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> prompt Anda berubah menjadi <code>azureuser@vm-web-1</code> selama terhubung; <code>lsblk</code> menampilkan satu disk sekitar
+30 GB (OS disk) dan tidak ada temporary disk, karena size Basv2 memang tidak punya; metadata service menjawab
+<code>Standard_B2ats_v2</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--pasang-nginx-dan-terbitkan-halaman-nusantara-retail" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Pasang nginx dan terbitkan halaman Nusantara Retail</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--pasang-nginx-dan-terbitkan-halaman-nusantara-retail" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>VM mengunduh nginx dari mirror paket Ubuntu. Itu berhasil karena public IP-nya memberinya akses outbound yang eksplisit.
+Anda bisa menjalankan perintah lewat SSH tanpa membuka sesi interaktif:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ssh &quot;$ADMIN_USER@$IP&quot; &#x27;sudo apt-get update -q &amp;&amp; sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -q nginx&#x27;
+</code></pre></div>
+<p>Sekarang salin halaman contoh dari folder lab dan taruh di tempat nginx menyajikan file:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>head -n 12 app/index.html                             # have a quick look first
+scp app/index.html &quot;$ADMIN_USER@$IP:index.html&quot;
+ssh &quot;$ADMIN_USER@$IP&quot; &#x27;sudo cp ~/index.html /var/www/html/index.html &amp;&amp; curl -s localhost | grep -o &quot;&lt;title&gt;.*&lt;/title&gt;&quot;&#x27;
+</code></pre></div>
+<p>Terakhir, coba buka situsnya dari Cloud Shell — artinya, dari internet:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>curl -s -m 5 -o /dev/null -w &#x27;%{http_code}\n&#x27; &quot;http://$IP/&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> di dalam VM, <code>curl localhost</code> mencetak <code>&lt;title&gt;Nusantara Retail · Online Store&lt;/title&gt;</code>. Dari
+Cloud Shell Anda mendapat <code>000</code> — permintaannya habis waktu (timeout). nginx berfungsi; ada sesuatu di depannya yang tidak
+membiarkan pembeli masuk. Itulah Tugas 4.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--buka-port-80" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Buka port 80</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--buka-port-80" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>NSG punya aturan untuk SSH, tetapi tidak untuk HTTP, dan aturan default-nya menolak semua lalu lintas lain yang datang dari
+internet. <code>az vm open-port</code> menambahkan aturan allow ke NSG pada network interface milik VM (angka priority yang lebih kecil
+diperiksa lebih dulu).</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm open-port -g &quot;$RG&quot; -n &quot;$VM&quot; --port 80 --priority 900 --output none
+
+az network nsg rule list -g &quot;$RG&quot; --nsg-name nsg-web \
+  --query &quot;[].{name:name, priority:priority, port:destinationPortRange, source:sourceAddressPrefix, access:access}&quot; -o table
+
+curl -s -o /dev/null -w &#x27;%{http_code}\n&#x27; &quot;http://$IP/&quot;
+</code></pre></div>
+<p>Buka juga <code>http://&lt;your public IP&gt;</code> di tab browser, dengan public IP milik Anda.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>vm-web-1 › Networking › Network settings › Create port rule › Inbound port rule</em>, service
+<strong>HTTP</strong>, priority <strong>900</strong>. Portal menampilkan effective rules (aturan yang benar-benar berlaku) di halaman yang sama — cara
+praktis untuk melihat aturan subnet dan NIC sekaligus.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> daftar aturan menampilkan aturan SSH (priority 1000) dan aturan baru untuk port 80 (priority 900). <code>curl</code>
+mencetak <code>200</code>, dan browser menampilkan halaman Nusantara Retail.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--tambahkan-dan-mount-data-disk" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Tambahkan dan mount data disk</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--tambahkan-dan-mount-data-disk" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Foto produk akan terus bertambah; tempatnya bukan di OS disk. Pasang (attach) Standard SSD baru berukuran 8 GiB di LUN 0
+(logical unit number — slot data disk pertama):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm disk attach -g &quot;$RG&quot; --vm-name &quot;$VM&quot; \
+  --name disk-web-1-data --new --size-gb 8 --sku StandardSSD_LRS --lun 0 --output none
+
+az vm show -g &quot;$RG&quot; -n &quot;$VM&quot; --query &quot;storageProfile.dataDisks[].{lun:lun, name:name, sizeGb:diskSizeGb}&quot; -o table
+</code></pre></div>
+<p>Azure sudah memasang disknya, tetapi Linux hanya melihat perangkat mentah yang kosong. Disk itu masih butuh partisi,
+filesystem, dan mount point. Ibaratnya membeli lemari baru: Azure mengantarkan lemarinya ke kamar, tetapi Anda sendiri yang
+memasang rak di dalamnya dan menempelkan label di pintunya. <code>mount-data-disk.sh</code> milik lab mengerjakan semua itu, dan Anda bisa
+menjalankannya lewat <strong>Run Command</strong> — tanpa SSH, tanpa port terbuka, cukup Azure VM agent:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM&quot; --command-id RunShellScript \
+  --scripts @mount-data-disk.sh --query &quot;value[0].message&quot; -o tsv
+</code></pre></div>
+<p>Skrip itu menemukan disk di LUN 0, membuat satu partisi GPT, memformatnya sebagai ext4 (filesystem standar Linux), me-mount-nya
+di <code>/datadrive</code>, menambahkan satu baris ke <code>/etc/fstab</code> (daftar disk yang otomatis di-mount saat boot) memakai UUID partisi
+(pengenal uniknya) dengan opsi <code>nofail</code> (supaya disk yang hilang tidak pernah menghentikan VM saat boot), lalu membuat
+<code>/datadrive/images</code>. Skrip ini aman dijalankan dua kali. Run Command butuh waktu 30–60 detik.</p>
+<details class="plain"><summary>Lebih suka mengerjakannya manual lewat SSH?</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ssh &quot;$ADMIN_USER@$IP&quot;
+lsblk -o NAME,HCTL,SIZE,MOUNTPOINTS          # the new 8G disk has no partitions; the last HCTL number is the LUN
+ls -l /dev/disk/azure/scsi1/ 2&gt;/dev/null     # lun0 -&gt; ../../../sdX on most images
+DISK=/dev/sdc                                # &lt;-- use the device you found!
+sudo parted --script &quot;$DISK&quot; mklabel gpt mkpart primary ext4 0% 100%
+sudo mkfs.ext4 -L datadrive &quot;${DISK}1&quot;
+sudo mkdir -p /datadrive
+echo &quot;UUID=$(sudo blkid -s UUID -o value ${DISK}1) /datadrive ext4 defaults,nofail 0 2&quot; | sudo tee -a /etc/fstab
+sudo mount /datadrive &amp;&amp; df -h /datadrive
+exit
+</code></pre></div>
+<p>Periksa ulang nama perangkatnya: memformat disk yang salah akan menghancurkan datanya.</p>
+</details>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> output Run Command diakhiri baris <code>df</code> untuk <code>/datadrive</code> berukuran sekitar 8 GB. Pastikan lewat SSH:
+<code>ssh &quot;$ADMIN_USER@$IP&quot; 'df -h /datadrive &amp;&amp; grep datadrive /etc/fstab'</code></p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--resize-vm" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Resize VM</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--resize-vm" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Promo Ramadan sudah dekat dan Dewi ingin memori yang lebih besar. Resizing adalah scaling <em>vertikal</em>: VM yang sama, size yang
+berbeda, satu kali restart. Pertama, lihat size apa saja yang ditawarkan hardware cluster VM Anda saat ini dengan jumlah vCPU
+yang sama:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm list-vm-resize-options -g &quot;$RG&quot; -n &quot;$VM&quot; \
+  --query &#x27;[?numberOfCores==`2`].{size:name, memoryMb:memoryInMb}&#x27; -o table
+</code></pre></div>
+<p>Resize ke <code>Standard_B2als_v2</code> (2 vCPU, 4 GiB) — atau size 2 vCPU lain dari daftar — dan perhatikan situsnya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm resize -g &quot;$RG&quot; -n &quot;$VM&quot; --size Standard_B2als_v2 --output none
+az vm show -d -g &quot;$RG&quot; -n &quot;$VM&quot; --query &quot;{size:hardwareProfile.vmSize, power:powerState, ip:publicIps}&quot; -o table
+curl -s -o /dev/null -w &#x27;%{http_code}\n&#x27; &quot;http://$IP/&quot;
+</code></pre></div>
+<p>Jatah jam VM bulanan dari akun gratis mencakup <code>Standard_B2ats_v2</code>, tetapi tidak mencakup size yang lebih besar, jadi kecilkan
+lagi size-nya setelah selesai:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm resize -g &quot;$RG&quot; -n &quot;$VM&quot; --size &quot;$VM_SIZE&quot; --output none
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> setelah setiap resize, VM berjalan dengan size barunya, public IP tidak berubah (IP Standard bersifat
+statis), dan situs kembali menjawab <code>200</code>. Selama setiap resize, situs sempat mati sebentar — ingat itu ketika ada yang
+mengusulkan me-resize VM production pada jam makan siang.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--jadwalkan-auto-shutdown" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Jadwalkan auto-shutdown</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--jadwalkan-auto-shutdown" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Salinan uji toko online tidak perlu menyala sepanjang malam. Auto-shutdown melakukan deallocate pada VM di jam yang sama
+setiap hari. CLI menerima waktu dalam <strong>UTC</strong>: pukul 19.00 di Jakarta (UTC+7) adalah <code>1200</code>. Supaya VM tidak mematikan
+dirinya sendiri di tengah lab ini, jadwalkan tiga jam dari sekarang:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>date -u +&quot;It is now %H:%M UTC&quot;
+SHUTDOWN_UTC=$(date -u -d &#x27;+3 hours&#x27; +%H00)
+az vm auto-shutdown -g &quot;$RG&quot; -n &quot;$VM&quot; --time &quot;$SHUTDOWN_UTC&quot; --output none
+# Optional: add --email you@example.com to get a warning 30 minutes before each shutdown.
+
+SCHED=$(az resource list -g &quot;$RG&quot; --resource-type Microsoft.DevTestLab/schedules --query &quot;[0].name&quot; -o tsv)
+az resource show -g &quot;$RG&quot; --resource-type Microsoft.DevTestLab/schedules -n &quot;$SCHED&quot; \
+  --query &quot;{name:name, status:properties.status, time:properties.dailyRecurrence.time, timeZone:properties.timeZoneId}&quot; -o table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>vm-web-1 › Operations › Auto-shutdown</em>: aktifkan, pilih jam, lalu pilih zona waktu
+<em>(UTC+07:00) Bangkok, Hanoi, Jakarta</em> supaya Anda tidak perlu mengonversi ke UTC. Anda juga bisa menambahkan e-mail
+notifikasi di sana.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> ada resource schedule (tipe <code>Microsoft.DevTestLab/schedules</code>) di resource group Anda dengan
+status <code>Enabled</code>, jam pilihan Anda, dan zona waktu <code>UTC</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-8--stopped-versus-deallocated" data-kind="task"><h2><span class="task-tag">Tugas 8</span><span class="title">Stopped versus deallocated</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-8--stopped-versus-deallocated" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Tim keuangan bertanya apakah mereka tetap membayar di malam hari. Buktikan jawabannya. Pertama, <strong>stop</strong> VM:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm stop -g &quot;$RG&quot; -n &quot;$VM&quot;
+az vm show -d -g &quot;$RG&quot; -n &quot;$VM&quot; --query powerState -o tsv
+</code></pre></div>
+<p>Power state menunjukkan <code>VM stopped</code>: sistem operasi mati, tetapi VM masih dialokasikan ke host-nya, sehingga meteran
+compute terus berjalan. Sekarang lakukan <strong>deallocate</strong>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm deallocate -g &quot;$RG&quot; -n &quot;$VM&quot;
+az vm get-instance-view -g &quot;$RG&quot; -n &quot;$VM&quot; --query &quot;instanceView.statuses[].displayStatus&quot; -o tsv
+az vm show -d -g &quot;$RG&quot; -n &quot;$VM&quot; --query publicIps -o tsv
+</code></pre></div>
+<p>Lalu hidupkan kembali tokonya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm start -g &quot;$RG&quot; -n &quot;$VM&quot;
+curl -s -o /dev/null -w &#x27;%{http_code}\n&#x27; &quot;http://$IP/&quot;
+ssh &quot;$ADMIN_USER@$IP&quot; &#x27;df -h /datadrive&#x27;
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Status yang Anda lihat</th>
+<th>Compute ditagih?</th>
+<th>Disk ditagih?</th>
+<th>Public IP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VM stopped</code></td>
+<td><strong>Ya</strong></td>
+<td>Ya</td>
+<td>Tetap</td>
+</tr>
+<tr>
+<td><code>VM deallocated</code></td>
+<td>Tidak</td>
+<td>Ya</td>
+<td>Tetap (IP Standard bersifat statis) dan ditagih</td>
+</tr>
+</tbody>
+</table></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Anda melihat <code>VM stopped</code>, lalu <code>VM deallocated</code>, lalu <code>VM running</code>. Public IP tidak pernah berubah,
+situs menjawab <code>200</code>, dan <code>/datadrive</code> otomatis ter-mount lagi berkat entri <code>fstab</code>.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Seorang rekan &quot;merapikan&quot; NSG. Jadilah rekan itu — hapus aturan yang mengizinkan port 80:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>RULE=$(az network nsg rule list -g &quot;$RG&quot; --nsg-name nsg-web --query &quot;[?destinationPortRange==&#x27;80&#x27;].name | [0]&quot; -o tsv)
+echo &quot;Deleting rule: $RULE&quot;
+az network nsg rule delete -g &quot;$RG&quot; --nsg-name nsg-web --name &quot;$RULE&quot;
+curl -s -m 5 -o /dev/null -w &#x27;%{http_code}\n&#x27; &quot;http://$IP/&quot;
+</code></pre></div>
+<p><strong>Gejala:</strong> toko mati — <code>curl</code> mencetak <code>000</code> setelah timeout lima detik, browser terus berputar, dan <code>bash verify.sh</code> gagal di dua pemeriksaan. Padahal nginx baik-baik saja: <code>ssh &quot;$ADMIN_USER@$IP&quot; 'curl -s -o /dev/null -w &quot;%{http_code}\n&quot; localhost'</code> mencetak <code>200</code>. Temukan penyebabnya dan perbaiki tanpa melihat petunjuk.</p>
+<details class="plain"><summary>Petunjuk dan perbaikan</summary>
+<p>VM menjawab secara lokal tetapi tidak dari internet, dan SSH masih berfungsi — jadi masalahnya ada di antara internet dan
+VM, khusus di port 80. Tampilkan daftar aturannya (<code>az network nsg rule list -g &quot;$RG&quot; --nsg-name nsg-web -o table</code>): hanya SSH
+yang diizinkan, dan aturan default <code>DenyAllInBound</code> membuang HTTP. Kembalikan aturannya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm open-port -g &quot;$RG&quot; -n &quot;$VM&quot; --port 80 --priority 900 --output none
+curl -s -o /dev/null -w &#x27;%{http_code}\n&#x27; &quot;http://$IP/&quot;
+</code></pre></div>
+<p>Bonus: Azure Network Watcher bisa memberi tahu Anda aturan <em>mana</em> yang memblokir sebuah paket (Makan Siang 08 membahasnya):
+<code>az network watcher test-ip-flow -g &quot;$RG&quot; --vm &quot;$VM&quot; --direction Inbound --protocol TCP --local &quot;$(az vm show -d -g &quot;$RG&quot; -n &quot;$VM&quot; --query privateIps -o tsv):80&quot; --remote 203.0.113.10:50000</code></p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu Anda
+ulangi. Pemeriksaan mount data disk memakai Run Command, jadi skrip ini butuh waktu sekitar satu menit.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Skrip ini menghapus semua yang dibuat lab (resource group <code>rg-lunch06-&lt;suffix&gt;</code>, termasuk VM, disk, public IP, dan jadwal
+auto-shutdown) dan menghapus host key VM dari <code>~/.ssh/known_hosts</code>. Pasangan SSH key Anda tetap disimpan, karena lab lain
+memakainya lagi. Penghapusan berlanjut di latar belakang selama beberapa menit.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SkuNotAvailable</code> … &quot;The requested size for resource … is currently not available in location …&quot;</td>
+<td>Size itu tidak ditawarkan untuk subscription Anda di region atau zona tersebut</td>
+<td>Jalankan <code>bash ../common/check-environment.sh</code>, pilih size 2 vCPU lain, lalu <code>export VM_SIZE=&lt;size&gt;</code> dan <code>source ../common/config.sh</code> lagi</td>
+</tr>
+<tr>
+<td>&quot;Operation could not be completed as it results in exceeding approved Total Regional Cores quota&quot;</td>
+<td>VM lain sudah memakai kuota vCPU Anda</td>
+<td>Hapus sisa resource dari lab lain (<code>bash ../common/check-environment.sh</code> menampilkannya) atau minta tambahan kuota</td>
+</tr>
+<tr>
+<td><code>ssh: connect to host … port 22: Connection timed out</code></td>
+<td>VM sedang stopped/deallocated, atau aturan SSH hilang</td>
+<td><code>az vm start …</code>; tampilkan aturan NSG dan pastikan port 22 diizinkan</td>
+</tr>
+<tr>
+<td><code>Permission denied (publickey)</code></td>
+<td>Kunci Cloud Shell Anda berubah (misalnya sesi sementara tanpa storage)</td>
+<td>Kirim kunci Anda yang sekarang ke VM: <code>az vm user update -g &quot;$RG&quot; -n &quot;$VM&quot; -u &quot;$ADMIN_USER&quot; --ssh-key-value &quot;$(cat ~/.ssh/id_rsa.pub)&quot;</code></td>
+</tr>
+<tr>
+<td><code>WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</code></td>
+<td>VM sebelumnya memakai public IP yang sama</td>
+<td><code>ssh-keygen -R &quot;$IP&quot;</code>, lalu hubungkan lagi</td>
+</tr>
+<tr>
+<td><code>E: Could not get lock /var/lib/dpkg/lock-frontend</code></td>
+<td>Ubuntu masih memasang update dari boot pertama</td>
+<td>Tunggu dua atau tiga menit lalu jalankan perintahnya lagi</td>
+</tr>
+<tr>
+<td><code>curl</code> mencetak <code>000</code></td>
+<td>Tidak ada aturan NSG untuk port 80, atau VM tidak sedang berjalan</td>
+<td>Tugas 4; <code>az vm show -d … --query powerState</code></td>
+</tr>
+<tr>
+<td><code>curl</code> mencetak <code>200</code> tetapi Anda melihat &quot;Welcome to nginx!&quot;</td>
+<td>Halaman contoh belum tersalin</td>
+<td>Ulangi baris <code>scp</code> dan <code>sudo cp</code> di Tugas 3</td>
+</tr>
+<tr>
+<td>Run Command gagal dengan konflik atau &quot;execution is in progress&quot;</td>
+<td>Run Command lain masih berjalan di VM</td>
+<td>Tunggu satu menit lalu jalankan lagi</td>
+</tr>
+<tr>
+<td><code>mount-data-disk.sh</code> menyatakan &quot;No data disk found at LUN 0&quot;</td>
+<td>Disk belum terpasang, atau terpasang di LUN lain</td>
+<td>Periksa tabel <code>dataDisks</code> di Tugas 5; gunakan <code>--lun 0</code></td>
+</tr>
+<tr>
+<td>Resize gagal karena size-nya &quot;not available in the current hardware cluster&quot;</td>
+<td>Cluster tempat VM Anda berjalan tidak menawarkan size itu</td>
+<td><code>az vm deallocate</code>, lalu <code>az vm resize</code>, lalu <code>az vm start</code></td>
+</tr>
+<tr>
+<td><code>verify.sh</code> menyatakan VM tidak sedang berjalan</td>
+<td>Auto-shutdown sudah terpicu, atau Anda membiarkannya dalam keadaan deallocated</td>
+<td><code>az vm start -g &quot;$RG&quot; -n &quot;$VM&quot;</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li><strong>Kunci SSH rapat-rapat.</strong> Izinkan port 22 hanya dari alamat Cloud Shell Anda saat ini (alamat ini bisa berubah antar-sesi):
+<code>R22=$(az network nsg rule list -g &quot;$RG&quot; --nsg-name nsg-web --query &quot;[?destinationPortRange=='22'].name | [0]&quot; -o tsv)</code>
+lalu <code>az network nsg rule update -g &quot;$RG&quot; --nsg-name nsg-web -n &quot;$R22&quot; --source-address-prefixes &quot;$(my_public_ip)/32&quot;</code>.</li>
+<li><strong>Sajikan foto dari data disk.</strong> Lewat SSH: <code>sudo ln -s /datadrive/images /var/www/html/images</code>, salin sebuah gambar
+ke <code>/datadrive/images</code> lalu buka <code>http://&lt;IP&gt;/images/&lt;file&gt;</code>.</li>
+<li><strong>Sign in dengan Microsoft Entra ID, bukan dengan key.</strong> Beri VM sebuah system-assigned identity
+(<code>az vm identity assign -g &quot;$RG&quot; -n &quot;$VM&quot;</code>), pasang extension login-nya
+(<code>az vm extension set -g &quot;$RG&quot; --vm-name &quot;$VM&quot; --publisher Microsoft.Azure.ActiveDirectory --name AADSSHLoginForLinux</code>),
+beri diri Anda role <em>Virtual Machine Administrator Login</em> di VM tersebut
+(<code>az role assignment create --role &quot;Virtual Machine Administrator Login&quot; --assignee &quot;$(my_upn)&quot; --scope &quot;$(az vm show -g &quot;$RG&quot; -n &quot;$VM&quot; --query id -o tsv)&quot;</code>),
+lalu hubungkan dengan <code>az ssh vm -g &quot;$RG&quot; -n &quot;$VM&quot;</code>.</li>
+<li><strong>Coba Azure Bastion.</strong> Di portal, buka <em>vm-web-1 › Connect › Bastion</em>. Jika region Anda menawarkan SKU Developer yang gratis,
+Anda bisa terhubung dari browser — lalu hapus aturan SSH sepenuhnya dan lihat bahwa Bastion tetap berfungsi.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep):</p>
+<ol>
+<li>Resource group bernama <code>rg-lunch06-&lt;suffix&gt;</code> (<code>rg_name 06</code>) dengan tag <code>course=azure-fundamentals-lunches</code> dan
+<code>lunch=06</code> — <code>ensure_rg &quot;$RG&quot; 06</code> mengerjakannya untuk Anda.</li>
+<li>VM Ubuntu Server 24.04 LTS yang sedang berjalan bernama <code>vm-web-1</code>, size <code>$VM_SIZE</code>, dengan autentikasi SSH key saja (tanpa
+kata sandi) dan Standard public IP address.</li>
+<li>NSG pada NIC atau subnet VM yang mengizinkan TCP port 80 inbound dari internet.</li>
+<li>nginx yang menyajikan halaman berisi teks <code>Nusantara Retail</code>, dengan respons HTTP 200 di <code>http://&lt;public IP&gt;/</code>.</li>
+<li>Minimal satu managed data disk yang terpasang ke VM, sudah diformat dan di-mount di <code>/datadrive</code> sehingga tetap ada
+setelah restart.</li>
+<li>Jadwal auto-shutdown harian yang aktif untuk VM tersebut.</li>
+<li>Tidak diperiksa oleh skrip, tetapi tetap kerjakan: resize VM lalu kembalikan, dan amati <em>stopped</em> versus <em>deallocated</em>.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="05-identity-access-basic.html"><small>← Lab sebelumnya</small>05 · Beri kontraktor akses secukupnya</a><a class="next" href="07-storage-basic.html"><small>Lab berikutnya →</small>07 · Menyimpan gambar produk dan faktur</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/06-virtual-machines-basic/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

@@ -430,7 +430,7 @@ svg path.usage{stroke:var(--accent);stroke-width:2.5}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/11-relational-databases-basic.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/11-relational-databases-basic.html" data-href-id="../id/lunches/11-relational-databases-basic.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -821,10 +821,174 @@ svg path.usage{stroke:var(--accent);stroke-width:2.5}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 11 · Database Relasional (Dasar): Azure SQL — Demo interaktif",
+   "kicker": "Makan Siang 11 · Database Relasional (Dasar) · Demo interaktif",
+   "title": "Database yang mana, bagaimana cara masuk, dan berapa yang Anda bayar",
+   "lede": "Ikuti data pesanan Nusantara Retail melewati pohon keputusan “database yang mana?”, sebuah koneksi yang bertemu gateway, firewall, dan Microsoft Entra ID, serta database serverless yang berhenti sendiri saat menganggur. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Memilih database untuk pesanan Nusantara Retail, terhubung melalui gateway dan firewall Azure SQL, serta auto-pause pada serverless",
+   "svgDesc": "Adegan pertama adalah pohon keputusan yang menanyakan datanya, engine-nya, dan kendali yang dibutuhkan, lalu berakhir di Azure SQL Database. Adegan kedua mengikuti koneksi client melalui gateway regional, firewall server, dan autentikasi Microsoft Entra. Adegan ketiga menunjukkan database serverless yang berhenti sementara saat menganggur dan aktif kembali pada koneksi berikutnya, serta jatah free offer."
+  },
+  "steps": [
+   {
+    "title": "Data pesanan butuh rumah baru",
+    "text": "Data pesanan Nusantara Retail masih tinggal di SQL Server Express pada server di sebelah pantry. Sebelum memilih produk, ajukan dulu pertanyaan tentang datanya. Telusuri pohon keputusan dengan Lanjut, atau lompat ke langkah mana pun di daftar. Pertanyaan pertama: apakah ini data relasional, dengan tabel, kunci, dan transaksi?"
+   },
+   {
+    "title": "Pertanyaan 1: relasional atau bukan?",
+    "text": "Sebuah pesanan adalah satu baris yang terhubung ke baris pelanggan, produk, dan rincian pesanan, dan sebuah pembayaran harus memperbarui beberapa baris sekaligus — semuanya atau tidak sama sekali. Itulah data relasional dengan transaksi ACID, jadi jawabannya ya. Katalog yang setiap itemnya punya atribut berbeda, atau keranjang belanja global, akan mengikuti cabang Tidak ke Azure Cosmos DB, topik Makan Siang 12."
+   },
+   {
+    "title": "Pertanyaan 2 dan 3: engine, kendali",
+    "text": "Kode Dewi sudah berbicara T-SQL, jadi engine SQL Server dipertahankan; aplikasi berbasis engine open source akan menuju Azure Database for PostgreSQL atau MySQL flexible server. Berikutnya: adakah yang butuh sistem operasi atau versi SQL Server lama? Hanya dalam kasus itu SQL Server on Azure VMs sepadan dengan urusan patch, backup, dan clustering yang harus Anda tanggung. Tidak ada yang butuh, jadi jawabannya tidak."
+   },
+   {
+    "title": "Jawabannya: Azure SQL Database",
+    "text": "Pertanyaan terakhir: apakah aplikasi butuh fitur instance seperti job SQL Server Agent, query lintas database, atau CLR? Paket akuntansi lama milik tim keuangan butuh, jadi ia akan mendarat di SQL Managed Instance. Aplikasi pesanan tidak, jadi jalurnya berakhir di Azure SQL Database: single database yang dikelola penuh, dengan patch, backup, dan ketersediaan tinggi diurus oleh Microsoft."
+   },
+   {
+    "title": "Perjalanan sebuah koneksi dimulai",
+    "text": "Sekarang mari terhubung. Client Anda menerjemahkan sql-nusa-ab12c.database.windows.net menjadi alamat gateway regional yang mendengarkan di port TCP 1433. Dengan kebijakan Redirect, client di dalam Azure lalu diarahkan langsung ke node yang menampung database; dengan Proxy, trafik tetap mengalir melalui gateway. Bawaannya memakai Redirect di dalam Azure dan Proxy dari luar. Tetapi firewall server mendapat giliran lebih dulu."
+   },
+   {
+    "title": "Tertutup secara bawaan",
+    "text": "Server yang baru dibuat tidak mengizinkan alamat IP apa pun. Koneksi Anda sampai ke gateway, firewall tidak menemukan aturan yang cocok, dan percobaan itu berakhir dengan error 40615, yang menyebutkan IP client yang ditolak. Autentikasi bahkan belum dimulai. Inilah bawaan yang paling aman: tidak ada yang bisa masuk sampai Anda memutuskan siapa yang boleh."
+   },
+   {
+    "title": "Buka pintu untuk satu IP",
+    "text": "Anda menambahkan aturan firewall tingkat server untuk tepat satu alamat: IP publik client Anda, di sini disebut IP A. Koneksi Anda kini lolos, ditandai hijau. Client tak dikenal di IP B tetap dihentikan di firewall, ditandai merah. Tahan godaan untuk menyalakan sakelar Allow Azure services: sakelar itu mengizinkan setiap alamat di dalam Azure. Dan ingat, IP Cloud Shell bisa berubah antar-sesi.",
+    "set": {
+     "t-fw-rules": "aturan: hanya IP A"
+    }
+   },
+   {
+    "title": "Buktikan identitas Anda dengan Entra",
+    "text": "Lolos dari firewall hanya membawa Anda ke tahap login. Server ini memakai Microsoft Entra-only authentication: Anda lebih dulu mendapat token akses dari Microsoft Entra ID, dengan MFA dan Conditional Access diterapkan, lalu menyerahkannya bersama koneksi. Database mengenali Anda sebagai pengguna Entra Anda. Login SQL dengan kata sandi tebakan ditolak, bahkan dari alamat IP yang diizinkan.",
+    "set": {
+     "t-db-auth": "masuk sebagai Anda"
+    }
+   },
+   {
+    "title": "Serverless: bayar selama bekerja",
+    "text": "Adegan terakhir: tagihannya. Database pesanan berjalan di komputasi General Purpose serverless. Jumlah vCore-nya naik-turun di antara batas minimum dan maksimum mengikuti beban, dan Anda membayar per detik untuk komputasi yang benar-benar dipakai, ditambah penyimpanan. Ikuti satu hari: pagi buta yang sepi, menjelang siang yang sibuk, lalu jeda makan siang yang panjang."
+   },
+   {
+    "title": "Menganggur? Ia berhenti sendiri",
+    "text": "Setelah query terakhir pukul 13.00, tidak ada lagi yang terhubung. Begitu auto-pause delay terlewati — bawaannya 60 menit, minimal 15 menit — database berhenti sementara. Sejak itu meteran komputasi berhenti dan Anda hanya membayar penyimpanan. Jendela query yang dibiarkan terbuka di sebuah tool akan membuatnya tetap terjaga, jadi tutup tool Anda setelah selesai.",
+    "set": {
+     "t-sdb-status": "Dijeda · 0 vCore",
+     "t-meter1": "hanya penyimpanan",
+     "t-meter2": "meteran komputasi berhenti"
+    }
+   },
+   {
+    "title": "Login pertama membangunkannya",
+    "text": "Pukul 19.00 aplikasi uji Dewi terhubung lagi. Percobaan pertama mendapat error 40613, database not currently available, selama database bangun kembali — biasanya kurang dari satu menit. Aplikasi mencoba ulang lalu berhasil masuk, dan meteran komputasi berjalan lagi. Logika coba-ulang yang baik itu penting; untuk database yang sibuk sepanjang hari, komputasi provisioned mungkin lebih cocok.",
+    "set": {
+     "t-sdb-status": "Bangun, lalu online",
+     "t-meter1": "komputasi (per detik)",
+     "t-meter2": "+ penyimpanan (selalu)"
+    }
+   },
+   {
+    "title": "Free offer untuk database kecil",
+    "text": "Untuk pengembangan dan lab, cobalah free offer. Saat tulisan ini dibuat, setiap subscription mendapat hingga sepuluh database General Purpose serverless gratis, masing-masing dengan 100.000 vCore-detik komputasi, 32 GB data, dan 32 GB penyimpanan backup setiap bulan. Jika jatahnya habis, database berhenti sementara sampai bulan berikutnya, atau tetap berjalan dan kelebihannya ditagih jika Anda memilih itu."
+   },
+   {
+    "title": "Rangkuman: pilih, hubungkan, bayar",
+    "text": "Pilih dengan bertanya: data relasional, T-SQL, dan tidak butuh sistem operasi maupun fitur instance mengarah ke Azure SQL Database. Hubungkan melalui gateway dan firewall yang hanya mengizinkan alamat IP yang dikenal, lalu login dengan Microsoft Entra-only authentication. Bayar per detik dengan serverless, biarkan database yang menganggur berhenti sendiri, dan gunakan free offer untuk pengembangan.",
+    "tip": "Di Lab 11 Anda membangun persis ini: server khusus Entra, database sqldb-orders yang gratis atau serverless, satu aturan firewall, dan tabel Orders yang Anda query dari Cloud Shell dan portal."
+   }
+  ],
+  "svg": {
+   "Which database fits the orders?": "Database mana yang cocok untuk pesanan?",
+   "No": "Tidak",
+   "Yes": "Ya",
+   "Orders": "Pesanan",
+   "new data": "data baru",
+   "Tables, keys,": "Tabel, kunci,",
+   "transactions?": "transaksi?",
+   "relational data": "data relasional",
+   "NoSQL · Lunch 12": "NoSQL · Makan Siang 12",
+   "skills and code": "keahlian dan kode",
+   "Need the OS or": "Perlu OS atau",
+   "old SQL version?": "versi SQL lama?",
+   "full control": "kendali penuh",
+   "IaaS · you patch": "IaaS · Anda yang patch",
+   "Instance features?": "Fitur instance?",
+   "SQL Agent, cross-DB": "SQL Agent, query",
+   "queries, CLR": "lintas DB, CLR",
+   "near-100% compatible": "kompatibel hampir 100%",
+   "PaaS · single DB or pool": "PaaS · single DB atau pool",
+   "Orders → Azure SQL Database": "Pesanan → Azure SQL Database",
+   "relational, T-SQL, no OS work,": "relasional, T-SQL, tanpa urusan OS,",
+   "no instance features needed": "tanpa perlu fitur instance",
+   "Azure region · Southeast Asia": "Region Azure · Southeast Asia",
+   "issues access tokens": "menerbitkan token akses",
+   "You · Cloud Shell": "Anda · Cloud Shell",
+   "sqlcmd · client IP A": "sqlcmd · IP client A",
+   "Unknown client": "Client tak dikenal",
+   "IP B · password guess": "IP B · tebak kata sandi",
+   "proxy or redirect": "proxy atau redirect",
+   "Server firewall": "Firewall server",
+   "no rules: deny all": "0 aturan: tolak semua",
+   "checks client IP": "memeriksa IP client",
+   "waiting for sign-in": "menunggu login",
+   "token from Entra ID: accepted": "token dari Entra ID: diterima",
+   "SQL login + password: rejected": "login SQL + kata sandi: ditolak",
+   "Think twice": "Pikir dua kali",
+   "'Allow Azure services' admits": "'Allow Azure services' membuka",
+   "every IP inside Azure, other": "akses bagi semua IP di Azure,",
+   "customers' resources too": "termasuk milik pelanggan lain",
+   "Serverless compute: one day of sqldb-orders": "Komputasi serverless: satu hari sqldb-orders",
+   "vCores used": "vCore terpakai",
+   "Paused": "Dijeda",
+   "storage only": "hanya penyimpanan",
+   "60 min idle": "diam 60 menit",
+   "resume": "aktif lagi",
+   "Dewi's test app": "Aplikasi uji Dewi",
+   "connects when it works": "terhubung saat bekerja",
+   "Online · 0.5–2 vCores": "Online · 0,5–2 vCore",
+   "You pay for": "Anda membayar",
+   "compute (per second)": "komputasi (per detik)",
+   "+ storage (always)": "+ penyimpanan (selalu)",
+   "19:00 · first login after a pause": "19.00 · login pertama setelah jeda",
+   "error 40613 while it resumes (usually under": "error 40613 selama database bangun (biasanya kurang",
+   "a minute), then the app retries and gets in": "dari semenit), lalu aplikasi mencoba ulang dan masuk",
+   "Free offer · per database, per month": "Free offer · per database, per bulan",
+   "100,000 vCore-seconds · 32 GB data · 32 GB backup": "100.000 vCore-detik · 32 GB data · 32 GB backup",
+   "up to 10 per subscription": "hingga 10 per subscription",
+   "example: a third used this month": "contoh: 1/3 terpakai bulan ini",
+   "Three things to remember": "Tiga hal yang perlu diingat",
+   "1 · Choose": "1 · Pilih",
+   "Relational data + T-SQL,": "Data relasional + T-SQL,",
+   "no OS, no instance": "tanpa OS, tanpa fitur",
+   "features needed": "instance",
+   "2 · Connect": "2 · Hubungkan",
+   "Gateway, then firewall:": "Gateway, lalu firewall:",
+   "known IPs only, then": "hanya IP dikenal, lalu",
+   "Entra-only sign-in": "login khusus Entra",
+   "No shared passwords": "Tanpa kata sandi bersama",
+   "3 · Pay": "3 · Bayar",
+   "Serverless bills per": "Serverless ditagih per",
+   "second; idle databases": "detik; database yang diam",
+   "pause themselves": "berhenti sendiri",
+   "Free offer for dev/test": "Free offer untuk dev/test",
+   "Next: build it yourself in Lab 11": "Berikutnya: bangun sendiri di Lab 11"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -840,6 +1004,119 @@ svg path.usage{stroke:var(--accent);stroke-width:2.5}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -959,7 +1236,7 @@ svg path.usage{stroke:var(--accent);stroke-width:2.5}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -994,7 +1271,7 @@ svg path.usage{stroke:var(--accent);stroke-width:2.5}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -1007,7 +1284,7 @@ svg path.usage{stroke:var(--accent);stroke-width:2.5}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -1028,7 +1305,7 @@ svg path.usage{stroke:var(--accent);stroke-width:2.5}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -1036,7 +1313,7 @@ svg path.usage{stroke:var(--accent);stroke-width:2.5}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

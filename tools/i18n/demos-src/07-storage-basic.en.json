@@ -1,0 +1,155 @@
+{
+  "page": {
+    "doc_title": "Lunch 07 · Storage (Basic) — Interactive demo",
+    "kicker": "Lunch 07 · Storage (Basic) · Interactive demo",
+    "title": "Where do the copies live, and which shelf do the files sit on?",
+    "lede": "Watch Nusantara Retail's copies survive (or not) when a disk, a datacenter, a zone or a whole region fails. Then tip the access-tier seesaw from hot to archive. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "Storage redundancy options under failures, followed by an access-tier seesaw comparing storage price and access price",
+    "svgDesc": "Scene one shows a storefront app writing through one blob endpoint to copies in a primary region with three availability zones and a paired secondary region. Copies are placed with LRS, ZRS and GZRS while a disk, a datacenter, a zone and the whole region fail. Scene two shows four tier cards (hot, cool, cold, archive) above a seesaw that tilts from storage price to access price, and a rehydration path from archive back to hot."
+  },
+  "steps": [
+    {
+      "title": "Nusantara's files need a home",
+      "text": "Product photos, invoices and price lists sit on one disk next to the pantry. In Azure they move into a storage account: one name, one blob endpoint, and at least three copies of every object. Where those copies live decides which failures the shop survives. The paired region on the right stays empty for now."
+    },
+    {
+      "title": "LRS: three copies, one building",
+      "text": "Locally redundant storage keeps three copies inside a single datacenter. It is the cheapest option and is designed for at least eleven nines of durability per year. Each write from the storefront reaches all three copies before Azure confirms it.",
+      "set": {
+        "t-mode": "LRS · 3 copies in one datacenter · ≥ 11 nines"
+      }
+    },
+    {
+      "title": "A disk fails — no drama",
+      "text": "The drive under copy 2 dies. Azure keeps serving reads and writes from the healthy copies and rebuilds the lost one on other hardware. Customers notice nothing. LRS protects you against failed drives, servers and racks: the everyday failures inside one building.",
+      "set": {
+        "t-outcome": "Disk failed: data still available ✓"
+      }
+    },
+    {
+      "title": "A whole datacenter goes dark",
+      "text": "Now a fire or a flood takes out the entire datacenter. All three LRS copies were in that one building, so the storefront's requests fail and, in the worst case, the data is gone for good. LRS suits data you can re-create, not ten years of invoices.",
+      "set": {
+        "t-outcome": "Datacenter lost: LRS can't serve data"
+      }
+    },
+    {
+      "title": "ZRS: one copy in every zone",
+      "text": "Zone-redundant storage places the copies in three availability zones, each with its own power, cooling and networking. Every write is copied synchronously to all zones before Azure confirms it. Durability rises to at least twelve nines, for a somewhat higher price than LRS.",
+      "set": {
+        "t-mode": "ZRS · 3 copies across 3 zones · ≥ 12 nines",
+        "t-outcome": "Normal day: every copy healthy"
+      }
+    },
+    {
+      "title": "A whole zone fails",
+      "text": "Zone 1 goes offline. The endpoint keeps sending the storefront's requests to the copies in zones 2 and 3, so customers keep shopping. Apps should retry briefly while Azure updates its routing, but no data is lost and nobody has to start a failover.",
+      "set": {
+        "t-outcome": "Zone lost: ZRS keeps serving ✓"
+      }
+    },
+    {
+      "title": "A region-wide disaster",
+      "text": "Now imagine a disaster that hits the whole region. LRS and ZRS keep every copy inside it, so both are out of action until the region recovers. If the business can't accept that, the data needs a copy in a second region — and the paired region on the right is still empty.",
+      "set": {
+        "t-outcome": "Region lost: LRS and ZRS can't help"
+      }
+    },
+    {
+      "title": "GZRS adds a copy far away",
+      "text": "Geo-zone-redundant storage keeps ZRS in the primary region and copies every change asynchronously to the paired region, where it is stored with LRS. Durability rises to at least sixteen nines. GRS works the same way with LRS in the primary. Indonesia Central has no pair, so neither is offered there.",
+      "set": {
+        "t-mode": "GZRS · ZRS + async copy to the paired region",
+        "t-outcome": "Secondary copy lags a little behind"
+      }
+    },
+    {
+      "title": "Fail over to the secondary",
+      "text": "The primary region goes down. With GRS or GZRS you start an account failover: DNS points the same endpoint at the secondary region and the shop reads and writes again. Writes made after the Last Sync Time may be lost. With RA-GRS or RA-GZRS, apps could read the secondary copy even before the failover.",
+      "tip": "Redundancy copies mistakes too: delete an invoice and every copy changes at once. Soft delete and versioning arrive in Lunch 24.",
+      "set": {
+        "t-outcome": "After failover: shop is back ✓"
+      }
+    },
+    {
+      "title": "Second question: which shelf?",
+      "text": "Copies answer how safe the data is; access tiers answer how much it costs. Picture a seesaw: one side is the price of keeping a gigabyte for a month, the other is the price of reading it. Hot sits heavy on storage price and light on access price, perfect for product photos read all day.",
+      "set": {
+        "t-example": "Product photos, read all day → Hot"
+      }
+    },
+    {
+      "title": "Cool and cold: cheaper shelves",
+      "text": "Cool and cold lower the storage price but charge more for every read, and they expect blobs to stay at least 30 and 90 days. Delete, overwrite or move a blob earlier and you still pay for the remaining days. Last season's photos fit cool; last year's invoices fit cold.",
+      "set": {
+        "t-example": "Older photos and invoices, rarely read → Cool or Cold"
+      }
+    },
+    {
+      "title": "Archive: the warehouse",
+      "text": "Archive has the lowest storage price and the highest access price, and the blob goes offline: you can list its name and metadata but not read its content. Keep it at least 180 days. Archive works only in LRS, GRS and RA-GRS accounts, and it suits invoices older than a year.",
+      "set": {
+        "t-example": "Invoices older than a year → Archive"
+      }
+    },
+    {
+      "title": "Rehydration takes hours",
+      "text": "To read an archived invoice, rehydrate it to an online tier: change its tier, or copy it to a new blob, which avoids the early deletion charge. Standard priority can take up to 15 hours. High priority often finishes in under an hour for blobs under 10 GB, at a higher price and without a guarantee."
+    },
+    {
+      "title": "Recap and your lab",
+      "text": "Choose redundancy by the failure you must survive: LRS for hardware, ZRS for a zone, GZRS or GRS for a region. Choose a tier by how often data is read, and remember the 30, 90 and 180-day minimums. Neither choice protects against a careless delete; that is the job of Lunch 24.",
+      "tip": "In Lab 07 you move one blob to Cool and one to Archive, then try to download the archived one and read the error."
+    }
+  ],
+  "svg": [
+    "Redundancy decides where the copies live",
+    "Normal day: every copy healthy",
+    "Storefront app",
+    "reads and writes",
+    "Blob endpoint",
+    "one name for every copy",
+    "Primary region · Southeast Asia",
+    "Zone 1",
+    "Zone 2",
+    "Zone 3",
+    "Datacenter",
+    "Paired region · East Asia",
+    "LRS inside the secondary",
+    "copy 1",
+    "copy 2",
+    "copy 3",
+    "copy 4",
+    "copy 5",
+    "copy 6",
+    "disk failed",
+    "Datacenter fire",
+    "Zone 1 outage",
+    "Region-wide disaster",
+    "Access tiers: storage price versus access price",
+    "Hot",
+    "online · no minimum",
+    "priciest to keep",
+    "Cool",
+    "online · min 30 days",
+    "cheaper to keep",
+    "Cold",
+    "online · min 90 days",
+    "cheaper still",
+    "Archive",
+    "offline · min 180 days",
+    "cheapest to keep",
+    "Standard: up to 15 h · High: often under 1 h",
+    "price to keep each GB for a month",
+    "price to read it back",
+    "Storage price",
+    "high",
+    "Access price: low",
+    "lower",
+    "Access price",
+    "higher",
+    "Storage price: lowest",
+    "highest, plus hours",
+    "Which shelf fits which data?"
+  ]
+}

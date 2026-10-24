@@ -1,0 +1,126 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 01 · Dari klik sampai resource — Demo interaktif",
+    "kicker": "Makan Siang 01 · Sebelum Memulai · Demo interaktif",
+    "title": "Dari klik sampai resource",
+    "lede": "Ikuti perjalanan permintaan dari Azure portal, Azure CLI, dan Azure PowerShell melewati Azure Resource Manager sampai ke resource provider, saksikan anggaran terisi hingga 50, 80, dan 100%, lalu lihat apa yang sebenarnya terjadi saat sebuah resource group dihapus. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Permintaan dari Azure portal, Azure CLI, dan Azure PowerShell mengalir melalui Azure Resource Manager ke resource provider, dengan indikator anggaran bulanan dan alert",
+    "svgDesc": "Tiga perkakas di kiri mengirim permintaan ke Azure Resource Manager di tengah, yang memeriksa identitas, izin, dan validitas sebelum meneruskan setiap permintaan ke sebuah resource provider: Microsoft.Resources, Microsoft.Storage, atau Microsoft.Compute. Provider-provider itu membangun sebuah resource group, sebuah storage account, dan sebuah virtual machine di dalam subscription lab di sebelah kanan. Di bagian bawah, indikator anggaran bulanan terisi hingga 50, 80, dan 100 persen dan mengirim email alert; terakhir, resource group dihapus beserta seluruh isinya."
+  },
+  "steps": [
+    {
+      "title": "Lab yang bersih, tiga jalan masuk",
+      "text": "Inilah titik awal Anda: subscription lab pribadi yang masih kosong. Di sebelah kiri ada tiga jalan masuk: Azure portal, Azure CLI di Cloud Shell, dan Azure PowerShell. Di tengah berdiri Azure Resource Manager, satu-satunya pintu depan yang wajib dilewati setiap permintaan, apa pun perkakas yang mengirimnya."
+    },
+    {
+      "title": "Resource provider yang membangun",
+      "text": "Di belakang Resource Manager ada para resource provider. Masing-masing membangun satu keluarga resource: Microsoft.Resources untuk resource group, Microsoft.Storage untuk storage account, dan Microsoft.Compute untuk virtual machine. Anda tidak pernah memanggil provider secara langsung. Resource Manager memeriksa setiap permintaan lebih dulu, lalu menentukan provider mana yang menerimanya."
+    },
+    {
+      "title": "Klik Create di portal",
+      "text": "Anda membuat resource group di portal. Browser mengirim permintaan itu, beserta token login Anda, ke Resource Manager. Resource Manager memeriksa siapa Anda lewat Microsoft Entra ID, memastikan peran Anda mengizinkan tindakan itu, lalu memvalidasi permintaannya. Baru setelah itu Microsoft.Resources membuat rg-lunch01-ab12c di dalam subscription Anda.",
+      "set": {
+        "t-arm": "PUT resource group ✓"
+      }
+    },
+    {
+      "title": "CLI lewat pintu yang sama",
+      "text": "Sekarang cara Dewi: az storage account create di Cloud Shell. Perkakasnya berbeda, tetapi jalurnya sama. Permintaan sampai di Resource Manager yang sama, melewati tiga pemeriksaan yang sama, lalu diteruskan ke Microsoft.Storage, yang membangun storage account di resource group yang sama. Satu perintah dan satu klik memberi hasil yang sama.",
+      "set": {
+        "t-cli": "az storage account create",
+        "t-arm": "PUT storage account ✓"
+      }
+    },
+    {
+      "title": "PowerShell, cerita yang sama",
+      "text": "Pak Budi lebih suka PowerShell, jadi ia menjalankan New-AzVM. Resource Manager memeriksa permintaannya dengan cara yang persis sama, lalu menyerahkannya ke Microsoft.Compute, yang membangun virtual machine. Tiga perkakas, tiga orang, satu pintu depan, dan satu tempat di mana identitas, izin, dan policy ditegakkan untuk semua orang.",
+      "set": {
+        "t-ps": "New-AzVM",
+        "t-arm": "PUT virtual machine ✓"
+      }
+    },
+    {
+      "title": "Salah ketik tertahan di pintu",
+      "text": "Dewi mengetik southeastasai, bukan southeastasia. Resource Manager memvalidasi permintaan sebelum provider mana pun terlibat, lalu menolaknya. Tidak ada yang dibuat dan tidak ada yang ditagih. Kode error-nya, LocationNotAvailableForResourceGroup, spesifik dan mudah dicari, dan pesannya mencantumkan nama-nama region yang valid. Baca error dari atas: kodenya dulu, baru pesannya.",
+      "set": {
+        "t-cli": "location: southeastasai",
+        "t-arm": "permintaan ditolak ✗"
+      }
+    },
+    {
+      "title": "Resource diam-diam memakan biaya",
+      "text": "Kembali ke resource yang sudah dibuat. Storage account dan virtual machine memakan biaya untuk setiap jam keberadaannya, dipakai atau tidak. Di sinilah pagar pengaman Anda berperan: anggaran bulanan di scope subscription, dengan alert di 50, 80, dan 100 persen dari biaya aktual.",
+      "set": {
+        "t-cli": "Cloud Shell · Bash",
+        "t-arm": "menunggu permintaan",
+        "t-spend": "Terpakai bulan ini: 18% dari anggaran"
+      }
+    },
+    {
+      "title": "50 persen: email pertama",
+      "text": "Separuh anggaran sudah terpakai, jadi alert 50 persen menyala dan sebuah email datang dari azure-noreply@microsoft.com. Ingat jedanya: data biaya bisa butuh 8 hingga 24 jam untuk masuk, dan anggaran dievaluasi kira-kira sekali sehari, jadi email itu menggambarkan pengeluaran kemarin. Tidak ada yang dihentikan. Pesannya hanya berkata: coba periksa.",
+      "set": {
+        "t-spend": "Terpakai bulan ini: 52% dari anggaran",
+        "t-alert": "Biaya aktual melewati 50%"
+      }
+    },
+    {
+      "title": "80 persen: saatnya bertindak",
+      "text": "Di 80 persen, alert kedua datang. Inilah yang paling berguna, karena masih ada waktu untuk bertindak sebelum bulan berakhir. Anda membuka Cost analysis, melihat virtual machine yang menyala sepanjang akhir pekan, dan memutuskan bahwa VM itu belum perlu ada. Tim keuangan Ibu Sari juga bisa dimasukkan ke daftar penerima, supaya tidak ada yang kaget saat invoice datang.",
+      "set": {
+        "t-spend": "Terpakai bulan ini: 81% dari anggaran",
+        "t-alert": "Biaya aktual melewati 80%"
+      }
+    },
+    {
+      "title": "100 persen: alarm, bukan rem",
+      "text": "Misalkan tidak ada yang bertindak. Pengeluaran melewati 100 persen dan alert terakhir menyala, tetapi virtual machine tetap berjalan dan tetap memakan biaya. Anggaran tidak pernah menghentikan atau menghapus apa pun. Di subscription berbasis kredit, spending limit-lah rem yang sebenarnya: saat kredit habis, resource dinonaktifkan. Di pay-as-you-go, Andalah remnya.",
+      "set": {
+        "t-spend": "Terpakai: 104% dari anggaran · VM masih berjalan",
+        "t-alert": "Biaya aktual melewati 100%",
+        "t-alert3": "tidak ada yang dihentikan"
+      }
+    },
+    {
+      "title": "Hapus group-nya, hapus semuanya",
+      "text": "Perbaikannya cukup satu perintah: az group delete. Resource Manager meminta setiap provider menghapus apa yang dibangunnya, lalu storage account dan virtual machine lenyap bersama group-nya. Satu resource group per lab, bertag nomor makan siang, membuat pembersihan menjadi satu langkah yang andal. Argo biaya berhenti, meskipun pengeluaran bulan ini tetap tercatat di tagihan.",
+      "set": {
+        "t-cli": "az group delete",
+        "t-arm": "DELETE group ✓",
+        "t-spend": "Argo berhenti · 104% tetap ada di tagihan bulan ini"
+      }
+    },
+    {
+      "title": "Giliran Anda: pasang pagar pengamannya",
+      "text": "Rangkuman. Setiap perkakas melewati Azure Resource Manager. Resource provider yang membangun. Validasi menangkap kesalahan sebelum apa pun dibuat. Anggaran memperingatkan Anda, tetapi tidak pernah menghentikan apa pun. Menghapus resource group berarti menghapus semua isinya. Di Lab 01, Anda melakukan semua ini sungguhan, di subscription Anda sendiri.",
+      "tip": "Lab 01: buka Cloud Shell, jalankan check-environment.sh, buat anggaran bulanan dengan alert 50/80/100%, lalu buat, periksa, dan hapus sebuah resource group bertag.",
+      "set": {
+        "t-cli": "Cloud Shell · Bash",
+        "t-arm": "menunggu permintaan"
+      }
+    }
+  ],
+  "svg": {
+    "Lab subscription": "Subscription lab",
+    "click Create": "klik Create",
+    "Az module": "modul Az",
+    "waiting for requests": "menunggu permintaan",
+    "Who are you?": "Siapa Anda?",
+    "Allowed?": "Diizinkan?",
+    "Valid request?": "Permintaan valid?",
+    "resource groups": "resource group",
+    "storage accounts": "storage account",
+    "virtual machines": "virtual machine",
+    "tags: course · lunch=01": "tag: course · lunch=01",
+    "rg-lunch01-ab12c deleted": "rg-lunch01-ab12c dihapus",
+    "storage account and VM gone": "storage account dan VM lenyap",
+    "no more charges": "tidak ada biaya lagi",
+    "Rejected by Azure Resource Manager": "Ditolak oleh Azure Resource Manager",
+    "Nothing was created. Fix: use a valid region name such as southeastasia.": "Tidak ada yang dibuat. Perbaikan: pakai nama region yang valid, misalnya southeastasia.",
+    "Monthly budget · actual cost": "Anggaran bulanan · biaya aktual",
+    "Spent this month: 0% of budget": "Terpakai bulan ini: 0% dari anggaran",
+    "✉ Budget alert": "✉ Alert anggaran",
+    "Actual cost passed 50%": "Biaya aktual melewati 50%",
+    "to: you and the finance team": "kepada: Anda dan tim keuangan"
+  }
+}

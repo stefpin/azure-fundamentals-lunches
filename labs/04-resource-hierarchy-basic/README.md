@@ -1,8 +1,11 @@
 # Lab 04 · Organise Nusantara Retail
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 04 · Resource Hierarchy and Azure Resource Manager (Basic)](../../lunches/04-resource-hierarchy-basic/README.md)
 > **Time:** about 40 minutes · **Cost:** 💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its own steps.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

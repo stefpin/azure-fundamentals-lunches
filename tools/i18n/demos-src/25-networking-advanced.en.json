@@ -1,0 +1,141 @@
+{
+  "page": {
+    "doc_title": "Lunch 25 · Virtual Networking (Advanced) — Interactive demo",
+    "kicker": "Lunch 25 · Virtual Networking (Advanced) · Interactive demo",
+    "title": "Through the hub: routes, routers and private names",
+    "lede": "Watch spoke-to-spoke traffic fail because peering isn't transitive, fix it with user-defined routes and a router in the hub, then follow a private endpoint's name to its private IP. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Nusantara Retail's hub-and-spoke network: routing spoke-to-spoke traffic through a hub router, and resolving a private endpoint's name",
+    "svgDesc": "At the top centre, the hub virtual network vnet-nusa-hub with the router VM vm-hub-nva at 10.30.1.4 and, later, a private endpoint and a DNS Private Resolver. Bottom left, spoke1 (storefront) with vm-spoke1; bottom right, spoke2 (back office) with vm-spoke2. The top-left panel lists the effective routes of vm-spoke1's network interface. The top-right panels show peerings, Network Watcher next-hop results and, later, the steps of name resolution. Between the spokes, Azure DNS and a private DNS zone appear in the second half."
+  },
+  "steps": [
+    {
+      "title": "A hub and two spokes",
+      "text": "Nusantara Retail now runs three virtual networks in one region. The hub, 10.30.0.0/16, holds shared services such as the router VM vm-hub-nva. The storefront lives in spoke1, 10.31.0.0/16, and the finance back office in spoke2, 10.32.0.0/16. Nothing is peered yet. The left panel lists the effective routes of vm-spoke1's network interface."
+    },
+    {
+      "title": "Peering each spoke with the hub",
+      "text": "Each peering is two links, one created from each side; with both in place the status turns Connected. The spokes' links also allow forwarded traffic, which matters later. A peering adds a route for its direct neighbour only: vm-spoke1 now has 10.30.0.0/16 with next hop VNet peering. Notice what it doesn't get: any route to spoke2."
+    },
+    {
+      "title": "Spokes can reach the hub",
+      "text": "vm-spoke1 pings the hub VM at 10.30.1.4. Azure looks at every route that matches the destination: 10.30.0.0/16 through the peering, 10.0.0.0/8 to None and 0.0.0.0/0 to the internet. The longest prefix wins, so the packet crosses the peering and the reply comes straight back. vm-spoke2 reaches the hub the same way."
+    },
+    {
+      "title": "Spoke to spoke: no route",
+      "text": "Now vm-spoke1 tries vm-spoke2 at 10.32.1.4. Peering isn't transitive: spoke1 learned the hub's range but not spoke2's. The only matching routes are 10.0.0.0/8 to None and 0.0.0.0/0, and the /8 is longer, so the packet is silently dropped. Network Watcher's next hop confirms it: None, decided by a default system route."
+    },
+    {
+      "title": "Route tables point to the hub",
+      "text": "Two route tables fix the routing. rt-spoke1 sends 10.32.0.0/16 to next hop type VirtualAppliance at 10.30.1.4, the hub VM. rt-spoke2 sends 10.31.0.0/16 the same way, so replies return through the hub too. A /16 is longer than the /8, so the user-defined route wins, and next hop now names the appliance.",
+      "set": {
+        "t-nha": "VirtualAppliance · 10.30.1.4",
+        "t-nhb": "route 10.32.0.0/16 · User · rt-spoke1"
+      }
+    },
+    {
+      "title": "The hub VM drops it",
+      "text": "The route works: the packet is handed to vm-hub-nva's network interface. But it's addressed to 10.32.1.4, not to the hub VM, and by default Azure only delivers packets addressed to a NIC's own IP addresses. Everything else is dropped. Routing through an appliance takes more than a route: the appliance must be allowed to forward."
+    },
+    {
+      "title": "Two switches make a router",
+      "text": "First switch: enable IP forwarding on vm-hub-nva's network interface, an Azure setting. Second switch: inside Linux, set net.ipv4.ip_forward to 1 and save it in /etc/sysctl.d so it survives a reboot. Now the hub VM passes the packet on, the hub-to-spoke2 peering carries it, and spoke2's link accepts it because forwarded traffic is allowed.",
+      "set": {
+        "t-fwd": "IP forwarding: on"
+      }
+    },
+    {
+      "title": "Proving the path both ways",
+      "text": "Replies from vm-spoke2 follow rt-spoke2 back through the hub, so both directions use the same appliance, which a stateful firewall requires. Evidence beats diagrams: next hop answers VirtualAppliance in both directions, and the hub's forwarded-packet counter rises with every ping. In production, Azure Firewall takes the router's place and logs every decision.",
+      "set": {
+        "t-nhq": "vm-spoke2 → 10.31.1.4",
+        "t-nhb": "route 10.31.0.0/16 · User · rt-spoke2",
+        "t-cnt": "forwarded: 14"
+      }
+    },
+    {
+      "title": "A private endpoint in the hub",
+      "text": "Second story: the invoices storage account, stnusa. Its public network access is switched off, and a private endpoint gives it a network interface in the hub at 10.30.3.4. The application keeps using the usual name, stnusa.blob.core.windows.net, so its connection string and TLS certificate don't change. The question is how that name turns into 10.30.3.4."
+    },
+    {
+      "title": "The name becomes an alias",
+      "text": "vm-spoke1 sends its question to Azure DNS at 168.63.129.16, the resolver every virtual network uses by default. The public DNS answer isn't an address but a CNAME: stnusa.privatelink.blob.core.windows.net. That alias is public, so anyone can look it up. On its own, it still ends at the public endpoint, where the request would be refused."
+    },
+    {
+      "title": "A linked zone answers privately",
+      "text": "Before answering, Azure DNS checks the private DNS zones linked to the asking network. privatelink.blob.core.windows.net is linked to spoke1 and holds an A record, stnusa → 10.30.3.4, which the endpoint's DNS zone group keeps up to date. So vm-spoke1 receives the private IP. A network without that link gets the public IP and an access-denied error."
+    },
+    {
+      "title": "Connecting without the internet",
+      "text": "vm-spoke1 opens HTTPS to 10.30.3.4. The traffic crosses the spoke1-to-hub peering to the private endpoint and never touches the internet. One detail for the auditor: by default, NSGs and user-defined routes don't apply to traffic sent to a private endpoint. Enable network policies on the endpoint's subnet if the firewall must inspect it."
+    },
+    {
+      "title": "Head office needs a resolver",
+      "text": "Pak Budi's head-office DNS servers can't reach 168.63.129.16, which only answers inside Azure. Azure DNS Private Resolver solves this without DNS VMs. Head office forwards the public zone, blob.core.windows.net, to its inbound endpoint in the hub over the VPN from Lunch 26, so the private zone must be linked to the hub too. An outbound endpoint and a ruleset handle the other direction.",
+      "set": {
+        "t-link": "linked to spoke1 and the hub"
+      }
+    },
+    {
+      "title": "What to remember",
+      "text": "Four habits from this demo. Peering is private, fast and non-transitive, so spoke-to-spoke traffic needs a route through the hub. An appliance needs a user-defined route, IP forwarding on its NIC and in its OS, and a matching return route. A private endpoint works only when its private DNS zone is linked. And next hop proves what really happens.",
+      "tip": "Try it in Lab 25: peer a hub and two spokes, turn the hub VM into a router, and prove spoke-to-spoke traffic with next hop and a forwarded-packet counter."
+    }
+  ],
+  "svg": [
+    "vnet-nusa-hub · 10.30.0.0/16",
+    "vnet-nusa-spoke1",
+    "10.31.0.0/16 · storefront",
+    "vnet-nusa-spoke2",
+    "10.32.0.0/16 · back office",
+    "Effective routes",
+    "vm-spoke1's network interface",
+    "Default",
+    "→ Virtual network (own range)",
+    "→ Internet",
+    "→ None: packet dropped",
+    "→ VNet peering (the hub)",
+    "User",
+    "→ Virtual appliance 10.30.1.4",
+    "Next hop",
+    "Network Watcher",
+    "vm-spoke1 → 10.32.1.4",
+    "None (packet dropped)",
+    "route 10.0.0.0/8 · Default",
+    "Peerings",
+    "hub ↔ spoke1 · Connected",
+    "hub ↔ spoke2 · Connected",
+    "spoke1 ↔ spoke2 · not peered",
+    "spoke links allow forwarded traffic",
+    "Name resolution",
+    "1 · vm-spoke1 asks Azure DNS for",
+    "stnusa.blob.core.windows.net",
+    "2 · public DNS answers with a CNAME",
+    "stnusa.privatelink.blob.core.windows.net",
+    "3 · the linked private zone answers",
+    "A record: stnusa → 10.30.3.4 (private)",
+    "4 · vm-spoke1 connects to",
+    "10.30.3.4, across the peering to the hub",
+    "peering",
+    "rt-spoke1",
+    "rt-spoke2",
+    "DNS Private Resolver",
+    "inbound 10.30.4.4 · outbound + ruleset",
+    "pe-stnusa",
+    "private endpoint",
+    "vm-hub-nva",
+    "IP forwarding: off",
+    "forwarded: 0",
+    "vm-spoke1",
+    "vm-spoke2",
+    "Azure DNS",
+    "Private DNS zone",
+    "privatelink.blob.core.windows.net",
+    "stnusa A 10.30.3.4",
+    "linked to vnet-nusa-spoke1",
+    "Head office DNS",
+    "Pak Budi's servers, over the VPN",
+    "blob.core.windows.net → 10.30.4.4",
+    "No route: dropped",
+    "10.32.1.4 matches 10.0.0.0/8 → None"
+  ]
+}

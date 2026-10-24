@@ -1,0 +1,139 @@
+{
+  "page": {
+    "doc_title": "Lunch 15 · Security Essentials — Interactive demo",
+    "kicker": "Lunch 15 · Security Essentials · Interactive demo",
+    "title": "Layers that stop attacks, and a secret without a password",
+    "lede": "Watch five attacks stop at five layers of defense in depth, then follow a VM's managed identity as Key Vault answers 403 — and 200 after a role assignment. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "Defense in depth on the left, a managed identity reading a Key Vault secret on the right",
+    "svgDesc": "Left: an attacker above seven stacked security layers, from physical security down to data; five attacks stop at the identity, perimeter, network, application and data layers. Right: the app server vm-app-1 asks the instance metadata endpoint for a token issued by Microsoft Entra ID, calls Key Vault, is refused with 403, gets the Key Vault Secrets User role and then receives the secret. Microsoft Defender for Cloud sits underneath with a secure score."
+  },
+  "steps": [
+    {
+      "title": "A password in a zip file",
+      "text": "Rizky zipped the storefront project to share it, and inside was appsettings.json with the orders database password in plain text. On the left are the layers that guard Nusantara Retail's data; on the right is the app server that needs that password. Two questions today: how many independent walls stand between an attacker and the data, and how can the app get its secret without a file?"
+    },
+    {
+      "title": "Seven layers, one goal",
+      "text": "Defense in depth stacks independent controls so that one failure is not a breach. From the outside in: physical security, identity and access, the perimeter, the network, compute, the application and the data itself. Microsoft runs the physical layer; most of the others are yours to configure. An attacker has to get past every layer, and each one can stop, slow down or expose them."
+    },
+    {
+      "title": "A stolen password meets MFA",
+      "text": "A phishing email gave the attacker Dewi's password. At the identity layer, Microsoft Entra ID asks for a second factor, and Conditional Access notices a sign-in from an unfamiliar device in another country. The attempt stops here and lands in the sign-in logs. Verify explicitly: a password on its own is never enough proof.",
+      "set": {
+        "t-attack": "attack 1: a stolen password"
+      }
+    },
+    {
+      "title": "A flood at the front door",
+      "text": "Next, a botnet floods the storefront's public IP address. Azure DDoS infrastructure protection is always on at no extra cost and absorbs common volumetric attacks at the network edge. For business-critical endpoints, the paid DDoS IP Protection or DDoS Network Protection tiers add mitigation tuned to your traffic, alerts and attack reports.",
+      "set": {
+        "t-attack": "attack 2: a traffic flood"
+      }
+    },
+    {
+      "title": "Port 22 stays closed",
+      "text": "A scanner knocks on SSH and RDP ports, hoping for a weak administrator password. At the network layer, network security groups deny inbound traffic that no rule allows, and the app server has no public IP address at all. Administrators use Run Command or Azure Bastion instead, and separate subnets keep one compromised machine from reaching everything else.",
+      "set": {
+        "t-attack": "attack 3: a port scan"
+      }
+    },
+    {
+      "title": "Injection stopped at the app",
+      "text": "The attacker types SQL commands into the storefront's search box. A web application firewall in front of the site recognises the pattern and blocks the request before it reaches the code, while parameterised queries back it up inside. One layer further out, patching and Defender for Servers keep the compute layer from becoming the weak spot.",
+      "set": {
+        "t-attack": "attack 4: SQL injection"
+      }
+    },
+    {
+      "title": "Assume breach: encrypt the data",
+      "text": "Now suppose every outer layer failed and a copy of a database backup leaked. Azure encrypts data at rest by default with platform-managed keys, and you can use your own keys from Key Vault for extra control. Without the keys, the copy is unreadable noise. Assume breach means planning for a layer to fail, so that the next one still holds.",
+      "set": {
+        "t-attack": "attack 5: a leaked backup"
+      }
+    },
+    {
+      "title": "The app still needs a secret",
+      "text": "Now the right-hand side. The storefront app on vm-app-1 reads its connection string from a file, so anyone who can read the file, a backup or the Git history has the password. We move the secret into Azure Key Vault, which uses the Azure RBAC permission model. But how does the app prove who it is without another password?"
+    },
+    {
+      "title": "A managed identity asks for a token",
+      "text": "We switch on a system-assigned managed identity for vm-app-1, and Azure creates a service principal for it in Microsoft Entra ID. The app calls the metadata endpoint at 169.254.169.254 with the header Metadata: true and asks for a token whose audience is vault.azure.net. Entra ID issues it. No password appears in code, configuration or environment variables.",
+      "set": {
+        "t-vm-id": "identity: system-assigned"
+      }
+    },
+    {
+      "title": "First knock on the vault: 403",
+      "text": "The app sends GET /secrets/sql-connection with the token as a bearer token. Key Vault validates the token, so authentication succeeds, but Azure RBAC finds no role assignment for this identity on the vault. The answer is 403 Forbidden with the inner code ForbiddenByRbac. Being able to sign in is not the same as being allowed to read.",
+      "set": {
+        "t-kv-status": "403 ForbiddenByRbac"
+      }
+    },
+    {
+      "title": "Grant least privilege",
+      "text": "You assign the Key Vault Secrets User role to the VM's identity, scoped to this one vault. It can read secret values and nothing else: no writing, no deleting, no other vaults. Role assignments take a few minutes to propagate, so an immediate retry may still fail. The people who manage the secrets get Key Vault Secrets Officer instead.",
+      "set": {
+        "t-kv-status": "waiting for propagation"
+      }
+    },
+    {
+      "title": "Second try: 200 OK",
+      "text": "A few minutes later the same request succeeds: Key Vault returns 200 OK and the secret value. The app keeps it in memory, and the config file now holds only the vault address and the secret's name. Rotating the password later means updating one secret in one place, and every read can be logged once you turn on the vault's diagnostic settings.",
+      "set": {
+        "t-kv-status": "200 OK, secret returned",
+        "t-config": "vault URI + secret name"
+      }
+    },
+    {
+      "title": "Recap: layers plus a coach",
+      "text": "Five attacks stopped at five different layers, and the app now reads its secret with a managed identity instead of a password. Microsoft Defender for Cloud watches over all of it: free foundational CSPM gives you recommendations and a secure score, and paid Defender plans add threat detection. Fix the recommendations one control at a time and the score climbs.",
+      "tip": "In Lab 15 you do this for real: a 403 first, a 200 after the role assignment, and a look at your own secure score.",
+      "set": {
+        "t-def": "fix recommendations and the secure score climbs",
+        "t-attack": "every layer did its job"
+      }
+    }
+  ],
+  "svg": [
+    "Defense in depth",
+    "seven layers, outside to inside",
+    "1 · Physical security",
+    "Microsoft datacenters, guards, cameras",
+    "2 · Identity & access",
+    "Entra ID · MFA · Conditional Access",
+    "3 · Perimeter",
+    "DDoS Protection · Azure Firewall",
+    "4 · Network",
+    "Subnets · NSGs · private endpoints",
+    "5 · Compute",
+    "Patching · Defender for Servers",
+    "6 · Application",
+    "WAF · Key Vault · managed identity",
+    "7 · Data",
+    "Encryption at rest and in transit",
+    "Attacker",
+    "on the internet",
+    "Secrets without passwords",
+    "managed identity, token, Key Vault",
+    "GET token",
+    "ask Entra",
+    "GET secret",
+    "response",
+    "IMDS endpoint",
+    "Microsoft Entra ID",
+    "issues the token",
+    "vm-app-1",
+    "storefront app",
+    "identity: none yet",
+    "kv-nusa",
+    "secret: sql-connection",
+    "RBAC permission model",
+    "appsettings.json",
+    "password in plain text",
+    "Secrets User",
+    "role at vault scope",
+    "for vm-app-1's identity",
+    "Microsoft Defender for Cloud",
+    "foundational CSPM: free recommendations and a secure score"
+  ]
+}

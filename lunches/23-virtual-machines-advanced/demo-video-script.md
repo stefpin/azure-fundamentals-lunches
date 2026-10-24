@@ -1,5 +1,7 @@
 # Lunch 23 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the scale set creation wizard (zones, autoscale, Spot,
 > health and repairs), a live scale set scaling out under load with its run history, and a patch assessment in Azure
 > Update Manager. These are the parts the animation cannot show.
@@ -10,7 +12,7 @@
 
 ## Setup before you press record
 
-- A live scale set to show, built from the lab about 30 minutes in advance (quota: 3 vCPUs with the default 1-vCPU size):
+- A live scale set to show, built from the lab about 30 minutes in advance (quota: up to 6 vCPUs with the default 2-vCPU size):
 
   ```bash
   cd ~/azure-fundamentals-lunches/labs/23-virtual-machines-advanced

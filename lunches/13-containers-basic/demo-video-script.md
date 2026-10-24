@@ -1,5 +1,7 @@
 # Lunch 13 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the part an animation cannot show: an image in a real
 > registry, a container app pulling it with a managed identity, live replicas appearing under load, and a traffic split
 > configured in the portal.

@@ -1,0 +1,219 @@
+{
+  "page": {
+    "doc_title": "Lunch 27 · Load Balancing (Advanced) — Interactive demo",
+    "kicker": "Lunch 27 · Load Balancing (Advanced) · Interactive demo",
+    "title": "Pick the right front door: Front Door, Application Gateway and Traffic Manager",
+    "lede": "Walk the decision tree, follow a shopper in Surabaya to the nearest edge and a healthy origin, watch a web application firewall block a SQL-injection request, and see Traffic Manager fail over through DNS. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "Choosing and combining Azure Front Door, Application Gateway, Traffic Manager and Load Balancer",
+    "svgDesc": "A decision tree asks whether traffic is HTTP or HTTPS and whether it spans regions. A shopper in Surabaya reaches the Jakarta edge of Front Door, which forwards to a healthy origin and switches to Southeast Asia when Indonesia Central fails. Inside a region, an Application Gateway routes by path to two App Service apps and its web application firewall blocks a SQL-injection request with 403. Finally, Traffic Manager answers DNS lookups for a point-of-sale service and fails over to priority 2 once the cached answer expires."
+  },
+  "steps": [
+    {
+      "title": "Which service goes in front?",
+      "text": "Nusantara Retail's storefront needs three things at once: send /images/* to a new images app, stop attacks such as SQL injection before they reach the code, and keep selling if a whole region fails. Azure has four services that can stand in front of an application. Two questions pick the right one — and sometimes the answer is two services working together."
+    },
+    {
+      "title": "Question 1: is it HTTP or HTTPS?",
+      "text": "Application Gateway and Front Door are reverse proxies: they end the connection, read each HTTP request, and can route it by host name or path, end TLS and run a web application firewall. That is built for web traffic. For anything else — a point-of-sale sync over plain TCP, a game over UDP — you need layer 4 or DNS: Load Balancer or Traffic Manager."
+    },
+    {
+      "title": "Question 2: one region or several?",
+      "text": "Inside one region, Application Gateway handles web traffic and Azure Load Balancer everything else. Across regions you need a global service. Front Door is a global proxy that runs in Microsoft's edge locations. For other protocols, the cross-region load balancer offers one static anycast IP, while Traffic Manager steers clients with DNS answers — any protocol, but its failover waits for DNS caches."
+    },
+    {
+      "title": "Nusantara's answer: two services",
+      "text": "The storefront is web traffic for shoppers all over Indonesia, with a standby region. So Front Door works at the edge, in front of an Application Gateway in each region that routes paths to the apps. The stores' point-of-sale sync is plain TCP between two regions, so it gets a Traffic Manager priority profile. Now follow a shopper in Surabaya through this design."
+    },
+    {
+      "title": "A shopper in Surabaya reaches the nearest edge",
+      "text": "A shopper in Surabaya opens the storefront on her phone. Front Door's DNS and network send her to a nearby edge location — Jakarta — instead of a server far away. TLS ends at the edge and the WAF policy checks her request there. Product photos are cached at the edge too, so a repeat request for an image never leaves Jakarta."
+    },
+    {
+      "title": "A healthy origin answers",
+      "text": "Prices and stock can't come from a cache, so the edge forwards the product page over Microsoft's network to an origin. The origin group lists two Application Gateways: Indonesia Central with priority 1 and Southeast Asia with priority 2. Health probes run all the time, and both answer. Front Door picks the healthy origins with the best priority, then the lowest latency.",
+      "set": {
+        "t-o1": "healthy ✓ · serving shoppers",
+        "t-o2": "healthy ✓ · on standby"
+      }
+    },
+    {
+      "title": "Origin 1 fails: the edge switches",
+      "text": "Indonesia Central stops answering its health probes, so the edge stops sending requests there and forwards them to Southeast Asia, which serves the catalogue in browse-only mode. The shopper notices little: she still talks to the same Jakarta edge, so no DNS answer has to change and no cache has to expire. When Indonesia Central recovers, priority 1 takes the traffic back.",
+      "set": {
+        "t-o1": "probes failing ✗ · skipped",
+        "t-o2": "healthy ✓ · now serving"
+      }
+    },
+    {
+      "title": "Inside a region: the host name trap",
+      "text": "Zoom into one region. The Application Gateway's listener accepts the request, and its rule picks an App Service app. But App Service finds an app by its host name, and the gateway's default probe asks for 127.0.0.1. Neither app recognises that name, so both probes fail. With no healthy backend, the shopper gets 502 Bad Gateway.",
+      "set": {
+        "t-store": "unknown host · probe ✗",
+        "t-img": "unknown host · probe ✗"
+      }
+    },
+    {
+      "title": "Fix the host name, then route by path",
+      "text": "Two settings fix it: the backend settings pick the host name from the backend target, and a custom probe takes its host name from those settings. Both apps turn healthy. Now the rule's path map does its job: /images/* goes to the images app and everything else to the storefront app — one address, two apps, each receiving its own name.",
+      "set": {
+        "t-set": "host name from backend ✓",
+        "t-probe": "custom probe · app's own name",
+        "t-store": "healthy ✓ · serves /",
+        "t-img": "healthy ✓ · serves /images/*"
+      }
+    },
+    {
+      "title": "The WAF blocks SQL injection",
+      "text": "An attacker sends ?id=1' OR 1=1-- hoping the database returns every customer. The WAF policy, now in Prevention mode, checks the request against Microsoft's Default Rule Set. The SQL-injection rule is critical and adds 5 points; at a total of 5 the request is blocked. The attacker gets 403 Forbidden, and the storefront never sees the request. Shoppers carry on as normal.",
+      "set": {
+        "t-waf": "WAF policy · Prevention"
+      }
+    },
+    {
+      "title": "Traffic Manager answers with DNS",
+      "text": "The stores' point-of-sale sync uses plain TCP, so it gets Traffic Manager. A terminal in Makassar looks up the service's name. Its DNS resolver asks Traffic Manager, which returns the healthy endpoint with the best priority: Indonesia Central. The resolver may cache that answer for the 30-second TTL. The terminal then connects to the endpoint directly; Traffic Manager never sees the traffic.",
+      "set": {
+        "t-cache": "cache: Indonesia Central · 30 s"
+      }
+    },
+    {
+      "title": "Priority 1 fails, the answer changes",
+      "text": "Indonesia Central stops responding. Traffic Manager's health probes fail several times in a row, the endpoint turns Degraded, and from now on Traffic Manager answers with Southeast Asia, priority 2. But this terminal's resolver still holds the old answer, so the terminal keeps trying the failed region until the cached answer expires. DNS failover is only as fast as the caches allow.",
+      "set": {
+        "t-ep1": "Degraded ✗ · probes failing",
+        "t-tm": "answers: Southeast Asia"
+      }
+    },
+    {
+      "title": "After the TTL, the terminal follows",
+      "text": "Thirty seconds later the cached answer expires. The next lookup reaches Traffic Manager, which now returns Southeast Asia, and the terminal reconnects there. Total failover time is roughly detection time plus the TTL plus any extra caching by the client. A lower TTL fails over faster but multiplies DNS queries. When Indonesia Central recovers, new answers move back to priority 1.",
+      "set": {
+        "t-cache": "cache: Southeast Asia · 30 s",
+        "t-ep2": "Online ✓ · now serving"
+      }
+    },
+    {
+      "title": "Recap: global in front, regional behind",
+      "text": "Two questions — HTTP or not, one region or several — pick the service. Front Door handles the global edge, caching and fast origin failover. Application Gateway routes by path inside a region and carries the WAF policy. Traffic Manager steers any protocol with DNS but waits for caches, and the cross-region load balancer gives TCP and UDP one anycast address.",
+      "tip": "Lab 27: build an Application Gateway WAF_v2 with path routing, watch it block a SQL-injection request, and fail over a Traffic Manager profile while you watch the DNS answer with dig."
+    }
+  ],
+  "svg": [
+    "No",
+    "Yes",
+    "one region",
+    "several",
+    "Is it HTTP or HTTPS?",
+    "web requests, or any other TCP / UDP traffic",
+    "One region or several?",
+    "for TCP, UDP or any protocol",
+    "for web apps and APIs",
+    "Azure Load Balancer",
+    "regional · layer 4",
+    "any TCP or UDP port",
+    "Cross-region LB",
+    "global · one anycast IP",
+    "or Traffic Manager (DNS)",
+    "Application Gateway",
+    "regional · layer 7",
+    "path routing · WAF",
+    "Azure Front Door",
+    "global · Microsoft's edge",
+    "caching · WAF · TLS",
+    "Three requests for the storefront — which service goes in front?",
+    "Dewi: serve /images/* from the new images app, under the shop's own address",
+    "Rizky: thousands of ' OR 1=1-- attempts a day in the web server logs",
+    "Ibu Sari: if Jakarta goes down during 12.12, do shoppers just see an error?",
+    "Layer 7 proxies are built for HTTP and HTTPS",
+    "Front Door and Application Gateway read each request: host name, path, headers",
+    "so they can route by path, end TLS and run a web application firewall",
+    "other protocols: Load Balancer (layer 4) or Traffic Manager (DNS)",
+    "Regional or global?",
+    "One region: Application Gateway (web) or Azure Load Balancer (anything else)",
+    "Several regions: Front Door (web), cross-region LB or Traffic Manager (any protocol)",
+    "Traffic Manager only answers DNS, so its failover waits for DNS caches",
+    "Nusantara Retail: two services, stacked",
+    "Storefront (HTTPS, shoppers across Indonesia): Front Door → Application Gateway per region",
+    "Point-of-sale sync (plain TCP, two regions): Traffic Manager with priority routing",
+    "Next: follow a shopper in Surabaya through the storefront design",
+    "Global in front, regional behind",
+    "Front Door: edge TLS, caching, WAF, origin failover without DNS changes",
+    "Application Gateway: path and host routing, WAF policy, one region across zones",
+    "Traffic Manager: DNS for any protocol · cross-region LB: one anycast IP for TCP/UDP",
+    "Azure Front Door · edge locations",
+    "Indonesia Central (Jakarta)",
+    "Southeast Asia (Singapore)",
+    "Shopper",
+    "Surabaya, East Java",
+    "phone browser · HTTPS",
+    "Edge · Jakarta",
+    "TLS · WAF policy · cache",
+    "nearest to the shopper",
+    "Edge · Singapore",
+    "another edge location",
+    "Origin 1 · priority 1",
+    "Application Gateway → storefront",
+    "healthy · answering probes",
+    "Origin 2 · priority 2",
+    "Application Gateway → standby",
+    "healthy · on standby",
+    "Nearest edge: Jakarta",
+    "TLS ends at the edge · the WAF checks requests there",
+    "product photos are cached there: no trip to the origin",
+    "Origin group: two App Gateways",
+    "priority 1: Indonesia Central · priority 2: Southeast Asia",
+    "health probes run all the time · healthy origins only",
+    "Same edge, new origin",
+    "no DNS change and no cache to wait for",
+    "the standby serves the catalogue in browse-only mode",
+    "Indonesia Central · virtual network · dedicated subnet",
+    "GET / and /images/",
+    "one address",
+    "Attacker",
+    "?id=1' OR 1=1--",
+    "SQL injection",
+    "WAF_v2 · zone-redundant · autoscale",
+    "listener · HTTPS 443",
+    "WAF policy · DRS 2.2",
+    "rule · /images/* → images app",
+    "backend settings · HTTPS 443",
+    "default probe · 127.0.0.1",
+    "anomaly score 5 → 403",
+    "Storefront app",
+    "App Service",
+    "waiting for traffic",
+    "Images app",
+    "App Service picks the app by host name",
+    "the default probe asks for 127.0.0.1 → unknown host → unhealthy → shoppers get 502 Bad Gateway",
+    "Pick the host name from the backend target",
+    "a custom probe uses the same name · path map: /images/* → images app, everything else → storefront",
+    "Prevention mode: blocked with 403 Forbidden",
+    "SQL-injection rule = critical = 5 points · threshold 5 · the storefront never sees the request",
+    "POS terminal",
+    "store in Makassar",
+    "sync over TCP",
+    "DNS resolver",
+    "caches answers for the TTL",
+    "cache: empty",
+    "Traffic Manager · tm-nusa",
+    "priority routing · TTL 30 s",
+    "answers: Indonesia Central",
+    "Priority 1 · Indonesia Central",
+    "public load balancer · sync service",
+    "Online ✓",
+    "Priority 2 · Southeast Asia",
+    "Online ✓ · standby",
+    "DNS answer, then a direct connection",
+    "Traffic Manager only answers the lookup",
+    "it never sees the TCP or HTTPS traffic itself",
+    "so it works for any protocol",
+    "New answers move — cached ones don't",
+    "the endpoint turns Degraded after repeated probe failures",
+    "this resolver keeps the old answer until the TTL ends",
+    "meanwhile the terminal keeps trying the failed region",
+    "Failover ≈ detection + TTL + client caching",
+    "after 30 seconds the next lookup returns priority 2",
+    "a lower TTL fails over faster, with more DNS queries",
+    "when priority 1 recovers, new answers move back"
+  ]
+}

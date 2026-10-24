@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 09 · Keep the shop open when a server fails · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 09: Keep the shop open when a server fails. about 50 minutes (including about 8 minutes of setup), cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/09-load-balancing-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 09 · Keep the shop open when a server fails">
+<meta property="og:description" content="Hands-on Azure lab 09: Keep the shop open when a server fails. about 50 minutes (including about 8 minutes of setup), cost 💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/09-load-balancing-basic.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lab" data-lab="09" style="--c:#e2482f">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/labs/09-load-balancing-basic.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#e2482f">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 09</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>09</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Keep the shop open when a server fails</h1>
+        <p class="lab-story">🏪 <b>Episode 09 · Two Servers, One Address</b> — A perfectly good twin server sits idle while shoppers can only find one. <a href="../lunches/09-load-balancing-basic.html">Read the lunch</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ about 50 minutes (including about 8 minutes of setup)</span>
+          <span class="chip cost">💲💲 small charges while running</span>
+          <span class="chip">Difficulty ★★☆</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 9 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--look-at-the-starting-point">Task 1 · Look at the starting point</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--create-a-zone-redundant-frontend-ip">Task 2 · Create a zone-redundant frontend IP</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--create-the-load-balancer-and-fill-the-backend-pool">Task 3 · Create the load balancer and fill the backend pool</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--add-a-health-probe-and-a-load-balancing-rule">Task 4 · Add a health probe and a load-balancing rule</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--fail-a-server-and-watch-the-shop-stay-open">Task 5 · Fail a server and watch the shop stay open</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-6--reach-one-vm-with-an-inbound-nat-rule">Task 6 · Reach one VM with an inbound NAT rule</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-7--give-the-backends-a-way-out-with-an-outbound-rule">Task 7 · Give the backends a way out with an outbound rule</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/09-load-balancing-basic" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Nusantara Retail's storefront now runs on two small web servers, one in availability zone 1 and one in zone 2. Neither
+has a public IP address, and they sit in a private subnet with no default internet access. You give them <strong>one front
+door</strong>: a Standard public load balancer with a zone-redundant frontend IP, a health probe that checks <code>/health</code>, and a
+rule that spreads shoppers across both servers. Then you break one server on purpose and watch the shop stay open, add
+an inbound NAT rule so an administrator can still reach <code>vm-web-1</code> over SSH, and add an outbound rule so the servers
+can reach the internet for updates and the payment provider.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shop([&quot;Shoppers&lt;br/&gt;(curl from Cloud Shell)&quot;]) --&gt;|HTTP :80| fe
+  admin([&quot;You · SSH&quot;]) --&gt;|TCP :50001| fe
+  subgraph rg[&quot;rg-lunch09-&amp;lt;suffix&amp;gt;&quot;]
+    fe[&quot;pip-lb-nusa-web&lt;br/&gt;zone-redundant frontend&quot;] --&gt; lb[&quot;lb-nusa-web&lt;br/&gt;Standard SKU&quot;]
+    subgraph vnet[&quot;vnet-nusa-web · snet-web (private) · nsg-web&quot;]
+      vm1[&quot;vm-web-1&lt;br/&gt;zone 1&quot;]
+      vm2[&quot;vm-web-2&lt;br/&gt;zone 2&quot;]
+    end
+    lb --&gt;|&quot;rule-http TCP 80&lt;br/&gt;probe-http /health&quot;| vm1
+    lb --&gt;|&quot;rule-http TCP 80&lt;br/&gt;probe-http /health&quot;| vm2
+    lb -.-&gt;|&quot;nat-ssh-vm1&lt;br/&gt;50001 → 22&quot;| vm1
+  end
+  lb ==&gt;|&quot;rule-outbound (SNAT)&quot;| net([&quot;Internet&lt;br/&gt;updates, payment API&quot;])
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Nothing to install.</li>
+<li>About <strong>4 vCPUs of free quota</strong> in your region (two <code>Standard_B2ats_v2</code> VMs with 2 vCPUs each). <code>bash ../common/check-environment.sh</code> shows it.</li>
+<li>Get the lab files and load the shared settings:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/09-load-balancing-basic
+source ../common/config.sh
+source lab.env          # the resource names this lab uses: RG, LB, PIP, POOL, PROBE, ...
+RG=$(rg_name 09)
+</code></pre></div>
+<ul>
+<li>Create the starting point — takes about 6–10 minutes (two VMs, then a quick check that each web server answers):</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<p>While you wait, reread section 3 of the lunch (health probes). The script creates <code>nsg-web</code> (allows TCP 80 from the
+<code>Internet</code> and <code>AzureLoadBalancer</code> service tags), the virtual network <code>vnet-nusa-web</code> with the <strong>private</strong> subnet
+<code>snet-web</code>, and <code>vm-web-1</code>/<code>vm-web-2</code> running the course's tiny web server (<code>/</code> shows the VM name and zone,
+<code>/health</code> answers <code>ok</code>).</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Lab resources cost money while they exist (two VMs, a load balancer and a public IP). Finish with the
+<strong>Clean up</strong> section, even if you stop halfway. If Cloud Shell times out, reconnect and rerun the <code>cd</code> and both
+<code>source</code> lines above before you continue.</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–7 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>run <code>bash setup.sh</code>, read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--look-at-the-starting-point" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Look at the starting point</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--look-at-the-starting-point" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Before adding a load balancer, confirm what you are balancing: two servers in two zones, no public IPs, and a subnet
+that cannot reach the internet on its own.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm list -g &quot;$RG&quot; -d \
+  --query &quot;[].{name:name, zone:zones[0], privateIp:privateIps, publicIp:publicIps}&quot; -o table
+
+az network vnet subnet show -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n &quot;$SUBNET&quot; \
+  --query &quot;{prefix:addressPrefix, defaultOutboundAccess:defaultOutboundAccess, nsg:networkSecurityGroup.id}&quot; -o yaml
+
+az network nsg rule list -g &quot;$RG&quot; --nsg-name &quot;$NSG&quot; \
+  --query &quot;[].{name:name, priority:priority, source:sourceAddressPrefix, port:destinationPortRange}&quot; -o table
+
+# Ask vm-web-1 for its own home page (Run Command works without any public IP)
+az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript \
+  --scripts &quot;curl -s localhost | grep &#x27;Served by&#x27;&quot; --query &quot;value[0].message&quot; -o tsv
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> two VMs in zones <code>1</code> and <code>2</code> with private IPs <code>10.9.1.x</code> and an <strong>empty</strong> public IP column;
+<code>defaultOutboundAccess: false</code>; two NSG rules for port 80; and the page from <code>vm-web-1</code> says
+<em>Served by vm-web-1 in availability zone 1</em>.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--create-a-zone-redundant-frontend-ip" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Create a zone-redundant frontend IP</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--create-a-zone-redundant-frontend-ip" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Shoppers need one stable address. A <strong>Standard</strong> public IP spread across zones 1, 2 and 3 keeps answering even if a
+whole zone fails. (Basic public IPs were retired on September 30, 2025.)</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network public-ip create -g &quot;$RG&quot; -n &quot;$PIP&quot; -l &quot;$LOCATION&quot; \
+  --sku Standard --allocation-method Static --zone 1 2 3 --output none
+
+az network public-ip show -g &quot;$RG&quot; -n &quot;$PIP&quot; \
+  --query &quot;{sku:sku.name, zones:join(&#x27;,&#x27;, zones), address:ipAddress}&quot; -o table
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>Standard</code>, zones <code>1,2,3</code>, and an IP address. <code>lb_ip</code> (a helper from <code>lab.env</code>) prints the same address.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--create-the-load-balancer-and-fill-the-backend-pool" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Create the load balancer and fill the backend pool</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--create-the-load-balancer-and-fill-the-backend-pool" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Create a Standard load balancer that uses the IP as its <strong>frontend</strong>, with an empty <strong>backend pool</strong>. Then put both
+servers' network interfaces into the pool. Adding NICs (rather than IP addresses) is the recommended pool type.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network lb create -g &quot;$RG&quot; -n &quot;$LB&quot; -l &quot;$LOCATION&quot; --sku Standard \
+  --public-ip-address &quot;$PIP&quot; --frontend-ip-name &quot;$FE&quot; --backend-pool-name &quot;$POOL&quot; --output none
+
+for nic in &quot;$NIC1&quot; &quot;$NIC2&quot;; do
+  az network nic ip-config address-pool add -g &quot;$RG&quot; --nic-name &quot;$nic&quot; \
+    --ip-config-name &quot;$IPCONFIG&quot; --lb-name &quot;$LB&quot; --address-pool &quot;$POOL&quot; --output none
+done
+
+az network lb address-pool show -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$POOL&quot; \
+  --query &quot;backendIPConfigurations[].id&quot; -o tsv
+</code></pre></div>
+<p>Now try the frontend: <code>curl -s --max-time 5 &quot;http://$(lb_ip)/&quot; || echo &quot;no answer&quot;</code>. Nothing answers yet — a load
+balancer forwards nothing until a <strong>rule</strong> tells it which traffic to send where.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Load balancers › Create</em>: SKU <strong>Standard</strong>, Type <strong>Public</strong>, Tier <strong>Regional</strong>; on
+<em>Frontend IP configuration</em> choose the existing <code>pip-lb-nusa-web</code>; on <em>Backend pools</em> add <code>vm-web-1</code> and <code>vm-web-2</code>
+(configuration type <strong>NIC</strong>). Skip rules for now, review, create — then come back for Task 4. The portal wizard shows
+every component of section 2 of the lunch on one screen.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> two IDs ending in <code>nic-vm-web-1/ipConfigurations/ipconfig1</code> and <code>nic-vm-web-2/ipConfigurations/ipconfig1</code>.</p>
+</div>
+</div></section><section class="lab-section" id="task-4--add-a-health-probe-and-a-load-balancing-rule" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Add a health probe and a load-balancing rule</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--add-a-health-probe-and-a-load-balancing-rule" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The <strong>probe</strong> asks every pool member for <code>/health</code> every 5 seconds; only members that answer <code>200 OK</code> receive new
+connections. The <strong>rule</strong> says: TCP traffic arriving on frontend port 80 goes to port 80 on healthy pool members.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network lb probe create -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$PROBE&quot; \
+  --protocol Http --port 80 --path /health --interval 5 --output none
+
+az network lb rule create -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$RULE&quot; \
+  --protocol Tcp --frontend-port 80 --backend-port 80 \
+  --frontend-ip &quot;$FE&quot; --backend-pool-name &quot;$POOL&quot; --probe &quot;$PROBE&quot; \
+  --disable-outbound-snat true --idle-timeout 15 --enable-tcp-reset true --output none
+</code></pre></div>
+<p>What the flags mean:</p>
+<ul>
+<li><code>--interval 5</code> — probe every 5 seconds. The CLI default is 15 seconds; the portal suggests 5.</li>
+<li><code>--disable-outbound-snat true</code> — this rule handles <strong>inbound</strong> traffic only. You give the servers outbound access
+deliberately in Task 7, with an outbound rule.</li>
+<li><code>--idle-timeout 15 --enable-tcp-reset true</code> — idle connections are closed after 15 minutes, and both ends are told
+with a TCP reset instead of being silently dropped.</li>
+</ul>
+<p>Wait about 30 seconds for the first probes, then send ten requests and see who answers:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>who_answers 10
+curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;http://$(lb_ip)/&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the lines mention both <code>vm-web-1 … zone 1</code> and <code>vm-web-2 … zone 2</code> (not strictly alternating —
+each new connection is placed by a hash), and the status is <code>HTTP 200</code>. Open <code>http://&lt;frontend IP&gt;</code> in your browser
+and refresh a few times.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--fail-a-server-and-watch-the-shop-stay-open" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Fail a server and watch the shop stay open</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--fail-a-server-and-watch-the-shop-stay-open" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Stop the web service on <code>vm-web-2</code> — the VM keeps running, but nothing answers on port 80 any more, just like a
+crashed application.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM2&quot; --command-id RunShellScript \
+  --scripts &quot;systemctl stop nusa-web &amp;&amp; echo stopped&quot; --query &quot;value[0].message&quot; -o tsv
+
+who_answers 10
+</code></pre></div>
+<p>Within a few seconds of the service stopping, the probe to <code>vm-web-2</code> fails and every new connection goes to
+<code>vm-web-1</code>. The shop stays open; shoppers do not need a new address. Now repair the server:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM2&quot; --command-id RunShellScript \
+  --scripts &quot;systemctl start nusa-web &amp;&amp; echo started&quot; --query &quot;value[0].message&quot; -o tsv
+
+who_answers 10
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> Open <code>lb-nusa-web</code> › <em>Monitoring</em> › <em>Metrics</em>, choose the metric <strong>Health Probe Status</strong> and
+<em>Apply splitting</em> by <strong>Backend IP Address</strong>. Stop and start the service again and watch one line drop to 0 % and
+recover (metrics arrive with a delay of a minute or two).</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> while the service is stopped, every answer says <code>vm-web-1</code>; after you start it again, <code>vm-web-2</code>
+reappears without you touching the load balancer.</p>
+</div>
+</div></section><section class="lab-section" id="task-6--reach-one-vm-with-an-inbound-nat-rule" data-kind="task"><h2><span class="task-tag">Task 6</span><span class="title">Reach one VM with an inbound NAT rule</span><button class="btn btn-sm done-toggle" type="button" data-task="task-6--reach-one-vm-with-an-inbound-nat-rule" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The servers have no public IPs, but an administrator sometimes needs SSH. An <strong>inbound NAT rule</strong> forwards one
+frontend port to one VM: here <code>50001</code> on the frontend goes to port <code>22</code> on <code>vm-web-1</code>. It is port forwarding, not
+load balancing — it always lands on the same VM.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network lb inbound-nat-rule create -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$NAT_RULE&quot; \
+  --protocol Tcp --frontend-ip &quot;$FE&quot; --frontend-port &quot;$NAT_PORT&quot; --backend-port 22 --output none
+
+az network nic ip-config inbound-nat-rule add -g &quot;$RG&quot; --nic-name &quot;$NIC1&quot; \
+  --ip-config-name &quot;$IPCONFIG&quot; --lb-name &quot;$LB&quot; --inbound-nat-rule &quot;$NAT_RULE&quot; --output none
+</code></pre></div>
+<p>The load balancer is secure by default, so the NSG must also allow the traffic. The NSG evaluates the packet <strong>after</strong>
+translation, so the rule opens port <strong>22</strong> (not 50001) — and only for your own address:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>MY_IP=$(my_public_ip); echo &quot;Your public IP: $MY_IP&quot;
+
+az network nsg rule create -g &quot;$RG&quot; --nsg-name &quot;$NSG&quot; -n Allow-SSH-MyIP \
+  --priority 120 --direction Inbound --access Allow --protocol Tcp \
+  --source-address-prefixes &quot;${MY_IP}/32&quot; --source-port-ranges &#x27;*&#x27; \
+  --destination-address-prefixes &#x27;*&#x27; --destination-port-ranges 22 --output none
+
+ssh -p &quot;$NAT_PORT&quot; -o StrictHostKeyChecking=accept-new &quot;${ADMIN_USER}@$(lb_ip)&quot; &#x27;hostname; cat /var/www/nusa/health&#x27;
+</code></pre></div>
+<p><code>setup.sh</code> created the VMs with <code>--generate-ssh-keys</code>, so the key pair is in <code>~/.ssh</code> of this Cloud Shell.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the SSH command prints <code>vm-web-1</code> and <code>ok</code>. Run it three times — it is always <code>vm-web-1</code>.
+In production you would prefer Azure Bastion (Lunch 06) over opening SSH through a public frontend.</p>
+</div>
+</div></section><section class="lab-section" id="task-7--give-the-backends-a-way-out-with-an-outbound-rule" data-kind="task"><h2><span class="task-tag">Task 7</span><span class="title">Give the backends a way out with an outbound rule</span><button class="btn btn-sm done-toggle" type="button" data-task="task-7--give-the-backends-a-way-out-with-an-outbound-rule" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The subnet is private and the load-balancing rule has outbound SNAT disabled, so the servers cannot reach the
+internet — no updates, no calls to the payment provider. Prove it first:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript \
+  --scripts &quot;curl -s --max-time 10 https://api.ipify.org || echo no-outbound&quot; \
+  --query &quot;value[0].message&quot; -o tsv
+</code></pre></div>
+<p>You should see <code>no-outbound</code>. Now add an <strong>outbound rule</strong>: the servers in <code>be-web</code> leave through the frontend IP,
+and each VM gets 10,000 SNAT ports (a multiple of 8; two VMs × 10,000 fits easily in the 64,000 ports one public IP
+offers).</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network lb outbound-rule create -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$OUT_RULE&quot; \
+  --frontend-ip-configs &quot;$FE&quot; --address-pool &quot;$POOL&quot; --protocol All \
+  --outbound-ports 10000 --idle-timeout 15 --enable-tcp-reset true --output none
+</code></pre></div>
+<p>Run the same Run Command test again (give it a minute), and compare the answer with <code>lb_ip</code>.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>vm-web-1</code> now reaches <code>api.ipify.org</code>, and the address the internet sees is your frontend IP.
+For many VMs or heavy outbound traffic, a NAT gateway on the subnet is the more scalable choice (Lunch 08).</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Change the probe path to a page that does not exist (a one-letter typo):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network lb probe update -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$PROBE&quot; --path /healthz --output none
+sleep 20
+who_answers 5
+</code></pre></div>
+<p><strong>Symptom:</strong> every request says <code>(no answer)</code> — yet both VMs are running and their web servers are fine.</p>
+<details class="plain"><summary>Hint</summary>
+<p>Ask each server what the probe asks for:
+<code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript --scripts &quot;curl -s -o /dev/null -w '%{http_code}' localhost/healthz&quot;</code>
+returns <code>404</code>. An HTTP probe treats anything except <code>200</code> as &quot;down&quot;. With <strong>all</strong> members down, a Standard load
+balancer sends no new connections anywhere.</p>
+</details>
+<details class="plain"><summary>Fix</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az network lb probe update -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$PROBE&quot; --path /health --output none
+sleep 20
+who_answers 5
+</code></pre></div>
+<p>Lesson: when everything behind a load balancer &quot;fails&quot; at once, check the probe before you check the servers.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit. The last check runs a
+command on <code>vm-web-1</code> and takes about 30 seconds.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes the resource group <code>rg-lunch09-&lt;suffix&gt;</code> with everything inside it (VMs, disks, NICs, load balancer, public
+IP, network). Nothing in this lab lives outside the group. Deletion continues in the background for a few minutes.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>who_answers</code> prints <code>(no answer)</code> for every request</td>
+<td>probe failing (wrong path or port), NSG blocking port 80, or no rule yet</td>
+<td><code>az network lb probe show -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$PROBE&quot; -o table</code>; check <code>nsg-web</code> rules; confirm <code>rule-http</code> exists</td>
+</tr>
+<tr>
+<td>Only one VM ever answers</td>
+<td>the other VM is not in the pool, or its web service is stopped</td>
+<td><code>az network lb address-pool show ... --query &quot;backendIPConfigurations[].id&quot;</code>; run <code>systemctl start nusa-web</code> on it with Run Command</td>
+</tr>
+<tr>
+<td><code>setup.sh</code> reports <code>no answer from /health yet</code></td>
+<td>cloud-init is still running on a slow first boot</td>
+<td>wait two minutes, then: <code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript --scripts &quot;curl -s localhost/health&quot;</code></td>
+</tr>
+<tr>
+<td><code>az vm create</code> fails with <code>SkuNotAvailable</code></td>
+<td>the VM size is not offered in that zone or region</td>
+<td><code>export VM_SIZE_SMALL=Standard_B2ts_v2</code>, run <code>source ../common/config.sh</code> again, rerun <code>bash setup.sh</code></td>
+</tr>
+<tr>
+<td><code>az vm create</code> fails with <code>OperationNotAllowed</code> mentioning quota</td>
+<td>not enough regional vCPU quota</td>
+<td>delete VMs from other labs, or use another region (<code>export LOCATION=...</code>, then <code>source ../common/config.sh</code> again)</td>
+</tr>
+<tr>
+<td>Outbound rule fails with <code>LoadBalancingRuleMustDisableSNATSinceSameFrontendIPConfigurationIsReferencedByOutboundRule</code></td>
+<td>the load-balancing rule still does automatic outbound SNAT on the same frontend</td>
+<td><code>az network lb rule update -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$RULE&quot; --disable-outbound-snat true</code></td>
+</tr>
+<tr>
+<td><code>ssh: connect to host … port 50001: Connection timed out</code></td>
+<td>NSG has no allow for port <strong>22</strong> from your IP, NAT rule not attached to the NIC, or Cloud Shell's public IP changed</td>
+<td>rerun <code>MY_IP=$(my_public_ip)</code> and the NSG rule command; check <code>az network nic show -g &quot;$RG&quot; -n &quot;$NIC1&quot; --query &quot;ipConfigurations[0].loadBalancerInboundNatRules&quot;</code></td>
+</tr>
+<tr>
+<td><code>Permission denied (publickey)</code></td>
+<td>you are not in the Cloud Shell where <code>setup.sh</code> generated the key</td>
+<td><code>az vm user update -g &quot;$RG&quot; -n &quot;$VM1&quot; -u &quot;$ADMIN_USER&quot; --ssh-key-value ~/.ssh/id_rsa.pub</code></td>
+</tr>
+<tr>
+<td>Run Command says another operation is in progress</td>
+<td>one Run Command at a time per VM</td>
+<td>wait a minute and run it again</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><ul>
+<li><strong>Session persistence:</strong> <code>az network lb rule update -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$RULE&quot; --load-distribution SourceIP</code>,
+then <code>who_answers 10</code> — every answer now comes from the same VM. Switch back with <code>--load-distribution Default</code>.</li>
+<li><strong>Swap the outbound rule for a NAT gateway:</strong> create a Standard NAT gateway with its own public IP, attach it to
+<code>snet-web</code>, and repeat the <code>api.ipify.org</code> test. A NAT gateway takes precedence over outbound rules.</li>
+<li><strong>Add an internal load balancer</strong> with a private frontend IP in a second subnet, as you would for an order API tier.</li>
+<li><strong>Look at the topology:</strong> open the load balancer in the portal, <em>Monitoring › Insights</em>, and explore the diagram.</li>
+</ul>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Run <code>bash setup.sh</code>, then build the following, any way you like (portal, CLI, Bicep), using the names from <code>lab.env</code>:</p>
+<ol>
+<li>A <strong>Standard</strong> public load balancer <code>lb-nusa-web</code> whose frontend uses a <strong>zone-redundant</strong> Standard public IP.</li>
+<li>A NIC-based backend pool <code>be-web</code> that contains the NICs of <code>vm-web-1</code> and <code>vm-web-2</code>.</li>
+<li>An <strong>HTTP</strong> health probe <code>probe-http</code> on port 80, path <code>/health</code>.</li>
+<li>A load-balancing rule <code>rule-http</code>: TCP 80 → 80, using <code>probe-http</code>, with <strong>outbound SNAT disabled</strong> on the rule.</li>
+<li>An inbound NAT rule <code>nat-ssh-vm1</code>: frontend port 50001 → port 22 on <code>vm-web-1</code> (SSH allowed only from your IP).</li>
+<li>An outbound rule <code>rule-outbound</code> that gives the backend pool internet access through the frontend IP.</li>
+<li>Both servers answer <code>http://&lt;frontend IP&gt;/</code> with HTTP 200.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="08-networking-basic.html"><small>← Previous lab</small>08 · Build Nusantara Retail&#x27;s network</a><a class="next" href="10-app-service.html"><small>Next lab →</small>10 · Move the storefront to PaaS</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

@@ -285,7 +285,7 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/20-infrastructure-as-code-bicep.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/20-infrastructure-as-code-bicep.html" data-href-id="../id/lunches/20-infrastructure-as-code-bicep.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -472,7 +472,7 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
   },
   {
     "title": "Change one parameter: modify",
-    "text": "Ibu Sari wants this copy labelled as a test environment. Change one parameter, run what-if again, and every resource gets a tilde: modify. The detail line shows the environment tag changing from lab to test. Watch for noise as well: what-if sometimes lists default values Azure filled in, even when nothing really changes. Then deploy.",
+    "text": "Dewi wants this copy labelled as a test environment. Change one parameter, run what-if again, and every resource gets a tilde: modify. The detail line shows the environment tag changing from lab to test. Watch for noise as well: what-if sometimes lists default values Azure filled in, even when nothing really changes. Then deploy.",
     "highlight": [
       "code-params",
       "n-whatif"
@@ -642,10 +642,150 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 20 · Infrastructure as Code dengan Bicep — Demo interaktif",
+   "kicker": "Makan Siang 20 · Infrastructure as Code dengan Bicep · Demo interaktif",
+   "title": "Dari satu file menjadi satu lingkungan utuh: tulis, pratinjau, deploy, lindungi, bangun ulang",
+   "lede": "Saksikan sebuah file Bicep terbentuk, lihat what-if memprediksi setiap perubahan, dan bangun ulang lingkungan test Nusantara Retail dari nol. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "File Bicep yang di-deploy melalui Azure Resource Manager ke sebuah resource group, dengan pratinjau what-if, deployment stack, dan pembangunan ulang",
+   "svgDesc": "Di kiri, file Bicep bernama main.bicep ditulis blok demi blok, dan di bawahnya panel what-if mencantumkan perubahan yang diprediksi. Di tengah, Azure Resource Manager menerima file tersebut. Di kanan, sebuah resource group terisi network security group, virtual network dengan dua subnet, storage account, dan Log Analytics workspace. Deployment stack dengan DenyDelete memblokir penghapusan manual, lalu lingkungan itu dihapus dan dibangun ulang dari file yang sama."
+  },
+  "steps": [
+   {
+    "title": "Sembilan belas makan siang penuh klik",
+    "text": "Selama sembilan belas makan siang, lingkungan Azure Nusantara Retail tumbuh satu klik portal dan satu perintah CLI demi satu. Tidak ada yang bisa membangunnya ulang dengan persis, dan tidak ada yang tahu apa yang diubah Rizky pukul 23.00 tadi malam. Infrastructure as code menyelesaikannya: Anda menuliskan lingkungan dalam sebuah file, meninjaunya seperti kode aplikasi, lalu membiarkan Azure Resource Manager membuat kenyataan sesuai dengan file."
+   },
+   {
+    "title": "Mulai dari parameter",
+    "text": "File Bicep diawali dengan input. Parameter seperti location dan environment memungkinkan satu file melayani test maupun produksi, dan location secara default mengikuti region resource group itu sendiri. Sebuah variabel menyusun set tag sekali saja, sehingga setiap resource membawa tag costCenter dan environment tanpa copy-paste. Decorator seperti @allowed membatasi nilai yang boleh diterima sebuah parameter."
+   },
+   {
+    "title": "Deklarasikan jaringannya",
+    "text": "Berikutnya deklarasi resource: sebuah network security group dan sebuah virtual network dengan dua subnet. Setiap resource punya symbolic name, jenis, dan versi API. Karena subnet web merujuk ke nsg.id, Bicep tahu bahwa security group harus ada lebih dulu. Di sebelah kanan, resource yang direncanakan tampil samar, karena belum ada apa pun di Azure."
+   },
+   {
+    "title": "Penyimpanan, log, dan output",
+    "text": "Nama storage account menggabungkan sebuah awalan dengan uniqueString dari ID resource group, sehingga unik di seluruh Azure tetapi identik di setiap eksekusi. Sebuah Log Analytics workspace ikut masuk ke file, dan sebuah output mengembalikan nama storage account kepada Anda atau ke langkah pipeline berikutnya. Seluruh lingkungan kini muat dalam satu layar kode."
+   },
+   {
+    "title": "Pratinjau dengan what-if",
+    "text": "Sebelum menyentuh apa pun, mintalah what-if kepada Resource Manager. File dikompilasi menjadi template ARM JSON lalu dibandingkan dengan apa yang sudah ada, dan hasilnya berupa diff. Tanda plus berarti dibuat. Empat resource akan dibuat dan tidak ada hal lain yang tersentuh — persis yang ingin dilihat peninjau dalam sebuah pull request.",
+    "set": {
+     "t-wi1": "+ Microsoft.Network/networkSecurityGroups/nsg-web",
+     "t-wi2": "+ Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+     "t-wi3": "+ Microsoft.Storage/storageAccounts/stiac…",
+     "t-wi4": "+ Microsoft.OperationalInsights/workspaces/log-…",
+     "t-wi-sum": "Resource changes: 4 to create."
+    }
+   },
+   {
+    "title": "Deploy: Resource Manager membangunnya",
+    "text": "Sekarang deploy. File dikirim ke Azure Resource Manager, yang memvalidasinya, menentukan urutan dari dependensi, lalu memanggil setiap resource provider. Storage account dan workspace dibuat secara paralel, sementara subnet menunggu security group-nya. Beberapa menit kemudian, resource group sudah sama persis dengan file, termasuk tag-nya.",
+    "set": {
+     "t-status": "4 resource · sesuai dengan file",
+     "t-tags": "tag: costCenter, environment=lab"
+    }
+   },
+   {
+    "title": "Redeploy: tidak ada yang berubah",
+    "text": "Jalankan file yang sama lagi dan tidak ada yang berubah, karena deployment deklaratif bersifat idempoten: Resource Manager membandingkan kondisi yang diinginkan dengan kondisi sebenarnya dan hanya bertindak pada perbedaannya. Karena itu redeploy aman dilakukan setelah eksekusi yang gagal, setelah kecelakaan di portal, atau setiap malam, sekadar untuk membuktikan bahwa lingkungan masih sesuai dengan file.",
+    "set": {
+     "t-wi1": "= Microsoft.Network/networkSecurityGroups/nsg-web",
+     "t-wi2": "= Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+     "t-wi3": "= Microsoft.Storage/storageAccounts/stiac…",
+     "t-wi4": "= Microsoft.OperationalInsights/workspaces/log-…",
+     "t-wi-sum": "Resource changes: 4 no change."
+    }
+   },
+   {
+    "title": "Ubah satu parameter: modify",
+    "text": "Dewi ingin salinan ini diberi label lingkungan test. Ubah satu parameter, jalankan what-if lagi, dan setiap resource mendapat tilde: modify, alias diubah. Baris detailnya menunjukkan tag environment berubah dari lab menjadi test. Waspadai juga noise: what-if kadang mencantumkan nilai default yang diisi Azure, padahal sebenarnya tidak ada yang berubah. Lalu deploy.",
+    "set": {
+     "t-code-env": "param env string = 'test'",
+     "t-wi1": "~ Microsoft.Network/networkSecurityGroups/nsg-web",
+     "t-wi2": "~ Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+     "t-wi3": "~ Microsoft.Storage/storageAccounts/stiac…",
+     "t-wi4": "~ Microsoft.OperationalInsights/workspaces/log-…",
+     "t-wi-sum": "Resource changes: 4 to modify.",
+     "t-wi-note": "~ tags.environment: \"lab\" => \"test\"",
+     "t-wi-noise": "Baca diff-nya: nilai default bisa tampil sebagai noise.",
+     "t-tags": "tag: costCenter, environment=test",
+     "t-status": "Di-redeploy · hanya tag yang berubah"
+    }
+   },
+   {
+    "title": "Lindungi dengan deployment stack",
+    "text": "Sekarang deploy file yang sama sebagai deployment stack. Stack mengingat resource mana saja yang dikelolanya dan menerapkan deny settings. Dengan DenyDelete, tidak ada yang bisa menghapus managed resource, bahkan seorang Owner, kecuali ia tercantum di daftar pengecualian stack yang pendek. Jika kelak sebuah resource hilang dari file, stack bisa melepasnya (detach) atau menghapusnya.",
+    "set": {
+     "t-status": "Dikelola stack · DenyDelete",
+     "t-wi-note": "",
+     "t-wi-noise": ""
+    }
+   },
+   {
+    "title": "Penghapusan manual ditolak",
+    "text": "Pukul 23.00 Rizky mencoba menghapus storage account. Permintaannya sampai ke Resource Manager, yang menemukan deny assignment milik stack lalu menolaknya dengan DenyAssignmentAuthorizationFailed. Resource lock juga akan memblokirnya, tetapi deny settings adalah milik stack: datang bersama deployment, bisa mengecualikan identitas pipeline, dan hilang saat stack dihapus."
+   },
+   {
+    "title": "Dihapus dari file, dihapus dari Azure",
+    "text": "Dewi memutuskan salinan test tidak butuh workspace, lalu menghapusnya dari file. Deployment incremental biasa akan membiarkan workspace itu tertinggal. Stack ini diatur untuk menghapus resource yang tidak lagi dikelola, jadi pratinjaunya menunjukkan tanda minus dan pembaruannya menghapus workspace. Inilah pengganti mode deployment complete yang lama, yang sedang dihentikan Microsoft secara bertahap.",
+    "set": {
+     "t-wi1": "= Microsoft.Network/networkSecurityGroups/nsg-web",
+     "t-wi2": "= Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+     "t-wi3": "= Microsoft.Storage/storageAccounts/stiac…",
+     "t-wi4": "- Microsoft.OperationalInsights/workspaces/log-…",
+     "t-wi-sum": "Pratinjau stack: 1 dihapus, 3 tidak berubah"
+    }
+   },
+   {
+    "title": "Jumat: hapus stack-nya",
+    "text": "Jumat sore, tim menghapus stack beserta resource-nya. Satu perintah kemudian resource group sudah kosong, jadi tidak ada yang ditagih selama akhir pekan. Tidak ada yang gugup, karena semua yang penting tersimpan di file Bicep dan di Git, bukan di ingatan seseorang tentang klik portal berbulan-bulan lalu.",
+    "set": {
+     "t-status": "Resource group kosong · tak ada tagihan",
+     "t-tags": "tag: tidak ada, tanpa resource"
+    }
+   },
+   {
+    "title": "Senin: file sama, hasil sama",
+    "text": "Senin, pipeline men-deploy file yang sama sebagai stack lagi, dan lingkungan kembali dalam hitungan menit, identik sampai ke tag-nya. Itulah janji infrastructure as code: bisa diulang, bisa ditinjau, dan bisa dipulihkan. Di capstone nanti, Anda akan men-deploy seluruh platform inti Nusantara Retail dengan cara ini, dari file Bicep yang modular.",
+    "tip": "Di Lab 20 Anda melengkapi main.bicep starter, menjalankan what-if, men-deploy, mengubah sebuah parameter, melindungi hasilnya dengan stack DenyDelete, menyaksikan penghapusan gagal, lalu menghapus semuanya dengan menghapus stack.",
+    "set": {
+     "t-wi1": "+ Microsoft.Network/networkSecurityGroups/nsg-web",
+     "t-wi2": "+ Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+     "t-wi3": "+ Microsoft.Storage/storageAccounts/stiac…",
+     "t-wi4": "",
+     "t-wi-sum": "Resource changes: 3 to create.",
+     "t-status": "Dibangun ulang dari file dalam hitungan menit",
+     "t-tags": "tag: costCenter, environment=test"
+    }
+   }
+  ],
+  "svg": {
+   "abbreviated · full file in Lab 20": "versi ringkas · file lengkap di Lab 20",
+   "+ create ~ modify - delete = no change": "+ buat ~ ubah - hapus = tidak berubah",
+   "no preview yet": "belum ada pratinjau",
+   "validates · orders · deploys": "validasi · urutkan · deploy",
+   "tags: none yet": "tag: belum ada",
+   "Empty resource group": "Resource group kosong",
+   "10.20.0.0/16 · 2 subnets": "10.20.0.0/16 · 2 subnet",
+   "allow TCP 80": "izinkan TCP 80",
+   "storage · uniqueString": "penyimpanan · uniqueString",
+   "Rizky · 23:00": "Rizky · 23.00",
+   "deletes the storage account": "menghapus storage account"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -661,6 +801,119 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -780,7 +1033,7 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -815,7 +1068,7 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -828,7 +1081,7 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -849,7 +1102,7 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -857,7 +1110,7 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

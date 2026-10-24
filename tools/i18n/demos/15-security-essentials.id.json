@@ -1,0 +1,121 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 15 · Esensi Keamanan — Demo interaktif",
+    "kicker": "Makan Siang 15 · Esensi Keamanan · Demo interaktif",
+    "title": "Lapisan yang menghentikan serangan, dan secret tanpa kata sandi",
+    "lede": "Saksikan lima serangan berhenti di lima lapisan defense in depth, lalu ikuti managed identity milik sebuah VM saat Key Vault menjawab 403 — dan 200 setelah role assignment. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Defense in depth di sebelah kiri, managed identity yang membaca secret Key Vault di sebelah kanan",
+    "svgDesc": "Kiri: seorang penyerang di atas tujuh lapisan keamanan yang bertumpuk, dari keamanan fisik hingga data; lima serangan berhenti di lapisan identitas, perimeter, jaringan, aplikasi, dan data. Kanan: server aplikasi vm-app-1 meminta token yang diterbitkan Microsoft Entra ID ke instance metadata endpoint, memanggil Key Vault, ditolak dengan 403, mendapat peran Key Vault Secrets User, lalu menerima secret. Microsoft Defender for Cloud berada di bagian bawah dengan secure score."
+  },
+  "steps": [
+    {
+      "title": "Kata sandi di dalam file zip",
+      "text": "Rizky mengompres proyek toko online untuk dibagikan, dan di dalamnya ada appsettings.json berisi kata sandi database pesanan dalam teks biasa. Di kiri ada lapisan-lapisan yang menjaga data Nusantara Retail; di kanan ada server aplikasi yang membutuhkan kata sandi itu. Dua pertanyaan hari ini: berapa banyak tembok independen yang berdiri antara penyerang dan data, dan bagaimana aplikasi bisa mendapat secret-nya tanpa file?"
+    },
+    {
+      "title": "Tujuh lapisan, satu tujuan",
+      "text": "Defense in depth menumpuk kontrol-kontrol yang independen sehingga satu kegagalan tidak langsung berarti kebobolan. Dari luar ke dalam: keamanan fisik, identitas dan akses, perimeter, jaringan, komputasi, aplikasi, dan data itu sendiri. Microsoft mengurus lapisan fisik; sebagian besar lapisan lainnya Anda yang mengonfigurasi. Penyerang harus melewati setiap lapisan, dan setiap lapisan bisa menghentikan, memperlambat, atau membongkar aksinya."
+    },
+    {
+      "title": "Kata sandi curian bertemu MFA",
+      "text": "Sebuah email phishing membuat penyerang mendapatkan kata sandi Dewi. Di lapisan identitas, Microsoft Entra ID meminta faktor kedua, dan Conditional Access mendeteksi upaya masuk dari perangkat asing di negara lain. Percobaan itu berhenti di sini dan tercatat di sign-in log. Verifikasi secara eksplisit: kata sandi saja tidak pernah cukup sebagai bukti.",
+      "set": {
+        "t-attack": "serangan 1: kata sandi curian"
+      }
+    },
+    {
+      "title": "Banjir di pintu depan",
+      "text": "Berikutnya, sebuah botnet (jaringan perangkat yang dikendalikan penyerang) membanjiri alamat IP publik toko online. DDoS infrastructure protection di Azure selalu aktif tanpa biaya tambahan dan meredam serangan volumetrik umum di tepi jaringan. Untuk endpoint yang kritis bagi bisnis, tingkatan berbayar DDoS IP Protection atau DDoS Network Protection menambahkan mitigasi yang disesuaikan dengan lalu lintas Anda, alert, dan laporan serangan.",
+      "set": {
+        "t-attack": "serangan 2: banjir lalu lintas"
+      }
+    },
+    {
+      "title": "Port 22 tetap tertutup",
+      "text": "Sebuah pemindai mengetuk port SSH dan RDP, berharap menemukan kata sandi administrator yang lemah. Di lapisan jaringan, network security group menolak lalu lintas masuk yang tidak diizinkan aturan mana pun, dan server aplikasi sama sekali tidak punya alamat IP publik. Administrator memakai Run Command atau Azure Bastion, dan subnet yang terpisah mencegah satu mesin yang dibobol menjangkau semua mesin lainnya.",
+      "set": {
+        "t-attack": "serangan 3: pemindaian port"
+      }
+    },
+    {
+      "title": "Injeksi dihentikan di aplikasi",
+      "text": "Penyerang mengetikkan perintah SQL ke kotak pencarian toko online. Web application firewall di depan situs mengenali polanya dan memblokir permintaan itu sebelum mencapai kode, sementara parameterised query menjadi pengaman cadangan di dalam aplikasi. Satu lapisan lebih ke luar, patching dan Defender for Servers menjaga agar lapisan komputasi tidak menjadi titik lemah.",
+      "set": {
+        "t-attack": "serangan 4: SQL injection"
+      }
+    },
+    {
+      "title": "Anggap sudah kebobolan: enkripsi datanya",
+      "text": "Sekarang misalkan semua lapisan luar gagal dan salinan cadangan database bocor. Azure mengenkripsi data saat disimpan secara default dengan platform-managed key, dan Anda bisa memakai kunci sendiri dari Key Vault untuk kendali tambahan. Tanpa kuncinya, salinan itu hanyalah deretan acak yang tidak terbaca. Assume breach berarti merencanakan kegagalan satu lapisan, agar lapisan berikutnya tetap bertahan.",
+      "set": {
+        "t-attack": "serangan 5: cadangan yang bocor"
+      }
+    },
+    {
+      "title": "Aplikasi tetap butuh secret",
+      "text": "Sekarang sisi kanan. Aplikasi toko online di vm-app-1 membaca connection string-nya dari sebuah file, sehingga siapa pun yang bisa membaca file itu, cadangannya, atau riwayat Git memegang kata sandinya. Kita memindahkan secret itu ke Azure Key Vault, yang memakai Azure RBAC permission model. Tetapi bagaimana aplikasi membuktikan siapa dirinya tanpa kata sandi lain?"
+    },
+    {
+      "title": "Managed identity meminta token",
+      "text": "Kita mengaktifkan system-assigned managed identity untuk vm-app-1, dan Azure membuatkan service principal untuknya di Microsoft Entra ID. Aplikasi memanggil metadata endpoint di 169.254.169.254 dengan header Metadata: true dan meminta token dengan audience vault.azure.net. Entra ID menerbitkannya. Tidak ada kata sandi di kode, konfigurasi, maupun environment variable.",
+      "set": {
+        "t-vm-id": "identitas: system-assigned"
+      }
+    },
+    {
+      "title": "Ketukan pertama di vault: 403",
+      "text": "Aplikasi mengirim GET /secrets/sql-connection dengan token tadi sebagai bearer token. Key Vault memvalidasi tokennya, jadi autentikasi berhasil, tetapi Azure RBAC tidak menemukan role assignment untuk identitas ini di vault. Jawabannya 403 Forbidden dengan kode internal ForbiddenByRbac. Bisa masuk tidak sama dengan boleh membaca.",
+      "set": {
+        "t-kv-status": "403 ForbiddenByRbac"
+      }
+    },
+    {
+      "title": "Berikan hak akses minimum",
+      "text": "Anda memberikan peran Key Vault Secrets User kepada identitas VM, dengan cakupan satu vault ini saja. Identitas itu hanya bisa membaca nilai secret, tidak lebih: tidak bisa menulis, tidak bisa menghapus, tidak bisa membuka vault lain. Role assignment butuh beberapa menit untuk menyebar, jadi percobaan ulang yang terlalu cepat mungkin masih gagal. Orang yang mengelola secret mendapat Key Vault Secrets Officer.",
+      "set": {
+        "t-kv-status": "menunggu propagasi"
+      }
+    },
+    {
+      "title": "Percobaan kedua: 200 OK",
+      "text": "Beberapa menit kemudian, permintaan yang sama berhasil: Key Vault mengembalikan 200 OK beserta nilai secret. Aplikasi menyimpannya di memori, dan file konfigurasi kini hanya berisi alamat vault dan nama secret. Merotasi kata sandi nanti cukup dengan memperbarui satu secret di satu tempat, dan setiap pembacaan bisa dicatat begitu Anda mengaktifkan diagnostic settings milik vault.",
+      "set": {
+        "t-kv-status": "200 OK, secret diterima",
+        "t-config": "URI vault + nama secret"
+      }
+    },
+    {
+      "title": "Rangkuman: lapisan plus seorang pelatih",
+      "text": "Lima serangan berhenti di lima lapisan yang berbeda, dan aplikasi kini membaca secret-nya dengan managed identity, bukan kata sandi. Microsoft Defender for Cloud mengawasi semuanya: foundational CSPM yang gratis memberi Anda rekomendasi dan secure score, sedangkan paket Defender berbayar menambahkan deteksi ancaman. Perbaiki rekomendasi satu kontrol demi satu kontrol, dan skornya pun naik.",
+      "tip": "Di Lab 15 Anda melakukannya sungguhan: 403 lebih dulu, 200 setelah role assignment, lalu melihat secure score Anda sendiri.",
+      "set": {
+        "t-def": "perbaiki rekomendasi, secure score pun naik",
+        "t-attack": "setiap lapisan menjalankan tugasnya"
+      }
+    }
+  ],
+  "svg": {
+    "seven layers, outside to inside": "tujuh lapisan, dari luar ke dalam",
+    "1 · Physical security": "1 · Keamanan fisik",
+    "Microsoft datacenters, guards, cameras": "pusat data Microsoft, penjaga, kamera",
+    "2 · Identity & access": "2 · Identitas & akses",
+    "4 · Network": "4 · Jaringan",
+    "Subnets · NSGs · private endpoints": "Subnet · NSG · private endpoint",
+    "5 · Compute": "5 · Komputasi",
+    "6 · Application": "6 · Aplikasi",
+    "Encryption at rest and in transit": "Enkripsi saat disimpan dan dikirim",
+    "Attacker": "Penyerang",
+    "on the internet": "di internet",
+    "Secrets without passwords": "Secret tanpa kata sandi",
+    "ask Entra": "tanya Entra",
+    "response": "respons",
+    "issues the token": "menerbitkan token",
+    "storefront app": "aplikasi toko online",
+    "identity: none yet": "identitas: belum ada",
+    "RBAC permission model": "model izin RBAC",
+    "password in plain text": "kata sandi dalam teks biasa",
+    "role at vault scope": "peran pada cakupan vault",
+    "for vm-app-1's identity": "untuk identitas vm-app-1",
+    "foundational CSPM: free recommendations and a secure score": "foundational CSPM: rekomendasi gratis dan secure score"
+  }
+}

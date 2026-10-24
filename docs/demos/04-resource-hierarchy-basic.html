@@ -316,7 +316,7 @@ svg text.mono.id{font-size:12.5px}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/04-resource-hierarchy-basic.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/04-resource-hierarchy-basic.html" data-href-id="../id/lunches/04-resource-hierarchy-basic.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -634,10 +634,115 @@ svg text.mono.id{font-size:12.5px}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 04 · Hierarki resource dan Azure Resource Manager — Demo interaktif",
+   "kicker": "Makan Siang 04 · Hierarki resource · Demo interaktif",
+   "title": "Dari tenant ke resource: bagaimana aturan mengalir ke bawah",
+   "lede": "Bangun hierarki Nusantara Retail tingkat demi tingkat, saksikan sebuah role, policy, dan lock mengalir ke bawah sementara tag tetap di tempatnya, lalu bongkar sebuah resource ID. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Hierarki Azure milik Nusantara Retail, dari tenant Microsoft Entra sampai ke resource satu per satu",
+   "svgDesc": "Sebuah pohon menampilkan tenant Microsoft Entra, Tenant root group, management group mg-nusa dengan anak produksi dan nonproduksi, satu subscription di bawah masing-masing anak, tiga resource group, dan tiga resource. Di sebelah kanan, berbagai alat mengirim permintaan melalui Azure Resource Manager ke resource provider. Langkah-langkahnya menunjukkan role assignment, policy, dan lock yang mengalir ke bawah pohon sementara tag tidak diwariskan, dan sebuah panel di bagian bawah membongkar resource ID milik storage account."
+  },
+  "steps": [
+   {
+    "title": "Semuanya dalam satu tumpukan besar",
+    "text": "Eksperimen Azure pertama Nusantara Retail mendarat di satu subscription dengan resource group bernama test, rg1, dan rg-new. Tidak ada yang tahu resource mana milik toko online, siapa yang boleh mengubahnya, atau berapa biaya masing-masing. Sebelum workload sungguhan datang, Anda butuh struktur: hierarki yang mengelompokkan resource secara masuk akal dan membiarkan aturan mengalir dari atas ke bawah."
+   },
+   {
+    "title": "Tenant ada di puncak",
+    "text": "Semuanya berawal dari tenant Microsoft Entra: direktori identitas Nusantara Retail beserta pengguna, grup, dan aplikasinya. Setiap subscription memercayai tepat satu tenant. Tenant menjawab pertanyaan 'siapa yang sedang masuk?'. Semua yang kita bangun di bawahnya menjawab dua pertanyaan lain: di mana resource tinggal, dan aturan apa yang berlaku untuknya?"
+   },
+   {
+    "title": "Root management group",
+    "text": "Setiap tenant punya tepat satu root management group, yang tampil sebagai Tenant root group. ID-nya sama dengan ID tenant, dan grup ini tidak bisa dipindahkan atau dihapus. Setiap management group dan subscription bermuara ke sana, dan subscription baru otomatis masuk ke sana. Secara bawaan tidak ada yang punya akses ke grup ini; seorang Global Administrator harus menaikkan aksesnya terlebih dahulu."
+   },
+   {
+    "title": "Management group menata subscription",
+    "text": "Di bawah root, Anda membangun management group: mg-nusa untuk perusahaan, lalu mg-nusa-prod dan mg-nusa-nonprod. Sebuah management group bisa menampung subscription dan management group lain, dan setiap item punya tepat satu induk. Pohonnya bisa sedalam hingga enam tingkat di bawah root. Merancang pohon landing zone yang lengkap adalah tugas Makan Siang 31."
+   },
+   {
+    "title": "Subscription: penagihan dan skala",
+    "text": "Subscription menggantung di bawah management group. Subscription adalah batas penagihan, karena pemakaian dicatat per subscription, sekaligus batas skala, karena kuota seperti jumlah vCPU per region berlaku per subscription. Produksi dan development mendapat subscription terpisah, sehingga sebuah uji coba tidak akan pernah menghabiskan kuota produksi atau bersembunyi di dalam tagihannya."
+   },
+   {
+    "title": "Resource group menampung resource",
+    "text": "Di dalam setiap subscription, resource group menampung resource yang berbagi siklus hidup: Anda membuat, memperbarui, dan menghapusnya bersama-sama. rg-storefront-prod menampung web app; rg-shared-prod menampung storage account untuk foto produk yang akan dipakai beberapa aplikasi. Setiap resource tinggal di tepat satu resource group, dan resource group tidak bisa bersarang."
+   },
+   {
+    "title": "Setiap permintaan melewati ARM",
+    "text": "Entah Anda mengeklik di portal, mengetik perintah Azure CLI, atau men-deploy file Bicep, permintaannya menuju Azure Resource Manager. ARM memeriksa siapa Anda dan apa yang boleh Anda lakukan, menerapkan Azure Policy dan lock, menulis activity log, dan baru kemudian menyerahkan pekerjaannya ke resource provider seperti Microsoft.Storage. Inilah control plane.",
+    "set": {
+     "t-arm": "permintaan diizinkan ✓"
+    }
+   },
+   {
+    "title": "Role di management group",
+    "text": "Sekarang perhatikan pewarisan. Tim keuangan mendapat role Reader di mg-nusa-prod. Satu assignment itu mengalir ke setiap subscription, resource group, dan resource di bawahnya, termasuk yang ditambahkan tahun depan. Cabang nonproduksi tidak tersentuh. Tetapkan role setinggi yang dibutuhkan pekerjaan dan serendah yang diizinkan prinsip hak akses minimum; Makan Siang 05 membahas kontrol akses berbasis peran."
+   },
+   {
+    "title": "Policy di subscription",
+    "text": "Berikutnya, assignment Azure Policy di sub-nusa-prod hanya mengizinkan Indonesia Central. Seseorang mencoba membuat storage account di Southeast Asia. ARM mengevaluasi policy itu sebelum apa pun dibangun, dan permintaannya ditolak. Policy ini mencakup setiap resource group dan resource di subscription tersebut, tetapi tidak berlaku untuk subscription development di sebelahnya.",
+    "set": {
+     "t-arm": "policy: lokasi ditolak ✗"
+    }
+   },
+   {
+    "title": "Lock di resource group",
+    "text": "Pak Budi memasang lock CanNotDelete di rg-shared-prod. Storage account di dalamnya mewarisi lock itu, jadi saat seseorang mencoba menghapus account tersebut, ARM menolak, bahkan untuk seorang Owner. Lock ReadOnly bertindak lebih jauh dan memblokir setiap perubahan, termasuk aksi POST seperti menampilkan storage key. Lock menjaga control plane, bukan data di dalamnya.",
+    "set": {
+     "t-arm": "lock: hapus diblokir ✗"
+    }
+   },
+   {
+    "title": "Tag tidak mengalir ke bawah",
+    "text": "Ada satu hal yang tidak diwariskan: tag. rg-storefront-prod membawa costCenter=ecommerce, tetapi web app di dalamnya tidak punya tag sampai Anda menambahkannya, atau sampai Azure Policy menyalinnya. Tag menjadi dasar laporan biaya dan query Resource Graph, jadi pasang tag pada resource-nya sendiri. Role, policy, dan lock mengalir ke bawah; tag tetap persis di tempat Anda memasangnya.",
+    "set": {
+     "t-arm": "siap"
+    }
+   },
+   {
+    "title": "Resource ID adalah alamat",
+    "text": "Setiap resource punya resource ID, sebuah jalur yang menyebutkan persis di mana ia tinggal. Inilah ID storage account di rg-shared-prod. Script, template, role assignment, dan lock semuanya menunjuk resource melalui ID. Karena resource group menjadi bagian dari jalurnya, memindahkan resource ke grup lain akan mengubah ID-nya, jadi perbarui apa pun yang merujuk kepadanya."
+   },
+   {
+    "title": "Baca ID dari kiri ke kanan",
+    "text": "Baca segmen demi segmen: subscription, lalu resource group, lalu namespace resource provider, tipe resource, dan akhirnya nama resource. Resource anak cukup menambahkan pasangan tipe-dan-nama. Legenda di samping merangkum pewarisan. Dengan pola ini, Anda bisa membaca ID apa pun di pesan error dan langsung tahu scope mana yang harus diperiksa.",
+    "tip": "Di Lab 04, Anda membedah resource ID sungguhan, melihat lock CanNotDelete dan ReadOnly menghadang Anda, memindahkan storage account antar-resource group, lalu menemukannya kembali berdasarkan tag dengan Resource Graph."
+   }
+  ],
+  "svg": {
+   "Today's lab subscription": "Subscription lab saat ini",
+   "Resource groups: test, rg1, rg-new": "Resource group: test, rg1, rg-new",
+   "No owner, no tags, no rules, no budget": "Tanpa pemilik, tag, aturan, atau anggaran",
+   "Microsoft Entra tenant": "Tenant Microsoft Entra",
+   "auth · RBAC · Policy · locks": "auth · RBAC · Policy · lock",
+   "ready": "siap",
+   "Resource providers": "Resource provider",
+   "What flows down?": "Apa yang diwariskan?",
+   "✓ Role assignments (RBAC)": "✓ Role assignment (RBAC)",
+   "✓ Policy assignments": "✓ Policy assignment",
+   "✓ Locks (strictest wins)": "✓ Lock (terketat menang)",
+   "✗ Tags: not inherited": "✗ Tag: tidak diwariskan",
+   "Reader: Finance": "Reader: Keuangan",
+   "Policy: IDC only": "Policy: hanya IDC",
+   "no tags": "tanpa tag",
+   "Resource ID of stnusaimg01": "Resource ID milik stnusaimg01",
+   "provider namespace": "namespace provider",
+   "resource type": "tipe resource",
+   "resource name": "nama resource"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -653,6 +758,119 @@ svg text.mono.id{font-size:12.5px}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -772,7 +990,7 @@ svg text.mono.id{font-size:12.5px}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -807,7 +1025,7 @@ svg text.mono.id{font-size:12.5px}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -820,7 +1038,7 @@ svg text.mono.id{font-size:12.5px}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -841,7 +1059,7 @@ svg text.mono.id{font-size:12.5px}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -849,7 +1067,7 @@ svg text.mono.id{font-size:12.5px}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

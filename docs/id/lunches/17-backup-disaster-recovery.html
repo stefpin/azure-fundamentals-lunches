@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 17 · Ransomware di Surabaya — Makan Siang 17: Pencadangan Data dan Pemulihan Bencana (Dasar) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 17 · Pencadangan Data dan Pemulihan Bencana (Dasar). Sebuah usaha tetangga kehilangan segalanya karena penyerang menghapus cadangannya lebih dulu — pernahkah kita benar-benar menguji pemulihan? Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/17-backup-disaster-recovery.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/17-backup-disaster-recovery.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/17-backup-disaster-recovery.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/17-backup-disaster-recovery.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 17 · Ransomware di Surabaya — Makan Siang 17: Pencadangan Data dan Pemulihan Bencana (Dasar)">
+<meta property="og:description" content="Makan Siang 17 · Pencadangan Data dan Pemulihan Bencana (Dasar). Sebuah usaha tetangga kehilangan segalanya karena penyerang menghapus cadangannya lebih dulu — pernahkah kita benar-benar menguji pemulihan? Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/17-backup-disaster-recovery.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="17" style="--c:#d98a00">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/17-backup-disaster-recovery.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 17</span> Season 1 · 🛡️ Bagian 4 · Keamanan, operasional, dan tata kelola</div>
+      <h1>Ransomware di Surabaya</h1>
+      <div class="lunch-title">Makan Siang 17 · Pencadangan Data dan Pemulihan Bencana (Dasar)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 Di luar cakupan AZ-900 (keandalan dalam praktik)</span>
+        <span class="chip cost">🔬 Lab · 60–90 menit · 💲💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="03-global-infrastructure.html" title="Toko Kita Tinggal di Mana?">↩ 03</a><a class="chip" href="06-virtual-machines-basic.html" title="Kabur dari Pantry">↩ 06</a><a class="chip" href="07-storage-basic.html" title="Flashdisk yang Pulang Tiap Jumat">↩ 07</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 16 · Pelanggan Tahu Duluan, alert kini sampai ke Anda sebelum pelanggan sadar, dan activity log menjawab &quot;siapa pelakunya?&quot;.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, senang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 62% siap</b>Setelah episode ini Anda bisa menjawab: “Bahkan kalau ada yang menghapus semuanya, kita bisa memulihkannya — dan kita sudah melatihnya.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-ketersediaan-tinggi-cadangan-dan-pemulihan-bencana-adalah-tiga-pekerjaan-yang-berbeda">Ketersediaan tinggi, cadangan, dan pemulihan bencana adalah tiga pekerjaan yang berbeda</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-azure-backup-vault-policy-dan-restore">Azure Backup: vault, policy, dan restore</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-melindungi-cadangan-itu-sendiri">Melindungi cadangan itu sendiri</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-azure-site-recovery-salinan-siaga-di-region-lain">Azure Site Recovery: salinan siaga di region lain</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-pemulihan-bencana-untuk-region-tanpa-pasangan">Pemulihan bencana untuk region tanpa pasangan</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/17-backup-disaster-recovery.html">🔬 Buka Lab 17</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membedakan</strong> ketersediaan tinggi, cadangan (backup), dan pemulihan bencana (disaster recovery), serta <strong>menetapkan</strong> target RPO dan RTO yang bisa ditandatangani seorang direktur.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> antara Recovery Services vault dan Backup vault, serta <strong>menjelaskan</strong> backup policy, instant restore, dan pilihan restore untuk sebuah VM (<em>komputer virtual</em>).</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> bagaimana soft delete, immutable vault, dan multi-user authorization menjaga cadangan tetap hidup ketika penyerang memegang kata sandi admin.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menguraikan</strong> cara Azure Site Recovery memindahkan (failover) sebuah VM ke region (<em>wilayah</em>) lain, dan <strong>merencanakan</strong> pemulihan bencana untuk region yang tidak punya region pasangan (<em>pasangan wilayah</em>), seperti Indonesia Central.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 17</span>
+        <div class="story-body"><p>Senin pagi, Pak Budi meneruskan sebuah berita: sembilan hari lalu, sebuah jaringan toko ritel di Surabaya
+terkena serangan ransomware. Ransomware adalah program jahat yang mengunci (mengenkripsi) data korbannya lalu meminta uang
+tebusan. Para penyerangnya tidak sekadar mengenkripsi server. Mereka lebih dulu masuk dengan kata sandi administrator
+curian, lalu menghapus semua cadangannya. Sampai hari ini, toko online jaringan ritel itu masih belum
+bisa dibuka.</p>
+<p>Ibu Sari langsung mengumpulkan tim. &quot;Toko online kita kan sudah pindah ke Azure,&quot; katanya, &quot;jadi kita aman, kan?&quot; Dewi
+menjelaskan bahwa database pesanan sudah zone-redundant. Pak Budi ingat pernah menyetel &quot;job backup&quot; di server lama
+pada tahun 2019, lalu mengaku belum pernah sekali pun mencoba me-restore-nya. Kemudian seseorang dari bagian keuangan
+melontarkan pertanyaan yang tidak bisa dijawab siapa pun: kalau seluruh region Indonesia Central padam besok, di mana
+toko akan berjalan, dan apakah hukum bahkan mengizinkan data pelanggan dibawa ke sana?</p>
+<p>Pertanyaan hari ini: <strong>berapa banyak data yang sanggup direlakan hilang oleh Nusantara Retail, seberapa cepat toko harus
+kembali buka, dan layanan Azure mana yang bisa mewujudkan kedua angka itu, bahkan ketika sumber masalahnya adalah si
+penyerang atau region itu sendiri?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 5 adegan</span></div>
+      
+      <article class="scene-card" id="1-ketersediaan-tinggi-cadangan-dan-pemulihan-bencana-adalah-tiga-pekerjaan-yang-berbeda" data-spy><span class="scene-no">Adegan 1 dari 5</span><h3>Ketersediaan tinggi, cadangan, dan pemulihan bencana adalah tiga pekerjaan yang berbeda</h3><div class="prose"><p>Banyak orang memakai ketiga istilah ini seolah-olah artinya sama. Padahal ketiganya menyelesaikan masalah yang berbeda,
+dan sebuah rencana membutuhkan ketiganya sekaligus.</p>
+<ul>
+<li><strong>Ketersediaan tinggi</strong> (high availability, HA) menjaga layanan tetap berjalan saat terjadi kegagalan kecil yang
+umum: sebuah disk, sebuah server, satu rak, bahkan satu pusat data utuh. Anda membangunnya dengan redundansi <em>di
+dalam</em> satu region: dua VM di belakang load balancer (Makan Siang 09), storage yang zone-redundant (Makan Siang 07),
+dan database yang zone-redundant. Failover, yaitu perpindahan ke komponen lain yang masih sehat, berjalan otomatis dan
+hanya butuh hitungan detik.</li>
+<li><strong>Cadangan</strong> (backup) adalah salinan data Anda <em>pada satu titik waktu</em>, yang disimpan terpisah dari aslinya agar Anda
+bisa kembali ke kondisi itu. Dari ketiganya, hanya cadangan yang melindungi Anda dari diri sendiri: data yang terhapus
+tanpa sengaja, file yang rusak, deployment yang keliru, atau ransomware. Ketersediaan tinggi justru menyalin sebuah
+kesalahan ke setiap replika dalam hitungan milidetik.</li>
+<li><strong>Pemulihan bencana</strong> (disaster recovery, DR) menghidupkan kembali seluruh layanan di <em>tempat lain</em> ketika lokasi
+utama hilang atau tidak bisa dipakai, misalnya setelah gangguan yang melanda satu region penuh. Anda menyimpan
+replika di region kedua (atau di zona kedua), lalu melakukan <strong>failover</strong> ke sana.</li>
+</ul>
+<p>Bayangkan sebuah warung makan. Ketersediaan tinggi itu seperti punya dua kompor: kalau satu mati, masakan tetap jalan di
+kompor yang lain. Cadangan itu seperti fotokopi buku catatan utang pelanggan yang disimpan di rumah: kalau bukunya
+tersiram kuah, Anda kembali ke salinan kemarin. Pemulihan bencana itu seperti lapak kedua di pasar lain: kalau seluruh
+pasar kebanjiran, Anda pindah berjualan ke sana. Kompor kedua tidak menolong catatan yang basah, dan fotokopi catatan
+tidak menolong pasar yang terendam. Karena itulah Anda butuh ketiganya.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Apa yang salah</th>
+<th>Ketersediaan tinggi</th>
+<th>Cadangan</th>
+<th>Pemulihan bencana</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Host (server fisik) di bawah <code>vm-web-1</code> rusak</td>
+<td>✅ VM kedua tetap melayani</td>
+<td>terlalu lambat untuk kasus ini</td>
+<td>tidak diperlukan</td>
+</tr>
+<tr>
+<td>Skrip bersih-bersih Dewi menghapus foto-foto produk</td>
+<td>❌ penghapusannya ikut direplikasi</td>
+<td>✅ restore salinan kemarin</td>
+<td>❌ replikanya ikut menghapus juga</td>
+</tr>
+<tr>
+<td>Ransomware mengenkripsi server pesanan</td>
+<td>❌</td>
+<td>✅ jika penyerang tidak bisa menghancurkan cadangannya</td>
+<td>⚠️ hanya dari recovery point yang dibuat sebelum serangan, dalam jendela waktu yang singkat</td>
+</tr>
+<tr>
+<td>Gangguan satu region penuh melanda Indonesia Central</td>
+<td>❌ semua zona di region itu terdampak</td>
+<td>⚠️ hanya jika ada salinan di region lain, dan prosesnya lambat</td>
+<td>✅ failover ke region kedua</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ada dua angka yang menentukan setiap keputusan di makan siang ini. <strong>Recovery point objective (RPO)</strong>, atau target titik
+pemulihan, adalah jumlah data terbanyak yang sanggup Anda relakan hilang, diukur dalam satuan waktu. RPO 24 jam berarti
+Anda menerima kehilangan perubahan data hingga satu hari, dan itulah tepatnya yang Anda dapatkan dari backup sekali
+semalam. <strong>Recovery time objective (RTO)</strong>, atau target waktu pemulihan, adalah waktu terlama layanan boleh mati,
+dihitung sejak layanan rusak sampai pelanggan bisa memakainya lagi.</p>
+<p>Ibaratnya Anda sedang menulis skripsi dan laptop tiba-tiba mati total. RPO menjawab pertanyaan &quot;kapan terakhir saya
+menekan Save?&quot;: kalau dua jam lalu, dua jam ketikan itulah yang hilang. RTO menjawab pertanyaan &quot;berapa lama sampai saya
+bisa mengetik lagi?&quot;: meminjam laptop teman, mengunduh file terakhir, lalu melanjutkan. Yang satu mengukur data yang
+hilang, yang lain mengukur waktu yang terbuang.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  b[&quot;Senin 22.00&lt;br/&gt;backup baik terakhir&quot;] --&gt;|&quot;RPO: 17 jam pesanan terancam hilang&quot;| x[&quot;Selasa 15.00&lt;br/&gt;ransomware menyerang&quot;]
+  x --&gt;|&quot;RTO: 4 jam offline&quot;| ok[&quot;Selasa 19.00&lt;br/&gt;toko online kembali buka&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>RPO dan RTO adalah keputusan bisnis, bukan keputusan teknis, dan semakin kecil angkanya, semakin mahal biayanya. Angka
+itu juga berbeda untuk setiap sistem, jadi Nusantara Retail menetapkannya sistem demi sistem. Inilah angka yang sudah
+disetujui Ibu Sari:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Sistem</th>
+<th>RPO</th>
+<th>RTO</th>
+<th>Alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pesanan dan pembayaran (Azure SQL)</td>
+<td>5 menit</td>
+<td>1 jam</td>
+<td>setiap pesanan yang hilang berarti pendapatan yang hilang dan pelanggan yang marah</td>
+</tr>
+<tr>
+<td>Web server toko online</td>
+<td>24 jam</td>
+<td>4 jam</td>
+<td>tidak menyimpan data unik dan bisa dibangun ulang</td>
+</tr>
+<tr>
+<td>Katalog produk (Cosmos DB)</td>
+<td>4 jam</td>
+<td>4 jam</td>
+<td>bisa dibangun ulang dari spreadsheet pemasok, meski lambat</td>
+</tr>
+<tr>
+<td>Ekspor pesanan harian di <code>vm-orders</code></td>
+<td>24 jam</td>
+<td>8 jam</td>
+<td>dibuat ulang setiap malam, tetapi bagian keuangan membutuhkannya di akhir bulan</td>
+</tr>
+</tbody>
+</table></div>
+<p>Lalu, dari mana angka yang sebenarnya? RPO yang <em>benar-benar tercapai</em> adalah jarak antar-recovery point (titik
+pemulihan, yaitu salinan yang bisa Anda pakai untuk kembali), ditambah jeda sebelum sebuah titik tersimpan dengan aman.
+Dengan satu backup setiap malam pukul 22.00, kegagalan pada pukul 21.30 keesokan malamnya menghilangkan 23½ jam
+perubahan. RTO yang <em>benar-benar tercapai</em> adalah jumlah dari empat langkah: menyadari ada masalah, memutuskan untuk
+memulihkan, proses pemulihan itu sendiri, dan memeriksa bahwa semuanya berfungsi. Tim biasanya hanya merencanakan
+langkah ketiga, padahal dua langkah pertama sering memakan waktu paling lama, apalagi pukul 3 dini hari di hari libur
+nasional, misalnya saat separuh tim sedang mudik Lebaran.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Tanyakan kepada pihak bisnis: &quot;berapa kerugian kita jika layanan mati satu jam?&quot; dan &quot;berapa kerugian kita jika
+pesanan selama satu jam hilang?&quot; Kedua harga itu memberi tahu Anda seberapa layak mengeluarkan biaya untuk memperkecil
+RTO dan RPO.</p>
+</aside>
+</div></article><article class="scene-card" id="2-azure-backup-vault-policy-dan-restore" data-spy><span class="scene-no">Adegan 2 dari 5</span><h3>Azure Backup: vault, policy, dan restore</h3><div class="prose"><p><strong>Azure Backup</strong> adalah layanan terkelola (managed service): tidak ada server backup yang harus Anda perbarui (patch),
+dan tidak ada pita (tape) yang perlu Anda ganti-ganti. Layanan ini menyimpan cadangan Anda di dalam sebuah <strong>vault</strong> (secara
+harfiah berarti &quot;brankas&quot;), yaitu resource (<em>sumber daya</em>) Azure tersendiri dengan kontrol aksesnya sendiri, yang
+berada di luar resource yang dilindunginya. Ada dua jenis vault:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Recovery Services vault</th>
+<th>Backup vault</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Melindungi</td>
+<td>VM Azure, SQL Server dan SAP HANA yang berjalan di VM, share Azure Files, serta server on-premises di pusat data Anda sendiri (lewat agen MARS, MABS, atau DPM)</td>
+<td>Workload yang lebih baru, seperti Azure Blobs, Azure Disks, Azure Database for PostgreSQL flexible server, dan AKS</td>
+</tr>
+<tr>
+<td>Juga menampung</td>
+<td>Azure Site Recovery</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Di Lab 17</td>
+<td>✅ backup VM</td>
+<td>—</td>
+</tr>
+</tbody>
+</table></div>
+<p>Anda mengelola keduanya dari hub <strong>Resiliency</strong> di portal (dulu bernama Azure Business Continuity Center), yang
+menampilkan apa saja yang sudah terlindungi, dan apa yang belum, di seluruh vault, subscription (<em>langganan</em>), dan
+region.</p>
+<p>Sebuah <strong>backup policy</strong> (kebijakan pencadangan) menentukan kapan backup dibuat dan berapa lama setiap <strong>recovery
+point</strong> disimpan. Untuk VM, <strong>DefaultPolicy</strong> bawaan membuat satu backup per hari dan menyimpan setiap titik harian
+selama 30 hari. Policy juga bisa menambahkan titik mingguan, bulanan, dan tahunan yang disimpan hingga bertahun-tahun.
+Policy <strong>Standard</strong> membuat backup sekali sehari; policy <strong>Enhanced</strong> bisa membuat backup sesering setiap empat jam dan
+wajib dipakai untuk jenis disk yang lebih baru seperti Premium SSD v2 dan Ultra Disk.</p>
+<p>Backup sebuah VM berlangsung dalam dua fase. Pertama, ekstensi Backup di VM mengambil <strong>snapshot</strong> (potret sesaat) dari
+disk-disknya: <em>application-consistent</em> di Windows (aplikasi diminta menuntaskan tulisannya lebih dulu) dan <em>file-system
+consistent</em> di Linux (sistem file-nya dijamin utuh). Snapshot itu bisa langsung dipakai, dan inilah yang disebut
+<strong>instant restore</strong>: DefaultPolicy menyimpan snapshot di samping disk selama dua hari (policy Standard mengizinkan satu
+sampai lima hari), sehingga restore dari titik yang baru hanya butuh hitungan menit. Kedua, data disalin ke dalam vault
+(<strong>vault tier</strong>), yaitu salinan jangka panjang yang terisolasi. Backup pertama menyalin setiap blok yang terpakai dan
+bisa memakan waktu satu jam atau lebih; backup berikutnya hanya menyalin perubahannya. Anda membayar biaya bulanan per
+instance yang dilindungi, yang besarnya bergantung pada ukuran instance itu, ditambah penyimpanan vault yang dipakai
+recovery point-nya; snapshot instant restore ditagih seperti snapshot disk biasa.</p>
+<p>Penyimpanan sebuah vault bisa locally redundant, zone-redundant, atau geo-redundant (GRS secara default), dan pilihan
+redundansi (<em>opsi redundansi</em>) ini hanya bisa diubah <em>sebelum</em> backup pertama. Ingat kembali Makan Siang 07: locally
+redundant berarti semua salinan berada di satu pusat data, zone-redundant menyebarkannya ke beberapa zona dalam satu
+region, dan geo-redundant juga mengirim salinan ke region kedua. Vault GRS juga bisa mengaktifkan <strong>Cross Region
+Restore</strong>, yang me-restore dari salinan di region <em>pasangan</em>. Microsoft mencatat bahwa RPO terburuk di sana bisa
+mencapai 36 jam.</p>
+<p>Saat Anda membutuhkan datanya kembali, Anda memilih sebuah recovery point dan salah satu opsi berikut:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Opsi restore</th>
+<th>Yang Anda dapatkan</th>
+<th>Penggunaan umum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create a new VM</td>
+<td>VM yang dibangun dari recovery point, di region yang sama</td>
+<td>VM aslinya sudah hilang, atau Anda ingin salinannya berdampingan</td>
+</tr>
+<tr>
+<td>Restore disks</td>
+<td>managed disk, ditambah sebuah template, di resource group (<em>grup sumber daya</em>) yang Anda pilih</td>
+<td>menyesuaikan VM baru, atau memasang disk ke VM yang sudah ada lalu menyalin file darinya</td>
+</tr>
+<tr>
+<td>Replace existing</td>
+<td>disk VM ditukar dengan disk dari recovery point</td>
+<td>mengembalikan seluruh VM ke kondisi lama (setelah salinan ke vault selesai)</td>
+</tr>
+<tr>
+<td>File Recovery</td>
+<td>disk dari recovery point dipasang sebagai drive oleh skrip yang Anda unduh</td>
+<td>beberapa file saja, tanpa me-restore seluruh VM</td>
+</tr>
+<tr>
+<td>Cross Region Restore</td>
+<td>VM atau disk di region pasangan, dari salinan di vault</td>
+<td>region utama tidak bisa dipakai (khusus vault GRS)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Untuk satu file yang hilang, me-restore seluruh VM itu berlebihan. <strong>File Recovery</strong> memberi Anda sebuah skrip yang
+memasang (mount) disk dari recovery point melalui iSCSI, yaitu protokol untuk memakai disk lewat jaringan, di mesin
+yang Anda pilih. Mesin itu membutuhkan akses jaringan keluar (outbound) ke Azure Backup, sesuatu yang sering tidak
+dimiliki server yang dikunci rapat. Alternatifnya adalah cara yang akan Anda pakai di lab: <strong>restore disks</strong>, pasang
+disk hasil restore ke sebuah VM sebagai data disk tambahan, salin file yang Anda perlukan, lalu lepaskan (detach) dan
+hapus disk itu. Cara ini tidak membutuhkan akses internet dari VM, dan memperlihatkan dengan jelas di mana data Anda
+sebenarnya berada.</p>
+<p>Tidak semua hal membutuhkan vault. Banyak layanan platform mencadangkan dirinya sendiri. <strong>Azure SQL Database</strong> membuat
+backup otomatis dan bisa di-restore ke titik waktu mana pun dalam masa retensinya (tujuh hari secara default). <strong>Azure
+Cosmos DB</strong> membuat backup berkala, atau dengan continuous backup, bisa di-restore ke titik mana pun dalam 7 atau 30
+hari terakhir. <strong>Blob Storage</strong> menyediakan soft delete, versioning, dan point-in-time restore (Makan Siang 07).
+Periksa apa yang diberikan setiap layanan secara default, dan apakah default itu sesuai dengan RPO-nya.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Geo-redundant storage bukan cadangan. Ia juga ikut mereplikasi kesalahan Anda: blob yang dihapus Dewi di Indonesia
+ikut terhapus di salinan sekunder beberapa saat kemudian. Hanya salinan terpisah dari satu titik waktu yang bisa
+membawa Anda kembali.</p>
+</aside>
+</div></article><article class="scene-card" id="3-melindungi-cadangan-itu-sendiri" data-spy><span class="scene-no">Adegan 3 dari 5</span><h3>Melindungi cadangan itu sendiri</h3><div class="prose"><p>Penyerang tahu bahwa cadangan adalah jalan pulang Anda, jadi ransomware modern mengincarnya lebih dulu, biasanya dengan
+akun administrator curian. Azure Backup menjawabnya dengan tiga lapis perlindungan.</p>
+<p><strong>Soft delete</strong> (penghapusan sementara) berarti data backup yang dihapus tidak benar-benar lenyap. Data itu pindah ke
+status <em>soft-deleted</em> selama 14 hari secara default (bisa Anda perpanjang hingga 180 hari), dan selama waktu itu Anda
+bisa melakukan <strong>undelete</strong> (membatalkan penghapusan). Mirip Recycle Bin di laptop, hanya saja tempat sampah yang ini
+tidak bisa dikosongkan paksa. Dengan prinsip <strong>secure by default</strong> (aman sejak awal), soft delete selalu aktif di
+Recovery Services vault: fitur ini tidak bisa dimatikan, juga berlaku untuk vault itu sendiri (menghapus vault
+membuatnya berstatus soft-deleted), dan 14 hari pertamanya tidak dikenai biaya tambahan.</p>
+<p><strong>Immutable vault</strong> (vault yang isinya tidak bisa diubah) memblokir setiap operasi yang akan menghancurkan recovery
+point sebelum masa simpannya habis, seperti menghapus data backup atau memperpendek retensi. Selama immutability masih
+<em>unlocked</em> (belum dikunci), Anda masih bisa mematikannya; begitu <em>locked</em> (dikunci), keputusan itu tidak akan pernah
+bisa dibatalkan, jadi kuncilah hanya setelah Anda mengujinya.</p>
+<p><strong>Multi-user authorization (MUA)</strong>, atau otorisasi multi-pengguna, mencegah satu orang, atau satu akun curian,
+menjalankan operasi penting seorang diri. Operasi seperti mematikan immutability atau menghentikan perlindungan sambil
+menghapus data membutuhkan izin tambahan pada sebuah <strong>Resource Guard</strong>, yaitu resource terpisah milik tim keamanan,
+idealnya di subscription lain. Administrator backup harus meminta akses berbatas waktu, misalnya lewat Privileged
+Identity Management, sebelum operasi itu bisa dijalankan. Prinsipnya sama dengan ruang brankas di bank yang hanya bisa
+dibuka oleh dua petugas berbeda, masing-masing memegang satu kunci: mencuri satu kunci saja tidak cukup.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lapisan</th>
+<th>Apa yang dicegahnya</th>
+<th>Bisakah penyerang mematikannya?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Soft delete</td>
+<td>cadangan yang dihapus langsung lenyap selamanya; perlindungan berlaku 14–180 hari</td>
+<td>tidak: secure by default membuatnya tetap aktif</td>
+</tr>
+<tr>
+<td>Immutable vault</td>
+<td>penghapusan recovery point sebelum waktunya, retensi yang diperpendek</td>
+<td>unlocked: admin bisa; locked: tidak ada yang bisa</td>
+</tr>
+<tr>
+<td>Multi-user authorization</td>
+<td>satu akun menjalankan operasi penting seorang diri</td>
+<td>hanya dengan persetujuan di Resource Guard</td>
+</tr>
+</tbody>
+</table></div>
+<p>Gagasan di balik ketiga lapisan ini sudah lama: simpan setidaknya satu salinan data yang tidak bisa dihancurkan oleh
+akun-akun yang menjalankan produksi. Para administrator backup menyebutnya aturan 3-2-1: tiga salinan, di dua jenis
+media penyimpanan, satu di antaranya di tempat lain. Dalam bahasa Azure, vault sudah terpisah dari VM; soft delete dan
+immutability membuat penghapusan menjadi lambat dan terlihat, dan MUA menempatkan orang kedua di antara penyerang dan
+salinan terakhir.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  atk[&quot;Penyerang dengan&lt;br/&gt;akun admin curian&quot;] --&gt;|&quot;menghapus data backup&quot;| sd[&quot;Soft-deleted selama 14 hari&lt;br/&gt;Anda bisa meng-undelete&quot;]
+  atk --&gt;|&quot;memperpendek retensi&quot;| imm[&quot;Diblokir oleh&lt;br/&gt;immutable vault&quot;]
+  atk --&gt;|&quot;menghentikan perlindungan, menghapus data&quot;| mua[&quot;Perlu persetujuan di&lt;br/&gt;Resource Guard (tim keamanan)&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Tambahkan dasar-dasarnya di atas semua itu: berikan setiap orang built-in role (peran bawaan) yang paling sempit
+(Backup Reader, Backup Operator, atau Backup Contributor), dan aktifkan alert (<em>pemberitahuan</em>) Azure Monitor untuk job
+yang gagal dan data backup yang dihapus, supaya ada yang menyadarinya di hari pertama, bukan di hari kelima belas.</p>
+</div></article><article class="scene-card" id="4-azure-site-recovery-salinan-siaga-di-region-lain" data-spy><span class="scene-no">Adegan 4 dari 5</span><h3>Azure Site Recovery: salinan siaga di region lain</h3><div class="prose"><p>Restore dari backup bisa memakan waktu berjam-jam, dan itu terlalu lambat untuk toko online dengan RTO satu jam.
+<strong>Azure Site Recovery (ASR)</strong> mereplikasi VM secara terus-menerus ke region lain, atau ke zona lain di region yang sama,
+lalu mengatur jalannya perpindahan.</p>
+<p>Saat Anda mengaktifkan replikasi, Site Recovery memasang ekstensi <strong>Mobility service</strong> di VM. Setiap penulisan ke disk
+dikirim ke sebuah <strong>cache storage account</strong> (<em>akun penyimpanan</em>) di region sumber, lalu diteruskan ke managed disk
+replika di region tujuan. Site Recovery membuat recovery point <strong>crash-consistent</strong> setiap lima menit, sebuah
+pengaturan tetap; kondisinya mirip disk saat listrik PLN tiba-tiba padam. Recovery point <strong>app-consistent</strong>, yang lebih rapi karena aplikasi sempat
+menuntaskan tulisannya, hanya dibuat jika Anda menetapkan frekuensinya (nonaktif secara default). Recovery point
+disimpan selama satu hari, kecuali Anda mengubah policy-nya. Berbeda dengan backup, replikasi membutuhkan konektivitas
+keluar (outbound) dari VM.</p>
+<p>Tombol terpenting adalah <strong>Test failover</strong>. Tombol ini menyalakan salinan VM dari sebuah recovery point di dalam
+jaringan virtual (VNet) yang terisolasi, tanpa menghentikan replikasi dan tanpa menyentuh produksi, sehingga Anda bisa
+berlatih lalu membersihkannya. <strong>Failover</strong> sungguhan menyalakan VM di region tujuan. Setelah itu Anda melakukan
+<strong>re-protect</strong> (mereplikasi ke arah sebaliknya), dan nanti <strong>fail back</strong> (kembali ke region asal). <strong>Recovery plan</strong>
+mengelompokkan VM dan menyalakannya berurutan, database dulu, lalu tier aplikasi, lalu tier web, dengan skrip atau
+langkah manual di antaranya. Anda membayar biaya Site Recovery per VM ditambah penyimpanan di region tujuan. VM replika
+tidak berjalan, dan tidak ditagih biaya komputasi, sampai Anda melakukan failover.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph idc[&quot;Indonesia Central (primer)&quot;]
+    vm[&quot;VM toko online&lt;br/&gt;Mobility service&quot;] --&gt; cache[(&quot;cache storage&quot;)]
+  end
+  subgraph sea[&quot;Southeast Asia (target)&quot;]
+    disks[(&quot;disk replika&lt;br/&gt;recovery point setiap 5 menit&quot;)]
+    test[&quot;Test failover&lt;br/&gt;VNet terisolasi&quot;]
+    live[&quot;Failover:&lt;br/&gt;VM menyala di sini&quot;]
+  end
+  cache --&gt;|&quot;replikasi berkelanjutan&quot;| disks
+  disks -.-&gt; test
+  disks ==&gt; live
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Ibaratnya mobil keluarga untuk mudik. Backup itu seperti kotak perkakas di bagasi: dengan itu ban bocor bisa ditambal,
+tetapi Anda tertahan lama di bahu jalan tol. Site Recovery itu ban serep yang sudah terpompa, siap dipasang dalam
+hitungan menit. Dan test failover adalah kebiasaan memeriksa ban serep <em>sebelum</em> berangkat, bukan saat ban sudah kempis
+di tengah perjalanan.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Azure Backup</th>
+<th>Azure Site Recovery</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pertanyaan yang dijawabnya</td>
+<td>&quot;Kembalikan data saya yang kemarin.&quot;</td>
+<td>&quot;Jalankan layanan ini di tempat lain, sekarang juga.&quot;</td>
+</tr>
+<tr>
+<td>RPO yang bisa diharapkan</td>
+<td>hitungan jam: harian, atau setiap 4 jam dengan Enhanced</td>
+<td>hitungan menit: recovery point setiap 5 menit</td>
+</tr>
+<tr>
+<td>RTO yang bisa diharapkan</td>
+<td>hitungan jam: restore, lalu bangun ulang</td>
+<td>beberapa menit hingga satu jam: nyalakan replikanya</td>
+</tr>
+<tr>
+<td>Riwayat yang disimpan</td>
+<td>beberapa hari hingga bertahun-tahun</td>
+<td>beberapa jam hingga beberapa hari (satu hari secara default)</td>
+</tr>
+<tr>
+<td>Melawan penghapusan dan ransomware</td>
+<td>✅ dengan soft delete, immutability, dan MUA</td>
+<td>hanya dalam jendela recovery point-nya yang singkat</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sebagian besar layanan produksi membutuhkan keduanya: Site Recovery untuk RTO yang cepat, dan Backup untuk ingatan yang
+panjang.</p>
+</div></article><article class="scene-card" id="5-pemulihan-bencana-untuk-region-tanpa-pasangan" data-spy><span class="scene-no">Adegan 5 dari 5</span><h3>Pemulihan bencana untuk region tanpa pasangan</h3><div class="prose"><p>Lingkungan produksi Nusantara Retail akan berjalan di <strong>Indonesia Central</strong>, di Jakarta, agar data pelanggan tetap
+berada di dalam negeri. Region ini memiliki tiga availability zone (<em>zona ketersediaan</em>) tetapi <strong>tidak punya region
+pasangan</strong>, dan hal itu mengubah rencananya:</p>
+<ol>
+<li><strong>Zona adalah ketersediaan tinggi, bukan pemulihan bencana.</strong> Menyebarkan VM dan database ke beberapa zona membuat
+layanan selamat dari kegagalan satu pusat data, tetapi tidak dari kejadian yang melumpuhkan seluruh region.</li>
+<li><strong>Fitur yang bergantung pada pasangan region tidak tersedia.</strong> Geo-redundant storage, backup vault yang
+geo-redundant, dan Cross Region Restore membutuhkan region pasangan. Cadangan di Indonesia Central tetap tinggal di
+region itu, di penyimpanan locally redundant atau zone-redundant, kecuali Anda sendiri yang menyalinnya ke tempat
+lain.</li>
+<li><strong>Anda memilih region sekunder sendiri, secara eksplisit.</strong> Banyak layanan bisa mereplikasi antara dua region mana
+pun: Site Recovery untuk VM, failover group untuk Azure SQL, region tambahan untuk Cosmos DB, dan object replication
+untuk Blob Storage.</li>
+</ol>
+<p>Memilih region sekunder itu adalah keputusan bisnis sekaligus keputusan teknis. Region itu harus cukup jauh agar satu
+kejadian tidak bisa menghantam kedua region sekaligus, dan cukup dekat agar latensinya (jeda pengiriman data) masih bisa
+diterima. Region itu harus menyediakan layanan dan ukuran VM yang Anda replikasi, dengan kapasitas yang cukup. Region
+itu juga harus memenuhi <strong>residensi data</strong> (data residency), yaitu aturan tentang di negara mana data boleh disimpan.
+Undang-Undang Pelindungan Data Pribadi Indonesia (UU No. 27 Tahun 2022, sering disebut UU PDP) hanya mengizinkan data
+pribadi ditransfer ke luar negeri dengan syarat tertentu, misalnya negara tujuan memiliki tingkat pelindungan yang
+setara, ada pengaman (safeguard) yang memadai, atau ada persetujuan dari pemilik data. Tim hukum Nusantara harus
+memberi persetujuan sebelum data pelanggan apa pun direplikasi ke Singapura. Makan siang ini menjelaskan teknologinya;
+isinya bukan nasihat hukum. Southeast Asia, di Singapura, adalah kandidat yang paling wajar: dekat, memiliki tiga zona,
+dan layanannya lengkap.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Komponen</th>
+<th>Ketersediaan tinggi di Indonesia Central</th>
+<th>Cadangan</th>
+<th>Pemulihan bencana ke Southeast Asia</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VM toko online</td>
+<td>tersebar di beberapa zona di belakang load balancer</td>
+<td>Azure Backup, harian, vault zone-redundant</td>
+<td>Site Recovery, dengan test failover dua kali setahun</td>
+</tr>
+<tr>
+<td>Database pesanan (Azure SQL)</td>
+<td>database zone-redundant</td>
+<td>backup point-in-time otomatis</td>
+<td>failover group</td>
+</tr>
+<tr>
+<td>Katalog (Cosmos DB)</td>
+<td>zone redundancy</td>
+<td>continuous backup</td>
+<td>Southeast Asia sebagai region kedua</td>
+</tr>
+<tr>
+<td>Foto produk (Blob Storage)</td>
+<td>zone-redundant storage</td>
+<td>soft delete dan versioning</td>
+<td>object replication ke akun di Southeast Asia</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sebagian besar pemulihan yang gagal, gagal karena alasan yang membosankan. Waspadai hal-hal berikut:</p>
+<ul>
+<li><strong>Cadangan yang belum pernah di-restore siapa pun.</strong> Restore pertama justru terjadi saat insiden, di bawah tekanan,
+lalu gagal karena izin yang kurang atau langkah yang terlupa.</li>
+<li><strong>Satu set kunci untuk semuanya.</strong> Cadangan yang dikelola akun admin yang sama dengan produksi akan ikut tumbang
+bersama produksi. Pisahkan perannya dan tambahkan MUA.</li>
+<li><strong>Dependensi yang terlupa.</strong> VM berhasil failover, tetapi nama DNS, Key Vault, aturan firewall, atau sertifikatnya
+masih menunjuk ke region utama.</li>
+<li><strong>Tidak ada kapasitas di region sekunder.</strong> Ukuran VM atau kuota yang Anda butuhkan tidak tersedia di region tujuan,
+tepat pada hari ketika semua orang juga sedang failover ke sana, mirip berburu tiket kereta di hari terakhir sebelum
+Lebaran. Periksa kuota jauh-jauh hari.</li>
+<li><strong>Rencana yang hanya dipahami satu orang.</strong> Kalau runbook (panduan pemulihan langkah demi langkah) hanya ada di kepala
+Pak Budi, RTO Anda bergantung pada jadwal cutinya.</li>
+</ul>
+<p>Terakhir, <strong>uji restore Anda</strong>. Cadangan yang belum pernah Anda restore hanyalah harapan, bukan rencana. Nusantara
+Retail akan me-restore satu file dan satu VM setiap bulan, serta menjalankan test failover dua kali setahun. Setiap
+latihan mengukur RTO yang sebenarnya dibandingkan targetnya, dan runbook mencatat siapa yang memutuskan failover serta
+bagaimana pelanggan diberi tahu. RTO hanyalah tebakan sampai sebuah latihan mengukur waktunya, dan Lab 17 adalah
+latihan pertama Anda.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Indonesia Central memiliki tiga availability zone, dan setiap layanan Nusantara bisa dibuat
+zone-redundant di sana. Apakah itu cukup untuk menjawab pertanyaan bagian keuangan tadi pagi?</p>
+</aside>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · RPO, RTO, cadangan yang terlindungi, dan region kedua</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/17-backup-disaster-recovery.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/17-backup-disaster-recovery.html?lang=id" title="Demo interaktif: RPO, RTO, cadangan yang terlindungi, dan region kedua" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/17-backup-disaster-recovery/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Bagaimana waktu sejak recovery point terakhir berubah menjadi data yang hilang (RPO), dan waktu untuk pulih berubah
+menjadi lamanya layanan mati (RTO).</li>
+<li>Apa yang terjadi ketika penyerang menghapus cadangan, dan lapisan mana yang menyelamatkannya.</li>
+<li>Bagaimana Site Recovery menjaga salinan siaga di region kedua, dan mengapa test failover berjalan di jaringan yang
+terisolasi.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Skrip bersih-bersih Dewi menghapus 2.000 foto produk dari storage account yang memakai geo-redundant storage.
+Apakah salinan di region sekunder bisa menyelamatkan Dewi?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Tidak</strong> — <em>alasannya:</em> geo-redundant storage juga ikut mereplikasi penghapusan itu. Dewi membutuhkan perlindungan
+point-in-time (pada titik waktu tertentu) seperti blob soft delete, versioning, atau backup, yang menyimpan data lama
+alih-alih ikut meniru perubahannya.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Ibu Sari bersedia kehilangan data paling banyak 4 jam dan layanan mati paling lama 1 jam untuk sebuah layanan
+berbasis VM. Angka mana yang RPO, mana yang RTO, dan apakah backup VM harian dengan DefaultPolicy memenuhinya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>RPO 4 jam, RTO 1 jam, dan tidak memenuhi</strong> — <em>alasannya:</em> backup harian bisa kehilangan data hingga 24 jam, dan
+membangun ulang dari backup jarang selesai dalam waktu kurang dari satu jam. Policy Enhanced (setiap 4 jam)
+memperbaiki RPO-nya; Site Recovery atau ketersediaan tinggi memperbaiki RTO-nya.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Penyerang dengan akun admin curian menghapus setiap backup item di sebuah Recovery Services vault. Apa yang terjadi
+pada datanya, dan apa yang harus dilakukan tim?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Datanya berstatus soft-deleted, bukan lenyap</strong> — <em>alasannya:</em> soft delete bawaan secure by default menyimpannya
+selama 14 hari atau lebih. Tim melakukan undelete pada item-item itu, melanjutkan perlindungan, lalu menambahkan
+multi-user authorization agar percobaan berikutnya membutuhkan persetujuan di sebuah Resource Guard.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Jenis vault apa yang Anda butuhkan untuk VM Azure dan share Azure Files, dan jenis apa untuk operational backup
+Azure Blobs?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Recovery Services vault untuk VM dan Azure Files; Backup vault untuk Blobs</strong> — <em>alasannya:</em> Backup vault mencakup
+workload yang lebih baru seperti Blobs, Disks, PostgreSQL flexible server, dan AKS.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Tim ingin VM pesanan di Indonesia Central selamat dari gangguan satu region penuh. Seseorang mengusulkan backup
+vault geo-redundant dengan Cross Region Restore. Mengapa itu tidak akan berhasil, dan apa usulan Anda sebagai
+gantinya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Indonesia Central tidak punya region pasangan</strong> — <em>alasannya:</em> vault geo-redundant dan Cross Region Restore
+bergantung pada region pasangan. Pilih region sekunder secara eksplisit, misalnya Southeast Asia jika tim hukum
+menyetujui transfer datanya, lalu lakukan replikasi dengan Site Recovery.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p><strong>Ketersediaan tinggi</strong> bertahan dari kegagalan komponen dan zona, <strong>cadangan</strong> memungkinkan Anda kembali ke masa lalu, dan <strong>pemulihan bencana</strong> memindahkan layanan ke region lain: rencanakan ketiganya.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Tetapkan <strong>RPO</strong> (berapa banyak data yang boleh hilang) dan <strong>RTO</strong> (berapa lama layanan boleh mati) per sistem, lalu biarkan angka-angka itu yang memilih teknologinya.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p><strong>Azure Backup</strong> menyimpan recovery point di dalam vault (Recovery Services vault untuk VM). Policy menentukan frekuensi dan retensi, dan instant restore membuat restore dari titik yang baru menjadi cepat.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p><strong>Soft delete</strong> (selalu aktif), <strong>immutable vault</strong>, dan <strong>multi-user authorization</strong> menjaga cadangan tetap bisa dipulihkan meskipun akun admin sudah dibobol.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p><strong>Site Recovery</strong> memberi RPO dalam hitungan menit di region lain. Untuk region tanpa pasangan seperti Indonesia Central, Anda memilih sendiri region sekundernya, menimbang residensi data, dan <strong>menguji</strong> dengan latihan rutin.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Tanyakan dulu: siapa yang bisa menghapus salinan terakhir?</strong> Dalam setiap tinjauan desain, saya selalu bertanya
+tentang backup: <em>akun mana saja yang sanggup menghancurkan salinan terakhir data ini, dan apakah itu akun yang sama
+dengan yang menjalankan produksi?</em> Kalau jawabannya ya, satu kata sandi yang bocor bisa merobohkan sistem sekaligus
+jalan pulangnya. Karena itu saya minta multi-user authorization dengan Resource Guard di subscription yang tidak bisa
+disentuh admin produksi, plus alert untuk data backup yang dihapus, yang dikirim ke orang di luar tim. Lalu saya
+bertanya dengan jujur: berapa lama sampai kita sadar sedang diserang? Kalau bisa lebih dari 14 hari, retensi soft
+delete saya perpanjang. Satu lagi kebiasaan saya: latihan restore tidak pernah dijalankan oleh orang yang merancang
+backup-nya. Runbook yang hanya bisa diikuti penulisnya adalah <em>single point of failure</em> yang kebetulan punya nama dan
+jatah cuti.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>17</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Latihan pemulihan data</h3>
+          <div class="prose"><p>Anda akan menjalankan latihan restore pertama Nusantara Retail, di waktu luang Anda sendiri. Sebuah skrip membuat VM
+kecil berisi file pesanan. Anda melindungi VM itu di Recovery Services vault, melihat pengaturan soft delete yang tidak
+bisa dimatikan, lalu memicu backup sambil membaca. Setelah itu Anda &quot;menghilangkan&quot; file tersebut dan me-restore-nya
+dari recovery point dengan cara me-restore disk lalu menyalin file itu kembali. Terakhir, Anda berperan sebagai
+penyerang yang menghapus cadangan, lalu mengembalikannya lagi.</p>
+<p>perlu lab sebelumnya)</p>
+</div>
+          <div class="meta"><span class="chip">⏱ 60–90 menit</span><span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/17-backup-disaster-recovery.html">Mulai Lab 17 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/backup/secure-by-default" target="_blank" rel="noopener"><b>Microsoft Learn: Aman secara default dengan soft delete untuk Azure Backup</b><span>Apa saja yang di-soft-delete, berapa lama, berapa biayanya, dan bagaimana perilaku penghapusan vault sekarang.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/backup/backup-azure-arm-restore-vms" target="_blank" rel="noopener"><b>Microsoft Learn: Cara me-restore data VM Azure di portal Azure</b><span>Setiap opsi restore, lengkap dengan persyaratan dan batasannya.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/site-recovery/azure-to-azure-architecture" target="_blank" rel="noopener"><b>Microsoft Learn: Arsitektur pemulihan bencana Azure ke Azure</b><span>Cara Site Recovery mereplikasi, default apa yang dipakainya, dan akses jaringan apa yang dibutuhkannya.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/reliability/regions-paired" target="_blank" rel="noopener"><b>Microsoft Learn: Pasangan region Azure dan region tanpa pasangan</b><span>Region mana yang punya pasangan, dan cara merancang untuk region yang tidak punya.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🛟</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Lulus Latihan Pemulihan</h2>
+        <p class="muted">Cadangkan, pulihkan, dan bersiap menghadapi bencana.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Bahkan kalau ada yang menghapus semuanya, kita bisa memulihkannya — dan kita sudah melatihnya.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 18</b><h4>Storage Account di West Europe</h4><p>Resource tanpa tag, data di region yang salah, dan tidak ada yang menghentikan siapa pun.</p><p style="margin-top:10px"><a href="18-governance-compliance-basic.html">Tonton Episode 18 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="16-monitoring-basic.html"><small>← Episode sebelumnya</small>16 · Pelanggan Tahu Duluan</a><a class="next" href="18-governance-compliance-basic.html"><small>Episode berikutnya →</small>18 · Storage Account di West Europe</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/17-backup-disaster-recovery/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

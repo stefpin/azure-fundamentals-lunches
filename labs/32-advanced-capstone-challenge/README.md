@@ -1,8 +1,11 @@
 # Advanced capstone challenge · Nusantara Retail goes to production
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** the whole deep-dive month, [Lunch 22](../../lunches/22-identity-access-advanced/README.md) to [Lunch 31](../../lunches/31-governance-at-scale/README.md) (requirements only: no reading, demo or video)
 > **Time:** about 8–12 hours over 3–5 sessions · **Cost:** 💲💲💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★★
 > **Works on its own:** ✅ You do not need any earlier lab. You design and build every resource yourself. You do need what Lunches 22–31 teach.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 > [!CAUTION]
 > **💲💲💲 This is the most expensive project in the course, because it runs production-grade services.**

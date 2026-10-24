@@ -227,8 +227,8 @@ hosting plans; Cosmos DB API list; Azure SQL free-offer limits; TCO calculator a
 
 ## 9. The website (`docs/`)
 
-The GitHub Pages site is generated: never edit `docs/index.html`, `docs/lunches/`, `docs/labs/`, `docs/demos/index.html`
-or `docs/lunchbox.html` by hand. `tools/build_site.py` turns every reading and lab into an interactive page, so keep the
+The GitHub Pages site is generated in two languages: never edit `docs/index.html`, `docs/en/`, `docs/id/`,
+`docs/lunches/`, `docs/labs/`, `docs/demos/index.html` or `docs/lunchbox.html` by hand. `tools/build_site.py` turns every reading and lab into an interactive page, so keep the
 structure it relies on:
 
 - **Readings:** the H2 sections in template order — 🍱 Today's menu, 🏪 Meanwhile at Nusantara Retail, 📖 Reading (one
@@ -239,7 +239,14 @@ structure it relies on:
 - **Callouts:** GitHub alerts (`> [!TIP]` and friends). A NOTE that starts with `**Pause and think:**` becomes a
   reflection card, and `> ✅ **Checkpoint:**` becomes a checkpoint strip.
 - **Story layer:** an episode's title, hook, badge, metro-map station and "answer to the director" live in
-  `tools/site/series.json`. Update it when a lunch changes what Nusantara Retail can do.
+  `tools/site/series.json` (Indonesian: `series.id.json`, same keys). Update both when a lunch changes what Nusantara
+  Retail can do.
+- **Field notes:** `## 🗒️ Field notes from Stefanus` (Indonesian: `## 🗒️ Catatan lapangan dari Stefanus`) sits between
+  Key takeaways and Your lab: a blockquote that starts with a bold headline. It becomes the author's note card.
+- **Indonesian edition:** every reading, lab, video script and demo has an Indonesian twin (`*.id.md`,
+  `tools/i18n/demos/*.id.json`). The generator finds sections by their emoji and understands the Indonesian labels, so
+  keep the emoji and the fixed phrases in [TRANSLATION-GUIDE.md](TRANSLATION-GUIDE.md). Interface text and the author
+  details live in `tools/site/strings.py`.
 
 Rebuild with `python3 tools/build_site.py` (run `pip install -r tools/requirements-site.txt` first) and preview with
 `python3 -m http.server --directory docs 8000`.

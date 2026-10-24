@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 09 · Menjaga toko tetap buka saat server gagal · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 09: Menjaga toko tetap buka saat server gagal. sekitar 50 menit (termasuk sekitar 8 menit persiapan), biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/09-load-balancing-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/09-load-balancing-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 09 · Menjaga toko tetap buka saat server gagal">
+<meta property="og:description" content="Lab Azure praktik 09: Menjaga toko tetap buka saat server gagal. sekitar 50 menit (termasuk sekitar 8 menit persiapan), biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/09-load-balancing-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="09" style="--c:#e2482f">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/09-load-balancing-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#e2482f">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 09</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>09</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Menjaga toko tetap buka saat server gagal</h1>
+        <p class="lab-story">🏪 <b>Episode 09 · Dua Server, Satu Alamat</b> — Server kembar yang sehat walafiat cuma menganggur, sementara pembeli hanya bisa menemukan satu server. <a href="../lunches/09-load-balancing-basic.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 50 menit (termasuk sekitar 8 menit persiapan)</span>
+          <span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 9 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--melihat-titik-awal">Tugas 1 · Melihat titik awal</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--membuat-ip-frontend-yang-zone-redundant">Tugas 2 · Membuat IP frontend yang zone-redundant</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--membuat-load-balancer-dan-mengisi-backend-pool">Tugas 3 · Membuat load balancer dan mengisi backend pool</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--menambahkan-health-probe-dan-load-balancing-rule">Tugas 4 · Menambahkan health probe dan load-balancing rule</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--menggagalkan-sebuah-server-dan-menyaksikan-toko-tetap-buka">Tugas 5 · Menggagalkan sebuah server dan menyaksikan toko tetap buka</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--menjangkau-satu-vm-dengan-inbound-nat-rule">Tugas 6 · Menjangkau satu VM dengan inbound NAT rule</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--memberi-backend-jalan-keluar-dengan-outbound-rule">Tugas 7 · Memberi backend jalan keluar dengan outbound rule</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>5 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/09-load-balancing-basic" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Toko online Nusantara Retail kini berjalan di dua server web kecil, satu di availability zone 1 dan satu lagi di zona 2.
+Keduanya tidak punya alamat IP publik, dan keduanya berada di subnet privat tanpa akses internet default. Anda akan
+memberi mereka <strong>satu pintu depan</strong>: Standard load balancer publik dengan IP frontend yang zone-redundant, health probe
+yang memeriksa <code>/health</code>, dan sebuah rule yang membagi pembeli ke kedua server. Setelah itu Anda sengaja merusak satu
+server dan menyaksikan toko tetap buka, menambahkan inbound NAT rule agar administrator tetap bisa menjangkau <code>vm-web-1</code>
+lewat SSH, dan menambahkan outbound rule agar server bisa menjangkau internet untuk update dan penyedia pembayaran.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shop([&quot;Pembeli&lt;br/&gt;(curl dari Cloud Shell)&quot;]) --&gt;|HTTP :80| fe
+  admin([&quot;Anda · SSH&quot;]) --&gt;|TCP :50001| fe
+  subgraph rg[&quot;rg-lunch09-&amp;lt;suffix&amp;gt;&quot;]
+    fe[&quot;pip-lb-nusa-web&lt;br/&gt;frontend zone-redundant&quot;] --&gt; lb[&quot;lb-nusa-web&lt;br/&gt;Standard SKU&quot;]
+    subgraph vnet[&quot;vnet-nusa-web · snet-web (privat) · nsg-web&quot;]
+      vm1[&quot;vm-web-1&lt;br/&gt;zona 1&quot;]
+      vm2[&quot;vm-web-2&lt;br/&gt;zona 2&quot;]
+    end
+    lb --&gt;|&quot;rule-http TCP 80&lt;br/&gt;probe-http /health&quot;| vm1
+    lb --&gt;|&quot;rule-http TCP 80&lt;br/&gt;probe-http /health&quot;| vm2
+    lb -.-&gt;|&quot;nat-ssh-vm1&lt;br/&gt;50001 → 22&quot;| vm1
+  end
+  lb ==&gt;|&quot;rule-outbound (SNAT)&quot;| net([&quot;Internet&lt;br/&gt;update, API pembayaran&quot;])
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription (<em>langganan</em>) Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu diinstal.</li>
+<li>Sekitar <strong>4 vCPU kuota yang masih kosong</strong> di region Anda (dua VM <code>Standard_B2ats_v2</code>, masing-masing 2 vCPU).
+<code>bash ../common/check-environment.sh</code> menampilkannya.</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/09-load-balancing-basic
+source ../common/config.sh
+source lab.env          # the resource names this lab uses: RG, LB, PIP, POOL, PROBE, ...
+RG=$(rg_name 09)
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya — butuh sekitar 6–10 menit (dua VM, lalu pemeriksaan singkat bahwa setiap server web menjawab):</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<p>Sambil menunggu, baca ulang bagian 3 dari makan siang ini (health probe). Skrip ini membuat <code>nsg-web</code> (mengizinkan TCP 80
+dari service tag <code>Internet</code> dan <code>AzureLoadBalancer</code>), virtual network <code>vnet-nusa-web</code> dengan subnet <strong>privat</strong>
+<code>snet-web</code>, serta <code>vm-web-1</code>/<code>vm-web-2</code> yang menjalankan server web mungil milik kursus ini (<code>/</code> menampilkan nama VM dan
+zonanya, <code>/health</code> menjawab <code>ok</code>).</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab dikenai biaya selama masih ada (dua VM, sebuah load balancer, dan sebuah IP publik). Akhiri lab dengan
+bagian <strong>Bersihkan</strong>, bahkan jika Anda berhenti di tengah jalan. Jika Cloud Shell timeout, sambungkan kembali lalu
+jalankan ulang baris <code>cd</code> dan kedua baris <code>source</code> di atas sebelum melanjutkan.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–7 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>jalankan <code>bash setup.sh</code>, baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--melihat-titik-awal" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Melihat titik awal</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--melihat-titik-awal" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sebelum menambahkan load balancer, pastikan dulu apa yang akan Anda seimbangkan: dua server di dua zona, tanpa IP
+publik, dan sebuah subnet yang tidak bisa menjangkau internet dengan sendirinya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm list -g &quot;$RG&quot; -d \
+  --query &quot;[].{name:name, zone:zones[0], privateIp:privateIps, publicIp:publicIps}&quot; -o table
+
+az network vnet subnet show -g &quot;$RG&quot; --vnet-name &quot;$VNET&quot; -n &quot;$SUBNET&quot; \
+  --query &quot;{prefix:addressPrefix, defaultOutboundAccess:defaultOutboundAccess, nsg:networkSecurityGroup.id}&quot; -o yaml
+
+az network nsg rule list -g &quot;$RG&quot; --nsg-name &quot;$NSG&quot; \
+  --query &quot;[].{name:name, priority:priority, source:sourceAddressPrefix, port:destinationPortRange}&quot; -o table
+
+# Ask vm-web-1 for its own home page (Run Command works without any public IP)
+az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript \
+  --scripts &quot;curl -s localhost | grep &#x27;Served by&#x27;&quot; --query &quot;value[0].message&quot; -o tsv
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> dua VM di zona <code>1</code> dan <code>2</code> dengan IP privat <code>10.9.1.x</code> dan kolom IP publik yang <strong>kosong</strong>;
+<code>defaultOutboundAccess: false</code>; dua aturan NSG untuk port 80; dan halaman dari <code>vm-web-1</code> bertuliskan
+<em>Served by vm-web-1 in availability zone 1</em>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--membuat-ip-frontend-yang-zone-redundant" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Membuat IP frontend yang zone-redundant</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--membuat-ip-frontend-yang-zone-redundant" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Pembeli membutuhkan satu alamat yang stabil. IP publik <strong>Standard</strong> yang tersebar di zona 1, 2, dan 3 tetap menjawab
+bahkan jika satu zona lumpuh total. (IP publik Basic sudah dipensiunkan pada 30 September 2025.)</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network public-ip create -g &quot;$RG&quot; -n &quot;$PIP&quot; -l &quot;$LOCATION&quot; \
+  --sku Standard --allocation-method Static --zone 1 2 3 --output none
+
+az network public-ip show -g &quot;$RG&quot; -n &quot;$PIP&quot; \
+  --query &quot;{sku:sku.name, zones:join(&#x27;,&#x27;, zones), address:ipAddress}&quot; -o table
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>Standard</code>, zona <code>1,2,3</code>, dan sebuah alamat IP. <code>lb_ip</code> (fungsi bantu dari <code>lab.env</code>) mencetak
+alamat yang sama.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--membuat-load-balancer-dan-mengisi-backend-pool" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Membuat load balancer dan mengisi backend pool</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--membuat-load-balancer-dan-mengisi-backend-pool" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Buat Standard load balancer yang memakai IP tadi sebagai <strong>frontend</strong>, dengan <strong>backend pool</strong> yang masih kosong. Lalu
+masukkan network interface (NIC, kartu jaringan virtual) kedua server ke dalam pool. Menambahkan NIC (bukan alamat IP)
+adalah jenis pool yang direkomendasikan.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network lb create -g &quot;$RG&quot; -n &quot;$LB&quot; -l &quot;$LOCATION&quot; --sku Standard \
+  --public-ip-address &quot;$PIP&quot; --frontend-ip-name &quot;$FE&quot; --backend-pool-name &quot;$POOL&quot; --output none
+
+for nic in &quot;$NIC1&quot; &quot;$NIC2&quot;; do
+  az network nic ip-config address-pool add -g &quot;$RG&quot; --nic-name &quot;$nic&quot; \
+    --ip-config-name &quot;$IPCONFIG&quot; --lb-name &quot;$LB&quot; --address-pool &quot;$POOL&quot; --output none
+done
+
+az network lb address-pool show -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$POOL&quot; \
+  --query &quot;backendIPConfigurations[].id&quot; -o tsv
+</code></pre></div>
+<p>Sekarang coba frontend-nya: <code>curl -s --max-time 5 &quot;http://$(lb_ip)/&quot; || echo &quot;no answer&quot;</code>. Belum ada yang menjawab —
+load balancer tidak meneruskan apa pun sampai sebuah <strong>rule</strong> memberitahunya lalu lintas mana yang harus dikirim ke mana.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Load balancers › Create</em>: SKU <strong>Standard</strong>, Type <strong>Public</strong>, Tier <strong>Regional</strong>; di <em>Frontend IP
+configuration</em> pilih <code>pip-lb-nusa-web</code> yang sudah ada; di <em>Backend pools</em> tambahkan <code>vm-web-1</code> dan <code>vm-web-2</code>
+(configuration type <strong>NIC</strong>). Lewati rule untuk saat ini, review, create — lalu kembali untuk Tugas 4. Wizard di portal
+menampilkan setiap komponen dari bagian 2 makan siang ini dalam satu layar.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> dua ID yang berakhiran <code>nic-vm-web-1/ipConfigurations/ipconfig1</code> dan
+<code>nic-vm-web-2/ipConfigurations/ipconfig1</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--menambahkan-health-probe-dan-load-balancing-rule" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Menambahkan health probe dan load-balancing rule</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--menambahkan-health-probe-dan-load-balancing-rule" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><strong>Probe</strong> menanyakan <code>/health</code> kepada setiap anggota pool setiap 5 detik; hanya anggota yang menjawab <code>200 OK</code> yang
+menerima koneksi baru. <strong>Rule</strong> menyatakan: lalu lintas TCP yang tiba di port frontend 80 diteruskan ke port 80 pada
+anggota pool yang sehat.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network lb probe create -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$PROBE&quot; \
+  --protocol Http --port 80 --path /health --interval 5 --output none
+
+az network lb rule create -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$RULE&quot; \
+  --protocol Tcp --frontend-port 80 --backend-port 80 \
+  --frontend-ip &quot;$FE&quot; --backend-pool-name &quot;$POOL&quot; --probe &quot;$PROBE&quot; \
+  --disable-outbound-snat true --idle-timeout 15 --enable-tcp-reset true --output none
+</code></pre></div>
+<p>Arti flag-flag tersebut:</p>
+<ul>
+<li><code>--interval 5</code> — probe setiap 5 detik. Default CLI adalah 15 detik; portal menyarankan 5.</li>
+<li><code>--disable-outbound-snat true</code> — rule ini hanya menangani lalu lintas <strong>masuk</strong> (inbound). Anda memberi server akses
+keluar secara sengaja di Tugas 7, dengan sebuah outbound rule.</li>
+<li><code>--idle-timeout 15 --enable-tcp-reset true</code> — koneksi yang menganggur ditutup setelah 15 menit, dan kedua ujungnya
+diberi tahu lewat TCP reset alih-alih diputus diam-diam.</li>
+</ul>
+<p>Tunggu sekitar 30 detik sampai probe pertama berjalan, lalu kirim sepuluh request dan lihat siapa yang menjawab:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>who_answers 10
+curl -s -o /dev/null -w &quot;HTTP %{http_code}\n&quot; &quot;http://$(lb_ip)/&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> baris-baris keluarannya menyebut <code>vm-web-1 … zone 1</code> dan <code>vm-web-2 … zone 2</code> (tidak bergantian
+secara ketat — setiap koneksi baru ditempatkan berdasarkan hash), dan statusnya <code>HTTP 200</code>. Buka
+<code>http://&lt;frontend IP&gt;</code> di browser Anda dan refresh beberapa kali.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--menggagalkan-sebuah-server-dan-menyaksikan-toko-tetap-buka" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Menggagalkan sebuah server dan menyaksikan toko tetap buka</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--menggagalkan-sebuah-server-dan-menyaksikan-toko-tetap-buka" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Hentikan layanan web di <code>vm-web-2</code> — VM-nya tetap berjalan, tetapi tidak ada lagi yang menjawab di port 80, persis
+seperti aplikasi yang crash.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM2&quot; --command-id RunShellScript \
+  --scripts &quot;systemctl stop nusa-web &amp;&amp; echo stopped&quot; --query &quot;value[0].message&quot; -o tsv
+
+who_answers 10
+</code></pre></div>
+<p>Dalam beberapa detik setelah layanan berhenti, probe ke <code>vm-web-2</code> gagal dan setiap koneksi baru diarahkan ke
+<code>vm-web-1</code>. Toko tetap buka; pembeli tidak perlu alamat baru. Sekarang perbaiki servernya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM2&quot; --command-id RunShellScript \
+  --scripts &quot;systemctl start nusa-web &amp;&amp; echo started&quot; --query &quot;value[0].message&quot; -o tsv
+
+who_answers 10
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Buka <code>lb-nusa-web</code> › <em>Monitoring</em> › <em>Metrics</em>, pilih metrik <strong>Health Probe Status</strong>, lalu
+<em>Apply splitting</em> berdasarkan <strong>Backend IP Address</strong>. Hentikan dan jalankan lagi layanannya, lalu saksikan satu garis
+turun ke 0% dan pulih kembali (metrik datang dengan jeda satu atau dua menit).</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> selama layanan dihentikan, setiap jawaban menyebut <code>vm-web-1</code>; setelah Anda menjalankannya lagi,
+<code>vm-web-2</code> muncul kembali tanpa Anda menyentuh load balancer.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--menjangkau-satu-vm-dengan-inbound-nat-rule" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Menjangkau satu VM dengan inbound NAT rule</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--menjangkau-satu-vm-dengan-inbound-nat-rule" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Server tidak punya IP publik, tetapi administrator sesekali memerlukan SSH. <strong>Inbound NAT rule</strong> meneruskan satu port
+frontend ke satu VM: di sini <code>50001</code> di frontend diteruskan ke port <code>22</code> di <code>vm-web-1</code>. Ini port forwarding (penerusan
+port), bukan load balancing — rule ini selalu mendarat di VM yang sama.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network lb inbound-nat-rule create -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$NAT_RULE&quot; \
+  --protocol Tcp --frontend-ip &quot;$FE&quot; --frontend-port &quot;$NAT_PORT&quot; --backend-port 22 --output none
+
+az network nic ip-config inbound-nat-rule add -g &quot;$RG&quot; --nic-name &quot;$NIC1&quot; \
+  --ip-config-name &quot;$IPCONFIG&quot; --lb-name &quot;$LB&quot; --inbound-nat-rule &quot;$NAT_RULE&quot; --output none
+</code></pre></div>
+<p>Load balancer ini secure by default, jadi NSG juga harus mengizinkan lalu lintasnya. NSG mengevaluasi paket <strong>setelah</strong>
+penerjemahan, jadi aturannya membuka port <strong>22</strong> (bukan 50001) — dan hanya untuk alamat Anda sendiri:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>MY_IP=$(my_public_ip); echo &quot;Your public IP: $MY_IP&quot;
+
+az network nsg rule create -g &quot;$RG&quot; --nsg-name &quot;$NSG&quot; -n Allow-SSH-MyIP \
+  --priority 120 --direction Inbound --access Allow --protocol Tcp \
+  --source-address-prefixes &quot;${MY_IP}/32&quot; --source-port-ranges &#x27;*&#x27; \
+  --destination-address-prefixes &#x27;*&#x27; --destination-port-ranges 22 --output none
+
+ssh -p &quot;$NAT_PORT&quot; -o StrictHostKeyChecking=accept-new &quot;${ADMIN_USER}@$(lb_ip)&quot; &#x27;hostname; cat /var/www/nusa/health&#x27;
+</code></pre></div>
+<p><code>setup.sh</code> membuat VM dengan <code>--generate-ssh-keys</code>, jadi pasangan kuncinya ada di <code>~/.ssh</code> milik Cloud Shell ini.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> perintah SSH mencetak <code>vm-web-1</code> dan <code>ok</code>. Jalankan tiga kali — hasilnya selalu <code>vm-web-1</code>.
+Di production, Anda sebaiknya memakai Azure Bastion (Makan Siang 06) alih-alih membuka SSH lewat frontend publik.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--memberi-backend-jalan-keluar-dengan-outbound-rule" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Memberi backend jalan keluar dengan outbound rule</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--memberi-backend-jalan-keluar-dengan-outbound-rule" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Subnet-nya privat dan load-balancing rule menonaktifkan outbound SNAT, sehingga server tidak bisa menjangkau internet —
+tidak ada update, tidak ada panggilan ke penyedia pembayaran. Buktikan dulu:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript \
+  --scripts &quot;curl -s --max-time 10 https://api.ipify.org || echo no-outbound&quot; \
+  --query &quot;value[0].message&quot; -o tsv
+</code></pre></div>
+<p>Anda seharusnya melihat <code>no-outbound</code>. Sekarang tambahkan <strong>outbound rule</strong>: server di <code>be-web</code> keluar melalui IP
+frontend, dan setiap VM mendapat 10.000 SNAT port (kelipatan 8; dua VM × 10.000 muat dengan mudah di 64.000 port yang
+ditawarkan satu IP publik).</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network lb outbound-rule create -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$OUT_RULE&quot; \
+  --frontend-ip-configs &quot;$FE&quot; --address-pool &quot;$POOL&quot; --protocol All \
+  --outbound-ports 10000 --idle-timeout 15 --enable-tcp-reset true --output none
+</code></pre></div>
+<p>Jalankan lagi tes Run Command yang sama (beri waktu satu menit), lalu bandingkan jawabannya dengan <code>lb_ip</code>.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>vm-web-1</code> kini menjangkau <code>api.ipify.org</code>, dan alamat yang dilihat internet adalah IP frontend
+Anda. Untuk banyak VM atau lalu lintas keluar yang berat, NAT gateway pada subnet adalah pilihan yang lebih mudah
+diskalakan (Makan Siang 08).</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Ubah path probe ke halaman yang tidak ada (salah ketik satu huruf):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network lb probe update -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$PROBE&quot; --path /healthz --output none
+sleep 20
+who_answers 5
+</code></pre></div>
+<p><strong>Gejala:</strong> setiap request menghasilkan <code>(no answer)</code> — padahal kedua VM berjalan dan server web-nya baik-baik saja.</p>
+<details class="plain"><summary>Petunjuk</summary>
+<p>Tanyakan kepada setiap server hal yang sama dengan yang ditanyakan probe:
+<code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript --scripts &quot;curl -s -o /dev/null -w '%{http_code}' localhost/healthz&quot;</code>
+mengembalikan <code>404</code>. Probe HTTP menganggap apa pun selain <code>200</code> sebagai &quot;down&quot;. Jika <strong>semua</strong> anggota down, Standard
+load balancer tidak mengirim koneksi baru ke mana pun.</p>
+</details>
+<details class="plain"><summary>Perbaikan</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network lb probe update -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$PROBE&quot; --path /health --output none
+sleep 20
+who_answers 5
+</code></pre></div>
+<p>Pelajarannya: ketika semua yang ada di belakang load balancer &quot;gagal&quot; bersamaan, periksa probe sebelum memeriksa
+server.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu
+Anda ulangi. Pemeriksaan terakhir menjalankan perintah di <code>vm-web-1</code> dan memakan waktu sekitar 30 detik.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Perintah ini menghapus resource group (<em>grup sumber daya</em>) <code>rg-lunch09-&lt;suffix&gt;</code> beserta semua isinya (VM, disk, NIC,
+load balancer, IP publik, jaringan). Tidak ada satu pun bagian lab ini yang berada di luar grup tersebut. Penghapusan
+berlanjut di latar belakang selama beberapa menit.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>who_answers</code> mencetak <code>(no answer)</code> untuk setiap request</td>
+<td>probe gagal (path atau port salah), NSG memblokir port 80, atau belum ada rule</td>
+<td><code>az network lb probe show -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$PROBE&quot; -o table</code>; periksa aturan <code>nsg-web</code>; pastikan <code>rule-http</code> sudah ada</td>
+</tr>
+<tr>
+<td>Hanya satu VM yang pernah menjawab</td>
+<td>VM lainnya tidak ada di pool, atau layanan web-nya berhenti</td>
+<td><code>az network lb address-pool show ... --query &quot;backendIPConfigurations[].id&quot;</code>; jalankan <code>systemctl start nusa-web</code> di VM itu dengan Run Command</td>
+</tr>
+<tr>
+<td><code>setup.sh</code> melaporkan <code>no answer from /health yet</code></td>
+<td>cloud-init masih berjalan pada boot pertama yang lambat</td>
+<td>tunggu dua menit, lalu: <code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript --scripts &quot;curl -s localhost/health&quot;</code></td>
+</tr>
+<tr>
+<td><code>az vm create</code> gagal dengan <code>SkuNotAvailable</code></td>
+<td>ukuran VM tersebut tidak ditawarkan di zona atau region itu</td>
+<td><code>export VM_SIZE_SMALL=Standard_B2ts_v2</code>, jalankan lagi <code>source ../common/config.sh</code>, lalu jalankan ulang <code>bash setup.sh</code></td>
+</tr>
+<tr>
+<td><code>az vm create</code> gagal dengan <code>OperationNotAllowed</code> yang menyebut kuota</td>
+<td>kuota vCPU regional tidak cukup</td>
+<td>hapus VM dari lab lain, atau gunakan region lain (<code>export LOCATION=...</code>, lalu <code>source ../common/config.sh</code> lagi)</td>
+</tr>
+<tr>
+<td>Outbound rule gagal dengan <code>LoadBalancingRuleMustDisableSNATSinceSameFrontendIPConfigurationIsReferencedByOutboundRule</code></td>
+<td>load-balancing rule masih melakukan outbound SNAT otomatis pada frontend yang sama</td>
+<td><code>az network lb rule update -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$RULE&quot; --disable-outbound-snat true</code></td>
+</tr>
+<tr>
+<td><code>ssh: connect to host … port 50001: Connection timed out</code></td>
+<td>NSG belum mengizinkan port <strong>22</strong> dari IP Anda, NAT rule belum terpasang ke NIC, atau IP publik Cloud Shell berubah</td>
+<td>jalankan ulang <code>MY_IP=$(my_public_ip)</code> dan perintah aturan NSG; periksa <code>az network nic show -g &quot;$RG&quot; -n &quot;$NIC1&quot; --query &quot;ipConfigurations[0].loadBalancerInboundNatRules&quot;</code></td>
+</tr>
+<tr>
+<td><code>Permission denied (publickey)</code></td>
+<td>Anda tidak berada di Cloud Shell tempat <code>setup.sh</code> membuat kuncinya</td>
+<td><code>az vm user update -g &quot;$RG&quot; -n &quot;$VM1&quot; -u &quot;$ADMIN_USER&quot; --ssh-key-value ~/.ssh/id_rsa.pub</code></td>
+</tr>
+<tr>
+<td>Run Command menyatakan ada operasi lain yang sedang berjalan</td>
+<td>hanya boleh ada satu Run Command per VM dalam satu waktu</td>
+<td>tunggu satu menit, lalu jalankan lagi</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li><strong>Session persistence:</strong> <code>az network lb rule update -g &quot;$RG&quot; --lb-name &quot;$LB&quot; -n &quot;$RULE&quot; --load-distribution SourceIP</code>,
+lalu <code>who_answers 10</code> — kini setiap jawaban datang dari VM yang sama. Kembalikan dengan
+<code>--load-distribution Default</code>.</li>
+<li><strong>Ganti outbound rule dengan NAT gateway:</strong> buat NAT gateway Standard dengan IP publiknya sendiri, pasang ke
+<code>snet-web</code>, lalu ulangi tes <code>api.ipify.org</code>. NAT gateway diutamakan di atas outbound rule.</li>
+<li><strong>Tambahkan load balancer internal</strong> dengan IP frontend privat di subnet kedua, seperti yang akan Anda lakukan untuk
+tier API pesanan.</li>
+<li><strong>Lihat topologinya:</strong> buka load balancer di portal, <em>Monitoring › Insights</em>, lalu jelajahi diagramnya.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Jalankan <code>bash setup.sh</code>, lalu bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep), memakai
+nama-nama dari <code>lab.env</code>:</p>
+<ol>
+<li>Load balancer publik <strong>Standard</strong> <code>lb-nusa-web</code> yang frontend-nya memakai IP publik Standard yang <strong>zone-redundant</strong>.</li>
+<li>Backend pool berbasis NIC <code>be-web</code> yang berisi NIC milik <code>vm-web-1</code> dan <code>vm-web-2</code>.</li>
+<li>Health probe <strong>HTTP</strong> <code>probe-http</code> di port 80, path <code>/health</code>.</li>
+<li>Load-balancing rule <code>rule-http</code>: TCP 80 → 80, memakai <code>probe-http</code>, dengan <strong>outbound SNAT dinonaktifkan</strong> pada rule
+tersebut.</li>
+<li>Inbound NAT rule <code>nat-ssh-vm1</code>: port frontend 50001 → port 22 di <code>vm-web-1</code> (SSH hanya diizinkan dari IP Anda).</li>
+<li>Outbound rule <code>rule-outbound</code> yang memberi backend pool akses internet melalui IP frontend.</li>
+<li>Kedua server menjawab <code>http://&lt;frontend IP&gt;/</code> dengan HTTP 200.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="08-networking-basic.html"><small>← Lab sebelumnya</small>08 · Membangun jaringan Nusantara Retail</a><a class="next" href="10-app-service.html"><small>Lab berikutnya →</small>10 · Memindahkan toko online ke PaaS</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/09-load-balancing-basic/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

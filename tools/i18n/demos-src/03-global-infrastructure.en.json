@@ -1,0 +1,113 @@
+{
+  "page": {
+    "doc_title": "Lunch 03 · Azure global infrastructure — Interactive demo",
+    "kicker": "Lunch 03 · Global infrastructure · Interactive demo",
+    "title": "From the globe to a single datacenter",
+    "lede": "Zoom from geographies to a region, its availability zones and datacenters, watch a zone fail, and compare a paired region with one that has no pair. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "Zooming from the globe to an Azure region, its availability zones and datacenters",
+    "svgDesc": "A simplified globe shows the Asia Pacific and Indonesia geographies with the Southeast Asia, East Asia and Indonesia Central regions. The camera zooms into Indonesia Central, which has three availability zones with datacenters, a zone-redundant public IP, zonal web servers and zone-redundant storage copies. Zone 1 fails, a second web server in zone 2 keeps the shop open, and the camera zooms back out to compare the Southeast Asia and East Asia region pair with Indonesia Central, which has no pair."
+  },
+  "steps": [
+    {
+      "title": "One server next to the pantry",
+      "text": "Nusantara Retail's storefront still runs on one physical server in a room next to the pantry in Jakarta. If that room loses power, the shop closes. Azure spreads its capacity over many regions around the globe, each built from several datacenters. Let's zoom in step by step, from the whole planet down to a single building, and then watch what happens when parts of it fail."
+    },
+    {
+      "title": "Geographies: where data may live",
+      "text": "Zoom in on Asia. Azure groups regions into geographies, and each geography is a data residency boundary. Southeast Asia (Singapore) and East Asia (Hong Kong) sit in the Asia Pacific geography. Indonesia Central sits in its own Indonesia geography. If a law or a contract says customer data must stay in Indonesia, the edge of that geography is the line you must not cross."
+    },
+    {
+      "title": "A region: Indonesia Central",
+      "text": "A region is a set of datacenters in one metropolitan area, joined by a fast, low-latency network. Indonesia Central in Jakarta opened on May 27, 2025. It has three availability zones but no paired region, as its label now shows. Singapore's Southeast Asia region is close by and also has three zones. You choose a region every time you create most resources.",
+      "set": {
+        "t-jkt": "Indonesia Central · 3 zones · no pair"
+      }
+    },
+    {
+      "title": "Inside the region: three zones",
+      "text": "Open the region and you find its availability zones. Each zone is a separate group of datacenters with its own power, cooling and networking. Zones sit kilometres apart, so a fire or flood in one should not reach the others, yet they are close enough for round trips of about two milliseconds. Every region that offers zones has at least three of them."
+    },
+    {
+      "title": "Zones are made of datacenters",
+      "text": "Look closer: each zone holds one or more datacenters, real buildings full of servers and switches. Here zone 2 has a single building, while zones 1 and 3 have two. The zone numbers you see are logical labels for your subscription, so your zone 1 may be a different building from a colleague's zone 1 in another subscription."
+    },
+    {
+      "title": "Zonal and zone-redundant resources",
+      "text": "Now place the shop's resources. vm-web-1 is zonal: you pinned it to zone 1, so it lives in exactly one zone. The Standard public IP is zone-redundant, so Azure spreads it across all three zones. The storage account uses zone-redundant storage, ZRS, which keeps a synchronous copy of every write in each zone."
+    },
+    {
+      "title": "A normal day: traffic and copies",
+      "text": "On a normal day, shoppers reach the public IP, the request lands on vm-web-1, and new product images are written to storage. Each write is copied to all three zones before Azure confirms it, so no zone holds the only copy. Everything looks healthy, but notice that a single zone is doing all of the compute work."
+    },
+    {
+      "title": "Zone 1 goes dark",
+      "text": "Now zone 1 loses power. The zone-redundant public IP keeps answering, and the storage account keeps serving data from the copies in zones 2 and 3. But vm-web-1 was zonal and lived only in zone 1, so it is down, and with it the whole shop. The zone-redundant pieces survived; the single zonal piece did not.",
+      "set": {
+        "t-vm1": "down ✗"
+      }
+    },
+    {
+      "title": "Fix: spread compute across zones",
+      "text": "The fix is to stop depending on one zone. Run a second web server, vm-web-2, in zone 2, and put a Standard load balancer with a zone-redundant frontend in front of both. When zone 1 fails, traffic simply flows to zone 2. Two zonal VMs in different zones make the web tier zone-resilient. You will build exactly this in Lunch 09.",
+      "set": {
+        "t-pip": "load balancer · zone-redundant frontend"
+      }
+    },
+    {
+      "title": "Region pairs: Singapore and Hong Kong",
+      "text": "Zones don't help if a whole region is lost, so zoom back out. Microsoft pairs some regions: Southeast Asia is paired with East Asia. A pair gets planned updates one region at a time, priority for recovery in a wide outage, and stays in one geography. A few services, such as geo-redundant storage, can copy data to the pair. Your own apps are never copied automatically."
+    },
+    {
+      "title": "No pair? You choose",
+      "text": "Indonesia Central has no pair, like many newer regions. You still have options. Keep everything in Indonesia: spread across three zones and keep backups in the region. Or pick your own second region, for example Southeast Asia, about 17 milliseconds away in Microsoft's July 2026 measurements, and build the replication yourself, as long as your data rules allow data to leave Indonesia."
+    },
+    {
+      "title": "Recap: choose on purpose",
+      "text": "Recap: geographies set data residency, regions set location and services, zones protect against a building-level failure, and a pair or a second region of your choice protects against losing a region. Pin zonal resources on purpose, prefer zone-redundant options for shared building blocks, and never assume that a region pair copies your data for you.",
+      "tip": "In Lab 03 you list regions, pairs and your zone mapping with the CLI, create a zonal and a zone-redundant Standard public IP, and compare LRS with ZRS storage."
+    }
+  ],
+  "svg": [
+    "Azure global infrastructure (simplified, not to scale)",
+    "India",
+    "Australia",
+    "Asia Pacific geography",
+    "Indonesia geography",
+    "East Asia (Hong Kong)",
+    "Southeast Asia (Singapore)",
+    "Indonesia Central (Jakarta)",
+    "Today: one server",
+    "next to the pantry",
+    "single point of failure",
+    "Region pair",
+    "Region pair gives you",
+    "Staggered updates",
+    "Recovery priority",
+    "Same geography",
+    "NOT: copies of your data",
+    "NOT: automatic failover",
+    "No pair",
+    "Your DR choice",
+    "No pair? Your choices",
+    "A: 3 zones + backups,",
+    "all inside Indonesia",
+    "B: your own 2nd region;",
+    "you build the copies",
+    "and check data rules",
+    "Indonesia Central · Jakarta",
+    "Zone 1",
+    "Zone 2",
+    "Zone 3",
+    "DC",
+    "Shoppers",
+    "pip-shop · zone-redundant (1, 2, 3)",
+    "vm-web-1",
+    "zone 1 only",
+    "vm-web-2",
+    "zone 2 only",
+    "ZRS copy",
+    "Every zone has its own",
+    "power, cooling and",
+    "network, km apart"
+  ]
+}

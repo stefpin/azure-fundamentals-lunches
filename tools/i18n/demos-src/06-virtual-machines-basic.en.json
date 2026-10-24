@@ -1,0 +1,129 @@
+{
+  "page": {
+    "doc_title": "Lunch 06 · Virtual Machines (Basic) — Interactive demo",
+    "kicker": "Lunch 06 · Virtual Machines (Basic) · Interactive demo",
+    "title": "What really gets created when you create a VM",
+    "lede": "Follow one <code>az vm create</code> as it becomes six Azure resources, watch SSH get in while HTTP is blocked, and see which meter stops when the VM is switched off. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "What Azure creates for one virtual machine, and how traffic and billing behave",
+    "svgDesc": "Cloud Shell sends az vm create to Azure Resource Manager. In a resource group, a virtual network with a subnet, a Standard public IP, a network security group, a network interface, the VM vm-web-1, an OS disk and later a data disk appear. SSH from Cloud Shell passes the NSG, HTTP from a shopper is blocked until port 80 is opened, the VM downloads updates through its public IP, and compute and disk meters show what is billed when the VM is stopped or deallocated."
+  },
+  "steps": [
+    {
+      "title": "The storefront leaves the pantry",
+      "text": "Nusantara Retail's online store still runs on one physical server next to the pantry. Dewi opens Azure Cloud Shell and types a single command, az vm create. Watch what that one command really builds, how traffic reaches the new VM, and which meters keep running when the VM is switched off."
+    },
+    {
+      "title": "One request reaches Resource Manager",
+      "text": "The command becomes one request to Azure Resource Manager, the front door for every create, update and delete. Resource Manager checks who Dewi is, what she may do and which policies apply. Then it hands the work to resource providers: Microsoft.Network for the networking pieces and Microsoft.Compute for the VM and its disk."
+    },
+    {
+      "title": "First, a private network",
+      "text": "Microsoft.Network creates the virtual network vnet-nusa-web, 10.20.0.0/16, with the subnet snet-web, 10.20.1.0/24. Dewi chose the range on purpose, so it can never collide with head office's 10.0.0.0/16. Subnets in new virtual networks are private by default: nothing inside them gets an automatic route to the internet."
+    },
+    {
+      "title": "A front door and a guard",
+      "text": "Next come a Standard public IP address — static, and closed to inbound traffic until a rule allows it — and the network security group nsg-web. Because this is a Linux VM, the CLI adds one inbound rule: allow SSH on port 22 from anywhere. Default rules deny everything else from the internet."
+    },
+    {
+      "title": "NIC, VM and OS disk",
+      "text": "A network interface joins the subnet with the private address 10.20.1.4. Microsoft.Compute then places vm-web-1 on a physical host: size Standard_B2ats_v2, image Ubuntu 24.04 LTS, Trusted Launch switched on. Its OS disk is a separate managed disk created from the image. One command, six separate resources — each with its own resource ID."
+    },
+    {
+      "title": "The meters start ticking",
+      "text": "While the VM runs, two meters tick. The compute meter charges for the vCPUs and memory the VM holds on its host. The disk meter charges for the provisioned size of every managed disk, whether it is full or empty. The public IP adds a small charge of its own."
+    },
+    {
+      "title": "SSH gets through",
+      "text": "Dewi connects from Cloud Shell with SSH. The packet reaches the public IP, the NSG finds its allow rule for port 22, and the NIC hands it to the VM. Her private key never leaves Cloud Shell; the VM holds only the public half, so there is no password for bots to guess."
+    },
+    {
+      "title": "Explicit outbound for updates",
+      "text": "Inside the VM, Dewi installs nginx with apt. The download leaves through the VM's own Standard public IP to the Ubuntu package mirror. A public IP on the VM is an explicit outbound method, so it works even in a private subnet. Without it she would need a NAT gateway or load balancer outbound rules."
+    },
+    {
+      "title": "HTTP is blocked",
+      "text": "nginx is running, so a shopper opens the site. The request reaches the public IP, but the NSG has no rule for port 80. The default DenyAllInBound rule drops it, and the browser spins until it times out. nginx never even sees the request — the problem lies in front of the VM.",
+      "set": {
+        "t-rule80": "HTTP 80 · denied ✗"
+      }
+    },
+    {
+      "title": "Open port 80",
+      "text": "Dewi runs az vm open-port with port 80. A new allow rule with priority 900 joins the NSG. Rules are checked from the lowest number up, so HTTP now matches the new rule long before the default deny. The shopper's request flows all the way to nginx, and the page appears.",
+      "set": {
+        "t-rule80": "HTTP 80 · allow (900)"
+      }
+    },
+    {
+      "title": "A data disk for product images",
+      "text": "Product images get their own 8 GiB Standard SSD, attached at LUN 0. Azure attaches the disk, but Linux sees only an empty device, so Dewi uses Run Command to partition, format and mount it at /datadrive with an fstab entry. B2ats_v2 has no temporary disk, and nothing important should ever live on one."
+    },
+    {
+      "title": "Stopped is not deallocated",
+      "text": "At 18:00 Dewi runs az vm stop. Ubuntu shuts down, but the VM keeps its place on the host — the state reads Stopped (allocated) — so the compute meter keeps running. A shutdown from inside the operating system does exactly the same. This is the surprise that finance finds on the bill.",
+      "set": {
+        "t-vm-state": "stopped (allocated)",
+        "t-compute": "still billed"
+      }
+    },
+    {
+      "title": "Deallocate stops the compute meter",
+      "text": "Now she runs az vm deallocate. Azure releases the host capacity, the state becomes Deallocated and the compute meter stops. The disk meter keeps running because the disks still exist, and the static public IP keeps its address and its small charge. The portal's Stop button and auto-shutdown deallocate too.",
+      "set": {
+        "t-vm-state": "deallocated",
+        "t-compute": "stopped · not billed",
+        "t-disk": "still billed"
+      }
+    },
+    {
+      "title": "Recap: rent it properly",
+      "text": "One command built six resources and a second added the data disk. The NSG decided what got in, the public IP gave explicit outbound access, and only deallocation stopped the compute bill. Next, build it yourself in Lab 06 — then break the port-80 rule on purpose and fix it.",
+      "tip": "Lab 06 · Your first web server VM (about 45 minutes in Cloud Shell): create the VM, publish the Nusantara Retail page, open port 80, mount a data disk, resize, schedule auto-shutdown and compare stopped with deallocated.",
+      "set": {
+        "t-vm-state": "running",
+        "t-compute": "running · billed",
+        "t-disk": "billed"
+      }
+    }
+  ],
+  "svg": [
+    "Azure region · Southeast Asia",
+    "Resource group rg-lunch06-…",
+    "vnet-nusa-web · 10.20.0.0/16",
+    "snet-web · 10.20.1.0/24",
+    "Cloud Shell",
+    "Dewi · az vm create",
+    "Ubuntu mirror",
+    "package downloads",
+    "Explicit outbound",
+    "via the VM's public IP",
+    "Shopper",
+    "web browser",
+    "Azure Resource Manager",
+    "checks access, then calls providers",
+    "Public IP",
+    "pip-web-1",
+    "Standard · static",
+    "NSG nsg-web",
+    "SSH 22 · allow",
+    "HTTP 80 · no rule",
+    "allow HTTP · 900",
+    "NIC",
+    "vm-web-1",
+    "Standard_B2ats_v2",
+    "Ubuntu 24.04 LTS",
+    "running",
+    "Compute meter",
+    "running · billed",
+    "while allocated",
+    "Disk meter",
+    "billed",
+    "per GiB provisioned",
+    "OS disk",
+    "osdisk-web-1",
+    "Standard SSD",
+    "Data disk",
+    "8 GiB · LUN 0",
+    "/datadrive"
+  ]
+}

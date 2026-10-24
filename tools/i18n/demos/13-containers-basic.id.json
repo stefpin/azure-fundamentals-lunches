@@ -1,0 +1,133 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 13 · Containers (Dasar) — Demo interaktif",
+    "kicker": "Makan Siang 13 · Containers (Dasar) · Demo interaktif",
+    "title": "Build sekali, jalankan di mana saja, menyusut hingga nol",
+    "lede": "Ikuti perjalanan image toko online Nusantara Retail dari laptop Dewi ke registry privat, Container Instances, dan Container Apps. Saksikan replica bergerak 0 → 1 → 5 → 0 dan sebuah revision baru mengambil 20% trafik. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Sebuah container image berpindah dari laptop ke Azure Container Registry, lalu berjalan di Container Instances dan Container Apps",
+    "svgDesc": "Di sebelah kiri, laptop Dewi membangun image berlapis, meteran compute menunjukkan apa yang sedang ditagih, dan para pembeli mengirim request. Di region Azure, sebuah container registry menyimpan image, Container Instances menjalankan satu container group, dan environment Container Apps berisi ingress serta dua revision yang jumlah replica-nya naik turun antara nol dan lima."
+  },
+  "steps": [
+    {
+      "title": "Cuma jalan di laptop saya",
+      "text": "Halaman toko online baru buatan Dewi berjalan mulus di laptopnya, tetapi crash di server uji yang runtime-nya lebih lama. Ibu Sari punya kekhawatiran kedua: promo 12.12 butuh kapasitas sepuluh kali lipat selama beberapa jam, padahal pukul 3 pagi hampir tidak ada yang berbelanja. Container menjawab keduanya: satu kemasan yang berjalan sama di mana pun, dan layanan yang membesar serta mengecil mengikuti jumlah pembeli."
+    },
+    {
+      "title": "Build image dari Dockerfile",
+      "text": "Dewi menulis Dockerfile: mulai dari base image, tambahkan dependensi, salin kodenya, lalu tentukan perintah start. Build menghasilkan image yang tersusun dari layer read-only, dengan kodenya sebagai layer teratas yang tipis. Semua yang dibutuhkan aplikasi kini ada dalam satu kemasan bertag storefront:v1, jadi runtime lama di server uji tidak lagi jadi masalah."
+    },
+    {
+      "title": "Push ke registry privat",
+      "text": "Image dikirim ke Azure Container Registry, registry privat Nusantara Retail yang berada di region yang sama dengan aplikasinya. Tag seperti v1 adalah label yang bisa dipindah; digest mengenali isi yang persis. Layanan yang menarik image dari registry melakukan sign-in dengan managed identity yang memegang role AcrPull, jadi tidak ada kata sandi yang bisa bocor.",
+      "set": {
+        "t-acr-tag": "storefront:v1"
+      }
+    },
+    {
+      "title": "Jalankan sekarang dengan Container Instances",
+      "text": "Container Instances menarik image dan menyalakan sebuah container group dalam hitungan detik: tanpa VM dan tanpa cluster yang perlu diurus. Ia menjawab di sebuah nama DNS dan ditagih per detik untuk CPU dan memori yang dipakainya. Cocok untuk impor harga malam hari atau uji cepat, tetapi ia tidak bisa scale out atau membagi beban dengan sendirinya.",
+      "set": {
+        "t-meter": "ACI: ditagih per detik",
+        "t-aci": "berjalan · tagihan per detik"
+      }
+    },
+    {
+      "title": "Container Apps: environment, revision, dan ingress",
+      "text": "Untuk toko online itu sendiri, Nusantara Retail memilih Container Apps. Environment adalah batas amannya. Ingress menerbitkan alamat HTTPS publik dan meneruskan request ke target port 80. Revision v1 adalah snapshot image, pengaturan, dan scale rule yang tidak bisa diubah. Dengan minimum nol dan tanpa pembeli di malam hari, tidak ada yang berjalan, dan tidak ada biaya compute.",
+      "set": {
+        "t-meter": "aplikasi: 0 replica, Rp0",
+        "t-rev1": "Revision v1 · 100%"
+      }
+    },
+    {
+      "title": "Pembeli pertama: dari nol ke satu",
+      "text": "Pukul 07.00 pembeli pertama datang. Ingress menahan request-nya sementara platform menyalakan sebuah replica dari image: cold start selama beberapa detik. Setelah itu, request berjalan cepat. Jika detik-detik di jam buka itu membuat penjualan hilang, production mengatur minimum satu replica dan menerima biaya idle yang kecil sebagai gantinya.",
+      "set": {
+        "t-shop": "07.00 · pembeli pertama",
+        "t-rep1": "replica: 1 (min 0 · maks 5)",
+        "t-meter": "1 replica: per detik"
+      }
+    },
+    {
+      "title": "Trafik promo: scale out ke lima",
+      "text": "Promo 12.12 dimulai. HTTP scale rule menargetkan 10 request bersamaan per replica, jadi 45 request bersamaan meminta ceil(45 ÷ 10) = 5 replica. KEDA menambah replica dalam hitungan detik, dan batas maksimum lima juga mengunci tagihan jika kerumunan terus bertambah. Pembeli tidak pernah melihat proses penskalaan; mereka hanya merasakan toko yang cepat.",
+      "set": {
+        "t-shop": "promo 12.12: 45 sekaligus",
+        "t-rep1": "replica: 5 (maksimum tercapai)",
+        "t-meter": "5 replica: per detik"
+      }
+    },
+    {
+      "title": "Sepi lagi: kembali ke nol",
+      "text": "Promo berakhir dan request mereda. Platform menunggu masa tenang, secara default 300 detik sebelum replica terakhir dihapus, lalu menyusutkan revision kembali ke nol. Image tetap aman di registry dan meteran compute berhenti. Kemampuan menyusut hingga nol inilah yang membuat lab, juga environment uji yang sepi, hampir tidak memakan biaya.",
+      "set": {
+        "t-shop": "malam yang sepi lagi",
+        "t-rep1": "replica: 0 (min 0 · maks 5)",
+        "t-meter": "aplikasi: 0 replica, Rp0"
+      }
+    },
+    {
+      "title": "Kirim v2 dengan trafik nol",
+      "text": "Dewi mengubah sebuah environment variable, yang membuat revision v2. Sebelumnya ia sudah mengalihkan aplikasi ke multiple revision mode dan mengunci 100% trafik ke v1; kalau tidak, revision terbaru akan langsung mengambil semua pembeli. Kini v2 aktif tetapi belum menerima pembeli, dan Dewi mengujinya di alamat revision-nya sendiri.",
+      "set": {
+        "t-rev2": "Revision v2 · 0% (diuji)",
+        "t-shop": "hari biasa: trafik stabil",
+        "t-rep1": "replica: 2",
+        "t-meter": "2 replica: per detik"
+      }
+    },
+    {
+      "title": "Canary release: pembagian 80/20",
+      "text": "Ingress kini mengirim kira-kira empat dari lima request ke v1 dan satu dari lima ke v2, dan setiap revision diskalakan berdasarkan porsi trafiknya sendiri. Jika tingkat error v2 naik, Dewi mengembalikan bobotnya ke 0% dalam hitungan detik. Jika v2 terlihat sehat, ia menaikkannya ke 100% dan kemudian menonaktifkan v1.",
+      "set": {
+        "t-rev1": "Revision v1 · 80%",
+        "t-rev2": "Revision v2 · 20%",
+        "t-rep1": "replica: 4",
+        "t-rep2": "replica: 1",
+        "t-meter": "5 replica: per detik"
+      }
+    },
+    {
+      "title": "Salah konfigurasi: target port keliru",
+      "text": "Rizky mengubah target port ingress menjadi 8080, padahal web server di dalam container mendengarkan di port 80. Ingress kini meneruskan request ke port yang tidak menjawab, sehingga setiap request gagal. Kedua revision rusak sekaligus, karena ingress adalah pengaturan tingkat aplikasi, bukan bagian dari sebuah revision.",
+      "set": {
+        "t-ingress": "target port 8080 ✗"
+      }
+    },
+    {
+      "title": "Beres, dan giliran Anda di lab",
+      "text": "Mengembalikan target port ke 80 langsung memulihkan trafik ke kedua revision; tidak perlu revision baru. Rangkumannya: build image sekali, simpan di registry privat, tarik dengan managed identity, dan pilih layanan sesuai banyaknya platform yang Anda inginkan, dari Container Instances untuk eksekusi tunggal hingga Container Apps untuk aplikasi yang perlu diskalakan.",
+      "tip": "Di Lab 13 Anda mengerjakan semuanya sendiri: mengimpor storefront:v1 ke registry Anda, menjalankannya di Container Instances, menskalakan container app dari 0 ke 5 dan kembali, membagi trafik 80/20, serta memperbaiki target port yang rusak.",
+      "set": {
+        "t-ingress": "target port 80 ✓"
+      }
+    }
+  ],
+  "svg": {
+    "Azure region · Southeast Asia": "Region Azure · Southeast Asia",
+    "Container Apps environment · cae-nusa": "Environment Container Apps · cae-nusa",
+    "Dewi's laptop": "Laptop Dewi",
+    "Dockerfile + storefront code": "Dockerfile + kode storefront",
+    "layer 3 · your code": "layer 3 · kode Anda",
+    "layer 2 · dependencies": "layer 2 · dependensi",
+    "Compute meter": "Meteran compute",
+    "nothing running": "tidak ada yang berjalan",
+    "Shoppers": "Pembeli",
+    "quiet night: nobody shopping": "malam sepi: tak ada pembeli",
+    "acrnusa… · private": "acrnusa… · privat",
+    "no images yet": "belum ada image",
+    "one container group": "satu container group",
+    "starts in seconds": "menyala dalam hitungan detik",
+    "In the lab: az acr import": "Di lab: az acr import",
+    "copies a public image into": "menyalin image publik ke",
+    "your registry. No Docker.": "registry Anda. Tanpa Docker.",
+    "Cold start: the first request": "Cold start: request pertama",
+    "waits while a replica starts.": "menunggu replica menyala.",
+    "Min 1 replica avoids it.": "Min 1 replica mencegahnya.",
+    "Ingress forwards to 8080,": "Ingress meneruskan ke 8080,",
+    "the app listens on 80.": "aplikasi mendengarkan di 80.",
+    "Nothing answers: requests fail.": "Tak ada jawaban: request gagal.",
+    "replicas: 0 (min 0 · max 5)": "replica: 0 (min 0 · maks 5)",
+    "Ingress (Envoy) · public HTTPS": "Ingress (Envoy) · HTTPS publik"
+  }
+}

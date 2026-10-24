@@ -1,8 +1,11 @@
 # Lab 23 · Ready for the 12.12 sale
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 23 · Virtual Machines (Advanced)](../../lunches/23-virtual-machines-advanced/README.md)
 > **Time:** about 60 minutes · **Cost:** 💲💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by `setup.sh`.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 
@@ -461,8 +464,8 @@ method Microsoft recommends, and it scales to many instances without running out
 bash verify.sh
 ```
 
-Every check should say **PASS**. If one fails, the message tells you which task to revisit. If you used the 2-vCPU
-small-quota settings, make sure `AS_MIN` and `AS_MAX` are still exported in your shell (`echo $AS_MIN $AS_MAX`) so the script
+Every check should say **PASS**. If one fails, the message tells you which task to revisit. If you used the small-quota
+settings (at most 4 vCPUs), make sure `AS_MIN` and `AS_MAX` are still exported in your shell (`echo $AS_MIN $AS_MAX`) so the script
 expects your limits.
 
 ## 🧹 Clean up (do not skip!)

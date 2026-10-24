@@ -1,5 +1,7 @@
 # Lunch 03 · Walkthrough video script (≤ 6 minutes)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](demo-video-script.id.md)
+
 > **Purpose:** show the real Azure experience for this lunch — the part an animation cannot show: finding regions and
 > their pairs, checking whether a service is offered in a region, and the zone choices you meet when you create resources.
 > **Length target:** 4–6 minutes (short videos keep attention; split anything longer).

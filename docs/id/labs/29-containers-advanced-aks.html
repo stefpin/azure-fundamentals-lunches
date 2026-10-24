@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 29 · Kubernetes untuk tim microservices · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 29: Kubernetes untuk tim microservices. sekitar 60 menit, biaya 💲💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/29-containers-advanced-aks.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/29-containers-advanced-aks.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/29-containers-advanced-aks.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/29-containers-advanced-aks.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 29 · Kubernetes untuk tim microservices">
+<meta property="og:description" content="Lab Azure praktik 29: Kubernetes untuk tim microservices. sekitar 60 menit, biaya 💲💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/29-containers-advanced-aks.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="29" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/29-containers-advanced-aks.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 29</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>29</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Kubernetes untuk tim microservices</h1>
+        <p class="lab-story">🏪 <b>Episode 29 · Pokoknya Harus Kubernetes Asli</b> — Empat layanan, Helm chart dari vendor, dan direktur yang tidak mau merekrut tim khusus untuk mengasuh server. <a href="../lunches/29-containers-advanced-aks.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 60 menit</span>
+          <span class="chip cost">💲💲💲 biaya yang terasa selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★★</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 7 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--membuat-cluster-aks-kecil">Tugas 1 · Membuat cluster AKS kecil</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--men-deploy-storefront-dari-manifest">Tugas 2 · Men-deploy storefront dari manifest</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--saksikan-kubernetes-memulihkan-dirinya-lalu-scale-secara-manual">Tugas 3 · Saksikan Kubernetes memulihkan dirinya, lalu scale secara manual</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--meluncurkan-v2-tanpa-kehilangan-satu-request-pun-lalu-rollback">Tugas 4 · Meluncurkan v2 tanpa kehilangan satu request pun, lalu rollback</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--autoscale-pod-dengan-hpa">Tugas 5 · Autoscale pod dengan HPA</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/deployment.yaml" target="_blank" rel="noopener"><span>k8s/deployment.yaml</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/gateway.yaml" target="_blank" rel="noopener"><span>k8s/gateway.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/hpa.yaml" target="_blank" rel="noopener"><span>k8s/hpa.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/load-generator.yaml" target="_blank" rel="noopener"><span>k8s/load-generator.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/namespace.yaml" target="_blank" rel="noopener"><span>k8s/namespace.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/pdb.yaml" target="_blank" rel="noopener"><span>k8s/pdb.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/service.yaml" target="_blank" rel="noopener"><span>k8s/service.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>6 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/29-containers-advanced-aks" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Tim Dewi membutuhkan cluster Kubernetes untuk microservices-nya, dan Ibu Sari membutuhkan bukti bahwa cluster itu bisa
+memulihkan dirinya sendiri, ikut membesar saat promo 12.12, dan diperbarui tanpa menutup toko. Anda akan membuat
+cluster <strong>AKS</strong> kecil (tier Free, Azure CNI Overlay, satu node) yang rentang alamatnya menjauhi 10.0.0.0/16 milik
+kantor pusat, lalu melihat isi kedua resource group-nya. Setelah itu Anda men-deploy storefront dari manifest (file
+YAML yang menjelaskan kondisi yang diinginkan) di <a href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/29-containers-advanced-aks/k8s" target="_blank" rel="noopener"><code>k8s/</code></a>: tiga replica dengan probe dan resource request di
+belakang service LoadBalancer publik. Anda akan menghapus pod dan melihatnya kembali, meluncurkan v2 tanpa satu pun
+request yang gagal, menambahkan Horizontal Pod Autoscaler lalu membebaninya sampai pod baru muncul, dan mendiagnosis
+tag image yang rusak.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch29-&amp;lt;suffix&amp;gt; (milik Anda)&quot;]
+    AKS[&quot;aks-nusa&lt;br/&gt;tier Free · Azure CNI Overlay&quot;]
+  end
+  subgraph mc[&quot;MC_rg-lunch29-&amp;lt;suffix&amp;gt;_aks-nusa_&amp;lt;region&amp;gt; (milik AKS)&quot;]
+    VMSS[&quot;System node pool&lt;br/&gt;1 × Standard_D2s_v5&quot;]
+    LB[&quot;Standard Load Balancer&lt;br/&gt;+ IP publik&quot;]
+  end
+  subgraph ns[&quot;Namespace Kubernetes nusa&quot;]
+    DEP[&quot;Deployment storefront&lt;br/&gt;3 replica · probe · request&quot;]
+    SVC[&quot;Service storefront&lt;br/&gt;tipe LoadBalancer&quot;]
+    HPA[&quot;HPA: 3–10 pod pada CPU 50%&quot;]
+  end
+  AKS --&gt; VMSS
+  DEP --&gt; VMSS
+  HPA --&gt; DEP
+  SVC --&gt; DEP
+  SVC --&gt; LB
+  SHOP[&quot;Pembeli&quot;] --&gt;|HTTP| LB
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Aplikasinya adalah web server contoh kecil dari Microsoft yang mendengarkan di <strong>port 80</strong> dan menampilkan environment
+variable <code>TITLE</code> sebagai judul halamannya, sehingga Anda bisa langsung melihat versi mana yang menjawab.</p>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>), dengan
+kuota regional minimal <strong>2 vCPU kosong</strong> (4 jika Anda ingin mengerjakan tantangan tambahan).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. <code>kubectl</code> sudah terpasang di sana.</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/29-containers-advanced-aks
+source ../common/config.sh
+RG=$(rg_name 29)
+AKS=aks-nusa
+AKS_NODE_SIZE=${AKS_NODE_SIZE:-Standard_D2s_v5}
+</code></pre></div>
+<ul>
+<li>Pastikan ukuran node tersedia untuk Anda dan kuotanya cukup. Ukuran ini butuh 2 vCPU; subscription gratis dan trial
+sering kali hanya punya total 4 vCPU per region:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm list-skus --location &quot;$LOCATION&quot; --size &quot;$AKS_NODE_SIZE&quot; --resource-type virtualMachines \
+  --query &quot;[].{size:name, zones:join(&#x27;,&#x27;, locationInfo[0].zones || \`[]\`), restricted:length(restrictions)}&quot; --output table
+
+az vm list-usage --location &quot;$LOCATION&quot; \
+  --query &quot;[?contains(localName, &#x27;Total Regional&#x27;) || contains(localName, &#x27;DSv5&#x27;)].{quota:localName, used:currentValue, limit:limit}&quot; \
+  --output table
+
+az provider register --namespace Microsoft.ContainerService --wait
+</code></pre></div>
+<p>Jika <code>restricted</code> bukan <code>0</code>, atau keluarga DSv5 tidak punya kuota kosong, pilih ukuran non-burstable lain dengan 2 vCPU,
+misalnya <code>AKS_NODE_SIZE=Standard_D2as_v5</code> atau <code>Standard_D2s_v4</code>, lalu periksa lagi. Ukuran seri B tidak diizinkan untuk
+system node pool.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Ini lab 💲💲💲: VM node, disknya, load balancer, dan alamat IP publik menimbulkan biaya setiap jam selama cluster masih
+ada. Kerjakan lab ini dalam sekali duduk dan jalankan bagian <strong>Bersihkan</strong> segera setelah selesai, bahkan jika Anda
+berhenti di tengah jalan.
+Jika Cloud Shell timeout, buka lagi, <code>cd</code> kembali ke folder ini, dan jalankan ulang baris <code>source</code> dan baris variabel
+di atas (ditambah <code>IP=</code> dan <code>NODE_RG=</code> dari tugas-tugas).</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–5 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--membuat-cluster-aks-kecil" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Membuat cluster AKS kecil</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--membuat-cluster-aks-kecil" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Pembuatan cluster butuh <strong>5 sampai 10 menit</strong>. Jalankan sekarang, lalu baca tabel flag sambil menunggu.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ensure_rg &quot;$RG&quot; 29
+
+az aks create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$AKS&quot; \
+  --location &quot;$LOCATION&quot; \
+  --tier free \
+  --node-count 1 \
+  --node-vm-size &quot;$AKS_NODE_SIZE&quot; \
+  --zones 1 2 3 \
+  --network-plugin azure \
+  --network-plugin-mode overlay \
+  --pod-cidr 192.168.0.0/16 \
+  --service-cidr 172.16.0.0/16 \
+  --dns-service-ip 172.16.0.10 \
+  --generate-ssh-keys \
+  --output none
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Alasannya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--tier free</code></td>
+<td>Manajemen cluster tidak dikenai biaya dan tidak ada SLA uptime: pas untuk lab. Produksi memakai Standard atau Premium.</td>
+</tr>
+<tr>
+<td><code>--node-count 1 --node-vm-size …</code></td>
+<td>Satu node system pool dengan 2 vCPU, ukuran praktis yang terkecil. System pool di produksi punya minimal tiga node.</td>
+</tr>
+<tr>
+<td><code>--zones 1 2 3</code></td>
+<td>Node pool boleh menempatkan node di ketiga zona. Dengan satu node, Anda hanya memakai satu zona, tetapi tantangan tambahan menambahkan node kedua.</td>
+</tr>
+<tr>
+<td><code>--network-plugin azure --network-plugin-mode overlay</code></td>
+<td>Azure CNI Overlay: pod mendapat alamat dari rentang pod privat, bukan dari virtual network Anda. Jika Anda menulis <code>--network-plugin azure</code> tanpa mode, AKS memakai mode node-subnet yang lebih lama, jadi nyatakan secara eksplisit.</td>
+</tr>
+<tr>
+<td><code>--pod-cidr 192.168.0.0/16</code></td>
+<td>Rentang alamat pod. Rentang ini tidak boleh tumpang tindih dengan jaringan mana pun yang kelak akan diajak bicara oleh cluster.</td>
+</tr>
+<tr>
+<td><code>--service-cidr 172.16.0.0/16 --dns-service-ip 172.16.0.10</code></td>
+<td>Rentang service default adalah 10.0.0.0/16, persis jaringan kantor pusat Pak Budi, jadi kita memindahkannya.</td>
+</tr>
+<tr>
+<td><code>--generate-ssh-keys</code></td>
+<td>Memakai SSH key Anda di <code>~/.ssh</code>, atau membuatnya jika Anda belum punya.</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sambil menunggu, buka file-file di <a href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/29-containers-advanced-aks/k8s" target="_blank" rel="noopener"><code>k8s/</code></a> (di Cloud Shell: <code>code k8s/deployment.yaml</code>) dan temukan jumlah
+replica, pengaturan rolling update, probe, serta resource request dan limit.</p>
+<p>Setelah perintahnya selesai, lihat apa yang sudah Anda buat dan hubungkan <code>kubectl</code> ke cluster:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az aks show --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; \
+  --query &quot;{state:provisioningState, version:currentKubernetesVersion, tier:sku.tier, plugin:networkProfile.networkPlugin, mode:networkProfile.networkPluginMode, podCidr:networkProfile.podCidr, serviceCidr:networkProfile.serviceCidr}&quot; \
+  --output table
+
+NODE_RG=$(az aks show --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --query nodeResourceGroup --output tsv)
+echo &quot;Node resource group: $NODE_RG&quot;
+az resource list --resource-group &quot;$NODE_RG&quot; --query &quot;[].{name:name, type:type}&quot; --output table
+
+az aks get-credentials --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --overwrite-existing
+kubectl get nodes -o wide
+kubectl get nodes -L topology.kubernetes.io/zone,node.kubernetes.io/instance-type
+kubectl get pods --namespace kube-system
+</code></pre></div>
+<p>Resource group Anda hanya berisi resource cluster. Node resource group, yang dibuat dan dimiliki AKS, berisi
+infrastruktur yang sebenarnya: virtual machine scale set untuk node pool, virtual network, network security group,
+load balancer dengan IP publik untuk outbound, dan sebuah managed identity. Lihat saja, jangan ubah apa pun di dalamnya.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Kubernetes services › aks-nusa</em> menampilkan pengaturan yang sama di <strong>Overview</strong> dan
+<strong>Settings › Networking</strong>, dan <strong>Kubernetes resources › Workloads</strong> menampilkan pod sistem tanpa <code>kubectl</code> sama
+sekali. Halaman <strong>Properties</strong> menautkan ke infrastructure (node) resource group.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> state-nya <code>Succeeded</code>, tier <code>Free</code>, plugin <code>azure</code> dalam mode <code>overlay</code>, rentang service
+<code>172.16.0.0/16</code>, dan <code>kubectl get nodes</code> menampilkan satu node berstatus <code>Ready</code> dengan label zona.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--men-deploy-storefront-dari-manifest" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Men-deploy storefront dari manifest</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--men-deploy-storefront-dari-manifest" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Manifest menjelaskan <strong>desired state</strong> (kondisi yang diinginkan); <code>kubectl apply</code> menyerahkannya ke API server, dan
+para controller mewujudkannya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml -f k8s/pdb.yaml
+kubectl rollout status deployment/storefront --namespace nusa
+kubectl get deployment,pods,service,pdb --namespace nusa -o wide
+</code></pre></div>
+<p>Service meminta alamat IP publik kepada Azure, dan itu butuh satu atau dua menit. Pantau, lalu tekan <strong>Ctrl+C</strong> ketika
+<code>EXTERNAL-IP</code> menampilkan sebuah alamat, bukan <code>&lt;pending&gt;</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kubectl get service storefront --namespace nusa --watch
+</code></pre></div>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>IP=$(kubectl get service storefront --namespace nusa -o jsonpath=&#x27;{.status.loadBalancer.ingress[0].ip}&#x27;)
+echo &quot;http://${IP}&quot;
+curl -s &quot;http://${IP}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+
+# The same service, seen from the Azure side:
+az network public-ip list --resource-group &quot;$NODE_RG&quot; --query &quot;[].{name:name, ip:ipAddress}&quot; --output table
+</code></pre></div>
+<p>PodDisruptionBudget dari <code>pdb.yaml</code> menjanjikan bahwa gangguan yang disengaja (voluntary disruption), seperti drain
+node saat upgrade, tidak pernah membuat storefront tinggal kurang dari dua pod yang siap.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>READY</code> menampilkan <code>3/3</code>, service punya alamat IP eksternal, <code>curl</code> mencetak
+<code>&lt;title&gt;Nusantara Retail storefront v1&lt;/title&gt;</code>, dan alamat yang sama muncul di node resource group.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--saksikan-kubernetes-memulihkan-dirinya-lalu-scale-secara-manual" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Saksikan Kubernetes memulihkan dirinya, lalu scale secara manual</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--saksikan-kubernetes-memulihkan-dirinya-lalu-scale-secara-manual" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Hapus sebuah pod seolah-olah pod itu crash, lalu saksikan Deployment controller menggantinya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kubectl get pods --namespace nusa
+POD=$(kubectl get pods --namespace nusa -l app=storefront -o jsonpath=&#x27;{.items[0].metadata.name}&#x27;)
+kubectl delete pod &quot;$POD&quot; --namespace nusa --wait=false
+kubectl get pods --namespace nusa --watch        # Ctrl+C after a few seconds
+kubectl get events --namespace nusa --sort-by=.lastTimestamp | tail -n 8
+</code></pre></div>
+<p>Sekarang lakukan scaling secara manual, dengan cara imperatif (Anda memberi perintah langsung, &quot;jadikan lima sekarang&quot;,
+alih-alih menuliskan keinginan di file):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kubectl scale deployment storefront --namespace nusa --replicas=5
+kubectl get pods --namespace nusa -o wide
+kubectl scale deployment storefront --namespace nusa --replicas=3
+</code></pre></div>
+<p><code>kubectl scale</code> mengubah objek yang sedang berjalan, bukan file Anda. <code>kubectl apply -f k8s/deployment.yaml</code> berikutnya
+akan mengembalikan jumlahnya ke 3, jadi perubahan deklaratif di file (atau autoscaler, di Tugas 5) adalah cara yang
+bertahan lama untuk mengubahnya.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> pod yang dihapus digantikan oleh pod bernama baru dalam hitungan detik, event-nya menampilkan
+<code>Killing</code> dan <code>Scheduled</code>/<code>Created</code>/<code>Started</code>, dan deployment naik ke 5 replica lalu kembali ke 3.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--meluncurkan-v2-tanpa-kehilangan-satu-request-pun-lalu-rollback" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Meluncurkan v2 tanpa kehilangan satu request pun, lalu rollback</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--meluncurkan-v2-tanpa-kehilangan-satu-request-pun-lalu-rollback" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Jalankan &quot;pembeli&quot; di latar belakang yang memanggil situs setiap setengah detik selama sekitar 90 detik dan menghitung
+kode status HTTP-nya, lalu ubah pod template:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>( for i in $(seq 1 180); do curl -s -o /dev/null -w &quot;%{http_code}\n&quot; --max-time 5 &quot;http://${IP}/&quot;; sleep 0.5; done | sort | uniq -c ) &amp;
+WATCH_PID=$!
+
+kubectl set env deployment/storefront --namespace nusa TITLE=&quot;Nusantara Retail storefront v2&quot;
+kubectl rollout status deployment/storefront --namespace nusa
+wait &quot;$WATCH_PID&quot;
+
+curl -s &quot;http://${IP}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+kubectl rollout history deployment/storefront --namespace nusa
+</code></pre></div>
+<p>Hitungan si pembeli seharusnya hanya menampilkan <code>200</code>. Dengan <code>maxSurge: 1</code> dan <code>maxUnavailable: 0</code>, Kubernetes
+menyalakan satu pod baru, menunggu readiness probe-nya, membuang satu pod lama, lalu mengulanginya; jumlah pod yang siap
+tidak pernah turun di bawah tiga. Ibaratnya pergantian sif kasir di minimarket: kasir baru duduk dan siap melayani
+lebih dulu, baru kasir lama pulang, sehingga antrean tidak pernah berhenti.</p>
+<p>Sekarang anggap saja v2 punya bug, lalu lakukan rollback ke ReplicaSet sebelumnya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kubectl rollout undo deployment/storefront --namespace nusa
+kubectl rollout status deployment/storefront --namespace nusa
+curl -s &quot;http://${IP}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> hitungannya hanya menampilkan respons <code>200</code>, judul berubah menjadi v2 lalu, setelah undo, kembali
+ke v1, dan <code>kubectl rollout history</code> menampilkan daftar revisinya.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--autoscale-pod-dengan-hpa" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Autoscale pod dengan HPA</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--autoscale-pod-dengan-hpa" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Horizontal Pod Autoscaler mengukur CPU sebagai persentase dari <strong>request</strong> setiap pod (di sini 50m, yaitu 50 millicore
+atau seperdua puluh vCPU). AKS sudah menyertakan metrics-server, jadi Anda bisa melihat angka yang dipakainya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kubectl top pods --namespace nusa
+kubectl apply -f k8s/hpa.yaml
+kubectl get hpa storefront --namespace nusa
+</code></pre></div>
+<p><code>kubectl autoscale deployment storefront --namespace nusa --min=3 --max=10 --cpu=50%</code> membuat objek yang sama secara
+imperatif (versi <code>kubectl</code> yang lebih lama memakai <code>--cpu-percent=50</code>). Versi YAML berfungsi di semua versi dan
+tersimpan di source control.</p>
+<p>Sekarang bangkitkan beban dari dalam cluster dengan pod yang sudah disediakan (berjalan selama lima menit), lalu pantau
+HPA:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kubectl apply -f k8s/load-generator.yaml
+
+for i in $(seq 1 16); do
+  sleep 15
+  kubectl get hpa storefront --namespace nusa --no-headers
+done
+kubectl get pods --namespace nusa -o wide
+</code></pre></div>
+<p><code>TARGETS</code> naik jauh di atas <code>50%</code>, dan <code>REPLICAS</code> naik menuju 10. Jika beberapa pod baru tetap <code>Pending</code>, berarti
+satu-satunya node sudah penuh: tepat pada saat itulah cluster autoscaler akan menambahkan node (tantangan tambahan 3).
+Setelah load generator selesai, HPA menunggu stabilization window lima menitnya, lalu kembali ke 3. Hapus pod yang
+sudah selesai itu:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kubectl delete pod load-generator --namespace nusa --ignore-not-found
+</code></pre></div>
+<details class="plain"><summary>Load generator tidak berhasil? Pakai Cloud Shell saja</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>end=$((SECONDS + 180))
+while (( SECONDS &lt; end )); do
+  seq 1 300 | xargs -P 50 -I{} curl -s -o /dev/null --max-time 5 &quot;http://${IP}/&quot;
+done &amp;
+for i in $(seq 1 12); do sleep 15; kubectl get hpa storefront --namespace nusa --no-headers; done
+wait
+</code></pre></div>
+</details>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>aks-nusa › Kubernetes resources › Workloads</em> menampilkan jumlah pod yang berubah, dan
+<strong>Monitoring › Metrics</strong> bisa membuat grafik CPU node selama beban berjalan.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> selama beban berjalan, <code>kubectl get hpa</code> menampilkan nilai CPU di atas 50% dan lebih dari 3
+replica; beberapa menit setelah beban berhenti, jumlahnya kembali ke 3.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Seorang rekan &quot;meng-upgrade&quot; storefront ke tag yang tidak ada:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kubectl set image deployment/storefront --namespace nusa storefront=mcr.microsoft.com/azuredocs/aks-helloworld:v99
+kubectl rollout status deployment/storefront --namespace nusa --timeout=60s
+kubectl get pods --namespace nusa
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; &quot;http://${IP}/&quot;
+</code></pre></div>
+<p><strong>Gejala:</strong> rollout tidak pernah selesai, dan satu pod baru menampilkan <code>ErrImagePull</code> lalu <code>ImagePullBackOff</code>. Namun
+<code>curl</code> tetap mengembalikan <code>200</code>. Cari tahu mengapa pod itu macet, mengapa toko tetap buka, lalu perbaiki.</p>
+<details class="plain"><summary>Petunjuk</summary>
+<p>Jalankan <code>kubectl describe pod &lt;the-stuck-pod&gt; --namespace nusa</code> dan baca bagian <strong>Events</strong> di bagian bawah: kubelet
+melaporkan bahwa ia gagal menarik <code>mcr.microsoft.com/azuredocs/aks-helloworld:v99</code> karena tag-nya tidak ditemukan. Toko
+tetap buka karena <code>maxUnavailable: 0</code> mempertahankan setiap pod lama sampai ada pod baru yang siap, dan pod yang satu ini
+tidak pernah siap.</p>
+</details>
+<details class="plain"><summary>Perbaikan</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>kubectl rollout undo deployment/storefront --namespace nusa
+# or: kubectl set image deployment/storefront --namespace nusa storefront=mcr.microsoft.com/azuredocs/aks-helloworld:v1
+kubectl rollout status deployment/storefront --namespace nusa
+kubectl get pods --namespace nusa
+</code></pre></div>
+<p>Pesan yang sama muncul ketika sebuah tag sudah dihapus, ketika registry bersifat privat dan cluster tidak punya izin
+pull (<code>az aks update --attach-acr</code> memperbaikinya untuk ACR), atau ketika node tidak bisa menjangkau registry.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu
+Anda ulangi.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Perintah ini menghapus resource group <code>rg-lunch29-&lt;suffix&gt;</code>. Karena cluster di dalamnya ikut terhapus, AKS juga
+menghapus node resource group <code>MC_rg-lunch29-&lt;suffix&gt;_aks-nusa_&lt;region&gt;</code>, beserta VM node, disknya, load balancer, dan
+alamat IP publik, jadi Anda tidak perlu menghapus grup itu sendiri. Script ini juga menghapus cluster dari kubeconfig
+Anda. Penghapusan berjalan di latar belakang dan butuh beberapa menit; jalankan <code>bash cleanup.sh</code> lagi setelah sekitar
+sepuluh menit untuk memastikan tidak ada yang tersisa (script itu juga menghapus node resource group yang tertinggal
+akibat deployment yang gagal).</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Operation could not be completed as it results in exceeding approved ... Cores quota</code></td>
+<td>Kuota vCPU regional atau kuota keluarga VM tidak cukup</td>
+<td>Hapus VM atau cluster lain, pilih ukuran dari keluarga yang masih punya kuota (<code>AKS_NODE_SIZE=...</code>), atau minta tambahan kuota (tidak bisa di Free Trial atau Azure for Students)</td>
+</tr>
+<tr>
+<td>Pembuatan gagal karena ukuran VM tidak tersedia, tidak diizinkan di subscription Anda, atau tidak ditawarkan di suatu zona</td>
+<td>Ukuran itu dibatasi untuk subscription atau region Anda</td>
+<td>Pilih ukuran lain dengan 2 vCPU yang bukan seri B, atau hapus baris <code>--zones 1 2 3</code></td>
+</tr>
+<tr>
+<td>Pembuatan menolak ukuran node untuk system node pool</td>
+<td>Dokumentasi AKS tidak konsisten soal batas minimumnya (satu halaman menyebut 2 vCPU, halaman lain 4)</td>
+<td>Pakai ukuran 4 vCPU seperti <code>Standard_D4s_v5</code> jika kuota Anda memungkinkan; ukuran ini memakai seluruh 4 vCPU kuota trial</td>
+</tr>
+<tr>
+<td><code>ManagedClusterCountExceedsQuotaLimit</code></td>
+<td>Terlalu banyak cluster AKS di region ini untuk subscription Anda</td>
+<td>Hapus cluster yang tidak dipakai (<code>az aks list --output table</code>)</td>
+</tr>
+<tr>
+<td><code>MissingSubscriptionRegistration</code> untuk <code>Microsoft.ContainerService</code></td>
+<td>Resource provider belum terdaftar</td>
+<td><code>az provider register --namespace Microsoft.ContainerService --wait</code></td>
+</tr>
+<tr>
+<td><code>kubectl</code>: <code>Unable to connect to the server</code> atau <code>You must be logged in to the server</code></td>
+<td>Entri kubeconfig sudah lama atau hilang, atau sesi Cloud Shell baru</td>
+<td><code>az aks get-credentials --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --overwrite-existing</code>, lalu <code>kubectl config current-context</code></td>
+</tr>
+<tr>
+<td><code>EXTERNAL-IP</code> tetap <code>&lt;pending&gt;</code> lebih dari beberapa menit</td>
+<td>Azure masih membuat IP publiknya, atau ada kuota atau policy yang memblokirnya</td>
+<td><code>kubectl describe service storefront --namespace nusa</code> lalu baca event-nya</td>
+</tr>
+<tr>
+<td><code>TARGETS</code> HPA menampilkan <code>&lt;unknown&gt;/50%</code></td>
+<td>Metrik belum tersedia, atau pod tidak punya CPU request</td>
+<td>Tunggu satu menit setelah pod menyala; pastikan <code>deployment.yaml</code> masih punya <code>resources.requests.cpu</code></td>
+</tr>
+<tr>
+<td>Pod baru tetap <code>Pending</code> dengan <code>Insufficient cpu</code></td>
+<td>Satu-satunya node sudah penuh</td>
+<td>Wajar di puncak beban; turunkan <code>maxReplicas</code>, atau tambahkan node (tantangan tambahan 2 dan 3)</td>
+</tr>
+<tr>
+<td><code>load-generator</code> berakhir dengan <code>Error</code> atau tidak pernah menyala</td>
+<td>Image busybox tidak bisa ditarik atau tidak punya tool yang dibutuhkan</td>
+<td>Gunakan alternatif Cloud Shell di Tugas 5</td>
+</tr>
+<tr>
+<td>Pod menampilkan <code>ErrImagePull</code> atau <code>ImagePullBackOff</code></td>
+<td>Nama image atau tag salah, atau tidak ada izin untuk pull</td>
+<td>Lihat <strong>Rusak lalu perbaiki</strong></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><p>Tantangan tambahan 1–3 membutuhkan node kedua: total 4 vCPU. Periksa kuota Anda dulu, dan kembalikan skalanya setelah
+selesai.</p>
+<ol>
+<li>
+<p><strong>Ingress dengan Gateway API.</strong> Aktifkan implementasi Gateway API milik application routing add-on (Azure CLI 2.86
+atau lebih baru), beri ruang, lalu terapkan <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/gateway.yaml" target="_blank" rel="noopener"><code>k8s/gateway.yaml</code></a>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az aks scale --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --node-count 2
+az aks update --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --enable-gateway-api --enable-app-routing-istio
+kubectl get pods --namespace aks-istio-system
+kubectl apply -f k8s/gateway.yaml
+kubectl wait --for=condition=programmed gateways.gateway.networking.k8s.io/storefront-gateway --namespace nusa --timeout=300s
+GW=$(kubectl get gateways.gateway.networking.k8s.io storefront-gateway --namespace nusa -o jsonpath=&#x27;{.status.addresses[0].value}&#x27;)
+curl -s &quot;http://${GW}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+</code></pre></div>
+<p>Jangan membangun ingress baru di atas varian NGINX milik add-on ini: dukungan Microsoft untuknya berakhir pada
+November 2026.</p>
+</li>
+<li>
+<p><strong>Zona dan kegagalan node.</strong> Dengan dua node, periksa <code>kubectl get nodes -L topology.kubernetes.io/zone</code> dan
+<code>kubectl get pods --namespace nusa -o wide</code>: topology spread constraint menempatkan replica di kedua node.
+Simulasikan pemeliharaan dengan <code>kubectl drain &lt;node-name&gt; --ignore-daemonsets --delete-emptydir-data</code>, saksikan
+pod-pod berpindah sementara PodDisruptionBudget menjaga dua di antaranya tetap hidup, lalu jalankan
+<code>kubectl uncordon &lt;node-name&gt;</code>.</p>
+</li>
+<li>
+<p><strong>Cluster autoscaler.</strong> Biarkan AKS menambahkan node kedua hanya ketika ada pod yang <code>Pending</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az aks update --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --enable-cluster-autoscaler --min-count 1 --max-count 2
+kubectl patch hpa storefront --namespace nusa --patch &#x27;{&quot;spec&quot;:{&quot;maxReplicas&quot;:20}}&#x27;
+</code></pre></div>
+<p>Jalankan beban lagi dan pantau <code>kubectl get nodes --watch</code>: node baru bergabung setelah beberapa menit.</p>
+</li>
+<li>
+<p><strong>Container insights.</strong> Kirim log container ke workspace di dalam resource group lab, supaya proses pembersihan ikut
+menghapusnya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor log-analytics workspace create --resource-group &quot;$RG&quot; --workspace-name log-nusa --output none
+WS_ID=$(az monitor log-analytics workspace show --resource-group &quot;$RG&quot; --workspace-name log-nusa --query id --output tsv)
+az aks enable-addons --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --addons monitoring --workspace-resource-id &quot;$WS_ID&quot;
+</code></pre></div>
+<p>Setelah sekitar sepuluh menit, buka <em>aks-nusa › Monitoring › Insights</em>. Makan Siang 30 mengajarkan cara meng-query
+log ini dengan KQL.</p>
+</li>
+<li>
+<p><strong>Jeda alih-alih hapus (untuk proyek yang lebih panjang).</strong> <code>az aks stop --resource-group &quot;$RG&quot; --name &quot;$AKS&quot;</code>
+menghentikan node dan control plane sambil tetap menyimpan konfigurasinya, dan <code>az aks start</code> menghidupkan semuanya
+kembali. Untuk lab ini, menghapus cluster tetap pilihan termurah, dan panduan ini bisa membuatnya ulang dalam sepuluh
+menit.</p>
+</li>
+</ol>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut, dengan cara apa pun yang Anda suka (CLI, portal, Bicep, Terraform):</p>
+<ol>
+<li>Resource group <code>rg-lunch29-&lt;suffix&gt;</code> di region lab Anda, dibuat dengan <code>ensure_rg &quot;$(rg_name 29)&quot; 29</code> agar
+<code>cleanup.sh</code> bisa menemukannya.</li>
+<li>Cluster AKS <code>aks-nusa</code> di tier <strong>Free</strong>, memakai <strong>Azure CNI Overlay</strong>, dengan system node pool berukuran non-seri-B,
+dan dengan rentang alamat pod dan service yang tidak tumpang tindih dengan 10.0.0.0/16 milik kantor pusat.</li>
+<li>Di namespace <code>nusa</code>, deployment <code>storefront</code> yang menjalankan <code>mcr.microsoft.com/azuredocs/aks-helloworld:v1</code> dengan
+minimal <strong>3 replica yang siap</strong>, request dan limit untuk CPU dan memori, serta readiness probe dan liveness probe.</li>
+<li>Service <code>storefront</code> bertipe <strong>LoadBalancer</strong> dengan alamat IP publik yang menjawab HTTP 200.</li>
+<li>Horizontal Pod Autoscaler <code>storefront</code> untuk deployment tersebut dengan minimum 3 dan maksimum 10 replica serta
+target utilisasi CPU.</li>
+<li>Tidak ada pod di namespace itu yang macet di <code>ErrImagePull</code> atau <code>ImagePullBackOff</code>.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu. Setelah itu, hapus
+cluster-nya.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="28-relational-databases-advanced.html"><small>← Lab sebelumnya</small>28 · Pesanan yang selamat dari gangguan region</a><a class="next" href="30-monitoring-advanced.html"><small>Lab berikutnya →</small>30 · Mengapa checkout lambat pada hari Jumat?</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

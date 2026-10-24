@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 29 · Pokoknya Harus Kubernetes Asli — Makan Siang 29: Containers (Lanjutan): Azure Kubernetes Service · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 29 · Containers (Lanjutan): Azure Kubernetes Service. Empat layanan, Helm chart dari vendor, dan direktur yang tidak mau merekrut tim khusus untuk mengasuh server. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/29-containers-advanced-aks.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/29-containers-advanced-aks.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/29-containers-advanced-aks.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/29-containers-advanced-aks.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 29 · Pokoknya Harus Kubernetes Asli — Makan Siang 29: Containers (Lanjutan): Azure Kubernetes Service">
+<meta property="og:description" content="Makan Siang 29 · Containers (Lanjutan): Azure Kubernetes Service. Empat layanan, Helm chart dari vendor, dan direktur yang tidak mau merekrut tim khusus untuk mengasuh server. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/29-containers-advanced-aks.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="29" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/29-containers-advanced-aks.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 29</span> Season 2 · 🌊 Bagian 5 · Pendalaman</div>
+      <h1>Pokoknya Harus Kubernetes Asli</h1>
+      <div class="lunch-title">Makan Siang 29 · Containers (Lanjutan): Azure Kubernetes Service</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip advanced">Lanjutan</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 Di luar cakupan AZ-900</span>
+        <span class="chip cost">🔬 Lab · sekitar 60 menit · 💲💲💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="13-containers-basic.html" title="Di Laptop Saya Jalan, Kok">↩ 13</a><a class="chip" href="08-networking-basic.html" title="Jangan Tabrak Jaringan Saya">↩ 08</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 28 · Kalau Satu Region Padam, failover group memindahkan database pesanan ke region kedua dalam hitungan menit, dengan data yang hilang hanya beberapa detik.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-4"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, santai"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 96% siap</b>Setelah episode ini Anda bisa menjawab: “Region padam: hitungan menit, dan microservices bisa memulihkan dirinya sendiri.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-kubernetes-dalam-satu-makan-siang-desired-state">Kubernetes dalam satu makan siang: desired state</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-aks-apa-yang-dijalankan-azure-dan-apa-yang-anda-jalankan">AKS: apa yang dijalankan Azure, dan apa yang Anda jalankan</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-jaringan-alamat-service-dan-pintu-masuk">Jaringan: alamat, service, dan pintu masuk</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-scaling-dan-identitas-keduanya-berlapis">Scaling dan identitas: keduanya berlapis</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-hari-kedua-upgrade-pemantauan-dan-biaya">Hari kedua: upgrade, pemantauan, dan biaya</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-bagaimana-semuanya-menyatu-di-nusantara-retail-aks-atau-container-apps">Bagaimana semuanya menyatu di Nusantara Retail: AKS atau Container Apps?</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/29-containers-advanced-aks.html">🔬 Buka Lab 29</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Menjelaskan cara Kubernetes menjaga <em>desired state</em> (kondisi yang diinginkan) dengan pod, deployment, service, probe, dan resource request.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Menjelaskan apa yang dijalankan Azure Kubernetes Service (AKS) untuk Anda dan apa yang tetap menjadi milik Anda: control plane, node pool, node resource group, pricing tier, dan AKS Automatic.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Memilih model jaringan, rencana alamat IP, dan opsi ingress untuk sebuah cluster AKS.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Merencanakan scaling, identitas, upgrade, dan pemantauan, serta memutuskan kapan memakai AKS dan kapan Azure Container Apps.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 29</span>
+        <div class="story-body"><p>Enam bulan setelah toko online pindah ke container (<em>kontainer</em>), tim Dewi memecahnya menjadi beberapa layanan:
+katalog, keranjang, checkout, dan mesin promosi yang mengubah harga ratusan produk setiap jam selama masa promo. Vendor
+poin loyalitas mengirim produknya sebagai Helm chart (semacam paket instalasi siap pakai untuk Kubernetes), lengkap
+dengan Kubernetes operator miliknya sendiri, dan Rizky bersikeras bahwa hanya cluster Kubernetes sungguhan yang bisa
+menjalankannya.</p>
+<p>Pak Budi punya satu syarat: tidak boleh ada apa pun di dalam cluster yang bentrok dengan jaringan kantor pusat,
+10.0.0.0/16, karena koneksi VPN ke Azure segera menyusul. Ibu Sari punya dua: &quot;Saya tidak mau merekrut satu tim hanya
+untuk mengasuh server,&quot; dan &quot;Tunjukkan berapa biayanya pada pukul tiga pagi.&quot;</p>
+<p>Hari ini Anda akan mengetahui apa yang dijalankan AKS untuk Anda, apa yang tetap menjadi pekerjaan Anda, dan cara
+menyiapkan cluster yang bisa memulihkan dirinya sendiri, ikut membesar saat serbuan pembeli 12.12, dan diperbarui tanpa
+downtime. Anda juga akan tahu kapan sebaiknya <em>tidak</em> memakainya.</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-kubernetes-dalam-satu-makan-siang-desired-state" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Kubernetes dalam satu makan siang: desired state</h3><div class="prose"><p><strong>Kubernetes</strong> adalah <em>container orchestrator</em>, yaitu sistem yang mengatur banyak container di banyak server sekaligus.
+Anda tidak memberinya perintah &quot;jalankan tiga container di server 2&quot;; Anda menuliskan <strong>desired state</strong> atau kondisi
+yang diinginkan (&quot;tiga salinan storefront v1 harus selalu berjalan&quot;) dalam sebuah <strong>manifest</strong> berformat YAML, lalu
+Kubernetes bekerja tanpa henti agar kenyataan cocok dengan keinginan itu. Setiap <strong>controller</strong> menjalankan
+<em>reconciliation loop</em> (putaran penyelarasan): bandingkan kondisi yang diinginkan dengan kondisi sebenarnya, bertindak
+atas selisihnya, lalu ulangi. Putaran inilah yang membuat Kubernetes bisa memulihkan dirinya sendiri.</p>
+<p>Ibaratnya pemilik warung yang berpesan kepada penjaganya: &quot;Etalase harus selalu berisi tiga termos es teh.&quot; Ia tidak
+perlu mengawasi seharian. Setiap kali satu termos habis, penjaga melihat selisihnya dan langsung mengisi yang baru.
+Pemilik warung menulis keinginan; penjaga yang mengejar kenyataan.</p>
+<p>Sebuah <strong>cluster</strong> terdiri atas dua bagian. <strong>Control plane</strong> adalah otaknya: <strong>API server</strong> adalah pintu depan yang
+dilewati setiap perintah, <strong>etcd</strong> adalah database yang menyimpan kondisi yang diinginkan dan kondisi sebenarnya,
+<strong>scheduler</strong> memilih node untuk setiap pod baru, dan <strong>controller manager</strong> menjalankan putaran-putaran penyelarasan
+tadi. <strong>Node</strong> adalah ototnya: virtual machine (<em>komputer virtual</em>) yang menjalankan <strong>kubelet</strong> (agen di setiap node),
+sebuah container runtime (containerd), dan <strong>kube-proxy</strong>, yang mengatur jaringan untuk service.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  DEV[&quot;kubectl apply -f deployment.yaml&quot;] --&gt; API[&quot;API server&quot;]
+  API &lt;--&gt; ETCD[(&quot;etcd: kondisi diinginkan + sebenarnya&quot;)]
+  SCH[&quot;Scheduler&quot;] --&gt;|&quot;memilih node&quot;| API
+  CM[&quot;Controller: putaran penyelarasan&quot;] --&gt;|&quot;ingin 3, berjalan 2: buat 1&quot;| API
+  API --&gt; K1[&quot;kubelet di node 1&quot;] --&gt; P1((&quot;pod&quot;))
+  API --&gt; K2[&quot;kubelet di node 2&quot;] --&gt; P2((&quot;pod&quot;))
+  SVC[&quot;Service storefront&quot;] -.-&gt;|&quot;hanya ke pod yang siap&quot;| P1
+  SVC -.-&gt; P2
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Ada beberapa objek yang akan Anda temui berulang kali:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Objek</th>
+<th>Fungsinya</th>
+<th>Contoh di Nusantara Retail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pod</strong></td>
+<td>Unit terkecil: satu atau beberapa container yang berbagi alamat IP dan volume</td>
+<td>Satu salinan web server storefront</td>
+</tr>
+<tr>
+<td><strong>Deployment</strong></td>
+<td>Menjaga N pod yang identik tetap berjalan dan meluncurkan versi baru secara bertahap</td>
+<td><code>storefront</code>, tiga replica, image <code>v1</code></td>
+</tr>
+<tr>
+<td><strong>Service</strong></td>
+<td>Nama dan IP virtual yang stabil di depan pod-pod yang terus berganti</td>
+<td><code>storefront</code>, bisa dihubungi dari dalam cluster sebagai <code>storefront.nusa</code></td>
+</tr>
+<tr>
+<td><strong>Namespace</strong></td>
+<td>Semacam folder untuk objek, dengan izin dan kuotanya sendiri</td>
+<td><code>nusa</code> untuk toko, <code>loyalty</code> untuk chart milik vendor</td>
+</tr>
+<tr>
+<td><strong>ConfigMap / Secret</strong></td>
+<td>Pengaturan dan nilai sensitif yang disuntikkan ke dalam pod</td>
+<td>Pengaturan promosi; connection string database</td>
+</tr>
+<tr>
+<td><strong>Ingress / Gateway</strong></td>
+<td>Pintu masuk layer 7: satu alamat, routing berdasarkan host name atau path, plus TLS</td>
+<td><code>shop.nusantara.example/cart</code> ke service keranjang</td>
+</tr>
+<tr>
+<td><strong>HorizontalPodAutoscaler</strong></td>
+<td>Mengubah jumlah replica sebuah deployment berdasarkan metrik</td>
+<td>3 sampai 10 pod storefront selama promo</td>
+</tr>
+</tbody>
+</table></div>
+<p>Deployment hanyalah salah satu jenis workload (beban kerja). <strong>StatefulSet</strong> memberi setiap pod nama yang tetap dan disk
+permanennya sendiri, cocok untuk perangkat lunak seperti message broker. <strong>DaemonSet</strong> menjalankan tepat satu pod di
+setiap node, pas untuk agen log dan agen keamanan. <strong>Job</strong> menjalankan pod sampai tugasnya selesai, dan <strong>CronJob</strong>
+memulai Job sesuai jadwal, seperti impor harga setiap malam dari Makan Siang 13.</p>
+<p>Dua detail dalam setiap pod template yang baik menentukan seberapa jauh cluster bisa menjaga Anda. <strong>Probe</strong>
+memberi tahu Kubernetes tentang kesehatan pod. <strong>Readiness probe</strong> menjawab pertanyaan &quot;bolehkah pod ini sudah menerima
+traffic?&quot;, sehingga service hanya mengirim request ke pod yang sudah siap (ready). <strong>Liveness probe</strong> menjawab
+&quot;apakah proses ini macet?&quot;, dan jika gagal, container dijalankan ulang (di-restart). <strong>Startup probe</strong> memberi waktu
+bagi aplikasi yang lambat menyala sebelum dua probe lainnya mulai bekerja.</p>
+<p>Bayangkan loket di kantor bank. Readiness probe ibarat satpam yang baru mengarahkan antrean ke sebuah loket setelah
+petugasnya benar-benar siap melayani. Liveness probe ibarat supervisor yang melihat seorang petugas terpaku lama tanpa
+melayani siapa pun, lalu memintanya memulai lagi dari awal.</p>
+<p><strong>Resource request dan limit</strong> menggambarkan &quot;nafsu makan&quot; pod. Scheduler menempatkan pod berdasarkan <em>request</em>-nya;
+pod yang melewati <em>limit</em> CPU akan diperlambat (throttled), sedangkan pod yang melewati <em>limit</em> memori akan dimatikan
+(<code>OOMKilled</code>) lalu dijalankan ulang.</p>
+<div class="code" data-lang="yaml"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>yaml</span><button class="copy-btn" type="button">Salin</button></div><pre><code>spec:
+  replicas: 3
+  template:
+    spec:
+      containers:
+        - name: storefront
+          image: mcr.microsoft.com/azuredocs/aks-helloworld:v1
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }    # what the scheduler reserves
+            limits:   { cpu: 250m, memory: 256Mi }  # the hard ceiling
+          readinessProbe: { httpGet: { path: /, port: 80 } }   # gate for traffic
+          livenessProbe:  { httpGet: { path: /, port: 80 } }   # restart if stuck
+</code></pre></div>
+<p>Kemampuan memulihkan diri (self-healing) itu nyata, tetapi tidak instan. Jika sebuah container crash, kubelet
+menjalankannya ulang dalam hitungan detik. Jika seluruh node berhenti merespons, Kubernetes menandainya <code>NotReady</code> dan,
+secara default, mengusir (evict) pod-podnya setelah sekitar lima menit; Deployment controller lalu membuat pengganti
+di node yang sehat. Itulah sebabnya satu replica tidak pernah cukup untuk apa pun yang penting, dan replica sebaiknya
+disebar ke beberapa node dan zona.</p>
+<p>Versi baru diluncurkan dengan cara deklaratif yang sama. Ubah tag image di manifest lalu terapkan: Deployment membuat
+ReplicaSet baru (objek di balik layar yang menjaga jumlah pod untuk satu versi) dan memindahkan pod secara bertahap,
+secepat yang diizinkan <code>maxSurge</code> (jumlah pod tambahan yang boleh ada) dan <code>maxUnavailable</code> (jumlah pod yang boleh
+absen), dan hanya secepat pod-pod baru lolos readiness probe-nya. Jika ada yang salah, <code>kubectl rollout undo</code>
+mengembalikan ke ReplicaSet sebelumnya dalam hitungan detik.</p>
+</div></article><article class="scene-card" id="2-aks-apa-yang-dijalankan-azure-dan-apa-yang-anda-jalankan" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>AKS: apa yang dijalankan Azure, dan apa yang Anda jalankan</h3><div class="prose"><p><strong>Azure Kubernetes Service (AKS)</strong> memberi Anda cluster Kubernetes yang control plane-nya dijalankan, di-patch, dan
+dijaga agar selalu tersedia (high availability, <em>ketersediaan tinggi</em>) oleh Microsoft. Anda tidak pernah melihat
+mesin-mesin control plane itu. Pada tier Free, manajemen cluster tidak dikenai biaya; Anda membayar apa yang berjalan
+di subscription (<em>langganan</em>) Anda: VM node, disk-disknya, load balancer, alamat IP publik, dan data yang keluar
+(outbound).</p>
+<p>Setiap cluster melibatkan <strong>dua resource group</strong> (<em>grup sumber daya</em>). Resource group yang Anda pilih hanya berisi
+resource (<em>sumber daya</em>) cluster itu sendiri. AKS membuat resource group kedua, yaitu <strong>node resource group</strong> (namanya
+seperti <code>MC_rg-lunch29-ab12c_aks-nusa_southeastasia</code>), lalu mengisinya dengan infrastruktur: satu Virtual Machine Scale
+Set (<em>Kumpulan Skala Komputer Virtual</em>) per node pool, virtual network (<em>jaringan virtual</em>), load balancer, alamat IP
+publik, dan managed disk. Grup itu milik AKS; anggap saja ruang mesin gedung: boleh dilihat, jangan diutak-atik.
+Mengubah isinya secara manual tidak didukung dan bisa merusak cluster, dan AKS menghapusnya secara otomatis saat Anda
+menghapus cluster.</p>
+<p>Node dikelompokkan ke dalam <strong>node pool</strong>, masing-masing berisi sekumpulan VM yang identik. <strong>System node pool</strong>
+menampung add-on penting seperti CoreDNS dan metrics-server. Pool ini wajib memakai Linux, tidak boleh memakai ukuran
+burstable seri B, dan AKS menolak ukuran yang lebih kecil dari sekitar 2 vCPU dan 4 GB memori. Panduan untuk produksi
+meminta minimal tiga node, dengan ukuran yang lebih besar, karena pod sistem butuh ruang lega. <strong>User node pool</strong>
+menjalankan aplikasi Anda: Linux atau Windows, ukuran apa pun yang sesuai, dan bisa di-scale sampai nol. Menambahkan
+taint (semacam tanda &quot;dilarang masuk&quot; bagi pod) <code>CriticalAddonsOnly=true:NoSchedule</code> pada system pool membuat pod
+aplikasi tidak ditempatkan di sana. Di region (<em>wilayah</em>) yang memiliki availability zone (<em>zona ketersediaan</em>), sebuah
+node pool bisa disebar ke zona 1, 2, dan 3, dan control plane otomatis tersebar di beberapa zona.</p>
+<p>Anda berkomunikasi dengan cluster melalui <code>kubectl</code>, alat baris perintah Kubernetes. Perintah <code>az aks get-credentials</code>
+mengunduh file kubeconfig yang memberi tahu <code>kubectl</code> di mana API server berada dan bagaimana cara masuk; di Cloud
+Shell, <code>kubectl</code> sudah terpasang. Secara default, API server memiliki public endpoint (<em>titik akhir publik</em>) yang
+dilindungi autentikasi. Untuk produksi, Anda bisa membatasinya ke rentang IP yang diizinkan, atau menjadikan cluster
+privat sehingga API server hanya bisa dijangkau dari jaringan Anda. Lakukan scaling dan upgrade node melalui AKS
+(<code>az aks scale</code>, <code>az aks nodepool</code>, <code>az aks upgrade</code>), jangan pernah lewat API scale set atau VM, dan matikan seluruh
+cluster dev semalaman dengan <code>az aks stop</code>.</p>
+<p>AKS menawarkan tiga pricing tier (tingkat harga). Untuk membaca tabelnya, kenali dulu istilah SLA (Service Level
+Agreement, perjanjian tingkat layanan): janji tertulis Microsoft tentang uptime, dengan kompensasi berupa kredit tagihan jika janji itu tidak
+terpenuhi. Itulah arti &quot;dijamin secara finansial&quot;.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Pricing tier</th>
+<th>Cocok untuk</th>
+<th>Yang Anda dapatkan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Free</strong></td>
+<td>Belajar, pengembangan, pengujian; disarankan untuk kurang dari 10 node</td>
+<td>Manajemen cluster gratis, semua fitur AKS, tanpa SLA uptime yang dijamin secara finansial</td>
+</tr>
+<tr>
+<td><strong>Standard</strong></td>
+<td>Produksi</td>
+<td>SLA uptime untuk API server (99,95% dengan availability zone, 99,9% tanpanya), kapasitas control plane lebih besar, hingga 5.000 node</td>
+</tr>
+<tr>
+<td><strong>Premium</strong></td>
+<td>Produksi yang harus bertahan lebih lama di satu versi Kubernetes</td>
+<td>Semua yang ada di Standard plus Long-Term Support: sekitar dua tahun per versi, bukan satu</td>
+</tr>
+</tbody>
+</table></div>
+<p>Selain tier, ada juga dua cara <em>menjalankan</em> AKS. <strong>AKS Standard</strong> (pilihan di lab, supaya Anda melihat setiap
+bagiannya) membiarkan Anda memilih semuanya: node pool, ukuran VM, network plugin, add-on, dan pengaturan upgrade.
+<strong>AKS Automatic</strong>, yang kini direkomendasikan Microsoft sebagai default untuk produksi, membuat pilihan-pilihan itu
+untuk Anda. Mode ini menyediakan node secara otomatis sesuai kebutuhan pod Anda, memakai Azure CNI Overlay powered by
+Cilium, ingress terkelola, workload identity, dan Azure RBAC, meng-upgrade dirinya sendiri, serta berjalan di tier
+Standard dengan SLA uptime plus SLA kesiapan pod (pod readiness). Pilih Automatic, kecuali Anda membutuhkan pengaturan
+yang dikuncinya. (Jangan tertukar: &quot;AKS Standard&quot; adalah nama mode, sedangkan &quot;tier Standard&quot; adalah tingkat harga.)</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  subgraph MS[&quot;Dikelola oleh Microsoft&quot;]
+    CP[&quot;Control plane: API server, etcd, scheduler, controller&quot;]
+  end
+  subgraph RG1[&quot;Resource group Anda: rg-lunch29-...&quot;]
+    AKS[&quot;Resource cluster AKS aks-nusa&quot;]
+  end
+  subgraph RG2[&quot;Node resource group MC_... (milik AKS)&quot;]
+    SYS[&quot;System node pool (VM scale set)&quot;]
+    USR[&quot;User node pool (VM scale set)&quot;]
+    NET[&quot;VNet, load balancer, IP publik, disk&quot;]
+  end
+  AKS --- CP
+  CP &lt;--&gt;|&quot;tunnel aman&quot;| SYS
+  CP &lt;--&gt;|&quot;tunnel aman&quot;| USR
+  ACR[(&quot;Azure Container Registry&quot;)] --&gt;|&quot;menarik image&quot;| USR
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></article><article class="scene-card" id="3-jaringan-alamat-service-dan-pintu-masuk" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Jaringan: alamat, service, dan pintu masuk</h3><div class="prose"><p>Setiap pod butuh alamat IP, dan <strong>model jaringan</strong> menentukan dari mana alamat-alamat itu berasal. Rentang alamat ditulis
+dalam notasi CIDR: misalnya 10.0.0.0/16, yang berisi 65.536 alamat.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Model</th>
+<th>Cara pod mendapatkan alamat IP</th>
+<th>Gunakan jika</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure CNI Overlay</strong></td>
+<td>Dari rentang pod privat (CIDR) yang terpisah dari virtual network; setiap node mendapat potongan /24, dan traffic yang keluar dari cluster memakai alamat IP node</td>
+<td>Default untuk cluster baru dan pilihan yang direkomendasikan: bisa sampai 5.000 node dan hingga 250 pod per node tanpa menghabiskan alamat virtual network</td>
+</tr>
+<tr>
+<td><strong>Azure CNI Pod Subnet</strong></td>
+<td>Alamat virtual network sungguhan dari subnet khusus untuk pod</td>
+<td>Resource di luar cluster harus bisa menjangkau pod secara langsung</td>
+</tr>
+<tr>
+<td><strong>Azure CNI Node Subnet</strong></td>
+<td>Alamat virtual network dari subnet node</td>
+<td>Hanya untuk cluster lama (legacy)</td>
+</tr>
+<tr>
+<td><strong>kubenet</strong></td>
+<td>Rentang privat dengan route table</td>
+<td>Akan pensiun pada 31 Maret 2028: migrasikan ke Azure CNI Overlay</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Azure CNI powered by Cilium</strong> adalah data plane (bagian yang benar-benar meneruskan paket) yang bisa Anda
+kombinasikan dengan Overlay: ia memakai eBPF, bukan iptables, dan menegakkan <strong>network policy</strong>, yaitu aturan yang
+menentukan pod mana boleh berbicara dengan pod mana. AKS Automatic memakainya secara default.</p>
+<p>Rencanakan tiga rentang alamat sebelum membuat cluster, karena ketiganya sulit atau bahkan mustahil diubah belakangan:
+<strong>node subnet</strong>, <strong>pod CIDR</strong>, dan <strong>service CIDR</strong>, yang memberi setiap service Kubernetes alamat IP virtualnya. Tidak
+satu pun boleh tumpang tindih dengan jaringan mana pun yang kelak akan Anda sambungkan. Inilah jebakan bagi Pak Budi:
+service CIDR default adalah <strong>10.0.0.0/16</strong>, persis rentang milik kantor pusat. Lab ini memakai
+<code>--service-cidr 172.16.0.0/16</code> dan <code>--pod-cidr 192.168.0.0/16</code> agar terhindar darinya.</p>
+<p>Bayangkan dua kompleks perumahan yang sama-sama punya rumah di &quot;Jalan Melati No. 10&quot;. Selama keduanya terpisah, tidak
+ada masalah. Begitu ada jalan tembus yang menyambungkan keduanya (di sini: VPN), kurir paket tidak tahu rumah mana yang
+dimaksud. Router jaringan mengalami kebingungan yang sama ketika dua rentang alamat tumpang tindih.</p>
+<p><strong>Service</strong> bertipe <code>ClusterIP</code> (default) hanya bisa dijangkau dari dalam cluster, melalui nama DNS seperti
+<code>storefront.nusa.svc.cluster.local</code>. Tipe <code>LoadBalancer</code> meminta AKS memprogram Azure Standard Load Balancer dan
+memasang alamat IP publik dari node resource group; dengan sebuah annotation, ia menjadi load balancer internal.</p>
+<p>Traffic yang keluar dari cluster juga perlu direncanakan. Secara default, node keluar melalui outbound rule milik
+Standard Load Balancer. Anda bisa mengganti outbound type ke NAT gateway terkelola atau NAT gateway milik Anda sendiri,
+atau mengalirkan semuanya lewat Azure Firewall dengan user-defined route; begitulah desain hub-and-spoke dari Makan
+Siang 25 akan memeriksanya. Di dalam cluster, setiap pod bisa menjangkau setiap pod lain sampai Anda menambahkan network
+policy, misalnya &quot;hanya checkout yang boleh memanggil payments&quot;.</p>
+<p>Load balancer bekerja di layer 4 (hanya melihat alamat IP dan port), sehingga Anda akan membutuhkan satu alamat IP
+publik per service. Untuk routing HTTP berdasarkan host name atau path, lengkap dengan TLS, Anda menambahkan
+<strong>ingress</strong>: satu pintu masuk yang mengarahkan setiap tamu ke kantor yang tepat, seperti resepsionis di lobi gedung.
+Kubernetes punya dua API untuk itu: API <strong>Ingress</strong> yang lebih lama, dan <strong>Gateway API</strong>, penerusnya yang berorientasi
+peran (<code>GatewayClass</code>, <code>Gateway</code>, <code>HTTPRoute</code>). Di AKS, opsi terkelola yang direkomendasikan adalah <strong>application
+routing add-on dengan implementasi Gateway API-nya</strong> (gateway class <code>approuting-istio</code>). Alternatifnya adalah
+Application Gateway for Containers dan add-on service mesh Istio.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Jangan memulai pekerjaan baru di atas ingress berbasis NGINX. Proyek upstream Ingress NGINX sudah pensiun (masa
+pemeliharaannya berakhir pada Maret 2026), dan Microsoft menyediakan patch keamanan kritis untuk NGINX milik
+application routing add-on hanya sampai November 2026. Rencanakan dengan Gateway API.</p>
+</aside>
+</div></article><article class="scene-card" id="4-scaling-dan-identitas-keduanya-berlapis" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Scaling dan identitas: keduanya berlapis</h3><div class="prose"><p>Scaling di AKS terjadi di beberapa lapisan, dan masing-masing menyelesaikan masalah yang berbeda:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Lapisan</th>
+<th>Yang di-scale</th>
+<th>Dipicu oleh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Horizontal Pod Autoscaler (HPA)</strong></td>
+<td>Jumlah pod dalam sebuah deployment</td>
+<td>Pemakaian CPU atau memori sebagai persentase dari <em>request</em>, atau metrik kustom; secara default ia memeriksa setiap 15 detik dan menunggu lima menit sebelum mengurangi pod</td>
+</tr>
+<tr>
+<td><strong>KEDA</strong> (add-on)</td>
+<td>Pod, termasuk sampai nol</td>
+<td>Event seperti panjang antrean, lag Kafka, atau jadwal</td>
+</tr>
+<tr>
+<td><strong>Vertical Pod Autoscaler</strong> (add-on)</td>
+<td>Request dan limit setiap pod</td>
+<td>Pemakaian yang teramati, untuk menyesuaikan ukuran pod</td>
+</tr>
+<tr>
+<td><strong>Cluster autoscaler</strong></td>
+<td>Node dalam sebuah node pool, di antara batas minimum dan maksimum</td>
+<td>Pod yang tertahan di <code>Pending</code> karena tidak ada node yang punya ruang; node kosong yang kurang terpakai dibuang</td>
+</tr>
+<tr>
+<td><strong>Node autoprovisioning (NAP)</strong></td>
+<td>Node baru dengan ukuran VM apa pun yang pas</td>
+<td>Pod yang <code>Pending</code>; default di AKS Automatic</td>
+</tr>
+</tbody>
+</table></div>
+<p>Lapisan-lapisan ini bekerja berantai. Ketika serbuan pembeli 12.12 datang, HPA meminta lebih banyak pod storefront. Jika
+node masih punya ruang, pod baru menyala dalam hitungan detik. Jika tidak, pod tambahan menunggu di status <code>Pending</code>,
+lalu cluster autoscaler (atau NAP) menambahkan node, yang memakan waktu beberapa menit. Semuanya bergantung pada
+<strong>request</strong> yang jujur: tanpa CPU request, HPA tidak bisa menghitung persentase, dan dengan request yang digelembungkan,
+Anda membayar node yang setengah kosong.</p>
+<p>Ibaratnya warung makan menjelang Lebaran: pemilik menambah pelayan lebih dulu (pod), dan itu cepat. Kalau semua meja
+sudah penuh, barulah ia menyewa tenda tambahan (node), yang butuh waktu lebih lama untuk didirikan.</p>
+<p>Hitungan HPA bersifat proporsional. Tiga pod dengan rata-rata 100% dari CPU request-nya, dibandingkan target 50%,
+menghasilkan ceil(3 × 100 ÷ 50) = 6 pod (ceil berarti dibulatkan ke atas), dibatasi oleh nilai maksimum HPA. Saat beban
+turun, jumlahnya berkurang lagi, tetapi baru setelah stabilization window lima menit, sehingga jeda sesaat tidak membuat
+jumlah pod naik-turun bolak-balik (flapping).</p>
+<p>Identitas juga hadir dalam tiga lapisan, satu untuk setiap arah kepercayaan:</p>
+<ul>
+<li><strong>Manusia dan pipeline masuk ke cluster.</strong> Integrasikan cluster dengan <strong>Microsoft Entra ID</strong> (<em>ID Microsoft Entra</em>)
+dan atur otorisasinya dengan Kubernetes RBAC atau <strong>Azure RBAC for Kubernetes</strong> (RBAC adalah role-based access
+control, <em>kontrol akses berbasis peran</em>). AKS Standard dimulai dengan akun lokal, yang tidak masalah untuk lab;
+cluster produksi sebaiknya menonaktifkannya agar setiap perintah <code>kubectl</code> terikat pada identitas yang nyata.</li>
+<li><strong>Cluster masuk ke Azure.</strong> Managed identity milik cluster (identitas yang dikelola Azure, tanpa kata sandi yang perlu
+disimpan) membuat load balancer dan disk. <strong>Kubelet identity</strong> yang terpisah menarik image;
+<code>az aks update --attach-acr</code> memberinya peran AcrPull pada registry Anda, sehingga image pull secret tidak diperlukan.</li>
+<li><strong>Pod masuk ke Azure.</strong> <strong>Microsoft Entra Workload ID</strong> memungkinkan pod menukar token service account Kubernetes-nya
+dengan token Entra melalui OpenID Connect issuer dan federated credential. Fitur ini menggantikan pratinjau
+pod-managed identity yang lebih lama, yang sudah deprecated (tidak dianjurkan lagi). Secret dari Key Vault sampai ke
+pod melalui Secrets Store CSI driver.</li>
+</ul>
+</div></article><article class="scene-card" id="5-hari-kedua-upgrade-pemantauan-dan-biaya" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Hari kedua: upgrade, pemantauan, dan biaya</h3><div class="prose"><p>&quot;Hari kedua&quot; (day 2) adalah sebutan untuk masa operasional setelah cluster berdiri. Kubernetes merilis versi minor
+kira-kira setiap empat bulan. AKS mendukung versi minor terbaru yang sudah tersedia umum (generally available) dan dua
+versi sebelumnya (N, N-1, dan N-2), masing-masing selama sekitar dua belas bulan; cluster baru dimulai di N-1. Versi
+yang turun ke N-3 hanya mendapat dukungan platform, dan mulai Juni 2027 AKS akan meng-upgrade sendiri cluster yang
+dibiarkan di versi yang tidak didukung, setelah masa tenggang 60 hari. Dalam praktik: rencanakan upgrade minimal
+setahun sekali, atau pilih tier Premium dengan Long-Term Support jika Anda benar-benar tidak bisa.</p>
+<p>Upgrade dimulai dari control plane, lalu node pool. Untuk setiap node pool, AKS menambahkan node <strong>surge</strong> (node
+tambahan sementara) dengan versi baru, melakukan <strong>cordon</strong> pada node lama (tidak ada pod baru yang boleh masuk),
+melakukan <strong>drain</strong> (mengusir pod-podnya agar dijadwalkan ulang di tempat lain), lalu mengulanginya. Bagian Anda adalah
+membuat pengusiran itu aman: jalankan minimal dua replica, gunakan readiness probe, dan tambahkan
+<strong>PodDisruptionBudget</strong> yang menyatakan berapa replica yang harus tetap hidup. Image sistem operasi node mendapat
+pembaruan keamanan mingguan di jalur terpisah. <strong>Auto-upgrade channel</strong> (misalnya <code>patch</code> atau <code>stable</code>) dan <strong>node OS
+upgrade channel</strong> mengotomatiskan keduanya, dan <strong>planned maintenance window</strong> menjaga semuanya tetap di luar jam
+kerja.</p>
+<p>Sebelum upgrade manual, <code>az aks get-upgrades</code> menampilkan versi-versi yang bisa Anda tuju, dan AKS menghentikan upgrade
+jika mendeteksi workload yang masih memanggil API Kubernetes yang tidak lagi dilayani versi tujuan. Jaga agar versi
+<code>kubectl</code> tidak berselisih lebih dari satu versi minor dengan cluster.</p>
+<p>Untuk pemantauan (monitoring), <strong>Container insights</strong> mengirim log container dan inventarisnya ke Log Analytics
+workspace, <strong>Azure Monitor managed service for Prometheus</strong> mengumpulkan metrik, dan <strong>Azure Managed Grafana</strong> (atau
+Azure Monitor dashboards with Grafana) menyajikannya dalam grafik. Makan Siang 30 membahasnya lebih dalam. Sehari-hari,
+<code>kubectl get events</code>, <code>kubectl describe</code>, dan <code>kubectl top</code> sudah menjawab sebagian besar pertanyaan &quot;kenapa pod ini
+rewel?&quot;.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Tagihan AKS sebagian besar berasal dari node, dan node tetap dibayar entah sedang sibuk atau menganggur. Tetapkan
+request yang realistis agar pod tersusun rapat, aktifkan cluster autoscaler dengan batas yang masuk akal, jalankan
+pekerjaan yang boleh terputus di user pool Spot (VM dari kapasitas sisa Azure, jauh lebih murah tetapi bisa ditarik
+kembali sewaktu-waktu), pakai tier Free untuk dev dan test, matikan cluster dev pada malam hari dengan <code>az aks stop</code>,
+dan hapus cluster lab segera setelah selesai.</p>
+</aside>
+</div></article><article class="scene-card" id="6-bagaimana-semuanya-menyatu-di-nusantara-retail-aks-atau-container-apps" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Bagaimana semuanya menyatu di Nusantara Retail: AKS atau Container Apps?</h3><div class="prose"><p>AKS hebat karena memberi Anda seluruh Kubernetes, dan justru itulah harganya: harus ada yang bertanggung jawab atas
+upgrade, node pool, add-on, dan YAML. Bandingkan secara jujur dengan Container Apps dari Makan Siang 13:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Pertanyaan</th>
+<th>Azure Container Apps</th>
+<th>Azure Kubernetes Service</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Butuh API Kubernetes (Helm chart dengan operator, CRD, DaemonSet)?</td>
+<td>Tidak tersedia</td>
+<td>Ya, API lengkap</td>
+</tr>
+<tr>
+<td>Siapa yang mengurus node dan upgrade?</td>
+<td>Platform</td>
+<td>Anda (jauh lebih sedikit dengan AKS Automatic)</td>
+</tr>
+<tr>
+<td>Scale ke nol</td>
+<td>Bawaan untuk setiap aplikasi</td>
+<td>Per workload dengan KEDA; node tetap berjalan kecuali sebuah pool di-scale ke nol</td>
+</tr>
+<tr>
+<td>Harga</td>
+<td>Per detik pemakaian plus jumlah request, dengan jatah gratis</td>
+<td>VM node sepanjang waktu, plus biaya tier pada Standard dan Premium</td>
+</tr>
+<tr>
+<td>Paling cocok untuk</td>
+<td>Aplikasi web, API, worker, dan job dari tim yang hanya ingin merilis aplikasinya</td>
+<td>Tim platform, microservices yang kompleks, perangkat lunak vendor yang dibuat untuk Kubernetes</td>
+</tr>
+</tbody>
+</table></div>
+<p>Rekomendasi Anda untuk Ibu Sari: toko online tetap di Container Apps, tempat biayanya hampir nol pada pukul tiga pagi.
+Microservices dan chart loyalitas milik vendor pindah ke satu cluster AKS, dibangun sebagai AKS Automatic di Indonesia
+Central setelah Anda memastikan bahwa fitur yang dibutuhkan tersedia di sana. Hasilnya: SLA tier Standard, node di tiga
+zona, Azure CNI Overlay dengan Cilium, rentang service dan pod yang menghindari 10.0.0.0/16, ingress berbasis Gateway
+API, login Entra ID dengan Azure RBAC, Workload ID untuk Key Vault, image yang ditarik dari ACR oleh kubelet identity,
+serta Container insights dengan managed Prometheus sejak hari pertama. Satu cluster bersama, dengan namespace dan
+resource quota untuk setiap tim, jauh lebih murah daripada satu cluster per aplikasi. Dan jika suatu hari toko-toko
+cabang menjalankan cluster Kubernetes kecil milik mereka sendiri, Azure Arc-enabled Kubernetes bisa membawanya ke bawah
+policy dan pemantauan yang sama (Makan Siang 31).</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Ketiga replica storefront ternyata dijadwalkan ke satu node di zona 1. Apa yang terjadi pada
+toko jika zona 1 gagal, dan pengaturan mana di pod template yang seharusnya mencegahnya? (Petunjuk: cari
+<code>topologySpreadConstraints</code> di <code>deployment.yaml</code> milik lab.)</p>
+</aside>
+<p>Di makan siang berikutnya, Anda akan belajar bertanya kepada log dan metrik cluster <em>mengapa</em> checkout lambat pada hari
+Jumat.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Katakan apa yang Anda inginkan, dan Kubernetes menjaganya tetap nyata</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/29-containers-advanced-aks.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/29-containers-advanced-aks.html?lang=id" title="Demo interaktif: Katakan apa yang Anda inginkan, dan Kubernetes menjaganya tetap nyata" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/29-containers-advanced-aks/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Desired state (tiga replica) tidak pernah berubah selama sebuah node gagal; hanya kondisi sebenarnya yang berubah,
+sampai controller memperbaikinya.</li>
+<li>Scheduler menyebar pod ke berbagai zona, dan HPA mengubah jumlah replica yang diinginkan berdasarkan CPU yang terpakai
+dibandingkan request.</li>
+<li>Selama rolling update, pod baru hanya menerima traffic setelah readiness probe-nya lolos, sehingga toko tidak pernah
+tutup.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Sebuah pod storefront baru berstatus <code>Running</code>, tetapi service tidak pernah mengirim satu request pun kepadanya.
+Probe mana yang gagal, dan apa bedanya dengan liveness probe yang gagal?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Readiness probe. <em>Alasannya:</em> readiness probe yang gagal membuat pod dikeluarkan dari daftar endpoint service,
+tetapi pod tetap berjalan; liveness probe yang gagal membuat kubelet menjalankan ulang (me-restart) container.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Anda membuat HPA untuk storefront, tetapi <code>kubectl get hpa</code> menampilkan target CPU sebagai <code>&lt;unknown&gt;/50%</code>, dan
+tidak ada yang di-scale. Apa penyebab yang paling mungkin?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Pod tidak punya CPU request (atau metriknya belum tersedia). <em>Alasannya:</em> HPA menghitung utilisasi sebagai
+persentase dari request, jadi tanpa request ia tidak punya pembanding.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Kantor pusat memakai 10.0.0.0/16 dan VPN ke Azure sedang direncanakan. Rentang alamat AKS mana yang menjadi risiko
+tersembunyi jika Anda membiarkan nilai default, dan kapan Anda harus memperbaikinya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Service CIDR, yang default-nya 10.0.0.0/16. Tetapkan rentang yang tidak tumpang tindih seperti 172.16.0.0/16 (dan
+pod CIDR yang juga tidak tumpang tindih) saat Anda membuat cluster. <em>Alasannya:</em> rentang-rentang ini sulit atau
+mustahil diubah belakangan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Tim keuangan menemukan resource group bernama <code>MC_rg-lunch29-…_aks-nusa_southeastasia</code>, penuh dengan VM dan sebuah
+load balancer, dan ingin menghapusnya untuk berhemat. Apa yang Anda katakan kepada mereka?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Itu adalah node resource group milik AKS. Jangan mengubah atau menghapus resource di dalamnya secara manual; hapus
+atau scale cluster-nya saja. <em>Alasannya:</em> menghapus cluster otomatis ikut menghapus node resource group.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Pada Oktober 2026, Rizky mengusulkan NGINX terkelola milik application routing add-on untuk ingress yang benar-benar
+baru. Apa yang Anda rekomendasikan sebagai gantinya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Implementasi Gateway API milik application routing add-on (atau Application Gateway for Containers, atau add-on
+Istio). <em>Alasannya:</em> Ingress NGINX upstream sudah pensiun, dan patch dari Microsoft untuk NGINX milik add-on itu
+berakhir pada November 2026.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Kubernetes bekerja berdasarkan desired state: Anda mendeklarasikan deployment, service, probe, dan request, lalu controller menjaga kenyataan tetap sesuai dengan menjalankan ulang, menjadwalkan ulang, dan meluncurkan pod.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>AKS menjalankan control plane; node pool adalah milik Anda, sedangkan node resource group <code>MC_</code> milik AKS. Pakai Free untuk dev dan test, Standard untuk SLA, dan Premium untuk Long-Term Support; AKS Automatic adalah default yang direkomendasikan untuk produksi.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Pilih Azure CNI Overlay (kubenet pensiun pada Maret 2028), rencanakan rentang node, pod, dan service yang tidak pernah tumpang tindih dengan jaringan Anda, dan bangun ingress di atas Gateway API, bukan di atas NGINX yang akan pensiun.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Scaling dan identitas sama-sama berlapis: HPA, KEDA, dan cluster autoscaler atau NAP untuk kapasitas; Entra ID, managed identity, dan Workload ID untuk manusia, cluster, dan pod.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Hari kedua adalah pekerjaan yang sesungguhnya: upgrade di dalam jendela N-2, lindungi upgrade dengan replica, probe, dan PodDisruptionBudget, pantau dengan Container insights dan Prometheus, dan pilih Container Apps setiap kali Anda tidak membutuhkan API Kubernetes.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Gladi resik paling murah: drain satu node dengan sengaja.</strong> Sebelum saya menyetujui cluster AKS mana pun untuk
+produksi, saya melakukan cordon dan drain pada satu node di jam kerja, lalu mengamati toko online-nya. Satu kali drain
+sudah cukup untuk membongkar replica tunggal yang luput dari perhatian, pod tanpa readiness probe yang menerima
+traffic terlalu dini, dan PodDisruptionBudget yang begitu ketat sampai memblokir setiap drain — dan bersamanya,
+setiap upgrade berikutnya. Saya juga selalu memeriksa di mana replica-replica itu mendarat: tiga pod di satu node,
+ketika node itu tumbang, sama saja dengan satu pod. Kalau drain-nya berjalan membosankan, saya percaya pada cluster
+itu. Kalau ternyata menegangkan, saya jauh lebih suka mengetahuinya pada Selasa siang yang tenang daripada di tengah
+serbuan promo 12.12.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>29</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Kubernetes untuk tim microservices</h3>
+          <div class="prose"><p>Anda akan membuat cluster AKS kecil (tier Free, Azure CNI Overlay, satu node), melihat isi kedua resource group-nya,
+lalu men-deploy storefront dari manifest dengan tiga replica, probe, dan resource request di belakang service
+LoadBalancer publik. Anda akan menghapus pod dan melihatnya kembali, melakukan scaling secara manual, meluncurkan v2
+tanpa kehilangan satu request pun, menambahkan HPA dan membebaninya sampai pod baru muncul, serta mendiagnosis tag image
+yang rusak dengan <code>kubectl describe</code>. Cluster ini adalah resource termahal di kursus ini, jadi Anda menghapusnya segera
+setelah selesai.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 60 menit</span><span class="chip cost">💲💲💲 biaya yang terasa selama berjalan</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/29-containers-advanced-aks.html">Mulai Lab 29 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/aks/concepts-network-azure-cni-overlay" target="_blank" rel="noopener"><b>Microsoft Learn: Ikhtisar jaringan Azure CNI Overlay di AKS</b><span>Cara kerja alamat pod, perencanaan IP, dan perbandingan Overlay dengan kubenet.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/aks/free-standard-pricing-tiers" target="_blank" rel="noopener"><b>Microsoft Learn: Pricing tier AKS Free, Standard, dan Premium</b><span>Apa saja yang termasuk di setiap tier dan cara berpindah di antaranya.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/aks/intro-aks-automatic" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu AKS Automatic?</b><span>Default produksi yang sudah dikonfigurasi, dibandingkan fitur demi fitur dengan AKS Standard.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/aks/supported-kubernetes-versions" target="_blank" rel="noopener"><b>Microsoft Learn: Versi Kubernetes yang didukung di AKS</b><span>Kalender rilis, jendela N-2, Long-Term Support, dan upgrade yang diprakarsai platform.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">☸️</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Kapten Cluster</h2>
+        <p class="muted">Jalankan workload di Azure Kubernetes Service.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Region padam: hitungan menit, dan microservices bisa memulihkan dirinya sendiri.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 30</b><h4>Kenapa Checkout Lambat Hari Jumat?</h4><p>CPU baik-baik saja, tetapi checkout butuh empat detik dan 312 keranjang belanja ditinggalkan.</p><p style="margin-top:10px"><a href="30-monitoring-advanced.html">Tonton Episode 30 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="28-relational-databases-advanced.html"><small>← Episode sebelumnya</small>28 · Kalau Satu Region Padam</a><a class="next" href="30-monitoring-advanced.html"><small>Episode berikutnya →</small>30 · Kenapa Checkout Lambat Hari Jumat?</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/29-containers-advanced-aks/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 05 · Bolehkah Dewi me-restart VM? — Demo interaktif",
+    "kicker": "Makan Siang 05 · Identitas dan Akses (Dasar) · Demo interaktif",
+    "title": "Bolehkah Dewi me-restart VM?",
+    "lede": "Ikuti satu permintaan dari sign-in sampai keputusan: Microsoft Entra ID membuktikan siapa Dewi, Azure Resource Manager mengumpulkan role assignment-nya dari setiap scope lalu menjumlahkannya, dan Conditional Access menentukan bagaimana seorang kontraktor boleh sign in. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Autentikasi dengan Microsoft Entra ID dan otorisasi dengan Azure RBAC di empat scope",
+    "svgDesc": "Di sebelah kiri, Dewi dan kemudian Rizky sign in melalui Microsoft Entra ID dan Conditional Access. Di tengah, Azure Resource Manager mengevaluasi setiap permintaan serta menampilkan izin efektif dan hasilnya. Di sebelah kanan, tangga scope: management group, subscription, resource group rg-storefront-test, dan virtual machine vm-storefront-test, dengan deny assignment yang memblokir operasi delete."
+  },
+  "steps": [
+    {
+      "title": "Larut malam, situs uji macet",
+      "text": "Pukul 22.00, situs uji toko online tiba-tiba macet. Dewi, developer Nusantara Retail, ingin me-restart vm-storefront-test supaya bisa melanjutkan pengujian rilis malam ini. Dia membuka portal Azure. Kini dua pertanyaan terpisah menentukan apa yang terjadi: siapa dia, dan apakah dia boleh me-restart virtual machine yang satu ini?"
+    },
+    {
+      "title": "Autentikasi: buktikan siapa Anda",
+      "text": "Browser Dewi mengarahkannya ke Microsoft Entra ID. Dia mengetik kata sandi, lalu Entra ID meminta faktor kedua: layar sign-in menampilkan sebuah angka, dan Dewi mengetikkannya di Microsoft Authenticator di ponselnya. Sesuatu yang dia ketahui ditambah sesuatu yang dia miliki membuktikan bahwa ini benar-benar Dewi."
+    },
+    {
+      "title": "Token, bukan kata sandi",
+      "text": "Entra ID memberikan token bertanda tangan digital yang berumur pendek ke browser Dewi. Token itu menyatakan siapa dia, bahwa dia sudah menyelesaikan MFA, dan grup mana saja yang dia ikuti — di sini grp-developers. Kata sandinya tidak pernah dikirim ke Azure Resource Manager. Mulai sekarang, setiap permintaannya membawa token ini sebagai gantinya."
+    },
+    {
+      "title": "Permintaan tiba di Resource Manager",
+      "text": "Dewi mengeklik Restart. Portal mengirim satu permintaan ke Azure Resource Manager: jalankan Microsoft.Compute/virtualMachines/restart/action pada vm-storefront-test, dengan token Dewi terlampir. Sign-in hanya membuktikan siapa dia. Otorisasi baru dimulai sekarang, dan terjadi lagi untuk setiap permintaan, bukan sekali per sesi."
+    },
+    {
+      "title": "Deny assignment diperiksa lebih dulu",
+      "text": "Resource Manager pertama-tama mencari deny assignment yang mencakup action ini di scope ini. Ada satu di vm-storefront-test, dibuat oleh deployment stack, tetapi hanya memblokir operasi delete. Restart tidak ada di daftarnya, jadi pemeriksaan ini lolos dan evaluasi berlanjut. Anda tidak bisa membuat deny assignment sendiri; Azure yang membuatnya."
+    },
+    {
+      "title": "Kumpulkan assignment dari setiap scope",
+      "text": "Berikutnya, Resource Manager mengumpulkan semua role assignment untuk Dewi dan untuk setiap grupnya, di VM itu dan di setiap scope di atasnya. Management group tidak menyimpan apa pun untuknya. Subscription memberi grp-developers role Reader. Resource group dan VM itu sendiri tidak menyimpan assignment untuknya.",
+      "set": {
+        "t-perm1": "sub: Reader (via grup)",
+        "t-perm2": "mg, rg, vm: tidak ada",
+        "t-perm3": ""
+      }
+    },
+    {
+      "title": "Jumlahkan: hanya baca",
+      "text": "Azure RBAC bersifat aditif: izin efektif Dewi adalah gabungan dari semua assignment itu. Reader hanya mengizinkan */read, tidak lebih, sehingga restart/action tidak ada. Resource Manager menolak permintaan itu dengan 403 AuthorizationFailed, dan virtual machine-nya bahkan tidak pernah tahu. Hasilnya berubah merah: ditolak.",
+      "set": {
+        "t-perm1": "gabungan = */read",
+        "t-perm2": "restart/action ✗ tidak ada",
+        "t-result": "DITOLAK · 403"
+      }
+    },
+    {
+      "title": "Solusi yang menggoda: Owner di mana-mana",
+      "text": "Seseorang mengusulkan agar Dewi dijadikan Owner untuk seluruh subscription. Malam ini memang akan berhasil. Tetapi itu juga membuatnya bisa mengubah production, menghapus apa saja, dan memberi akses kepada siapa pun, di setiap resource group, sampai ada yang ingat mencabutnya. Itu salah konfigurasi: kekuasaan terlalu besar di scope yang terlalu tinggi."
+    },
+    {
+      "title": "Role yang tepat, scope yang tepat",
+      "text": "Solusi yang lebih baik bersifat sempit. Seorang Owner resource group memberi role Virtual Machine Contributor kepada grp-developers, hanya di rg-storefront-test. Dewi tidak butuh akun atau kata sandi baru: keanggotaan grupnya yang membawa akses baru itu. Resource Manager mengumpulkan assignment sekali lagi dan kini menemukan dua.",
+      "set": {
+        "t-rg": "grp-developers → VM Contributor",
+        "t-perm1": "mengumpulkan lagi…",
+        "t-perm2": "",
+        "t-perm3": "",
+        "t-result": "?"
+      }
+    },
+    {
+      "title": "Diizinkan, dan hanya di sini",
+      "text": "Gabungannya kini adalah Reader di mana-mana ditambah virtualMachines/* di rg-storefront-test, jadi restart/action termasuk di dalamnya. Permintaan itu melewati deny assignment, yang hanya mencakup delete, dan sampai ke VM: diizinkan, ditampilkan dengan warna hijau. Di rg-storefront-prod, Dewi tetap hanya bisa membaca. Perubahan role bisa butuh beberapa menit untuk berlaku.",
+      "set": {
+        "t-perm1": "*/read (Reader)",
+        "t-perm2": "+ virtualMachines/*",
+        "t-perm3": "restart/action ✓",
+        "t-result": "DIIZINKAN ✓"
+      }
+    },
+    {
+      "title": "Deny mengalahkan allow",
+      "text": "Merasa percaya diri, Dewi mencoba menghapus VM itu. Virtual Machine Contributor mencakup delete, jadi role-nya saja sebenarnya mengizinkan. Namun deny assignment dari deployment stack memblokir setiap delete pada VM ini, untuk semua orang. Deny assignment dievaluasi lebih dulu dan selalu menang, jadi permintaan berhenti di sini, ditampilkan dengan warna merah.",
+      "set": {
+        "t-perm3": "delete: diizinkan role…",
+        "t-result": "DIBLOKIR deny"
+      }
+    },
+    {
+      "title": "Gerbang pertama: Conditional Access",
+      "text": "Sekarang kenalan dengan Rizky, kontraktor outsourcing, yang sign in dari laptop pribadinya di Bandung. Sebelum Entra ID menerbitkan tokennya, Conditional Access mengumpulkan sinyal: dia anggota grp-contractors, dia membuka portal Azure, perangkatnya tidak dikelola Nusantara Retail, dan sign-in-nya berasal dari Indonesia. Kebijakan mengubah sinyal menjadi keputusan."
+    },
+    {
+      "title": "Keputusan: izinkan, tetapi wajibkan MFA",
+      "text": "Kebijakan Nusantara Retail menyatakan bahwa kontraktor di perangkat yang tidak dikelola wajib menyelesaikan MFA. Rizky mengetik kode number matching di Microsoft Authenticator, Conditional Access mengizinkan akses, dan baru setelah itu Entra ID menerbitkan tokennya. Seandainya dia memakai aplikasi e-mail lama yang tidak mendukung MFA, kebijakan legacy authentication akan memblokirnya. Conditional Access membutuhkan Entra ID P1.",
+      "set": {
+        "t-decision": "Izinkan · wajib MFA ✓"
+      }
+    },
+    {
+      "title": "Rangkuman: dua gerbang, setiap saat",
+      "text": "Conditional Access menentukan bagaimana seseorang boleh sign in. Azure RBAC memutuskan, pada setiap permintaan, apa yang boleh dia lakukan dan di mana: deny assignment lebih dulu, lalu gabungan role dari setiap scope. Berikan role ke grup, di scope tersempit, dengan role yang paling spesifik, maka kontrak yang berakhir benar-benar mengakhiri akses.",
+      "tip": "Di Lab 05, Anda mempraktikkannya sendiri: membuat pengguna uji dan grup kontraktor, memberi Reader lalu Contributor di satu resource group, dan sign-in sebagai pengguna uji di jendela browser privat."
+    }
+  ],
+  "svg": {
+    "Scopes · where roles live": "Scope · tempat role berada",
+    "token for Dewi": "token untuk Dewi",
+    "password + MFA check": "cek kata sandi + MFA",
+    "if signals, then decision": "jika sinyal, maka keputusan",
+    "contractor · own laptop": "kontraktor · laptop pribadi",
+    "Request: restart vm-storefront-test": "Permintaan: restart vm-storefront-test",
+    "authorizes every request": "otorisasi tiap permintaan",
+    "Effective permissions": "Izin efektif",
+    "waiting for a request": "menunggu permintaan",
+    "Dewi's groups: no assignment": "Grup Dewi: tidak ada assignment",
+    "no assignment for Dewi": "tidak ada assignment untuk Dewi",
+    "Deny assignment · blocks */delete": "Deny assignment · blokir */delete",
+    "created by a deployment stack": "dibuat oleh deployment stack",
+    "Make her Owner of the subscription?": "Jadikan dia Owner subscription?",
+    "works, but opens everything, everywhere": "berhasil, tetapi membuka semuanya di mana-mana",
+    "Signals · Rizky signs in": "Sinyal · Rizky sign in",
+    "user: member of grp-contractors": "pengguna: anggota grp-contractors",
+    "app: Azure portal": "aplikasi: portal Azure",
+    "device: personal, not managed": "perangkat: pribadi, tidak dikelola",
+    "location: Bandung, Indonesia": "lokasi: Bandung, Indonesia",
+    "risk: low (risk signals need P2)": "risiko: rendah (sinyal risiko perlu P2)",
+    "evaluating…": "mengevaluasi…"
+  }
+}

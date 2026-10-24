@@ -1,9 +1,12 @@
 # Lunch 13 · Containers (Basic): Container Registry, Container Instances and Container Apps
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 3:** Platform services and data
 > **Time:** 60 minutes · **Prerequisite lunches:** 02, 10
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 13 · Package the storefront](../../labs/13-containers-basic/README.md) — about 45 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -380,6 +383,16 @@ What to watch for:
   splitting, with no Kubernetes to manage. Get the target port right.
 - Pick the least platform that meets the need: Container Instances, then Container Apps, then AKS for the full
   Kubernetes API; App Service when it is simply a website.
+
+## 🗒️ Field notes from Stefanus
+
+> **Fix the recipe, not the dish.** My rule for containers is simple: whatever I learn by opening a shell inside a
+> running container goes back into the Dockerfile the same day. The shell is for looking around, never for repairs,
+> because the next replica starts from the image and forgets every manual change. In design reviews I ask one question
+> about each container: what do we lose if it disappears right now? Any answer other than "nothing" means something
+> lives in the wrong place, such as uploaded photos in a local folder, shopping carts held in memory or logs that never
+> leave the container. And I read the Dockerfile as carefully as the code: a password copied into an early layer stays
+> readable to anyone who can pull the image, even if a later instruction deletes the file.
 
 ## 🔬 Your lab: Package the storefront
 

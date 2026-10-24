@@ -265,7 +265,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/10-app-service.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/10-app-service.html" data-href-id="../id/lunches/10-app-service.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -284,7 +284,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 [
   {
     "title": "Patching on Friday nights",
-    "text": "Nusantara Retail's storefront runs on two VMs that Dewi patches every other Friday night: the operating system, Python, the certificate and nginx, one VM at a time. Harbolnas, the 12.12 sale, is eight weeks away and needs extra capacity for a single evening. In this demo you move the shop to Azure App Service, where Microsoft runs the servers and Dewi only ships code.",
+    "text": "Nusantara Retail's storefront runs on two VMs that Dewi patches every Friday night: the operating system, Python, the certificate and nginx, one VM at a time. Harbolnas, the 12.12 sale, is eight weeks away and needs extra capacity for a single evening. In this demo you move the shop to Azure App Service, where Microsoft runs the servers and Dewi only ships code.",
     "highlight": [
       "n-cust"
     ],
@@ -725,10 +725,169 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 10 · Aplikasi Web dengan Azure App Service — Demo interaktif",
+   "kicker": "Makan Siang 10 · Aplikasi Web dengan Azure App Service · Demo interaktif",
+   "title": "Front end, scale out, dan swap slot tanpa downtime",
+   "lede": "Ikuti request seorang pembeli melewati App Service, saksikan autoscale menambah instance untuk promo 12.12, dan lihat slot staging menjalani warm-up lalu di-swap ke production. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Request yang mengalir melalui front end App Service ke instance-instance sebuah App Service plan, autoscale, dan swap slot staging",
+   "svgDesc": "Pelanggan di sebelah kiri mengirim request ke front end App Service, yang meneruskannya ke hingga tiga instance plan Standard S1 di sebelah kanan. Setiap instance menjalankan slot production dan, kemudian, sebuah slot staging. Dewi, di kiri bawah, men-deploy dan menguji versi 2 di staging sebelum di-swap ke production."
+  },
+  "steps": [
+   {
+    "title": "Patching setiap Jumat malam",
+    "text": "Toko online Nusantara Retail berjalan di dua VM yang di-patch Dewi setiap Jumat malam: sistem operasi, Python, sertifikat, dan nginx, satu VM demi satu VM. Harbolnas, promo 12.12, tinggal delapan minggu lagi dan butuh kapasitas ekstra hanya untuk satu malam. Di demo ini Anda memindahkan toko ke Azure App Service, tempat Microsoft menjalankan server dan Dewi cukup merilis kode."
+   },
+   {
+    "title": "Front end dan worker",
+    "text": "Setiap request untuk alamat toko lebih dulu sampai di front end App Service. Front end mengakhiri HTTPS, memilih instance yang sehat, lalu meneruskan request. Instance adalah worker dari App Service plan Anda: di sini satu virtual machine Standard S1 yang menjalankan Linux. Kode Anda berjalan di slot production pada instance itu, dan tak seorang pun login untuk mem-patch-nya."
+   },
+   {
+    "title": "Sebuah request menempuh jalurnya",
+    "text": "Seorang pembeli membuka toko online. Front end memeriksa host name, memilih sebuah instance, dan meneruskan request lewat jaringan internal Azure. Aplikasi Python membaca setting-nya, yang diserahkan App Service sebagai environment variable, lalu mengembalikan halaman. Perhatikan apa yang tidak ada: tidak ada VM yang harus di-patch dan tidak ada server web yang harus dikonfigurasi. Itu sekarang tugas Microsoft."
+   },
+   {
+    "title": "Lalu lintas Harbolnas datang",
+    "text": "12 Desember, pukul delapan malam. Lalu lintas melonjak tiga kali lipat dalam hitungan menit, dan satu-satunya instance berjalan pada CPU 94 persen. Halaman melambat dan sebagian request timeout. Scale up ke ukuran yang lebih besar akan membantu sementara, tetapi me-restart aplikasi dan tetap punya batas atas. Scale out menambah instance berukuran sama, dan front end membagi beban di antara mereka.",
+    "set": {
+     "t-p1c": "CPU 94% · lambat"
+    }
+   },
+   {
+    "title": "Autoscale menambah instance",
+    "text": "Sebuah aturan autoscale memantau rata-rata CPU plan. Jika di atas 70 persen selama sepuluh menit, aturan itu menambah satu instance, hingga tiga. Setiap instance baru menjalankan kode yang sama yang sudah di-deploy, dan front end langsung mengirim lalu lintas kepadanya. CPU turun ke sekitar 40 persen di semua instance. Setelah keramaian usai, aturan scale in menghapus instance tambahan, sehingga Anda berhenti membayarnya.",
+    "set": {
+     "t-p1c": "CPU 41% · melayani",
+     "t-p2c": "CPU 38% · melayani",
+     "t-p3c": "CPU 40% · melayani",
+     "t-plan": "3 instance"
+    }
+   },
+   {
+    "title": "Merilis v2 dengan cara berisiko",
+    "text": "Dewi punya halaman checkout baru, versi 2. Misalkan ia men-deploy-nya langsung ke slot production di tengah promo. Setiap instance harus restart dan memuat kode baru, sehingga pembeli pertama harus menunggu atau mendapat error. Lebih buruk lagi, jika versi 2 punya bug, setiap pelanggan mengalaminya sekaligus, dan satu-satunya cara membatalkannya adalah deployment berikutnya beserta putaran restart berikutnya.",
+    "set": {
+     "t-p1": "v2",
+     "t-p2": "v2",
+     "t-p3": "v2",
+     "t-fe": "prod → v2",
+     "t-dewi": "deploy ke prod",
+     "t-p1c": "restart…",
+     "t-p2c": "restart…",
+     "t-p3c": "restart…"
+    }
+   },
+   {
+    "title": "Putar ulang: tambahkan slot staging",
+    "text": "Mari kita putar ulang. Tier Standard ke atas menyertakan deployment slot: aplikasi hidup dengan host name sendiri yang berjalan di instance yang sama dengan production. Dewi membuat slot bernama staging dan menyalin setting production ke dalamnya. Slot itu tidak menambah biaya karena berbagi instance milik plan, tetapi memang memakai sebagian CPU dan memorinya.",
+    "set": {
+     "t-p1c": "CPU 41% · melayani",
+     "t-p2c": "CPU 38% · melayani",
+     "t-p3c": "CPU 40% · melayani",
+     "t-p1": "v1",
+     "t-p2": "v1",
+     "t-p3": "v1",
+     "t-fe": "prod → v1",
+     "t-dewi": "membuat slot"
+    }
+   },
+   {
+    "title": "Deploy dan uji di staging",
+    "text": "Dewi men-deploy versi 2 ke slot staging dan membuka alamatnya sendiri, yang berakhiran -staging.azurewebsites.net. Pelanggan tidak pernah melihatnya: host name production tetap mengarahkan setiap pembeli ke versi 1. Ia menguji checkout, membaca log stream, dan memperbaiki salah ketik, semuanya sementara promo tetap berjalan di versi 1.",
+    "set": {
+     "t-s1": "v2",
+     "t-s2": "v2",
+     "t-s3": "v2",
+     "t-dewi": "menguji staging",
+     "t-s1c": "diuji",
+     "t-s2c": "diuji",
+     "t-s3c": "diuji"
+    }
+   },
+   {
+    "title": "Warm-up sebelum swap",
+    "text": "Dewi memulai swap dengan production sebagai target. App Service lebih dulu menerapkan setting sticky milik production ke instance staging dan me-restart-nya. Lalu ia mengirim sebuah request ke setiap instance staging dan menunggu sampai masing-masing menjawab. Production tetap melayani versi 1 sepanjang waktu, jadi pembeli tidak merasakan apa pun dari persiapan ini.",
+    "set": {
+     "t-s1c": "warm-up selesai ✓",
+     "t-s2c": "warm-up selesai ✓",
+     "t-s3c": "warm-up selesai ✓",
+     "t-dewi": "memulai swap"
+    }
+   },
+   {
+    "title": "Swap: routing berbalik",
+    "text": "Setelah setiap instance selesai warm-up, App Service mengalihkan aturan routing. Host name production kini menunjuk ke versi 2 yang sudah hangat, dan slot staging berisi versi 1. Request yang sedang berjalan selesai secara normal dan tidak ada yang hilang. Bagi pembeli, checkout baru muncul begitu saja; production sendiri tidak perlu restart untuk kode baru.",
+    "set": {
+     "t-p1": "v2",
+     "t-p2": "v2",
+     "t-p3": "v2",
+     "t-fe": "prod → v2",
+     "t-s1": "v1",
+     "t-s2": "v1",
+     "t-s3": "v1",
+     "t-s1c": "versi sebelumnya",
+     "t-s2c": "versi sebelumnya",
+     "t-s3c": "versi sebelumnya"
+    }
+   },
+   {
+    "title": "Ada yang salah? Swap balik",
+    "text": "Setengah jam kemudian, bagian keuangan menemukan kesalahan pembulatan pada voucher versi 2. Dewi tidak men-deploy ulang apa pun. Ia melakukan swap lagi: App Service melakukan warm-up versi 1 di slotnya dan mengalihkan routing kembali, sehingga production kembali ke versi 1 dalam satu atau dua menit, tetap tanpa downtime. Ia memperbaiki versi 2 di staging dengan tenang.",
+    "set": {
+     "t-p1": "v1",
+     "t-p2": "v1",
+     "t-p3": "v1",
+     "t-fe": "prod → v1",
+     "t-s1": "v2",
+     "t-s2": "v2",
+     "t-s3": "v2",
+     "t-s1c": "memperbaiki bug",
+     "t-s2c": "memperbaiki bug",
+     "t-s3c": "memperbaiki bug",
+     "t-dewi": "swap balik"
+    }
+   },
+   {
+    "title": "Rangkuman",
+    "text": "Front end mengakhiri HTTPS dan meneruskan request ke instance di App Service plan. Tier, ukuran, dan jumlah instance plan menentukan fitur dan harganya. Autoscale menambah instance saat beban naik dan menghapusnya setelahnya. Deployment slot memungkinkan Dewi menguji rilis di perangkat keras production, men-swap-nya tanpa downtime, dan swap balik saat ada yang salah.",
+    "tip": "Di Lab 10, Anda men-deploy toko ini ke plan Free F1 dengan az webapp up, mengatur app setting STORE_NAME, memaksa HTTPS, dan membaca log stream. Tantangan tambahannya mengulang swap slot staging ini di plan Standard S1."
+   }
+  ],
+  "svg": {
+   "Customers": "Pelanggan",
+   "shoppers on 12.12": "pembeli saat 12.12",
+   "TLS termination": "terminasi TLS",
+   "production slot": "slot production",
+   "CPU 35% · serving": "CPU 35% · melayani",
+   "staging slot": "slot staging",
+   "empty": "kosong",
+   "settings copied": "setting tersalin",
+   "Autoscale rule": "Aturan autoscale",
+   "CPU > 70% for 10 min": "CPU > 70% selama 10 mnt",
+   "→ add 1 instance": "→ tambah 1 instance",
+   "max 3, scale in later": "maks. 3, lalu scale in",
+   "Risky deploy": "Deploy berisiko",
+   "all instances restart": "semua instance restart",
+   "slow first requests": "request awal lambat",
+   "undo = redeploy": "batal = deploy ulang",
+   "Slot swap": "Swap slot",
+   "1. warm up staging": "1. pemanasan staging",
+   "2. switch routing": "2. alihkan routing",
+   "no dropped requests": "tak ada request hilang"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -744,6 +903,119 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -863,7 +1135,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -898,7 +1170,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -911,7 +1183,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -932,7 +1204,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -940,7 +1212,7 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

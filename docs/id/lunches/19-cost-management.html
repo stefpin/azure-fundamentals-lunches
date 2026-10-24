@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 19 · Tagihan yang Tak Bisa Dibaca — Makan Siang 19: Manajemen Biaya (Dasar) · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 19 · Manajemen Biaya (Dasar). Tagihan Azure sungguhan yang pertama tiba, dan angkanya lebih besar daripada di spreadsheet. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/19-cost-management.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/19-cost-management.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/19-cost-management.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/19-cost-management.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 19 · Tagihan yang Tak Bisa Dibaca — Makan Siang 19: Manajemen Biaya (Dasar)">
+<meta property="og:description" content="Makan Siang 19 · Manajemen Biaya (Dasar). Tagihan Azure sungguhan yang pertama tiba, dan angkanya lebih besar daripada di spreadsheet. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/19-cost-management.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="19" style="--c:#d98a00">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/19-cost-management.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 19</span> Season 1 · 🛡️ Bagian 4 · Keamanan, operasional, dan tata kelola</div>
+      <h1>Tagihan yang Tak Bisa Dibaca</h1>
+      <div class="lunch-title">Makan Siang 19 · Manajemen Biaya (Dasar)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan manajemen dan tata kelola Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 40 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Siapa yang Bikin server-baru-final2?">↩ 04</a><a class="chip" href="18-governance-compliance-basic.html" title="Storage Account di West Europe">↩ 18</a><a class="chip" href="06-virtual-machines-basic.html" title="Kabur dari Pantry">↩ 06</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 18 · Storage Account di West Europe, region yang salah kini diblokir Azure Policy, dan tag yang sering terlupa ditambahkan secara otomatis.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-3"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, senang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 66% siap</b>Setelah episode ini Anda bisa menjawab: “Kita tetap online — dan kita bisa menjelaskan setiap rupiah biayanya.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-ke-mana-uangnya-pergi">Ke mana uangnya pergi</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-perkirakan-sebelum-membangun">Perkirakan sebelum membangun</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-bayar-lebih-murah-untuk-hal-yang-sama">Bayar lebih murah untuk hal yang sama</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-melihat-dan-mengendalikan-pengeluaran">Melihat dan mengendalikan pengeluaran</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-menemukan-dan-menghentikan-pemborosan">Menemukan dan menghentikan pemborosan</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-bagaimana-semuanya-menyatu-untuk-nusantara-retail">Bagaimana semuanya menyatu untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/19-cost-management.html">🔬 Buka Lab 19</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> apa saja yang membentuk tagihan Azure, dan mengapa data biaya baru tiba beberapa jam setelah pemakaian, bukan secara real-time.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memperkirakan</strong> biaya sebuah desain dengan pricing calculator (<em>kalkulator harga</em>) dan <strong>memilih</strong> di antara pay-as-you-go (<em>model berbasis penggunaan</em>), reservation, savings plan, Spot, Azure Hybrid Benefit, dan harga dev/test.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menggunakan</strong> Cost Management (<em>manajemen biaya</em>) — cost analysis, anggaran, alert, export — dan Azure Advisor untuk melihat serta mengendalikan pengeluaran.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menemukan</strong> pemborosan yang umum dengan Azure Resource Graph dan memakai tag agar setiap biaya punya pemilik.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 19</span>
+        <div class="story-body"><p>Invoice Azure pertama yang lengkap mendarat di meja tim keuangan pada suatu Senin pagi. Jumlahnya tidak fantastis,
+tetapi lebih besar daripada spreadsheet yang sudah disetujui Ibu Sari, dan rincian barisnya terbaca seperti bahasa
+asing: managed disk, alamat IP, bandwidth, App Service. Pak Budi bersikeras bahwa toko online hanya butuh dua web
+server. Dewi samar-samar ingat pernah membuat sebuah plan uji coba waktu bereksperimen dengan serverless. Rizky mengaku
+sudah menghapus sebuah VM, &quot;tapi mungkin tidak semuanya&quot;. Tidak ada yang bisa memastikan biaya mana milik toko online,
+mana milik toko-toko cabang, dan mana milik eksperimen yang seharusnya sudah selesai berminggu-minggu lalu.</p>
+<p>Ibu Sari meneruskan invoice itu kepada Anda dengan tiga pertanyaan. Sebenarnya kita membayar untuk apa? Untuk siapa? Dan
+bagaimana caranya supaya bulan depan tidak ada kejutan lagi?</p>
+<p>Pertanyaan hari ini: <strong>bagaimana Anda memahami, memprediksi, dan mengendalikan biaya Azure Nusantara Retail?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-ke-mana-uangnya-pergi" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Ke mana uangnya pergi</h3><div class="prose"><p>Hampir semua harga di Azure berbentuk tarif: sekian per jam, per gigabyte per bulan, per sejuta operasi, atau per
+gigabyte data yang ditransfer. Di balik layar, setiap resource (<em>sumber daya</em>) melaporkan pemakaiannya pada satu atau
+beberapa <strong>meter</strong>. Sebuah virtual machine (<em>komputer virtual</em>) melaporkan jam compute pada meter yang sesuai dengan
+ukuran dan region (<em>wilayah</em>) tempat ia berjalan. Managed disk miliknya melaporkan kapasitas yang di-provision pada
+meter disk. Alamat IP publik Standard melaporkan setiap jam selama ia ada. Lalu lintas yang keluar dari Azure diukur
+dalam gigabyte. Sistem penagihan mengalikan setiap jumlah itu dengan harga di perjanjian Anda, lalu menjumlahkan
+semuanya. Tagihan Anda tidak lebih misterius daripada hasil penjumlahan itu.</p>
+<p>Ibaratnya meteran listrik PLN di rumah: kulkas, lampu, dan AC sama-sama menambah angka kWh, lalu di akhir bulan angka
+itu dikalikan tarif. Bedanya, di Azure setiap resource punya meterannya sendiri, sehingga Anda bisa melihat persis
+&quot;peralatan&quot; mana yang menyedot biaya.</p>
+<p>Model sederhana itu menyimpan dua jebakan. Pertama, banyak meter menagih apa yang Anda <strong>provision</strong> — kapasitas yang
+Anda pesan dan sediakan — bukan apa yang Anda pakai. Managed disk 128 GiB berbiaya sama, entah berisi database pesanan
+atau kosong sama sekali, dan App Service plan tetap ditagih untuk instance-nya (server virtual yang disiapkan untuk plan
+itu) walaupun tidak ada satu aplikasi pun yang berjalan di atasnya. Jebakan kedua adalah waktu: sebagian meter terus
+berjalan selama resource itu ada, sehingga apa pun yang Anda lupakan diam-diam terus memakan biaya, jam demi jam, sampai
+ada yang menghapusnya — persis seperti tarif parkir mal yang terus berjalan selama mobil masih di dalam gedung, entah
+Anda sedang belanja atau lupa memarkirnya di lantai berapa.</p>
+<p>Inilah <strong>pendorong biaya</strong> (cost driver) yang benar-benar bisa Anda pengaruhi:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Pendorong biaya</th>
+<th>Apa yang mengubah harga</th>
+<th>Contoh di Nusantara Retail</th>
+<th>Tuas yang bisa Anda tarik</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Jenis, tier, dan ukuran resource</td>
+<td>Layanannya, SKU-nya (varian produknya), atau ukuran VM-nya (seri B vs seri D, Standard HDD vs Premium SSD)</td>
+<td>VM toko online yang ukurannya disiapkan untuk promo 12.12 sepanjang tahun</td>
+<td>Sesuaikan ukuran (right-size); pilih tier (tingkatan layanan) termurah yang memenuhi kebutuhan</td>
+</tr>
+<tr>
+<td>Lama berjalan</td>
+<td>Meter per jam berjalan selama resource ada atau dialokasikan</td>
+<td>VM pengembangan yang tetap menyala pada malam hari dan akhir pekan</td>
+<td>Deallocate, auto-shutdown (mati otomatis sesuai jadwal), jadwal, scale in (kurangi jumlah instance)</td>
+</tr>
+<tr>
+<td>Kapasitas yang di-provision</td>
+<td>Disk, plan, dan throughput yang dipesan ditagih berdasarkan ukuran, bukan pemakaian</td>
+<td>Data disk 256 GiB yang hanya berisi 3 GiB</td>
+<td>Disk yang lebih kecil; hapus yang tidak dipakai siapa pun</td>
+</tr>
+<tr>
+<td>Region</td>
+<td>SKU yang sama bisa berbeda harga di region lain</td>
+<td>Indonesia Central dibandingkan dengan Southeast Asia</td>
+<td>Bandingkan di kalkulator, setelah urusan residensi data beres</td>
+</tr>
+<tr>
+<td>Transfer data</td>
+<td>Data yang masuk ke Azure gratis; data yang keluar ke internet dan antar-region dikenai biaya</td>
+<td>Pembeli yang mengunduh foto produk</td>
+<td>Kompres, gunakan cache, tempatkan layanan yang sering saling berkomunikasi dalam satu region</td>
+</tr>
+<tr>
+<td>Lisensi</td>
+<td>Windows Server, SQL Server, dan sebagian distribusi Linux menambah biaya perangkat lunak</td>
+<td>Server laporan berbasis Windows di kantor pusat</td>
+<td>Azure Hybrid Benefit, harga dev/test, Linux bila cocok</td>
+</tr>
+<tr>
+<td>Tambahan</td>
+<td>Paket dukungan (support plan), perangkat lunak dari Marketplace (toko aplikasi pihak ketiga di Azure), fitur premium</td>
+<td>Image firewall pihak ketiga dari Marketplace</td>
+<td>Baca harganya sebelum memilih <strong>Create</strong></td>
+</tr>
+</tbody>
+</table></div>
+<p>Ada satu hal lagi yang perlu dipahami sebelum Anda membuka laporan biaya apa pun: <strong>data biaya tidak real-time</strong>.
+Pemakaian dikumpulkan, diberi harga, lalu dimuat ke Cost Management secara berkelompok (batch). Untuk subscription
+(<em>langganan</em>) Enterprise Agreement dan Microsoft Customer Agreement, data biasanya muncul dalam 8 sampai 24 jam; untuk
+sebagian subscription pay-as-you-go bisa sampai 72 jam. Perkiraan biaya untuk bulan yang sedang berjalan diperbarui
+beberapa kali sehari dan baru menjadi final setelah invoice terbit. Subscription yang benar-benar baru bisa butuh hingga
+48 jam sebelum semua fitur Cost Management berfungsi.</p>
+<p>Bayangkan buku kas sebuah warung yang baru direkap setiap malam: penjualan pagi tadi jelas sudah terjadi, tetapi
+angkanya belum tercatat di buku. Cost Management bekerja dengan cara serupa, hanya saja jeda rekapnya bisa berjam-jam,
+bahkan berhari-hari.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  R[&quot;Resource&lt;br/&gt;VM, disk, IP, plan&quot;] --&gt;|&quot;pemakaian di meter&lt;br/&gt;jam · GB-bulan · GB keluar&quot;| B[&quot;Sistem penagihan&lt;br/&gt;jumlah × harga&quot;]
+  B --&gt;|&quot;biasanya 8–24 jam kemudian&lt;br/&gt;(hingga 72 jam untuk sebagian&lt;br/&gt;subscription pay-as-you-go)&quot;| C[&quot;Cost Management&lt;br/&gt;cost analysis · anggaran · alert&quot;]
+  C --&gt;|&quot;dievaluasi sekitar&lt;br/&gt;sekali sehari&quot;| A[&quot;Alert anggaran&lt;br/&gt;email · action group&quot;]
+  B --&gt;|&quot;setelah periode&lt;br/&gt;penagihan ditutup&quot;| I[&quot;Invoice&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Jadi, ketika Dewi menyalakan VM besar pukul 09.00 dan cost analysis masih kosong pukul 11.00, itu bukan bug. Saat Anda
+perlu tahu apa yang ada <em>saat ini juga</em>, tanyakan pada inventaris — Azure Resource Graph atau activity log (catatan
+setiap operasi pada resource Anda) — bukan pada tagihan.</p>
+</div></article><article class="scene-card" id="2-perkirakan-sebelum-membangun" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Perkirakan sebelum membangun</h3><div class="prose"><p>Kejutan biaya yang paling murah adalah kejutan yang Anda temukan sebelum men-deploy. <strong>Azure pricing calculator</strong>
+(azure.microsoft.com/pricing/calculator) bekerja seperti keranjang belanja online: Anda memasukkan produk ke sebuah
+<strong>estimate</strong> (perkiraan), lalu memilih region, tier, ukuran, sistem operasi, dan perkiraan pemakaian untuk
+masing-masing. Virtual machine secara default dihitung 730 jam, yaitu satu bulan penuh; ubah menjadi 200 jam dan
+perkiraannya langsung diperbarui. Untuk produk yang menawarkan diskon komitmen, kalkulator memungkinkan Anda berpindah
+antara pay-as-you-go, reservation, dan savings plan, serta menampilkan biaya <strong>di muka</strong> (upfront) terpisah dari biaya
+<strong>bulanan</strong>. Anda bisa menyimpan beberapa estimate, mengekspor salah satunya ke Excel, membagikan tautannya kepada tim
+keuangan, dan mengganti mata uang tampilan. Jika Anda login ke kalkulator itu sendiri, ia bisa menampilkan harga sesuai
+perjanjian Anda, bukan harga ritel.</p>
+<p>Setiap harga di kalkulator berasal dari <strong>Azure Retail Prices API</strong>, sebuah API publik — antarmuka yang bisa dipanggil
+langsung oleh program — yang tidak memerlukan login. Karena itu API ini praktis untuk skrip dan spreadsheet; di lab
+nanti Anda akan memakainya dari Cloud Shell untuk membandingkan pay-as-you-go dengan reservation satu tahun. Microsoft
+menetapkan harga setiap layanan Azure dalam dolar AS; mata uang lain disediakan sebagai acuan dan bisa berubah dari
+bulan ke bulan.</p>
+<p>Perkiraan yang baik untuk Nusantara Retail memiliki tiga kebiasaan:</p>
+<ul>
+<li><strong>Pisahkan beban dasar dan beban puncak.</strong> Dua web server hampir sepanjang tahun, enam selama dua minggu promo 12.12.
+Kalau dirata-ratakan, kedua angka itu sama-sama tersembunyi.</li>
+<li><strong>Baris-baris yang sunyi.</strong> Disk, IP publik, data keluar, penyimpanan cadangan (backup), ingesti log, dan paket
+dukungan sering kali, kalau dijumlahkan, sama besarnya dengan layanan &quot;utama&quot;.</li>
+<li><strong>Satu estimate per opsi.</strong> Desain berbasis VM dan desain PaaS (<em>platform sebagai layanan</em>) yang disandingkan membuat
+untung-ruginya terlihat jelas oleh Ibu Sari.</li>
+</ul>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Materi pelatihan lama akan mengarahkan Anda ke <strong>Total Cost of Ownership (TCO) Calculator</strong>, kalkulator total biaya
+kepemilikan. Microsoft sudah menghentikannya (deprecated) pada akhir Agustus 2025. Untuk membandingkan pusat data —
+atau ruang server di sebelah pantry kantor — dengan Azure, gunakan fitur <strong>business case</strong> di Azure Migrate (masih
+preview saat tulisan ini dibuat), yang bekerja dari data server hasil penemuan otomatis (discovery) atau hasil impor.</p>
+</aside>
+</div></article><article class="scene-card" id="3-bayar-lebih-murah-untuk-hal-yang-sama" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Bayar lebih murah untuk hal yang sama</h3><div class="prose"><p>Setelah Anda tahu <em>apa</em> yang dibutuhkan, Anda bisa mengubah <em>cara</em> membayarnya. <strong>Pay-as-you-go</strong> adalah cara default:
+Anda membayar tarif normal sesuai daftar harga, persis sesuai pemakaian, dan tidak berkomitmen apa pun. Cara ini ideal
+untuk apa pun yang baru, naik-turun tajam, atau berumur pendek — sekaligus cara paling mahal untuk menjalankan server
+yang tidak pernah berhenti. Azure menawarkan lima cara untuk membayar lebih murah:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Opsi</th>
+<th>Cara kerjanya</th>
+<th>Gunakan ketika</th>
+<th>Waspadai</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Reservation</strong></td>
+<td>Berkomitmen satu atau tiga tahun untuk satu jenis resource di satu region (untuk VM, ada fleksibilitas di dalam satu keluarga ukuran); bayar di muka atau bulanan</td>
+<td>Pemakaian stabil dan tidak akan berganti ukuran, region, atau layanan</td>
+<td>Jam yang tidak terpakai hangus; refund dibatasi (USD 50.000 per 12 bulan bergulir); reservation yang dibeli mulai Februari 2027 untuk layanan yang dicakup savings plan tidak bisa ditukar (exchange)</td>
+</tr>
+<tr>
+<td><strong>Savings plan for compute</strong></td>
+<td>Berkomitmen pada jumlah tetap per jam selama satu atau tiga tahun; berlaku otomatis untuk compute yang memenuhi syarat (VM, App Service, Functions Premium, Container Apps, Container Instances, Dedicated Host) di region mana pun</td>
+<td>Total belanja compute stabil, tetapi ukuran, region, atau layanannya mungkin berubah</td>
+<td>Tidak bisa dibatalkan; komitmen yang tidak terpakai dalam satu jam hangus</td>
+</tr>
+<tr>
+<td><strong>Spot VMs</strong></td>
+<td>Berjalan di kapasitas sisa dengan diskon besar; Azure bisa mengusir (evict) VM dengan pemberitahuan 30 detik</td>
+<td>Batch job (pekerjaan massal terjadwal), test run, rendering — pekerjaan yang bisa diulang</td>
+<td>Tanpa SLA (perjanjian tingkat layanan); ukuran seri B tidak didukung; kapasitas bisa hilang</td>
+</tr>
+<tr>
+<td><strong>Azure Hybrid Benefit</strong></td>
+<td>Bawa lisensi Windows Server atau SQL Server dengan Software Assurance (program pemeliharaan lisensi Microsoft) atau dengan subscription yang memenuhi syarat, atau bawa subscription RHEL/SLES (Red Hat Enterprise Linux/SUSE Linux Enterprise Server), lalu bayar infrastrukturnya saja</td>
+<td>Anda sudah memiliki lisensinya</td>
+<td>Kepatuhan lisensi tetap menjadi tanggung jawab Anda</td>
+</tr>
+<tr>
+<td><strong>Harga dev/test</strong></td>
+<td>Pelanggan Visual Studio yang aktif mendapat tarif diskon di subscription dev/test — misalnya, VM Windows ditagih dengan tarif Linux</td>
+<td>Lingkungan non-produksi</td>
+<td>Tanpa SLA; jangan pernah menjalankan produksi di sana</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Reservation</strong> cocok untuk dua VM toko online Nusantara Retail setelah ukurannya stabil selama beberapa bulan.
+<strong>Savings plan</strong> lebih pas jika Dewi berencana memindahkan sebagian toko online ke Container Apps tahun depan, karena
+komitmennya mengikuti belanja, bukan VM tertentu. <strong>Savings plan for databases</strong> yang lebih baru bekerja dengan cara
+yang sama untuk layanan seperti Azure SQL dan Cosmos DB. Bila beberapa diskon bisa berlaku sekaligus, Azure memakai yang
+paling spesifik lebih dulu: reservation, lalu savings plan, lalu pay-as-you-go untuk sisanya.</p>
+<p>Ibaratnya begini. Pay-as-you-go seperti menginap di hotel per malam: bebas datang dan pergi, tetapi mahal kalau
+dilakukan setiap hari. Reservation seperti mengontrak satu kamar kos tertentu selama setahun: per bulannya jauh lebih
+murah, tetapi uang sewanya tetap jalan walaupun kamar itu Anda tinggalkan. Savings plan lebih mirip voucher makan
+bernilai tetap per jam yang berlaku di semua gerai food court yang ikut program: Anda bebas pindah gerai, tetapi jatah
+jam itu yang tidak terpakai langsung hangus.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  S[&quot;Sebuah beban kerja yang akan dijalankan&quot;] --&gt; Q1{&quot;Berjalan stabil selama&lt;br/&gt;satu sampai tiga tahun?&quot;}
+  Q1 --&gt;|&quot;ya&quot;| Q2{&quot;Keluarga VM dan region&lt;br/&gt;sama sepanjang masa kontrak?&quot;}
+  Q2 --&gt;|&quot;ya&quot;| RI[&quot;Reservation&quot;]
+  Q2 --&gt;|&quot;tidak — ukuran, region, atau&lt;br/&gt;layanan mungkin berubah&quot;| SP[&quot;Savings plan for compute&quot;]
+  Q1 --&gt;|&quot;tidak&quot;| Q3{&quot;Boleh berhenti dengan&lt;br/&gt;pemberitahuan 30 detik?&quot;}
+  Q3 --&gt;|&quot;ya&quot;| SPOT[&quot;Spot VMs&quot;]
+  Q3 --&gt;|&quot;tidak&quot;| PAYG[&quot;Pay-as-you-go&lt;br/&gt;+ auto-shutdown&quot;]
+  L[&quot;Punya lisensi Windows Server, SQL Server,&lt;br/&gt;RHEL, atau SLES?&quot;] -.-&gt;|&quot;tambahkan di atasnya&quot;| AHB[&quot;Azure Hybrid Benefit&quot;]
+  D[&quot;Pekerjaan non-produksi oleh&lt;br/&gt;pelanggan Visual Studio?&quot;] -.-&gt;|&quot;subscription terpisah&quot;| DT[&quot;Harga dev/test&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Azure Hybrid Benefit bisa ditumpuk dengan reservation: reservation memberi diskon pada compute, dan Hybrid Benefit
+menghapus biaya lisensinya. Spot dan harga dev/test berbicara soal <em>di mana</em> sebuah beban kerja (workload) berjalan;
+reservation dan savings plan berbicara soal <em>berapa lama</em> Anda berjanji membayar.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Reservation atau savings plan adalah janji pembayaran, bukan server. Jika VM yang menjadi tujuannya Anda hapus, Anda
+tetap membayar komitmen itu sampai masa kontraknya berakhir. Beli komitmen <strong>paling akhir</strong>: setelah Anda membuang
+pemborosan dan menyesuaikan ukuran, dan hanya untuk pemakaian yang sudah Anda amati selama beberapa bulan.</p>
+</aside>
+</div></article><article class="scene-card" id="4-melihat-dan-mengendalikan-pengeluaran" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Melihat dan mengendalikan pengeluaran</h3><div class="prose"><p><strong>Microsoft Cost Management</strong> adalah seperangkat alat bawaan yang gratis untuk memahami dan mengatur pengeluaran. Ia
+bekerja di berbagai <strong>scope</strong> (cakupan) — billing account, management group (<em>grup manajemen</em>), subscription, atau
+resource group (<em>grup sumber daya</em>) — sehingga tim toko online bisa melihat resource group miliknya sendiri, sementara
+tim keuangan melihat semuanya. Sebagian besar jenis subscription didukung, termasuk akun gratis (free account) dan
+pay-as-you-go, tetapi ada beberapa penawaran yang tidak; saat tulisan ini dibuat, Azure for Students salah satunya.</p>
+<p>Alat yang paling sering akan Anda pakai:</p>
+<ul>
+<li><strong>Cost analysis</strong> menampilkan biaya aktual dan biaya perkiraan (forecast). Smart view memecah total berdasarkan
+resource, layanan, resource group, atau subscription; custom view memungkinkan Anda mengelompokkan dan memfilter
+berdasarkan hampir apa saja, termasuk <strong>tag</strong>, lalu menyimpan, membagikan, atau mengunduh hasilnya. Mengelompokkan
+biaya Nusantara Retail berdasarkan layanan itulah &quot;tagihan yang diurai&quot; yang diminta tim keuangan.</li>
+<li><strong>Anggaran (budget)</strong> menetapkan jumlah untuk satu bulan, kuartal, atau tahun pada suatu scope, lalu memicu <strong>alert</strong>
+(<em>pemberitahuan</em>) ketika pengeluaran aktual atau perkiraan melewati persentase tertentu dari jumlah itu. Satu anggaran
+bisa memiliki hingga lima ambang (threshold) dan lima penerima email. Pada scope subscription dan resource group,
+anggaran juga bisa memanggil <strong>action group</strong>, yang dapat menjalankan otomatisasi — misalnya runbook (skrip
+otomatisasi yang dijalankan Azure) yang mematikan VM pengembangan. Ibaratnya sensor parkir di mobil: bunyinya makin
+rapat saat bemper mendekati tembok, tetapi sensor itu tidak pernah menginjak rem untuk Anda.</li>
+<li><strong>Anomaly alert</strong> memakai riwayat 60 hari terakhir Anda untuk menandai hari yang terlihat tidak biasa. Fitur ini
+bekerja di scope subscription dan berjalan sekitar satu setengah hari setelah hari yang diperiksanya.</li>
+<li><strong>Export</strong> mengirim data biaya ke storage account (<em>akun penyimpanan</em>) sesuai jadwal, siap dipakai di Power BI atau di
+laporan Anda sendiri.</li>
+</ul>
+<p><strong>Azure Advisor</strong>, yang sudah Anda kenal di Makan Siang 16, menambahkan tab <strong>Cost</strong> berisi rekomendasi: menyesuaikan
+ukuran atau mematikan VM yang kurang dimanfaatkan, menghapus App Service plan yang kosong, meninjau disk yang tidak
+terpasang ke apa pun, dan membeli reservation atau savings plan berdasarkan pemakaian Anda belakangan ini. Sebagian
+besar aturan ini melihat riwayat berhari-hari atau berminggu-minggu, jadi Advisor tidak akan menandai sesuatu yang baru
+Anda buat sejam yang lalu.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Anggaran adalah <strong>alarm, bukan rem</strong>. Saat sebuah ambang terlewati, Azure mengirim email (biasanya dalam satu jam
+setelah evaluasi harian) dan tidak ada yang berhenti. Ditambah jeda data 8 sampai 72 jam, sebuah kesalahan bisa
+berjalan sehari atau lebih sebelum ada yang mengetahuinya. Subscription berbasis kredit seperti akun gratis punya
+batas pengeluaran (spending limit); subscription pay-as-you-go tidak punya, sehingga anggaran ditambah kebiasaan
+bersih-bersih adalah jaring pengaman Anda.</p>
+</aside>
+<p>Untuk menjawab &quot;untuk siapa?&quot;, Anda membutuhkan <strong>tag</strong>. Data biaya membawa tag setiap resource, sehingga tag
+<code>costCenter</code> memungkinkan cost analysis membagi tagihan per tim — itulah <strong>showback</strong>, yaitu menunjukkan porsi biaya
+setiap tim. Ketika tim keuangan benar-benar menagihkan porsi itu ke setiap departemen, namanya menjadi <strong>chargeback</strong>.
+Ada tiga fakta tentang tag yang sering menjebak. Tag tidak diwariskan dari resource group secara default. Tag hanya
+muncul di data biaya sejak saat ia dipasang, jadi biaya bulan lalu tidak akan menampilkan tag yang baru dipasang minggu
+ini. Dan tag baru bisa butuh waktu hingga sehari untuk muncul. Wajibkan tag sejak resource dibuat dengan Azure Policy
+(Makan Siang 18). Jika akun Anda berupa Enterprise Agreement atau Microsoft Customer Agreement, Cost Management juga
+bisa <strong>mewarisi</strong> (inherit) tag subscription dan resource group ke dalam catatan pemakaian — resource-nya sendiri tetap
+tidak berubah.</p>
+</div></article><article class="scene-card" id="5-menemukan-dan-menghentikan-pemborosan" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Menemukan dan menghentikan pemborosan</h3><div class="prose"><p>Sebagian besar pemborosan di Azure tidak dramatis. Ia kecil, terus-menerus, dan tak terlihat di antara daftar resource
+yang semuanya menampilkan status hijau <strong>Succeeded</strong>. Inilah para tersangka yang biasa:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Pemborosan</th>
+<th>Mengapa masih memakan biaya</th>
+<th>Cara menemukannya</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Managed disk yang tidak terpasang</td>
+<td>Disk ditagih berdasarkan ukuran yang di-provision; menghapus VM tidak ikut menghapus disk-nya kecuali Anda memintanya</td>
+<td>Resource Graph (<code>diskState</code> bernilai <code>Unattached</code>), Advisor</td>
+<td>Buat snapshot (salinan disk pada satu titik waktu) jika ragu, lalu hapus</td>
+</tr>
+<tr>
+<td>IP publik yang tidak terhubung</td>
+<td>IP publik Standard ditagih setiap jam, terpasang atau tidak</td>
+<td>Resource Graph (tanpa IP configuration dan tanpa NAT gateway)</td>
+<td>Hapus, atau pakai ulang</td>
+</tr>
+<tr>
+<td>App Service plan kosong</td>
+<td>Instance plan tetap ditagih walaupun tidak ada aplikasi sama sekali (kecuali tier Free dan Shared)</td>
+<td>Resource Graph (jumlah site = 0), Advisor</td>
+<td>Hapus plan-nya atau pindahkan aplikasi ke dalamnya</td>
+</tr>
+<tr>
+<td>VM yang berhenti tetapi tidak di-deallocate</td>
+<td>Mematikan dari dalam sistem operasi hanya mematikan OS-nya; kapasitas compute tetap dialokasikan (dipesankan) untuk Anda dan tetap ditagih. Hanya deallocate yang melepasnya dan menghentikan meter compute</td>
+<td>Status daya VM &quot;Stopped&quot;, bukan &quot;Stopped (deallocated)&quot;</td>
+<td>Stop dari Azure, atau deallocate</td>
+</tr>
+<tr>
+<td>VM kebesaran atau menganggur</td>
+<td>Anda membayar kapasitas yang tidak pernah dipakai beban kerjanya</td>
+<td>Rekomendasi right-size dari Advisor, metrik CPU</td>
+<td>Ubah ukurannya (resize), atau jadwalkan shutdown</td>
+</tr>
+<tr>
+<td>Lingkungan uji yang terlupakan</td>
+<td>Semua isinya terus ditagih</td>
+<td>Cost analysis per resource group, tag seperti <code>environment=test</code></td>
+<td>Hapus resource group-nya; bangun ulang dari kode saat dibutuhkan</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Azure Resource Graph</strong> — layanan kueri dari Makan Siang 04 — adalah cara tercepat untuk memburu resource yatim
+(orphan) di semua subscription yang bisa Anda baca. Resource yatim adalah resource yang &quot;induknya&quot; sudah tiada, misalnya
+disk yang VM-nya sudah dihapus. Resource Graph memakai sebagian dari Kusto Query Language (KQL), bahasa kueri yang juga
+dipakai Log Analytics, dan tidak seperti data biaya, ia mencerminkan perubahan hanya dalam hitungan saat. Kueri ini
+menampilkan setiap disk tak terpasang yang bisa Anda lihat:</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Resources
+| where type =~ &#x27;microsoft.compute/disks&#x27;
+| where tostring(properties.diskState) =~ &#x27;Unattached&#x27;
+| project name, resourceGroup, sku = tostring(sku.name), sizeGB = toint(properties.diskSizeGB)
+</code></pre></div>
+<p>Filter satu baris yang serupa bisa menemukan IP publik tanpa <code>ipConfiguration</code> dan tanpa <code>natGateway</code>, serta App Service
+plan yang nilai <code>numberOfSites</code>-nya nol. Sebelum menghapus apa pun, tanyakan dulu kepada pemiliknya (tag sangat membantu
+di sini), periksa activity log untuk melihat pemakaian terakhir, dan buat snapshot untuk disk yang Anda ragukan.
+Sebagian disk hanya <em>tampak</em> terlantar — replika Azure Site Recovery (layanan replikasi untuk pemulihan bencana),
+misalnya.</p>
+<p>Bersih-bersih sekali itu memuaskan; tetap bersih adalah soal kebiasaan. Kebiasaan itu punya nama: <strong>FinOps</strong> (dari
+<em>financial operations</em>), sebuah praktik di mana tim engineering, keuangan, dan bisnis berbagi tanggung jawab atas
+pengeluaran cloud. FinOps Foundation menggambarkannya sebagai siklus tiga fase yang terus diulang, bukan proyek yang
+punya titik selesai.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  I[&quot;Inform&lt;br/&gt;lihat dan alokasikan biaya&lt;br/&gt;(cost analysis, tag)&quot;] --&gt; O[&quot;Optimize&lt;br/&gt;buang pemborosan, sesuaikan ukuran,&lt;br/&gt;berkomitmen untuk beban stabil&quot;]
+  O --&gt; P[&quot;Operate&lt;br/&gt;anggaran, policy,&lt;br/&gt;tinjauan bulanan&quot;]
+  P --&gt; I
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></article><article class="scene-card" id="6-bagaimana-semuanya-menyatu-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Bagaimana semuanya menyatu untuk Nusantara Retail</h3><div class="prose"><p>Inilah rencana yang Anda bawa kembali kepada Ibu Sari. Pertama, <strong>inform</strong> (beri informasi): setiap resource diberi tag
+<code>costCenter</code> (storefront untuk toko online, stores untuk toko-toko cabang, atau it-shared untuk layanan TI bersama),
+<code>environment</code>, dan <code>owner</code>, yang diwajibkan lewat assignment Azure Policy dari Makan Siang 18. Cost analysis yang
+dikelompokkan berdasarkan <code>costCenter</code> dan disimpan sebagai view bersama menjadi halaman pertama rapat keuangan bulanan,
+sekaligus jawaban atas pertanyaan &quot;untuk siapa?&quot;.</p>
+<p>Berikutnya, <strong>optimize</strong> (optimalkan). Perburuan resource yatim berjalan setiap Jumat: disk yang tidak terpasang, IP
+yang tidak terhubung, dan plan kosong dimasukkan ke laporan singkat, pemiliknya diberi waktu seminggu untuk
+mengklaimnya, dan sisanya dihapus. Tab Cost di Advisor ditinjau setiap bulan. VM pengembangan diberi auto-shutdown pukul
+19.00 WIB. Setelah ukuran toko online stabil selama satu kuartal, kedua web server beralih ke reservation — atau ke
+savings plan jika migrasi ke Container Apps jadi dilakukan. Job malam yang menghitung ulang harga untuk empat puluh toko
+adalah kandidat yang bagus untuk Spot, asalkan memakai ukuran yang mendukung Spot. Jika tim Dewi punya subscription
+Visual Studio, pekerjaan pengembangan dipindahkan ke subscription dev/test.</p>
+<p>Terakhir, <strong>operate</strong> (jalankan secara rutin). Setiap resource group mendapat anggaran bulanan dengan alert pada 50, 80,
+dan 100 persen yang dikirim ke Ibu Sari dan pemilik grup tersebut. Alert 100 persen pada anggaran pengembangan juga
+memanggil action group yang mematikan VM dev. Sebuah anomaly alert di tingkat subscription menangkap lonjakan tak
+terduga yang tidak dianggarkan siapa pun.</p>
+<p>Perhatikan apa yang membuat semua ini lebih mudah: kemampuan menghapus sesuatu tanpa rasa takut. Jika sebuah lingkungan
+bisa dibangun ulang dari sebuah file dalam hitungan menit, tidak ada yang mau menyimpan salinan menganggur &quot;buat
+jaga-jaga&quot;. Itulah topik makan siang berikutnya, infrastructure as code (<em>infrastruktur sebagai kode</em>) dengan Bicep. Di
+Makan Siang 21 Anda akan bertemu lagi dengan biaya sebagai salah satu dari lima pilar Azure Well-Architected Framework,
+dan Makan Siang 31 menerapkan anggaran di scope management group untuk seluruh perusahaan.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Saat ini toko online berjalan di dua VM sepanjang waktu, tetapi Dewi ingin memindahkannya ke
+Container Apps dalam enam bulan. Apakah Anda akan membeli reservation tiga tahun untuk VM-nya sekarang, savings plan
+for compute, atau belum membeli apa-apa? Apa yang ingin Anda lihat di cost analysis sebelum memutuskan?</p>
+</aside>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Ke mana perginya uang? Urai tagihannya, buru resource yatim, pasang alarmnya</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/19-cost-management.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/19-cost-management.html?lang=id" title="Demo interaktif: Ke mana perginya uang? Urai tagihannya, buru resource yatim, pasang alarmnya" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/19-cost-management/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Bagaimana satu angka total terpecah menjadi compute, penyimpanan, dan jaringan begitu tagihan dikelompokkan
+berdasarkan kategori meter.</li>
+<li>Lencana yang mengingatkan bahwa data biaya tertinggal beberapa jam, dan mengapa hal itu membuat Resource Graph menjadi
+alat yang tepat untuk berburu resource yatim.</li>
+<li>Tiga resource yatim yang meternya terus menyuapi tagihan, dan apa yang terjadi pada totalnya setelah ketiganya
+dihapus.</li>
+<li>Indikator anggaran pada 50, 80, dan 100 persen: email terkirim, tetapi tidak ada satu resource pun yang berhenti.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Rizky menghapus sebuah VM uji minggu lalu, tetapi invoice masih menampilkan biaya managed disk untuk VM itu. Apa yang
+terjadi, dan bagaimana Anda menemukan semua resource serupa di seluruh subscription?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Menghapus VM meninggalkan disk-nya dalam status <strong>Unattached</strong>, dan managed disk ditagih sesuai ukuran yang
+di-provision. Jalankan kueri Azure Resource Graph untuk disk yang <code>diskState</code>-nya <code>Unattached</code> (Advisor juga akan
+menandainya setelah beberapa waktu) — <em>alasannya:</em> Resource Graph melihat semua subscription dalam hitungan detik,
+sedangkan tagihan baru memberi tahu Anda sehari kemudian.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Ibu Sari ingin menerima email saat resource group toko online mencapai 80 persen dari jumlah bulanannya, dan ingin VM
+pengembangan dimatikan otomatis pada 100 persen. Apa yang Anda konfigurasikan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Sebuah <strong>anggaran (budget)</strong> bulanan di setiap resource group dengan alert biaya aktual pada 80 persen yang dikirim
+ke email Ibu Sari, dan pada anggaran pengembangan sebuah alert 100 persen yang memanggil <strong>action group</strong> untuk
+menjalankan otomatisasi yang men-deallocate VM tersebut — <em>alasannya:</em> anggaran saja hanya memberi tahu; ia tidak
+pernah menghentikan resource.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Dua VM toko online dengan ukuran yang sama akan berjalan 24/7 di Indonesia Central setidaknya selama tiga tahun.
+Sebuah job malam untuk menghitung ulang harga bisa dijalankan ulang jika terputus. Opsi pembelian mana yang cocok
+untuk masing-masing?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Reservation</strong> (atau savings plan, jika ukuran atau layanannya mungkin berubah) untuk web server yang stabil, dan
+<strong>Spot VMs</strong> untuk job malam yang bisa diulang, dengan ukuran VM yang mendukung Spot — <em>alasannya:</em> komitmen memberi
+imbalan bagi pemakaian yang bisa diprediksi, sedangkan Spot menukar jaminan kapasitas dengan diskon besar.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Dewi membuat sebuah VM besar pukul 09.00. Pukul 11.00, cost analysis untuk resource group-nya masih kosong. Haruskah
+ia melaporkan bug?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Tidak. Data biaya datang secara berkelompok, biasanya 8 sampai 24 jam kemudian dan hingga 72 jam untuk sebagian
+subscription pay-as-you-go — <em>alasannya:</em> alur penagihan mengumpulkan dan memberi harga pada pemakaian sebelum Cost
+Management menampilkannya, jadi gunakan Resource Graph atau activity log untuk inventaris real-time.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Kemarin tim keuangan memasang tag <code>costCenter=storefront</code> pada setiap resource toko online. Mengapa cost analysis
+bulan lalu masih menampilkan sebagian besar biaya toko online sebagai &quot;untagged&quot;?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Tag hanya muncul di data biaya sejak saat dipasang; tag tidak ditambahkan ke pemakaian historis — <em>alasannya:</em> setiap
+catatan pemakaian membawa tag yang dimiliki resource saat catatan itu direkam, jadi wajibkan tag sejak resource
+dibuat dengan Azure Policy.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Setiap biaya Azure adalah sebuah meter: jumlah dikali harga. Banyak meter menagih apa yang Anda <strong>provision</strong> atau berapa lama sebuah resource <strong>ada</strong>, sehingga resource yang terlupakan memakan biaya setiap jam.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Data biaya <strong>tertinggal beberapa jam</strong> (biasanya 8–24 jam, hingga 72 jam untuk sebagian subscription pay-as-you-go); gunakan Resource Graph untuk inventaris real-time dan anggaran untuk peringatan dini.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Perkirakan sebelum membangun dengan <strong>pricing calculator</strong>; TCO calculator yang lama sudah tidak ada, jadi gunakan business case di Azure Migrate untuk perbandingan dengan pusat data.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Buang pemborosan dan sesuaikan ukuran <strong>lebih dulu</strong>, baru berkomitmen: reservation untuk pemakaian yang stabil, savings plan untuk compute yang fleksibel, Spot untuk pekerjaan yang boleh terinterupsi, Hybrid Benefit dan harga dev/test untuk lisensi dan lingkungan non-produksi.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p><strong>Anggaran adalah alarm, bukan rem.</strong> Padukan tag, cost analysis, anggaran dengan alert 50/80/100 persen, Advisor, dan perburuan resource yatim secara rutin — itulah siklus FinOps: inform, optimize, dan operate.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Setiap resource butuh pemilik dan tanggal kedaluwarsa.</strong> Saat meninjau sebuah subscription, saya tidak memulai dari
+baris tagihan yang paling besar, melainkan dari baris yang tidak bisa dijelaskan siapa pun. Biaya besar biasanya punya
+pembela yang siap angkat tangan. Biaya kecil — sebuah disk, sebuah alamat IP, sebuah plan sisa uji coba kuartal lalu —
+tidak ada yang merasa memilikinya, dan justru karena itulah ia awet. Maka aturan saya sederhana: apa pun yang sifatnya
+sementara wajib lahir dengan tag <code>owner</code> dan tag <code>expiresOn</code>, dan yang menjaganya adalah Azure Policy, bukan niat
+baik. Sebulan sekali saya mengurutkan semuanya menurut tanggal itu, lalu mengirim daftar pendek ke setiap pemilik.
+Jarang ada orang yang mau membela resource yang mencantumkan namanya sendiri; biasanya langsung dihapus. Dan kalau ada
+yang bilang &quot;simpan dulu, buat jaga-jaga&quot;, saya cukup bertanya: bisakah kita membangunnya lagi dari kode dalam sepuluh
+menit?</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>19</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Temukan pemborosan buatan Anda sendiri</h3>
+          <div class="prose"><p><code>setup.sh</code> membuat tiga pemborosan murah yang disengaja, semuanya diberi tag <code>costCenter=retail-lab</code>: disk Standard HDD
+yang tidak terpasang, IP publik Standard yang tidak terhubung ke apa pun, dan App Service plan tanpa aplikasi. Anda
+memburunya dengan Azure Resource Graph, memeriksa apa kata Advisor (dan mempelajari mengapa ia masih diam), membuat
+anggaran resource group dengan alert 50, 80, dan 100 persen, membandingkan pay-as-you-go dengan reservation satu tahun
+untuk VM kecil, lalu akhirnya menghapus pemborosan itu dan membuktikan bahwa semuanya sudah hilang.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 40 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/19-cost-management.html">Mulai Lab 19 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/cost-management-billing/costs/pricing-calculator" target="_blank" rel="noopener"><b>Microsoft Learn: Memperkirakan biaya dengan Azure pricing calculator</b><span>Semua fitur kalkulator, termasuk harga sesuai perjanjian Anda dan cara perkiraan dihitung.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/cost-management-billing/costs/tutorial-acm-create-budgets" target="_blank" rel="noopener"><b>Microsoft Learn: Tutorial — Membuat dan mengelola anggaran</b><span>Scope anggaran, alert biaya aktual dan perkiraan, serta action group.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/cost-management-billing/savings-plan/savings-plan-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu savings plan?</b><span>Bagaimana komitmen per jam diterapkan dan bagaimana perbandingannya dengan reservation.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/advisor/advisor-reference-cost-recommendations" target="_blank" rel="noopener"><b>Microsoft Learn: Rekomendasi biaya di Azure Advisor</b><span>Daftar lengkap pemeriksaan biaya yang dijalankan Advisor, layanan demi layanan.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">💰</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Pendekar Rupiah</h2>
+        <p class="muted">Temukan, jelaskan, dan kendalikan biaya cloud.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Kita tetap online — dan kita bisa menjelaskan setiap rupiah biayanya.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 20</b><h4>Bangun Ulang Semua dalam Sejam?</h4><p>Seluruh desain hanya ada di ingatan orang, padahal ingatan tidak bisa di-redeploy.</p><p style="margin-top:10px"><a href="20-infrastructure-as-code-bicep.html">Tonton Episode 20 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="18-governance-compliance-basic.html"><small>← Episode sebelumnya</small>18 · Storage Account di West Europe</a><a class="next" href="20-infrastructure-as-code-bicep.html"><small>Episode berikutnya →</small>20 · Bangun Ulang Semua dalam Sejam?</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/19-cost-management/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

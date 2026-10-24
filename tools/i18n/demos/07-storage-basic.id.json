@@ -1,0 +1,147 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 07 · Penyimpanan (Dasar) — Demo interaktif",
+    "kicker": "Makan Siang 07 · Penyimpanan (Dasar) · Demo interaktif",
+    "title": "Di mana salinan tinggal, dan di rak mana file disimpan?",
+    "lede": "Saksikan salinan data Nusantara Retail selamat (atau tidak) ketika sebuah disk, pusat data, zone, atau seluruh region gagal. Lalu miringkan jungkat-jungkit access tier dari hot ke archive. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Opsi redundansi storage saat terjadi kegagalan, disusul jungkat-jungkit access tier yang membandingkan harga penyimpanan dan harga akses",
+    "svgDesc": "Adegan pertama menampilkan aplikasi toko online yang menulis melalui satu blob endpoint ke salinan-salinan di region primer dengan tiga availability zone dan sebuah region sekunder pasangannya. Salinan ditempatkan dengan LRS, ZRS, dan GZRS, sementara sebuah disk, sebuah pusat data, sebuah zone, lalu seluruh region mengalami kegagalan. Adegan kedua menampilkan empat kartu tier (hot, cool, cold, archive) di atas jungkat-jungkit yang miring dari harga penyimpanan ke harga akses, serta jalur rehidrasi dari archive kembali ke hot."
+  },
+  "steps": [
+    {
+      "title": "File Nusantara butuh rumah",
+      "text": "Foto produk, faktur, dan daftar harga menumpuk di satu disk di sebelah pantry. Di Azure, semuanya pindah ke sebuah storage account: satu nama, satu blob endpoint, dan minimal tiga salinan untuk setiap objek. Letak salinan-salinan itulah yang menentukan kegagalan mana yang bisa dilewati toko. Region pasangan di sebelah kanan masih kosong untuk saat ini."
+    },
+    {
+      "title": "LRS: tiga salinan, satu gedung",
+      "text": "Locally redundant storage menyimpan tiga salinan di dalam satu pusat data, ibarat tiga fotokopi di satu laci. Inilah opsi termurah, dirancang untuk durabilitas minimal sebelas angka sembilan per tahun. Setiap penulisan dari toko online sampai ke ketiga salinan sebelum Azure mengonfirmasinya.",
+      "set": {
+        "t-mode": "LRS · 3 salinan di satu pusat data · ≥ 11 angka sembilan"
+      }
+    },
+    {
+      "title": "Disk rusak — tanpa drama",
+      "text": "Drive di bawah salinan 2 mati. Azure tetap melayani baca dan tulis dari salinan yang sehat, lalu membangun ulang salinan yang hilang di perangkat keras lain. Pelanggan tidak merasakan apa-apa. LRS melindungi Anda dari drive, server, dan rak yang rusak: kegagalan sehari-hari di dalam satu gedung.",
+      "set": {
+        "t-outcome": "Disk rusak: data tetap tersedia ✓"
+      }
+    },
+    {
+      "title": "Satu pusat data padam total",
+      "text": "Kini kebakaran atau banjir melumpuhkan seluruh pusat data. Ketiga salinan LRS ada di gedung itu, jadi permintaan dari toko online gagal dan, dalam skenario terburuk, datanya hilang untuk selamanya. LRS cocok untuk data yang bisa dibuat ulang, bukan untuk faktur sepuluh tahun.",
+      "set": {
+        "t-outcome": "Pusat data lumpuh: LRS tak bisa melayani"
+      }
+    },
+    {
+      "title": "ZRS: satu salinan di setiap zone",
+      "text": "Zone-redundant storage menempatkan salinan di tiga availability zone, masing-masing dengan listrik, pendingin, dan jaringannya sendiri. Setiap penulisan disalin secara sinkron ke semua zone sebelum Azure mengonfirmasinya. Durabilitas naik menjadi minimal dua belas angka sembilan, dengan harga sedikit lebih mahal daripada LRS.",
+      "set": {
+        "t-mode": "ZRS · 3 salinan di 3 zone · ≥ 12 angka sembilan",
+        "t-outcome": "Hari normal: semua salinan sehat"
+      }
+    },
+    {
+      "title": "Satu zone gagal total",
+      "text": "Zone 1 offline. Endpoint terus mengarahkan permintaan toko online ke salinan di zone 2 dan 3, sehingga pelanggan tetap bisa berbelanja. Aplikasi sebaiknya mencoba ulang sebentar selama Azure memperbarui perutean, tetapi tidak ada data yang hilang dan tidak ada yang perlu memulai failover.",
+      "set": {
+        "t-outcome": "Zone hilang: ZRS tetap melayani ✓"
+      }
+    },
+    {
+      "title": "Bencana di seluruh region",
+      "text": "Sekarang bayangkan bencana yang melanda seluruh region. LRS dan ZRS menyimpan semua salinan di dalam region itu, jadi keduanya lumpuh sampai region pulih. Kalau bisnis tidak bisa menerimanya, data butuh salinan di region kedua — dan region pasangan di sebelah kanan masih kosong.",
+      "set": {
+        "t-outcome": "Region lumpuh: LRS dan ZRS tak berdaya"
+      }
+    },
+    {
+      "title": "GZRS menambah salinan di tempat jauh",
+      "text": "Geo-zone-redundant storage memakai ZRS di region primer dan menyalin setiap perubahan secara asinkron ke region pasangan, tempat data disimpan dengan LRS. Durabilitas naik menjadi minimal enam belas angka sembilan. GRS bekerja dengan cara yang sama, tetapi dengan LRS di region primer. Indonesia Central tidak punya pasangan, jadi keduanya tidak tersedia di sana.",
+      "set": {
+        "t-mode": "GZRS · ZRS + salinan asinkron ke region pasangan",
+        "t-outcome": "Salinan sekunder sedikit tertinggal"
+      }
+    },
+    {
+      "title": "Failover ke region sekunder",
+      "text": "Region primer padam. Dengan GRS atau GZRS, Anda memulai account failover: DNS mengarahkan endpoint yang sama ke region sekunder, dan toko bisa membaca serta menulis lagi. Penulisan yang terjadi setelah Last Sync Time mungkin hilang. Dengan RA-GRS atau RA-GZRS, aplikasi bahkan bisa membaca salinan sekunder sebelum failover.",
+      "tip": "Redundansi juga menyalin kesalahan: hapus satu faktur, dan semua salinannya ikut berubah seketika. Soft delete dan versioning hadir di Makan Siang 24.",
+      "set": {
+        "t-outcome": "Setelah failover: toko kembali buka ✓"
+      }
+    },
+    {
+      "title": "Pertanyaan kedua: rak yang mana?",
+      "text": "Salinan menjawab seberapa aman datanya; access tier menjawab berapa biayanya. Bayangkan jungkat-jungkit: satu sisi adalah harga menyimpan satu gigabyte selama sebulan, sisi lainnya harga membacanya. Hot berat di harga penyimpanan dan ringan di harga akses, pas untuk foto produk yang dibaca sepanjang hari.",
+      "set": {
+        "t-example": "Foto produk, dibaca sepanjang hari → Hot"
+      }
+    },
+    {
+      "title": "Cool dan cold: rak yang lebih murah",
+      "text": "Cool dan cold menurunkan harga penyimpanan tetapi menarik biaya lebih untuk setiap pembacaan, dan keduanya mengharapkan blob tinggal minimal 30 dan 90 hari. Hapus, timpa, atau pindahkan blob lebih awal, dan Anda tetap membayar sisa harinya — seperti kontrak kos minimum. Foto musim lalu cocok di cool; faktur tahun lalu cocok di cold.",
+      "set": {
+        "t-example": "Foto dan faktur lama, jarang dibaca → Cool atau Cold"
+      }
+    },
+    {
+      "title": "Archive: gudang di luar kota",
+      "text": "Archive punya harga penyimpanan terendah dan harga akses tertinggi, dan blob-nya menjadi offline: Anda bisa melihat nama dan metadatanya di daftar, tetapi tidak bisa membaca isinya. Simpan minimal 180 hari. Archive hanya tersedia di account LRS, GRS, dan RA-GRS, dan cocok untuk faktur yang lebih tua dari setahun.",
+      "set": {
+        "t-example": "Faktur lebih tua dari setahun → Archive"
+      }
+    },
+    {
+      "title": "Rehidrasi butuh berjam-jam",
+      "text": "Untuk membaca faktur di archive, lakukan rehydrate ke tier online: ubah tier-nya, atau salin ke blob baru, yang menghindari biaya early deletion. Prioritas Standard bisa butuh hingga 15 jam. Prioritas High sering selesai dalam waktu kurang dari satu jam untuk blob di bawah 10 GB, dengan harga lebih mahal dan tanpa jaminan."
+    },
+    {
+      "title": "Rangkuman dan lab Anda",
+      "text": "Pilih redundansi berdasarkan kegagalan yang harus Anda lewati: LRS untuk perangkat keras, ZRS untuk satu zone, GZRS atau GRS untuk satu region. Pilih tier berdasarkan seberapa sering data dibaca, dan ingat masa minimum 30, 90, dan 180 hari. Tak satu pun dari pilihan itu melindungi dari penghapusan yang ceroboh; itu tugas Makan Siang 24.",
+      "tip": "Di Lab 07, Anda memindahkan satu blob ke Cool dan satu ke Archive, lalu mencoba mengunduh blob yang diarsipkan dan membaca error-nya."
+    }
+  ],
+  "svg": {
+    "Redundancy decides where the copies live": "Redundansi menentukan letak salinan",
+    "Normal day: every copy healthy": "Hari normal: semua salinan sehat",
+    "Storefront app": "Aplikasi toko",
+    "reads and writes": "membaca dan menulis",
+    "one name for every copy": "satu nama untuk semua salinan",
+    "Primary region · Southeast Asia": "Region primer · Southeast Asia",
+    "Datacenter": "Pusat data",
+    "Paired region · East Asia": "Pasangannya · East Asia",
+    "LRS inside the secondary": "LRS di region sekunder",
+    "copy 1": "salinan 1",
+    "copy 2": "salinan 2",
+    "copy 3": "salinan 3",
+    "copy 4": "salinan 4",
+    "copy 5": "salinan 5",
+    "copy 6": "salinan 6",
+    "disk failed": "disk rusak",
+    "Datacenter fire": "Pusat data terbakar",
+    "Zone 1 outage": "Zone 1 padam",
+    "Region-wide disaster": "Bencana satu region",
+    "Access tiers: storage price versus access price": "Access tier: harga simpan versus harga akses",
+    "online · no minimum": "online · tanpa minimum",
+    "priciest to keep": "termahal untuk disimpan",
+    "online · min 30 days": "online · min. 30 hari",
+    "cheaper to keep": "lebih murah disimpan",
+    "online · min 90 days": "online · min. 90 hari",
+    "cheaper still": "lebih murah lagi",
+    "offline · min 180 days": "offline · min. 180 hari",
+    "cheapest to keep": "termurah untuk disimpan",
+    "Standard: up to 15 h · High: often under 1 h": "Standard: hingga 15 jam · High: sering < 1 jam",
+    "price to keep each GB for a month": "harga menyimpan tiap GB per bulan",
+    "price to read it back": "harga membacanya kembali",
+    "Storage price": "Harga simpan",
+    "high": "tinggi",
+    "Access price: low": "Harga akses: rendah",
+    "lower": "lebih rendah",
+    "Access price": "Harga akses",
+    "higher": "lebih tinggi",
+    "Storage price: lowest": "Harga simpan: terendah",
+    "highest, plus hours": "tertinggi + berjam-jam",
+    "Which shelf fits which data?": "Rak mana untuk data yang mana?"
+  }
+}

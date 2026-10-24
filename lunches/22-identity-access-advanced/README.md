@@ -1,9 +1,12 @@
 # Lunch 22 · Identity and Access (Advanced)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Deep-dive month · **Level:** Advanced · **Part 5:** Deep dives
 > **Time:** 60 minutes · **Prerequisite lunches:** 05, 15, 20
 > **AZ-900 skill area:** Beyond AZ-900
 > **Lab:** [Lab 22 · Passwordless pipelines and least privilege](../../labs/22-identity-access-advanced/README.md) — about 50 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -266,6 +269,10 @@ What to watch for:
 - A Conditional Access policy combines assignments, conditions and grant or session controls; roll it out in report-only and never without emergency-access exclusions.
 - PIM turns standing admin rights into eligible, time-limited, approved activations; access reviews and two tested break-glass accounts complete the picture.
 - Custom roles grant exactly the operations a job needs at a scope you choose; NotActions only subtracts, and only deny assignments block.
+
+## 🗒️ Field notes from Stefanus
+
+> **Ask what a stolen laptop could do before breakfast.** I ask that question in every access review, about each person and each pipeline. For people, the honest answer should be "nothing without a second factor, and nothing in production without a PIM activation that someone gets notified about". For pipelines: "nothing, because no pipeline secret exists — not in GitHub, not in a script, not on that laptop". My habit is one short list of every credential that can sign in without a human, with an owner and an expiry date on each line. Lines without an owner are the first I replace with a managed identity or a federated credential. And I name each federated credential after the exact branch or environment it trusts, so the next reviewer sees the boundary without decoding a subject string.
 
 ## 🔬 Your lab: Passwordless pipelines and least privilege
 

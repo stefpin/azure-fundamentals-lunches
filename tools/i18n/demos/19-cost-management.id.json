@@ -1,0 +1,111 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 19 · Manajemen Biaya — Demo interaktif",
+    "kicker": "Makan Siang 19 · Manajemen Biaya · Demo interaktif",
+    "title": "Ke mana perginya uang? Urai tagihannya, buru resource yatim, pasang alarmnya",
+    "lede": "Ikuti invoice Azure pertama Nusantara Retail, dari satu angka total yang membingungkan hingga menjadi tagihan yang bisa Anda jelaskan dan kendalikan. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Tagihan Azure yang diurai menjadi compute, penyimpanan, dan jaringan, perburuan resource yatim, serta anggaran dengan alert pada 50, 80, dan 100 persen",
+    "svgDesc": "Di kiri, subscription Nusantara Retail berisi resource compute, penyimpanan, dan jaringan yang meternya mengisi tagihan bulanan di bawahnya. Tiga resource yatim ditemukan dengan kueri Resource Graph lalu dihapus. Di kanan, indikator anggaran bulanan terisi hingga 50, 80, dan 100 persen dan mengirim email alert, sementara semua resource tetap berjalan."
+  },
+  "steps": [
+    {
+      "title": "Tagihan yang tak bisa dijelaskan siapa pun",
+      "text": "Hari ini hari kerja pertama di bulan baru, dan invoice Azure PT Nusantara Retail sudah tiba. Ibu Sari melihat satu angka total yang besar, lebih tinggi daripada spreadsheet yang ia setujui, dan tim keuangan mengajukan pertanyaan yang wajar: sebenarnya kita membayar untuk apa? Dalam beberapa menit ke depan, Anda akan membongkar tagihan ini, memburu pemborosan, dan memasang sistem peringatan dini."
+    },
+    {
+      "title": "Setiap resource menjalankan meter",
+      "text": "Di dalam subscription ada resource yang dibangun beberapa minggu terakhir: web server, App Service plan, disk, storage account, alamat IP publik, dan lalu lintas ke pembeli. Masing-masing melaporkan pemakaian pada meter: jam untuk compute, GB-bulan untuk penyimpanan, gigabyte keluar dan jam untuk jaringan. Tagihan hanyalah jumlah dikali harga untuk setiap meter, lalu semuanya dijumlahkan."
+    },
+    {
+      "title": "Tagihan, diurai",
+      "text": "Kelompokkan invoice yang sama berdasarkan kategori meter, dan satu angka total itu terpecah menjadi tiga bagian. Compute sering menjadi potongan terbesar, karena mesin dan plan ditagih untuk setiap jam keberadaannya. Penyimpanan ditagih untuk kapasitas yang Anda provision. Jaringan ditagih untuk alamat IP publik dan data yang keluar dari Azure. Di Cost Management, inilah cost analysis yang dikelompokkan per layanan."
+    },
+    {
+      "title": "Compute: bayar selama berjalan",
+      "text": "Meter compute berdetak setiap jam selama VM dialokasikan atau plan masih ada. vm-web-2 berjalan dengan CPU lima persen sepanjang hari: itu mesin yang kebesaran, bukan mesin yang sibuk. Mematikannya dari dalam sistem operasi tidak cukup; hanya deallocate yang menghentikan meter compute. Plan asp-test sama sekali tidak menampung aplikasi, tetapi tetap ditagih setiap jam."
+    },
+    {
+      "title": "Penyimpanan: bayar untuk kapasitas",
+      "text": "Managed disk ditagih berdasarkan ukuran yang di-provision, entah dibaca orang atau tidak. disk-old dulunya milik VM uji yang dihapus Rizky bulan lalu, dan menghapus VM tidak ikut menghapus disk-nya kecuali Anda memintanya. Storage account st-images bekerja dengan cara berbeda: Anda membayar foto yang benar-benar tersimpan, ditambah operasi untuk membaca dan menulisnya."
+    },
+    {
+      "title": "Jaringan: data keluar, IP menganggur",
+      "text": "Data yang masuk ke Azure gratis, tetapi data yang keluar ke pembeli di internet ditagih per gigabyte, jadi halaman produk yang ramai lebih mahal. Alamat IP publik Standard ditagih setiap jam selama ia ada, terpasang atau tidak. pip-old dulu menunjuk ke server yang kini sudah tidak ada, jadi setiap jam keberadaannya murni pemborosan."
+    },
+    {
+      "title": "Angkanya datang terlambat",
+      "text": "Inilah jebakannya: data biaya tidak real-time. Pemakaian dikumpulkan, diberi harga, lalu dimuat ke Cost Management secara berkelompok, biasanya 8 sampai 24 jam kemudian dan hingga 72 jam untuk sebagian subscription pay-as-you-go. Anggaran dievaluasi sekitar sekali sehari. Resource yang lepas kendali bisa berjalan seharian sebelum ada grafik yang menunjukkannya, jadi Anda juga butuh alat inventaris.",
+      "set": {
+        "t-total": "Total sementara: pemakaian hari ini belum termasuk"
+      }
+    },
+    {
+      "title": "Pemborosan bersembunyi di depan mata",
+      "text": "Lihat lagi dengan kacamata biaya, dan tiga resource langsung menonjol: disk yang tidak terpasang ke apa pun, IP publik yang tidak terhubung ke apa pun, dan App Service plan tanpa aplikasi. Tidak ada yang memakainya, tetapi meternya terus menyuapi tagihan setiap jam. Di portal, semuanya berstatus Succeeded yang tampak sehat — persis karena itulah resource yatim bisa bertahan berbulan-bulan."
+    },
+    {
+      "title": "Berburu resource yatim",
+      "text": "Azure Resource Graph menjalankan kueri atas setiap resource di semua subscription yang bisa Anda baca, dalam hitungan detik. Kueri ini menemukan disk yang statusnya Unattached; kueri serupa menemukan IP publik tanpa IP configuration dan plan yang jumlah site-nya nol. Tidak seperti data biaya, Resource Graph mencerminkan perubahan hampir seketika, jadi inilah alat yang tepat untuk perburuan resource yatim setiap minggu."
+    },
+    {
+      "title": "Hapus pemborosan, sesuaikan sisanya",
+      "text": "Setelah memastikan dengan para pemiliknya, Anda menghapus ketiga resource yatim. Azure Advisor merekomendasikan ukuran yang lebih kecil untuk vm-web-2; Advisor butuh riwayat berhari-hari, jadi pemborosan yang masih baru tidak langsung muncul di sana. Untuk server toko online yang stabil, reservation atau savings plan bisa memangkas tarif per jam lebih jauh, tetapi hanya setelah bersih-bersih. Total bulan depan akan lebih rendah.",
+      "set": {
+        "t-total": "Bulan depan: lebih rendah, 3 resource yatim dihapus",
+        "t-seg-compute": "VM (plan kosong dihapus)",
+        "t-seg-storage": "blob, disk terpasang",
+        "t-seg-network": "data keluar, satu IP"
+      }
+    },
+    {
+      "title": "Anggaran mengawasi tren",
+      "text": "Mencegah lebih baik daripada membereskan, jadi Anda membuat anggaran bulanan pada resource group toko online dengan alert pada 50, 80, dan 100 persen. Di pertengahan bulan, pengeluaran aktual melewati 50 persen dan Cost Management mengirim email ke Ibu Sari dan para pemilik resource. Belum ada yang salah, tetapi kini semua orang tahu ke mana arah pengeluaran bulan ini.",
+      "set": {
+        "t-budget-sub": "rg-storefront · alert 50/80/100%",
+        "t-spend": "Biaya: 50% · email 1 terkirim"
+      }
+    },
+    {
+      "title": "Alarm, bukan rem",
+      "text": "Pada 80 persen email kedua datang, dan pada 100 persen email ketiga. Perhatikan apa yang tidak terjadi: tidak ada resource yang berhenti. Anggaran adalah alarm, bukan rem, dan ia bekerja dengan data yang tertunda. Untuk tindakan otomatis, pasang action group yang menjalankan otomatisasi, misalnya men-deallocate VM pengembangan. Subscription pay-as-you-go tidak punya batas pengeluaran sebagai sandaran.",
+      "set": {
+        "t-spend": "Biaya: 100% · tetap berjalan"
+      }
+    },
+    {
+      "title": "Rangkuman: lihat, temukan, perbaiki, jaga",
+      "text": "Urai tagihan per layanan dan per tag, ingat bahwa data biaya terlambat beberapa jam, buru resource yatim dengan Resource Graph dan Advisor, beli komitmen hanya untuk beban kerja yang stabil setelah bersih-bersih, dan jaga setiap resource group dengan anggaran dan alert. Lalu ulangi setiap bulan: siklus inform, optimize, dan operate itulah jantung FinOps.",
+      "tip": "Di Lab 19 Anda sengaja membuat tiga resource yatim yang murah, menemukannya dengan Resource Graph, memeriksa Advisor, memasang anggaran 50/80/100% pada resource group, membandingkan pay-as-you-go dengan reservation, lalu menghapus pemborosannya."
+    }
+  ],
+  "svg": {
+    "Compute · per hour": "Compute · per jam",
+    "Storage · per GB-month": "Penyimpanan · per GB-bulan",
+    "Network · per GB and hour": "Jaringan · per GB dan jam",
+    "Monthly bill · PT Nusantara Retail": "Tagihan bulanan · PT Nusantara Retail",
+    "Total this month: higher than expected": "Total bulan ini: lebih tinggi dari perkiraan",
+    "Monthly budget": "Anggaran bulanan",
+    "rg-storefront · no budget yet": "rg-storefront · belum ada anggaran",
+    "Actual spend: not tracked": "Biaya aktual: belum dipantau",
+    "One total. What are we paying for?": "Satu angka total. Kita membayar untuk apa?",
+    "VMs, plans": "VM, plan",
+    "Storage": "Penyimpanan",
+    "disks, blobs": "disk, blob",
+    "Network": "Jaringan",
+    "public IPs, data out": "IP publik, data keluar",
+    "cost data: 8–24 h behind": "data biaya telat 8–24 jam",
+    "running 24/7": "menyala 24/7",
+    "running 24/7 · 5% CPU": "menyala 24/7 · CPU 5%",
+    "plan with 0 apps": "plan dengan 0 aplikasi",
+    "product photos": "foto produk",
+    "attached · OS disk": "terpasang · disk OS",
+    "unattached": "tidak terpasang",
+    "data out": "data keluar",
+    "pages to shoppers": "halaman ke pembeli",
+    "attached to vm-web-1": "terpasang ke vm-web-1",
+    "not associated": "tidak terhubung",
+    "Azure Resource Graph · seconds, across every subscription you can read": "Azure Resource Graph · hitungan detik, di semua subscription yang bisa Anda baca",
+    "Alert email": "Email alert",
+    "Ibu Sari + resource owners": "Ibu Sari + pemilik resource"
+  }
+}

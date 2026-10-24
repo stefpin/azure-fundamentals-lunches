@@ -1,0 +1,139 @@
+{
+  "page": {
+    "doc_title": "Lunch 05 · Can Dewi restart the VM? — Interactive demo",
+    "kicker": "Lunch 05 · Identity and Access (Basic) · Interactive demo",
+    "title": "Can Dewi restart the VM?",
+    "lede": "Follow one request from sign-in to decision: Microsoft Entra ID proves who Dewi is, Azure Resource Manager collects her role assignments from every scope and adds them up, and Conditional Access decides how a contractor may sign in. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "Authentication with Microsoft Entra ID and authorization with Azure RBAC across four scopes",
+    "svgDesc": "On the left, Dewi and later Rizky sign in through Microsoft Entra ID and Conditional Access. In the middle, Azure Resource Manager evaluates each request and shows the effective permissions and the result. On the right, the scope ladder: management group, subscription, resource group rg-storefront-test and the virtual machine vm-storefront-test, with a deny assignment that blocks delete operations."
+  },
+  "steps": [
+    {
+      "title": "Late night, a frozen test site",
+      "text": "It's 22:00 and the storefront's test site has frozen. Dewi, a Nusantara Retail developer, wants to restart vm-storefront-test so she can keep testing tonight's release. She opens the Azure portal. Two separate questions now decide what happens: who is she, and is she allowed to restart this particular virtual machine?"
+    },
+    {
+      "title": "Authentication: prove who you are",
+      "text": "Dewi's browser sends her to Microsoft Entra ID. She types her password, then Entra ID asks for a second factor: the sign-in screen shows a number, and she types it into Microsoft Authenticator on her phone. Something she knows plus something she has proves that this really is Dewi."
+    },
+    {
+      "title": "A token, not a password",
+      "text": "Entra ID hands Dewi's browser a signed, short-lived token. It states who she is, that she completed MFA, and which groups she belongs to, here grp-developers. Her password never travels to Azure Resource Manager. From now on, every request she makes carries this token instead."
+    },
+    {
+      "title": "The request reaches Resource Manager",
+      "text": "Dewi clicks Restart. The portal sends one request to Azure Resource Manager: perform Microsoft.Compute/virtualMachines/restart/action on vm-storefront-test, with her token attached. Signing in only proved who she is. Authorization starts now, and it happens again for every single request, not once per session."
+    },
+    {
+      "title": "Deny assignments are checked first",
+      "text": "Resource Manager first looks for deny assignments that cover this action at this scope. There is one on vm-storefront-test, created by a deployment stack, but it blocks only delete operations. Restart isn't on its list, so this check passes and evaluation continues. You can't create deny assignments yourself; Azure creates them."
+    },
+    {
+      "title": "Collect assignments from every scope",
+      "text": "Next, Resource Manager gathers every role assignment for Dewi and for each of her groups, at the VM and at every scope above it. The management group holds nothing for her. The subscription gives grp-developers Reader. The resource group and the VM itself hold no assignments for her.",
+      "set": {
+        "t-perm1": "sub: Reader (via group)",
+        "t-perm2": "mg, rg, vm: nothing",
+        "t-perm3": ""
+      }
+    },
+    {
+      "title": "Add them up: read-only",
+      "text": "Azure RBAC is additive: Dewi's effective permissions are the union of all those assignments. Reader allows */read and nothing more, so restart/action is missing. Resource Manager refuses the request with 403 AuthorizationFailed, and the virtual machine never even hears about it. The result turns red: denied.",
+      "set": {
+        "t-perm1": "union = */read",
+        "t-perm2": "restart/action ✗ missing",
+        "t-result": "DENIED · 403"
+      }
+    },
+    {
+      "title": "The tempting fix: Owner everywhere",
+      "text": "Someone suggests making Dewi Owner of the whole subscription. It would work tonight. It would also let her change production, delete anything and grant access to anyone, in every resource group, until someone remembers to remove it. That's a misconfiguration: far too much power at far too high a scope."
+    },
+    {
+      "title": "Right role, right scope",
+      "text": "The better fix is narrow. An Owner of the resource group assigns Virtual Machine Contributor to grp-developers on rg-storefront-test only. Dewi needs no new account or password: her group membership carries the new access. Resource Manager collects the assignments again and now finds two of them.",
+      "set": {
+        "t-rg": "grp-developers → VM Contributor",
+        "t-perm1": "collecting again…",
+        "t-perm2": "",
+        "t-perm3": "",
+        "t-result": "?"
+      }
+    },
+    {
+      "title": "Allowed, and only here",
+      "text": "The union is now Reader everywhere plus virtualMachines/* in rg-storefront-test, so restart/action is included. The request passes the deny assignment, which only covers delete, and reaches the VM: allowed, shown in green. In rg-storefront-prod Dewi can still only read. Role changes can take a few minutes to apply.",
+      "set": {
+        "t-perm1": "*/read (Reader)",
+        "t-perm2": "+ virtualMachines/*",
+        "t-perm3": "restart/action ✓",
+        "t-result": "ALLOWED ✓"
+      }
+    },
+    {
+      "title": "Deny beats allow",
+      "text": "Feeling confident, Dewi tries to delete the VM. Virtual Machine Contributor includes delete, so her roles alone would allow it. But the deny assignment from the deployment stack blocks every delete on this VM, for everyone. Deny assignments are evaluated first and always win, so the request stops here, shown in red.",
+      "set": {
+        "t-perm3": "delete: allowed by role…",
+        "t-result": "BLOCKED by deny"
+      }
+    },
+    {
+      "title": "Gate one: Conditional Access",
+      "text": "Now meet Rizky, the outsourced contractor, signing in from his own laptop in Bandung. Before Entra ID issues his token, Conditional Access collects signals: he's in grp-contractors, he's opening the Azure portal, his device isn't managed by Nusantara Retail, and the sign-in comes from Indonesia. Policies turn signals into a decision."
+    },
+    {
+      "title": "Decision: grant, but require MFA",
+      "text": "Nusantara Retail's policy says contractors on unmanaged devices must complete MFA. Rizky types the number-matching code into Microsoft Authenticator, Conditional Access grants access, and only then does Entra ID issue his token. Had he tried an old mail app that can't do MFA, a legacy-authentication policy would block him. Conditional Access needs Entra ID P1.",
+      "set": {
+        "t-decision": "Grant · require MFA ✓"
+      }
+    },
+    {
+      "title": "Recap: two gates, every time",
+      "text": "Conditional Access decides how someone may sign in. Azure RBAC decides, on every request, what they may do and where: deny assignments first, then the union of roles from every scope. Grant roles to groups, at the narrowest scope, with the most specific role, and an ended contract really ends.",
+      "tip": "In Lab 05 you do this yourself: create a test user and a contractors group, assign Reader and then Contributor on one resource group, and sign in as the test user in a private browser window."
+    }
+  ],
+  "svg": [
+    "Sign-in · Microsoft Entra ID",
+    "Scopes · where roles live",
+    "Dewi",
+    "developer · grp-developers",
+    "token for Dewi",
+    "MFA ✓ · grp-developers",
+    "Microsoft Entra ID",
+    "password + MFA check",
+    "Conditional Access",
+    "if signals, then decision",
+    "Rizky",
+    "contractor · own laptop",
+    "Request: restart vm-storefront-test",
+    "…/virtualMachines/restart/action",
+    "Azure Resource",
+    "Manager",
+    "authorizes every request",
+    "Effective permissions",
+    "waiting for a request",
+    "?",
+    "Management group · nusa-root",
+    "Dewi's groups: no assignment",
+    "Subscription · nusa-prod",
+    "grp-developers → Reader",
+    "rg-storefront-test",
+    "no assignment for Dewi",
+    "vm-storefront-test",
+    "Deny assignment · blocks */delete",
+    "created by a deployment stack",
+    "Make her Owner of the subscription?",
+    "works, but opens everything, everywhere",
+    "Signals · Rizky signs in",
+    "user: member of grp-contractors",
+    "app: Azure portal",
+    "device: personal, not managed",
+    "location: Bandung, Indonesia",
+    "risk: low (risk signals need P2)",
+    "evaluating…"
+  ]
+}

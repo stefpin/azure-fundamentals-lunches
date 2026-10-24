@@ -1,8 +1,11 @@
 # Lab 17 · The restore drill
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Pairs with:** [Lunch 17 · Backup and Disaster Recovery (Basic)](../../lunches/17-backup-disaster-recovery/README.md)
 > **Time:** 60–90 minutes, mostly waiting for the first backup · **Cost:** 💲💲 (see [cost bands](../README.md#cost-bands)) · **Difficulty:** ★★☆
 > **Works on its own:** ✅ You do not need any earlier lab. Everything this lab needs is created by its steps or by `setup.sh`.
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 ## 🎯 What you'll build
 

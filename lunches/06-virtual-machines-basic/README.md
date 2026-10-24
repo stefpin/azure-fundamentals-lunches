@@ -1,9 +1,12 @@
 # Lunch 06 · Virtual Machines (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 2:** Core infrastructure
 > **Time:** 60 minutes · **Prerequisite lunches:** 01, 03, 04
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 06 · Your first web server VM](../../labs/06-virtual-machines-basic/README.md) — about 45 minutes · cost 💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -374,6 +377,15 @@ What to watch for:
   a NAT gateway or load balancer outbound rules.
 - Stopped is not deallocated: only deallocation stops the compute meter, and disks and public IPs are billed until
   deleted.
+
+## 🗒️ Field notes from Stefanus
+
+> **The two-in-the-morning question.** In design reviews I ask one question about every VM: *what state should it be in
+> at two in the morning?* If the answer is "off", I want auto-shutdown or a schedule that deallocates it — not a
+> promise, and not a shutdown from inside the operating system, which leaves the compute meter running. If the answer is
+> "gone", I delete the resource group, not just the VM, because orphaned disks and public IP addresses are the quiet
+> line items that survive a hasty cleanup. And if the answer is "busy", I check the size family before anyone touches
+> the code: a burstable VM that has used up its CPU credits looks exactly like a bug.
 
 ## 🔬 Your lab: Your first web server VM
 

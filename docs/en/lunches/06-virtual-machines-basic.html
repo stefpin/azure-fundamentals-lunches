@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 06 · Escape from the Pantry — Lunch 06: Virtual Machines (Basic) · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Lunch 06 · Virtual Machines (Basic). A desk fan in front of the server is not a strategy. Time to get the shop off that box. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/06-virtual-machines-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/06-virtual-machines-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/06-virtual-machines-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/06-virtual-machines-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Episode 06 · Escape from the Pantry — Lunch 06: Virtual Machines (Basic)">
+<meta property="og:description" content="Lunch 06 · Virtual Machines (Basic). A desk fan in front of the server is not a strategy. Time to get the shop off that box. A 60-minute reading, animated demo, knowledge check and a hands-on Azure lab.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/06-virtual-machines-basic.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lunch" data-lunch="06" style="--c:#e2482f">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes" aria-current="page">Episodes</a><a href="../labs/index.html">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/lunches/06-virtual-machines-basic.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 06</span> Season 1 · 🏗️ Part 2 · Core infrastructure</div>
+      <h1>Escape from the Pantry</h1>
+      <div class="lunch-title">Lunch 06 · Virtual Machines (Basic)</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Basic</span>
+        <span class="chip">⏱ 60-minute lunch</span>
+        <span class="chip">🎓 AZ-900 · Describe Azure architecture and services</span>
+        <span class="chip cost">🔬 Lab · about 45 minutes · 💲💲</span>
+        <span class="chip">Builds on</span><a class="chip" href="01-before-you-begin.html" title="The Room Next to the Pantry">↩ 01</a><a class="chip" href="03-global-infrastructure.html" title="Where Does the Shop Live?">↩ 03</a><a class="chip" href="04-resource-hierarchy-basic.html" title="Who Made server-baru-final2?">↩ 04</a>
+      </div>
+      <div class="previously"><b>Previously on Nusantara Retail</b>In Episode 05 · Just Give Him My Password, you gave Rizky exactly the access he needs — and a clean way to take it back.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Start the 60-minute lunch</button>
+        <a class="btn" href="#demo">🎬 Jump to the demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Mark lunch finished</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-1"  viewBox="0 0 200 236" role="img" aria-label="The pantry server, worried"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>The director&#x27;s question · 18% ready</b>After this episode you can say: “If the VM dies, I can rebuild it in about ten minutes.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Sections of this lunch"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Story</a><a href="#reading">📖 Reading</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Quiz</a><a href="#takeaways">🧠 Takeaways</a><a href="#field-notes">🗒️ Notes</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Finish</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Lunch clock">
+      <h4>Lunch clock <span>60 min</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Today&#x27;s menu <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Meanwhile…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Reading <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-when-a-virtual-machine-is-the-right-tool">When a virtual machine is the right tool</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-the-building-blocks-a-vm-is-a-bundle-of-resources">The building blocks: a VM is a bundle of resources</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-choosing-a-size-and-a-disk">Choosing a size and a disk</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-getting-in-and-getting-out">Getting in, and getting out</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-living-with-a-vm-power-states-billing-resizing-and-auto-shutdown">Living with a VM: power states, billing, resizing and auto-shutdown</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-paying-for-vms-and-what-it-means-for-nusantara-retail">Paying for VMs, and what it means for Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Knowledge check <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Takeaways <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Field notes</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Your lab</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Finish <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Start the lunch timer</button>
+        <a class="btn btn-sm" href="../labs/06-virtual-machines-basic.html">🔬 Open Lab 06</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Today&#x27;s menu</h2><span class="minute">Minutes 0–5</span></div>
+      <div class="menu-card">
+        <h3>By the end of this lunch you will be able to</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Decide</strong> when an IaaS virtual machine is the right tool for a workload, and what you still manage yourself.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Name</strong> every resource Azure creates for a VM — image, size, disks, network interface, virtual network, public IP and network security group — and explain what each one does.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Choose</strong> a VM size family and a managed disk type, including when a burstable B-series size is a good fit.</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Compare</strong> the ways to sign in to and connect to a VM, and explain why new virtual networks need explicit outbound access.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="I can do this now">✓</button><span><strong>Explain</strong> power states and billing, resizing, auto-shutdown and the main VM pricing options.</span></li></ul>
+        <p class="hint">Tick an objective when you can really do it. Each one is worth 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Meanwhile at Nusantara Retail · Episode 06</span>
+        <div class="story-body"><p>Monday, 08:15. The storefront server next to the pantry is humming loudly again, and Pak Budi has placed a desk fan in
+front of it &quot;just for today&quot;. Ibu Sari has read your cloud-concepts notes from Lunch 02 and has a simple request:
+&quot;Before we redesign anything, can we at least get the shop off that box and into Azure?&quot;</p>
+<p>Dewi is excited. &quot;It's only Ubuntu and nginx. Give me a server in the cloud and I'll copy the site over this
+afternoon.&quot; Pak Budi is less excited. He wants to know who can sign in, which ports will be open to the internet, and
+whether the new server can still download security updates. Then the finance team asks the question everyone was
+avoiding: &quot;Will we keep paying for it at night, when nobody is shopping?&quot;</p>
+<p>Your job today is to rent that first server properly. What exactly do you get — and pay for — when you create a
+virtual machine in Azure?</p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Reading</h2><span class="minute">Minutes 5–30 · 6 scenes</span></div>
+      
+      <article class="scene-card" id="1-when-a-virtual-machine-is-the-right-tool" data-spy><span class="scene-no">Scene 1 of 6</span><h3>When a virtual machine is the right tool</h3><div class="prose"><p>A <strong>virtual machine (VM)</strong> is a computer that Azure runs for you on its own physical servers. You choose an operating
+system image and a size, Azure finds a host with free capacity, and a few minutes later you have a machine you can sign
+in to. It is the purest form of <strong>infrastructure as a service (IaaS)</strong>: Microsoft owns the buildings, the physical
+hosts, the hypervisor and the physical network; you own everything from the operating system upwards — patches, the
+firewall inside the OS, the web server, the application and its data. In the shared-responsibility picture from
+Lunch 02, a VM is the cloud option that leaves the most work on your side of the line.</p>
+<p>So why pick the option with the most work? Because sometimes control matters more than convenience:</p>
+<ul>
+<li><strong>Lift and shift.</strong> The storefront already runs on Ubuntu with nginx. Moving it to a VM — called <strong>rehosting</strong> —
+needs almost no code changes, so Nusantara Retail can leave the pantry room this month and modernise later.</li>
+<li><strong>Full control of the operating system.</strong> Some software needs a particular kernel module, a vendor agent, or a
+licence tied to the OS.</li>
+<li><strong>Software that was never built for the cloud.</strong> Older business applications that expect a fixed disk path, a
+Windows service or a fixed hostname are happiest on a VM.</li>
+<li><strong>Short-lived environments.</strong> Developers can create, break and delete test servers in minutes.</li>
+</ul>
+<p>If all you want is to run a web application, a platform service such as Azure App Service (Lunch 10), a container
+(Lunch 13) or a function (Lunch 14) usually costs less effort, because Azure patches and scales the platform for you.
+A good habit: choose a VM when you need control, and write down why. That note will tell you when it is time to
+modernise.</p>
+</div></article><article class="scene-card" id="2-the-building-blocks-a-vm-is-a-bundle-of-resources" data-spy><span class="scene-no">Scene 2 of 6</span><h3>The building blocks: a VM is a bundle of resources</h3><div class="prose"><p>When you select <strong>Create</strong> in the portal or run <code>az vm create</code>, Azure Resource Manager does not create one thing. It
+creates a small family of separate resources in your resource group, each with its own resource ID, its own settings
+and — sometimes — its own line on the bill. Knowing the family is the difference between a tidy subscription and a
+pile of forgotten disks.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  dewi[&quot;Dewi · Cloud Shell&quot;]
+  shopper[&quot;Shopper&#x27;s browser&quot;]
+  subgraph rg[&quot;Resource group rg-lunch06-&amp;lt;suffix&amp;gt;&quot;]
+    pip[&quot;Public IP pip-web-1&lt;br/&gt;Standard SKU, static&quot;]
+    nsg[&quot;NSG nsg-web&lt;br/&gt;inbound rules&quot;]
+    subgraph vnet[&quot;VNet vnet-nusa-web · 10.20.0.0/16&quot;]
+      subgraph snet[&quot;Subnet snet-web · 10.20.1.0/24&quot;]
+        nic[&quot;NIC · private IP 10.20.1.4&quot;]
+      end
+    end
+    vm[&quot;VM vm-web-1&lt;br/&gt;size + image&quot;]
+    os[(&quot;OS disk&quot;)]
+    data[(&quot;Data disk · LUN 0&quot;)]
+  end
+  dewi --&gt;|&quot;SSH 22&quot;| pip
+  shopper --&gt;|&quot;HTTP 80&quot;| pip
+  pip --&gt; nic
+  nsg -. &quot;filters traffic&quot; .- nic
+  nic --- vm
+  vm --- os
+  vm --- data
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Building block</th>
+<th>What it is</th>
+<th>Nusantara Retail example</th>
+<th>Watch out for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Image</strong></td>
+<td>Template for the OS disk, from Azure Marketplace or your own</td>
+<td>Ubuntu Server 24.04 LTS</td>
+<td>Choose a supported, current version</td>
+</tr>
+<tr>
+<td><strong>Size</strong></td>
+<td>vCPUs, memory, local storage, bandwidth and features</td>
+<td>Standard_B2ats_v2</td>
+<td>Not every size exists in every region or zone</td>
+</tr>
+<tr>
+<td><strong>OS disk</strong></td>
+<td>Managed disk created from the image</td>
+<td>30 GiB holding Ubuntu and nginx</td>
+<td>Billed even while the VM is off</td>
+</tr>
+<tr>
+<td><strong>Data disk</strong></td>
+<td>Extra managed disks you attach, format and mount</td>
+<td>8 GiB for product images</td>
+<td>Azure attaches it; you format it</td>
+</tr>
+<tr>
+<td><strong>Temporary disk</strong></td>
+<td>Local storage on the physical host, if the size has one</td>
+<td>None on Basv2 sizes</td>
+<td>Wiped when the VM moves host — never keep data there</td>
+</tr>
+<tr>
+<td><strong>Network interface (NIC)</strong></td>
+<td>Connects the VM to a subnet and holds its private IP</td>
+<td>10.20.1.4</td>
+<td>Every VM needs at least one</td>
+</tr>
+<tr>
+<td><strong>Virtual network and subnet</strong></td>
+<td>Your private address space in Azure</td>
+<td>vnet-nusa-web, 10.20.0.0/16</td>
+<td>Avoid overlap with head office's 10.0.0.0/16</td>
+</tr>
+<tr>
+<td><strong>Public IP address</strong></td>
+<td>Internet-facing address, Standard SKU</td>
+<td>pip-web-1</td>
+<td>Basic SKU was retired on September 30, 2025</td>
+</tr>
+<tr>
+<td><strong>Network security group (NSG)</strong></td>
+<td>Allow and deny rules for a NIC or subnet</td>
+<td>nsg-web</td>
+<td>Standard public IPs stay closed until an NSG allows traffic</td>
+</tr>
+</tbody>
+</table></div>
+<p>The <strong>image</strong> decides what lands on the OS disk. New Generation 2 VMs created from the portal, the CLI or PowerShell
+now use <strong>Trusted Launch</strong> by default — Secure Boot plus a virtual TPM that protect the boot process — at no extra
+cost. Lunch 23 returns to it.</p>
+<p>Two practical lessons follow from this table. First, if you let <code>az vm create</code> invent the network, it picks
+10.0.0.0/16 — exactly Pak Budi's head-office range. Harmless today, painful on the day you connect the two networks
+(Lunch 26), so the lab names its own range. Second, deleting a VM does not always delete its disks, NIC and public IP;
+the portal shows &quot;delete with VM&quot; options, and leftovers keep costing money. In labs, deleting the whole resource
+group is the clean way out.</p>
+</div></article><article class="scene-card" id="3-choosing-a-size-and-a-disk" data-spy><span class="scene-no">Scene 3 of 6</span><h3>Choosing a size and a disk</h3><div class="prose"><p>A VM <strong>size</strong> fixes the number of vCPUs, the memory, any local disk, the maximum number of data disks and the network
+bandwidth. Size names look cryptic but follow a pattern. In <code>Standard_B2ats_v2</code>, <strong>B</strong> is the family, <strong>2</strong> is the
+number of vCPUs, <strong>a</strong> means an AMD processor (<strong>p</strong> would mean Arm), <strong>t</strong> means a tiny amount of memory, <strong>s</strong> means
+it can use Premium SSD disks, and <strong>v2</strong> is the version of the series. A <strong>d</strong> in a name means the size has a local
+temporary disk.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Family</th>
+<th>Optimised for</th>
+<th>Typical workloads</th>
+<th>Nusantara Retail example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>B</strong> — burstable</td>
+<td>Low baseline CPU with short bursts</td>
+<td>Small web servers, dev/test, proofs of concept</td>
+<td>The first storefront VM</td>
+</tr>
+<tr>
+<td><strong>D</strong> — general purpose</td>
+<td>Balanced CPU and memory</td>
+<td>Most production apps, app servers, small databases</td>
+<td>A steady inventory API</td>
+</tr>
+<tr>
+<td><strong>E</strong> — memory optimised</td>
+<td>More memory per vCPU</td>
+<td>Relational databases, caches, in-memory analytics</td>
+<td>A larger SQL Server later</td>
+</tr>
+<tr>
+<td><strong>F</strong> — compute optimised</td>
+<td>More CPU per GiB of memory</td>
+<td>Batch jobs, CPU-heavy web tiers, game servers</td>
+<td>Nightly price recalculation</td>
+</tr>
+<tr>
+<td><strong>L</strong> — storage optimised</td>
+<td>Large, fast local disks</td>
+<td>NoSQL databases, big data, data warehouses</td>
+<td>A product-search cluster</td>
+</tr>
+<tr>
+<td><strong>M</strong> — very large memory</td>
+<td>Terabytes of RAM</td>
+<td>SAP HANA, very large in-memory databases</td>
+<td>Not needed — good to know</td>
+</tr>
+<tr>
+<td><strong>N</strong> — GPU</td>
+<td>NVIDIA or AMD graphics processors</td>
+<td>AI training and inference, rendering, graphic workstations</td>
+<td>An image-recognition model</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Burstable B-series</strong> sizes deserve a closer look, because they are cheap and easy to misuse. Each size has a
+<strong>baseline</strong> — a share of its vCPUs it can always use. Below the baseline the VM banks <strong>CPU credits</strong>; above it, the VM
+spends them. One credit is roughly one vCPU running at 100% for one minute. A <code>Standard_B2ats_v2</code> has a baseline of
+20%, starts with 60 credits, earns up to 24 credits an hour while idle and can bank up to 576. If both vCPUs run flat
+out, it spends about 1.6 credits per minute, so a brand-new VM can sprint for roughly 35–40 minutes. When the credits
+run out, Azure throttles it back to the baseline until it earns more. That suits the storefront — mostly quiet, with
+short peaks — but not a three-hour report that keeps the CPU busy. Watch the <strong>CPU Credits Remaining</strong> metric. One more
+note: the original B-series sizes (such as B1s) are End of Life — since July 2026 new subscriptions can't deploy them,
+and they retire on November 15, 2028 — so new designs use Bsv2, Basv2 or Bpsv2.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span>Before you choose, list the sizes your subscription can actually use in a region:
+<code>az vm list-skus --location southeastasia --size Standard_B --resource-type virtualMachines --output table</code>.
+The <code>Restrictions</code> column tells you when a size is not offered to you or not available in a zone.</p>
+</aside>
+<p>Every VM disk is a <strong>managed disk</strong>: Azure stores and replicates it for you, and you pick its type.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Disk type</th>
+<th>Best for</th>
+<th>Can be the OS disk?</th>
+<th>Good to know</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Standard HDD</strong></td>
+<td>Backups, rarely used data</td>
+<td>Yes, but retiring for OS disks on September 8, 2028</td>
+<td>Cheapest; latency varies</td>
+</tr>
+<tr>
+<td><strong>Standard SSD</strong></td>
+<td>Web servers, light apps, dev/test</td>
+<td>Yes</td>
+<td>A sensible default for small VMs</td>
+</tr>
+<tr>
+<td><strong>Premium SSD</strong></td>
+<td>Production apps and databases</td>
+<td>Yes</td>
+<td>Fixed size tiers; needs a size with <strong>s</strong> in its name</td>
+</tr>
+<tr>
+<td><strong>Premium SSD v2</strong></td>
+<td>Databases that need tunable performance</td>
+<td>No — data disks only</td>
+<td>Set capacity, IOPS and throughput separately</td>
+</tr>
+<tr>
+<td><strong>Ultra Disk</strong></td>
+<td>The most demanding I/O, such as SAP HANA</td>
+<td>No — data disks only</td>
+<td>Change performance without restarting the VM</td>
+</tr>
+</tbody>
+</table></div>
+<p>You pay for the provisioned size, rounded up to the next size tier, whether the disk is full or empty. Standard SSD
+and Premium SSD also come in zone-redundant (ZRS) versions. Disk choice even affects the uptime promise: at the time of
+writing (October 2026), a single VM whose disks are all Premium SSD or Ultra Disk has a 99.9% connectivity SLA, Standard
+SSD gives 99.5% and Standard HDD only 95% — check the
+<a href="https://www.microsoft.com/licensing/docs/view/Service-Level-Agreements-SLA-for-Online-Services" target="_blank" rel="noopener">service level agreements</a>
+for current figures.</p>
+</div></article><article class="scene-card" id="4-getting-in-and-getting-out" data-spy><span class="scene-no">Scene 4 of 6</span><h3>Getting in, and getting out</h3><div class="prose"><p>First, <strong>authentication</strong> — how you prove who you are to the operating system:</p>
+<ul>
+<li><strong>SSH key pairs</strong> are the default for Linux. <code>--generate-ssh-keys</code> creates a pair in <code>~/.ssh</code>; Azure stores only the
+public key on the VM, and the private key never leaves you.</li>
+<li><strong>Passwords</strong> are required for Windows and possible on Linux. Avoid them on Linux; if you must use one, generate it.</li>
+<li><strong>Microsoft Entra ID login</strong> lets people sign in with their company identity. Access is granted with Azure RBAC roles
+such as <em>Virtual Machine User Login</em> or <em>Virtual Machine Administrator Login</em> (Lunch 05). When Rizky's contract ends,
+you remove a role assignment — no keys to hunt down.</li>
+</ul>
+<p>Then, <strong>connecting</strong>:</p>
+<ul>
+<li><strong>SSH</strong> (port 22) for Linux and <strong>RDP</strong> (port 3389) for Windows need a network path and an NSG rule.</li>
+<li><strong>Azure Bastion</strong> is a managed jump host inside your virtual network. You connect from the browser, and the VM needs
+no public IP at all. The free Developer SKU suits dev/test in selected regions (Southeast Asia is one) and handles
+one VM at a time; Basic, Standard and Premium are paid SKUs for production.</li>
+<li><strong>Run Command</strong> executes a script inside the VM through the Azure VM agent, with no inbound port. The lab uses it to
+mount a disk.</li>
+<li><strong>Serial console</strong> gives you a text console through boot diagnostics, even when networking inside the VM is broken.</li>
+</ul>
+<p>Inbound traffic meets the <strong>NSG</strong>. Its default rules allow traffic from inside the virtual network and from Azure's load
+balancer probe, then deny everything else — including anything from the internet. For a Linux VM, <code>az vm create</code> also adds a rule that
+allows SSH from anywhere — convenient for a lab, risky in production, where you would restrict the source address or use
+Bastion. Web traffic on port 80 stays blocked until you add a rule, for example with <code>az vm open-port</code>. Lunch 08
+covers NSGs properly.</p>
+<p>Outbound traffic has changed recently, and it surprises people.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>Virtual networks created with Azure API versions released after March 31, 2026 — and the portal already does this —
+use <strong>private subnets</strong>: VMs get no default outbound internet access. A VM that must reach the internet (for
+<code>apt-get update</code>, Windows activation or calling an external API) needs an explicit method: a public IP on the VM, a
+NAT gateway on the subnet, or load balancer outbound rules. Existing virtual networks are not changed.</p>
+</aside>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  q1{&quot;Does the VM need to start&lt;br/&gt;connections to the internet?&quot;}
+  q1 -- &quot;No&quot; --&gt; none[&quot;Keep it private:&lt;br/&gt;no outbound path at all&quot;]
+  q1 -- &quot;Yes&quot; --&gt; q2{&quot;What does it look like?&quot;}
+  q2 -- &quot;One VM that already has&lt;br/&gt;a public IP for inbound&quot; --&gt; pip[&quot;Standard public IP on the NIC&lt;br/&gt;(today&#x27;s lab)&quot;]
+  q2 -- &quot;Several VMs in a subnet&quot; --&gt; nat[&quot;NAT gateway on the subnet&lt;br/&gt;(recommended, Lunch 08)&quot;]
+  q2 -- &quot;VMs behind a public&lt;br/&gt;load balancer&quot; --&gt; lbo[&quot;Load balancer outbound rules&lt;br/&gt;(Lunch 09)&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>Today's storefront VM has its own Standard public IP, so it has explicit outbound access and can install nginx. Remove
+that IP without adding a NAT gateway, and <code>apt-get</code> simply hangs.</p>
+</div></article><article class="scene-card" id="5-living-with-a-vm-power-states-billing-resizing-and-auto-shutdown" data-spy><span class="scene-no">Scene 5 of 6</span><h3>Living with a VM: power states, billing, resizing and auto-shutdown</h3><div class="prose"><p>A VM moves through <strong>power states</strong>, and only some of them stop the compute meter.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Power state</th>
+<th>What is happening</th>
+<th>Compute billed?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Starting</td>
+<td>The VM is booting</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Running</td>
+<td>Normal working state</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Stopping</td>
+<td>The OS is shutting down</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Stopped (allocated)</td>
+<td>The OS is off, but the VM still holds its place on the host</td>
+<td><strong>Yes</strong></td>
+</tr>
+<tr>
+<td>Deallocating</td>
+<td>Azure is releasing the host capacity</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Deallocated</td>
+<td>Only the disks and IP addresses remain</td>
+<td>No — disks and public IPs are still billed</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="diagram"><pre class="mermaid">stateDiagram-v2
+  [*] --&gt; Running : create or start
+  Running --&gt; Stopped : az vm stop, or shutdown inside the OS
+  Stopped --&gt; Running : start
+  Stopped --&gt; Deallocated : az vm deallocate
+  Running --&gt; Deallocated : deallocate, portal Stop, auto-shutdown
+  Deallocated --&gt; Running : start, possibly on a different host
+  note right of Stopped : compute still billed
+  note right of Deallocated : compute not billed, disks and public IP billed
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Warning</span>Shutting down from inside the operating system (<code>sudo shutdown -h now</code>) or running <code>az vm stop</code> leaves the VM
+<strong>Stopped (allocated) — and still billed for compute</strong>. Use the portal's <strong>Stop</strong> button, <code>az vm deallocate</code> or
+auto-shutdown, which all deallocate.</p>
+</aside>
+<p>Deallocation keeps your managed disks and a Standard public IP keeps its address, because Standard IPs are always
+static. Anything on the temporary disk is lost, and the next start may land on a different physical host.</p>
+<p><strong>Resizing</strong> is vertical scaling: you change the size, Azure restarts the VM, and it comes back with more or fewer
+resources. <code>az vm list-vm-resize-options</code> shows the sizes available on the hardware cluster where your VM runs today.
+If the size you want is missing, deallocate the VM first so Azure can place it anywhere in the region. When one bigger
+VM is no longer enough, you scale <em>out</em> instead — more VMs behind a load balancer (Lunch 09) or a scale set (Lunch 23).</p>
+<p><strong>Auto-shutdown</strong> deallocates a VM at the same time every day and can email you first. The portal lets you choose a
+time zone; the CLI expects UTC, so 19:00 in Jakarta (UTC+7) is <code>1200</code>. It is perfect for test VMs and dangerous for
+anything customers use.</p>
+<p>Two ways to configure a VM without logging in will appear throughout the course. <strong>cloud-init</strong> reads &quot;custom data&quot;
+on the first boot of a Linux VM to install packages, write files and run commands. <strong>VM extensions</strong> are small add-ons
+installed by the Azure VM agent — the Custom Script extension, the Azure Monitor Agent, Microsoft Entra login and many
+more. Marketplace images already include the agent.</p>
+</div></article><article class="scene-card" id="6-paying-for-vms-and-what-it-means-for-nusantara-retail" data-spy><span class="scene-no">Scene 6 of 6</span><h3>Paying for VMs, and what it means for Nusantara Retail</h3><div class="prose"><p>Compute is billed only while a VM is allocated; disks and public IPs are billed while they exist; data leaving Azure
+and Windows licences add to the bill. Five purchase options change the price of the compute part:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>How it works</th>
+<th>Good for</th>
+<th>Nusantara Retail example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pay-as-you-go</strong></td>
+<td>No commitment; pay for the time the VM is allocated</td>
+<td>Labs, tests, new workloads</td>
+<td>The first weeks after migration</td>
+</tr>
+<tr>
+<td><strong>Reservations</strong></td>
+<td>Commit to a VM size in a region for one or three years</td>
+<td>Steady servers that won't change</td>
+<td>The storefront once its size is settled</td>
+</tr>
+<tr>
+<td><strong>Azure savings plan for compute</strong></td>
+<td>Commit to an hourly spend for one or three years, across sizes and regions</td>
+<td>Steady spend that may change shape</td>
+<td>A future mix of VMs and App Service</td>
+</tr>
+<tr>
+<td><strong>Spot</strong></td>
+<td>Spare capacity at a deep discount; evicted with 30 seconds' notice; no SLA</td>
+<td>Interruptible batch jobs, dev/test</td>
+<td>Overnight image-thumbnail jobs (Lunch 23)</td>
+</tr>
+<tr>
+<td><strong>Azure Hybrid Benefit</strong></td>
+<td>Reuse eligible Windows Server or SQL Server licences (also RHEL and SLES subscriptions)</td>
+<td>Windows and SQL Server VMs</td>
+<td>The back-office Windows server</td>
+</tr>
+</tbody>
+</table></div>
+<p>Lunch 19 turns these into a cost strategy.</p>
+<p>Here is the first-step plan for Nusantara Retail. Production will run in <strong>Indonesia Central</strong> (Jakarta) to keep
+customer data in the country; the labs use Southeast Asia for the widest service choice. The storefront gets one
+Ubuntu 24.04 VM on a burstable B2ats_v2 size, because traffic is spiky but mostly low. Its OS disk is Premium SSD for
+the 99.9% single-VM SLA; product images live on a separate data disk. The NSG allows HTTP and HTTPS from the
+internet, and SSH only from head office — or nobody at all once Bastion is in place. The VM's public IP gives it the
+explicit outbound access it needs for updates. Test copies get auto-shutdown and are deallocated at night; the
+production VM does not.</p>
+<p>That answers finance, but not yet the director. A single VM is still a single point of failure: 99.9% allows about 43
+minutes of downtime in a 30-day month, and planned maintenance or a host failure can restart it. Networking (Lunch 08),
+load balancing (Lunch 09) and scale sets (Lunch 23) remove that weak spot step by step.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Pause and think</span>Dewi suggests enabling auto-shutdown at 19:00 WIB on the production storefront VM to save
+money. What happens to the shoppers who browse after dinner — and which of Nusantara Retail's VMs <em>should</em> get
+auto-shutdown instead?</p>
+</aside>
+<p>➡️ Availability sets and zones, scale sets with autoscale, custom images, Spot VMs and patching at scale continue in
+<a href="23-virtual-machines-advanced.html">Lunch 23 · Virtual Machines (Advanced)</a>.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Minutes 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Interactive demo · What really gets created when you create a VM</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/06-virtual-machines-basic.html" target="_blank" rel="noopener">↗ Open in a new tab</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Theatre mode</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/06-virtual-machines-basic.html" title="Interactive demo: What really gets created when you create a VM" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.
+        Prefer video? Read the <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/06-virtual-machines-basic/demo-video-script.md" target="_blank" rel="noopener">walkthrough video script</a>.</p>
+        <p>What to watch for:</p>
+<ul>
+<li>How one <code>az vm create</code> command turns into separate resources: virtual network, public IP, NSG, NIC, VM and OS disk.</li>
+<li>Why the SSH packet passes the NSG while the first HTTP request is dropped — and which single rule changes that.</li>
+<li>How the VM reaches the Ubuntu package mirror through its own public IP (explicit outbound access).</li>
+<li>Which meter keeps running after <code>az vm stop</code>, and which one is still running after <code>az vm deallocate</code>.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Knowledge check</h2><span class="minute">Minutes 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 scenario questions. Honest grading.</b><p class="muted" style="margin:0" data-score-note>Answer in your head, reveal, then be honest with yourself.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi finished testing at 18:00 and ran <code>sudo shutdown -h now</code> inside the test VM. Next morning, finance asks why
+the VM was billed for compute all night. What happened, and what should she do instead?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Shutting down from inside the OS leaves the VM <strong>Stopped (allocated)</strong>, which is still billed for compute. She should
+deallocate it — the portal's Stop button, <code>az vm deallocate</code> or auto-shutdown — <em>why:</em> only deallocation releases the
+host capacity that the compute meter charges for.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>A nightly sales report keeps both vCPUs of a <code>Standard_B2ats_v2</code> VM at 100% for three hours. After about 40 minutes
+it becomes painfully slow. Why, and what would you change?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>The VM used up its CPU credits and was throttled to its 20% baseline. Use a non-burstable size such as a D-series
+(balanced) or F-series (compute optimised) VM for sustained CPU work — <em>why:</em> B-series sizes are designed for
+workloads that are quiet most of the time and burst only briefly.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Pak Budi creates a new virtual network with the current API, adds a VM without a public IP, and <code>apt-get update</code>
+hangs. Nothing else is wrong. What is missing?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>An explicit outbound method. New virtual networks use private subnets, so the VM needs a NAT gateway on the subnet
+(the usual choice), load balancer outbound rules, or its own public IP — <em>why:</em> default outbound access is no longer
+given to VMs in private subnets.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>You want the highest single-VM SLA for the production storefront. Which disk types can you use for the OS disk and
+for the data disk?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>A Premium SSD OS disk, with Premium SSD, Premium SSD v2 or Ultra Disk data disks — <em>why:</em> the top single-instance SLA
+(99.9% at the time of writing) requires premium-class storage, and Premium SSD v2 and Ultra Disk cannot be OS disks.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Rizky, an outsourced contractor, must troubleshoot the storefront VM for one week. Pak Budi does not want port 22
+open to the internet or SSH keys handed around. What do you set up?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Reveal answer</button></div></div><div class="a"><div><div class="a-inner"><p>Azure Bastion (or Run Command for scripted tasks) plus Microsoft Entra ID login, with a <em>Virtual Machine User Login</em>
+role assignment for Rizky that you remove after the week — <em>why:</em> Bastion needs no public inbound port, and
+access tied to an identity and an RBAC role is easy to grant and revoke.</p>
+<div class="grade"><span class="muted">Did you get it?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 I got it</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Not quite</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Key takeaways</h2><span class="minute">Minutes 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>A VM is IaaS: Azure runs the hardware and hypervisor; you own the OS, patches, software and data.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Pin to notebook</button></div><div class="tk"><p>&quot;One VM&quot; is a bundle of resources — VM, OS disk, data disks, NIC, virtual network, Standard public IP and NSG — and leftovers keep costing money until you delete them.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Pin to notebook</button></div><div class="tk"><p>Pick the size family for the workload (B for bursty, D balanced, E memory, F compute, L storage, M huge memory, N GPU) and the disk type for the I/O and SLA you need.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Pin to notebook</button></div><div class="tk"><p>Inbound traffic needs an NSG rule; outbound traffic from new virtual networks needs an explicit method — a public IP, a NAT gateway or load balancer outbound rules.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Pin to notebook</button></div><div class="tk"><p>Stopped is not deallocated: only deallocation stops the compute meter, and disks and public IPs are billed until deleted.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Pin to notebook</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Field notes from Stefanus</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>The two-in-the-morning question.</strong> In design reviews I ask one question about every VM: <em>what state should it be in
+at two in the morning?</em> If the answer is &quot;off&quot;, I want auto-shutdown or a schedule that deallocates it — not a
+promise, and not a shutdown from inside the operating system, which leaves the compute meter running. If the answer is
+&quot;gone&quot;, I delete the resource group, not just the VM, because orphaned disks and public IP addresses are the quiet
+line items that survive a hasty cleanup. And if the answer is &quot;busy&quot;, I check the size family before anyone touches
+the code: a burstable VM that has used up its CPU credits looks exactly like a bug.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">More about the author →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Your lab</h2><span class="minute">Any time · your own pace</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>06</b><span>Admit one</span></div>
+        <div class="main">
+          <h3>Your first web server VM</h3>
+          <div class="prose"><p>You will create an Ubuntu VM with the Azure CLI, SSH in from Cloud Shell, install nginx and publish a Nusantara Retail
+page, open port 80, add and mount a data disk, resize the VM, schedule auto-shutdown, and watch the difference between
+stopped and deallocated. A deliberate break — deleting the port-80 rule — shows you how to trace a website that
+suddenly stops answering.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ about 45 minutes</span><span class="chip cost">💲💲 small charges while running</span>
+            <span class="chip ok">✅ Works on its own</span><span class="chip">🧭 Guided or challenge mode</span></div>
+          <a class="btn btn-primary" href="../labs/06-virtual-machines-basic.html">Start Lab 06 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Go further</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/virtual-machines/sizes/overview" target="_blank" rel="noopener"><b>Microsoft Learn: Virtual machine sizes overview</b><span>Every family and series, with the naming rules decoded.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/virtual-machines/disks-types" target="_blank" rel="noopener"><b>Microsoft Learn: Azure managed disk types</b><span>Performance limits and when to choose each disk type.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/virtual-machines/states-billing" target="_blank" rel="noopener"><b>Microsoft Learn: States and billing status of Azure Virtual Machines</b><span>The official power-state and billing table.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/virtual-network/ip-services/default-outbound-access" target="_blank" rel="noopener"><b>Microsoft Learn: Default outbound access in Azure</b><span>Private subnets and the explicit outbound options.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🖥️</div>
+        <p class="kicker" style="justify-content:center">Finish line · badge to earn</p>
+        <h2>First Server</h2>
+        <p class="muted">Build and run your first Azure VM.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 I finished this lunch</button></p>
+        <p><a href="#finish" data-undo hidden>Undo — mark as not finished</a></p>
+        <p class="finish-answer">After this episode you can tell Ibu Sari: <b>“If the VM dies, I can rebuild it in about ten minutes.”</b></p>
+        <div class="teaser"><b>Next episode · 07</b><h4>The USB Drive Goes Home on Fridays</h4><p>Forty thousand photos and ten years of invoices live on one disk next to the pantry.</p><p style="margin-top:10px"><a href="07-storage-basic.html">Watch Episode 07 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episodes"><a href="05-identity-access-basic.html"><small>← Previous episode</small>05 · Just Give Him My Password</a><a class="next" href="07-storage-basic.html"><small>Next episode →</small>07 · The USB Drive Goes Home on Fridays</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/06-virtual-machines-basic/README.md" target="_blank" rel="noopener">Read this lunch on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Spotted something out of date?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Now: Scenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Stop the lunch timer">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

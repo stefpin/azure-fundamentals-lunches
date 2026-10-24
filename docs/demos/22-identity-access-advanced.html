@@ -282,7 +282,7 @@ svg .callout > text{fill:var(--ink)}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/22-identity-access-advanced.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/22-identity-access-advanced.html" data-href-id="../id/lunches/22-identity-access-advanced.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -583,10 +583,136 @@ svg .callout > text{fill:var(--ink)}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 22 · Tanpa secret tersimpan, tanpa admin permanen — Demo interaktif",
+   "kicker": "Makan Siang 22 · Identitas dan Akses (Lanjutan) · Demo interaktif",
+   "title": "Tanpa secret tersimpan, tanpa admin permanen",
+   "lede": "Saksikan workflow GitHub Actions menukar token OpenID Connect yang berumur pendek dengan access token Azure melalui federated credential, lalu ikuti aktivasi Privileged Identity Management dari eligible hingga kedaluwarsa. Tekan ▶ Putar, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Workload identity federation dari GitHub Actions ke Azure, dan linimasa aktivasi PIM",
+   "svgDesc": "Di kiri atas, sebuah job GitHub Actions dan provider OpenID Connect milik GitHub. Di bawahnya, Microsoft Entra ID dengan app registration dan federated credential-nya. Di kanan atas, Azure Resource Manager dan resource group rg-storefront yang berisi web app App Service dan database Azure SQL. Di bagian bawah, mula-mula claim dari token, lalu sebuah linimasa ketika Pak Budi mengaktifkan role Owner yang eligible selama dua jam hingga kedaluwarsa."
+  },
+  "steps": [
+   {
+    "title": "Malam rilis, secret kedaluwarsa",
+    "text": "Jumat, pukul 23.00, dan pipeline rilis Nusantara Retail gagal. Job deployment sign-in ke Azure dengan client secret yang disimpan di GitHub, dan secret itu kedaluwarsa kemarin. Secret seperti ini bisa kedaluwarsa, bocor ke log dan screenshot, dan harus ada orang yang ingat untuk merotasinya. Bisakah pipeline menjangkau Azure tanpa menyimpan secret sama sekali?"
+   },
+   {
+    "title": "Ganti secret dengan kepercayaan",
+    "text": "Anda mendaftarkan sebuah aplikasi di Microsoft Entra ID, dan service principal-nya mendapat Contributor hanya di rg-storefront, tidak lebih. Alih-alih secret, Anda menambahkan federated credential: percayai token yang issuer-nya GitHub Actions, subject-nya branch main dari repository ini, dan audience-nya api://AzureADTokenExchange. Lalu Anda menghapus secret yang lama."
+   },
+   {
+    "title": "Job meminta token ke GitHub",
+    "text": "Pada push berikutnya ke main, workflow berjalan. YAML-nya memberikan permissions: id-token: write, yang memungkinkan job meminta identity token. Action azure/login meminta token yang ditujukan untuk Microsoft Entra ID kepada provider OpenID Connect milik GitHub. Tidak ada rahasia yang disimpan di repository maupun di pengaturannya.",
+    "set": {
+     "t-ghperm": "permissions: id-token: write"
+    }
+   },
+   {
+    "title": "Token singkat yang ditandatangani",
+    "text": "Provider GitHub menandatangani JSON Web Token yang hanya hidup beberapa menit, bukan berbulan-bulan. Claim-nya menjelaskan job tersebut: issuer-nya token.actions.githubusercontent.com, subject-nya menyebut repository dan branch, dan audience-nya menyatakan bahwa token ini untuk pertukaran token Azure. Siapa pun bisa membaca claim ini; hanya GitHub yang bisa menandatanganinya."
+   },
+   {
+    "title": "Tukarkan di Microsoft Entra ID",
+    "text": "azure/login mengirim token GitHub ke Microsoft Entra ID sebagai client assertion, bersama client ID aplikasi dan tenant ID. Kedua ID itu bukan rahasia; keduanya hanya menyebut aplikasi yang ingin diperankan oleh job. Token GitHub yang ditandatangani itulah bukti bahwa job memang diizinkan."
+   },
+   {
+    "title": "Entra ID memeriksa kepercayaan",
+    "text": "Entra ID mengambil public signing key milik GitHub melalui OpenID Connect discovery dan memverifikasi tanda tangannya. Lalu ia membandingkan claim dengan federated credential: issuer, subject, dan audience harus cocok persis, dan wildcard tidak diizinkan, jadi main berarti main. Semuanya cocok, sehingga pemeriksaan berubah hijau.",
+    "set": {
+     "t-chk": "tanda tangan ✓ issuer ✓ subject ✓"
+    }
+   },
+   {
+    "title": "Access token Azure dikembalikan",
+    "text": "Entra ID menerbitkan access token untuk service principal aplikasi dan mengembalikannya ke job, yang kini bertindak sebagai workload identity tersebut. Token itu kedaluwarsa dengan sendirinya, tidak ada kata sandi yang bisa dicuri, dan MFA wajib di Azure tidak berlaku untuk workload identity, sehingga otomatisasi tanpa pengawasan tetap berjalan."
+   },
+   {
+    "title": "Deploy dengan hak akses minimum",
+    "text": "Job memanggil Azure Resource Manager dengan access token itu. Azure RBAC memeriksa role service principal: Contributor, tetapi hanya di rg-storefront. Build toko online yang baru ter-deploy dan versi 1.5 mulai tayang. Bahkan jika pipeline ini dibobol, penyerang hanya menjangkau satu resource group, bukan seluruh subscription.",
+    "set": {
+     "t-web": "menjalankan versi 1.5 ✓"
+    }
+   },
+   {
+    "title": "Branch tak tepercaya ditolak",
+    "text": "Seseorang menjalankan workflow dari branch bernama feature/discount. GitHub menerbitkan token yang sah, tetapi subject-nya berakhiran refs/heads/feature/discount. Tidak ada federated credential yang cocok dengan subject itu, jadi Entra ID menolak pertukaran dengan error AADSTS700213 dan tidak menerbitkan apa pun. Deployment tidak pernah dimulai, ditandai dengan warna merah.",
+    "set": {
+     "t-tsub": "sub: repo:nusantara-retail/storefront:ref:refs/heads/feature/discount",
+     "t-chk": "subject ✗ tidak cocok"
+    }
+   },
+   {
+    "title": "Manusia juga butuh akses just-in-time",
+    "text": "Pipeline sudah beres. Bagaimana dengan manusia? Pak Budi sesekali membutuhkan Owner di rg-storefront-prod. Dengan Privileged Identity Management, ia hanya eligible: tidak ada akses yang terus melekat, tidak ada yang bisa dimanfaatkan penyerang selagi ia tidur. Assignment eligible, aktivasi, dan kedaluwarsa membutuhkan lisensi Microsoft Entra ID P2 atau ID Governance.",
+    "set": {
+     "t-tsub": "sub: repo:nusantara-retail/storefront:ref:refs/heads/main",
+     "t-chk": "menunggu token"
+    }
+   },
+   {
+    "title": "Aktivasi: MFA, alasan, persetujuan",
+    "text": "Pukul 09.00, sebuah insiden membutuhkan bantuannya. Pak Budi membuka PIM dan meminta role Owner selama dua jam, masih dalam batas maksimum yang diizinkan administratornya. Ia menyelesaikan MFA dan mengetik justifikasi INC-2041. Karena role ini memerlukan persetujuan, Ibu Sari menyetujui permintaan itu, seperti tampak di atas linimasa.",
+    "set": {
+     "t-budi": "PIM: aktivasi diminta"
+    }
+   },
+   {
+    "title": "Aktif selama dua jam",
+    "text": "Assignment Owner kini aktif, dan Azure RBAC memperlakukannya seperti role assignment lainnya. PIM memberi tahu orang-orang yang tepat dan mencatat siapa mengaktifkan apa, kapan, dan mengapa, sehingga audit dan access review punya bukti. Jika pekerjaan selesai lebih cepat, Pak Budi bisa menonaktifkan role itu sendiri.",
+    "set": {
+     "t-budi": "PIM: Owner aktif"
+    }
+   },
+   {
+    "title": "Kedaluwarsa: kembali eligible",
+    "text": "Pukul 11.00 aktivasi itu kedaluwarsa dan assignment Owner hilang dengan sendirinya. Pak Budi kembali eligible, tanpa akses yang terus melekat. Gabungkan kedua gagasan ini: pipeline yang memakai federated credential alih-alih secret, dan manusia yang memakai role just-in-time alih-alih Owner permanen.",
+    "tip": "Lab 22 membangun federated credential, custom role Nusantara VM Operator, dan managed identity dengan data role. Conditional Access dan PIM hadir sebagai tur portal terpandu, karena keduanya membutuhkan lisensi P1 atau P2.",
+    "set": {
+     "t-budi": "PIM: eligible lagi"
+    }
+   }
+  ],
+  "svg": {
+   "GitHub Actions job": "Job GitHub Actions",
+   "deploy.yml · push to main": "deploy.yml · push ke main",
+   "needs to deploy to Azure": "perlu deploy ke Azure",
+   "GitHub OIDC provider": "Provider OIDC GitHub",
+   "signs short-lived tokens": "menandatangani token sesaat",
+   "valid for minutes only": "hanya berlaku beberapa menit",
+   "+ service principal · no secret": "+ service principal · tanpa secret",
+   "waiting for a token": "menunggu token",
+   "Azure access token": "Access token Azure",
+   "short-lived · for the app": "sesaat · untuk aplikasi",
+   "RBAC: Contributor on rg-storefront only": "RBAC: Contributor hanya di rg-storefront",
+   "running version 1.4": "menjalankan versi 1.4",
+   "untouched by this deployment": "tidak tersentuh deployment ini",
+   "The old way: a client secret in GitHub": "Cara lama: client secret di GitHub",
+   "expires · can leak · someone must rotate it": "kedaluwarsa · bisa bocor · harus ada yang merotasi",
+   "OIDC token signed by GitHub · iss: token.actions.githubusercontent.com · aud: api://AzureADTokenExchange": "Token OIDC ditandatangani GitHub · iss: token.actions.githubusercontent.com · aud: api://AzureADTokenExchange",
+   "head-office IT": "TI kantor pusat",
+   "PIM: eligible for Owner": "PIM: eligible untuk Owner",
+   "on rg-storefront-prod": "di rg-storefront-prod",
+   "no access": "tanpa akses",
+   "09:00 activate": "09.00 aktivasi",
+   "MFA + reason": "MFA + alasan",
+   "active · 2 hours": "active · 2 jam",
+   "11:00 expires": "11.00 kedaluwarsa",
+   "back to eligible": "kembali eligible",
+   "approved by Ibu Sari ✓": "disetujui Ibu Sari ✓"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -602,6 +728,119 @@ svg .callout > text{fill:var(--ink)}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -721,7 +960,7 @@ svg .callout > text{fill:var(--ink)}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -756,7 +995,7 @@ svg .callout > text{fill:var(--ink)}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -769,7 +1008,7 @@ svg .callout > text{fill:var(--ink)}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -790,7 +1029,7 @@ svg .callout > text{fill:var(--ink)}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -798,7 +1037,7 @@ svg .callout > text{fill:var(--ink)}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

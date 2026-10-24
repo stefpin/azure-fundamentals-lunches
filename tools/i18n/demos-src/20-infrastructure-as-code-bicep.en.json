@@ -1,0 +1,157 @@
+{
+  "page": {
+    "doc_title": "Lunch 20 · Infrastructure as Code with Bicep — Interactive demo",
+    "kicker": "Lunch 20 · Infrastructure as Code with Bicep · Interactive demo",
+    "title": "From one file to a whole environment: write, preview, deploy, protect, rebuild",
+    "lede": "Watch a Bicep file take shape, see what-if predict every change, and rebuild Nusantara Retail's test environment from scratch. Press ▶ Play to watch, or step through with Next and Back.",
+    "svgTitle": "A Bicep file deployed through Azure Resource Manager into a resource group, with a what-if preview, a deployment stack and a rebuild",
+    "svgDesc": "On the left, a Bicep file named main.bicep is written block by block, and below it a what-if panel lists predicted changes. In the middle, Azure Resource Manager receives the file. On the right, a resource group fills with a network security group, a virtual network with two subnets, a storage account and a Log Analytics workspace. A deployment stack with DenyDelete blocks a manual delete, and the environment is deleted and rebuilt from the same file."
+  },
+  "steps": [
+    {
+      "title": "Nineteen lunches of clicks",
+      "text": "Over nineteen lunches, Nusantara Retail's Azure estate grew one portal click and one CLI command at a time. Nobody can rebuild it exactly, and nobody knows what Rizky changed at 23:00 last night. Infrastructure as code fixes that: you describe the environment in a file, review it like application code, and let Azure Resource Manager make reality match the file."
+    },
+    {
+      "title": "Start with parameters",
+      "text": "The Bicep file starts with inputs. Parameters such as location and environment let one file serve test and production, and the location defaults to the resource group's own region. A variable builds the tag set once, so every resource carries costCenter and environment tags without copy and paste. Decorators such as @allowed restrict what a parameter accepts."
+    },
+    {
+      "title": "Declare the network",
+      "text": "Next come the resource declarations: a network security group and a virtual network with two subnets. Each resource has a symbolic name, a type and an API version. Because the web subnet refers to nsg.id, Bicep knows the security group must exist first. On the right, the planned resources appear faintly, because nothing exists in Azure yet."
+    },
+    {
+      "title": "Storage, logs and outputs",
+      "text": "The storage account name joins a prefix with uniqueString of the resource group ID, so it is unique across Azure yet identical on every run. A Log Analytics workspace joins the file, and an output hands the storage account name back to you or to the next pipeline step. The whole environment now fits on one screen of code."
+    },
+    {
+      "title": "Preview with what-if",
+      "text": "Before touching anything, ask Resource Manager for a what-if. The file is compiled to an ARM JSON template and compared with what already exists, and the result is a diff. A plus sign means create. Four resources will be created and nothing else is touched, which is exactly what a reviewer wants to see in a pull request.",
+      "set": {
+        "t-wi1": "+ Microsoft.Network/networkSecurityGroups/nsg-web",
+        "t-wi2": "+ Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+        "t-wi3": "+ Microsoft.Storage/storageAccounts/stiac…",
+        "t-wi4": "+ Microsoft.OperationalInsights/workspaces/log-…",
+        "t-wi-sum": "Resource changes: 4 to create."
+      }
+    },
+    {
+      "title": "Deploy: Resource Manager builds it",
+      "text": "Now deploy. The file travels to Azure Resource Manager, which validates it, works out the order from the dependencies and calls each resource provider. The storage account and the workspace are created in parallel, while the subnet waits for its security group. A few minutes later the resource group matches the file exactly, tags included.",
+      "set": {
+        "t-status": "4 resources · match the file",
+        "t-tags": "tags: costCenter, environment=lab"
+      }
+    },
+    {
+      "title": "Redeploy: nothing changes",
+      "text": "Run the same file again and nothing changes, because declarative deployments are idempotent: Resource Manager compares the desired state with the actual state and only acts on the difference. That makes redeploying safe after a failed run, after a portal accident, or every night, simply to prove that the environment still matches the file.",
+      "set": {
+        "t-wi1": "= Microsoft.Network/networkSecurityGroups/nsg-web",
+        "t-wi2": "= Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+        "t-wi3": "= Microsoft.Storage/storageAccounts/stiac…",
+        "t-wi4": "= Microsoft.OperationalInsights/workspaces/log-…",
+        "t-wi-sum": "Resource changes: 4 no change."
+      }
+    },
+    {
+      "title": "Change one parameter: modify",
+      "text": "Dewi wants this copy labelled as a test environment. Change one parameter, run what-if again, and every resource gets a tilde: modify. The detail line shows the environment tag changing from lab to test. Watch for noise as well: what-if sometimes lists default values Azure filled in, even when nothing really changes. Then deploy.",
+      "set": {
+        "t-code-env": "param env string = 'test'",
+        "t-wi1": "~ Microsoft.Network/networkSecurityGroups/nsg-web",
+        "t-wi2": "~ Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+        "t-wi3": "~ Microsoft.Storage/storageAccounts/stiac…",
+        "t-wi4": "~ Microsoft.OperationalInsights/workspaces/log-…",
+        "t-wi-sum": "Resource changes: 4 to modify.",
+        "t-wi-note": "~ tags.environment: \"lab\" => \"test\"",
+        "t-wi-noise": "Read the diff: defaults can show up as noise.",
+        "t-tags": "tags: costCenter, environment=test",
+        "t-status": "Redeployed · only the tags changed"
+      }
+    },
+    {
+      "title": "Protect it with a deployment stack",
+      "text": "Now deploy the same file as a deployment stack. The stack remembers which resources it manages and applies deny settings. With DenyDelete, nobody can delete a managed resource, not even an Owner, unless they are on the stack's short exclusion list. If a resource later disappears from the file, the stack can detach it or delete it.",
+      "set": {
+        "t-status": "Managed by a stack · DenyDelete",
+        "t-wi-note": "",
+        "t-wi-noise": ""
+      }
+    },
+    {
+      "title": "A manual delete is denied",
+      "text": "At 23:00 Rizky tries to delete the storage account. The request reaches Resource Manager, which finds the stack's deny assignment and refuses with DenyAssignmentAuthorizationFailed. A resource lock would block it too, but deny settings belong to the stack: they arrive with the deployment, can exempt the pipeline's identity, and disappear when the stack is deleted."
+    },
+    {
+      "title": "Removed from the file, deleted",
+      "text": "Dewi decides the test copy needs no workspace and removes it from the file. A normal incremental deployment would simply leave the workspace behind. This stack is set to delete unmanaged resources, so its preview shows a minus sign and the update removes the workspace. That replaces the old complete deployment mode, which Microsoft is gradually deprecating.",
+      "set": {
+        "t-wi1": "= Microsoft.Network/networkSecurityGroups/nsg-web",
+        "t-wi2": "= Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+        "t-wi3": "= Microsoft.Storage/storageAccounts/stiac…",
+        "t-wi4": "- Microsoft.OperationalInsights/workspaces/log-…",
+        "t-wi-sum": "Stack preview: 1 to delete, 3 unchanged"
+      }
+    },
+    {
+      "title": "Friday: delete the stack",
+      "text": "On Friday evening the team deletes the stack together with its resources. One command later the resource group is empty, so nothing bills over the weekend. Nobody is nervous about it, because everything that mattered lives in the Bicep file and in Git, not in someone's memory of portal clicks made months ago.",
+      "set": {
+        "t-status": "Empty resource group · nothing bills",
+        "t-tags": "tags: none, no resources"
+      }
+    },
+    {
+      "title": "Monday: same file, same result",
+      "text": "On Monday the pipeline deploys the same file as a stack again, and the environment returns in minutes, identical down to the tags. That is the promise of infrastructure as code: repeatable, reviewable and recoverable. In the capstone you will deploy the whole Nusantara Retail core platform this way, from modular Bicep files.",
+      "tip": "In Lab 20 you complete a starter main.bicep, run what-if, deploy, change a parameter, protect the result with a DenyDelete stack, watch a delete fail, and remove everything by deleting the stack.",
+      "set": {
+        "t-wi1": "+ Microsoft.Network/networkSecurityGroups/nsg-web",
+        "t-wi2": "+ Microsoft.Network/virtualNetworks/vnet-nusa-iac",
+        "t-wi3": "+ Microsoft.Storage/storageAccounts/stiac…",
+        "t-wi4": "",
+        "t-wi-sum": "Resource changes: 3 to create.",
+        "t-status": "Rebuilt from the file in minutes",
+        "t-tags": "tags: costCenter, environment=test"
+      }
+    }
+  ],
+  "svg": [
+    "main.bicep",
+    "abbreviated · full file in Lab 20",
+    "what-if",
+    "az deployment group what-if",
+    "+ create ~ modify - delete = no change",
+    "no preview yet",
+    "Azure Resource Manager",
+    "validates · orders · deploys",
+    "rg-lunch20 · Southeast Asia",
+    "tags: none yet",
+    "Empty resource group",
+    "param location string = resourceGroup().location",
+    "param env string = 'lab'",
+    "var tags = { costCenter: 'retail-lab', env: env }",
+    "resource nsg '…/networkSecurityGroups@…' = {",
+    "name: 'nsg-web' // allow TCP 80 inbound",
+    "resource vnet '…/virtualNetworks@…' = {",
+    "subnets: snet-web (uses nsg.id), snet-app",
+    "resource st '…/storageAccounts@…' = {",
+    "name: 'stiac${uniqueString(…)}'",
+    "resource logs '…/workspaces@…' = { … }",
+    "output storageName string = st.name",
+    "vnet-nusa-iac",
+    "10.20.0.0/16 · 2 subnets",
+    "snet-app",
+    "snet-web",
+    "nsg-web",
+    "allow TCP 80",
+    "log-nusa-…",
+    "Log Analytics workspace",
+    "stiac…",
+    "storage · uniqueString",
+    "stack · DenyDelete",
+    "Rizky · 23:00",
+    "deletes the storage account"
+  ]
+}

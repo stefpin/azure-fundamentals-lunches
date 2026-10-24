@@ -243,7 +243,7 @@ svg text.rname{font-size:13px;font-weight:600}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/08-networking-basic.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/08-networking-basic.html" data-href-id="../id/lunches/08-networking-basic.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -570,10 +570,176 @@ svg text.rname{font-size:13px;font-weight:600}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 08 · Virtual Networking (Dasar) — Demo interaktif",
+   "kicker": "Makan Siang 08 · Virtual Networking (Dasar) · Demo interaktif",
+   "title": "Siapa boleh masuk, siapa boleh keluar: pemeriksa aturan NSG",
+   "lede": "Ikuti perjalanan paket melewati network security group di subnet dan di NIC, saksikan aturan diperiksa sesuai urutan prioritas, dan lihat mengapa private subnet membutuhkan NAT gateway. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Network security group memutuskan paket mana yang boleh mencapai web server dan app server Nusantara Retail",
+   "svgDesc": "Di kiri, internet dan, belakangan, sebuah NAT gateway. Di tengah, virtual network vnet-nusa-shop: subnet web tempat paket melewati NSG subnet nsg-web dan sebuah NSG NIC sebelum mencapai vm-web, serta subnet app yang privat tempat nsg-app menjaga vm-app. Di kanan, pemeriksa aturan mencantumkan aturan-aturan NSG yang sedang diperiksa, mulai dari nomor prioritas terkecil, dan menunjukkan aturan mana yang cocok."
+  },
+  "steps": [
+   {
+    "title": "Toko online dengan dua tier",
+    "text": "Toko online Nusantara Retail kini tinggal di vnet-nusa-shop, 10.20.0.0/16, jauh dari 10.0.0.0/16 milik kantor pusat. Pembeli harus bisa menjangkau vm-web di subnet web. vm-app di subnet app yang privat menjalankan logika pesanan dan harus tetap tak terlihat dari internet. Network security group berdiri di antara setiap paket dan setiap VM, dan panel di kanan menampilkan setiap pemeriksaan aturan saat terjadi."
+   },
+   {
+    "title": "Dua gerbang di jalan masuk",
+    "text": "Network security group, atau NSG, bisa dipasang di subnet, di network interface, atau di keduanya. Lalu lintas masuk bertemu NSG subnet lebih dulu, baru NSG NIC; lalu lintas keluar bertemu keduanya dengan urutan terbalik. Paket harus diizinkan di setiap gerbang yang ditemuinya. Di sini snet-web punya nsg-web, dan network interface vm-web masih membawa NSG lama sisa uji coba kilat."
+   },
+   {
+    "title": "Nomor terkecil diperiksa lebih dulu",
+    "text": "Setiap NSG adalah daftar yang berurutan. Aturan buatan Anda memakai prioritas 100 sampai 4096; aturan default Azure berada di 65000 ke atas dan tidak bisa dihapus. Azure memeriksa daftar mulai dari nomor terkecil, dan aturan pertama yang cocok dengan paket itulah yang memutuskan. Aturan sesudahnya tidak dibaca lagi. nsg-web punya satu aturan buatan, Allow-HTTP-Internet di 100, lalu tiga aturan default inbound."
+   },
+   {
+    "title": "SSH dari internet",
+    "text": "Sebuah bot mencoba SSH, TCP port 22, ke public IP Standard milik vm-web, yang tetap tertutup sampai ada NSG yang mengizinkan lalu lintas. Di nsg-web, aturan 100 hanya mencakup port 80, dan dua aturan allow default hanya cocok untuk lalu lintas dari virtual network atau health probe Azure. DenyAllInBound di 65500 cocok, jadi paket dibuang di subnet. NSG NIC bahkan tidak pernah melihatnya.",
+    "set": {
+     "t-pkt": "TCP 22 · internet → 10.20.1.4",
+     "t-res": "Hasil: dibuang di nsg-web",
+     "t-res2": "cocok pertama: 65500 DenyAllInBound"
+    }
+   },
+   {
+    "title": "HTTP hanya lolos satu gerbang",
+    "text": "Kini seorang pembeli meminta halaman utama di TCP 80. Di nsg-web, aturan 100 cocok: diizinkan. Tetapi paket juga harus lolos dari NSG NIC, yang satu-satunya aturan buatannya mengizinkan SSH di prioritas 1000. Tidak ada aturan lain yang cocok sebelum DenyAllInBound, jadi permintaan itu kandas selangkah sebelum vm-web. Kedua tingkat harus mengizinkan; satu NSG yang terlupakan sudah cukup untuk membuat toko offline.",
+    "set": {
+     "t-nsg": "NSG NIC di vm-web · inbound",
+     "t-r1p": "1000",
+     "t-r1n": "Allow-SSH",
+     "t-r1d": "Allow · TCP 22 · any → any",
+     "t-pkt": "TCP 80 · internet → 10.20.1.4",
+     "t-res": "Hasil: dibuang di NSG NIC",
+     "t-res2": "nsg-web mengizinkan · NSG NIC: 65500"
+    }
+   },
+   {
+    "title": "Satu tempat untuk semua aturan",
+    "text": "Dewi menghapus NSG NIC sisa itu, sehingga nsg-web menjadi satu-satunya tempat untuk membaca dan mengaudit aturan web tier. Permintaan berikutnya cocok dengan aturan 100 di subnet dan sampai ke vm-web. Balasannya tidak butuh aturan sendiri, karena NSG bersifat stateful. Kebanyakan tim memasang NSG di subnet saja; kalau Anda memakai kedua tingkat, selalu tinjau keduanya bersamaan.",
+    "set": {
+     "t-r1p": "100",
+     "t-r1n": "Allow-HTTP-Internet",
+     "t-r1d": "Allow · TCP 80 · Internet → asg-web",
+     "t-nsg": "nsg-web · NSG subnet · inbound",
+     "t-pkt": "TCP 80 · internet → 10.20.1.4",
+     "t-res": "Hasil: sampai di vm-web",
+     "t-res2": "cocok pertama: 100 Allow-HTTP-Internet"
+    }
+   },
+   {
+    "title": "Grup, bukan alamat IP",
+    "text": "Network interface vm-web adalah anggota application security group asg-web. Aturan bisa menyebut nama grup alih-alih alamat IP, sehingga web server ketiga otomatis tercakup cukup dengan bergabung ke grup itu. NSG subnet app, nsg-app, memakainya sebagai sumber: izinkan asg-web ke port 8080 di prioritas 100, lalu tolak sisa virtual network di 4000.",
+    "set": {
+     "t-nsg": "nsg-app · NSG subnet · inbound",
+     "t-pkt": "aturan subnet app",
+     "t-r1p": "100",
+     "t-r1n": "Allow-Web-To-App-8080",
+     "t-r1d": "Allow · TCP 8080 · asg-web → snet-app",
+     "t-r2p": "4000",
+     "t-r2n": "Deny-VNet-Inbound",
+     "t-r2d": "Deny · VirtualNetwork → any",
+     "t-r3p": "65000",
+     "t-r3n": "AllowVnetInBound",
+     "t-r3d": "Allow · VirtualNetwork → VirtualNetwork",
+     "t-r4p": "65001",
+     "t-r4n": "AllowAzureLoadBalancerInBound",
+     "t-r4d": "Allow · AzureLoadBalancer → any",
+     "t-r5p": "65500",
+     "t-r5n": "DenyAllInBound",
+     "t-r5d": "Deny · any → any",
+     "t-res": "Hasil: —",
+     "t-res2": "Nomor terkecil dulu · cocok pertama menang"
+    }
+   },
+   {
+    "title": "Web memanggil app tier",
+    "text": "vm-web memanggil vm-app di TCP 8080. Saat meninggalkan subnet web, aturan default AllowVnetOutBound mengizinkannya keluar. Saat tiba di nsg-app, aturan 100 langsung cocok: sumbernya anggota asg-web dan port-nya 8080. Paket pun sampai. Deny di 4000 dan aturan-aturan default tidak pernah dibaca untuk paket ini.",
+    "set": {
+     "t-pkt": "TCP 8080 · 10.20.1.4 → 10.20.2.4",
+     "t-res": "Hasil: sampai di vm-app",
+     "t-res2": "cocok pertama: 100 Allow-Web-To-App-8080"
+    }
+   },
+   {
+    "title": "Jaringan sama, port salah",
+    "text": "Kini seseorang di vm-web mencoba SSH ke vm-app. Aturan 100 tidak cocok, karena port-nya 22. Aturan 4000 cocok: sumbernya berada di dalam service tag VirtualNetwork, jadi paket ditolak. Tanpa aturan itu, aturan default AllowVnetInBound di 65000 akan meloloskannya. Itulah sebabnya allow ditaruh di nomor yang lebih kecil daripada deny yang menjadi sandarannya.",
+    "set": {
+     "t-pkt": "TCP 22 · 10.20.1.4 → 10.20.2.4",
+     "t-res": "Hasil: dibuang di nsg-app",
+     "t-res2": "cocok pertama: 4000 Deny-VNet-Inbound"
+    }
+   },
+   {
+    "title": "Panggilan keluar dari private subnet",
+    "text": "vm-app membutuhkan penyedia pembayaran di internet. Aturan outbound default nsg-app setuju: AllowInternetOutBound di 65001 cocok. Namun paketnya tidak ke mana-mana. snet-app adalah private subnet, default di virtual network baru, dan vm-app tidak punya public IP, jadi tidak ada jalur keluar. Allow di NSG adalah izin, bukan jalur — ibarat punya SIM tetapi jalannya belum dibangun. Koneksinya hanya berakhir dengan timeout.",
+    "set": {
+     "t-nsg": "nsg-app · NSG subnet · outbound",
+     "t-pkt": "TCP 443 · 10.20.2.4 → internet",
+     "t-r1p": "65000",
+     "t-r1n": "AllowVnetOutBound",
+     "t-r1d": "Allow · VirtualNetwork → VirtualNetwork",
+     "t-r2p": "65001",
+     "t-r2n": "AllowInternetOutBound",
+     "t-r2d": "Allow · any → Internet",
+     "t-r3p": "65500",
+     "t-r3n": "DenyAllOutBound",
+     "t-r3d": "Deny · any → any",
+     "t-r4p": "",
+     "t-r4n": "",
+     "t-r4d": "",
+     "t-r5p": "",
+     "t-r5n": "",
+     "t-r5d": "",
+     "t-res": "Hasil: tak ada jalur keluar",
+     "t-res2": "NSG mengizinkan, tapi tak ada rutenya"
+    }
+   },
+   {
+    "title": "NAT gateway membuka jalan",
+    "text": "Pasang NAT gateway dengan public IP Standard di snet-app. Tanpa route table dan tanpa perubahan di VM: koneksi keluar baru dari subnet itu kini berangkat lewat alamat statis NAT gateway, yang bisa dimasukkan penyedia pembayaran ke allow list-nya. Balasan bisa kembali, tetapi tak seorang pun di internet bisa membuka koneksi ke dalam melaluinya.",
+    "set": {
+     "t-res": "Hasil: keluar via NAT gateway",
+     "t-res2": "sumber menjadi public IP NAT gateway"
+    }
+   },
+   {
+    "title": "Yang perlu diingat",
+    "text": "Empat kebiasaan dari demo ini. Rencanakan alamat yang tidak pernah tumpang tindih dengan kantor pusat. Simpan aturan di satu tempat, dengan setiap allow bernomor lebih kecil daripada deny yang menjadi sandarannya. Gunakan service tag dan application security group alih-alih daftar IP yang panjang. Dan beri private subnet jalan keluar yang eksplisit. Ketika lalu lintas berulah, IP flow verify menyebutkan aturan yang memutuskan.",
+    "tip": "Coba di Lab 08: bangun jaringan ini, rusak dengan aturan deny berprioritas lebih tinggi, lalu temukan biang keroknya dengan IP flow verify."
+   }
+  ],
+  "svg": {
+   "Rule evaluator": "Pemeriksa aturan",
+   "nsg-web · subnet NSG · inbound": "nsg-web · NSG subnet · inbound",
+   "no packet yet": "belum ada paket",
+   "Result: —": "Hasil: —",
+   "Lowest number first · first match wins": "Nomor terkecil dulu · cocok pertama menang",
+   "Inbound: subnet NSG first, then NIC NSG": "Inbound: NSG subnet dulu, lalu NSG NIC",
+   "Outbound: NIC NSG first, then subnet NSG": "Outbound: NSG NIC dulu, lalu NSG subnet",
+   "shoppers and bots": "pembeli dan bot",
+   "subnet NSG": "NSG subnet",
+   "NIC NSG": "NSG NIC",
+   "on vm-web": "di vm-web",
+   "no public IP": "tanpa public IP",
+   "static public IP": "public IP statis",
+   "NIC NSG removed": "NSG NIC dihapus",
+   "rules on the subnet": "aturan di subnet",
+   "No path out": "Jalan buntu",
+   "no default outbound": "tanpa akses keluar"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -589,6 +755,119 @@ svg text.rname{font-size:13px;font-weight:600}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -708,7 +987,7 @@ svg text.rname{font-size:13px;font-weight:600}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -743,7 +1022,7 @@ svg text.rname{font-size:13px;font-weight:600}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -756,7 +1035,7 @@ svg text.rname{font-size:13px;font-weight:600}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -777,7 +1056,7 @@ svg text.rname{font-size:13px;font-weight:600}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -785,7 +1064,7 @@ svg text.rname{font-size:13px;font-weight:600}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

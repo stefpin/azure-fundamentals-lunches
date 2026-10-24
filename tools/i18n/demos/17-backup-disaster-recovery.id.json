@@ -1,0 +1,160 @@
+{
+  "page": {
+    "doc_title": "Makan Siang 17 · Pencadangan Data dan Pemulihan Bencana — Demo interaktif",
+    "kicker": "Makan Siang 17 · Pencadangan Data dan Pemulihan Bencana · Demo interaktif",
+    "title": "RPO, RTO, cadangan yang terlindungi, dan region kedua",
+    "lede": "Letakkan hari Selasa terburuk Nusantara Retail di sebuah garis waktu, saksikan penyerang mencoba menghapus cadangan, lalu pindahkan (failover) toko online ke Southeast Asia dengan Azure Site Recovery. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+    "svgTitle": "Pencadangan data dan pemulihan bencana untuk Nusantara Retail",
+    "svgDesc": "Adegan pertama: garis waktu dengan backup setiap malam, serangan ransomware, dan pemulihannya, yang menunjukkan RPO dan RTO, lalu backup setiap empat jam. Adegan kedua: penyerang menghapus cadangan di Recovery Services vault; soft delete menyimpannya, Resource Guard memblokir percobaan berikutnya, dan file berhasil di-restore. Adegan ketiga: Site Recovery mereplikasi toko online dari Indonesia Central ke Southeast Asia, menjalankan test failover, dan melakukan failover saat terjadi gangguan regional."
+  },
+  "steps": [
+    {
+      "title": "Satu backup setiap malam",
+      "text": "Server pesanan Nusantara Retail dilindungi Azure Backup dengan DefaultPolicy: satu backup per hari pukul 22.00, masing-masing disimpan 30 hari. Backup Senin malam berhasil, jadi sebuah recovery point sudah ada. Sejak saat itu, setiap pesanan baru hanya tersimpan di server itu sendiri, sampai backup berikutnya berjalan.",
+      "set": {
+        "t-a-title": "Server pesanan · DefaultPolicy: satu recovery point per hari pukul 22:00",
+        "t-a1": "DefaultPolicy: satu recovery point per hari, disimpan 30 hari",
+        "t-a2": "Setiap pesanan setelah pukul 22:00 hanya ada di server"
+      }
+    },
+    {
+      "title": "Ransomware menyerang pukul 15.00",
+      "text": "Selasa pukul 15.00, ransomware mengenkripsi server. Salinan bersih terbaru adalah recovery point Senin pukul 22.00, jadi semua yang masuk sejak itu hilang: 17 jam pesanan. Selisih itulah wujud nyata recovery point objective (RPO). Backup sekali semalam berarti menerima kehilangan data hingga 24 jam. Sanggupkah bisnis menerimanya?",
+      "set": {
+        "t-a1": "Data yang hilang = waktu sejak recovery point terakhir: itulah RPO",
+        "t-a2": "17 jam pesanan hilang · target mengizinkan hingga 24 jam"
+      }
+    },
+    {
+      "title": "Kembali online empat jam kemudian",
+      "text": "Pemulihan tidak terjadi seketika. Seseorang harus menyadari serangan itu, memutuskan untuk me-restore, me-restore VM dari recovery point, lalu memeriksa bahwa toko berfungsi. Di sini semuanya baru beres pukul 19.00: empat jam offline, dan itulah recovery time objective (RTO). Tim biasanya hanya merencanakan restore-nya, padahal menyadari dan memutuskan sering memakan waktu paling lama.",
+      "set": {
+        "t-a1": "Downtime = sadar + putuskan + restore + periksa: itulah RTO",
+        "t-a2": "4 jam offline, dari 15:00 sampai 19:00"
+      }
+    },
+    {
+      "title": "Backup lebih sering",
+      "text": "Jika kehilangan 17 jam pesanan terlalu banyak, buat backup lebih sering. Policy Enhanced bisa membuat recovery point setiap empat jam, sehingga serangan yang sama pukul 15.00 hanya menghilangkan sekitar satu jam pesanan. Namun RTO-nya tidak berubah: restore tetap butuh berjam-jam. RTO yang jauh lebih pendek membutuhkan salinan siaga, yang akan muncul di bagian akhir.",
+      "set": {
+        "t-a-title": "Server pesanan · Policy Enhanced: recovery point setiap 4 jam",
+        "t-a1": "Policy Enhanced: recovery point setiap 4 jam",
+        "t-a2": "RPO sekitar 1 jam · RTO tetap sekitar 4 jam"
+      }
+    },
+    {
+      "title": "Penyerang mengincar cadangan",
+      "text": "Ransomware modern mengincar cadangan lebih dulu. Dengan kata sandi administrator curian, penyerang membuka Recovery Services vault dan menghapus data backup server pesanan, berharap Nusantara Retail tidak punya jalan pulang. Tanpa perlindungan, recovery point itu akan lenyap dalam hitungan detik.",
+      "set": {
+        "t-vm2": "orders.csv masih di disk",
+        "t-b1": "Penyerang: \"delete backup data\" untuk vm-orders",
+        "t-b2": "Tanpa perlindungan, setiap recovery point lenyap dalam hitungan detik"
+      }
+    },
+    {
+      "title": "Soft delete menyimpannya",
+      "text": "Penghapusan itu tidak menghancurkan apa pun. Recovery point berpindah ke status soft-deleted dan bertahan di sana selama 14 hari secara default, tanpa biaya tambahan. Dengan secure by default, soft delete tidak bisa dimatikan di Recovery Services vault, jadi bahkan administrator pun tidak bisa membuat penghapusan itu permanen sebelum waktunya habis.",
+      "set": {
+        "t-b1": "Soft delete: disimpan 14 hari (hingga 180) · 14 hari pertama tanpa biaya",
+        "t-b2": "Secure by default: soft delete tidak bisa dimatikan"
+      }
+    },
+    {
+      "title": "Dua kunci tambahan",
+      "text": "Penyerang lalu mencoba menghentikan perlindungan dan memperpendek retensi. Multi-user authorization meneruskan permintaan itu ke Resource Guard milik tim keamanan, yang tidak pernah menyetujuinya, sehingga operasinya gagal. Immutable vault juga akan menolak menghapus atau memperpendek recovery point sebelum waktunya. Satu akun curian tidak lagi cukup.",
+      "set": {
+        "t-b1": "Multi-user authorization: operasi penting butuh persetujuan Resource Guard",
+        "t-b2": "Immutable vault: tidak ada penghapusan dini, tidak ada retensi yang dipersingkat"
+      }
+    },
+    {
+      "title": "Undelete, lalu restore",
+      "text": "Pak Budi melakukan undelete pada item-item itu dalam batas 14 hari, melanjutkan perlindungan, dan me-restore file pesanan dari recovery point hari Senin. Itulah latihan yang akan Anda jalankan di Lab 17. Pelajarannya: cadangan hanya sebaik perlindungannya, dan restore baru terbukti setelah seseorang benar-benar melakukannya.",
+      "set": {
+        "t-vm2": "orders.csv sudah pulih",
+        "t-b1": "Undelete, lanjutkan perlindungan, lalu restore file-nya",
+        "t-b2": "Lab 17 menjalankan latihan persis seperti ini"
+      }
+    },
+    {
+      "title": "Salinan siaga di Singapura",
+      "text": "Backup menjawab 'kembalikan data saya yang kemarin'. Untuk RTO satu jam, toko online butuh salinan siaga. Indonesia Central tidak punya region pasangan, jadi Nusantara Retail memilih Southeast Asia sendiri, setelah tim hukum menyetujui transfer datanya. Mobility service milik Site Recovery mengirim setiap penulisan disk melalui cache storage account ke disk replika di Singapura.",
+      "set": {
+        "t-c1": "Indonesia Central tidak punya region pasangan: Anda memilih targetnya",
+        "t-c2": "Southeast Asia: dekat, tiga zona, layanan lengkap · periksa residensi data dulu"
+      }
+    },
+    {
+      "title": "Recovery point setiap lima menit",
+      "text": "Site Recovery mengubah penulisan yang direplikasi menjadi recovery point crash-consistent setiap lima menit dan menyimpannya selama satu hari secara default. Itu berarti RPO dalam hitungan menit, jauh lebih baik daripada backup sekali semalam. VM replika belum berjalan, jadi Nusantara Retail membayar replikasi dan disk, bukan komputasi yang menganggur.",
+      "set": {
+        "t-c1": "Recovery point crash-consistent setiap 5 menit, disimpan 1 hari secara default",
+        "t-c2": "Anda membayar replikasi dan disk · VM replika belum berjalan"
+      }
+    },
+    {
+      "title": "Berlatih dengan test failover",
+      "text": "Dua kali setahun, Nusantara Retail berlatih. Test failover menyalakan salinan VM dari sebuah recovery point ke dalam virtual network yang terisolasi di Southeast Asia, sementara produksi dan replikasi tetap berjalan tanpa tersentuh. Tim memeriksa bahwa toko bisa menyala, mengukur waktu seluruh latihan dibandingkan RTO, lalu membersihkan hasil uji.",
+      "set": {
+        "t-c1": "Test failover: VNet terisolasi, produksi tidak tersentuh",
+        "t-c2": "Ukur waktunya: RTO yang terukur menggantikan tebakan"
+      }
+    },
+    {
+      "title": "Region utama padam",
+      "text": "Lalu gangguan satu region penuh melanda Indonesia Central, dan setiap zona di sana terdampak. Tim menjalankan failover: Site Recovery menyalakan VM di Southeast Asia dari recovery point terbaru, hanya beberapa menit di belakang produksi. DNS dan dependensi lain dialihkan sesuai runbook. Nanti mereka melakukan re-protect ke arah sebaliknya, lalu fail back ke rumah.",
+      "set": {
+        "t-c1": "Failover: VM menyala dari recovery point terbaru",
+        "t-c2": "Lalu re-protect, dan fail back setelah region utama sehat"
+      }
+    },
+    {
+      "title": "Rangkuman dan lab Anda",
+      "text": "Dua angka dan dua alat. RPO adalah data yang sanggup Anda relakan hilang, RTO adalah lama waktu layanan boleh mati; tetapkan keduanya per sistem. Azure Backup, yang dijaga soft delete, immutability, dan MUA, memberi Anda ingatan yang panjang, sedangkan Site Recovery memberi salinan siaga yang cepat. Tanpa pasangan region, Anda memilih region kedua sendiri.",
+      "tip": "Di Lab 17 Anda akan mencadangkan sebuah VM, sengaja menghilangkan sebuah file, me-restore-nya dari recovery point, dan mengembalikan cadangan yang dihapus penyerang.",
+      "set": {
+        "t-c1": "RPO dan RTO per sistem · Backup untuk riwayat · Site Recovery untuk kecepatan",
+        "t-c2": "Tidak punya pasangan region? Pilih region kedua sendiri, lalu ujilah"
+      }
+    }
+  ],
+  "svg": {
+    "Orders server · DefaultPolicy: one recovery point a day at 22:00": "Server pesanan · DefaultPolicy: satu recovery point per hari pukul 22:00",
+    "Mon 22:00": "Senin 22:00",
+    "Tue 15:00": "Selasa 15:00",
+    "Tue 19:00": "Selasa 19:00",
+    "Last good backup": "Backup baik terakhir",
+    "Mon 22:00 · recovery point": "Senin 22:00 · recovery point",
+    "Ransomware strikes": "Ransomware menyerang",
+    "Tue 15:00 · files encrypted": "Selasa 15:00 · terenkripsi",
+    "Storefront back": "Toko online kembali",
+    "Tue 19:00 · restored": "Selasa 19:00 · di-restore",
+    "17 hours of orders exist in no backup": "17 jam pesanan tidak ada di backup mana pun",
+    "4 hours offline": "4 jam offline",
+    "RPO now about 1 hour": "RPO kini sekitar 1 jam",
+    "DefaultPolicy: one recovery point a day, kept for 30 days": "DefaultPolicy: satu recovery point per hari, disimpan 30 hari",
+    "Every order written after 22:00 exists only on the server": "Setiap pesanan setelah pukul 22:00 hanya ada di server",
+    "No active recovery points left": "Tidak ada recovery point aktif yang tersisa",
+    "Sun 22:00": "Minggu 22:00",
+    "Sat 22:00": "Sabtu 22:00",
+    "Soft-deleted · kept 14 days · undelete possible": "Soft-deleted · disimpan 14 hari · bisa di-undelete",
+    "Attacker": "Penyerang",
+    "stolen admin password": "kata sandi admin curian",
+    "security team approves": "tim keamanan menyetujui",
+    "orders.csv still on disk": "orders.csv masih di disk",
+    "Attacker: \"delete backup data\" for vm-orders": "Penyerang: \"delete backup data\" untuk vm-orders",
+    "Without protection, every recovery point would be gone in seconds": "Tanpa perlindungan, setiap recovery point lenyap dalam hitungan detik",
+    "Indonesia Central · primary": "Indonesia Central · utama",
+    "Southeast Asia · DR target": "Southeast Asia · target DR",
+    "continuous replication": "replikasi berkelanjutan",
+    "Storefront VMs": "VM toko online",
+    "every write, first": "semua tulisan mampir dulu",
+    "Replica disks": "Disk replika",
+    "recovery point every 5 min": "recovery point setiap 5 menit",
+    "isolated VNet": "VNet terisolasi",
+    "Failover VMs": "VM failover",
+    "start here": "menyala di sini",
+    "Indonesia Central has no paired region: you choose the target": "Indonesia Central tidak punya region pasangan: Anda memilih targetnya",
+    "Southeast Asia: close, three zones, broad services · check data residency first": "Southeast Asia: dekat, tiga zona, layanan lengkap · periksa residensi data dulu"
+  }
+}

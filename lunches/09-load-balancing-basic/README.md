@@ -1,9 +1,12 @@
 # Lunch 09 · Load Balancing (Basic): Azure Load Balancer
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 2:** Core infrastructure
 > **Time:** 60 minutes · **Prerequisite lunches:** 03, 06, 08
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 09 · Keep the shop open when a server fails](../../labs/09-load-balancing-basic/README.md) — about 50 minutes · cost 💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -376,6 +379,16 @@ What to watch for:
   keeping state off the VMs.
 - Outbound access must be **explicit**: size SNAT ports with **outbound rules** or prefer a **NAT gateway**. A
   zone-redundant frontend plus VMs in several zones survives a zone failure.
+
+## 🗒️ Field notes from Stefanus
+
+> **A failover you have never tested is only a hope.** In design reviews I ask one question about every load-balanced
+> service: *when did you last stop one of these servers on purpose?* If the answer is "never", I don't call it highly
+> available yet. Before go-live I stop the web service on each backend in turn, in working hours, while the team
+> watches: the probe should take it out within seconds and the shop should keep answering. Then I test the way out,
+> because it fails quietly: from inside each VM I call the payment API or the update mirror and check which public
+> address the other side sees. And when every backend turns unhealthy at once, I check the probe and the NSG before I
+> touch a server.
 
 ## 🔬 Your lab: Keep the shop open when a server fails
 

@@ -1,0 +1,134 @@
+{
+  "page": {
+    "doc_title": "Lunch 18 · A deployment meets the policy engine — Interactive demo",
+    "kicker": "Lunch 18 · Governance and Compliance (Basic) · Interactive demo",
+    "title": "A deployment meets the policy engine",
+    "lede": "Watch Azure Policy refuse the wrong region, report what already exists, add a missing tag automatically and fix older resources with a remediation task. Press ▶ Play, or step through with Next and Back.",
+    "svgTitle": "A deployment request meets the Azure Policy engine",
+    "svgDesc": "Dewi's requests pass Azure Resource Manager and up to three policy assignments on a resource group. A request for West Europe is denied, a tagged storage account is created in Southeast Asia, a Modify policy adds a missing costCenter tag to a network security group, a remediation task tags two older resources, and a compliance view counts compliant and non-compliant resources."
+  },
+  "steps": [
+    {
+      "title": "No guardrails at Nusantara Retail",
+      "text": "Nusantara Retail's lab resource group sits in Southeast Asia. It holds two older resources with no tags, plus a storage account that Dewi created in West Europe last year and forgot. Finance cannot tell who pays for what, and the legal advisor wants customer data kept close to home. Right now nothing in Azure stops the next mistake, and nothing tells Ibu Sari how many mistakes already exist."
+    },
+    {
+      "title": "Every request passes Resource Manager",
+      "text": "Whether Dewi uses the portal, the CLI or a pipeline, her request goes to Azure Resource Manager. It checks who she is and whether her role allows the action. She is a Contributor, so RBAC says yes. Next, the Azure Policy engine evaluates every assignment that applies to the target scope. Right now there are none, so anything goes."
+    },
+    {
+      "title": "Assign Allowed locations",
+      "text": "You assign the built-in Allowed locations definition to the resource group and set its parameter to Southeast Asia. The definition is the rule, the assignment applies it to a scope with your values, and the effect is Deny. A new assignment takes about five minutes to reach its scope, so give it a moment before you test it. Microsoft maintains built-ins like this one, so you never write the JSON yourself."
+    },
+    {
+      "title": "A request for West Europe",
+      "text": "Dewi asks for a storage account in West Europe. RBAC still says yes, but the location is not on the list, so the Deny effect blocks the request before it ever reaches the storage resource provider. She gets RequestDisallowedByPolicy, the error names the assignment that stopped her, and nothing is created.",
+      "set": {
+        "t-weunew": "blocked ✗"
+      }
+    },
+    {
+      "title": "Retry in Southeast Asia",
+      "text": "She retries in Southeast Asia and tags the account costCenter CC-1001. Every assigned rule is satisfied, so Resource Manager hands the request to the storage resource provider and the account is created. The guardrail did not slow her down; it only took the wrong option away. Rules that say no only to the wrong choice are the ones developers stop noticing."
+    },
+    {
+      "title": "Existing resources are only reported",
+      "text": "Deny never deletes anything. The West Europe account from last year keeps running, but the next compliance scan marks it non-compliant. Scans run after an assignment is created or changed, after every resource change, once a day, and on demand. The compliance view turns the results into a score, so you can decide what to do next.",
+      "set": {
+        "t-c-ok": "Compliant: 3",
+        "t-c-bad": "Non-compliant: 1",
+        "t-c-pct": "Score: 75%"
+      }
+    },
+    {
+      "title": "Add the tagging rules",
+      "text": "Finance wants a costCenter tag on everything, so you assign two more built-ins: Require a tag on resources, a Deny rule, and Inherit a tag from the resource group if missing, a Modify rule that copies the tag from the resource group. The Modify assignment gets a managed identity. After the next scan, the three untagged resources show up as non-compliant.",
+      "set": {
+        "t-c-ok": "Compliant: 1",
+        "t-c-bad": "Non-compliant: 3",
+        "t-c-pct": "Score: 25%"
+      }
+    },
+    {
+      "title": "An untagged request is refused",
+      "text": "Dewi's pipeline creates a network security group without tags. The Modify rule has nothing to copy, because nobody tagged the resource group itself, so the request reaches the Deny rule unchanged and is refused. This is the most common surprise with tag policies: inheritance only works when the parent carries the tag."
+    },
+    {
+      "title": "Modify runs before Deny",
+      "text": "Why did the request fail, and what is the fix? Look at the order of evaluation: Disabled first, then Append and Modify, then Deny, then Audit. AuditIfNotExists and DeployIfNotExists run only after deployment. Modify gets the first chance to change a request, so if the resource group carries costCenter, the missing tag is added before the Deny rule ever looks at it."
+    },
+    {
+      "title": "Tag the group, run it again",
+      "text": "You add costCenter CC-1001 to the resource group, once. Dewi runs exactly the same pipeline again. This time the Modify rule copies the tag into the request, the Deny rule finds it, and the network security group is created. Nobody touched the pipeline; the platform filled the gap, and new resources are compliant from their first second.",
+      "set": {
+        "t-rgtag": "rg-storefront-test · costCenter = CC-1001",
+        "t-newnsg": "costCenter inherited ✓",
+        "t-c-ok": "Compliant: 2",
+        "t-c-bad": "Non-compliant: 3",
+        "t-c-pct": "Score: 40%"
+      }
+    },
+    {
+      "title": "Remediate what already exists",
+      "text": "The two older resources existed before the rules, so Modify never saw them. A remediation task fixes them in bulk, acting through the assignment's managed identity, which holds the Contributor role on the resource group. Minutes later both carry the tag. The West Europe account gets its tag too, but stays non-compliant: no tag can fix the wrong region.",
+      "set": {
+        "t-oldst": "costCenter added ✓",
+        "t-oldnsg": "costCenter added ✓",
+        "t-weuold": "tagged · wrong region",
+        "t-c-ok": "Compliant: 4",
+        "t-c-bad": "Non-compliant: 1",
+        "t-c-pct": "Score: 80%"
+      }
+    },
+    {
+      "title": "Guardrails, evidence, next steps",
+      "text": "Recap: RBAC decided who could act, Azure Policy decided what could exist, and the compliance view gives Ibu Sari evidence for the auditor. Deny blocked the wrong region, Modify added the missing tag, and remediation fixed the past. The last non-compliant account needs a human decision: migrate it, or grant an exemption with an expiry date.",
+      "tip": "In Lab 18 you build exactly this on your own resource group: three built-in assignments, a denied deployment, an inherited tag, a remediation task and a compliance report."
+    }
+  ],
+  "svg": [
+    "Southeast Asia",
+    "rg-storefront-test · no tags",
+    "West Europe",
+    "Azure Policy assignments",
+    "Dewi · developer",
+    "az storage account create",
+    "Azure Resource Manager",
+    "identity and RBAC checks",
+    "Allowed locations",
+    "Deny · Southeast Asia",
+    "Require costCenter",
+    "Deny · tag must exist",
+    "Inherit costCenter",
+    "Modify · copy from RG",
+    "stnusa",
+    "new · costCenter CC-1001",
+    "nsg-app",
+    "new resource",
+    "stlegacy",
+    "existing · no tag",
+    "nsg-legacy",
+    "Remediation task",
+    "uses the assignment's managed identity",
+    "stdenied",
+    "request",
+    "never created",
+    "st-promo-weu",
+    "same RG, other region",
+    "Compliance view",
+    "Compliant: –",
+    "Non-compliant: –",
+    "Score: –",
+    "checked on every change, after each assignment, daily, or on demand",
+    "RequestDisallowedByPolicy",
+    "Resource 'stdenied' was disallowed",
+    "by policy. Assignment:",
+    "Allowed locations (Deny)",
+    "Nothing was created.",
+    "Order of evaluation",
+    "1 Disabled · 2 Append, Modify",
+    "3 Deny · 4 Audit",
+    "after success: AuditIfNotExists,",
+    "DeployIfNotExists"
+  ]
+}

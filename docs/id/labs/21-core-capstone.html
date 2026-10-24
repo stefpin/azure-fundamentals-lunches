@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 21 · Proyek capstone · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 21: Proyek capstone. sekitar 2–3 jam termasuk menunggu deployment; boleh dibagi menjadi tiga sesi, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/21-core-capstone.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/21-core-capstone.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/21-core-capstone.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/21-core-capstone.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 21 · Proyek capstone">
+<meta property="og:description" content="Lab Azure praktik 21: Proyek capstone. sekitar 2–3 jam termasuk menunggu deployment; boleh dibagi menjadi tiga sesi, biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/21-core-capstone.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="21" style="--c:#d98a00">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/21-core-capstone.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#d98a00">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 21</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>21</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Proyek capstone</h1>
+        <p class="lab-story">🏪 <b>Episode 21 · Jawaban Hari Jumat</b> — Rapat bulanan jatuh hari Jumat, dan direktur ingin jawaban yang lugas — lengkap dengan angka. <a href="../lunches/21-core-capstone.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 2–3 jam termasuk menunggu deployment; boleh dibagi menjadi tiga sesi</span>
+          <span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★★</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 11 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--membaca-cetak-biru-sebelum-membangun-15-menit">Tugas 1 · Membaca cetak biru sebelum membangun (≈15 menit)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--melihat-pratinjau-dan-men-deploy-20-menit-sebagian-besar-menunggu">Tugas 2 · Melihat pratinjau dan men-deploy (≈20 menit, sebagian besar menunggu)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--mengikuti-satu-request-dari-ujung-ke-ujung-15-menit">Tugas 3 · Mengikuti satu request dari ujung ke ujung (≈15 menit)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--kehilangan-satu-zone-toko-tetap-buka-25-menit">Tugas 4 · Kehilangan satu zone, toko tetap buka (≈25 menit)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--memeriksa-guardrail-keamanan-dan-tata-kelola-20-menit">Tugas 5 · Memeriksa guardrail keamanan dan tata kelola (≈20 menit)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--memeriksa-guardrail-operasional-20-menit">Tugas 6 · Memeriksa guardrail operasional (≈20 menit)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7--memasang-budget-portal-10-menit">Tugas 7 · Memasang budget (portal, ≈10 menit)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-8--menjawab-direktur-dengan-rto-dan-rpo-15-menit-tanpa-perubahan-di-azure">Tugas 8 · Menjawab direktur dengan RTO dan RPO (≈15 menit, tanpa perubahan di Azure)</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-9--melakukan-tinjauan-mandiri-well-architected-20-menit">Tugas 9 · Melakukan tinjauan mandiri Well-Architected (≈20 menit)</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/deploy.sh" target="_blank" rel="noopener"><span>deploy.sh</span><small>5 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/main.bicep" target="_blank" rel="noopener"><span>infra/main.bicep</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/keyvault.bicep" target="_blank" rel="noopener"><span>infra/modules/keyvault.bicep</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/monitoring.bicep" target="_blank" rel="noopener"><span>infra/modules/monitoring.bicep</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/network.bicep" target="_blank" rel="noopener"><span>infra/modules/network.bicep</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/policy.bicep" target="_blank" rel="noopener"><span>infra/modules/policy.bicep</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/sql.bicep" target="_blank" rel="noopener"><span>infra/modules/sql.bicep</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/infra/modules/web.bicep" target="_blank" rel="noopener"><span>infra/modules/web.bicep</span><small>7 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/review-checklist.id.md" target="_blank" rel="noopener"><span>review-checklist.id.md</span><small>9 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>8 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/21-core-capstone" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri (file Bicep yang disediakan dan <code>deploy.sh</code>).</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Anda men-deploy platform inti Nusantara Retail — desain yang dibangun sepanjang bulan inti — dari satu template Bicep yang modular: jaringan privat, dua web server di dua availability zone di belakang Standard load balancer, database Azure SQL yang hanya menerima identitas Microsoft Entra, Key Vault yang memakai Azure RBAC, pemantauan dengan tiga alert rule, policy Allowed locations, dan (lewat portal) sebuah budget. Setelah itu Anda memperlakukannya seperti production: mengikuti satu request dari ujung ke ujung, mematikan zone 1 dan membuktikan toko tetap buka, memeriksa setiap guardrail (pagar pengaman), menjawab pertanyaan direktur dengan RTO dan RPO, lalu meninjau desain terhadap pilar-pilar Well-Architected.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shopper([&quot;Shopper (pembeli: browser Anda atau curl)&quot;]) --&gt;|&quot;HTTP 80&quot;| pip[&quot;pip-nusa-shop&lt;br/&gt;Standard · zone 1, 2, 3&quot;]
+  subgraph rg[&quot;rg-lunch21-&amp;lt;suffix&amp;gt; · region Anda&quot;]
+    pip --&gt; lb[&quot;lb-nusa-shop&lt;br/&gt;probe /health · rule 80 · outbound rule&quot;]
+    subgraph vnet[&quot;vnet-nusa-capstone · 10.21.0.0/16&quot;]
+      subgraph web[&quot;snet-web · nsg-web · private subnet&quot;]
+        vm1[&quot;vm-web-1&lt;br/&gt;zone 1 · tanpa public IP&quot;]
+        vm2[&quot;vm-web-2&lt;br/&gt;zone 2 · tanpa public IP&quot;]
+      end
+      data[&quot;snet-data · nsg-data&lt;br/&gt;dicadangkan untuk private endpoint&quot;]
+    end
+    lb --&gt; vm1 &amp; vm2
+    sql[(&quot;sql-nusa-&amp;lt;suffix&amp;gt; · sqldb-orders&lt;br/&gt;khusus Entra · serverless&quot;)]
+    kv[&quot;kv-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;Azure RBAC · 1 secret&quot;]
+    law[&quot;log-nusa&lt;br/&gt;Log Analytics workspace&quot;]
+    ag[&quot;ag-nusa-oncall&lt;br/&gt;3 alert rule&quot;]
+    pol{{&quot;Policy Allowed locations&quot;}}
+  end
+  kv -. &quot;log audit&quot; .-&gt; law
+  ag -. &quot;e-mail&quot; .-&gt; you([&quot;Anda, yang sedang piket&quot;])
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Modul Bicep</th>
+<th>Yang dibuatnya</th>
+<th>Makan siang</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>infra/modules/network.bicep</code></td>
+<td><code>vnet-nusa-capstone</code> (10.21.0.0/16), private subnet <code>snet-web</code> dan <code>snet-data</code>, NSG <code>nsg-web</code> dan <code>nsg-data</code></td>
+<td>08</td>
+</tr>
+<tr>
+<td><code>infra/modules/web.bicep</code></td>
+<td><code>pip-nusa-shop</code>, <code>lb-nusa-shop</code>, <code>vm-web-1</code> (zone 1), <code>vm-web-2</code> (zone 2) beserta NIC dan disk-nya</td>
+<td>03, 06, 09</td>
+</tr>
+<tr>
+<td><code>infra/modules/sql.bicep</code></td>
+<td>logical server <code>sql-nusa-&lt;suffix&gt;</code>, database serverless <code>sqldb-orders</code></td>
+<td>11, 17</td>
+</tr>
+<tr>
+<td><code>infra/modules/keyvault.bicep</code></td>
+<td><code>kv-nusa-&lt;suffix&gt;</code>, secret <code>sql-connection-string</code>, role Key Vault Secrets Officer milik Anda</td>
+<td>15</td>
+</tr>
+<tr>
+<td><code>infra/modules/monitoring.bicep</code></td>
+<td><code>log-nusa</code>, action group <code>ag-nusa-oncall</code>, alert <code>alert-web-cpu-high</code>, <code>alert-lb-backend-health</code>, <code>alert-web-vm-stopped</code>, log audit Key Vault</td>
+<td>16</td>
+</tr>
+<tr>
+<td><code>infra/modules/policy.bicep</code></td>
+<td>assignment <code>allowed-locations</code> dari policy bawaan <strong>Allowed locations</strong></td>
+<td>18</td>
+</tr>
+<tr>
+<td><em>(portal, Tugas 7)</em></td>
+<td>budget <code>budget-lunch21</code> dengan alert 50/80/100%</td>
+<td>19</td>
+</tr>
+<tr>
+<td><code>infra/main.bicep</code></td>
+<td>menghubungkan keenam modul; <code>deploy.sh</code> menjalankannya dengan what-if lebih dulu</td>
+<td>20</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda menjadi <strong>Owner</strong> — Tugas 2 membuat role assignment dan policy assignment. Gunakan subscription pribadi atau subscription khusus lab, jangan pernah subscription perusahaan (lihat <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Azure CLI dan Bicep sudah tersedia di sana.</li>
+<li>Region yang memiliki availability zone. Region default, <code>southeastasia</code>, bisa dipakai; jika Anda memakai <code>indonesiacentral</code>, jalankan dulu pemeriksaan lingkungan di bawah. Anda membutuhkan kuota <strong>4 vCPU</strong> di region tersebut (dua VM web <code>Standard_B2ats_v2</code>, masing-masing 2 vCPU).</li>
+<li>Alamat e-mail yang bisa Anda baca selama lab — semua alert dikirim ke sana.</li>
+<li>Ambil file lab, lalu muat pengaturan bersama dan nama-nama resource lab ini:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/21-core-capstone
+source ../common/config.sh
+source lab.env                          # resource names plus two helpers: who_answers and watch_shop
+echo &quot;$RG&quot;                              # rg-lunch21-&lt;suffix&gt;
+bash ../common/check-environment.sh     # optional: region, VM sizes and quota
+</code></pre></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Platform ini menimbulkan sedikit biaya setiap jam selama ia ada (dua VM kecil, satu load balancer, dan satu public IP; database-nya gratis atau berhenti sendiri saat menganggur). Akhiri dengan bagian <strong>Bersihkan</strong>, walaupun Anda berhenti di tengah jalan. Mau membagi lab ini ke beberapa hari? Jalankan <code>bash cleanup.sh</code> di akhir setiap sesi dan <code>bash deploy.sh</code> di awal sesi berikutnya — membangun ulang dari kode hanya butuh sekitar 15 menit, dan justru itulah inti dari infrastructure as code.</p>
+</aside>
+<p>Setiap kali membuka sesi Cloud Shell baru, kembalilah ke folder lab dan jalankan lagi <code>source ../common/config.sh &amp;&amp; source lab.env</code> sebelum melanjutkan.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Sesi</th>
+<th>Tugas</th>
+<th>Kira-kira</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 · Bangun</td>
+<td>1 Membaca cetak biru · 2 Deploy · 3 Mengikuti satu request</td>
+<td>50 menit</td>
+</tr>
+<tr>
+<td>2 · Buktikan</td>
+<td>4 Kehilangan satu zone · 5 Keamanan dan tata kelola · 6 Operasional</td>
+<td>65 menit</td>
+</tr>
+<tr>
+<td>3 · Putuskan</td>
+<td>7 Budget · 8 Menjawab direktur · 9 Tinjauan Well-Architected · Rusak lalu perbaiki · Bersihkan</td>
+<td>65 menit</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–9 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menyelesaikan bulan inti dan ingin merancangnya sendiri</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda (Bicep buatan sendiri adalah cara terbaik), lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--membaca-cetak-biru-sebelum-membangun-15-menit" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Membaca cetak biru sebelum membangun (≈15 menit)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--membaca-cetak-biru-sebelum-membangun-15-menit" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Di tim sungguhan, tidak ada yang men-deploy template yang belum ia baca. Meninjau infrastructure as code adalah cara menangkap port yang terbuka atau tag yang terlewat <em>sebelum</em> hal itu menghabiskan uang — ibaratnya memeriksa denah sebelum tukang mulai bekerja: memindahkan pintu di atas kertas jauh lebih murah daripada membongkar tembok. Buka file-file itu di editor Cloud Shell (<code>code infra/main.bicep</code>) atau baca di GitHub.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ls -R infra
+</code></pre></div>
+<p>Temukan setiap baris berikut dan ucapkan dengan lantang mengapa baris itu ada:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Cari</th>
+<th>Mengapa penting</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>main.bicep</code></td>
+<td><code>network.outputs.webSubnetId</code></td>
+<td>modul saling meneruskan nilai melalui output; Bicep menentukan urutan deployment dari referensi-referensi ini</td>
+</tr>
+<tr>
+<td><code>network.bicep</code></td>
+<td><code>defaultOutboundAccess: false</code></td>
+<td>sebuah <strong>private subnet</strong>: VM tidak mendapat akses internet tersembunyi (Makan Siang 08)</td>
+</tr>
+<tr>
+<td><code>network.bicep</code></td>
+<td><code>sourceAddressPrefix: 'AzureLoadBalancer'</code></td>
+<td>health probe harus diizinkan masuk; kalau tidak, semua server tampak mati</td>
+</tr>
+<tr>
+<td><code>web.bicep</code></td>
+<td><code>zones: [ zone ]</code> di dalam loop VM</td>
+<td>satu VM per availability zone</td>
+</tr>
+<tr>
+<td><code>web.bicep</code></td>
+<td><code>loadFileAsBase64('../../../common/cloud-init-web.yml')</code></td>
+<td>penyiapan web server bersama, dibaca saat kompilasi; path-nya relatif terhadap <code>web.bicep</code></td>
+</tr>
+<tr>
+<td><code>web.bicep</code></td>
+<td><code>disableOutboundSnat: true</code> dan <code>outboundRules</code></td>
+<td>akses keluar yang eksplisit melalui load balancer untuk VM-VM privat</td>
+</tr>
+<tr>
+<td><code>sql.bicep</code></td>
+<td><code>azureADOnlyAuthentication: true</code></td>
+<td>tidak ada SQL login dan tidak ada kata sandi; hanya identitas Microsoft Entra</td>
+</tr>
+<tr>
+<td><code>sql.bicep</code></td>
+<td><code>useFreeLimit</code> dan <code>freeLimitExhaustionBehavior: 'AutoPause'</code></td>
+<td>database dari penawaran gratis (free offer) akan pause alih-alih menagih Anda</td>
+</tr>
+<tr>
+<td><code>keyvault.bicep</code></td>
+<td><code>enableRbacAuthorization: true</code> dan <code>scope: vault</code></td>
+<td>Azure RBAC untuk secret, dengan role Anda hanya pada vault ini</td>
+</tr>
+<tr>
+<td><code>monitoring.bicep</code></td>
+<td>tiga resource alert</td>
+<td>kapasitas (CPU), kesehatan aplikasi (probe), dan perubahan (VM dihentikan)</td>
+</tr>
+<tr>
+<td><code>policy.bicep</code></td>
+<td><code>e56962a6-4747-49cd-b67b-bf8b01975c4c</code></td>
+<td>Bicep membutuhkan ID policy bawaan; komentar di file menunjukkan cara memeriksanya</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sekarang biarkan Bicep memeriksa file-file itu:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az bicep build --file infra/main.bicep --stdout &gt; /dev/null &amp;&amp; echo &quot;main.bicep compiles&quot;
+az bicep lint --file infra/main.bicep      # no output means no linter warnings
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>main.bicep compiles</code> tercetak, dan Anda bisa menunjuk modul yang membuat setiap kotak di diagram di atas. Tes cepat: file mana yang akan Anda ubah untuk menambahkan web server ketiga di zone 3?</p>
+<details class="plain"><summary>Jawaban</summary>
+<p><code>web.bicep</code> — tambahkan <code>'3'</code> ke parameter <code>zones</code> (dan periksa dulu kuota vCPU Anda).</p>
+</details>
+</div>
+</div></section><section class="lab-section" id="tugas-2--melihat-pratinjau-dan-men-deploy-20-menit-sebagian-besar-menunggu" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Melihat pratinjau dan men-deploy (≈20 menit, sebagian besar menunggu)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--melihat-pratinjau-dan-men-deploy-20-menit-sebagian-besar-menunggu" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><code>deploy.sh</code> melakukan apa yang dikerjakan engineer yang cermat secara manual: mencari tahu siapa Anda (user principal name dan object ID Anda menjadi administrator Azure SQL dan secrets officer Key Vault), memastikan Anda punya SSH key, mengompilasi template, menampilkan pratinjau <strong>what-if</strong>, dan baru men-deploy setelah Anda menjawab ya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash deploy.sh
+</code></pre></div>
+<p>Baca output what-if seperti sedang melakukan code review: setiap baris <code>+ Create</code> adalah sesuatu yang akan ada, memakan biaya, atau mengubah siapa bisa melakukan apa. Anda seharusnya melihat jaringan, lapisan web, database, vault beserta secret dan role assignment-nya, workspace, action group, tiga alert rule, satu diagnostic setting, dan policy assignment. Beberapa baris mungkin ditandai sebagai noise atau diabaikan; itu normal. Ketik <code>y</code> untuk men-deploy. Deployment memakan waktu sekitar 10–15 menit, lalu script menunggu sampai toko online menjawab.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Pantau deployment selagi berjalan: <em>Resource groups › rg-lunch21-&lt;suffix&gt; › Settings › Deployments</em>. Anda akan melihat <code>capstone</code> ditambah satu nested deployment per modul (<code>network</code>, <code>web</code>, <code>sql</code>, <code>keyvault</code>, <code>monitoring</code>, <code>policy</code>), yang memperlihatkan urutan yang disusun Bicep dari output-output tadi.</p>
+</aside>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Catatan</span>Bersiaplah menerima beberapa e-mail dari Azure Monitor: satu yang menyatakan Anda ditambahkan ke action group, dan mungkin alert <em>backend health</em> yang menyala lalu pulih sendiri selagi web server melakukan booting. Itu tandanya pemantauan Anda sudah bekerja.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> deployment berhasil dan toko online menjawab.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az deployment group show -g &quot;$RG&quot; -n &quot;$DEPLOYMENT&quot; --query properties.provisioningState -o tsv   # Succeeded
+curl -s &quot;http://$(lb_ip)/&quot; | grep -o &#x27;Served by.*&lt;/p&gt;&#x27; | sed &#x27;s/&lt;[^&gt;]*&gt;//g&#x27;
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-3--mengikuti-satu-request-dari-ujung-ke-ujung-15-menit" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Mengikuti satu request dari ujung ke ujung (≈15 menit)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--mengikuti-satu-request-dari-ujung-ke-ujung-15-menit" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Request dari seorang pembeli melewati lima hal yang Anda bangun di bulan inti. Ikuti request itu lompatan demi lompatan (hop by hop), seperti melacak paket dari gudang sampai ke depan pintu, supaya nanti Anda bisa menjelaskan kepada siapa pun di titik mana ia bisa terputus.</p>
+<ol>
+<li>
+<p><strong>Siapa yang menjawab?</strong> Kirim sepuluh request. Load balancer melakukan hashing pada setiap koneksi baru, sehingga Anda akan melihat kedua server dan kedua zone.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>who_answers 10
+</code></pre></div>
+</li>
+<li>
+<p><strong>Pintu depan</strong> — Standard public IP yang zone-redundant, lengkap dengan nama DNS:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network public-ip show -g &quot;$RG&quot; -n &quot;$PIP&quot; \
+  --query &quot;{ip:ipAddress, fqdn:dnsSettings.fqdn, sku:sku.name, zones:join(&#x27;,&#x27;, zones)}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>Load balancer</strong> — health probe, rule, dan outbound rule:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network lb show -g &quot;$RG&quot; -n &quot;$LB&quot; \
+  --query &quot;{probePath:probes[0].requestPath, everySeconds:probes[0].intervalInSeconds, rulePort:loadBalancingRules[0].frontendPort, outboundRules:length(outboundRules)}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>Network security group</strong> — apa saja yang boleh masuk ke subnet:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network nsg rule list -g &quot;$RG&quot; --nsg-name &quot;$NSG&quot; \
+  --query &quot;[].{rule:name, priority:priority, from:sourceAddressPrefix, port:destinationPortRange, access:access}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>Server</strong> — hanya alamat privat:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm list -g &quot;$RG&quot; -d --query &quot;[].{vm:name, zone:zones[0], privateIp:privateIps, publicIp:publicIps}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>Jalan keluar.</strong> VM tidak punya public IP dan berada di private subnet, tetapi tetap bisa menjangkau internet — melalui outbound rule milik load balancer. Tanyakan kepada salah satu VM alamat mana yang terlihat oleh internet (Run Command butuh sekitar satu menit):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript \
+  --scripts &quot;curl -s --max-time 10 https://api.ipify.org&quot; --query &quot;value[0].message&quot; -o tsv
+lb_ip
+</code></pre></div>
+</li>
+</ol>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>lb-nusa-shop › Monitoring › Insights</em> menggambar frontend, rule, probe, dan backend pool sebagai diagram dengan status kesehatan langsung (live). <em>rg-lunch21-&lt;suffix&gt; › Resource visualizer</em> menunjukkan bagaimana semua resource saling terhubung.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>vm-web-1</code> dan <code>vm-web-2</code> sama-sama menjawab, public IP mencantumkan zone <code>1,2,3</code>, VM tidak menunjukkan public IP, dan alamat yang dilaporkan VM di langkah 6 sama dengan <code>lb_ip</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--kehilangan-satu-zone-toko-tetap-buka-25-menit" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Kehilangan satu zone, toko tetap buka (≈25 menit)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--kehilangan-satu-zone-toko-tetap-buka-25-menit" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Inilah momen yang paling dipedulikan direktur. Anda tidak bisa mematikan pusat data Azure yang sesungguhnya, tetapi Anda bisa menyingkirkan semua yang <em>Anda</em> jalankan di zone 1 — yaitu <code>vm-web-1</code> — lalu melihat apa yang dialami para pembeli. Anggap saja ini simulasi evakuasi kebakaran di gedung kantor: lebih baik berlatih saat semuanya tenang daripada belajar saat panik.</p>
+<ol>
+<li>
+<p>Lakukan deallocate pada <code>vm-web-1</code> di latar belakang, lalu segera mulai memantau toko selama sekitar dua setengah menit:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm deallocate -g &quot;$RG&quot; -n &quot;$VM1&quot; --no-wait
+watch_shop 150
+</code></pre></div>
+<p>Anda seharusnya melihat sesuatu seperti ini: awalnya campuran, mungkin satu atau dua baris <code>(no answer)</code> selagi probe menyadari server itu hilang, lalu hanya <code>vm-web-2</code>.</p>
+<div class="code" data-lang="text"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>text</span><button class="copy-btn" type="button">Salin</button></div><pre><code>10:02:11  vm-web-1
+10:02:13  vm-web-2
+10:02:16  (no answer)
+10:02:18  vm-web-2
+10:02:20  vm-web-2
+</code></pre></div>
+<p>Hitung baris <code>(no answer)</code> lalu kalikan dengan dua detik: itulah <strong>RTO hasil pengukuran</strong> Anda untuk kegagalan zone. Catatlah; Anda akan membutuhkannya di Tugas 8.</p>
+</li>
+<li>
+<p>Pastikan VM itu benar-benar hilang dan lihat siapa pelakunya — activity log mencatat setiap tindakan control plane (tindakan pengelolaan resource):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm get-instance-view -g &quot;$RG&quot; -n &quot;$VM1&quot; \
+  --query &quot;instanceView.statuses[?starts_with(code, &#x27;PowerState/&#x27;)].displayStatus | [0]&quot; -o tsv
+az monitor activity-log list -g &quot;$RG&quot; --offset 1h \
+  --query &quot;[?operationName.value==&#x27;Microsoft.Compute/virtualMachines/deallocate/action&#x27;].{time:eventTimestamp, who:caller, status:status.value}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p>Periksa inbox Anda. Dalam beberapa menit, activity log alert <strong>alert-web-vm-stopped</strong> mengirimi Anda e-mail: pemantauan menyadari perubahan itu sebelum ada pelanggan yang mengeluh.</p>
+</li>
+<li>
+<p>Lihat dari sudut pandang probe: <em>lb-nusa-shop › Monitoring › Metrics › Health Probe Status</em>, aggregation <strong>Avg</strong>, lalu <strong>Apply splitting</strong> berdasarkan <strong>Backend IP Address</strong>. Garis untuk <code>vm-web-1</code> berhenti — load balancer sama sekali tidak memeriksa VM yang sudah di-deallocate, dan itulah sebabnya lab ini juga punya activity log alert.</p>
+</li>
+<li>
+<p>Hidupkan kembali zone 1 dan lihat ia bergabung lagi ke rotasi tanpa perubahan konfigurasi apa pun:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm start -g &quot;$RG&quot; -n &quot;$VM1&quot;
+who_answers 10
+</code></pre></div>
+</li>
+</ol>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Catatan</span><strong>Variasi — yang gagal aplikasinya, bukan servernya.</strong> Hentikan hanya layanan web di <code>vm-web-2</code>. VM tetap berjalan, health probe-nya gagal, load balancer mengalihkan lalu lintas menjauhinya, dan dalam sekitar 5–10 menit metric alert <strong>alert-lb-backend-health</strong> mengirimi Anda e-mail. Kegagalan yang berbeda, sinyal yang berbeda.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM2&quot; --command-id RunShellScript --scripts &quot;systemctl stop nusa-web&quot; -o none
+who_answers 6        # only vm-web-1 answers
+# ...wait for the e-mail, then repair it:
+az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM2&quot; --command-id RunShellScript --scripts &quot;systemctl start nusa-web&quot; -o none
+</code></pre></div>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> toko terus menjawab (kecuali beberapa detik), Anda menerima e-mail <em>VM stopped</em>, Anda sudah mencatat RTO hasil pengukuran, dan <code>who_answers 10</code> kembali menampilkan kedua server.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--memeriksa-guardrail-keamanan-dan-tata-kelola-20-menit" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Memeriksa guardrail keamanan dan tata kelola (≈20 menit)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--memeriksa-guardrail-keamanan-dan-tata-kelola-20-menit" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Keamanan dalam desain ini adalah tumpukan keputusan kecil yang bisa diperiksa satu per satu. Mari kita periksa.</p>
+<ol>
+<li>
+<p><strong>Key Vault memakai Azure RBAC, dan Anda memegang role hanya pada vault ini:</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az keyvault show -n &quot;$KV&quot; \
+  --query &quot;{rbac:properties.enableRbacAuthorization, softDeleteDays:properties.softDeleteRetentionInDays, purgeProtection:properties.enablePurgeProtection}&quot; -o table
+KV_ID=$(az keyvault show -n &quot;$KV&quot; --query id -o tsv)
+az role assignment list --scope &quot;$KV_ID&quot; --query &quot;[].{role:roleDefinitionName, who:principalName}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>Baca secret-nya.</strong> Secret ini aman dicetak karena tidak berisi kata sandi — itulah inti dari autentikasi Microsoft Entra. (Role assignment yang baru dibuat bisa butuh hingga sekitar 10 menit untuk berlaku; jika Anda mendapat <code>Forbidden</code>, tunggu lalu coba lagi.)</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az keyvault secret show --vault-name &quot;$KV&quot; -n &quot;$SECRET&quot; --query value -o tsv
+</code></pre></div>
+</li>
+<li>
+<p><strong>Azure SQL hanya menerima identitas Microsoft Entra, dan belum ada yang bisa terhubung dari internet:</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az sql server ad-only-auth get -g &quot;$RG&quot; -n &quot;$SQL&quot; --query azureAdOnlyAuthentication   # true
+az sql server ad-admin list -g &quot;$RG&quot; -s &quot;$SQL&quot; --query &quot;[].login&quot; -o tsv                # you
+az sql server firewall-rule list -g &quot;$RG&quot; -s &quot;$SQL&quot; -o table                            # empty
+az sql db show -g &quot;$RG&quot; -s &quot;$SQL&quot; -n &quot;$DB&quot; \
+  --query &quot;{tier:currentServiceObjectiveName, autoPauseMinutes:autoPauseDelay, freeOffer:useFreeLimit}&quot; -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>Guardrail policy.</strong> Tampilkan daftar assignment-nya, lalu coba langgar aturannya dengan resource gratis (NSG kosong) di region lain:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az policy assignment list -g &quot;$RG&quot; --query &quot;[].{name:name, displayName:displayName, mode:enforcementMode}&quot; -o table
+OTHER_REGION=$([[ &quot;$LOCATION&quot; == &quot;eastus&quot; ]] &amp;&amp; echo westeurope || echo eastus)
+az network nsg create -g &quot;$RG&quot; -n nsg-policy-test --location &quot;$OTHER_REGION&quot;
+</code></pre></div>
+<p>Yang diharapkan: error dengan kode <code>RequestDisallowedByPolicy</code> dan pesan yang ditulis Nusantara Retail di dalam assignment. Assignment baru butuh sekitar lima menit untuk berlaku; jika NSG itu <em>ternyata</em> berhasil dibuat, hapus (<code>az network nsg delete -g &quot;$RG&quot; -n nsg-policy-test</code>), tunggu beberapa menit, lalu coba lagi.</p>
+</li>
+</ol>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>kv-nusa-&lt;suffix&gt; › Access control (IAM) › Role assignments</em> menampilkan role Anda; <em>sql-nusa-&lt;suffix&gt; › Settings › Microsoft Entra ID</em> menampilkan pengaturan &quot;Support only Microsoft Entra authentication&quot;; <em>Policy › Compliance</em> menampilkan assignment-nya (hasil compliance pertama baru muncul setelah satu siklus evaluasi, yang bisa makan waktu cukup lama).</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> RBAC bernilai <code>true</code>, secret mencetak connection string dengan <code>Authentication=Active Directory Default</code> dan tanpa kata sandi, autentikasi khusus Entra bernilai <code>true</code>, tidak ada firewall rule, dan NSG di luar region ditolak.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--memeriksa-guardrail-operasional-20-menit" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Memeriksa guardrail operasional (≈20 menit)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--memeriksa-guardrail-operasional-20-menit" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Operasional menjawab tiga pertanyaan: apakah kita akan tahu, apakah orang yang tepat akan mendengarnya, dan bisakah kita mencari tahu apa yang terjadi?</p>
+<ol>
+<li>
+<p><strong>Alert rule dan siapa yang diberi tahu:</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor metrics alert list -g &quot;$RG&quot; --query &quot;[].{rule:name, severity:severity, enabled:enabled}&quot; -o table
+az monitor activity-log alert list -g &quot;$RG&quot; --query &quot;[].{rule:name, enabled:enabled}&quot; -o table
+az monitor action-group show -g &quot;$RG&quot; -n &quot;$AG&quot; --query &quot;{enabled:enabled, shortName:groupShortName, emails:length(emailReceivers)}&quot; -o table
+</code></pre></div>
+<p>Di portal, <em>Monitor › Alerts</em> (difilter ke resource group Anda) menampilkan alert yang menyala di Tugas 4.</p>
+</li>
+<li>
+<p><strong>Metrik tanpa agent apa pun.</strong> Azure mengumpulkan metrik host untuk setiap VM:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>VM1_ID=$(az vm show -g &quot;$RG&quot; -n &quot;$VM1&quot; --query id -o tsv)
+az monitor metrics list --resource &quot;$VM1_ID&quot; --metric &quot;Percentage CPU&quot; --interval PT5M --offset 1h --aggregation Average -o table
+</code></pre></div>
+</li>
+<li>
+<p><strong>Log: siapa yang membaca secret?</strong> Pembacaan secret yang Anda lakukan di Tugas 5 sudah tercatat. Di portal, buka <em>log-nusa › Logs</em>, beralih ke mode KQL, dan jalankan query ini (catatan pertama bisa butuh 10–15 menit untuk masuk):</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>search &quot;SecretGet&quot;
+| where TimeGenerated &gt; ago(4h)
+| project TimeGenerated, $table, OperationName
+| order by TimeGenerated desc
+</code></pre></div>
+<p><code>search</code> mencari di semua tabel, jadi query ini berfungsi tabel apa pun yang dipakai workspace Anda untuk log Key Vault (<code>AzureDiagnostics</code> secara default). Makan Siang 30 mengajarkan KQL secara tuntas.</p>
+</li>
+<li>
+<p><strong>Cadangan yang tidak perlu Anda konfigurasi.</strong> Azure SQL Database membuat cadangannya sendiri; periksa jendela restore-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az sql db show -g &quot;$RG&quot; -s &quot;$SQL&quot; -n &quot;$DB&quot; --query &quot;{earliestRestore:earliestRestoreDate, backupStorage:currentBackupStorageRedundancy}&quot; -o table
+az sql db str-policy show -g &quot;$RG&quot; -s &quot;$SQL&quot; -n &quot;$DB&quot; --query retentionDays    # 7
+</code></pre></div>
+<p><code>earliestRestore</code> tetap kosong sampai full backup pertama selesai, biasanya sekitar setengah jam setelah database dibuat.</p>
+</li>
+<li>
+<p><em>(Opsional)</em> <strong>Buat alert CPU menyala.</strong> Buat <code>vm-web-2</code> sibuk selama 15 menit; dalam sekitar 10 menit <strong>alert-web-cpu-high</strong> mengirimi Anda e-mail, dan alert itu pulih sendiri setelah loop berakhir.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM2&quot; --command-id RunShellScript \
+  --scripts &quot;nohup timeout 900 sh -c &#x27;while :; do :; done&#x27; &gt; /dev/null 2&gt;&amp;1 &amp;&quot; -o none
+</code></pre></div>
+</li>
+</ol>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tiga alert rule yang aktif mengarah ke <code>ag-nusa-oncall</code>, Anda bisa melihat metrik CPU, <code>SecretGet</code> Anda muncul di workspace, dan database melaporkan jendela restore 7 hari.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7--memasang-budget-portal-10-menit" data-kind="task"><h2><span class="task-tag">Tugas 7</span><span class="title">Memasang budget (portal, ≈10 menit)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7--memasang-budget-portal-10-menit" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Di sini budget dibuat lewat portal karena di sanalah Anda bisa mengatur alert e-mail dengan nyaman. Budget tidak pernah menghentikan resource; ia memperingatkan orang tepat pada waktunya — mirip notifikasi m-banking saat saldo menipis: Anda diberi tahu, tetapi transaksi tidak diblokir.</p>
+<ol>
+<li>Portal › <em>Resource groups</em> › <strong>rg-lunch21-&lt;suffix&gt;</strong> › <em>Cost Management</em> › <strong>Budgets</strong> › <strong>+ Add</strong>.</li>
+<li><strong>Name</strong> <code>budget-lunch21</code> (script lab mencari nama ini), <strong>Reset period</strong> Monthly, <strong>Amount</strong> angka kecil dalam mata uang tagihan Anda — misalnya setara US$10.</li>
+<li><strong>Next</strong> › <strong>Alert conditions</strong>: tambahkan <em>Actual</em> pada <strong>50</strong>, <strong>80</strong>, dan <strong>100</strong> persen, serta <em>Forecasted</em> pada <strong>100</strong> persen. Masukkan alamat e-mail Anda di bawah <strong>Alert recipients</strong>.</li>
+<li><strong>Create</strong>.</li>
+</ol>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Catatan</span>Data biaya datang dengan jeda beberapa jam, jadi budget yang baru dibuat awalnya hanya menunjukkan sedikit pengeluaran, dan alert-nya tidak pernah instan. Jika halaman <em>Budgets</em> menyatakan jenis penawaran (offer) subscription Anda tidak didukung, baca langkah-langkahnya, lewati tugas ini, dan wajar jika <code>verify.sh</code> menampilkan catatan alih-alih pemeriksaan.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az consumption budget list -g &quot;$RG&quot; --query &quot;[].{name:name, amount:amount, period:timeGrain}&quot; -o table
+</code></pre></div>
+</div>
+</div></section><section class="lab-section" id="tugas-8--menjawab-direktur-dengan-rto-dan-rpo-15-menit-tanpa-perubahan-di-azure" data-kind="task"><h2><span class="task-tag">Tugas 8</span><span class="title">Menjawab direktur dengan RTO dan RPO (≈15 menit, tanpa perubahan di Azure)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-8--menjawab-direktur-dengan-rto-dan-rpo-15-menit-tanpa-perubahan-di-azure" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Ibu Sari bertanya: <em>&quot;Kalau server itu mati, berapa lama kita tidak bisa jualan?&quot;</em> Jawablah dengan bukti dari lab ini, bukan dengan harapan. Salin tabel ini ke catatan Anda dan isilah.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kegagalan</th>
+<th>Apa yang melindungi kita dalam desain ini</th>
+<th>Bukti dari lab</th>
+<th>RTO (waktu kita tidak bisa jualan)</th>
+<th>RPO (pesanan yang bisa hilang)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Satu web server gagal</td>
+<td></td>
+<td>Variasi di Tugas 4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Zone 1 gagal</td>
+<td></td>
+<td>Pengukuran di Tugas 4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Seseorang menghapus pesanan hari ini</td>
+<td></td>
+<td>Tugas 6, langkah 4</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Seluruh region hilang</td>
+<td></td>
+<td>—</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p>Lalu tulis pesan lima kalimat untuk Ibu Sari: bahasa sederhana, ada angkanya, dan satu kalimat tentang apa yang bisa memperbaiki baris terlemah beserta biayanya (buka <a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">pricing calculator</a> — <em>kalkulator harga</em> — jika Anda ingin angka pasti).</p>
+<details class="plain"><summary>Contoh jawaban</summary>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kegagalan</th>
+<th>Apa yang melindungi kita</th>
+<th>Bukti</th>
+<th>RTO</th>
+<th>RPO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Satu web server gagal</td>
+<td>Health probe + server kedua</td>
+<td>probe menandainya down; server lain menjawab</td>
+<td>hitungan detik</td>
+<td>tidak ada (web server tidak menyimpan data)</td>
+</tr>
+<tr>
+<td>Zone 1 gagal</td>
+<td>Server di dua zone, public IP zone-redundant</td>
+<td>beberapa baris <code>(no answer)</code>, lalu hanya <code>vm-web-2</code></td>
+<td>hitungan detik</td>
+<td>tidak ada untuk lapisan web; database lab <em>tidak</em> zone-redundant, jadi production harus mengaktifkannya</td>
+</tr>
+<tr>
+<td>Seseorang menghapus pesanan hari ini</td>
+<td>Cadangan otomatis, point-in-time restore (7 hari)</td>
+<td><code>earliestRestoreDate</code>, retensi 7 hari</td>
+<td>beberapa menit hingga satu jam (restore membuat database baru; ukurannya berpengaruh)</td>
+<td>beberapa menit — log backup berjalan kira-kira setiap 5–10 menit, ditambah pesanan yang masuk setelah kesalahan</td>
+</tr>
+<tr>
+<td>Region hilang</td>
+<td>Belum ada apa-apa selain file Bicep</td>
+<td>—</td>
+<td>berjam-jam untuk membangun ulang di region lain; data hanya ada jika salinannya tersedia di sana</td>
+<td>semua data sejak salinan terakhir di luar region</td>
+</tr>
+</tbody>
+</table></div>
+<p><em>&quot;Ibu Sari, kalau satu server atau bahkan satu zone pusat data Azure di region kita gagal, toko tetap berjualan: kami mengukur jeda hanya beberapa detik dan tidak ada pesanan yang hilang. Kalau ada yang menghapus pesanan secara tidak sengaja, kita bisa memulihkan database ke titik waktu mana pun dalam tujuh hari terakhir, dan paling banyak hanya perlu memasukkan ulang pesanan dari beberapa menit. Kalau seluruh region hilang, yang jarang sekali terjadi, kita bisa membangun ulang toko di tempat lain dari template kita dalam hitungan jam, tetapi pesanan hari itu berisiko hilang. Menyimpan salinan database yang terus diperbarui di region kedua akan menutup celah itu; Makan Siang 28 menunjukkan caranya, dan saya bisa menghitungkan biayanya untuk rapat berikutnya. Untuk production, database juga sebaiknya dibuat zone-redundant, yang sengaja dilewati di lab ini demi menghemat biaya.&quot;</em></p>
+</details>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> setiap baris punya RTO dan RPO, dan pesan Anda menyebutkan satu perbaikan beserta trade-off biayanya.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-9--melakukan-tinjauan-mandiri-well-architected-20-menit" data-kind="task"><h2><span class="task-tag">Tugas 9</span><span class="title">Melakukan tinjauan mandiri Well-Architected (≈20 menit)</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-9--melakukan-tinjauan-mandiri-well-architected-20-menit" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Buka <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/review-checklist.id.md" target="_blank" rel="noopener"><code>review-checklist.id.md</code></a>. Untuk setiap pilar, jalankan perintahnya, beri tanda ✅, ⚠️, atau ❌ pada setiap pemeriksaan, lalu lengkapi bagian <em>Trade-off yang Anda terima</em> dan <em>Your top three</em> (tiga perbaikan teratas Anda). Bersikaplah tegas: hasil build lab ini sengaja menyisakan beberapa celah (hanya HTTP, database yang tidak zone-redundant, purge protection mati), dan tinjauan inilah tempat Anda mengatakannya.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> setiap pemeriksaan sudah diberi tanda, minimal tiga trade-off sudah dituliskan, dan setiap butir dari tiga perbaikan teratas Anda menyebutkan makan siang yang mengajarkan cara memperbaikinya.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><strong>Drift (penyimpangan konfigurasi).</strong> Seseorang &quot;merapikan&quot; network security group secara manual dan menghapus rule untuk para pembeli:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network nsg rule delete -g &quot;$RG&quot; --nsg-name &quot;$NSG&quot; -n Allow-HTTP-Internet
+curl -s -m 5 -o /dev/null -w &#x27;%{http_code}\n&#x27; &quot;http://$(lb_ip)/&quot;    # 000 = no answer
+</code></pre></div>
+<p>Toko mati — tetapi di portal, <strong>Health Probe Status</strong> milik load balancer tetap 100%. Mengapa kedua server &quot;sehat&quot; sementara tidak ada pembeli yang bisa masuk? Dan apa cara <em>aman</em> tercepat untuk memperbaikinya?</p>
+<details class="plain"><summary>Petunjuk dan perbaikan</summary>
+<p>Probe datang dari service tag <code>AzureLoadBalancer</code>, yang masih punya rule sendiri, sehingga server tampak sehat. Pembeli datang dari tag <code>Internet</code>, yang rule-nya Anda hapus, dan default rule menolak lalu lintas tersebut.</p>
+<p>Jangan membuat ulang rule itu secara manual — Anda bisa saja salah mengetik priority atau port. Jalankan lagi template-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash deploy.sh
+</code></pre></div>
+<p>What-if menampilkan <code>~ Modify</code> pada <code>nsg-web</code> dengan rule yang hilang; konfirmasikan, dan toko kembali buka. Infrastructure as code mengubah pertanyaan &quot;apa yang diubah seseorang?&quot; menjadi sebuah diff (daftar perbedaan). Untuk mencegah perubahan seperti ini sejak awal, deploy template sebagai deployment stack dengan deny settings (Makan Siang 20) — lihat tantangan tambahan.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya bertuliskan <strong>PASS</strong>: jaringan dan rule NSG, kedua VM berjalan di zone 1 dan 2 tanpa public IP, Standard public IP dan load balancer yang zone-redundant (probe, rule, outbound rule, dua backend, HTTP 200 dari kedua server), Azure SQL khusus Entra dengan TLS 1.2+ dan jendela restore 7 hari, Key Vault ber-RBAC beserta secret-nya yang tanpa kata sandi, workspace, action group, alert CPU dan activity log, log audit Key Vault, policy Allowed locations, serta budget. Jika ada pemeriksaan yang gagal, pesannya memberi tahu tugas mana yang perlu Anda ulangi.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Perintah ini menghapus budget, policy assignment, role assignment Anda pada vault, Key Vault itu sendiri (dihapus <strong>dan di-purge</strong>, sehingga namanya bisa dipakai lagi), deployment stack dari tantangan tambahan jika ada, dan resource group <code>rg-lunch21-&lt;suffix&gt;</code> beserta seluruh isinya. Penghapusan berlanjut di latar belakang selama beberapa menit; periksa dengan <code>az group list --tag lunch=21 -o table</code>. SSH key Anda di <code>~/.ssh</code> tetap ada — itu bukan resource Azure.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SkuNotAvailable</code> … <em>&quot;The requested size for resource … is currently not available in location … zones …&quot;</em></td>
+<td>Ukuran VM (<code>$VM_SIZE_SMALL</code>) tidak tersedia di zone itu untuk subscription Anda</td>
+<td>Pilih ukuran lain yang diizinkan: <code>VM_SIZE_SMALL=Standard_B2ts_v2 bash deploy.sh</code> (lihat daftar ukuran dengan <code>az vm list-skus --location &quot;$LOCATION&quot; --size Standard_B --zone -o table</code>)</td>
+</tr>
+<tr>
+<td><em>&quot;Operation could not be completed as it results in exceeding approved … Cores quota&quot;</em></td>
+<td>Kuota vCPU di region tidak cukup</td>
+<td>Hapus VM sisa lab lain (setiap VM web butuh 2 vCPU), atau minta tambahan kuota</td>
+</tr>
+<tr>
+<td><code>ConflictError</code> … <em>&quot;A vault with the same name already exists in deleted state&quot;</em></td>
+<td>Key Vault dari percobaan sebelumnya masih dalam status soft-delete</td>
+<td>Biarkan <code>deploy.sh</code> melakukan purge saat ditanya, atau <code>az keyvault purge --name &quot;$KV&quot; --location &quot;$LOCATION&quot;</code></td>
+</tr>
+<tr>
+<td>Error deployment tentang free offer atau <code>useFreeLimit</code></td>
+<td>Database gratis sudah dipakai di region lain, atau jenis penawaran Anda tidak mendukungnya</td>
+<td><code>USE_FREE_SQL_OFFER=false bash deploy.sh</code> (database serverless kecil yang pause saat menganggur)</td>
+</tr>
+<tr>
+<td><code>deploy.sh</code> mengatakan tidak bisa membaca profil Microsoft Entra Anda</td>
+<td>Akun tamu (guest) atau direktori yang dibatasi</td>
+<td>Atur sendiri <code>SQL_ADMIN_UPN</code> dan <code>SQL_ADMIN_OBJECT_ID</code>, seperti yang ditunjukkan pesannya</td>
+</tr>
+<tr>
+<td><code>RequestDisallowedByPolicy</code> saat <strong>Anda</strong> men-deploy ulang</td>
+<td>Anda mengubah <code>LOCATION</code> setelah deployment pertama; policy hanya mengizinkan region pertama</td>
+<td>Gunakan region semula, atau jalankan <code>cleanup.sh</code> lebih dulu</td>
+</tr>
+<tr>
+<td><code>PropertyChangeNotAllowed</code> … <code>linuxConfiguration.ssh.publicKeys</code></td>
+<td>SSH key Anda berubah di antara dua deployment</td>
+<td>Pulihkan key yang lama, atau jalankan <code>cleanup.sh</code> lalu deploy lagi</td>
+</tr>
+<tr>
+<td><code>Forbidden</code> … <em>&quot;Caller is not authorized to perform action on resource&quot;</em> … <code>secrets/getSecret/action</code></td>
+<td>Role assignment yang baru belum sampai ke Key Vault</td>
+<td>Tunggu sekitar 10 menit dan coba lagi</td>
+</tr>
+<tr>
+<td><code>curl</code> tidak mendapat jawaban tepat setelah deployment</td>
+<td>Web server masih menjalankan cloud-init</td>
+<td>Tunggu 2–3 menit; periksa dengan <code>az vm run-command invoke -g &quot;$RG&quot; -n &quot;$VM1&quot; --command-id RunShellScript --scripts &quot;systemctl status nusa-web --no-pager&quot;</code></td>
+</tr>
+<tr>
+<td><code>LoadBalancingRuleMustDisableSNATSinceSameFrontendIPConfigurationIsReferencedByOutboundRule</code> (mode Tantangan)</td>
+<td>Load-balancing rule masih melakukan SNAT padahal outbound rule memakai frontend yang sama</td>
+<td>Atur <code>disableOutboundSnat: true</code> pada rule tersebut</td>
+</tr>
+<tr>
+<td>NSG di luar region pada Tugas 5 <strong>tidak</strong> ditolak</td>
+<td>Assignment masih dalam proses propagasi</td>
+<td>Hapus NSG uji, tunggu sekitar lima menit, lalu coba lagi</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>
+<p><strong>Bekukan desainnya.</strong> Deploy template yang sama sebagai deployment stack yang menolak perubahan, lalu coba lagi latihan Rusak lalu perbaiki (kecualikan diri Anda dengan <code>--deny-settings-excluded-principals</code> jika Anda ingin tetap bisa memperbaiki sesuatu):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ALERT_EMAIL=&quot;you@example.com&quot;        # your address
+az stack group create --name capstone-stack --resource-group &quot;$RG&quot; --template-file infra/main.bicep \
+  --parameters suffix=&quot;$SUFFIX&quot; vmSize=&quot;$VM_SIZE_SMALL&quot; sshPublicKey=&quot;$(cat ~/.ssh/id_rsa.pub)&quot; \
+               sqlAdminLogin=&quot;$(my_upn)&quot; sqlAdminObjectId=&quot;$(my_object_id)&quot; alertEmail=&quot;$ALERT_EMAIL&quot; \
+  --action-on-unmanage deleteAll --deny-settings-mode denyWriteAndDelete
+</code></pre></div>
+<p><code>cleanup.sh</code> menghapus stack lebih dulu, sehingga deny settings-nya tidak pernah menghalangi proses bersih-bersih.</p>
+</li>
+<li>
+<p><strong>Zone 3.</strong> Tambahkan <code>'3'</code> ke parameter <code>zones</code> di <code>web.bicep</code> lalu deploy ulang (total 6 vCPU — periksa kuota Anda lebih dulu).</p>
+</li>
+<li>
+<p><strong>Database zone-redundant.</strong> Atur <code>zoneRedundant: true</code> di <code>sql.bicep</code> dengan <code>USE_FREE_SQL_OFFER=false</code>, periksa what-if, dan bandingkan harganya di pricing calculator sebelum men-deploy.</p>
+</li>
+<li>
+<p><strong>NAT gateway sebagai pengganti outbound rule</strong> (Makan Siang 08 dan 25): pasang NAT gateway pada <code>snet-web</code> dan hapus outbound rule. Mana yang lebih mudah dioperasikan?</p>
+</li>
+<li>
+<p><strong>Managed identity dari ujung ke ujung</strong> (Makan Siang 15): beri VM identitas system-assigned dengan role <em>Key Vault Secrets User</em>, lalu baca secret dari dalam <code>vm-web-1</code> menggunakan Run Command.</p>
+</li>
+<li>
+<p><strong>Log dari dalam sistem operasi VM</strong> (Makan Siang 30): kumpulkan syslog dari VM ke <code>log-nusa</code> dengan Azure Monitor Agent dan sebuah data collection rule.</p>
+</li>
+<li>
+<p><strong>Pendapat kedua:</strong> kerjakan <a href="https://learn.microsoft.com/assessments/azure-architecture-review/" target="_blank" rel="noopener">Azure Well-Architected Review</a> yang gratis untuk toko online, lalu bandingkan hasilnya dengan checklist Anda.</p>
+</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun platform inti Nusantara Retail dengan cara apa pun yang Anda suka — Bicep buatan sendiri adalah cara terbaik — dengan memakai nama-nama di bawah ini supaya <code>verify.sh</code> bisa menemukan semuanya. Pengaturan bersama memberi Anda <code>$LOCATION</code> dan <code>$SUFFIX</code>; <code>lab.env</code> mencantumkan semua nama.</p>
+<ol>
+<li>Resource group <code>rg-lunch21-&lt;suffix&gt;</code> dengan tag <code>course=azure-fundamentals-lunches</code> dan <code>lunch=21</code> (gunakan <code>ensure_rg &quot;$RG&quot; 21</code>).</li>
+<li>Virtual network <code>vnet-nusa-capstone</code> dengan subnet <strong>privat</strong> <code>snet-web</code> (default outbound access dinonaktifkan) yang dilindungi NSG <code>nsg-web</code>, yang mengizinkan TCP 80 dari <code>Internet</code> dan dari <code>AzureLoadBalancer</code>, dan tidak mengizinkan lalu lintas masuk lainnya.</li>
+<li>VM Ubuntu <code>vm-web-1</code> di zone 1 dan <code>vm-web-2</code> di zone 2, tanpa public IP, yang menjalankan web server bersama (<code>labs/common/cloud-init-web.yml</code>).</li>
+<li>Standard public IP <code>pip-nusa-shop</code> yang zone-redundant pada Standard load balancer <code>lb-nusa-shop</code> dengan HTTP probe pada <code>/health</code>, rule TCP 80, sebuah outbound rule, dan kedua VM di backend pool. Toko online menjawab HTTP 200 dari kedua server.</li>
+<li>Logical server <code>sql-nusa-&lt;suffix&gt;</code> dengan autentikasi khusus Microsoft Entra (Anda sebagai administrator) dan TLS 1.2 atau lebih baru, serta database serverless General Purpose <code>sqldb-orders</code> yang menyimpan point-in-time restore minimal 7 hari.</li>
+<li>Key Vault <code>kv-nusa-&lt;suffix&gt;</code> yang memakai model izin Azure RBAC, dengan secret <code>sql-connection-string</code> yang tidak berisi kata sandi; role data plane Anda di-assign hanya pada vault ini.</li>
+<li>Log Analytics workspace <code>log-nusa</code> yang menerima log audit vault; action group <code>ag-nusa-oncall</code> dengan e-mail Anda; metric alert yang aktif untuk <em>Percentage CPU</em> milik VM; dan activity log alert yang aktif untuk VM yang dihentikan atau di-deallocate.</li>
+<li>Policy bawaan <strong>Allowed locations</strong> yang di-assign ke resource group dan mengizinkan region Anda.</li>
+<li>Budget pada resource group dengan alert e-mail.</li>
+<li>Semuanya kecuali budget berasal dari kode, dan menjalankannya dua kali tidak mengubah apa pun.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Baca modul-modul di <a href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/21-core-capstone/infra" target="_blank" rel="noopener"><code>infra/</code></a>, lihat <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/solution.sh" target="_blank" rel="noopener"><code>solution.sh</code></a>, atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="20-infrastructure-as-code-bicep.html"><small>← Lab sebelumnya</small>20 · Sembilan belas makan siang penuh klik dalam satu file</a><a class="next" href="22-identity-access-advanced.html"><small>Lab berikutnya →</small>22 · Pipeline tanpa kata sandi dan hak akses minimum</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

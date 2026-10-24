@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 14 · Menanggapi pesanan baru secara otomatis · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 14: Menanggapi pesanan baru secara otomatis. sekitar 50 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/14-serverless.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/14-serverless.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/14-serverless.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/14-serverless.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 14 · Menanggapi pesanan baru secara otomatis">
+<meta property="og:description" content="Lab Azure praktik 14: Menanggapi pesanan baru secara otomatis. sekitar 50 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/14-serverless.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="14" style="--c:#11935a">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/14-serverless.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#11935a">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 14</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>14</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Menanggapi pesanan baru secara otomatis</h1>
+        <p class="lab-story">🏪 <b>Episode 14 · Saat API Kurir Lemot</b> — Satu mitra yang lambat tidak boleh ikut memperlambat setiap checkout. <a href="../lunches/14-serverless.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 50 menit</span>
+          <span class="chip cost">💲 gratis atau hampir gratis</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 8 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--memeriksa-titik-awal-dan-kodenya">Tugas 1 · Memeriksa titik awal dan kodenya</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--membuat-function-app-di-flex-consumption">Tugas 2 · Membuat function app di Flex Consumption</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--memberi-function-koneksi-tanpa-kata-sandi-ke-queue">Tugas 3 · Memberi function koneksi tanpa kata sandi ke queue</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--men-deploy-kode">Tugas 4 · Men-deploy kode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--mengirim-pesanan-dengan-curl-dan-mengintip-queue">Tugas 5 · Mengirim pesanan dengan curl dan mengintip queue</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--menjadwalkan-pesanan-heartbeat-dengan-logic-app">Tugas 6 · Menjadwalkan pesanan heartbeat dengan Logic App</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/14-serverless/.gitignore" target="_blank" rel="noopener"><span>.gitignore</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/14-serverless/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/14-serverless/function/function_app.py" target="_blank" rel="noopener"><span>function/function_app.py</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/14-serverless/function/host.json" target="_blank" rel="noopener"><span>function/host.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/14-serverless/function/requirements.txt" target="_blank" rel="noopener"><span>function/requirements.txt</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/14-serverless/lab.env" target="_blank" rel="noopener"><span>lab.env</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/14-serverless/logicapp/workflow.json" target="_blank" rel="noopener"><span>logicapp/workflow.json</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/14-serverless/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/14-serverless/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/14-serverless/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>4 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/14-serverless" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Saat ini toko online mengerjakan semuanya di dalam request checkout pelanggan, sehingga API kurir yang lambat berarti
+checkout yang lambat. Anda membangun bagian pertama dari desain yang lebih baik: sebuah <strong>function yang dipicu HTTP</strong>
+bernama <code>new_order</code> yang memvalidasi pesanan dan memasukkannya ke <strong>Storage queue</strong> melalui <strong>output binding</strong>, lalu
+langsung menjawab. Sisi gudang bisa memproses queue itu dengan kecepatannya sendiri. Function app berjalan di plan
+<strong>Flex Consumption</strong> (Python, bisa menyusut ke nol) dan menjangkau queue dengan <strong>managed identity</strong> miliknya, sehingga
+tidak ada storage key di koneksinya. Terakhir, sebuah <strong>Logic App Consumption</strong> mengirim pesanan &quot;heartbeat&quot; (detak
+jantung) setiap 15 menit untuk membuktikan bahwa alur pesanan masih berfungsi.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shop[&quot;Toko online atau curl&quot;]
+  subgraph rg[&quot;rg-lunch14-&amp;lt;suffix&amp;gt;&quot;]
+    la[&quot;Logic App logic-nusa-orders&lt;br/&gt;setiap 15 menit&quot;]
+    fn[&quot;Function app func-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;Flex Consumption · Python 3.12&lt;br/&gt;function new_order&quot;]
+    q[(&quot;Queue &#x27;orders&#x27; di&lt;br/&gt;stnusaorders&amp;lt;suffix&amp;gt;&quot;)]
+    ai[&quot;Application Insights&lt;br/&gt;+ workspace log-nusa&quot;]
+  end
+  shop --&gt;|&quot;POST /api/orders + function key&quot;| fn
+  la --&gt;|&quot;POST pesanan heartbeat&quot;| fn
+  fn --&gt;|&quot;queue output binding&lt;br/&gt;managed identity&quot;| q
+  fn -.-&gt;|telemetri| ai
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Sebuah subscription (<em>langganan</em>) Azure tempat Anda boleh membuat resource <strong>dan menetapkan role</strong> (Owner di
+subscription lab milik Anda sendiri adalah yang ideal; lihat <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang.</li>
+<li>Ambil file lab, lalu muat pengaturan bersama dan nama-nama resource untuk lab ini:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/14-serverless
+source ../common/config.sh
+source lab.env
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya — butuh sekitar 2 menit:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<p><code>setup.sh</code> pertama-tama memeriksa apakah region Anda menyediakan plan <strong>Flex Consumption</strong>, karena tidak semua region
+menyediakannya. Southeast Asia, region default kursus ini, menyediakannya saat tulisan ini dibuat. Jika Anda memakai
+Indonesia Central atau region lain yang tidak ada di daftar, skrip akan berhenti dan menampilkan region yang
+menyediakannya; pilih salah satunya (misalnya <code>export LOCATION=eastasia</code>), jalankan <code>source</code> untuk kedua file itu lagi,
+lalu jalankan ulang <code>setup.sh</code>. Tidak ada jalan mundur ke plan Consumption yang lebih lama: plan itu sudah legacy, dan
+versi Linux-nya, satu-satunya yang bisa menjalankan Python, sedang dipensiunkan. Setelah itu, skrip membuat resource
+group (<em>grup sumber daya</em>), sebuah storage account (<em>akun penyimpanan</em>) dengan queue kosong bernama <code>orders</code>, sebuah
+workspace Log Analytics untuk Application Insights, dan memasang extension <code>logic</code> untuk Azure CLI.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Semua yang ada di sini nyaris gratis: Flex Consumption hanya menagih selama function berjalan (dengan jatah gratis
+bulanan), dan Logic App hanya menjalankan segelintir action per jam. Meski begitu, akhiri dengan bagian
+<strong>Bersihkan</strong>, bahkan jika Anda berhenti di tengah jalan. Membuka sesi Cloud Shell baru? Jalankan lagi baris <code>cd</code> dan
+kedua baris <code>source</code>.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–6 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasar-dasarnya</td>
+<td>baca <a href="#-ringkasan-tantangan">Ringkasan tantangan</a> saja, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--memeriksa-titik-awal-dan-kodenya" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Memeriksa titik awal dan kodenya</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--memeriksa-titik-awal-dan-kodenya" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Serverless tidak berarti &quot;tanpa resource&quot;: function app memerlukan storage account untuk pembukuannya sendiri, dan
+function kita memerlukan tempat untuk menaruh pesanan. Periksa apa saja yang dibuat oleh <code>setup.sh</code>, lalu baca kode yang
+akan Anda deploy.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az resource list -g &quot;$RG&quot; --query &quot;[].{name:name, type:type}&quot; --output table
+az storage queue exists --name &quot;$QUEUE&quot; --account-name &quot;$ST&quot; --auth-mode key --only-show-errors --output tsv
+cat function/function_app.py
+cat function/host.json
+</code></pre></div>
+<p>Di <code>function_app.py</code>, perhatikan tiga decorator pada <code>new_order</code>: <code>@app.function_name</code> memberi nama fungsi,
+<code>@app.route</code> menjadikannya <strong>HTTP trigger</strong> untuk <code>POST /api/orders</code>, dan
+<code>@app.queue_output(..., connection=&quot;OrdersStorage&quot;)</code> adalah <strong>output binding</strong>-nya. Sementara itu,
+<code>http_auth_level=FUNCTION</code> yang berlaku untuk seluruh aplikasi berarti pemanggil memerlukan <strong>function key</strong>. Kode hanya
+memanggil <code>msg.set(...)</code>; host Functions-lah yang menulis pesan ke queue. <code>host.json</code> mengunci extension bundle
+(kumpulan extension untuk binding) ke versi 4 dan mengatur <code>messageEncoding</code> ke <code>none</code>, sehingga pesan di queue berupa
+JSON biasa yang bisa Anda baca.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tabel menampilkan sebuah storage account dan sebuah workspace Log Analytics, dan perintah kedua
+mencetak <code>True</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--membuat-function-app-di-flex-consumption" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Membuat function app di Flex Consumption</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--membuat-function-app-di-flex-consumption" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Satu perintah membuat function app, plan Flex Consumption-nya (satu aplikasi per plan), dan sebuah resource Application
+Insights yang menyimpan datanya di workspace Anda. Prosesnya memakan waktu satu atau dua menit.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az functionapp create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$FUNC&quot; \
+  --storage-account &quot;$ST&quot; \
+  --flexconsumption-location &quot;$LOCATION&quot; \
+  --runtime python --runtime-version &quot;$PY_VERSION&quot; \
+  --functions-version 4 \
+  --instance-memory 2048 \
+  --maximum-instance-count 10 \
+  --workspace &quot;$LAW&quot; \
+  --https-only true \
+  --output none
+</code></pre></div>
+<p><code>--instance-memory 2048</code> memilih ukuran instance default (pilihan lainnya adalah 512 MB dan 4.096 MB).
+<code>--maximum-instance-count 10</code> membatasi seberapa jauh aplikasi bisa scale out, yang melindungi anggaran Anda dan semua
+sistem di hilirnya. Tidak ada always-ready instance, jadi aplikasi menyusut ke nol saat menganggur dan Anda hanya
+membayar selama ia berjalan.</p>
+<p>Lihat pengaturan yang ditulis oleh CLI:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az functionapp config appsettings list -g &quot;$RG&quot; -n &quot;$FUNC&quot; --query &quot;[].name&quot; --output tsv
+</code></pre></div>
+<p><code>AzureWebJobsStorage</code> dan <code>DEPLOYMENT_STORAGE_CONNECTION_STRING</code> menghubungkan <strong>host</strong> ke storage account-nya dengan
+connection string; itulah default dari CLI, dan cukup baik untuk lab. <code>APPLICATIONINSIGHTS_CONNECTION_STRING</code> mengirim
+telemetri. Aplikasi production juga mengalihkan storage untuk host ke managed identity (lihat <em>Pelajari lebih lanjut</em> di
+bacaan).</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Create a resource › Function App › Flex Consumption</em>: runtime <strong>Python 3.12</strong>, region Anda,
+instance size <strong>2048 MB</strong>; di tab <em>Storage</em> pilih <code>stnusaorders&lt;suffix&gt;</code>; di tab <em>Monitoring</em> aktifkan Application
+Insights dengan workspace <code>log-nusa</code>. Tab <em>Authentication</em> bisa mengalihkan semua koneksi ke managed identity
+sekaligus.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong>
+<code>az functionapp plan list -g &quot;$RG&quot; --query &quot;[].{plan:name, sku:sku.name, tier:sku.tier}&quot; --output table</code>
+menampilkan satu plan dengan SKU <code>FC1</code> (Flex Consumption), dan
+<code>az functionapp show -g &quot;$RG&quot; -n &quot;$FUNC&quot; --query state --output tsv</code> mencetak <code>Running</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--memberi-function-koneksi-tanpa-kata-sandi-ke-queue" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Memberi function koneksi tanpa kata sandi ke queue</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--memberi-function-koneksi-tanpa-kata-sandi-ke-queue" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Kode meminta sebuah koneksi bernama <code>OrdersStorage</code>. Alih-alih menempelkan storage key ke sebuah pengaturan, Anda memberi
+function app <strong>managed identity</strong>-nya sendiri, mengizinkan identitas itu menulis pesan ke queue, lalu memberi tahu host
+di mana layanan queue berada. Tiga langkah:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code># 1. A system-assigned managed identity for the function app
+PRINCIPAL_ID=$(az functionapp identity assign -g &quot;$RG&quot; -n &quot;$FUNC&quot; --query principalId --output tsv)
+
+# 2. Permission to send messages to queues in this storage account (data-plane role)
+ST_ID=$(az storage account show -g &quot;$RG&quot; -n &quot;$ST&quot; --query id --output tsv)
+az role assignment create \
+  --assignee-object-id &quot;$PRINCIPAL_ID&quot; \
+  --assignee-principal-type ServicePrincipal \
+  --role &quot;Storage Queue Data Contributor&quot; \
+  --scope &quot;$ST_ID&quot; \
+  --output none
+
+# 3. The connection: &lt;name&gt;__queueServiceUri tells the host &quot;use an identity for this queue service&quot;
+QUEUE_URI=$(az storage account show -g &quot;$RG&quot; -n &quot;$ST&quot; --query primaryEndpoints.queue --output tsv)
+az functionapp config appsettings set -g &quot;$RG&quot; -n &quot;$FUNC&quot; \
+  --settings &quot;OrdersStorage__queueServiceUri=${QUEUE_URI%/}&quot; --output none
+</code></pre></div>
+<p>Garis bawah ganda itu penting: setiap pengaturan yang diawali <code>OrdersStorage__</code> adalah bagian dari koneksi
+<code>OrdersStorage</code>. Karena pengaturan itu hanya berisi alamat dan tanpa secret, kebocorannya tidak memberi akses kepada
+siapa pun. Role assignment yang baru bisa memerlukan beberapa menit sampai berlaku; Tugas 4 memberinya waktu itu.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong>
+<code>az role assignment list --assignee &quot;$PRINCIPAL_ID&quot; --scope &quot;$ST_ID&quot; --query &quot;[].roleDefinitionName&quot; --output tsv</code>
+mencetak <code>Storage Queue Data Contributor</code>, dan
+<code>az functionapp config appsettings list -g &quot;$RG&quot; -n &quot;$FUNC&quot; --query &quot;[?starts_with(name, 'OrdersStorage')].name&quot; --output tsv</code>
+mencetak <code>OrdersStorage__queueServiceUri</code>.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--men-deploy-kode" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Men-deploy kode</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--men-deploy-kode" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Aplikasi Flex Consumption berjalan dari paket zip di sebuah blob container. Untuk Python, selalu minta <strong>remote build</strong>,
+agar dependensinya dipasang di Linux di Azure, bukan di mesin Anda. Perkirakan waktunya 1–3 menit.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>mkdir -p &quot;$OUT_DIR&quot;
+(cd function &amp;&amp; python3 -m zipfile -c &quot;$OUT_DIR/function.zip&quot; function_app.py host.json requirements.txt)
+az functionapp deployment source config-zip -g &quot;$RG&quot; -n &quot;$FUNC&quot; \
+  --src &quot;$OUT_DIR/function.zip&quot; --build-remote true
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka alat lain?</strong> Azure Functions Core Tools (<code>func azure functionapp publish &lt;app&gt;</code>) dan extension Azure
+Functions di VS Code men-deploy paket yang sama; GitHub Actions melakukannya pada setiap push.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>az functionapp function list -g &quot;$RG&quot; -n &quot;$FUNC&quot; --query &quot;[].name&quot; --output tsv</code> mencetak sebuah
+nama yang berakhiran <code>/new_order</code>. Jika hasilnya kosong, tunggu 30 detik lalu coba lagi.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--mengirim-pesanan-dengan-curl-dan-mengintip-queue" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Mengirim pesanan dengan curl dan mengintip queue</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--mengirim-pesanan-dengan-curl-dan-mengintip-queue" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Baca URL dan key function dari Azure, lalu buat pesanan seperti yang akan dilakukan toko online:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ORDER_URL=$(az functionapp function show -g &quot;$RG&quot; -n &quot;$FUNC&quot; --function-name new_order --query invokeUrlTemplate --output tsv)
+FUNC_KEY=$(az functionapp function keys list -g &quot;$RG&quot; -n &quot;$FUNC&quot; --function-name new_order --query default --output tsv)
+echo &quot;$ORDER_URL&quot;
+
+curl -s -w &#x27;\nHTTP %{http_code}\n&#x27; -X POST &quot;$ORDER_URL&quot; \
+  -H &quot;x-functions-key: $FUNC_KEY&quot; -H &quot;Content-Type: application/json&quot; \
+  -d &#x27;{&quot;orderId&quot;:&quot;JKT-1001&quot;,&quot;store&quot;:&quot;Jakarta - Kemang&quot;,&quot;items&quot;:[{&quot;sku&quot;:&quot;KOPI-TORAJA-250G&quot;,&quot;qty&quot;:2},{&quot;sku&quot;:&quot;SAMBAL-MATAH-200ML&quot;,&quot;qty&quot;:1}]}&#x27;
+</code></pre></div>
+<p>Anda mendapat <code>{&quot;status&quot;: &quot;queued&quot;, ...}</code> dan <code>HTTP 200</code>. Panggilan pertama setelah masa sepi bisa memakan beberapa
+detik: itulah <strong>cold start</strong>, saat platform menyalakan sebuah instance dari nol. Sekarang coba dua panggilan yang salah:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>curl -s -w &#x27;\nHTTP %{http_code}\n&#x27; -X POST &quot;$ORDER_URL&quot; -H &quot;x-functions-key: $FUNC_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; -d &#x27;{&quot;orderId&quot;:&quot;JKT-1002&quot;}&#x27;                    # 400 with the reasons
+curl -s -o /dev/null -w &#x27;HTTP %{http_code}\n&#x27; -X POST &quot;$ORDER_URL&quot; -d &#x27;{}&#x27;           # 401: no function key
+</code></pre></div>
+<p>Terakhir, intip isi queue. Mengintip (peek) membaca pesan tanpa menghapusnya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage message peek --queue-name &quot;$QUEUE&quot; --account-name &quot;$ST&quot; --auth-mode key \
+  --num-messages 5 --only-show-errors --query &quot;[].content&quot; --output tsv
+</code></pre></div>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Catatan</span>Mendapat <code>HTTP 500</code> di beberapa menit pertama? Role assignment dari Tugas 3 kemungkinan besar belum berlaku. Tunggu
+satu menit lalu kirim pesanan itu lagi.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> hasil peek menampilkan pesan JSON dengan <code>&quot;orderId&quot;: &quot;JKT-1001&quot;</code>, waktu <code>receivedAtUtc</code>, dan sebuah
+<code>trackingId</code>. Pesanan yang ditolak tidak ada di queue.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--menjadwalkan-pesanan-heartbeat-dengan-logic-app" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Menjadwalkan pesanan heartbeat dengan Logic App</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--menjadwalkan-pesanan-heartbeat-dengan-logic-app" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Ibu Sari ingin bukti setiap seperempat jam bahwa alur pesanan masih hidup. Itu pekerjaan untuk sebuah workflow, bukan
+untuk kode tambahan. Buka definisinya di <code>logicapp/workflow.json</code>: sebuah trigger <strong>Recurrence</strong> (setiap 15 menit) dan
+satu action <strong>HTTP</strong> yang mengirim pesanan heartbeat dengan function key di header <code>x-functions-key</code>. URL dan key-nya
+tertulis sebagai <code>__ORDER_URL__</code> dan <code>__FUNCTION_KEY__</code> di file itu; isilah di luar repository, karena hasilnya berisi
+secret:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>cat logicapp/workflow.json
+sed -e &quot;s|__ORDER_URL__|${ORDER_URL}|&quot; -e &quot;s|__FUNCTION_KEY__|${FUNC_KEY}|&quot; \
+  logicapp/workflow.json &gt; &quot;$OUT_DIR/workflow.json&quot;
+chmod 600 &quot;$OUT_DIR/workflow.json&quot;
+
+az logic workflow create -g &quot;$RG&quot; -n &quot;$LOGIC&quot; -l &quot;$LOCATION&quot; \
+  --definition &quot;$OUT_DIR/workflow.json&quot; --output none
+az logic workflow show -g &quot;$RG&quot; -n &quot;$LOGIC&quot; --query state --output tsv
+</code></pre></div>
+<p>Run terjadwal yang pertama bisa baru terjadi hingga 15 menit lagi, jadi mulai satu run sekarang dan baca run history-nya
+melalui REST API Logic Apps:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>LOGIC_ID=$(az logic workflow show -g &quot;$RG&quot; -n &quot;$LOGIC&quot; --query id --output tsv)
+az rest --method post --url &quot;https://management.azure.com${LOGIC_ID}/triggers/Every_15_minutes/run?api-version=2016-06-01&quot;
+sleep 20
+az rest --method get --url &quot;https://management.azure.com${LOGIC_ID}/runs?api-version=2016-06-01&quot; \
+  --query &quot;value[:3].{started:properties.startTime, status:properties.status}&quot; --output table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Buka <code>logic-nusa-orders</code> › <em>Development Tools › Logic app designer</em> untuk melihat trigger dan
+action yang sama dalam bentuk kotak-kotak; <em>Code view</em> menampilkan JSON-nya. <em>Overview › Run trigger › Run</em> memulai
+sebuah run, dan setiap entri di <em>Run history</em> menampilkan input, output, dan durasi setiap langkah. Anda juga bisa
+membangun seluruh workflow di designer: <em>Recurrence</em> (15 menit), lalu <em>HTTP</em> (POST, URL, kedua header, dan body
+JSON).</p>
+</aside>
+<aside class="callout note" data-icon="ℹ️">
+<p><span class="callout-title">Catatan</span>Extension <code>az logic</code> ditandai experimental oleh Microsoft. Jika <code>az logic workflow create</code> berperilaku aneh, buat
+workflow-nya di designer portal seperti dijelaskan di tip tadi; <code>verify.sh</code> tidak peduli bagaimana Anda membangunnya.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> statusnya <code>Enabled</code>, run terbaru menunjukkan <code>Succeeded</code>, dan mengintip queue (Tugas 5)
+menampilkan sebuah pesan yang <code>orderId</code>-nya diawali <code>HB-</code>.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Seorang rekan kerja merapikan pengaturan yang &quot;tidak terpakai&quot; di function app dan menghapus pengaturan dengan garis
+bawah ganda yang tampak aneh itu:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az functionapp config appsettings delete -g &quot;$RG&quot; -n &quot;$FUNC&quot; --setting-names OrdersStorage__queueServiceUri --output none
+sleep 60                                                     # the app restarts after a settings change
+curl -s -w &#x27;\nHTTP %{http_code}\n&#x27; -X POST &quot;$ORDER_URL&quot; -H &quot;x-functions-key: $FUNC_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; -d &#x27;{&quot;orderId&quot;:&quot;JKT-2001&quot;,&quot;store&quot;:&quot;Jakarta - Kemang&quot;,&quot;items&quot;:[{&quot;sku&quot;:&quot;KOPI-TORAJA-250G&quot;,&quot;qty&quot;:1}]}&#x27;
+</code></pre></div>
+<p><strong>Gejala:</strong> pesanan tidak lagi diterima. Tergantung kapan host menyadarinya, Anda mendapat <strong>HTTP 404</strong> (host menolak
+memuat <code>new_order</code> karena binding-nya tidak punya koneksi, sehingga route-nya hilang) atau <strong>HTTP 500</strong> (function
+berjalan, tetapi binding tidak bisa menjangkau queue). Run Logic App terjadwal berikutnya juga gagal. Temukan buktinya
+sebelum memperbaiki apa pun:</p>
+<ol>
+<li>
+<p>Bandingkan konfigurasi dengan apa yang diharapkan oleh kode:
+<code>az functionapp config appsettings list -g &quot;$RG&quot; -n &quot;$FUNC&quot; --query &quot;[?starts_with(name, 'OrdersStorage')]&quot; --output table</code></p>
+</li>
+<li>
+<p>Baca penjelasan dari host itu sendiri. Di portal, buka resource Application Insights <code>func-nusa-&lt;suffix&gt;</code> ›
+<em>Monitoring › Logs</em> lalu jalankan query ini (entri log baru bisa butuh 2–5 menit untuk muncul):</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>traces
+| where timestamp &gt; ago(30m)
+| where severityLevel &gt;= 3 or message has &quot;OrdersStorage&quot;
+| project timestamp, severityLevel, message
+| order by timestamp desc
+</code></pre></div>
+</li>
+</ol>
+<details class="plain"><summary>Petunjuk dan perbaikan</summary>
+<p>Log menyebut koneksi <code>OrdersStorage</code> dan mengatakan bahwa pengaturan untuk koneksi itu tidak ada. Binding masih meminta
+<code>connection=&quot;OrdersStorage&quot;</code>, tetapi tidak ada satu pun bagian konfigurasi yang mendefinisikannya. Kembalikan
+pengaturannya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>QUEUE_URI=$(az storage account show -g &quot;$RG&quot; -n &quot;$ST&quot; --query primaryEndpoints.queue --output tsv)
+az functionapp config appsettings set -g &quot;$RG&quot; -n &quot;$FUNC&quot; \
+  --settings &quot;OrdersStorage__queueServiceUri=${QUEUE_URI%/}&quot; --output none
+</code></pre></div>
+<p>Setelah sekitar satu menit, <code>curl</code> yang sama mengembalikan <code>HTTP 200</code>, dan run Logic App berikutnya berhasil.
+Pelajarannya: pengaturan adalah bagian dari aplikasi. Beri nama yang jelas, simpan dalam kode (Makan Siang 20), dan
+pantau request yang gagal (Makan Siang 16).</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Skrip ini mengirim satu pesanan ujinya sendiri (<code>VERIFY-hhmmss</code>).
+Jika ada pemeriksaan yang gagal, pesannya memberi tahu tugas mana yang perlu Anda ulangi.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Perintah ini menghapus resource group <code>rg-lunch14-&lt;suffix&gt;</code> beserta seluruh isinya: storage account dan queue-nya,
+function app dan plan-nya, Application Insights, workspace (secara permanen, agar pengulangan lab dimulai dari kondisi
+bersih), dan Logic App. Role assignment ikut hilang bersama storage account. File lokal di <code>~/lab14-out</code>, termasuk file
+workflow yang berisi function key, juga dihapus. Penghapusan masih berlanjut di latar belakang selama beberapa menit.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setup.sh</code> mengatakan Flex Consumption tidak tersedia di region Anda</td>
+<td>Tidak semua region punya plan Flex Consumption</td>
+<td><code>export LOCATION=&lt;a listed region&gt;</code>, jalankan <code>source</code> untuk kedua file lagi, lalu jalankan <code>setup.sh</code></td>
+</tr>
+<tr>
+<td><code>The storage account named stnusaorders… is already taken.</code></td>
+<td>Nama storage account bersifat global</td>
+<td><code>export LAB14_ST=&quot;stnusaorders${SUFFIX}2&quot;</code>, <code>source lab.env</code>, jalankan <code>setup.sh</code></td>
+</tr>
+<tr>
+<td><code>az functionapp create</code> gagal karena nama function app sudah dipakai</td>
+<td>Nama function app juga bersifat global</td>
+<td><code>export LAB14_FUNC=&quot;func-nusa-${SUFFIX}2&quot;</code>, <code>source lab.env</code>, ulangi Tugas 2</td>
+</tr>
+<tr>
+<td><code>HTTP 500</code> tepat setelah Tugas 3</td>
+<td>Role assignment yang baru belum berlaku</td>
+<td>Tunggu 2–5 menit lalu coba lagi</td>
+</tr>
+<tr>
+<td><code>HTTP 401</code></td>
+<td>Header <code>x-functions-key</code> tidak ada atau berisi key lama</td>
+<td>Jalankan ulang baris <code>FUNC_KEY=$(...)</code> dari Tugas 5</td>
+</tr>
+<tr>
+<td><code>HTTP 404</code></td>
+<td>Kode belum di-deploy, <code>$ORDER_URL</code> kosong, atau host tidak bisa memuat <code>new_order</code> karena sebuah pengaturan koneksi tidak ada</td>
+<td>Cek bagian Pemeriksaan di Tugas 4, baca ulang <code>$ORDER_URL</code>, periksa pengaturan dari Tugas 3</td>
+</tr>
+<tr>
+<td><code>Encountered an error (ServiceUnavailable) from host runtime.</code> saat membaca key</td>
+<td>Host function masih dalam proses start</td>
+<td>Tunggu 30 detik lalu coba lagi</td>
+</tr>
+<tr>
+<td><code>Key based authentication is not permitted on this storage account.</code></td>
+<td>Sebuah policy menonaktifkan akses shared key di account itu</td>
+<td>Gunakan subscription lab pribadi (Lab 01). Host function di lab ini memerlukan akses shared key</td>
+</tr>
+<tr>
+<td><code>az: 'logic' is not in the 'az' command group.</code></td>
+<td>Extension CLI-nya belum terpasang</td>
+<td><code>az extension add --name logic</code></td>
+</tr>
+<tr>
+<td><code>Expecting value: line 1 column 1 (char 0)</code> dari <code>az logic workflow create</code></td>
+<td>Path file definisi salah atau file-nya kosong</td>
+<td>Pastikan <code>$OUT_DIR/workflow.json</code> ada; ulangi baris <code>sed</code></td>
+</tr>
+<tr>
+<td>Run Logic App gagal di <em>Send_heartbeat_order</em> dengan status 401</td>
+<td>Key belum diisi, atau key-nya sudah berubah</td>
+<td>Ulangi Tugas 6 mulai dari baris <code>sed</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>
+<p><strong>Saksikan penskalaannya.</strong> Buka function app › <em>Monitoring › Application Insights › Live metrics</em> (atau
+<em>Investigate › Live metrics</em> di resource Application Insights), lalu kirim 200 pesanan dari Cloud Shell:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>seq 1 200 | xargs -P 20 -I{} curl -s -o /dev/null -X POST &quot;$ORDER_URL&quot; -H &quot;x-functions-key: $FUNC_KEY&quot; \
+  -H &quot;Content-Type: application/json&quot; -d &#x27;{&quot;orderId&quot;:&quot;LOAD-{}&quot;,&quot;store&quot;:&quot;Load test&quot;,&quot;items&quot;:[{&quot;sku&quot;:&quot;TEST&quot;,&quot;qty&quot;:1}]}&#x27;
+</code></pre></div>
+<p>Perhatikan jumlah server dan request rate, lalu saksikan aplikasi kembali sepi.</p>
+</li>
+<li>
+<p><strong>Tambahkan consumer-nya.</strong> Tambahkan function yang dipicu queue ke <code>function_app.py</code> yang membaca setiap pesanan dan
+mencatatnya ke log, memakai <code>@app.queue_trigger(arg_name=&quot;msg&quot;, queue_name=&quot;orders&quot;, connection=&quot;OrdersStorage&quot;)</code> dan
+parameter <code>msg: func.QueueMessage</code>. Deploy ulang (Tugas 4) dan saksikan queue terkuras. Perhatikan bahwa <code>verify.sh</code>
+mengharapkan setidaknya satu pesan di queue, jadi jalankan <code>verify.sh</code> sebelum mencoba tantangan ini.</p>
+</li>
+<li>
+<p><strong>Singkirkan secret terakhir.</strong> Alihkan <code>AzureWebJobsStorage</code> dan storage untuk deployment ke managed identity (tab
+<em>Authentication</em> pada aplikasi Flex Consumption baru di portal menampilkan pengaturan tujuannya), dan lindungi function
+dengan autentikasi Microsoft Entra, bukan key (Makan Siang 15 dan Makan Siang 22).</p>
+</li>
+<li>
+<p><strong>Bangun ulang workflow di designer</strong> lalu bandingkan <em>Code view</em>-nya dengan <code>logicapp/workflow.json</code>.</p>
+</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep):</p>
+<ol>
+<li>Resource group <code>rg-lunch14-&lt;suffix&gt;</code> di region yang menyediakan plan Flex Consumption.</li>
+<li>Storage account <code>stnusaorders&lt;suffix&gt;</code> dengan queue bernama <code>orders</code>.</li>
+<li>Function app <code>func-nusa-&lt;suffix&gt;</code> di plan <strong>Flex Consumption</strong>, <strong>Python 3.12</strong>, yang menjalankan kode di
+<code>function/</code>. <code>POST /api/orders</code> dengan pesanan yang valid dan function key mengembalikan HTTP 200.</li>
+<li>Koneksi <code>OrdersStorage</code> yang didefinisikan di app settings, sebaiknya berbasis identitas
+(<code>OrdersStorage__queueServiceUri</code> ditambah role data queue untuk managed identity milik aplikasi).</li>
+<li>Setidaknya satu pesan pesanan di queue <code>orders</code>.</li>
+<li>Logic App <strong>Consumption</strong> <code>logic-nusa-orders</code> berstatus <strong>Enabled</strong> yang mengirim pesanan ke function sesuai jadwal.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="13-containers-basic.html"><small>← Lab sebelumnya</small>13 · Mengemas toko online</a><a class="next" href="15-security-essentials.html"><small>Lab berikutnya →</small>15 · Keluarkan kata sandi dari file konfigurasi</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/14-serverless/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

@@ -1,9 +1,12 @@
 # Lunch 16 · Monitoring (Basic): Azure Monitor, Alerts, Service Health and Advisor
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 4:** Secure, operate and govern
 > **Time:** 60 minutes · **Prerequisite lunches:** 04, 06
 > **AZ-900 skill area:** Describe Azure management and governance
 > **Lab:** [Lab 16 · Know before customers do](../../labs/16-monitoring-basic/README.md) — about 45 minutes · cost 💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -425,6 +428,16 @@ What to watch for:
   Service Health tells you about Azure incidents and maintenance in your services and regions.
 - Azure Advisor gives free, personalised recommendations in five categories — reliability, security, performance,
   cost and operational excellence — so make reviewing them a habit.
+
+## 🗒️ Field notes from Stefanus
+
+> **An alert is a promise that someone will act.** Before I create an alert rule, I write its description as an
+> instruction to the person who will read it at night: what it means, the first thing to check, and when to escalate.
+> If I can't write that sentence, the rule isn't ready, or it belongs on a dashboard instead of in someone's inbox.
+> Once a month, before they age out of the Alerts page, I go through every alert that fired: each one that nobody
+> acted on is retuned, given a lower severity, or deleted. An inbox full of ignored alerts is worse than an empty one,
+> because it teaches the team to stop reading. And I never trust an action group until I have tested it end to end, on
+> the phone of whoever is actually on call.
 
 ## 🔬 Your lab: Know before customers do
 

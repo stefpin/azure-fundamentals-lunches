@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 11 · Cadangan Data Tiga Minggu Lalu — Makan Siang 11: Database Relasional (Dasar): Azure SQL · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 11 · Database Relasional (Dasar): Azure SQL. Data pesanan masih tinggal di SQL Express, dijaga satu kata sandi bersama dan sebuah flashdisk. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/11-relational-databases-basic.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/11-relational-databases-basic.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/11-relational-databases-basic.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/11-relational-databases-basic.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 11 · Cadangan Data Tiga Minggu Lalu — Makan Siang 11: Database Relasional (Dasar): Azure SQL">
+<meta property="og:description" content="Makan Siang 11 · Database Relasional (Dasar): Azure SQL. Data pesanan masih tinggal di SQL Express, dijaga satu kata sandi bersama dan sebuah flashdisk. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/11-relational-databases-basic.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="11" style="--c:#11935a">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/11-relational-databases-basic.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 11</span> Season 1 · 🧩 Bagian 3 · Layanan platform dan data</div>
+      <h1>Cadangan Data Tiga Minggu Lalu</h1>
+      <div class="lunch-title">Makan Siang 11 · Database Relasional (Dasar): Azure SQL</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip basic">Dasar</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 AZ-900 · Menjelaskan arsitektur dan layanan Azure</span>
+        <span class="chip cost">🔬 Lab · sekitar 45 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="02-cloud-concepts.html" title="Sewa, Bukan Beli?">↩ 02</a><a class="chip" href="05-identity-access-basic.html" title="Kasih Saja Password Saya">↩ 05</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 10 · Jumat Malam Dewi, toko online pindah ke App Service: tak ada lagi sistem operasi yang harus di-patch, dan rilis baru masuk lewat swap tanpa downtime.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-2"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, lebih tenang"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 44% siap</b>Setelah episode ini Anda bisa menjawab: “Server yang gagal tidak terasa, dan pesanan bisa dipulihkan ke hampir titik waktu mana pun dalam seminggu terakhir.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-relasional-atau-bukan-memilih-database-di-azure">Relasional atau bukan? Memilih database di Azure</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-keluarga-azure-sql-dan-logical-server">Keluarga Azure SQL dan logical server</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-soal-biaya-model-pembelian-service-tier-dan-serverless">Soal biaya: model pembelian, service tier, dan serverless</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-cara-masuk-gateway-firewall-dan-autentikasi-microsoft-entra">Cara masuk: gateway, firewall, dan autentikasi Microsoft Entra</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-backup-bawaan-dan-tool-yang-akan-anda-pakai">Backup bawaan dan tool yang akan Anda pakai</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-merangkai-semuanya-untuk-nusantara-retail">Merangkai semuanya untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/11-relational-databases-basic.html">🔬 Buka Lab 11</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Memilih</strong> layanan database untuk sebuah beban kerja dengan membandingkan Azure SQL Database, Azure SQL Managed Instance, SQL Server on Azure VMs, Azure Database for PostgreSQL dan MySQL, serta Azure Cosmos DB.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menjelaskan</strong> apa itu logical server di Azure SQL dan bagaimana database serta elastic pool berhubungan dengannya.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Membandingkan</strong> model pembelian DTU dan vCore, service tier pada model vCore, komputasi serverless, dan free offer (penawaran gratis).</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span><strong>Menguraikan</strong> bagaimana sebuah koneksi sampai ke database — melalui gateway, firewall, dan autentikasi Microsoft Entra — serta mengapa autentikasi khusus Entra (Entra-only) adalah pilihan bawaan yang lebih aman.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 11</span>
+        <div class="story-body"><p>Pada makan siang sebelumnya, Dewi sudah memindahkan kode toko online ke App Service. Namun, data pesanan masih tinggal di database SQL Server Express pada server di sebelah pantry. Satu-satunya cadangan (backup) adalah flashdisk USB yang dibawa pulang Pak Budi setiap hari Jumat — dan minggu lalu ketahuan bahwa isi flashdisk itu ternyata salinan dari tiga minggu sebelumnya. Sejak itu, Ibu Sari tidak lagi bisa tersenyum setiap kali topik ini muncul.</p>
+<p>Semua orang punya pendapat. Dewi menginginkan database terkelola (managed) yang tidak perlu ia patch sendiri. Pak Budi khawatir soal siapa saja yang bisa menjangkaunya: saat ini, siapa pun yang tersambung ke Wi-Fi kantor dan tahu kata sandi bersama untuk akun <code>sa</code> — akun administrator bawaan SQL Server — bisa masuk. Rizky, sang kontraktor, mengusulkan &quot;buka saja port 1433 ke internet&quot; (port 1433 adalah &quot;pintu&quot; jaringan standar SQL Server) supaya tool laporannya bisa terhubung dari mana saja. Tim keuangan hanya menanyakan satu hal: berapa biayanya?</p>
+<p>Tugas Anda hari ini: memilih layanan database yang tepat untuk data pesanan, terhubung ke sana dengan identitas Anda sendiri alih-alih kata sandi bersama, dan menjaga pintunya tetap tertutup bagi semua orang lain. <strong>Database Azure mana yang sebaiknya menyimpan pesanan Nusantara Retail — dan siapa yang boleh melewati pintunya?</strong></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-relasional-atau-bukan-memilih-database-di-azure" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Relasional atau bukan? Memilih database di Azure</h3><div class="prose"><p>Setiap pesanan di toko online berubah menjadi beberapa baris data: satu baris di tabel <code>Orders</code>, beberapa baris di tabel <code>OrderLines</code> (rincian barang yang dibeli), serta tautan ke baris-baris di tabel <code>Customers</code> dan <code>Products</code>. Inilah <strong>data relasional</strong>: informasi yang disimpan dalam tabel dengan susunan kolom yang tetap (disebut <strong>skema</strong>), saling terhubung melalui kunci (key), dan diubah lewat <strong>transaksi</strong> yang selesai sepenuhnya atau tidak sama sekali. Saat pelanggan membayar, pencatatan pesanan, rincian barangnya, dan pengurangan stok harus berhasil bersama-sama. Janji &quot;semua atau tidak sama sekali&quot; ini biasanya diringkas sebagai <strong>ACID</strong> (<em>atomic, consistent, isolated, durable</em> — utuh, konsisten, terisolasi, dan tahan lama). Ibaratnya transfer lewat m-banking: saldo Anda berkurang dan saldo penerima bertambah — keduanya terjadi, atau tidak satu pun; tidak boleh ada uang yang &quot;hilang di jalan&quot; karena sinyal putus. Anda membaca dan mengubah data relasional dengan <strong>SQL</strong> (Structured Query Language); dialek SQL buatan Microsoft disebut <strong>T-SQL</strong> (Transact-SQL).</p>
+<p>Database <strong>non-relasional</strong> (atau <strong>NoSQL</strong>) melonggarkan sebagian aturan itu demi fleksibilitas dan skala. Database jenis ini menyimpan dokumen yang bentuknya boleh berbeda dari satu item ke item lain, pasangan kunci-nilai (key-value), graf, atau keluarga kolom yang lebar (wide column family). Katalog produk — tempat kemeja batik punya atribut bahan dan motif, sementara rice cooker punya daya listrik dan kapasitas — sangat cocok dengan model dokumen. Anda akan berkenalan dengan Azure Cosmos DB, layanan NoSQL milik Azure, pada makan siang berikutnya.</p>
+<p>Azure menyediakan beberapa &quot;rumah&quot; terkelola untuk data relasional, ditambah Cosmos DB untuk jenis data lainnya. Simpan baik-baik <strong>matriks pemilihan database</strong> berikut; tabel ini menjawab sebagian besar diskusi &quot;kita pakai database yang mana?&quot;. Kolom <strong>Model</strong> menunjukkan pembagian kerjanya: PaaS (<em>platform sebagai layanan</em>) berarti Microsoft mengurus server, sistem operasi, dan mesin database (engine), sedangkan IaaS (<em>infrastruktur sebagai layanan</em>) berarti Anda mendapat sebuah virtual machine (<em>komputer virtual</em>) dan mengurus sisanya sendiri.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Layanan</th>
+<th>Model</th>
+<th>Engine</th>
+<th>Pilih jika</th>
+<th>Pikirkan ulang jika</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure SQL Database</strong></td>
+<td>PaaS</td>
+<td>engine SQL Server, selalu versi terbaru</td>
+<td>Anda membangun atau memodernisasi aplikasi yang &quot;berbicara&quot; T-SQL dan ingin Microsoft mengurus patch, backup, dan ketersediaan tinggi</td>
+<td>Anda butuh fitur tingkat instance seperti job SQL Server Agent atau query lintas database</td>
+</tr>
+<tr>
+<td><strong>Azure SQL Managed Instance</strong></td>
+<td>PaaS, di dalam virtual network (<em>jaringan virtual</em>) Anda</td>
+<td>engine SQL Server dengan kompatibilitas hampir 100%</td>
+<td>Anda memindahkan apa adanya (lift and shift) aplikasi SQL Server lama yang bergantung pada fitur instance</td>
+<td>Anda hanya butuh satu database sederhana — biayanya lebih mahal dan deployment-nya lebih lama</td>
+</tr>
+<tr>
+<td><strong>SQL Server on Azure VMs</strong></td>
+<td>IaaS</td>
+<td>versi dan edisi SQL Server apa pun yang Anda pasang</td>
+<td>Anda butuh akses ke sistem operasi, versi SQL Server yang lebih lama, atau perangkat lunak lain di mesin yang sama</td>
+<td>Anda tidak ingin melakukan patch, backup, dan clustering sendiri</td>
+</tr>
+<tr>
+<td><strong>Azure Database for PostgreSQL – flexible server</strong></td>
+<td>PaaS</td>
+<td>PostgreSQL versi komunitas</td>
+<td>aplikasi dan tim Anda sudah memakai PostgreSQL beserta ekstensinya</td>
+<td>kode Anda ditulis dalam T-SQL</td>
+</tr>
+<tr>
+<td><strong>Azure Database for MySQL – flexible server</strong></td>
+<td>PaaS</td>
+<td>MySQL versi komunitas</td>
+<td>Anda menjalankan aplikasi PHP atau LAMP stack (Linux, Apache, MySQL, PHP) seperti WordPress</td>
+<td>Anda butuh fitur-fitur SQL Server</td>
+</tr>
+<tr>
+<td><strong>Azure Cosmos DB</strong></td>
+<td>PaaS, terdistribusi secara global</td>
+<td>NoSQL, beberapa API</td>
+<td>skema fleksibel, skala sangat besar, pembacaan cepat dari lokasi yang dekat dengan pengguna di seluruh dunia</td>
+<td>Anda butuh join antarbanyak tabel dan transaksi multi-baris yang kompleks</td>
+</tr>
+</tbody>
+</table></div>
+<p>Opsi deployment lama bernama <em>single server</em> untuk PostgreSQL dan MySQL sudah dipensiunkan (MySQL pada September 2024, PostgreSQL pada Maret 2025). Kini <strong>flexible server</strong> adalah opsi yang dipakai untuk keduanya.</p>
+<p>Memakai lebih dari satu database itu hal yang wajar. Banyak perusahaan menyimpan pesanan dan pembayaran di database relasional, lalu menaruh katalog, keranjang belanja, atau telemetri (aliran data sensor dan log) di penyimpanan NoSQL. Keahliannya terletak pada mencocokkan setiap jenis data dengan layanan yang paling sesuai, bukan memaksakan semuanya masuk ke database yang kebetulan sudah Anda kenal.</p>
+<p>Bacalah alur keputusan di bawah ini dari atas. Alur ini menanyakan datanya terlebih dahulu, lalu engine-nya, kemudian seberapa besar kendali yang Anda butuhkan. Setiap langkah ke arah IaaS memberi Anda kendali lebih besar — sekaligus pekerjaan lebih banyak. Inilah kompromi <em>model tanggung jawab bersama</em> yang Anda pelajari di Makan Siang 02. Dua istilah di diagram mungkin masih baru: SQL Agent adalah penjadwal job bawaan SQL Server, dan CLR (Common Language Runtime) memungkinkan kode .NET berjalan di dalam database — keduanya termasuk fitur tingkat instance.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  start([Data baru yang perlu disimpan]) --&gt; q1{&quot;Tabel, kunci, dan&lt;br/&gt;transaksi multi-baris?&quot;}
+  q1 -- Tidak --&gt; cosmos[&quot;Azure Cosmos DB&lt;br/&gt;(Makan Siang 12)&quot;]
+  q1 -- Ya --&gt; q2{&quot;Dibangun di atas engine&lt;br/&gt;SQL Server dan T-SQL?&quot;}
+  q2 -- Tidak --&gt; oss[&quot;Azure Database for PostgreSQL&lt;br/&gt;atau MySQL flexible server&quot;]
+  q2 -- Ya --&gt; q3{&quot;Perlu sistem operasi atau&lt;br/&gt;versi SQL Server lama?&quot;}
+  q3 -- Ya --&gt; vm[&quot;SQL Server on Azure VMs&lt;br/&gt;(IaaS)&quot;]
+  q3 -- Tidak --&gt; q4{&quot;Perlu fitur instance:&lt;br/&gt;SQL Agent, query lintas&lt;br/&gt;database, CLR?&quot;}
+  q4 -- Ya --&gt; mi[&quot;Azure SQL Managed Instance&quot;]
+  q4 -- Tidak --&gt; sqldb[&quot;Azure SQL Database&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></article><article class="scene-card" id="2-keluarga-azure-sql-dan-logical-server" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Keluarga Azure SQL dan logical server</h3><div class="prose"><p><strong>Azure SQL</strong> adalah nama payung untuk tiga cara menjalankan engine SQL Server di Azure. Ketiganya memakai engine yang sama, sehingga keterampilan T-SQL, driver, dan tool Anda tetap terpakai. Yang berbeda adalah siapa yang mengerjakan urusan operasionalnya.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Opsi deployment</th>
+<th>Yang Anda dapatkan</th>
+<th>Yang Anda kelola</th>
+<th>Pilih untuk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SQL Database — single database</strong></td>
+<td>satu database yang dikelola penuh, dengan sumber daya terjamin miliknya sendiri</td>
+<td>skema, data, dan akses</td>
+<td>sebagian besar aplikasi baru</td>
+</tr>
+<tr>
+<td><strong>SQL Database — elastic pool</strong></td>
+<td>banyak database yang berbagi satu &quot;kolam&quot; (pool) sumber daya</td>
+<td>sama seperti di atas, ditambah ukuran pool</td>
+<td>kelompok database yang sibuk pada waktu berbeda-beda, misalnya satu database per toko atau per pelanggan sebuah produk SaaS (<em>perangkat lunak sebagai layanan</em>)</td>
+</tr>
+<tr>
+<td><strong>SQL Managed Instance</strong></td>
+<td>satu instance SQL Server utuh yang dikelola, di dalam sebuah subnet pada virtual network Anda</td>
+<td>sama seperti di atas, ditambah jaringannya</td>
+<td>aplikasi lama yang membutuhkan SQL Server Agent, query lintas database, atau linked server</td>
+</tr>
+<tr>
+<td><strong>SQL Server on Azure VMs</strong></td>
+<td>sebuah virtual machine dengan SQL Server terpasang (IaaS)</td>
+<td>semuanya, mulai dari sistem operasi ke atas</td>
+<td>kendali penuh, versi lama, perangkat lunak lain di mesin yang sama</td>
+</tr>
+</tbody>
+</table></div>
+<p>Pada dua opsi PaaS, Microsoft yang memasang patch pada engine, membuat backup, dan menjaga ketersediaan tinggi database. Pada VM, ekstensi SQL IaaS Agent memang menambahkan fitur manajemen di portal, tetapi menjaga VM dan SQL Server tetap ter-patch, ter-backup, dan selalu tersedia tetap menjadi tugas Anda.</p>
+<p>SQL Database memperkenalkan satu konsep yang sering membingungkan pemula: <strong>logical server</strong> (server logis). Saat Anda membuat database pertama, portal juga meminta sebuah &quot;server&quot; dengan nama seperti <code>sql-nusa-ab12c</code>. Server ini bukan virtual machine; Anda tidak pernah login ke dalamnya ataupun memasang patch padanya. Ia adalah batas manajemen dan koneksi yang:</p>
+<ul>
+<li>memberi database Anda sebuah nama DNS (Domain Name System — &quot;buku alamat&quot; internet yang menerjemahkan nama menjadi alamat IP), misalnya <code>sql-nusa-ab12c.database.windows.net</code> — karena itu namanya harus unik di seluruh dunia;</li>
+<li>menyimpan pengaturan yang berlaku untuk setiap database di dalamnya: aturan firewall, administrator Microsoft Entra, audit, dan kebijakan koneksi (connection policy);</li>
+<li>berisi sebuah database kecil bernama <code>master</code> yang menyimpan metadata tingkat server.</li>
+</ul>
+<p>Logical server tidak punya harga sendiri; Anda membayar per database atau per elastic pool. Database pada server yang sama boleh memakai tier dan ukuran yang berbeda-beda. Sebuah server berada di satu region (<em>wilayah</em>), begitu pula database-database di dalamnya. Anggap saja logical server seperti alamat dan pos satpam sebuah kompleks ruko: alamat dan aturan masuknya berlaku untuk semua toko di dalamnya, tetapi yang Anda bayar adalah sewa setiap tokonya, bukan alamatnya.</p>
+<p>Mengapa ada yang memilih pool? Bayangkan empat puluh database kecil milik empat puluh toko. Setiap toko ramai pada jam bukanya sendiri dan sepi di sisa hari. Jika diukur satu per satu, setiap database butuh kapasitas yang cukup untuk jam puncaknya sendiri, dan sebagian besar kapasitas itu menganggur. Di dalam pool, mereka berbagi kapasitas yang diukur untuk puncak <em>gabungan</em> — jauh lebih kecil daripada jumlah empat puluh puncak masing-masing. Mirip food court yang memakai satu genset bersama: warung kopi ramai pagi, warung bakso ramai malam, jadi satu genset cukup untuk semuanya. Pool tidak lagi menguntungkan jika semua database mencapai puncaknya pada saat yang sama — seperti genset bersama yang kewalahan ketika semua warung ramai serentak.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+  subgraph rg[&quot;Resource group rg-lunch11-ab12c&quot;]
+    subgraph srv[&quot;Logical server sql-nusa-ab12c · Southeast Asia&lt;br/&gt;sql-nusa-ab12c.database.windows.net&quot;]
+      settings[&quot;Pengaturan server&lt;br/&gt;aturan firewall · admin Entra · audit&quot;]
+      master[(&quot;master&quot;)]
+      orders[(&quot;sqldb-orders&lt;br/&gt;single database, serverless&quot;)]
+      subgraph pool[&quot;Elastic pool (opsional)&quot;]
+        s1[(&quot;store-jkt-01&quot;)]
+        s2[(&quot;store-sby-01&quot;)]
+        s3[(&quot;store-mdn-01&quot;)]
+      end
+    end
+  end
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></article><article class="scene-card" id="3-soal-biaya-model-pembelian-service-tier-dan-serverless" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Soal biaya: model pembelian, service tier, dan serverless</h3><div class="prose"><p>Azure SQL Database menawarkan dua <strong>model pembelian</strong> (purchasing model). Keduanya memberi Anda engine yang sama; bedanya ada pada cara Anda menentukan ukuran dan membayar.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Model DTU</th>
+<th>Model vCore</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Yang Anda beli</td>
+<td><strong>DTU</strong> (Database Transaction Unit): paket campuran CPU, memori, dan I/O (baca-tulis disk) dengan porsi tetap</td>
+<td>sejumlah <strong>vCore</strong> (inti prosesor virtual) pada generasi perangkat keras pilihan, dengan penyimpanan yang diatur terpisah</td>
+</tr>
+<tr>
+<td>Service tier</td>
+<td>Basic, Standard, Premium</td>
+<td>General Purpose, Business Critical, Hyperscale</td>
+</tr>
+<tr>
+<td>Kelebihan</td>
+<td>sederhana, harga mudah diprediksi untuk database kecil yang bebannya stabil</td>
+<td>fleksibel; ada komputasi serverless; Azure Hybrid Benefit (potongan harga dengan lisensi SQL Server yang sudah Anda miliki) dan reservasi (diskon untuk komitmen pemakaian jangka panjang) untuk komputasi provisioned</td>
+</tr>
+<tr>
+<td>Penggunaan umum</td>
+<td>aplikasi kecil milik satu departemen, prototipe cepat</td>
+<td>sebagian besar beban kerja produksi baru</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ibaratnya memesan makan siang: DTU seperti paket nasi ayam yang isinya sudah ditentukan dalam satu harga, sedangkan vCore seperti prasmanan — Anda memilih sendiri porsi prosesornya, lalu penyimpanan dihitung terpisah.</p>
+<p>Anda tidak terkunci pada satu pilihan. Sebuah database bisa pindah antar-tier, bahkan dari model DTU ke model vCore, melalui operasi scaling yang menjaga data tetap online dan hanya diakhiri dengan koneksi ulang yang singkat. Karena itu, aman untuk mulai dari ukuran kecil, lalu menyesuaikan ukurannya begitu data pemakaian yang nyata tersedia.</p>
+<p>Di dalam model vCore, <strong>service tier</strong> (tingkat layanan) menentukan arsitektur di balik database Anda:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Cara kerjanya, dalam satu kalimat</th>
+<th>Cocok untuk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>General Purpose</strong></td>
+<td>node komputasi tanpa status (stateless) di depan penyimpanan jarak jauh yang sangat tahan lama</td>
+<td>sebagian besar aplikasi bisnis, pengembangan dan pengujian (dev/test); serverless dan free offer tersedia di tier ini</td>
+</tr>
+<tr>
+<td><strong>Business Critical</strong></td>
+<td>beberapa replika yang terus disinkronkan di atas penyimpanan SSD lokal yang cepat</td>
+<td>aplikasi transaksional berlatensi rendah yang butuh failover (peralihan ke replika lain) tercepat; termasuk replika yang bisa dibaca untuk laporan</td>
+</tr>
+<tr>
+<td><strong>Hyperscale</strong></td>
+<td>komputasi dipisahkan dari lapisan terdistribusi berisi page server dan layanan log</td>
+<td>database besar atau yang tumbuh cepat, hingga 128 TB, dengan scaling dan pemulihan yang cepat</td>
+</tr>
+</tbody>
+</table></div>
+<p>Berikutnya adalah <strong>compute tier</strong> (tingkat komputasi). Komputasi <strong>provisioned</strong> memesan sejumlah vCore yang tetap dan ditagih per jam, dipakai ataupun tidak. Komputasi <strong>serverless</strong>, yang tersedia di General Purpose dan Hyperscale, menyesuaikan diri secara otomatis di antara jumlah vCore minimum dan maksimum, dan ditagih per detik sesuai pemakaian database yang sebenarnya — contoh nyata <em>model berbasis penggunaan</em>.</p>
+<p>General Purpose serverless juga bisa melakukan <strong>auto-pause</strong> (jeda otomatis): setelah beberapa waktu tanpa koneksi (disebut auto-pause delay; bawaannya 60 menit dan minimal 15 menit), database berhenti sementara, dan Anda hanya membayar penyimpanannya. Koneksi berikutnya akan membangunkannya kembali. Proses bangun (resume) biasanya kurang dari satu menit, dan selama itu percobaan koneksi pertama gagal dengan error <strong>40613</strong> (&quot;database not currently available&quot;), sehingga aplikasi perlu logika coba-ulang (retry). Ibaratnya lampu toilet mal yang memakai sensor gerak: padam sendiri saat ruangan kosong dan menyala lagi saat ada yang masuk — bedanya, &quot;tamu&quot; pertama yang datang ke database harus mengetuk dua kali: ketukan pertama ditolak, ketukan berikutnya baru dibukakan. Auto-pause untuk Hyperscale serverless masih berstatus preview saat tulisan ini dibuat.</p>
+<p>Terakhir, <strong>free offer</strong> (penawaran gratis). Saat tulisan ini dibuat (Oktober 2026), setiap subscription (<em>langganan</em>) dapat membuat hingga sepuluh database General Purpose serverless gratis. Masing-masing mendapat jatah 100.000 vCore-detik komputasi (satu vCore-detik berarti satu vCore yang bekerja selama satu detik), 32 GB data, dan 32 GB penyimpanan backup setiap bulan, yang diperbarui selama subscription itu ada. Itu setara kira-kira 28 jam kerja satu vCore yang sibuk per bulan — lebih dari cukup untuk pengembangan dan lab. Jika jatahnya habis, Anda yang menentukan: database berhenti sementara sampai bulan berikutnya (pilihan bawaan), atau tetap berjalan dan kelebihan pemakaiannya ditagih. Database gratis punya batasan: maksimal 4 vCore, point-in-time restore hanya 7 hari, backup hanya locally redundant (semua salinannya berada di satu pusat data), serta tidak mendukung elastic pool maupun failover group. Periksa ketentuan terbarunya sebelum Anda mengandalkannya.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Auto-pause hanya bekerja jika tidak ada yang terhubung. Jendela query atau object explorer yang dibiarkan terbuka di sebuah tool membuat database tetap terjaga — dan terus menghabiskan biaya komputasi atau jatah vCore-detik gratis. Tutup tool Anda setelah selesai, dan jika memakai free offer, pasang metric alert (<em>pemberitahuan</em>) untuk sisa jatah gratisnya.</p>
+</aside>
+</div></article><article class="scene-card" id="4-cara-masuk-gateway-firewall-dan-autentikasi-microsoft-entra" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Cara masuk: gateway, firewall, dan autentikasi Microsoft Entra</h3><div class="prose"><p>Sebuah koneksi ke Azure SQL Database harus melewati beberapa pos pemeriksaan sebelum bisa membaca satu baris pun. Bayangkan sebuah kompleks perumahan berpagar: satpam di gerbang hanya membuka palang untuk kendaraan yang pelat nomornya terdaftar (itulah firewall yang memeriksa alamat IP), lalu Anda masih harus membuka pintu rumah dengan kunci Anda sendiri (itulah autentikasi). Mobil yang tidak terdaftar sudah ditolak di gerbang — bahkan tidak sempat mengetuk pintu.</p>
+<figure class="diagram"><pre class="mermaid">sequenceDiagram
+  participant C as Client (sqlcmd di Cloud Shell)
+  participant E as Microsoft Entra ID
+  participant G as Gateway (TCP 1433)
+  participant F as Firewall server
+  participant D as sqldb-orders
+  C-&gt;&gt;E: Login dan minta token untuk Azure SQL
+  E--&gt;&gt;C: Token akses
+  C-&gt;&gt;G: Hubungkan ke sql-nusa-ab12c.database.windows.net
+  G-&gt;&gt;F: Apakah alamat IP client ini diizinkan?
+  alt Tidak ada aturan yang cocok
+    F--&gt;&gt;C: Error 40615 — IP client tidak diizinkan
+  else Ada aturan yang cocok
+    F-&gt;&gt;D: Teruskan koneksi beserta tokennya
+    D--&gt;&gt;C: Masuk sebagai pengguna Entra Anda
+  end
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p><strong>Gateway.</strong> Nama server diterjemahkan menjadi alamat sebuah <strong>gateway</strong> regional — semacam gerbang depan — yang mendengarkan di port TCP 1433. <strong>Connection policy</strong> (kebijakan koneksi) milik server menentukan apa yang terjadi berikutnya. Dengan <strong>Redirect</strong>, client diberi tahu di mana database sebenarnya berada, lalu berbicara langsung dengan node tersebut melalui port 11000–11999, sehingga latensinya (jeda waktu respons) lebih rendah. Dengan <strong>Proxy</strong>, setiap paket data tetap mengalir melalui gateway. Kebijakan <strong>Default</strong> memakai Redirect untuk client di dalam Azure dan Proxy untuk client di luar Azure.</p>
+<p><strong>Firewall.</strong> Server baru menolak semua alamat IP. Anda membukanya dengan <strong>aturan firewall IP tingkat server</strong> (server-level IP firewall rules), yang berlaku untuk semua database di server itu, atau dengan <strong>aturan tingkat database</strong> (database-level rules), yang Anda buat dengan T-SQL dan ikut terbawa ke mana pun database-nya pergi. Perubahan aturan bisa memerlukan waktu hingga lima menit untuk berlaku. Ada juga sebuah sakelar bernama <strong>Allow Azure services and resources to access this server</strong>. Sakelar ini membuat aturan khusus <code>0.0.0.0</code> yang mengizinkan alamat mana pun dari dalam Azure — termasuk resource di subscription milik pelanggan lain. Untuk akses yang sepenuhnya privat, nanti Anda akan memakai <strong>private endpoint</strong> (<em>titik akhir privat</em>), yang dibahas di Makan Siang 25 dan 28.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>&quot;Buka saja port 1433 ke internet&quot; biasanya berakhir sebagai aturan dari <code>0.0.0.0</code> sampai <code>255.255.255.255</code>, atau sakelar <em>Allow Azure services</em> yang dinyalakan demi kepraktisan. Jika digabung dengan kata sandi SQL yang mudah ditebak, itulah resep klasik kebocoran data. Izinkan hanya alamat IP client tertentu, dan hapus aturan yang sudah tidak diperlukan.</p>
+</aside>
+<p><strong>Autentikasi.</strong> Lolos dari firewall hanya membawa Anda sampai ke tahap login. Azure SQL mendukung dua metode. <strong>Autentikasi SQL</strong> memakai login dan kata sandi yang disimpan di dalam engine database. <strong>Autentikasi Microsoft Entra</strong> memakai token — semacam tiket masuk digital berumur pendek — dari Microsoft Entra ID (<em>ID Microsoft Entra</em>; lihat Makan Siang 05). Entra membawa MFA (<em>autentikasi multifaktor</em>), Conditional Access (<em>Akses Bersyarat</em>), grup, dan — untuk aplikasi — managed identity, yaitu identitas yang dikelola Azure untuk aplikasi, sehingga tidak ada rahasia (secret) sama sekali di dalam kode.</p>
+<p>Setiap server dapat memiliki satu <strong>Microsoft Entra admin</strong>: seorang pengguna atau, lebih baik lagi, sebuah grup. Begitu Anda menyalakan <strong>Microsoft Entra-only authentication</strong> (autentikasi khusus Entra), autentikasi SQL berhenti berfungsi untuk seluruh server, termasuk login admin SQL yang dibuat bersama server itu. Orang lain mendapat akses sebagai <em>contained database user</em> — pengguna yang terdaftar langsung di dalam database, bukan di server — yang dibuat dari identitas Entra mereka, misalnya <code>CREATE USER [dewi@nusantararetail.co.id] FROM EXTERNAL PROVIDER;</code>, lalu diberi database role seperti <code>db_datareader</code> (hanya boleh membaca data).</p>
+<p><strong>Enkripsi</strong> aktif secara bawaan di dua sisi yang penting: koneksi memakai TLS (Transport Layer Security, yang mengenkripsi data selama perjalanan di jaringan), dan setiap database baru dienkripsi saat tersimpan (at rest) dengan <strong>transparent data encryption</strong> (TDE) memakai kunci yang dikelola oleh layanan (service-managed key).</p>
+</div></article><article class="scene-card" id="5-backup-bawaan-dan-tool-yang-akan-anda-pakai" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Backup bawaan dan tool yang akan Anda pakai</h3><div class="prose"><p>Flashdisk USB yang membuat Ibu Sari berhenti tersenyum itu akhirnya bisa pensiun. Azure SQL Database mem-backup setiap database secara otomatis: full backup (salinan lengkap) setiap minggu, differential backup (perubahan sejak full backup terakhir) setiap 12 atau 24 jam, dan backup transaction log (catatan setiap perubahan) kira-kira setiap 10 menit. Bersama-sama, ketiganya memungkinkan <strong>point-in-time restore</strong> (PITR) — pemulihan ke momen mana pun di dalam jendela retensi: 7 hari secara bawaan, bisa diatur dari 1 sampai 35 hari (tier Basic: maksimal 7 hari). Mirip memutar mundur rekaman CCTV ke menit tepat sebelum kejadian. Pemulihan selalu membuat database baru di samping database aslinya, sehingga Anda bisa membandingkan keduanya sebelum beralih. <strong>Long-term retention</strong> (retensi jangka panjang) menyimpan full backup mingguan, bulanan, atau tahunan hingga 10 tahun. Full backup pertama dimulai tepat setelah database dibuat dan biasanya selesai dalam 30 menit. Makan Siang 17 membahas strategi backup secara umum; Makan Siang 28 membahas backup Azure SQL dan pemulihan bencana (disaster recovery) lebih dalam.</p>
+<p>Untuk berbicara dengan database, Anda memerlukan sebuah tool client:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Berjalan di</th>
+<th>Paling cocok untuk</th>
+<th>Perlu diketahui</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Query editor</strong> di portal Azure</td>
+<td>browser Anda</td>
+<td>query dan pengecekan cepat</td>
+<td>mendukung autentikasi Entra dan SQL; tidak bisa terhubung ke <code>master</code>; query dihentikan (timeout) setelah 5 menit; hanya butuh port 443</td>
+</tr>
+<tr>
+<td><strong>VS Code</strong> dengan <strong>ekstensi MSSQL</strong></td>
+<td>Windows, macOS, Linux</td>
+<td>pengembangan sehari-hari</td>
+<td>pengganti yang direkomendasikan untuk Azure Data Studio, yang dipensiunkan pada 28 Februari 2026</td>
+</tr>
+<tr>
+<td><strong>sqlcmd</strong></td>
+<td>command line, termasuk Cloud Shell</td>
+<td>skrip dan otomatisasi</td>
+<td>hadir dalam dua varian (berbasis ODBC dan berbasis Go); Cloud Shell sudah menyertakan salah satunya, dan lab menunjukkan cara memakainya dengan token Entra</td>
+</tr>
+<tr>
+<td><strong>SQL Server Management Studio</strong> (SSMS)</td>
+<td>Windows</td>
+<td>administrasi lengkap</td>
+<td>tool klasik para administrator database</td>
+</tr>
+</tbody>
+</table></div>
+<p>Apa pun tool-nya, pos-pos pemeriksaan dari bagian 4 tetap berlaku: alamat IP client Anda harus diizinkan oleh firewall, dan identitas Anda harus diizinkan oleh database. Ada tiga kejutan yang hampir pasti dialami setiap orang, setidaknya sekali:</p>
+<ul>
+<li>Query editor di portal terhubung dari alamat IP publik <strong>browser</strong> Anda, yang biasanya berbeda dari alamat Cloud Shell, sehingga masing-masing perlu aturan firewall sendiri.</li>
+<li>Cloud Shell bisa mendapat <strong>alamat IP publik yang berbeda</strong> pada sesi baru. Aturan yang kemarin berhasil bisa saja tidak cocok hari ini; pesan error-nya akan memberi tahu alamat mana yang ditolak.</li>
+<li>Banyak jaringan kantor memblokir <strong>port 1433 ke arah luar</strong> (outbound). Akibatnya, tool hanya mengalami timeout alih-alih menampilkan error yang jelas. Query editor, yang hanya membutuhkan port 443, adalah cara praktis untuk membedakan masalah jaringan dari masalah database.</li>
+</ul>
+</div></article><article class="scene-card" id="6-merangkai-semuanya-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Merangkai semuanya untuk Nusantara Retail</h3><div class="prose"><p>Mari kita bawa data pesanan menyusuri alur keputusan tadi. Datanya relasional, kode Dewi sudah berbicara T-SQL, tidak ada yang membutuhkan akses ke sistem operasi, dan aplikasinya tidak memakai fitur instance. Jawabannya: <strong>Azure SQL Database</strong>, berupa single database di tier <strong>General Purpose</strong>:</p>
+<ul>
+<li><strong>Pengembangan dan pengujian</strong> memakai free offer, yang menjeda dirinya sendiri saat tidak ada yang bekerja.</li>
+<li><strong>Produksi</strong> dimulai dengan General Purpose serverless selama trafiknya masih sedang-sedang saja, lalu pindah ke vCore provisioned begitu bebannya cukup stabil sehingga layak membayar ukuran tetap. Data tetap berada di <strong>Indonesia Central</strong> demi residensi data (data disimpan di dalam negeri); lab memakai Southeast Asia karena ketersediaan layanannya lebih luas.</li>
+<li><strong>Akses</strong> berjalan melalui Microsoft Entra-only authentication. Entra admin-nya adalah sebuah grup, bukan perorangan. Tim Dewi mendapat contained database user dengan role secukupnya saja, dan aplikasi toko online nantinya memakai managed identity (Makan Siang 15), sehingga tidak ada kata sandi di file konfigurasi mana pun.</li>
+<li><strong>Firewall</strong> hanya mengizinkan alamat yang dikenal. Ide Rizky untuk &quot;membukanya ke internet&quot; ditolak dengan sopan; nantinya sebuah private endpoint akan menggantikan akses publik.</li>
+<li><strong>Backup</strong> berjalan otomatis, dan point-in-time restore menggantikan flashdisk USB.</li>
+</ul>
+<p>Lalu bagaimana dengan pertanyaan tim keuangan? Logical server-nya sendiri gratis. Database serverless dikenai biaya komputasi per detik selama bekerja ditambah biaya penyimpanan per GB, dan tidak ada biaya komputasi selama dijeda. Database uji tidak dikenai biaya selama pemakaiannya masih di dalam jatah gratis. Gunakan pricing calculator (<em>kalkulator harga</em>) untuk mendapat angka nyata di region Anda, dan pertahankan anggaran (budget) dari Makan Siang 01.</p>
+<p>Tim lain pun mendapat jawaban. Paket akuntansi lama milik tim keuangan memakai job SQL Server Agent dan query lintas database, jadi ia kandidat untuk <strong>SQL Managed Instance</strong>. Situs WordPress tim pemasaran cocok ditempatkan di <strong>Azure Database for MySQL flexible server</strong>. Katalog produk, dengan atribut yang terus berubah, menjadi topik makan siang berikutnya: <strong>Azure Cosmos DB</strong>.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Tool laporan Rizky berjalan di sebuah VM di Azure. Mana cara yang lebih baik untuk mengizinkannya menjangkau database: menyalakan <em>Allow Azure services</em>, menambahkan aturan firewall untuk alamat IP publik VM tersebut, atau memakai private endpoint? Selain VM Rizky, apa lagi yang ikut diizinkan masuk oleh masing-masing opsi?</p>
+</aside>
+<p>Ingin lebih dalam? <a href="28-relational-databases-advanced.html">Makan Siang 28 · Database Relasional (Lanjutan)</a> membahas ketersediaan tinggi, failover group, backup secara mendalam, dan keamanan tingkat lanjut untuk Azure SQL.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Database yang mana, bagaimana cara masuk, dan berapa yang Anda bayar</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/11-relational-databases-basic.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/11-relational-databases-basic.html?lang=id" title="Demo interaktif: Database yang mana, bagaimana cara masuk, dan berapa yang Anda bayar" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/11-relational-databases-basic/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Bagaimana setiap pertanyaan di pohon keputusan &quot;database yang mana?&quot; menyingkirkan pilihan demi pilihan hingga tersisa satu layanan.</li>
+<li>Koneksi yang dihentikan di firewall bahkan sebelum autentikasi dimulai, dan error yang dihasilkannya.</li>
+<li>Di titik mana meteran komputasi berhenti saat database serverless sedang dijeda, dan apa yang dialami koneksi pertama setelah jeda itu.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Paket akuntansi tim keuangan memakai job SQL Server Agent dan query yang menggabungkan (join) tabel dari tiga database. Tim ingin berhenti mengurus patch server. Opsi deployment Azure SQL mana yang paling cocok?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Azure SQL Managed Instance.</strong> Opsi ini tetap menyediakan fitur tingkat instance seperti SQL Server Agent dan query lintas database, sementara Microsoft yang mengurus patch dan backup-nya — SQL Database tidak memiliki fitur-fitur itu, dan VM tetap menyisakan pekerjaan patch untuk tim.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Database uji milik Dewi dipakai sekitar satu jam sehari dan menganggur di sisa waktunya. Opsi komputasi mana yang membuat tagihannya paling rendah tanpa mengganti engine?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>General Purpose serverless dengan auto-pause</strong> (atau free offer, yang juga serverless). Komputasi ditagih per detik selama berjalan, dan hanya penyimpanan yang ditagih selama database dijeda.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Tool laporan milik Rizky berjalan di Azure, jadi ia meminta Anda menyalakan sakelar <em>Allow Azure services and resources to access this server</em>. Apa masalahnya dengan permintaan itu?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Sakelar itu mengizinkan koneksi dari <strong>alamat IP Azure mana pun</strong>, termasuk resource milik pelanggan lain, bukan hanya tool Rizky. Gunakan aturan untuk alamat IP spesifik miliknya atau, lebih baik lagi, sebuah private endpoint — dan biarkan autentikasi Entra tetap aktif.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Setelah Anda mengaktifkan Microsoft Entra-only authentication, sebuah skrip lama yang masuk memakai login dan kata sandi admin SQL berhenti berfungsi. Apa yang terjadi, dan apa perbaikan yang benar?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Entra-only authentication <strong>mematikan autentikasi SQL untuk seluruh server</strong>, termasuk admin SQL. Berikan skrip itu sebuah identitas Entra (managed identity jika berjalan di Azure) dan contained database user dengan role secukupnya saja — jangan menyalakan kembali autentikasi SQL.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Seseorang menghapus separuh isi tabel <code>Orders</code> dua jam yang lalu. Tidak ada yang pernah mengatur backup apa pun. Bisakah baris-baris itu dikembalikan?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p><strong>Bisa.</strong> Azure SQL Database membuat backup secara otomatis, sehingga Anda bisa menjalankan <strong>point-in-time restore</strong> ke momen tepat sebelum penghapusan. Pemulihan itu membuat database baru yang bisa Anda bandingkan dan salin datanya; retensi bawaannya 7 hari.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Pilih database dalam tiga langkah: model datanya (relasional atau NoSQL), lalu engine-nya (SQL Server, PostgreSQL, atau MySQL), kemudian seberapa besar kendali yang Anda butuhkan (SQL Database → Managed Instance → VM).</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Logical server adalah batas koneksi dan manajemen — nama DNS, aturan firewall, Entra admin — bukan virtual machine; Anda membayar per database atau per elastic pool.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Model vCore (General Purpose, Business Critical, Hyperscale) adalah pilihan bawaan yang fleksibel; serverless dengan auto-pause dan free offer membuat database kecil dan database pengembangan nyaris gratis.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Setiap koneksi melewati gateway dan firewall server sebelum autentikasi: izinkan hanya alamat IP tertentu, dan gunakan Microsoft Entra-only authentication agar tidak ada kata sandi bersama.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Backup, point-in-time restore, ketersediaan tinggi, dan enkripsi sudah tersedia bawaan; jalankan query dengan Query editor di portal, VS Code dengan ekstensi MSSQL, atau sqlcmd.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Backup yang belum pernah dipulihkan baru sebatas kabar burung.</strong> Backup otomatis adalah fitur terbaik Azure SQL
+Database — sekaligus yang paling mudah dianggap beres begitu saja. Karena itu, di minggu pertama setiap database baru,
+saya sengaja memulihkannya: saya memilih satu momen dari hari kemarin, menjalankan point-in-time restore ke database
+baru di samping aslinya, menghitung jumlah barisnya, dan mencatat berapa lama prosesnya. Anggap saja ini simulasi
+kebakaran di gedung kantor: lebih baik canggung saat latihan daripada panik saat kejadian. Latihan kecil ini menjawab
+hal-hal yang tidak bisa dijawab diagram: berapa lama pemulihan untuk database sebesar ini, siapa yang berwenang
+memulainya, dan bagaimana aplikasi diarahkan ke salinan hasil pemulihan yang namanya selalu baru. Jawabannya langsung
+saya tulis di runbook (buku panduan operasional) selagi masih segar. Saat masalah datang di jam yang tidak enak,
+jangan sampai ada orang yang membaca dokumentasinya untuk pertama kali.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>11</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Database pesanan Nusantara Retail</h3>
+          <div class="prose"><p>Anda akan membuat logical server yang hanya menerima login Microsoft Entra, dengan diri Anda sendiri sebagai admin, serta database <code>sqldb-orders</code> yang gratis (atau serverless). Kemudian Anda membuka firewall untuk tepat satu alamat IP, membuat dan meng-query tabel <code>Orders</code> dari Cloud Shell dengan sqlcmd dan dari Query editor di portal, lalu terakhir sengaja merusak aturan firewall untuk melihat — dan memperbaiki — error yang akan dialami pengguna Anda.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 45 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/11-relational-databases-basic.html">Mulai Lab 11 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/azure-sql/azure-sql-iaas-vs-paas-what-is-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Apa itu Azure SQL?</b><span>Tiga opsi deployment dibandingkan berdampingan, dengan tautan ke masing-masing.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-sql/database/free-offer" target="_blank" rel="noopener"><b>Microsoft Learn: Deploy Azure SQL Database secara gratis</b><span>Ketentuan dan batasan free offer terbaru; periksa dulu sebelum Anda mengandalkan angka-angka di atas.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-sql/database/serverless-tier-overview" target="_blank" rel="noopener"><b>Microsoft Learn: Compute tier serverless untuk Azure SQL Database</b><span>Cara kerja auto-scaling, auto-pause, dan penagihannya secara mendetail.</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/training/modules/explore-provision-deploy-relational-database-offerings-azure/" target="_blank" rel="noopener"><b>Pelatihan Microsoft Learn: Menjelajahi layanan database relasional di Azure</b><span>Modul singkat untuk pemula yang memperkuat matriks pemilihan hari ini.</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🧾</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Penjaga Pesanan</h2>
+        <p class="muted">Jalankan database relasional terkelola.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Server yang gagal tidak terasa, dan pesanan bisa dipulihkan ke hampir titik waktu mana pun dalam seminggu terakhir.”</b></p>
+        <div class="teaser"><b>Episode berikutnya · 12</b><h4>Tabel 140 Kolom</h4><p>Setiap jenis produk baru berarti satu lagi perubahan skema hingga larut malam.</p><p style="margin-top:10px"><a href="12-cosmos-db.html">Tonton Episode 12 →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="10-app-service.html"><small>← Episode sebelumnya</small>10 · Jumat Malam Dewi</a><a class="next" href="12-cosmos-db.html"><small>Episode berikutnya →</small>12 · Tabel 140 Kolom</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/11-relational-databases-basic/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

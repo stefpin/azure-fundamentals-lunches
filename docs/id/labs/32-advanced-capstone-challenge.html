@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 32 · Nusantara Retail melangkah ke produksi · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 32: Nusantara Retail melangkah ke produksi. sekitar 8–12 jam dalam 3–5 sesi, biaya 💲💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/32-advanced-capstone-challenge.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/32-advanced-capstone-challenge.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/32-advanced-capstone-challenge.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/32-advanced-capstone-challenge.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 32 · Nusantara Retail melangkah ke produksi">
+<meta property="og:description" content="Lab Azure praktik 32: Nusantara Retail melangkah ke produksi. sekitar 8–12 jam dalam 3–5 sesi, biaya 💲💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/32-advanced-capstone-challenge.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="32" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/32-advanced-capstone-challenge.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Final musim · tantangan capstone</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>32</b><span>Final</span></div>
+      <div class="main">
+        <h1 class="lab-title">Nusantara Retail melangkah ke produksi</h1>
+        <p class="lab-story">🌟 <b>Episode Pamungkas</b> — Tanpa langkah terpandu: rancang, bangun, buktikan.</p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 8–12 jam dalam 3–5 sesi</span>
+          <span class="chip cost">💲💲💲 biaya yang terasa selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★★</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        <p class="muted small">seluruh bulan pendalaman, <a href="../lunches/22-identity-access-advanced.html">Makan Siang 22</a> sampai <a href="../lunches/31-governance-at-scale.html">Makan Siang 31</a> (hanya persyaratan: tanpa bacaan, demo, atau video)</p>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 1 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-ringkasan-proyek">🎯 Ringkasan proyek</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode-info" style="--sc:var(--c)"><a href="#-cara-kerja-tantangan-ini">Cara kerja tantangan ini</a></li><li data-kind="other" style="--sc:var(--c)"><a href="#-persyaratan">Persyaratan</a></li><li data-kind="other" style="--sc:var(--c)"><a href="#-batasan">Batasan</a></li><li data-kind="other" style="--sc:var(--c)"><a href="#-arsitektur-yang-disarankan">Arsitektur yang disarankan</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-daftar-periksa-penerimaan">🧪 Daftar periksa penerimaan</a></li><li data-kind="other" style="--sc:var(--c)"><a href="#-petunjuk">Petunjuk</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan">🧹 Bersihkan</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="other" style="--sc:var(--c)"><a href="#-di-mana-setiap-bagian-diajarkan">Di mana setiap bagian diajarkan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/32-advanced-capstone-challenge" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    <div class="prose wide lab-pre"><aside class="callout caution" data-icon="🛑">
+<p><span class="callout-title">Hati-hati</span><strong>💲💲💲 Ini proyek termahal dalam kursus ini, karena menjalankan layanan kelas produksi.</strong>
+Application Gateway WAF_v2, Azure Firewall (jika Anda memilihnya), Azure Bastion, private endpoint, NAT gateway, dan
+database SQL kedua ditagih <strong>untuk setiap jam keberadaannya, bahkan ketika tidak ada satu permintaan pun yang masuk</strong> —
+ibarat argo taksi yang terus berjalan selama taksi menunggu di depan rumah, meskipun Anda belum naik. Jangan pernah
+membiarkan lingkungan lengkapnya menyala semalaman atau &quot;sampai akhir pekan depan&quot;. Bangun secara bertahap, buktikan
+setiap tahap, <strong>hapus</strong>, lalu bangun ulang dari Bicep Anda di sesi berikutnya; kemampuan membangun ulang itulah inti dari
+infrastructure as code (<em>infrastruktur sebagai kode</em>). Buat budget (anggaran) dengan alert <em>sebelum</em> deployment pertama
+Anda, dan hitung biaya desain Anda untuk region Anda di
+<a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">Azure pricing calculator</a> (<em>kalkulator harga</em>) sebelum membangunnya.</p>
+</aside>
+</div>
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Anda merancang dan membangun setiap resource sendiri. Yang Anda perlukan adalah apa yang diajarkan di Makan Siang 22–31.</p>
+    <section class="lab-section" id="-ringkasan-proyek" data-kind="intro"><h2><span class="title">🎯 Ringkasan proyek</span></h2><div class="prose wide"><p>Delapan minggu sebelum promo 12.12, Ibu Sari meresmikannya: toko online pindah ke Azure secara sungguhan. Capstone inti
+(Lab 21) sudah membuktikan bahwa satu availability zone (<em>zona ketersediaan</em>) bisa gagal total sementara toko tetap buka.
+Produksi membawa pertanyaan yang lebih sulit, dan kini setiap pertanyaan datang dari orang tertentu:</p>
+<ul>
+<li><strong>Ibu Sari:</strong> &quot;Kalau seluruh region Jakarta padam, berapa lama kita tidak bisa jualan, dan berapa banyak pesanan yang hilang?&quot;</li>
+<li><strong>Pak Budi:</strong> &quot;Kantor pusat memakai <code>10.0.0.0/16</code>. Saat kita menghubungkannya tahun depan, tidak boleh ada yang tumpang
+tindih, dan semua lalu lintas keluar harus lewat satu titik yang kita kendalikan.&quot;</li>
+<li><strong>Rizky</strong>, yang sedang menulis laporan keamanan sebagai kontraktor: &quot;Kenapa siapa pun di internet bisa menjangkau
+database? Dan di mana kata sandinya disimpan?&quot; Satu-satunya jawaban yang bisa diterima adalah <em>&quot;tidak bisa&quot;</em> dan
+<em>&quot;memang tidak ada kata sandi&quot;</em>.</li>
+<li><strong>Tim keuangan:</strong> &quot;Berapa biayanya setiap bulan, dan siapa yang akan sadar kalau biayanya berlipat dua?&quot;</li>
+<li><strong>Dewi:</strong> &quot;Saya ingin merilis dari Git, bukan dengan mengeklik ke sana kemari di portal.&quot;</li>
+</ul>
+<p>Tugas Anda: rancang platformnya, bangun sebagai kode, buktikan setiap persyaratan di bawah dengan pemeriksaan penerimaan,
+tulis rencana pemulihan bencana (disaster recovery, DR) dan tinjauan arsitekturnya, lalu bongkar semuanya. Tidak ada
+instruksi langkah demi langkah — justru itulah tantangannya. Semua yang Anda butuhkan sudah diajarkan di Makan Siang 22–31
+(lihat <a href="#-di-mana-setiap-bagian-diajarkan">di mana setiap bagian diajarkan</a>).</p>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>
+<p>Anda sudah mempelajari Makan Siang 22–31 (mengerjakan lab-labnya sangat membantu), dan idealnya juga Lab 21.
+<a href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/21-core-capstone/infra" target="_blank" rel="noopener">Modul Bicep</a> milik lab itu adalah titik awal yang masuk akal untuk tier web, SQL, dan
+pemantauan.</p>
+</li>
+<li>
+<p>Sebuah <strong>subscription lab pribadi atau khusus</strong> tempat Anda berperan sebagai <strong>Owner</strong>. Role assignment, policy
+assignment, dan deployment stack dengan deny settings semuanya membutuhkan role tersebut. Subscription gratis dan pelajar
+punya kuota vCPU yang kecil dan kredit terbatas, jadi periksa keduanya sebelum mulai.</p>
+</li>
+<li>
+<p><strong>Azure Cloud Shell (Bash)</strong> atau Azure CLI lokal dengan Bicep. VS Code dengan ekstensi Bicep membuat penulisan template
+jauh lebih mudah.</p>
+</li>
+<li>
+<p><strong>Repositori Git privat</strong> milik Anda sendiri untuk semua hasil kerja (deliverable). Simpan pekerjaan Anda di sana, dan
+gunakan folder kursus ini hanya untuk pengaturan bersama:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/32-advanced-capstone-challenge
+source ../common/config.sh      # gives you $LOCATION, $SECONDARY_LOCATION, $SUFFIX and the helper functions
+</code></pre></div>
+</li>
+<li>
+<p>Kuota yang cukup: sekitar 6 vCPU dari keluarga B-series kecil di region utama Anda dan 2 di region sekunder. Jalankan
+pemeriksaan yang sama dengan <code>&quot;$SECONDARY_LOCATION&quot;</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm list-usage --location &quot;$LOCATION&quot; -o table | grep -i -E &quot;total regional vcpus|bs family|basv2|bsv2&quot;
+</code></pre></div>
+</li>
+</ul>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab memakan biaya selama masih ada. Akhiri <strong>setiap</strong> sesi dengan <a href="#-bersihkan">Bersihkan</a>, meskipun Anda
+berhenti di tengah jalan.</p>
+</aside>
+</div></section><section class="lab-section" id="-cara-kerja-tantangan-ini" data-kind="mode-info"><h2><span class="title">🧭 Cara kerja tantangan ini</span></h2><div class="prose wide"><ul>
+<li><strong>Persyaratan (R1–R12)</strong> menjelaskan <em>apa</em> yang harus benar, tidak pernah <em>bagaimana</em> caranya. <strong>Batasan (C1–C7)</strong> tidak
+bisa ditawar. <strong>Daftar periksa penerimaan (A1–A19)</strong> memberi tahu Anda persis cara membuktikan setiap persyaratan.</li>
+<li><strong>Deliverable</strong> (hasil kerja yang diserahkan), semuanya di repositori Anda sendiri:</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Deliverable</th>
+<th>Isinya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>infra/</code></td>
+<td>Bicep: sebuah <code>main.bicep</code> (scope subscription cocok untuk ini) ditambah satu modul per area, dan sebuah <code>main.bicepparam</code> tanpa rahasia di dalamnya</td>
+</tr>
+<tr>
+<td><code>DR-PLAN.md</code></td>
+<td>Rencana pemulihan bencana Anda untuk produksi di Indonesia Central, termasuk hasil latihan (drill) yang terukur (R9)</td>
+</tr>
+<tr>
+<td><code>ARCHITECTURE-REVIEW.md</code></td>
+<td>Tinjauan Well-Architected Anda, risiko teratas, trade-off (kompromi yang disengaja), dan temuan yang diterima (R10, R12)</td>
+</tr>
+<tr>
+<td><code>COST.md</code></td>
+<td>Estimasi biaya Anda dan opsi lebih murah yang Anda pertimbangkan (R11)</td>
+</tr>
+<tr>
+<td><code>evidence/</code></td>
+<td>Output setiap pemeriksaan penerimaan, hasil KQL, dan tangkapan layar. Samarkan ID subscription, ID tenant, dan alamat email</td>
+</tr>
+</tbody>
+</table></div>
+<ul>
+<li><strong>Bekerja per tahap.</strong> Setiap tahap menambahkan modul ke template yang sama dan di-deploy melalui stack yang sama.
+Buktikan apa yang sudah Anda bangun, lalu hapus, atau pertahankan hanya selama Anda masih aktif mengerjakannya:</li>
+</ul>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Tahap</th>
+<th>Yang dibangun</th>
+<th>Dibuktikan dengan</th>
+<th>Perkiraan waktu</th>
+<th>Biaya selama berjalan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 · Fondasi</td>
+<td>resource group dan tag, budget, initiative policy, hub dan spoke, firewall atau NVA, route table, Log Analytics</td>
+<td>A1–A3, A14, A18</td>
+<td>2–3 jam</td>
+<td>💲💲 (💲💲💲 dengan Azure Firewall)</td>
+</tr>
+<tr>
+<td>2 · Data</td>
+<td>server SQL di dua region, database dan failover group, penyimpanan, private endpoint dan zona DNS</td>
+<td>A9, A10, A12</td>
+<td>2 jam</td>
+<td>💲💲</td>
+</tr>
+<tr>
+<td>3 · Web</td>
+<td>tier web lintas zona, managed identity, Application Gateway WAF_v2 dan policy-nya</td>
+<td>A4–A8, A11, A13</td>
+<td>2 jam</td>
+<td>💲💲💲</td>
+</tr>
+<tr>
+<td>4 · Operasional</td>
+<td>diagnostic settings, Azure Monitor Agent dan DCR, alert KQL, retensi backup, latihan pemulihan</td>
+<td>A15, A16</td>
+<td>1–2 jam</td>
+<td>💲💲💲</td>
+</tr>
+<tr>
+<td>5 · Pembuktian</td>
+<td>uji penolakan (deny), latihan DR, tinjauan Defender for Cloud, dokumen, lalu semua pemeriksaan sekali lagi</td>
+<td>A2, A12, A17, A19</td>
+<td>2 jam</td>
+<td>💲💲💲</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-persyaratan" data-kind="other"><h2><span class="title">📋 Persyaratan</span></h2><div class="prose wide"><h3 id="r1--semuanya-sebagai-kode-di-bawah-deployment-stack">R1 · Semuanya sebagai kode, di bawah deployment stack <a class="h-anchor" href="#r1--semuanya-sebagai-kode-di-bawah-deployment-stack" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li>Setiap resource Azure didefinisikan dalam <strong>modul Bicep</strong> di repositori Anda. Budget dan pengaturan Defender for Cloud
+adalah satu-satunya hal yang boleh Anda konfigurasi di portal. Region, ukuran, suffix, dan grup admin Entra adalah
+parameter; tidak ada ID subscription yang ditulis langsung di dalam kode (hard-coded).</li>
+<li>Anda men-deploy melalui <strong>deployment stack</strong> (<code>az stack sub create</code> atau <code>az stack group create</code>) dengan <strong>deny
+settings</strong> minimal <code>denyDelete</code>, dan dengan <code>deleteAll</code> sebagai tindakan untuk resource yang tidak lagi dikelola
+(unmanaged), sehingga menghapus sebuah resource dari template juga menghapusnya dari Azure.</li>
+<li>Anda meninjau setiap perubahan dengan what-if sebelum menerapkannya, dan men-deploy ulang template yang tidak berubah
+tidak mengubah apa pun.</li>
+</ol>
+<h3 id="r2--hub-dan-spoke-dengan-satu-pintu-keluar-yang-terkendali">R2 · Hub dan spoke dengan satu pintu keluar yang terkendali <a class="h-anchor" href="#r2--hub-dan-spoke-dengan-satu-pintu-keluar-yang-terkendali" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li>Sebuah VNet (<em>jaringan virtual</em>) <strong>hub</strong> dan setidaknya dua <strong>spoke</strong> (web dan data) di region utama. Setiap spoke
+hanya di-peer dengan hub. Tidak ada rentang alamat yang tumpang tindih dengan VNet lain atau dengan <code>10.0.0.0/16</code> milik
+kantor pusat, dan hub menyisakan ruang untuk <code>GatewaySubnet</code> (VPN ke kantor pusat menyusul nanti, lihat Makan Siang 26).</li>
+<li>Sebuah <strong>firewall</strong> terpusat: Azure Firewall atau network virtual appliance (NVA, VM yang berperan sebagai perangkat
+jaringan) Linux kecil dengan IP forwarding.</li>
+<li><strong>Route table</strong> mengirim lalu lintas setiap spoke yang menuju internet (<code>0.0.0.0/0</code>) serta lalu lintas antar-spoke
+melalui firewall atau NVA. Subnet Application Gateway adalah pengecualiannya (lihat petunjuk).</li>
+<li>Tidak ada VM (<em>komputer virtual</em>) tier web atau data yang memiliki alamat IP publik. Setiap subnet workload punya NSG,
+dan tidak ada NSG yang mengizinkan SSH atau RDP dari internet. Anda mengelola VM melalui Run Command atau Azure Bastion.</li>
+</ol>
+<h3 id="r3--tier-web-zone-redundant-di-balik-web-application-firewall">R3 · Tier web zone-redundant di balik web application firewall <a class="h-anchor" href="#r3--tier-web-zone-redundant-di-balik-web-application-firewall" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li>Tier web berjalan di spoke web di <strong>setidaknya dua availability zone</strong>, baik sebagai Flexible scale set (<em>Kumpulan
+Skala Komputer Virtual</em>, Makan Siang 23) maupun sebagai dua VM atau lebih. Tier ini memakai
+<code>labs/common/cloud-init-web.yml</code> atau aplikasi Anda sendiri, dan harus menjawab di <code>/health</code>.</li>
+<li><strong>Application Gateway WAF_v2</strong> berjalan di subnet khusus miliknya sendiri dengan zona yang ditetapkan secara eksplisit,
+sebuah <strong>WAF policy dalam mode Prevention</strong> (memblokir, bukan sekadar mencatat) yang memakai managed rule set, dan
+health probe di <code>/health</code>.</li>
+<li>Permintaan normal melalui gateway mengembalikan <strong>200</strong>, dan percobaan SQL injection yang terang-terangan mengembalikan
+<strong>403</strong>. Server web hanya menerima HTTP dari subnet gateway.</li>
+<li><em>(Opsional)</em> HTTPS, memakai sertifikat yang disimpan di Key Vault dan dibaca oleh user-assigned managed identity milik
+gateway.</li>
+</ol>
+<h3 id="r4--data-privat-yang-bertahan-saat-sebuah-region-mengalami-gangguan">R4 · Data privat yang bertahan saat sebuah region mengalami gangguan <a class="h-anchor" href="#r4--data-privat-yang-bertahan-saat-sebuah-region-mengalami-gangguan" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li><strong>Azure SQL</strong>: satu logical server di masing-masing dari dua region Anda, keduanya dengan <strong>Microsoft Entra-only
+authentication</strong> (hanya login lewat Entra, tanpa login SQL berbasis kata sandi) dan grup admin Entra yang sama, serta
+sebuah database di dalam <strong>failover group</strong> dengan kebijakan failover yang dikelola pelanggan (customer-managed). Klien
+terhubung melalui read-write listener, tidak pernah melalui nama server. <em>(Penawaran database gratis tidak bisa
+bergabung dengan failover group, jadi gunakan database serverless atau provisioned yang kecil.)</em></li>
+<li>Sebuah <strong>storage account</strong> (<em>akun penyimpanan</em>) untuk faktur dengan <strong>shared key access dinonaktifkan</strong>, versi TLS
+minimum 1.2, blob soft delete, container soft delete, dan versioning.</li>
+<li><strong>Private endpoint</strong> (<em>titik akhir privat</em>) untuk kedua server SQL dan untuk layanan blob milik storage account,
+ditempatkan di spoke data. Zona DNS privat <code>privatelink.database.windows.net</code> dan <code>privatelink.blob.core.windows.net</code>
+di-link sehingga setiap VNet yang membutuhkannya me-resolve nama-nama itu ke IP privat.</li>
+<li><strong>Akses jaringan publik dinonaktifkan</strong> pada kedua server SQL dan pada storage account.</li>
+</ol>
+<h3 id="r5--identitas-bukan-rahasia">R5 · Identitas, bukan rahasia <a class="h-anchor" href="#r5--identitas-bukan-rahasia" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li>Tier web memakai <strong>managed identity</strong> (user-assigned direkomendasikan) untuk semua yang dibacanya.</li>
+<li>Setiap role assignment memakai role bawaan dengan hak paling minim, pada scope tersempit yang masih berfungsi (prinsip
+hak akses minimum, least privilege). Gunakan role data untuk data. Workload tidak pernah mendapat Owner atau
+Contributor.</li>
+<li><strong>Tidak ada rahasia di dalam kode</strong> (lihat C4). Jika Anda men-deploy dari GitHub Actions, gunakan OpenID Connect dengan
+federated credential (Makan Siang 22), jangan pernah client secret.</li>
+</ol>
+<h3 id="r6--tata-kelola-sebagai-kode">R6 · Tata kelola sebagai kode <a class="h-anchor" href="#r6--tata-kelola-sebagai-kode" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li>Sebuah <strong>initiative policy kustom</strong> yang memuat setidaknya policy berikut: <em>Allowed locations</em> (tepat dua region Anda),
+<em>Require a tag on resource groups</em> (<code>cost-center</code>), dan <em>Inherit a tag from the resource group if missing</em> (tag yang
+sama). Initiative ini ditetapkan di scope management group atau subscription (baca C6 dulu), dengan remediation task
+untuk tag yang diwarisi.</li>
+<li>Initiative dan assignment-nya juga didefinisikan dalam Bicep. Stack terpisah di scope yang lebih tinggi tidak masalah.</li>
+<li>Setiap exemption dicatat di <code>ARCHITECTURE-REVIEW.md</code> beserta alasan dan tanggal kedaluwarsanya.</li>
+</ol>
+<h3 id="r7--observabilitas-yang-bisa-dikueri">R7 · Observabilitas yang bisa dikueri <a class="h-anchor" href="#r7--observabilitas-yang-bisa-dikueri" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li>Satu <strong>Log Analytics workspace</strong> di region utama. <strong>Diagnostic settings</strong> mengirim log ke workspace itu dari
+Application Gateway (termasuk log firewall-nya), Azure Firewall (jika Anda memakainya), database SQL, layanan blob
+milik storage account, dan Key Vault (jika Anda memakainya).</li>
+<li><strong>Azure Monitor Agent</strong> berjalan di setiap VM, dengan <strong>data collection rule</strong> (DCR) yang setidaknya mengumpulkan Syslog
+atau performance counter.</li>
+<li>Setidaknya <strong>dua log search alert rule (KQL)</strong> memberi tahu sebuah action group, misalnya &quot;blokir WAF melonjak&quot; dan
+&quot;sebuah server web berhenti mengirim heartbeat&quot;, dan Anda sudah melihat masing-masing alert itu terpicu.</li>
+</ol>
+<h3 id="r8--cadangan-backup-yang-sudah-pernah-dipulihkan">R8 · Cadangan (backup) yang sudah pernah dipulihkan <a class="h-anchor" href="#r8--cadangan-backup-yang-sudah-pernah-dipulihkan" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li><strong>SQL:</strong> retensi point-in-time restore minimal 14 hari, ditambah kebijakan long-term retention (LTR) (misalnya backup
+mingguan yang disimpan selama empat minggu) pada database primer <strong>dan</strong> sekunder, sehingga LTR tetap berjalan setelah
+failover.</li>
+<li><strong>Blob:</strong> soft delete dan versioning, seperti di R4.2. Point-in-time restore untuk container bersifat opsional.</li>
+<li>Sebuah <strong>latihan pemulihan (restore drill)</strong>: pulihkan database ke suatu titik waktu sebagai database baru, dan
+kembalikan faktur yang tertimpa atau terhapus dari versi sebelumnya. Catat berapa lama masing-masing berlangsung, lalu
+hapus salinan hasil pemulihan.</li>
+<li>Tier web tidak menyimpan state (data sesi atau berkas yang harus dipertahankan). VM yang hilang diganti dari kode atau
+oleh scale set, tidak pernah dipulihkan dari backup.</li>
+</ol>
+<h3 id="r9--rencana-dr-untuk-region-tanpa-pasangan">R9 · Rencana DR untuk region tanpa pasangan <a class="h-anchor" href="#r9--rencana-dr-untuk-region-tanpa-pasangan" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li><code>DR-PLAN.md</code> menargetkan <strong>produksi di Indonesia Central</strong>, yang tidak memiliki region berpasangan (<em>pasangan
+wilayah</em>). Sebutkan region sekunder Anda dan jelaskan alasan pilihan Anda (latensi ke pembeli di Indonesia, layanan apa
+saja yang tersedia di sana, residensi data).</li>
+<li>Untuk setiap komponen, nyatakan apa yang direplikasi dan bagaimana caranya (failover group, salinan blob atau object
+replication, deploy ulang dari Bicep), RTO (recovery time objective — berapa lama layanan boleh terhenti sampai pulih)
+dan RPO (recovery point objective — seberapa banyak data, diukur dalam waktu, yang boleh hilang) yang Anda harapkan,
+serta apa pun yang biasanya ditangani region berpasangan tetapi kini harus Anda kerjakan sendiri. Sebagai contoh,
+geo-redundant backup storage untuk Azure SQL tidak tersedia di region tanpa pasangan.</li>
+<li>Runbook (panduan langkah operasional) untuk failover dan failback: siapa yang memutuskan, urutan langkahnya, dan cara
+Anda memeriksa bahwa toko berfungsi.</li>
+<li>Sebuah <strong>latihan (drill)</strong>: lakukan failover pada failover group ke region sekunder, ukur waktu sampai listener
+me-resolve ke private endpoint milik primer yang baru (dan, jika Anda punya klien SQL di dalam VNet, sampai operasi
+tulis berhasil), lalu lakukan failback. Catat kedua waktu tersebut.</li>
+</ol>
+<h3 id="r10--postur-keamanan">R10 · Postur keamanan <a class="h-anchor" href="#r10--postur-keamanan" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li>Tinjau rekomendasi <strong>Defender for Cloud</strong> (<em>Microsoft Defender untuk Cloud</em>) untuk resource group Anda. Perbaiki setiap
+item dengan tingkat keparahan High, atau catat di <code>ARCHITECTURE-REVIEW.md</code> alasan Anda menerimanya (atau kecualikan
+dengan tanggal kedaluwarsa).</li>
+<li>Jika Anda memakai Key Vault, gunakan model izin RBAC (<em>kontrol akses berbasis peran</em>). Putuskan apakah purge protection
+akan diaktifkan, dan catat trade-off-nya: fitur ini melindungi produksi, tetapi juga membuat nama vault tetap tercadang
+setelah setiap pembersihan.</li>
+</ol>
+<h3 id="r11--pagar-pengaman-biaya">R11 · Pagar pengaman biaya <a class="h-anchor" href="#r11--pagar-pengaman-biaya" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li>Sebuah <strong>budget</strong> dengan alert pada 50%, 80%, dan 100% (atau ambang Anda sendiri) sudah ada <strong>sebelum</strong> deployment
+mahal pertama Anda.</li>
+<li>Setiap resource group membawa tag <code>cost-center</code>, <code>environment</code>, dan <code>workload</code>, ditambah <code>course</code> dan <code>lunch=32</code> (lihat
+C5).</li>
+<li><code>COST.md</code> berisi estimasi dari pricing calculator per jam, per hari, dan per bulan 30 hari, menyebutkan tiga komponen
+termahal, dan menjelaskan setidaknya dua alternatif lebih murah yang Anda pertimbangkan (misalnya NVA alih-alih Azure
+Firewall).</li>
+</ol>
+<h3 id="r12--tinjauan-well-architected">R12 · Tinjauan Well-Architected <a class="h-anchor" href="#r12--tinjauan-well-architected" aria-label="Tautan ke bagian ini">#</a></h3>
+<ol>
+<li><code>ARCHITECTURE-REVIEW.md</code> menilai desain Anda terhadap kelima pilar Well-Architected, memakai
+<a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/21-core-capstone/review-checklist.id.md" target="_blank" rel="noopener">daftar periksa tinjauan</a> dari Lab 21, asesmen resmi
+<a href="https://learn.microsoft.com/assessments/azure-architecture-review/" target="_blank" rel="noopener">Azure Well-Architected Review</a>, atau keduanya.</li>
+<li>Dokumen itu mencantumkan lima risiko teratas Anda, masing-masing dengan pemilik dan langkah berikutnya, serta setidaknya
+tiga trade-off yang eksplisit, misalnya biaya versus keandalan untuk region sekunder.</li>
+</ol>
+</div></section><section class="lab-section" id="-batasan" data-kind="other"><h2><span class="title">🚧 Batasan</span></h2><div class="prose wide"><ul>
+<li><strong>C1 · Biaya.</strong> 💲💲💲. Biarkan lingkungan lengkap menyala hanya selama Anda sedang mengerjakannya, dan hapus di antara
+sesi (lihat <a href="#-bersihkan">Bersihkan</a>). Gunakan SKU (varian produk) terkecil yang memenuhi setiap persyaratan: VM
+B-series, database serverless atau provisioned yang kecil, autoscaling Application Gateway dengan batas maksimum rendah,
+dan tier Basic atau Standard dari Azure Firewall jika Anda memilihnya (jangan pernah Premium). Aktifkan long-term
+retention hanya di sesi terakhir Anda, karena backup LTR hidup lebih lama daripada database-nya.</li>
+<li><strong>C2 · Region.</strong> Gunakan <code>$LOCATION</code> dan <code>$SECONDARY_LOCATION</code> dari <code>labs/common/config.sh</code> (secara default Southeast
+Asia dan East Asia). Untuk meniru produksi secara persis, setel <code>LOCATION=indonesiacentral</code> dengan region sekunder seperti
+<code>southeastasia</code>, tetapi hanya setelah memastikan setiap layanan dan SKU yang Anda butuhkan tersedia di kedua region untuk
+subscription Anda. Apa pun pilihannya, bangunlah seolah-olah region utama Anda tidak punya pasangan: jangan mengandalkan
+fitur region berpasangan apa pun.</li>
+<li><strong>C3 · Ukuran.</strong> Paling banyak 6 vCPU di region utama dan 2 di region sekunder, satu Application Gateway, dan database
+SQL berukuran 2 vCore atau kurang.</li>
+<li><strong>C4 · Tidak ada rahasia di dalam kode.</strong> Kata sandi, account key, token SAS, connection string yang memuat kredensial,
+dan private key tidak pernah masuk ke Bicep, file parameter, skrip, cloud-init, atau YAML pipeline, dan tidak pernah
+masuk ke riwayat Git Anda. Gunakan autentikasi Entra, managed identity, dan Key Vault. Gunakan hanya SSH public key,
+atau tanpa SSH sama sekali. Aktifkan GitHub secret scanning dan push protection untuk repositori Anda.</li>
+<li><strong>C5 · Nama dan tag.</strong> Gunakan singkatan CAF (Cloud Adoption Framework) ditambah <code>$SUFFIX</code> (<code>vnet-</code>, <code>snet-</code>, <code>afw-</code>,
+<code>agw-</code>, <code>waf-</code>, <code>sql-</code>, <code>st</code>, <code>kv-</code>, <code>log-</code>, <code>pep-</code>). Beri nama resource group dengan <code>rg_name 32 &lt;purpose&gt;</code> (misalnya
+<code>rg-lunch32-hub-&lt;suffix&gt;</code>) dan beri tag <code>course=azure-fundamentals-lunches</code> dan <code>lunch=32</code>, agar pemeriksaan dan
+<code>delete_lunch_rgs 32</code> bisa menemukannya.</li>
+<li><strong>C6 · Kemungkinan besar Anda berbagi subscription dengan lab-lab lain.</strong> Policy yang ditetapkan di scope subscription
+atau management group memengaruhi setiap lab lain yang Anda jalankan di sana, dan <em>Allowed locations</em> akan memblokir
+deployment ke region lain mana pun. Gunakan subscription atau management group khusus, atau mulai assignment dengan
+enforcement mode <code>DoNotEnforce</code> dan alihkan ke <code>Default</code> hanya selama Anda sedang mengerjakan capstone.</li>
+<li><strong>C7 · Batas waktu.</strong> Rencanakan 8–12 jam. Jika waktu Anda habis, pangkas cakupan pekerjaan, jangan potong kompas:
+pertahankan R4.4 dan C4, lalu catat apa pun yang Anda tinggalkan di <code>ARCHITECTURE-REVIEW.md</code>.</li>
+</ul>
+</div></section><section class="lab-section" id="-arsitektur-yang-disarankan" data-kind="other"><h2><span class="title">🗺 Arsitektur yang disarankan</span></h2><div class="prose wide"><p>Berikut satu desain yang memenuhi setiap persyaratan. Anda boleh mengubahnya, asalkan bisa mempertahankan perubahan itu
+dalam tinjauan Anda.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  shoppers([&quot;Pembeli saat promo 12.12&quot;])
+  subgraph primary[&quot;Region utama — di lab: region ($LOCATION), di produksi: Indonesia Central&quot;]
+    subgraph hub[&quot;VNet hub&quot;]
+      fw[&quot;Azure Firewall atau NVA&lt;br/&gt;semua lalu lintas keluar spoke&quot;]
+      gws[&quot;GatewaySubnet&lt;br/&gt;dicadangkan untuk kantor pusat&quot;]
+    end
+    subgraph web[&quot;Spoke web&quot;]
+      agw[&quot;Application Gateway WAF_v2&lt;br/&gt;mode Prevention · zona 1-2-3&quot;]
+      vms[&quot;Tier web di zona 1 dan 2&lt;br/&gt;managed identity · tanpa IP publik&quot;]
+    end
+    subgraph data[&quot;Spoke data&quot;]
+      pep[&quot;Private endpoint&lt;br/&gt;SQL primer · SQL sekunder · blob&quot;]
+    end
+    sql1[(&quot;SQL primer&lt;br/&gt;Entra-only · tanpa akses publik&quot;)]
+    st[(&quot;Storage · faktur&lt;br/&gt;versioning · soft delete&quot;)]
+    ops[&quot;Log Analytics · alert KQL&lt;br/&gt;action group · budget&quot;]
+  end
+  subgraph secondary[&quot;Region sekunder — pilihan Anda&quot;]
+    sql2[(&quot;SQL sekunder&quot;)]
+  end
+  shoppers --&gt;|&quot;HTTP(S)&quot;| agw
+  agw --&gt; vms
+  vms --&gt;|&quot;0.0.0.0/0 lewat route table&quot;| fw
+  vms --&gt;|&quot;listener me-resolve ke IP privat&quot;| pep
+  pep --&gt; sql1
+  pep --&gt; sql2
+  pep --&gt; st
+  sql1 -. &quot;failover group&quot; .-&gt; sql2
+  hub &lt;--&gt;|&quot;peering&quot;| web
+  hub &lt;--&gt;|&quot;peering&quot;| data
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Diagram ini melewatkan beberapa hal. Deployment stack dan initiative policy membungkus semuanya. Key Vault bersifat
+opsional. Region sekunder tidak punya tier web: saat bencana, Anda membangunnya ulang dari Bicep (cold standby — cadangan
+&quot;dingin&quot; yang baru dinyalakan saat dibutuhkan), kecuali RTO Anda menuntut cadangan &quot;hangat&quot; (warm standby, lihat
+tantangan tambahan).</p>
+</div></section><section class="lab-section" id="-daftar-periksa-penerimaan" data-kind="verify"><h2><span class="title">✅ Daftar periksa penerimaan</span><button class="btn btn-sm done-toggle" type="button" data-task="-daftar-periksa-penerimaan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Jalankan pemeriksaan dari Cloud Shell. Tetapkan nama-nama Anda lebih dulu, lalu simpan output setiap pemeriksaan di bawah
+<code>evidence/</code> (misalnya <code>... | tee evidence/A06-appgw.txt</code>).</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>source ../common/config.sh
+RG_HUB=$(rg_name 32 hub)      # hub VNet, firewall or NVA, private DNS zones
+RG_WEB=$(rg_name 32 web)      # web spoke, Application Gateway, web tier, managed identity
+RG_DATA=$(rg_name 32 data)    # data spoke, primary SQL server, storage, private endpoints
+RG_DR=$(rg_name 32 dr)        # secondary SQL server, in $SECONDARY_LOCATION
+RG_OPS=$(rg_name 32 ops)      # Log Analytics, action group, alert rules
+# Change these to the names you chose:
+STACK=stack-nusa-prod
+HUB_VNET=vnet-nusa-hub; WEB_VNET=vnet-nusa-web
+AGW=agw-nusa-$SUFFIX; WAF_POLICY=waf-nusa-$SUFFIX
+SQL1=sql-nusa-1-$SUFFIX; SQL2=sql-nusa-2-$SUFFIX; FOG=fog-nusa-$SUFFIX; DB=sqldb-orders
+ST=stnusa$SUFFIX
+VM=$(az vm list -g &quot;$RG_WEB&quot; --query &quot;[0].name&quot; -o tsv)     # any web-tier VM
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Persyaratan</th>
+<th>Dibuktikan oleh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>R1 · Kode dan stack</td>
+<td>A1, A2</td>
+</tr>
+<tr>
+<td>R2 · Hub dan spoke</td>
+<td>A3, A4, A5</td>
+</tr>
+<tr>
+<td>R3 · Tier web dan WAF</td>
+<td>A6, A7, A8</td>
+</tr>
+<tr>
+<td>R4 · Data privat</td>
+<td>A9, A10, A11, A12</td>
+</tr>
+<tr>
+<td>R5 · Identitas</td>
+<td>A13</td>
+</tr>
+<tr>
+<td>R6 · Tata kelola</td>
+<td>A14</td>
+</tr>
+<tr>
+<td>R7 · Observabilitas</td>
+<td>A8, A15</td>
+</tr>
+<tr>
+<td>R8 · Backup</td>
+<td>A16</td>
+</tr>
+<tr>
+<td>R9 · Rencana DR</td>
+<td>A12, A19</td>
+</tr>
+<tr>
+<td>R10 · Postur keamanan</td>
+<td>A17</td>
+</tr>
+<tr>
+<td>R11 · Biaya</td>
+<td>A18, A19</td>
+</tr>
+<tr>
+<td>R12 · Tinjauan</td>
+<td>A19</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>A1 · Stack ada dan melindungi resource-nya</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az stack sub show --name &quot;$STACK&quot; \
+  --query &quot;{state:provisioningState, deny:denySettings.mode, managed:length(resources)}&quot; -o table
+az deployment sub what-if --location &quot;$LOCATION&quot; \
+  --template-file infra/main.bicep --parameters infra/main.bicepparam
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> status stack adalah succeeded, <code>deny</code> bernilai <code>denyDelete</code> atau <code>denyWriteAndDelete</code>, <code>managed</code> menghitung
+setiap resource yang Anda harapkan, dan what-if pada template Anda yang tidak berubah tidak menampilkan pembuatan,
+penghapusan, atau modifikasi yang nyata. (Jika Anda memakai stack di level resource group, jalankan
+<code>az stack group show -g &lt;rg&gt; --name ...</code> dan <code>az deployment group what-if</code> sebagai gantinya.)</p>
+<p><strong>A2 · Deny settings benar-benar menolak</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>AG=$(az monitor action-group list -g &quot;$RG_OPS&quot; --query &quot;[0].name&quot; -o tsv)
+az monitor action-group delete -g &quot;$RG_OPS&quot; -n &quot;$AG&quot;
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> penghapusan gagal dengan error otorisasi yang menyebut sebuah deny assignment. Jika penghapusan berhasil,
+berarti Anda termasuk excluded principal (identitas yang dikecualikan) milik stack, atau action group itu tidak dikelola
+oleh stack. Perbaiki hal itu, lalu deploy ulang stack untuk mengembalikan action group-nya.</p>
+<p><strong>A3 · Hub dan spoke</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network vnet peering list -g &quot;$RG_HUB&quot; --vnet-name &quot;$HUB_VNET&quot; \
+  --query &quot;[].{peering:name, state:peeringState, sync:peeringSyncLevel}&quot; -o table
+az network vnet list \
+  --query &quot;[?starts_with(name, &#x27;vnet-nusa&#x27;)].{vnet:name, ranges:join(&#x27;, &#x27;, addressSpace.addressPrefixes), peerings:length(virtualNetworkPeerings)}&quot; \
+  -o table      # adjust the name prefix to your naming
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> hub punya satu peering per spoke, masing-masing <code>Connected</code> dan <code>FullyInSync</code>. Setiap spoke punya tepat satu
+peering, dan tidak ada rentang yang tumpang tindih dengan rentang VNet lain atau dengan <code>10.0.0.0/16</code>.</p>
+<p><strong>A4 · Semua lalu lintas keluar melewati firewall</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>NIC_ID=$(az vm show -g &quot;$RG_WEB&quot; -n &quot;$VM&quot; --query &quot;networkProfile.networkInterfaces[0].id&quot; -o tsv)
+az network nic show-effective-route-table --ids &quot;$NIC_ID&quot; -o table
+az vm run-command invoke -g &quot;$RG_WEB&quot; -n &quot;$VM&quot; --command-id RunShellScript \
+  --scripts &quot;curl -s --max-time 10 https://api.ipify.org&quot; --query &quot;value[0].message&quot; -o tsv
+</code></pre></div>
+<p>✅ <strong>Lulus</strong> (VM harus dalam keadaan menyala): route <code>User</code> untuk <code>0.0.0.0/0</code> dengan next hop type <code>VirtualAppliance</code> dan IP
+privat firewall Anda berstatus <code>Active</code>, dan route default <code>0.0.0.0/0</code> ke <code>Internet</code> tampil <code>Invalid</code>. Alamat yang
+dilaporkan VM adalah IP publik firewall Anda (atau milik NAT gateway yang dipakai NVA), bukan milik Application Gateway.</p>
+<p><strong>A5 · Tidak ada IP publik pada workload, dan NSG di mana-mana</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm list -d --query &quot;[?publicIps!=&#x27;&#x27;].{vm:name, rg:resourceGroup, publicIp:publicIps}&quot; -o table
+az network vnet subnet list -g &quot;$RG_WEB&quot; --vnet-name &quot;$WEB_VNET&quot; \
+  --query &quot;[].{subnet:name, nsg:networkSecurityGroup.id, routeTable:routeTable.id}&quot; -o jsonc
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> tidak ada VM web atau data Anda yang muncul di daftar pertama. Di daftar kedua, setiap subnet workload punya
+NSG, subnet tier web punya route table Anda, dan subnet Application Gateway tidak punya route table. Ulangi perintah kedua
+untuk spoke data.</p>
+<p><strong>A6 · Application Gateway dan WAF policy-nya</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network application-gateway show -g &quot;$RG_WEB&quot; -n &quot;$AGW&quot; \
+  --query &quot;{tier:sku.tier, zones:zones, state:operationalState, wafPolicy:firewallPolicy.id}&quot; -o jsonc
+az network application-gateway waf-policy show -g &quot;$RG_WEB&quot; -n &quot;$WAF_POLICY&quot; \
+  --query &quot;{state:policySettings.state, mode:policySettings.mode, ruleSets:managedRules.managedRuleSets[].ruleSetType}&quot; -o jsonc
+az network application-gateway show-backend-health -g &quot;$RG_WEB&quot; -n &quot;$AGW&quot; \
+  --query &quot;backendAddressPools[].backendHttpSettingsCollection[].servers[].{server:address, health:health}&quot; -o table
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> tier-nya <code>WAF_v2</code>, setidaknya dua zona tercantum, statusnya <code>Running</code>, dan sebuah WAF policy terhubung.
+Policy itu <code>Enabled</code> dalam mode <code>Prevention</code> dengan managed rule set, dan setiap server backend berstatus <code>Healthy</code>.</p>
+<p><strong>A7 · WAF memblokir serangan</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>AGW_PIP_ID=$(az network application-gateway show -g &quot;$RG_WEB&quot; -n &quot;$AGW&quot; \
+  --query &quot;frontendIPConfigurations[?publicIPAddress].publicIPAddress.id | [0]&quot; -o tsv)
+AGW_IP=$(az network public-ip show --ids &quot;$AGW_PIP_ID&quot; --query ipAddress -o tsv)
+curl -s -o /dev/null -w &quot;normal: HTTP %{http_code}\n&quot; &quot;http://${AGW_IP}/?id=42&quot;
+curl -s -o /dev/null -w &quot;attack: HTTP %{http_code}\n&quot; &quot;http://${AGW_IP}/?id=1%27%20OR%201%3D1--&quot;
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> <code>normal: HTTP 200</code> dan <code>attack: HTTP 403</code>.</p>
+<p><strong>A8 · Blokir itu muncul di Log Analytics</strong> (jalankan KQL di halaman <strong>Logs</strong> milik workspace Anda)</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>AGWFirewallLogs
+| where TimeGenerated &gt; ago(1h)
+| summarize requests = count() by Action
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> muncul baris <code>Blocked</code>. Beri waktu 5–15 menit sampai log tiba. Jika diagnostic setting Anda menulis ke tabel
+bersama <em>Azure diagnostics</em> alih-alih tabel khusus per resource (resource-specific), gunakan
+<code>AzureDiagnostics | where Category == &quot;ApplicationGatewayFirewallLog&quot; | summarize count() by action_s</code> sebagai gantinya.</p>
+<p><strong>A9 · SQL hanya-Entra dan privat</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az sql server show -g &quot;$RG_DATA&quot; -n &quot;$SQL1&quot; --query publicNetworkAccess -o tsv
+az sql server show -g &quot;$RG_DR&quot; -n &quot;$SQL2&quot; --query publicNetworkAccess -o tsv
+az sql server ad-only-auth get -g &quot;$RG_DATA&quot; -n &quot;$SQL1&quot; --query azureAdOnlyAuthentication -o tsv
+az sql server ad-only-auth get -g &quot;$RG_DR&quot; -n &quot;$SQL2&quot; --query azureAdOnlyAuthentication -o tsv
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> <code>Disabled</code>, <code>Disabled</code>, <code>true</code>, <code>true</code>.</p>
+<p><strong>A10 · Storage terkunci rapat</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage account show -g &quot;$RG_DATA&quot; -n &quot;$ST&quot; \
+  --query &quot;{publicAccess:publicNetworkAccess, sharedKey:allowSharedKeyAccess, tls:minimumTlsVersion}&quot; -o table
+az storage account blob-service-properties show -g &quot;$RG_DATA&quot; --account-name &quot;$ST&quot; \
+  --query &quot;{versioning:isVersioningEnabled, blobSoftDelete:deleteRetentionPolicy.enabled, containerSoftDelete:containerDeleteRetentionPolicy.enabled}&quot; -o table
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> <code>Disabled</code>, <code>False</code>, dan <code>TLS1_2</code>, lalu <code>True</code>, <code>True</code>, dan <code>True</code>.</p>
+<p><strong>A11 · Nama-nama di-resolve ke private endpoint dari dalam jaringan</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network private-endpoint list -g &quot;$RG_DATA&quot; \
+  --query &quot;[].{endpoint:name, target:privateLinkServiceConnections[0].groupIds[0], status:privateLinkServiceConnections[0].privateLinkServiceConnectionState.status}&quot; -o table
+az network private-dns link vnet list -g &quot;$RG_HUB&quot; -z privatelink.database.windows.net \
+  --query &quot;[].{link:name, state:virtualNetworkLinkState}&quot; -o table      # -g: wherever your DNS zones live
+az vm run-command invoke -g &quot;$RG_WEB&quot; -n &quot;$VM&quot; --command-id RunShellScript \
+  --scripts &quot;getent hosts $FOG.database.windows.net $SQL1.database.windows.net $SQL2.database.windows.net $ST.blob.core.windows.net&quot; \
+  --query &quot;value[0].message&quot; -o tsv
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> ada setidaknya tiga endpoint (<code>sqlServer</code> dua kali dan <code>blob</code>), semuanya <code>Approved</code>. Setiap VNet yang
+membutuhkan zona tersebut punya link berstatus <code>Completed</code> (ulangi perintah kedua untuk
+<code>privatelink.blob.core.windows.net</code>). Keempat nama di-resolve ke alamat privat dari rentang Anda, dan listener di-resolve
+ke alamat yang sama dengan primer saat ini.</p>
+<p><strong>A12 · Failover group melakukan failover, lalu kembali</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az sql failover-group show -g &quot;$RG_DATA&quot; -s &quot;$SQL1&quot; -n &quot;$FOG&quot; \
+  --query &quot;{role:replicationRole, partner:partnerServers[0].replicationRole, policy:readWriteEndpoint.failoverPolicy, databases:length(databases)}&quot; -o table
+time az sql failover-group set-primary -g &quot;$RG_DR&quot; -s &quot;$SQL2&quot; -n &quot;$FOG&quot;      # planned failover to the secondary
+# ...now repeat the getent check from A11: the listener should resolve to the secondary&#x27;s private endpoint
+time az sql failover-group set-primary -g &quot;$RG_DATA&quot; -s &quot;$SQL1&quot; -n &quot;$FOG&quot;    # fail back
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> sebelum latihan, perannya <code>Primary</code> dan <code>Secondary</code>, kebijakannya <code>Manual</code>, dan ada setidaknya satu
+database. Setelah <code>set-primary</code> yang pertama, peran bertukar dan listener mengikutinya; setelah yang kedua, semuanya
+kembali seperti semula. Kedua waktu dicatat di <code>DR-PLAN.md</code>.</p>
+<p><strong>A13 · Identitas, bukan rahasia</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm list -g &quot;$RG_WEB&quot; --query &quot;[].{vm:name, identity:identity.type}&quot; -o table
+MI=$(az identity list -g &quot;$RG_WEB&quot; --query &quot;[0].principalId&quot; -o tsv)
+az role assignment list --all --assignee &quot;$MI&quot; --query &quot;[].{role:roleDefinitionName, scope:scope}&quot; -o table
+git -C ~/your-capstone-repo grep -n -I -i -E &quot;password|accountkey|sharedaccesssignature|sig=|client_secret|PRIVATE KEY&quot;
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> setiap VM web punya managed identity. Identitas itu hanya punya role data yang sempit (misalnya <em>Storage Blob
+Data Reader</em> pada storage account), tidak pernah Owner atau Contributor. Setiap temuan <code>git grep</code> adalah nama properti
+seperti <code>disablePasswordAuthentication</code>, tidak pernah nilai sungguhan.</p>
+<p><strong>A14 · Tata kelola sebagai kode</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az policy set-definition show -n &lt;initiative-name&gt; \
+  --query &quot;{initiative:displayName, policies:length(policyDefinitions)}&quot; -o table   # add --management-group &lt;mg-id&gt; if it lives there
+az policy assignment list --scope &lt;assignment-scope-id&gt; \
+  --query &quot;[?contains(policyDefinitionId, &#x27;policySetDefinitions&#x27;)].{assignment:name, enforcement:enforcementMode}&quot; -o table
+az policy state summarize --resource-group &quot;$RG_WEB&quot; --query &quot;results.nonCompliantResources&quot; -o tsv
+az network nsg create -g &quot;$RG_WEB&quot; -n nsg-policy-probe -l westus2 -o none          # this must be refused
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> initiative memuat setidaknya tiga policy, dan enforcement assignment-nya <code>Default</code>. Jumlah resource yang tidak
+patuh adalah 0, atau setiap item yang tersisa dijelaskan dalam tinjauan Anda. Probe-nya (resource uji coba) gagal dengan
+<code>RequestDisallowedByPolicy</code>. Jika berhasil, hapus <code>nsg-policy-probe</code> dan perbaiki assignment Anda. (Jika Anda mengaktifkan
+<code>--deny-settings-apply-to-child-scopes</code>, deny assignment milik stack mungkin menolak probe lebih dulu, jadi baca kode
+error-nya.)</p>
+<p><strong>A15 · Observabilitas</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>AGW_ID=$(az network application-gateway show -g &quot;$RG_WEB&quot; -n &quot;$AGW&quot; --query id -o tsv)
+az monitor diagnostic-settings list --resource &quot;$AGW_ID&quot; --query &quot;[].{setting:name, workspace:workspaceId}&quot; -o table
+az resource list --resource-type Microsoft.Insights/scheduledQueryRules --query &quot;[].{alert:name, rg:resourceGroup}&quot; -o table
+for i in {1..30}; do curl -s -o /dev/null &quot;http://${AGW_IP}/?id=1%27%20OR%201%3D1--&quot;; done   # makes the WAF alert fire
+</code></pre></div>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>Heartbeat
+| where TimeGenerated &gt; ago(15m)
+| summarize lastSeen = max(TimeGenerated) by Computer, Category
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> diagnostic setting gateway menunjuk ke workspace Anda (ulangi untuk resource lain di R7.1). Setidaknya ada
+dua scheduled query rule. Setiap VM muncul di <code>Heartbeat</code> dengan <code>lastSeen</code> dari beberapa menit terakhir (kolom <code>Category</code>
+menunjukkan agen mana yang mengirimnya). Dalam sekitar 15 menit setelah perulangan serangan, alert WAF Anda terpicu
+(<strong>Monitor → Alerts</strong>) dan email dari action group tiba. Untuk menguji alert heartbeat, hentikan satu VM web, tunggu
+alert-nya, lalu nyalakan lagi VM tersebut.</p>
+<p><strong>A16 · Backup dan latihan pemulihan</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az sql db str-policy show -g &quot;$RG_DATA&quot; -s &quot;$SQL1&quot; -n &quot;$DB&quot; --query retentionDays -o tsv
+az sql db ltr-policy show -g &quot;$RG_DATA&quot; -s &quot;$SQL1&quot; -n &quot;$DB&quot; -o table
+az sql db ltr-policy show -g &quot;$RG_DR&quot; -s &quot;$SQL2&quot; -n &quot;$DB&quot; -o table
+az sql db list -g &quot;$RG_DATA&quot; -s &quot;$SQL1&quot; --query &quot;[].{database:name, status:status}&quot; -o table
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> retensi 14 hari atau lebih, dan kedua database menampilkan retensi mingguan (atau bulanan) seperti <code>P4W</code>.
+Selama latihan, salinan hasil pemulihan muncul di daftar; hapus setelah Anda mencatat buktinya. Untuk pemulihan blob,
+bukti Anda menunjukkan faktur yang tertimpa berhasil dipulihkan dari versi sebelumnya. Ambil bukti itu dari dalam VNet,
+karena storage account tidak punya akses publik.</p>
+<p><strong>A17 · Tinjauan Defender for Cloud</strong> (jalankan KQL di <strong>Resource Graph Explorer</strong>)</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>securityresources
+| where type == &quot;microsoft.security/assessments&quot;
+| where id contains &quot;rg-lunch32-&quot;
+| where properties.status.code == &quot;Unhealthy&quot;
+| project recommendation = tostring(properties.displayName),
+          severity = tostring(properties.metadata.severity), id
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> setiap item <code>High</code> sudah diperbaiki atau tercantum di <code>ARCHITECTURE-REVIEW.md</code> beserta alasan Anda
+menerimanya (atau dicakup oleh exemption dengan tanggal kedaluwarsa). Rekomendasi diperbarui menurut jadwalnya sendiri,
+jadi jalankan query lagi tepat sebelum Anda menyatakan selesai.</p>
+<p><strong>A18 · Pagar pengaman biaya</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az consumption budget list --query &quot;[].{budget:name, amount:amount, timeGrain:timeGrain}&quot; -o table
+az group list --tag lunch=32 \
+  --query &quot;[].{rg:name, costCenter:tags.\&quot;cost-center\&quot;, environment:tags.environment, workload:tags.workload}&quot; -o table
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> sebuah budget ada (periksa ambang alert-nya di portal) dan dibuat sebelum deployment mahal pertama Anda.
+Setiap resource group capstone menampilkan ketiga tag. (Budget yang scope-nya sebuah resource group ditampilkan dengan
+<code>--resource-group</code>.)</p>
+<p><strong>A19 · Dokumen-dokumennya</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ls DR-PLAN.md ARCHITECTURE-REVIEW.md COST.md evidence/
+</code></pre></div>
+<p>✅ <strong>Lulus:</strong> semuanya ada. <code>DR-PLAN.md</code> memuat waktu latihan yang terukur serta RTO dan RPO untuk setiap komponen.
+<code>ARCHITECTURE-REVIEW.md</code> mencakup kelima pilar, lima risiko teratas, dan setidaknya tiga trade-off. <code>COST.md</code> memberikan
+angka per jam, per hari, dan per bulan.</p>
+<p>🏁 <strong>Anda selesai jika</strong> setiap pemeriksaan lulus dalam satu sesi, dokumen sudah di-commit ke repositori Anda, dan
+pemeriksaan terakhir di <a href="#-bersihkan">Bersihkan</a> tidak menemukan sisa apa pun.</p>
+</div></section><section class="lab-section" id="-petunjuk" data-kind="other"><h2><span class="title">💡 Petunjuk</span></h2><div class="prose wide"><p>Cobalah memenuhi persyaratan sendiri dulu. Buka petunjuk hanya ketika Anda benar-benar buntu.</p>
+<details class="plain">
+<summary>💡 Petunjuk 1 · Firewall atau NVA?</summary>
+<ul>
+<li><strong>NVA</strong> (opsi termurah, seperti di Lab 25): sebuah VM Linux kecil di hub. Aktifkan IP forwarding di NIC-nya
+(<code>enableIPForwarding: true</code> di Bicep) <em>dan</em> di dalam Linux (<code>net.ipv4.ip_forward=1</code>), lalu tambahkan aturan <code>iptables</code>
+MASQUERADE agar lalu lintas spoke bisa mencapai internet. Beri subnet NVA sebuah NAT gateway untuk lalu lintas keluarnya.
+Letakkan semua ini di cloud-init, agar pembangunan ulang tidak membutuhkan langkah manual.</li>
+<li><strong>Azure Firewall</strong>: membutuhkan subnet yang dinamai persis <code>AzureFirewallSubnet</code> (minimal /26), firewall policy dengan
+network rule dan application rule, serta sebuah diagnostic setting. Tier Basic juga membutuhkan
+<code>AzureFirewallManagementSubnet</code> (minimal /26) dan IP publik kedua untuk lalu lintas manajemen. Setiap tier ditagih per
+jam selama ter-deploy.</li>
+<li>Apa pun pilihannya, jika Azure Monitor Agent atau ekstensi VM berhenti bekerja setelah Anda menambahkan route
+<code>0.0.0.0/0</code>, berarti firewall Anda memblokir sesuatu yang dibutuhkan VM. Cari tujuan yang ditolak di log firewall atau
+NVA, lalu izinkan. Service tag seperti <code>AzureMonitor</code> membantu.</li>
+</ul>
+</details>
+<details class="plain">
+<summary>💡 Petunjuk 2 · Application Gateway dalam jaringan hub-and-spoke</summary>
+<ul>
+<li>Gateway membutuhkan <strong>subnet khusus</strong> yang tidak berisi apa pun selain dirinya. Microsoft merekomendasikan /24 untuk v2,
+agar ada ruang untuk menskalakan.</li>
+<li><strong>Tidak ada route table di subnet itu.</strong> Application Gateway v2 tidak mendukung pengiriman <code>0.0.0.0/0</code> melalui virtual
+appliance (forced tunnelling); hanya opsi <em>private deployment</em> yang terpisah yang melonggarkan aturan ini.</li>
+<li>Jika Anda memasang NSG di subnet gateway, izinkan TCP masuk 65200–65535 dari service tag <code>GatewayManager</code>, biarkan tag
+<code>AzureLoadBalancer</code> tetap diizinkan, izinkan port listener Anda dari internet, dan jangan blokir lalu lintas internet
+keluar.</li>
+<li>Tempatkan gateway di spoke web, berdekatan dengan backend-nya. Itulah cara paling sederhana untuk menghindari asymmetric
+routing (paket pergi lewat satu jalur tetapi pulang lewat jalur lain): route table subnet web bisa mengirim <code>0.0.0.0/0</code>
+ke firewall, sementara balasan ke gateway tetap di dalam VNet karena route milik VNet itu sendiri lebih spesifik.</li>
+<li>Di NSG subnet web, izinkan port 80 hanya dari rentang subnet gateway.</li>
+<li>Tetapkan zona secara eksplisit (<code>zones: ['1', '2', '3']</code>) dan gunakan autoscaling dengan batas maksimum yang kecil.</li>
+</ul>
+</details>
+<details class="plain">
+<summary>💡 Petunjuk 3 · Private endpoint dan DNS</summary>
+<ul>
+<li>Gunakan satu zona DNS privat per layanan: <code>privatelink.database.windows.net</code> untuk kedua server SQL dan
+<code>privatelink.blob.core.windows.net</code> untuk blob storage. Tautkan setiap zona ke setiap VNet yang VM-nya harus me-resolve
+nama tersebut (hub dan spoke), atau pusatkan resolusi nama dengan DNS Private Resolver (Makan Siang 25).</li>
+<li>Biarkan setiap private endpoint mendaftarkan record-nya sendiri melalui <strong>private DNS zone group</strong>, alih-alih membuat A
+record secara manual.</li>
+<li>Private endpoint bisa berada di region yang berbeda dari resource-nya. Letakkan juga endpoint untuk server SQL
+<em>sekunder</em> di spoke data primer Anda, agar tier web tetap bisa menjangkau database setelah failover.</li>
+<li>Listener <code>&lt;fog&gt;.database.windows.net</code> adalah CNAME (nama alias di DNS) ke server primer saat ini. Karena endpoint kedua
+server ada di zona tersebut, rantainya selalu berakhir di IP privat yang benar. TTL DNS listener adalah 30 detik.</li>
+<li>Dengan akses publik dinonaktifkan, Anda tidak bisa menjangkau data plane storage dari Cloud Shell atau portal. Kerjakan
+urusan data dari dalam jaringan: gunakan VM alat (tools VM) kecil dengan Azure CLI terpasang dan managed identity yang
+memegang <em>Storage Blob Data Contributor</em>, lalu kendalikan VM itu lewat Run Command. Mengizinkan akses publik sementara
+untuk IP Anda sendiri adalah jalan pintas; jika Anda mengambilnya, catat di bukti Anda dan segera tutup kembali.</li>
+</ul>
+</details>
+<details class="plain">
+<summary>💡 Petunjuk 4 · Failover group tanpa kejutan</summary>
+<ul>
+<li>Konfigurasikan kedua server dengan cara yang sama: autentikasi Entra-only, grup admin Entra yang sama, akses publik
+dinonaktifkan. Untuk database-nya, pilih database serverless General Purpose dengan 1–2 vCore, bukan penawaran gratis.</li>
+<li>Buat failover group dengan kebijakan yang dikelola pelanggan (<code>failoverPolicy: 'Manual'</code> di Bicep). Dengan begitu Andalah
+yang memutuskan kapan failover terjadi — persis yang dibutuhkan untuk latihan.</li>
+<li>Nama failover group menjadi nama DNS, jadi harus unik secara global.</li>
+<li>Database sekunder yang dibuat oleh failover group tidak zone-redundant secara default. Aktifkan zone redundancy
+setelahnya jika desain Anda membutuhkannya.</li>
+<li>Jika dua region Anda bukan pasangan region Azure (seperti Indonesia Central dengan region lain mana pun), beri database
+primer dan sekunder jendela pemeliharaan (maintenance window) yang berbeda.</li>
+<li>Konfigurasikan kebijakan LTR yang sama pada database sekunder. Backup LTR hanya diambil selama database berstatus primer,
+jadi langkah ini memastikan backup tetap berjalan setelah failover.</li>
+</ul>
+</details>
+<details class="plain">
+<summary>💡 Petunjuk 5 · Deployment stack dalam praktik</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az stack sub create --name stack-nusa-prod --location &quot;$LOCATION&quot; \
+  --template-file infra/main.bicep --parameters infra/main.bicepparam \
+  --action-on-unmanage deleteAll --deny-settings-mode denyDelete
+</code></pre></div>
+<ul>
+<li><code>main.bicep</code> dengan scope subscription bisa membuat resource group-nya sendiri, sehingga satu perintah
+<code>az stack sub delete --name stack-nusa-prod --action-on-unmanage deleteAll --yes</code> menghapus semuanya.</li>
+<li>Menjalankan <code>az stack sub create</code> lagi pada stack yang sudah ada akan memperbaruinya.</li>
+<li>Deny settings hanya melindungi control plane (lapisan pengelolaan resource, bukan isi datanya), jadi tidak akan
+menghentikan perubahan pada blob atau secret. Anda bisa mengecualikan paling banyak lima principal. Selama masih
+membangun, <code>denyDelete</code> adalah mode yang lebih ramah. Begitu semuanya stabil, coba <code>denyWriteAndDelete</code> dan lihat apa
+saja yang diblokirnya.</li>
+<li>Apa pun yang dibuat di luar stack di dalam resource group yang dikelola stack (misalnya database hasil pemulihan) membuat
+resource group itu tidak bisa dihapus. Hapus resource tersebut lebih dulu.</li>
+</ul>
+</details>
+<details class="plain">
+<summary>💡 Petunjuk 6 · Initiative policy</summary>
+<ul>
+<li>Cari ID definisi bawaan berdasarkan display name, misalnya
+<code>az policy definition list --query &quot;[?displayName=='Allowed locations'].name&quot; -o tsv</code>. Lakukan hal yang sama untuk
+<em>Require a tag on resource groups</em> dan <em>Inherit a tag from the resource group if missing</em>.</li>
+<li><em>Allowed locations</em> mengabaikan resource group dan resource yang lokasinya <code>global</code>. Zona DNS privat bersifat global,
+jadi aman. Tambahkan <em>Allowed locations for resource groups</em> jika Anda ingin resource group ikut dicakup.</li>
+<li>Policy Modify membutuhkan managed identity pada assignment-nya, role yang tercantum di <code>roleDefinitionIds</code> milik
+definisi yang diberikan kepada identitas tersebut di scope assignment, dan remediation task untuk resource yang sudah
+ada.</li>
+<li>Assignment di scope management group sebaiknya berada di stack terpisah di scope itu (<code>az stack mg create</code>).</li>
+</ul>
+</details>
+<details class="plain">
+<summary>💡 Petunjuk 7 · Dua alert KQL</summary>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>// WAF blocks spiking: evaluate every 5 minutes over the last 5 minutes
+AGWFirewallLogs
+| where Action == &quot;Blocked&quot;
+| summarize blocked = count() by bin(TimeGenerated, 5m)
+| where blocked &gt; 20
+</code></pre></div>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>// A web server stopped sending heartbeats
+Heartbeat
+| summarize lastSeen = max(TimeGenerated) by Computer
+| where lastSeen &lt; ago(10m)
+</code></pre></div>
+<ul>
+<li>Di Bicep, setiap alert adalah resource <code>Microsoft.Insights/scheduledQueryRules</code> yang menunjuk ke workspace dan action
+group Anda.</li>
+<li>Query heartbeat hanya bisa mendeteksi komputer yang pernah melapor pada suatu saat di dalam jendela waktu aturan
+tersebut. Buat jendelanya jauh lebih panjang daripada ambang 10 menit, misalnya satu jam.</li>
+</ul>
+</details>
+<details class="plain">
+<summary>💡 Petunjuk 8 · Merencanakan region tanpa pasangan</summary>
+<ul>
+<li>Indonesia Central tidak punya region berpasangan, jadi tidak ada yang direplikasi otomatis ke region mitra untuk Anda.
+Misalnya, geo-redundant backup storage untuk Azure SQL tidak tersedia di sana. Anda sendiri yang memilih, dan membayar,
+setiap salinan.</li>
+<li>Jawaban yang umum: failover group untuk pesanan; object replication atau penyalinan terjadwal untuk faktur (Makan Siang
+24); Bicep untuk semua yang lain. Ukur waktu membangun ulang tier web di region sekunder, karena itulah RTO cold standby
+Anda. Siapkan Allowed locations dan DNS untuk region sekunder <em>sebelum</em> bencana terjadi, bukan saat bencana berlangsung.</li>
+<li>Tulis rencananya untuk produksi meskipun lab Anda berjalan di Southeast Asia, dan catat apa yang akan berbeda di sana.</li>
+</ul>
+</details>
+<details class="plain">
+<summary>💡 Petunjuk 9 · Bukti yang meyakinkan auditor</summary>
+<ul>
+<li>Simpan output setiap pemeriksaan penerimaan, misalnya <code>az ... | tee evidence/A12-failover.txt</code>.</li>
+<li>Catat timestamp UTC (<code>date -u</code>) di sekitar setiap latihan, agar Anda bisa mencocokkannya dengan apa yang direkam Log
+Analytics.</li>
+<li>Samarkan ID subscription, ID tenant, dan alamat email sebelum Anda meng-commit apa pun.</li>
+</ul>
+</details>
+</div></section><section class="lab-section" id="-bersihkan" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan</span></h2><div class="prose wide"><p>Bersihkan di akhir <strong>setiap</strong> sesi, bukan hanya ketika proyek sudah selesai.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Beberapa hal tetap bertahan setelah penghapusan resource group biasa, lalu terus memakan biaya atau menghalangi Anda di
+sesi berikutnya: <strong>backup long-term retention</strong> (hidup lebih lama daripada server maupun database-nya), <strong>Key Vault yang
+soft-deleted</strong> (namanya tetap tercadang, dan bila purge protection aktif, nama itu tercadang sampai periode retensi
+berakhir), dan <strong>apa pun di scope subscription atau management group</strong> (policy, budget, role assignment, paket
+Defender). Kerjakan seluruh daftar di bawah ini.</p>
+</aside>
+<ol>
+<li>
+<p><strong>Hapus stack dan semua yang dikelolanya.</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>source ../common/config.sh
+az stack sub delete --name stack-nusa-prod --action-on-unmanage deleteAll --yes
+# If you have a governance stack at management-group scope:
+az stack mg delete --name stack-nusa-governance --management-group-id &lt;mg-id&gt; --action-on-unmanage deleteAll --yes
+</code></pre></div>
+<p>Jika penghapusan gagal, baca error-nya dan singkirkan apa pun yang menghalanginya (biasanya sesuatu yang dibuat di luar
+stack), lalu jalankan penghapusan lagi. Sebagai upaya terakhir, <code>--action-on-unmanage detachAll</code> menghapus stack
+beserta deny assignment-nya tanpa menghapus resource-nya, sehingga Anda kemudian bisa menghapus resource group sendiri.</p>
+</li>
+<li>
+<p><strong>Hapus resource group yang tersisa:</strong> <code>delete_lunch_rgs 32</code></p>
+</li>
+<li>
+<p><strong>Hapus backup long-term retention</strong> (hanya jika Anda mengaktifkan LTR). Backup ini disimpan selama periode retensinya
+penuh, bahkan setelah server dan database-nya tiada. Jika Anda sempat menjalankan latihan failover, periksa kedua
+region:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for loc in &quot;$LOCATION&quot; &quot;$SECONDARY_LOCATION&quot;; do
+  az sql db ltr-backup list -l &quot;$loc&quot; --query &quot;[].{server:serverName, database:databaseName, backup:name}&quot; -o table
+done
+az sql db ltr-backup delete -l &lt;location&gt; -s &lt;server&gt; -d &lt;database&gt; -n &quot;&lt;backup-name&gt;&quot; --yes
+</code></pre></div>
+</li>
+<li>
+<p><strong>Purge Key Vault yang soft-deleted</strong> agar namanya bisa dipakai lagi:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az keyvault list-deleted --query &quot;[?contains(name, &#x27;$SUFFIX&#x27;)].name&quot; -o tsv
+az keyvault purge --name &lt;vault-name&gt;     # fails if purge protection is on: the name stays reserved until retention ends
+</code></pre></div>
+</li>
+<li>
+<p><strong>Hapus semua yang Anda buat di atas level resource group:</strong></p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az policy assignment delete --name &lt;assignment&gt; --scope &lt;scope-id&gt;
+az policy set-definition delete --name &lt;initiative&gt;               # add --management-group &lt;mg-id&gt; if it lives there
+az role assignment list --scope /subscriptions/&lt;subscription-id&gt; -o table
+az role assignment delete --ids &lt;role-assignment-id&gt;              # only the ones you created for this project
+az consumption budget delete --budget-name &lt;budget&gt;
+</code></pre></div>
+<p>Matikan juga paket Defender for Cloud berbayar yang Anda aktifkan (<strong>Defender for Cloud → Environment settings →
+subscription Anda</strong>). Jika Anda membuatnya, hapus juga app registration untuk pipeline Anda (<code>az ad app delete --id &lt;app-id&gt;</code>)
+dan management group latihan apa pun (pindahkan subscription Anda kembali terlebih dulu). Di portal, role assignment
+milik identitas yang sudah dihapus muncul sebagai <em>Identity not found</em>; hapus juga yang itu.</p>
+</li>
+<li>
+<p><strong>Pemeriksaan akhir.</strong> Perintah ini seharusnya tidak mencetak apa pun (resource group gratis <code>NetworkWatcherRG</code> boleh
+tetap ada):</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az group list --tag lunch=32 -o table
+az stack sub list --query &quot;[].name&quot; -o tsv
+for loc in &quot;$LOCATION&quot; &quot;$SECONDARY_LOCATION&quot;; do az sql db ltr-backup list -l &quot;$loc&quot; -o table; done
+az keyvault list-deleted --query &quot;[].name&quot; -o tsv
+</code></pre></div>
+</li>
+</ol>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Deployment Application Gateway gagal karena subnetnya</td>
+<td>Ada sesuatu yang lain di subnet itu, atau subnetnya terlalu kecil</td>
+<td>Beri gateway subnet khusus miliknya sendiri (/24 direkomendasikan untuk v2)</td>
+</tr>
+<tr>
+<td>Backend health menampilkan <em>Unknown</em>, atau gateway tidak bisa dikelola</td>
+<td>Route table atau NSG di subnet gateway merusak lalu lintas manajemennya</td>
+<td>Lepaskan route table dari subnet itu, dan izinkan <code>GatewayManager</code> pada TCP 65200–65535 serta <code>AzureLoadBalancer</code></td>
+</tr>
+<tr>
+<td>VM web kehilangan akses internet setelah Anda menambahkan route table</td>
+<td>Firewall atau NVA tidak meneruskan atau menerjemahkan alamat lalu lintas</td>
+<td>NVA: IP forwarding di NIC <em>dan</em> di Linux, aturan MASQUERADE, dan jalur keluar. Azure Firewall: aturan yang mengizinkan lalu lintas tersebut</td>
+</tr>
+<tr>
+<td><code>getent hosts</code> mengembalikan IP publik untuk SQL atau storage</td>
+<td>Zona belum di-link ke VNet itu, nama zonanya salah, atau endpoint tidak punya DNS zone group</td>
+<td>Link zona ke VNet tersebut, gunakan nama <code>privatelink.</code> yang persis, dan tambahkan DNS zone group</td>
+</tr>
+<tr>
+<td>Pembuatan failover group gagal</td>
+<td>Database memakai penawaran gratis, atau nama failover group itu sudah dipakai orang lain</td>
+<td>Gunakan database di luar penawaran gratis, dan pilih nama yang lebih unik</td>
+</tr>
+<tr>
+<td>Menghapus stack menyisakan sebuah resource group</td>
+<td>Ada sesuatu di grup itu yang dibuat di luar stack</td>
+<td>Hapus resource tersebut, lalu hapus stack lagi</td>
+</tr>
+<tr>
+<td>Deploy ulang gagal karena nama vault sudah ada</td>
+<td>Vault dari sesi terakhir Anda masih dalam status soft-deleted</td>
+<td>Purge vault itu (<code>az keyvault purge</code>) atau ganti namanya</td>
+</tr>
+<tr>
+<td>Deployment Anda sendiri ditolak oleh policy</td>
+<td>Initiative Anda menolak sesuatu yang dilakukan template Anda</td>
+<td>Cari nama policy di pesan error, lalu perbaiki template-nya, bukan policy-nya</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>Deploy dari <strong>GitHub Actions</strong> dengan OpenID Connect: jalankan what-if di setiap pull request dan perbarui stack saat merge (Makan Siang 22).</li>
+<li>Terapkan <strong>HTTPS end to end</strong>: simpan sertifikat di Key Vault, izinkan managed identity milik gateway membacanya, dan alihkan (redirect) HTTP ke HTTPS.</li>
+<li>Bangun <strong>warm standby</strong>: tier web yang diperkecil dan Application Gateway kedua di region sekunder, di belakang Azure
+Front Door atau Traffic Manager (Makan Siang 27). Lalu ukur RTO baru Anda.</li>
+<li>Hubungkan <strong>kantor pusat</strong>: VNet on-premises simulasi dengan VPN ke <code>GatewaySubnet</code> milik hub (Makan Siang 26). Ini
+💲💲💲 dan lambat dibuat.</li>
+<li>Coba <strong>kontainer</strong>: jalankan toko online di AKS dengan Application Gateway sebagai ingress (pintu masuk lalu lintas),
+alih-alih VM (Makan Siang 29).</li>
+</ul>
+</div></section><section class="lab-section" id="-di-mana-setiap-bagian-diajarkan" data-kind="other"><h2><span class="title">📚 Di mana setiap bagian diajarkan</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Makan Siang</th>
+<th>Yang akan Anda pakai darinya</th>
+<th>Lab</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="../lunches/22-identity-access-advanced.html">22 · Identitas dan Akses (Lanjutan)</a></td>
+<td>managed identity, prinsip hak akses minimum, OIDC untuk pipeline (R5)</td>
+<td><a href="22-identity-access-advanced.html">Lab 22</a></td>
+</tr>
+<tr>
+<td><a href="../lunches/23-virtual-machines-advanced.html">23 · Virtual Machines (Lanjutan)</a></td>
+<td>scale set yang tersebar di beberapa zona, autoscale (R3)</td>
+<td><a href="23-virtual-machines-advanced.html">Lab 23</a></td>
+</tr>
+<tr>
+<td><a href="../lunches/24-storage-advanced.html">24 · Penyimpanan (Lanjutan)</a></td>
+<td>versioning, soft delete, private endpoint, object replication (R4, R8, R9)</td>
+<td><a href="24-storage-advanced.html">Lab 24</a></td>
+</tr>
+<tr>
+<td><a href="../lunches/25-networking-advanced.html">25 · Jaringan Virtual (Lanjutan)</a></td>
+<td>hub dan spoke, route table, NVA, Azure Firewall, DNS privat (R2, R4)</td>
+<td><a href="25-networking-advanced.html">Lab 25</a></td>
+</tr>
+<tr>
+<td><a href="../lunches/26-hybrid-connectivity.html">26 · Konektivitas Hibrid</a></td>
+<td>perencanaan alamat untuk kantor pusat, <code>GatewaySubnet</code> (R2)</td>
+<td><a href="26-hybrid-connectivity.html">Lab 26</a></td>
+</tr>
+<tr>
+<td><a href="../lunches/27-load-balancing-advanced.html">27 · Penyeimbangan Beban (Lanjutan)</a></td>
+<td>Application Gateway WAF_v2 dan WAF policy (R3)</td>
+<td><a href="27-load-balancing-advanced.html">Lab 27</a></td>
+</tr>
+<tr>
+<td><a href="../lunches/28-relational-databases-advanced.html">28 · Database Relasional (Lanjutan)</a></td>
+<td>failover group, listener, point-in-time restore, LTR (R4, R8, R9)</td>
+<td><a href="28-relational-databases-advanced.html">Lab 28</a></td>
+</tr>
+<tr>
+<td><a href="../lunches/29-containers-advanced-aks.html">29 · Kontainer (Lanjutan): AKS</a></td>
+<td>tantangan tambahan AKS yang opsional</td>
+<td><a href="29-containers-advanced-aks.html">Lab 29</a></td>
+</tr>
+<tr>
+<td><a href="../lunches/30-monitoring-advanced.html">30 · Pemantauan (Lanjutan)</a></td>
+<td>diagnostic settings, Azure Monitor Agent dan DCR, KQL, log search alert (R7)</td>
+<td><a href="30-monitoring-advanced.html">Lab 30</a></td>
+</tr>
+<tr>
+<td><a href="../lunches/31-governance-at-scale.html">31 · Tata Kelola Skala Besar</a></td>
+<td>initiative, remediasi, exemption, deployment stack (R1, R6)</td>
+<td><a href="31-governance-at-scale.html">Lab 31</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>Anda juga akan bersandar pada bulan inti: <a href="../lunches/17-backup-disaster-recovery.html">Makan Siang 17 · Pencadangan Data dan Pemulihan Bencana (Dasar)</a>
+(RTO dan RPO), <a href="../lunches/19-cost-management.html">Makan Siang 19 · Manajemen Biaya (Dasar)</a> (budget),
+<a href="../lunches/20-infrastructure-as-code-bicep.html">Makan Siang 20 · Infrastructure as Code dengan Bicep (Dasar)</a> dan
+<a href="../lunches/21-core-capstone.html">Makan Siang 21 · Capstone Inti: Menyatukan Semuanya (Dasar)</a> (tinjauan Well-Architected).</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="31-governance-at-scale.html"><small>← Lab sebelumnya</small>31 · Tata kelola untuk seluruh perusahaan</a><a class="next" href="../lunchbox.html"><small>Sudah selesai? →</small>Buka kotak bekal Anda</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/32-advanced-capstone-challenge/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

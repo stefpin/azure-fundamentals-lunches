@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 29 · Kubernetes for the microservices team · Azure Fundamentals: One Lunch at a Time</title>
+<meta name="description" content="Hands-on Azure lab 29: Kubernetes for the microservices team. about 60 minutes, cost 💲💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/29-containers-advanced-aks.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/29-containers-advanced-aks.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/29-containers-advanced-aks.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/29-containers-advanced-aks.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Azure Fundamentals: One Lunch at a Time">
+<meta property="og:title" content="Lab 29 · Kubernetes for the microservices team">
+<meta property="og:description" content="Hands-on Azure lab 29: Kubernetes for the microservices team. about 60 minutes, cost 💲💲💲. Guided steps or a challenge brief, with verify and cleanup scripts.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/29-containers-advanced-aks.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="en" data-page="lab" data-lab="29" style="--c:#7b4ff0">
+<a class="skip" href="#main">Skip to content</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Main"><a href="../index.html#journey">Journey</a><a href="../index.html#episodes">Episodes</a><a href="../labs/index.html" aria-current="page">Labs</a><a href="../demos/index.html">Demos</a><a href="../lunchbox.html">My lunchbox</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Your progress"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Curious visitor</span></a>
+      <a class="lang-switch" href="../../id/labs/29-containers-advanced-aks.html" hreflang="id" lang="id" data-lang-switch="id" title="Baca dalam Bahasa Indonesia" aria-label="Baca dalam Bahasa Indonesia"><span aria-hidden="true">🌐</span>ID</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Open the menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Hands-on lab · pairs with Episode 29</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>29</b><span>Admit one</span></div>
+      <div class="main">
+        <h1 class="lab-title">Kubernetes for the microservices team</h1>
+        <p class="lab-story">🏪 <b>Episode 29 · Only Real Kubernetes Will Do</b> — Four services, a vendor&#x27;s Helm chart, and a director who won&#x27;t hire a team to babysit servers. <a href="../lunches/29-containers-advanced-aks.html">Read the lunch</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Written by <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ years in enterprise IT</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ about 60 minutes</span>
+          <span class="chip cost">💲💲💲 noticeable charges while running</span>
+          <span class="chip">Difficulty ★★★</span>
+          <span class="chip ok">✅ Works on its own</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Lab mode"><button type="button" data-mode="guided" aria-pressed="true">🧭 Guided</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Challenge</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Lab steps">
+      <h4>Your progress <span data-task-text>0 of 7 tasks</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-what-youll-build">🎯 What you&#x27;ll build</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-before-you-start">✅ Before you start</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-choose-your-mode">🧭 Choose your mode</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-1--create-a-small-aks-cluster">Task 1 · Create a small AKS cluster</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-2--deploy-the-storefront-from-manifests">Task 2 · Deploy the storefront from manifests</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-3--watch-kubernetes-heal-itself-then-scale-by-hand">Task 3 · Watch Kubernetes heal itself, then scale by hand</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-4--roll-out-v2-without-dropping-a-request-then-roll-back">Task 4 · Roll out v2 without dropping a request, then roll back</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#task-5--autoscale-pods-with-the-hpa">Task 5 · Autoscale pods with the HPA</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-break-it-and-fix-it">🔧 Break it and fix it</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verify-your-work">🧪 Verify your work</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-clean-up-do-not-skip">🧹 Clean up (do not skip!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-troubleshooting">🩺 Troubleshooting</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-stretch-goals">🚀 Stretch goals</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-challenge-brief">🏁 Challenge brief</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Lab files</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/deployment.yaml" target="_blank" rel="noopener"><span>k8s/deployment.yaml</span><small>2 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/gateway.yaml" target="_blank" rel="noopener"><span>k8s/gateway.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/hpa.yaml" target="_blank" rel="noopener"><span>k8s/hpa.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/load-generator.yaml" target="_blank" rel="noopener"><span>k8s/load-generator.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/namespace.yaml" target="_blank" rel="noopener"><span>k8s/namespace.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/pdb.yaml" target="_blank" rel="noopener"><span>k8s/pdb.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/service.yaml" target="_blank" rel="noopener"><span>k8s/service.yaml</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>6 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>6 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/29-containers-advanced-aks" target="_blank" rel="noopener">Open the folder on GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ You do not need any earlier lab. Everything this lab needs is created by its steps.</p>
+    <section class="lab-section" id="-what-youll-build" data-kind="intro"><h2><span class="title">🎯 What you'll build</span></h2><div class="prose wide"><p>Dewi's team needs a Kubernetes cluster for its microservices, and Ibu Sari needs proof that it heals itself, scales
+for the 12.12 sale and updates without closing the shop. You will create a small <strong>AKS</strong> cluster (Free tier, Azure CNI
+Overlay, one node) whose address ranges stay clear of head office's 10.0.0.0/16, and look inside both of its resource
+groups. Then you deploy the storefront from the manifests in <a href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/29-containers-advanced-aks/k8s" target="_blank" rel="noopener"><code>k8s/</code></a>: three replicas with probes and resource
+requests behind a public LoadBalancer service. You will delete pods and watch them return, roll out v2 without a single
+failed request, add a Horizontal Pod Autoscaler and load it until new pods appear, and diagnose a broken image tag.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch29-&amp;lt;suffix&amp;gt; (yours)&quot;]
+    AKS[&quot;aks-nusa&lt;br/&gt;Free tier · Azure CNI Overlay&quot;]
+  end
+  subgraph mc[&quot;MC_rg-lunch29-&amp;lt;suffix&amp;gt;_aks-nusa_&amp;lt;region&amp;gt; (owned by AKS)&quot;]
+    VMSS[&quot;System node pool&lt;br/&gt;1 × Standard_D2s_v5&quot;]
+    LB[&quot;Standard Load Balancer&lt;br/&gt;+ public IPs&quot;]
+  end
+  subgraph ns[&quot;Kubernetes namespace nusa&quot;]
+    DEP[&quot;Deployment storefront&lt;br/&gt;3 replicas · probes · requests&quot;]
+    SVC[&quot;Service storefront&lt;br/&gt;type LoadBalancer&quot;]
+    HPA[&quot;HPA: 3–10 pods at 50% CPU&quot;]
+  end
+  AKS --&gt; VMSS
+  DEP --&gt; VMSS
+  HPA --&gt; DEP
+  SVC --&gt; DEP
+  SVC --&gt; LB
+  SHOP[&quot;Shoppers&quot;] --&gt;|HTTP| LB
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Zoom into the diagram">⤢ Zoom</button></figure>
+<p>The app is a small Microsoft sample web server that listens on <strong>port 80</strong> and shows the <code>TITLE</code> environment variable
+as its page title, so you can see at a glance which version answered.</p>
+</div></section><section class="lab-section" id="-before-you-start" data-kind="setup"><h2><span class="title">✅ Before you start</span></h2><div class="prose wide"><ul>
+<li>An Azure subscription where you can create resources (see <a href="01-before-you-begin.html">Lab 01</a>), with at least
+<strong>2 free vCPUs</strong> of regional quota (4 if you want the stretch goals).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — open <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. <code>kubectl</code> is already installed there.</li>
+<li>Get the lab files and load the shared settings:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/29-containers-advanced-aks
+source ../common/config.sh
+RG=$(rg_name 29)
+AKS=aks-nusa
+AKS_NODE_SIZE=${AKS_NODE_SIZE:-Standard_D2s_v5}
+</code></pre></div>
+<ul>
+<li>Check that the node size is offered to you and that you have quota. The size needs 2 vCPUs; free and trial
+subscriptions often have only 4 vCPUs in total per region:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az vm list-skus --location &quot;$LOCATION&quot; --size &quot;$AKS_NODE_SIZE&quot; --resource-type virtualMachines \
+  --query &quot;[].{size:name, zones:join(&#x27;,&#x27;, locationInfo[0].zones || \`[]\`), restricted:length(restrictions)}&quot; --output table
+
+az vm list-usage --location &quot;$LOCATION&quot; \
+  --query &quot;[?contains(localName, &#x27;Total Regional&#x27;) || contains(localName, &#x27;DSv5&#x27;)].{quota:localName, used:currentValue, limit:limit}&quot; \
+  --output table
+
+az provider register --namespace Microsoft.ContainerService --wait
+</code></pre></div>
+<p>If <code>restricted</code> is not <code>0</code>, or the DSv5 family has no free quota, pick another non-burstable size with 2 vCPUs, for
+example <code>AKS_NODE_SIZE=Standard_D2as_v5</code> or <code>Standard_D2s_v4</code>, and check again. B-series sizes are not allowed for a
+system node pool.</p>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Important</span>This is a 💲💲💲 lab: the node VM, its disk, the load balancer and the public IP addresses cost money every hour the
+cluster exists. Do the lab in one sitting and run <strong>Clean up</strong> as soon as you finish, even if you stop halfway.
+If Cloud Shell times out, reopen it, <code>cd</code> back into this folder and re-run the <code>source</code> and variable lines above
+(plus <code>IP=</code> and <code>NODE_RG=</code> from the tasks).</p>
+</aside>
+</div></section><section class="lab-section" id="-choose-your-mode" data-kind="mode"><h2><span class="title">🧭 Choose your mode</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>For you if…</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Guided</strong></td>
+<td>you want every step explained</td>
+<td>follow Tasks 1–5 below</td>
+</tr>
+<tr>
+<td><strong>Challenge</strong></td>
+<td>you already know the basics</td>
+<td>read only the <a href="#-challenge-brief">Challenge brief</a>, build it your way, then run <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="task-1--create-a-small-aks-cluster" data-kind="task"><h2><span class="task-tag">Task 1</span><span class="title">Create a small AKS cluster</span><button class="btn btn-sm done-toggle" type="button" data-task="task-1--create-a-small-aks-cluster" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The cluster takes <strong>5 to 10 minutes</strong> to create. Start it now and read the flag table while you wait.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>ensure_rg &quot;$RG&quot; 29
+
+az aks create \
+  --resource-group &quot;$RG&quot; \
+  --name &quot;$AKS&quot; \
+  --location &quot;$LOCATION&quot; \
+  --tier free \
+  --node-count 1 \
+  --node-vm-size &quot;$AKS_NODE_SIZE&quot; \
+  --zones 1 2 3 \
+  --network-plugin azure \
+  --network-plugin-mode overlay \
+  --pod-cidr 192.168.0.0/16 \
+  --service-cidr 172.16.0.0/16 \
+  --dns-service-ip 172.16.0.10 \
+  --generate-ssh-keys \
+  --output none
+</code></pre></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--tier free</code></td>
+<td>No charge for cluster management and no uptime SLA: right for a lab. Production uses Standard or Premium.</td>
+</tr>
+<tr>
+<td><code>--node-count 1 --node-vm-size …</code></td>
+<td>One system-pool node with 2 vCPUs, the smallest practical size. Production system pools have at least three nodes.</td>
+</tr>
+<tr>
+<td><code>--zones 1 2 3</code></td>
+<td>The node pool may place nodes in all three zones. With one node you only use one, but the stretch goals add a second.</td>
+</tr>
+<tr>
+<td><code>--network-plugin azure --network-plugin-mode overlay</code></td>
+<td>Azure CNI Overlay: pods get addresses from a private pod range, not from your virtual network. If you set <code>--network-plugin azure</code> without the mode, AKS uses the older node-subnet mode, so state it explicitly.</td>
+</tr>
+<tr>
+<td><code>--pod-cidr 192.168.0.0/16</code></td>
+<td>The pod range. It must not overlap any network the cluster will ever talk to.</td>
+</tr>
+<tr>
+<td><code>--service-cidr 172.16.0.0/16 --dns-service-ip 172.16.0.10</code></td>
+<td>The default service range is 10.0.0.0/16, exactly Pak Budi's head-office network, so we move it.</td>
+</tr>
+<tr>
+<td><code>--generate-ssh-keys</code></td>
+<td>Uses your SSH key in <code>~/.ssh</code>, or creates one if you have none.</td>
+</tr>
+</tbody>
+</table></div>
+<p>While you wait, open the files in <a href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/29-containers-advanced-aks/k8s" target="_blank" rel="noopener"><code>k8s/</code></a> (in Cloud Shell: <code>code k8s/deployment.yaml</code>) and find the replica
+count, the rolling-update settings, the probes, and the resource requests and limits.</p>
+<p>When the command returns, look at what you created and connect <code>kubectl</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az aks show --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; \
+  --query &quot;{state:provisioningState, version:currentKubernetesVersion, tier:sku.tier, plugin:networkProfile.networkPlugin, mode:networkProfile.networkPluginMode, podCidr:networkProfile.podCidr, serviceCidr:networkProfile.serviceCidr}&quot; \
+  --output table
+
+NODE_RG=$(az aks show --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --query nodeResourceGroup --output tsv)
+echo &quot;Node resource group: $NODE_RG&quot;
+az resource list --resource-group &quot;$NODE_RG&quot; --query &quot;[].{name:name, type:type}&quot; --output table
+
+az aks get-credentials --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --overwrite-existing
+kubectl get nodes -o wide
+kubectl get nodes -L topology.kubernetes.io/zone,node.kubernetes.io/instance-type
+kubectl get pods --namespace kube-system
+</code></pre></div>
+<p>Your resource group holds only the cluster resource. The node resource group, created and owned by AKS, holds the real
+infrastructure: a virtual machine scale set for the node pool, a virtual network, a network security group, a load
+balancer with an outbound public IP and a managed identity. Look, but don't change anything in it.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>Kubernetes services › aks-nusa</em> shows the same settings on <strong>Overview</strong> and <strong>Settings ›
+Networking</strong>, and <strong>Kubernetes resources › Workloads</strong> lists the system pods without any <code>kubectl</code>. The <strong>Properties</strong>
+page links to the infrastructure (node) resource group.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the state is <code>Succeeded</code>, the tier <code>Free</code>, the plugin <code>azure</code> in <code>overlay</code> mode, the service
+range <code>172.16.0.0/16</code>, and <code>kubectl get nodes</code> shows one node with status <code>Ready</code> and a zone label.</p>
+</div>
+</div></section><section class="lab-section" id="task-2--deploy-the-storefront-from-manifests" data-kind="task"><h2><span class="task-tag">Task 2</span><span class="title">Deploy the storefront from manifests</span><button class="btn btn-sm done-toggle" type="button" data-task="task-2--deploy-the-storefront-from-manifests" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Manifests describe the <strong>desired state</strong>; <code>kubectl apply</code> hands it to the API server, and the controllers make it
+happen.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/deployment.yaml -f k8s/service.yaml -f k8s/pdb.yaml
+kubectl rollout status deployment/storefront --namespace nusa
+kubectl get deployment,pods,service,pdb --namespace nusa -o wide
+</code></pre></div>
+<p>The service asks Azure for a public IP address, which takes a minute or two. Watch it, and press <strong>Ctrl+C</strong> when
+<code>EXTERNAL-IP</code> shows an address instead of <code>&lt;pending&gt;</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kubectl get service storefront --namespace nusa --watch
+</code></pre></div>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>IP=$(kubectl get service storefront --namespace nusa -o jsonpath=&#x27;{.status.loadBalancer.ingress[0].ip}&#x27;)
+echo &quot;http://${IP}&quot;
+curl -s &quot;http://${IP}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+
+# The same service, seen from the Azure side:
+az network public-ip list --resource-group &quot;$NODE_RG&quot; --query &quot;[].{name:name, ip:ipAddress}&quot; --output table
+</code></pre></div>
+<p>The PodDisruptionBudget from <code>pdb.yaml</code> promises that voluntary disruptions, such as a node drain during an upgrade,
+never take the storefront below two ready pods.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> <code>READY</code> shows <code>3/3</code>, the service has an external IP address, <code>curl</code> prints
+<code>&lt;title&gt;Nusantara Retail storefront v1&lt;/title&gt;</code>, and the same address appears in the node resource group.</p>
+</div>
+</div></section><section class="lab-section" id="task-3--watch-kubernetes-heal-itself-then-scale-by-hand" data-kind="task"><h2><span class="task-tag">Task 3</span><span class="title">Watch Kubernetes heal itself, then scale by hand</span><button class="btn btn-sm done-toggle" type="button" data-task="task-3--watch-kubernetes-heal-itself-then-scale-by-hand" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Delete a pod as if it had crashed, and watch the Deployment controller replace it:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kubectl get pods --namespace nusa
+POD=$(kubectl get pods --namespace nusa -l app=storefront -o jsonpath=&#x27;{.items[0].metadata.name}&#x27;)
+kubectl delete pod &quot;$POD&quot; --namespace nusa --wait=false
+kubectl get pods --namespace nusa --watch        # Ctrl+C after a few seconds
+kubectl get events --namespace nusa --sort-by=.lastTimestamp | tail -n 8
+</code></pre></div>
+<p>Now scale by hand, imperatively:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kubectl scale deployment storefront --namespace nusa --replicas=5
+kubectl get pods --namespace nusa -o wide
+kubectl scale deployment storefront --namespace nusa --replicas=3
+</code></pre></div>
+<p><code>kubectl scale</code> changes the live object, not your file. The next <code>kubectl apply -f k8s/deployment.yaml</code> sets the count
+back to 3, so a declarative change in the file (or an autoscaler, in Task 5) is the lasting way to change it.</p>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the deleted pod is replaced by one with a new name within seconds, the events show <code>Killing</code>
+and <code>Scheduled</code>/<code>Created</code>/<code>Started</code>, and the deployment went to 5 replicas and back to 3.</p>
+</div>
+</div></section><section class="lab-section" id="task-4--roll-out-v2-without-dropping-a-request-then-roll-back" data-kind="task"><h2><span class="task-tag">Task 4</span><span class="title">Roll out v2 without dropping a request, then roll back</span><button class="btn btn-sm done-toggle" type="button" data-task="task-4--roll-out-v2-without-dropping-a-request-then-roll-back" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>Start a background &quot;shopper&quot; that calls the site every half second for about 90 seconds and counts the HTTP status
+codes, then change the pod template:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>( for i in $(seq 1 180); do curl -s -o /dev/null -w &quot;%{http_code}\n&quot; --max-time 5 &quot;http://${IP}/&quot;; sleep 0.5; done | sort | uniq -c ) &amp;
+WATCH_PID=$!
+
+kubectl set env deployment/storefront --namespace nusa TITLE=&quot;Nusantara Retail storefront v2&quot;
+kubectl rollout status deployment/storefront --namespace nusa
+wait &quot;$WATCH_PID&quot;
+
+curl -s &quot;http://${IP}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+kubectl rollout history deployment/storefront --namespace nusa
+</code></pre></div>
+<p>The shopper's tally should show only <code>200</code>. With <code>maxSurge: 1</code> and <code>maxUnavailable: 0</code>, Kubernetes starts one new pod,
+waits for its readiness probe, removes one old pod, and repeats; the number of ready pods never drops below three.</p>
+<p>Now pretend v2 has a bug and roll back to the previous ReplicaSet:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kubectl rollout undo deployment/storefront --namespace nusa
+kubectl rollout status deployment/storefront --namespace nusa
+curl -s &quot;http://${IP}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> the tally shows only <code>200</code> responses, the title changed to v2 and, after the undo, back to v1, and
+<code>kubectl rollout history</code> lists the revisions.</p>
+</div>
+</div></section><section class="lab-section" id="task-5--autoscale-pods-with-the-hpa" data-kind="task"><h2><span class="task-tag">Task 5</span><span class="title">Autoscale pods with the HPA</span><button class="btn btn-sm done-toggle" type="button" data-task="task-5--autoscale-pods-with-the-hpa" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>The Horizontal Pod Autoscaler measures CPU as a percentage of each pod's <strong>request</strong> (50m here). AKS includes
+metrics-server, so you can see the numbers it uses:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kubectl top pods --namespace nusa
+kubectl apply -f k8s/hpa.yaml
+kubectl get hpa storefront --namespace nusa
+</code></pre></div>
+<p><code>kubectl autoscale deployment storefront --namespace nusa --min=3 --max=10 --cpu=50%</code> creates the same object
+imperatively (older <code>kubectl</code> versions use <code>--cpu-percent=50</code>). The YAML version works with every version and lives in
+source control.</p>
+<p>Now generate load from inside the cluster with the provided pod (it runs for five minutes), and watch the HPA:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kubectl apply -f k8s/load-generator.yaml
+
+for i in $(seq 1 16); do
+  sleep 15
+  kubectl get hpa storefront --namespace nusa --no-headers
+done
+kubectl get pods --namespace nusa -o wide
+</code></pre></div>
+<p><code>TARGETS</code> climbs well above <code>50%</code>, and <code>REPLICAS</code> rises towards 10. If some new pods stay <code>Pending</code>, the single node is
+full: that is exactly the moment a cluster autoscaler would add a node (stretch goal 3). When the load generator
+finishes, the HPA waits for its five-minute stabilization window and then scales back to 3. Remove the finished pod:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kubectl delete pod load-generator --namespace nusa --ignore-not-found
+</code></pre></div>
+<details class="plain"><summary>No luck with the load generator? Use Cloud Shell instead</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>end=$((SECONDS + 180))
+while (( SECONDS &lt; end )); do
+  seq 1 300 | xargs -P 50 -I{} curl -s -o /dev/null --max-time 5 &quot;http://${IP}/&quot;
+done &amp;
+for i in $(seq 1 12); do sleep 15; kubectl get hpa storefront --namespace nusa --no-headers; done
+wait
+</code></pre></div>
+</details>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tip</span><strong>Prefer the portal?</strong> <em>aks-nusa › Kubernetes resources › Workloads</em> shows the pod count changing, and <strong>Monitoring ›
+Metrics</strong> can chart node CPU while the load runs.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Checkpoint:</strong> during the load <code>kubectl get hpa</code> shows a CPU value above 50% and more than 3 replicas; a few
+minutes after the load stops, it is back to 3.</p>
+</div>
+</div></section><section class="lab-section" id="-break-it-and-fix-it" data-kind="bonus"><h2><span class="title">🔧 Break it and fix it</span><button class="btn btn-sm done-toggle" type="button" data-task="-break-it-and-fix-it" aria-pressed="false">Mark done</button></h2><div class="prose wide"><p>A colleague &quot;upgrades&quot; the storefront to a tag that does not exist:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kubectl set image deployment/storefront --namespace nusa storefront=mcr.microsoft.com/azuredocs/aks-helloworld:v99
+kubectl rollout status deployment/storefront --namespace nusa --timeout=60s
+kubectl get pods --namespace nusa
+curl -s -o /dev/null -w &quot;%{http_code}\n&quot; &quot;http://${IP}/&quot;
+</code></pre></div>
+<p><strong>Symptom:</strong> the rollout never finishes, and one new pod shows <code>ErrImagePull</code> and then <code>ImagePullBackOff</code>. Yet <code>curl</code>
+still returns <code>200</code>. Find out why the pod is stuck, why the shop stayed open, and fix it.</p>
+<details class="plain"><summary>Hint</summary>
+<p>Run <code>kubectl describe pod &lt;the-stuck-pod&gt; --namespace nusa</code> and read the <strong>Events</strong> at the bottom: the kubelet reports
+that it failed to pull <code>mcr.microsoft.com/azuredocs/aks-helloworld:v99</code> because the tag was not found. The shop stayed
+open because <code>maxUnavailable: 0</code> keeps every old pod running until a new pod is ready, and this one never becomes
+ready.</p>
+</details>
+<details class="plain"><summary>Fix</summary>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>kubectl rollout undo deployment/storefront --namespace nusa
+# or: kubectl set image deployment/storefront --namespace nusa storefront=mcr.microsoft.com/azuredocs/aks-helloworld:v1
+kubectl rollout status deployment/storefront --namespace nusa
+kubectl get pods --namespace nusa
+</code></pre></div>
+<p>The same message appears when a tag was deleted, a registry is private and the cluster has no pull permission
+(<code>az aks update --attach-acr</code> fixes that for ACR), or a node cannot reach the registry.</p>
+</details>
+</div></section><section class="lab-section" id="-verify-your-work" data-kind="verify"><h2><span class="title">🧪 Verify your work</span><button class="btn btn-sm done-toggle" type="button" data-task="-verify-your-work" aria-pressed="false">Mark done</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Every check should say <strong>PASS</strong>. If one fails, the message tells you which task to revisit.</p>
+</div></section><section class="lab-section" id="-clean-up-do-not-skip" data-kind="cleanup"><h2><span class="title">🧹 Clean up (do not skip!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>This deletes the resource group <code>rg-lunch29-&lt;suffix&gt;</code>. Deleting the cluster inside it makes AKS delete the node
+resource group <code>MC_rg-lunch29-&lt;suffix&gt;_aks-nusa_&lt;region&gt;</code> as well, with the node VM, its disk, the load balancer and the
+public IP addresses, so you don't delete that group yourself. The script also removes the cluster from your kubeconfig.
+Deletion runs in the background and takes several minutes; run <code>bash cleanup.sh</code> again after about ten minutes to
+confirm that nothing is left (it also removes a node resource group left behind by a failed deployment).</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 I ran cleanup.sh</button> <span class="muted">Worth 25 XP — and it keeps your bill at zero.</span></p></section><section class="lab-section" id="-troubleshooting" data-kind="trouble"><h2><span class="title">🩺 Troubleshooting</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Operation could not be completed as it results in exceeding approved ... Cores quota</code></td>
+<td>Not enough regional or VM-family vCPU quota</td>
+<td>Delete other VMs or clusters, choose a size from a family with free quota (<code>AKS_NODE_SIZE=...</code>), or request more quota (not possible on Free Trial or Azure for Students)</td>
+</tr>
+<tr>
+<td>The create fails because the VM size is not available, not allowed in your subscription, or not offered in a zone</td>
+<td>The size is restricted for your subscription or region</td>
+<td>Pick another 2-vCPU, non-B-series size, or remove the <code>--zones 1 2 3</code> line</td>
+</tr>
+<tr>
+<td>The create rejects the node size for a system node pool</td>
+<td>AKS documentation is inconsistent about the minimum (one page says 2 vCPUs, another 4)</td>
+<td>Use a 4-vCPU size such as <code>Standard_D4s_v5</code> if your quota allows; it uses all 4 vCPUs of a trial quota</td>
+</tr>
+<tr>
+<td><code>ManagedClusterCountExceedsQuotaLimit</code></td>
+<td>Too many AKS clusters in this region for your subscription</td>
+<td>Delete unused clusters (<code>az aks list --output table</code>)</td>
+</tr>
+<tr>
+<td><code>MissingSubscriptionRegistration</code> for <code>Microsoft.ContainerService</code></td>
+<td>Resource provider not registered</td>
+<td><code>az provider register --namespace Microsoft.ContainerService --wait</code></td>
+</tr>
+<tr>
+<td><code>kubectl</code>: <code>Unable to connect to the server</code> or <code>You must be logged in to the server</code></td>
+<td>Old or missing kubeconfig entry, or a new Cloud Shell session</td>
+<td><code>az aks get-credentials --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --overwrite-existing</code>, then <code>kubectl config current-context</code></td>
+</tr>
+<tr>
+<td><code>EXTERNAL-IP</code> stays <code>&lt;pending&gt;</code> for more than a few minutes</td>
+<td>Azure is still creating the public IP, or a quota or policy blocks it</td>
+<td><code>kubectl describe service storefront --namespace nusa</code> and read the events</td>
+</tr>
+<tr>
+<td>HPA <code>TARGETS</code> shows <code>&lt;unknown&gt;/50%</code></td>
+<td>Metrics are not available yet, or the pods have no CPU requests</td>
+<td>Wait a minute after the pods start; make sure <code>deployment.yaml</code> still has <code>resources.requests.cpu</code></td>
+</tr>
+<tr>
+<td>New pods stay <code>Pending</code> with <code>Insufficient cpu</code></td>
+<td>The single node is full</td>
+<td>Expected at the top of the load; lower <code>maxReplicas</code>, or add a node (stretch goals 2 and 3)</td>
+</tr>
+<tr>
+<td><code>load-generator</code> ends in <code>Error</code> or never starts</td>
+<td>The busybox image could not be pulled or lacks a tool</td>
+<td>Use the Cloud Shell alternative in Task 5</td>
+</tr>
+<tr>
+<td>A pod shows <code>ErrImagePull</code> or <code>ImagePullBackOff</code></td>
+<td>Wrong image name or tag, or no permission to pull</td>
+<td>See <strong>Break it and fix it</strong></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-stretch-goals" data-kind="stretch"><h2><span class="title">🚀 Stretch goals</span></h2><div class="prose wide"><p>Stretch goals 1–3 need a second node: 4 vCPUs in total. Check your quota first and scale back afterwards.</p>
+<ol>
+<li>
+<p><strong>Ingress with the Gateway API.</strong> Enable the application routing add-on's Gateway API implementation (Azure CLI
+2.86 or later), give it room, then apply <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/k8s/gateway.yaml" target="_blank" rel="noopener"><code>k8s/gateway.yaml</code></a>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az aks scale --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --node-count 2
+az aks update --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --enable-gateway-api --enable-app-routing-istio
+kubectl get pods --namespace aks-istio-system
+kubectl apply -f k8s/gateway.yaml
+kubectl wait --for=condition=programmed gateways.gateway.networking.k8s.io/storefront-gateway --namespace nusa --timeout=300s
+GW=$(kubectl get gateways.gateway.networking.k8s.io storefront-gateway --namespace nusa -o jsonpath=&#x27;{.status.addresses[0].value}&#x27;)
+curl -s &quot;http://${GW}/&quot; | grep -o &quot;&lt;title&gt;[^&lt;]*&lt;/title&gt;&quot;
+</code></pre></div>
+<p>Don't build new ingress on the add-on's NGINX flavour: its Microsoft support ends in November 2026.</p>
+</li>
+<li>
+<p><strong>Zones and a node failure.</strong> With two nodes, check <code>kubectl get nodes -L topology.kubernetes.io/zone</code> and
+<code>kubectl get pods --namespace nusa -o wide</code>: the topology spread constraints place replicas on both nodes. Simulate
+maintenance with <code>kubectl drain &lt;node-name&gt; --ignore-daemonsets --delete-emptydir-data</code>, watch the pods move while
+the PodDisruptionBudget keeps two of them up, then <code>kubectl uncordon &lt;node-name&gt;</code>.</p>
+</li>
+<li>
+<p><strong>Cluster autoscaler.</strong> Let AKS add the second node only when pods are <code>Pending</code>:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az aks update --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --enable-cluster-autoscaler --min-count 1 --max-count 2
+kubectl patch hpa storefront --namespace nusa --patch &#x27;{&quot;spec&quot;:{&quot;maxReplicas&quot;:20}}&#x27;
+</code></pre></div>
+<p>Run the load again and watch <code>kubectl get nodes --watch</code>: a new node joins after a few minutes.</p>
+</li>
+<li>
+<p><strong>Container insights.</strong> Send container logs to a workspace inside the lab's resource group, so that clean-up
+removes it too:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Copy</button></div><pre><code>az monitor log-analytics workspace create --resource-group &quot;$RG&quot; --workspace-name log-nusa --output none
+WS_ID=$(az monitor log-analytics workspace show --resource-group &quot;$RG&quot; --workspace-name log-nusa --query id --output tsv)
+az aks enable-addons --resource-group &quot;$RG&quot; --name &quot;$AKS&quot; --addons monitoring --workspace-resource-id &quot;$WS_ID&quot;
+</code></pre></div>
+<p>After about ten minutes, open <em>aks-nusa › Monitoring › Insights</em>. Lunch 30 teaches you to query these logs with KQL.</p>
+</li>
+<li>
+<p><strong>Pause instead of delete (for longer projects).</strong> <code>az aks stop --resource-group &quot;$RG&quot; --name &quot;$AKS&quot;</code> stops the
+nodes and the control plane while keeping the configuration, and <code>az aks start</code> brings it all back. For this lab,
+deleting the cluster is still the cheapest option, and this guide recreates it in ten minutes.</p>
+</li>
+</ol>
+</div></section><section class="lab-section" id="-challenge-brief" data-kind="challenge"><h2><span class="title">🏁 Challenge brief</span></h2><div class="prose wide"><p>Build the following, any way you like (CLI, portal, Bicep, Terraform):</p>
+<ol>
+<li>A resource group <code>rg-lunch29-&lt;suffix&gt;</code> in your lab region, created with <code>ensure_rg &quot;$(rg_name 29)&quot; 29</code> so that
+<code>cleanup.sh</code> can find it.</li>
+<li>An AKS cluster <code>aks-nusa</code> on the <strong>Free</strong> tier, using <strong>Azure CNI Overlay</strong>, with a system node pool of a
+non-B-series size, and with pod and service address ranges that do not overlap head office's 10.0.0.0/16.</li>
+<li>In namespace <code>nusa</code>, a deployment <code>storefront</code> running <code>mcr.microsoft.com/azuredocs/aks-helloworld:v1</code> with at least
+<strong>3 ready replicas</strong>, CPU and memory requests and limits, and readiness and liveness probes.</li>
+<li>A service <code>storefront</code> of type <strong>LoadBalancer</strong> with a public IP address that answers HTTP 200.</li>
+<li>A Horizontal Pod Autoscaler <code>storefront</code> for that deployment with a minimum of 3 and a maximum of 10 replicas and a
+CPU utilization target.</li>
+<li>No pod in the namespace stuck in <code>ErrImagePull</code> or <code>ImagePullBackOff</code>.</li>
+</ol>
+<p>Then run <code>bash verify.sh</code>. Stuck? Peek at <code>solution.sh</code> or switch to Guided mode. Then delete the cluster.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Finished?</h3><p class="muted" style="margin:0">Run the verify script, clean up, then claim your XP.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Mark lab complete</button>
+    </div>
+    <nav class="ep-nav" aria-label="Labs"><a href="28-relational-databases-advanced.html"><small>← Previous lab</small>28 · Orders that survive a regional outage</a><a class="next" href="30-monitoring-advanced.html"><small>Next lab →</small>30 · Why was checkout slow on Friday?</a></nav>
+    <p class="validated">Last validated: October 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/29-containers-advanced-aks/README.md" target="_blank" rel="noopener">Read this lab on GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a lab problem</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Lab resources may still be running. When you are done, run <code>bash cleanup.sh</code> — <a href="#-clean-up-do-not-skip">go to clean up</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>One Lunch at a Time<small>Azure Fundamentals</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional Indonesian retailer from a server next to the pantry to a governed, resilient Azure platform.</p>
+        
+      </div>
+      <div>
+        <h4>Learn</h4>
+        <ul><li><a href="../index.html#episodes">All episodes</a></li><li><a href="../labs/index.html">Hands-on labs</a></li>
+        <li><a href="../demos/index.html">Demo gallery</a></li><li><a href="../lunchbox.html">My lunchbox</a></li></ul>
+      </div>
+      <div>
+        <h4>Repository</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Source on GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.md" target="_blank" rel="noopener">Syllabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Course design</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Report a problem</a></li></ul>
+      </div>
+      <div>
+        <h4>Author</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · About the author</a></li>
+        <li><a href="https://www.linkedin.com/in/stefanus-pinarta-8193512/" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">An independent, personal learning project — not official Microsoft training, documentation or certification material, and not endorsed by Microsoft. Azure changes often: check the current <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">Azure documentation</a> and pricing before relying on a detail. Microsoft, Azure and related names are trademarks of the Microsoft group of companies. Nusantara Retail and its people are fictional. Text and demos: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · code: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progress, badges and notes are stored only in your browser.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.en.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

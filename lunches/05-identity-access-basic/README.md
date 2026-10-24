@@ -1,9 +1,12 @@
 # Lunch 05 · Identity and Access (Basic)
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Core month · **Level:** Basic · **Part 1:** Foundations
 > **Time:** 60 minutes · **Prerequisite lunches:** 04
 > **AZ-900 skill area:** Describe Azure architecture and services
 > **Lab:** [Lab 05 · Give a contractor just enough access](../../labs/05-identity-access-basic/README.md) — about 40 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -298,6 +301,10 @@ What to watch for:
 - MFA is no longer optional in Azure: security defaults and mandatory MFA enforce it, passkeys and Windows Hello make sign-in phishing-resistant, and Conditional Access (P1) adds if-then control.
 - A role assignment is security principal + role definition + scope; assignments inherit downwards and add up, and deny assignments override them.
 - Entra roles manage the directory and Azure roles manage resources; practise least privilege with groups, narrow scopes, specific roles and very few Owners.
+
+## 🗒️ Field notes from Stefanus
+
+> **Every access request has a fourth question.** A role assignment records three things: who, which role and which scope. The question I always add is *until when?* — because a standard role assignment never expires on its own. So when I grant access, I write the reason and the end date in the assignment's description, make sure the group has a named owner, and put that date in the owner's calendar. Contractors are where this matters most: projects end quietly, and nobody files a ticket to remove access. Before I tell anyone they're ready, I open *Check access* and read what they really have. Access that nobody owns doesn't expire; it just gets older.
 
 ## 🔬 Your lab: Give a contractor just enough access
 

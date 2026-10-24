@@ -1,5 +1,7 @@
 # Lab 21 · Well-Architected self-review
 
+🇮🇩 [Baca dalam Bahasa Indonesia](review-checklist.id.md)
+
 > **Use it in:** [Task 9](README.md#task-9--do-a-well-architected-self-review-20-min) of [Lab 21 · Capstone project](README.md)
 > **Time:** about 20 minutes · **Based on:** the five pillars of the [Azure Well-Architected Framework](https://learn.microsoft.com/azure/well-architected/)
 

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 03 · Menjelajahi region dan zona · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 03: Menjelajahi region dan zona. sekitar 35 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/03-global-infrastructure.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/03-global-infrastructure.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/03-global-infrastructure.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/03-global-infrastructure.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 03 · Menjelajahi region dan zona">
+<meta property="og:description" content="Lab Azure praktik 03: Menjelajahi region dan zona. sekitar 35 menit, biaya 💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/03-global-infrastructure.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="03" style="--c:#1665d8">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/03-global-infrastructure.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#1665d8">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 03</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>03</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Menjelajahi region dan zona</h1>
+        <p class="lab-story">🏪 <b>Episode 03 · Toko Kita Tinggal di Mana?</b> — Jakarta atau Singapura — dan apa jadinya kalau gedung itu sedang apes? <a href="../lunches/03-global-infrastructure.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 35 menit</span>
+          <span class="chip cost">💲 gratis atau hampir gratis</span>
+          <span class="chip">Tingkat kesulitan ★☆☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 7 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--region-geografi-dan-pasangan">Tugas 1 · Region, geografi, dan pasangan</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--melihat-ke-dalam-region-anda-zona-pemetaan-zona-dan-apa-saja-yang-tersedia">Tugas 2 · Melihat ke dalam region Anda: zona, pemetaan zona, dan apa saja yang tersedia</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--public-ip-zonal-zone-redundant-dan-tanpa-zona">Tugas 3 · Public IP zonal, zone-redundant, dan &quot;tanpa zona&quot;</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--storage-lrs-versus-zrs">Tugas 4 · Storage LRS versus ZRS</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5-opsional--pemeriksaan-latensi-kasar-dari-browser-anda">Tugas 5 (opsional) · Pemeriksaan latensi kasar dari browser Anda</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/03-global-infrastructure/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/03-global-infrastructure/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/03-global-infrastructure/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>3 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/03-global-infrastructure" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Sebelum Nusantara Retail menjatuhkan pilihan pada sebuah region, Ibu Sari ingin bukti, bukan opini. Di lab ini, Anda
+yang mengumpulkannya. Anda memakai Azure CLI untuk menampilkan daftar region beserta geografi dan pasangannya, membaca
+pemetaan zona logis ke zona fisik di subscription Anda, dan memeriksa ukuran VM serta layanan apa yang tersedia di
+mana. Setelah itu, Anda membangun resource kecil dan murah yang membuat perbedaan antara zonal dan zone-redundant
+terlihat jelas: tiga Standard public IP (zonal, zone-redundant, dan &quot;tanpa pengaturan zona&quot;) dan dua storage account
+(LRS dan ZRS). Anda menutupnya dengan pemeriksaan latensi singkat dari browser Anda sendiri.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  subgraph rg[&quot;rg-lunch03-&amp;lt;suffix&amp;gt; · region LOCATION (bawaan: Southeast Asia)&quot;]
+    subgraph ips[&quot;Standard public IP&quot;]
+      p1[&quot;pip-nusa-zonal&lt;br/&gt;hanya zona 1&quot;]
+      p2[&quot;pip-nusa-zr&lt;br/&gt;zona 1, 2, 3&quot;]
+      p3[&quot;pip-nusa-nozone&lt;br/&gt;tanpa pengaturan zona&quot;]
+    end
+    subgraph st[&quot;Storage account&quot;]
+      s1[&quot;stnusalrs&amp;lt;suffix&amp;gt;&lt;br/&gt;Standard_LRS: satu pusat data&quot;]
+      s2[&quot;stnusazrs&amp;lt;suffix&amp;gt;&lt;br/&gt;Standard_ZRS: tiga zona&quot;]
+    end
+  end
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>).</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Tidak ada yang perlu dipasang.</li>
+<li>Ambil file lab dan muat pengaturan bersama:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/03-global-infrastructure
+source ../common/config.sh
+RG=$(rg_name 03)
+ST_LRS=&quot;stnusalrs${SUFFIX}&quot;
+ST_ZRS=&quot;stnusazrs${SUFFIX}&quot;
+</code></pre></div>
+<ul>
+<li>Lab ini tidak punya <code>setup.sh</code>: Anda membuat semuanya sendiri.</li>
+<li><code>LOCATION</code> harus berupa region <strong>yang punya availability zone</strong>. Nilai bawaannya, <code>southeastasia</code>, punya tiga zona.
+Peserta di Indonesia bisa menjalankan <code>export LOCATION=indonesiacentral</code> lalu <code>source ../common/config.sh</code> sekali
+lagi; region ini juga punya tiga zona.</li>
+<li>Jika Cloud Shell kehabisan waktu (timeout) lalu dimulai ulang, <code>cd</code> kembali ke folder lab dan jalankan lagi empat
+baris setelah <code>cd</code>.</li>
+</ul>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Resource lab dikenai biaya selama masih ada. Alamat Standard public IPv4 ditagih per jam meskipun tidak dipakai apa
+pun. Akhiri lab dengan bagian <strong>Bersihkan</strong>, meskipun Anda berhenti di tengah jalan.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>ikuti Tugas 1–5 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--region-geografi-dan-pasangan" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Region, geografi, dan pasangan</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--region-geografi-dan-pasangan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Setiap region termasuk dalam sebuah geografi (batas residensi data, yaitu batas wilayah tempat data boleh disimpan),
+dan sebagian region punya region pasangan. CLI menampilkan persis apa yang bisa dilihat subscription Anda, jadi
+mulailah dari sana.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code># How many physical regions can your subscription see?
+az account list-locations --query &quot;length([?metadata.regionType==&#x27;Physical&#x27;])&quot;
+
+# The regions closest to Nusantara Retail: geography, city and paired region
+az account list-locations \
+  --query &quot;[?contains([&#x27;indonesiacentral&#x27;,&#x27;southeastasia&#x27;,&#x27;eastasia&#x27;,&#x27;malaysiawest&#x27;], name)].{region:name, geography:metadata.geography, city:metadata.physicalLocation, pair:metadata.pairedRegion[0].name}&quot; \
+  --output table
+
+# Which physical regions have no paired region at all?
+az account list-locations \
+  --query &quot;[?metadata.regionType==&#x27;Physical&#x27; &amp;&amp; !metadata.pairedRegion].displayName&quot; \
+  --output tsv | sort
+</code></pre></div>
+<p>Perintah pertama hanya menghitung region <strong>fisik</strong>. Daftarnya juga memuat entri <em>logis</em> seperti &quot;Asia Pacific&quot;, yang
+mengelompokkan region untuk sebagian layanan dan bukan tempat Anda men-deploy sesuatu.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Buka dropdown region di halaman <em>Create</em> mana pun (misalnya <em>Create a resource group</em>): region
+dikelompokkan per geografi, seperti &quot;(Asia Pacific) Southeast Asia&quot;. Pasangan dan jumlah zona lebih mudah dibaca di
+<a href="https://learn.microsoft.com/azure/reliability/regions-list" target="_blank" rel="noopener">daftar region Azure</a> milik Microsoft.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tabel menampilkan <code>eastasia</code> sebagai pasangan <code>southeastasia</code> (dan sebaliknya), sementara
+<code>indonesiacentral</code> dan <code>malaysiawest</code> menampilkan kolom pair yang kosong. Indonesia Central muncul di daftar &quot;tanpa
+pasangan&quot;. Kolom geografi menampilkan region Singapura dan Hong Kong dalam satu geografi dan Jakarta di geografi lain
+(kata-kata persisnya berasal dari platform dan bisa sedikit berbeda dari dokumentasi).</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--melihat-ke-dalam-region-anda-zona-pemetaan-zona-dan-apa-saja-yang-tersedia" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Melihat ke dalam region Anda: zona, pemetaan zona, dan apa saja yang tersedia</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--melihat-ke-dalam-region-anda-zona-pemetaan-zona-dan-apa-saja-yang-tersedia" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Zona diberi nomor 1, 2, dan 3 di setiap subscription, tetapi nomor itu bersifat <strong>logis</strong>. Setiap subscription punya
+pemetaannya sendiri ke zona fisik, dan Anda bisa membaca milik Anda.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code># Your subscription&#x27;s logical-to-physical zone mapping for LOCATION
+az account list-locations \
+  --query &quot;[?name==&#x27;${LOCATION}&#x27;].availabilityZoneMappings | [0]&quot; \
+  --output table
+
+# How many regions offer zones to your subscription?
+az account list-locations --query &quot;length([?availabilityZoneMappings])&quot;
+</code></pre></div>
+<p>Berikutnya, periksa ukuran VM mana yang bisa di-deploy subscription Anda ke dalam zona. Daftar SKU-nya besar, jadi
+perintah ini bisa memakan waktu satu atau dua menit; bacalah paragraf berikutnya sambil menunggu.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az vm list-skus --location &quot;$LOCATION&quot; --resource-type virtualMachines \
+  --size Standard_B --zone --output table
+</code></pre></div>
+<p><code>--zone</code> hanya menyisakan ukuran yang mendukung availability zone, dan kolom <strong>Zones</strong> menunjukkan di zona mana saja
+setiap ukuran ditawarkan. Secara bawaan, daftar ini menyembunyikan ukuran yang dibatasi untuk subscription Anda;
+tambahkan <code>--all</code> untuk ikut melihatnya, lengkap dengan alasannya di kolom <strong>Restrictions</strong>.</p>
+<p>Terakhir, tanyakan kepada Azure Resource Manager apakah sebuah layanan tersedia di suatu region. Setiap resource
+provider (layanan Azure di balik sekelompok tipe resource) menerbitkan lokasi untuk setiap tipe resource-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>for rt in Microsoft.Network/natGateways Microsoft.App/managedEnvironments; do
+  ns=&quot;${rt%%/*}&quot;; type=&quot;${rt#*/}&quot;
+  echo &quot;== ${rt}&quot;
+  az provider show --namespace &quot;$ns&quot; \
+    --query &quot;resourceTypes[?resourceType==&#x27;${type}&#x27;].locations | [0]&quot; --output tsv \
+    | grep -i -E &quot;indonesia|southeast asia|east asia&quot; || echo &quot;   (not listed in these regions)&quot;
+done
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> Halaman publik <a href="https://azure.microsoft.com/en-us/explore/global-infrastructure/products-by-region/" target="_blank" rel="noopener">produk yang tersedia per region</a>
+menjawab pertanyaan yang sama untuk setiap produk. CLI lebih cocok untuk tipe resource yang persis, ukuran VM, dan
+batasan khusus subscription Anda sendiri.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tabel pemetaan menampilkan tiga baris (zona logis 1, 2, dan 3, masing-masing dengan nama zona
+fisik seperti <code>southeastasia-az2</code>); zona logis 1 Anda belum tentu zona fisik 1. Tabel SKU menampilkan beberapa ukuran
+seri B dengan <code>1,2,3</code> di kolom Zones. Perulangan (loop) mencetak nama region tempat setiap tipe resource tersedia.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--public-ip-zonal-zone-redundant-dan-tanpa-zona" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Public IP zonal, zone-redundant, dan &quot;tanpa zona&quot;</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--public-ip-zonal-zone-redundant-dan-tanpa-zona" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Public IP adalah objek uji yang sempurna: dibuat dalam hitungan detik, biayanya sangat kecil, dan pengaturan zonanya
+terlihat jelas. Buat resource group dan tiga alamat Standard public IPv4.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>ensure_rg &quot;$RG&quot; 03
+
+# Zonal: pinned to logical zone 1
+az network public-ip create --resource-group &quot;$RG&quot; --name pip-nusa-zonal \
+  --location &quot;$LOCATION&quot; --sku Standard --version IPv4 --allocation-method Static \
+  --zone 1 --output none
+
+# Zone-redundant: spread across zones 1, 2 and 3
+az network public-ip create --resource-group &quot;$RG&quot; --name pip-nusa-zr \
+  --location &quot;$LOCATION&quot; --sku Standard --version IPv4 --allocation-method Static \
+  --zone 1 2 3 --output none
+
+# No zone given: what does Azure do?
+az network public-ip create --resource-group &quot;$RG&quot; --name pip-nusa-nozone \
+  --location &quot;$LOCATION&quot; --sku Standard --version IPv4 --allocation-method Static \
+  --output none
+</code></pre></div>
+<p>Sekarang bandingkan ketiganya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az network public-ip list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{name:name, sku:sku.name, allocation:publicIPAllocationMethod, zones:join(&#x27;, &#x27;, zones || \`[]\`)}&quot; \
+  --output table
+</code></pre></div>
+<p>Cara membaca hasilnya:</p>
+<ul>
+<li><strong>pip-nusa-zonal</strong> menampilkan <code>1</code>. IP ini <strong>zonal</strong>: tinggal di zona 1 dan berbagi nasib dengan zona itu.</li>
+<li><strong>pip-nusa-zr</strong> menampilkan <code>1, 2, 3</code>. IP ini <strong>zone-redundant</strong>: tetap bertahan saat zona mana pun hilang.</li>
+<li><strong>pip-nusa-nozone</strong> kemungkinan besar menampilkan kolom zones yang kosong. Jangan artikan itu sebagai &quot;nonzonal&quot;. Di
+region yang punya availability zone, Microsoft memperlakukan Standard public IP tanpa pengaturan zona sebagai
+zone-redundant; IP yang tidak menampilkan zona berperilaku sama dengan IP yang menampilkan <code>1, 2, 3</code>. Hanya di region
+<strong>tanpa</strong> zona sebuah public IP benar-benar nonzonal. Tergantung versi API-nya, kolom itu juga mungkin kembali dalam
+keadaan terisi. Apa pun hasilnya, tetapkan <code>--zone</code> secara eksplisit di script Anda agar niat Anda jelas bagi
+pembaca berikutnya.</li>
+</ul>
+<p>Satu aturan lagi: pengaturan zona sebuah public IP ditetapkan saat IP itu dibuat. Untuk mengubahnya, Anda harus membuat
+IP baru, yang berarti juga alamat baru, jadi putuskan dulu sebelum Anda memberikan alamat itu kepada mitra atau
+memasukkannya ke record DNS.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Home › Public IP addresses › Create</em>: perhatikan pengaturan <strong>Availability zone</strong> dan pilihan
+yang ditawarkannya di region Anda, lalu tinggalkan halaman itu tanpa membuat apa pun.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> tiga IP Standard dengan alokasi Static ada di <code>rg-lunch03-&lt;suffix&gt;</code>, dengan zona <code>1</code>, <code>1, 2, 3</code>, dan
+(kemungkinan besar) kosong.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--storage-lrs-versus-zrs" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Storage LRS versus ZRS</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--storage-lrs-versus-zrs" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Storage account menampilkan pilihan yang sama dalam bentuk <strong>redundansi</strong>. Locally redundant storage (LRS) menyimpan
+tiga salinan di satu pusat data; zone-redundant storage (ZRS) menyimpan salinan di tiga zona dan baru mengonfirmasi
+penulisan setelah setiap salinan menerimanya. Buat satu dari masing-masing jenis, keduanya dengan TLS 1.2 sebagai versi
+minimum dan akses blob anonim dimatikan.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage account create --name &quot;$ST_LRS&quot; --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; \
+  --sku Standard_LRS --kind StorageV2 --min-tls-version TLS1_2 --allow-blob-public-access false \
+  --output none
+
+az storage account create --name &quot;$ST_ZRS&quot; --resource-group &quot;$RG&quot; --location &quot;$LOCATION&quot; \
+  --sku Standard_ZRS --kind StorageV2 --min-tls-version TLS1_2 --allow-blob-public-access false \
+  --output none
+</code></pre></div>
+<p>Bandingkan keduanya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az storage account list --resource-group &quot;$RG&quot; \
+  --query &quot;[].{name:name, sku:sku.name, primary:primaryLocation, secondary:secondaryLocation, status:statusOfPrimary}&quot; \
+  --output table
+</code></pre></div>
+<p>Kedua account tinggal di <code>LOCATION</code> Anda, dan kolom <strong>secondary</strong> kosong untuk keduanya: LRS dan ZRS tidak pernah keluar
+dari region. ZRS melindungi Anda dari kehilangan satu pusat data atau satu zona utuh; ZRS tidak melindungi Anda dari
+kehilangan region, dan, seperti setiap opsi redundansi, ZRS juga ikut menyalin penghapusan dan penimpaan. Lokasi
+sekunder hanya muncul pada opsi geo-redundant (GRS, GZRS), yang mereplikasi ke region <strong>pasangan</strong>. Tantangan tambahan
+di akhir lab memberi Anda kesempatan untuk melihatnya.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>Home › Storage accounts › Create</em>: dropdown <strong>Redundancy</strong> di tab Basics menawarkan pilihan
+yang sama. Bandingkan apa yang ditawarkannya di Southeast Asia dan di Indonesia Central.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> dua account StorageV2, <code>stnusalrs&lt;suffix&gt;</code> dengan <code>Standard_LRS</code> dan <code>stnusazrs&lt;suffix&gt;</code> dengan
+<code>Standard_ZRS</code>, keduanya dengan <code>LOCATION</code> Anda sebagai lokasi primer dan tanpa lokasi sekunder.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5-opsional--pemeriksaan-latensi-kasar-dari-browser-anda" data-kind="task"><h2><span class="task-tag">Tugas 5 (opsional)</span><span class="title">Pemeriksaan latensi kasar dari browser Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5-opsional--pemeriksaan-latensi-kasar-dari-browser-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Cloud Shell berjalan di dalam pusat data Azure, jadi ia tidak bisa memberi tahu apa yang dirasakan para pembeli Anda.
+Browser Anda sendiri bisa.</p>
+<ol>
+<li>Buka halaman <a href="https://www.azurespeed.com/Azure/Latency" target="_blank" rel="noopener">Azure Latency Test</a> buatan komunitas (alat gratis dari pihak
+ketiga, bukan layanan Microsoft).</li>
+<li>Pilih Indonesia Central, Southeast Asia, East Asia, dan Malaysia West, lalu biarkan berjalan selama satu menit.</li>
+<li>Catat waktu bolak-balik (round trip) median untuk setiap region, lalu bandingkan.</li>
+</ol>
+<p>Anggap angka-angka itu sebagai sinyal kasar: pengujian berjalan lewat HTTPS dari browser Anda, jadi waktu pencarian DNS
+dan handshake TLS ikut terhitung, dan hasilnya bergantung pada penyedia internet Anda sendiri. Untuk angka antar-region
+yang diukur di dalam jaringan Microsoft, gunakan <a href="https://learn.microsoft.com/azure/networking/azure-network-latency" target="_blank" rel="noopener">statistik latensi antar-region</a>
+dari Microsoft.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> Anda punya empat angka latensi. Dari sebagian besar tempat di Indonesia, Jakarta biasanya
+diharapkan menjadi yang tercepat, tetapi jaringan Anda yang punya keputusan akhir. Justru karena itulah Anda
+mengukurnya.</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Zone-redundant storage membutuhkan region yang punya availability zone. Cobalah membuat account ZRS di region yang sama
+sekali tidak punya zona.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code># Find a physical region without availability zones (falls back to westus, which has none)
+NOZONE_REGION=$(az account list-locations \
+  --query &quot;[?metadata.regionType==&#x27;Physical&#x27; &amp;&amp; metadata.regionCategory==&#x27;Recommended&#x27; &amp;&amp; !availabilityZoneMappings].name | [0]&quot; \
+  --output tsv)
+NOZONE_REGION=${NOZONE_REGION:-westus}
+echo &quot;Region without zones: ${NOZONE_REGION}&quot;
+
+az storage account create --name &quot;stnusabrk${SUFFIX}&quot; --resource-group &quot;$RG&quot; \
+  --location &quot;$NOZONE_REGION&quot; --sku Standard_ZRS --kind StorageV2 --output none
+</code></pre></div>
+<p><strong>Gejala:</strong> perintah gagal dengan error yang menyatakan bahwa SKU <code>Standard_ZRS</code> tidak didukung atau tidak tersedia di
+lokasi itu. (Jika error-nya justru menyatakan bahwa lokasi itu tidak tersedia untuk subscription Anda, pilih region
+lain dari daftar dan coba lagi.)</p>
+<details class="plain"><summary>Petunjuk dan perbaikan</summary>
+<p>ZRS menyebarkan salinan ke beberapa availability zone, jadi ZRS hanya ada di region yang memiliki zona. Sebelum memilih
+opsi redundansi, periksa region-nya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az account list-locations --query &quot;[?name==&#x27;${NOZONE_REGION}&#x27;].availabilityZoneMappings | [0]&quot; --output table
+</code></pre></div>
+<p>Hasil kosong berarti tidak ada zona. Perbaiki dengan memilih region yang punya zona (<code>--location &quot;$LOCATION&quot;</code>) atau,
+jika Anda benar-benar membutuhkan region itu, dengan memakai <code>Standard_LRS</code> dan menerima bahwa kegagalan satu pusat data
+akan membuat data tidak bisa diakses. Lalu pastikan tidak ada resource tambahan yang telanjur terbuat:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>if az storage account show --name &quot;stnusabrk${SUFFIX}&quot; --resource-group &quot;$RG&quot; --output none 2&gt;/dev/null; then
+  az storage account delete --name &quot;stnusabrk${SUFFIX}&quot; --resource-group &quot;$RG&quot; --yes
+else
+  echo &quot;Nothing to remove: the failed request created nothing.&quot;
+fi
+</code></pre></div>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan semestinya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu
+Anda ulangi.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Perintah ini menghapus semua yang dibuat lab: resource group <code>rg-lunch03-&lt;suffix&gt;</code> beserta public IP dan storage
+account-nya. Tidak ada apa pun dari lab ini yang berada di luar resource group tersebut. Penghapusan berlanjut di latar
+belakang selama beberapa menit.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>az vm list-skus</code> tidak menampilkan apa pun dalam waktu lama</td>
+<td>Perintah itu mengunduh seluruh katalog SKU untuk region tersebut sebelum menampilkan hasil</td>
+<td>Tunggu hingga dua menit; pertahankan <code>--size</code> untuk mempersempit output</td>
+</tr>
+<tr>
+<td>Tabel pemetaan zona kosong</td>
+<td><code>LOCATION</code> menunjuk ke region tanpa availability zone (atau ada salah ketik)</td>
+<td>Jalankan <code>echo $LOCATION</code>; gunakan <code>southeastasia</code> atau <code>indonesiacentral</code></td>
+</tr>
+<tr>
+<td><code>(StorageAccountAlreadyTaken) The storage account named ... is already taken.</code></td>
+<td>Nama storage account bersifat global dan orang lain sudah memakai nama Anda</td>
+<td>Jalankan <code>bash cleanup.sh</code>, lalu <code>rm ~/.azlunches-suffix</code>, <code>source ../common/config.sh</code> lagi (suffix baru), dan ulangi Tugas 3–4</td>
+</tr>
+<tr>
+<td>Pembuatan public IP gagal dengan error tentang zona</td>
+<td>Region itu tidak punya zona, atau tidak ketiga zonanya aktif di sana</td>
+<td>Gunakan region yang punya zona untuk <code>LOCATION</code></td>
+</tr>
+<tr>
+<td><code>(MissingSubscriptionRegistration) The subscription is not registered to use namespace 'Microsoft.Network'</code></td>
+<td>Subscription yang masih baru belum pernah memakai resource provider tersebut</td>
+<td><code>az provider register --namespace Microsoft.Network</code>, tunggu satu menit, lalu coba lagi</td>
+</tr>
+<tr>
+<td><code>pip-nusa-nozone</code> menampilkan kolom zones yang kosong</td>
+<td>Memang begitu seharusnya: di region yang punya zona, IP ini tetap zone-redundant</td>
+<td>Baca ulang penjelasan di Tugas 3</td>
+</tr>
+<tr>
+<td><code>verify.sh</code> menyatakan resource group tidak ditemukan setelah Anda mengubah <code>LOCATION</code></td>
+<td>Suffix atau region di shell ini berbeda dari saat Anda membuat resource</td>
+<td><code>source ../common/config.sh</code> dengan <code>LOCATION</code> yang sama seperti sebelumnya</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>Buat account geo-redundant (<code>--sku Standard_GRS</code>) di Southeast Asia, jalankan query perbandingan dari Tugas 4, dan
+lihat kolom <strong>secondary</strong>: kolom itu menyebutkan region pasangannya. Hapus account itu setelahnya.</li>
+<li>Coba perintah <code>Standard_GRS</code> yang sama dengan <code>--location indonesiacentral</code>. Apa yang terjadi, dan mengapa?
+(Petunjuk: GRS mereplikasi ke region pasangan.)</li>
+<li>Hitung harga 100 GB storage LRS, ZRS, dan GRS di <a href="https://azure.microsoft.com/pricing/calculator/" target="_blank" rel="noopener">pricing calculator</a>
+untuk Southeast Asia dan Indonesia Central, lalu catat perbedaannya antar-region dan antar-opsi redundansi.</li>
+<li>Jika Anda punya akses ke subscription kedua, bandingkan pemetaan zona logis ke zona fisiknya dengan milik Anda.</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep), di region <strong>yang punya availability
+zone</strong>:</p>
+<ol>
+<li>Resource group <code>rg-lunch03-&lt;suffix&gt;</code> di <code>LOCATION</code> Anda, dengan tag <code>course=azure-fundamentals-lunches</code> dan
+<code>lunch=03</code> (<code>ensure_rg</code> melakukannya untuk Anda).</li>
+<li>Alamat public IPv4 Standard yang statis, <code>pip-nusa-zonal</code>, yang dipatok hanya ke zona 1.</li>
+<li>Alamat public IPv4 Standard yang statis, <code>pip-nusa-zr</code>, yang secara eksplisit zone-redundant di zona 1, 2, dan 3.</li>
+<li>Dua account StorageV2, <code>stnusalrs&lt;suffix&gt;</code> dengan <code>Standard_LRS</code> dan <code>stnusazrs&lt;suffix&gt;</code> dengan <code>Standard_ZRS</code>,
+keduanya dengan TLS 1.2 sebagai versi minimum dan akses blob anonim dinonaktifkan.</li>
+<li>Tidak diperiksa oleh script: catat geografi region Anda, region pasangannya (jika ada), dan pemetaan zona logis ke
+zona fisik di subscription Anda.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="02-cloud-concepts.html"><small>← Lab sebelumnya</small>02 · Menyusun justifikasi bisnis</a><a class="next" href="04-resource-hierarchy-basic.html"><small>Lab berikutnya →</small>04 · Menata Nusantara Retail</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/03-global-infrastructure/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

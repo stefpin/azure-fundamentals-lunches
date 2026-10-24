@@ -1,9 +1,12 @@
 # Lunch 27 · Load Balancing (Advanced): Application Gateway, Front Door and Traffic Manager
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Deep-dive month · **Level:** Advanced · **Part 5:** Deep dives
 > **Time:** 60 minutes · **Prerequisite lunches:** 09 (Load Balancing, Basic), 10, 08
 > **AZ-900 skill area:** Beyond AZ-900
 > **Lab:** [Lab 27 · Protect and route the storefront](../../labs/27-load-balancing-advanced/README.md) — about 75 minutes · cost 💲💲💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -32,8 +35,8 @@ balancer from Lunch 09. It survived the last sale. Now three new requests land o
 
 Dewi has moved the product photos into a separate images app and wants `www.nusantararetail.co.id/images/...` served
 by it, under the shop's address. Rizky forwards the web server logs: thousands of requests a day contain strings such
-as `' OR 1=1--`, attempts to trick the database into returning every customer. And Ibu Sari has read the
-same news story as in Lunch 28: *"If Jakarta goes down during 12.12, do shoppers in Medan and Makassar just see an
+as `' OR 1=1--`, attempts to trick the database into returning every customer. And Ibu Sari has read a news
+story about a cloud outage that took a whole region offline for an afternoon: *"If Jakarta goes down during 12.12, do shoppers in Medan and Makassar just see an
 error?"* Shoppers in eastern Indonesia already complain that product pages load slowly.
 
 The layer 4 load balancer can't help with any of this, because it never reads a request. Today's question: **which
@@ -397,6 +400,16 @@ What to watch for:
   WAF and origin failover without DNS delays. Lock origins to your profile.
 - **Traffic Manager** steers any protocol with DNS (six routing methods), but failover waits for TTLs and caches; the
   **cross-region load balancer** gives TCP and UDP one anycast IP. Global services often sit in front of regional ones.
+
+## 🗒️ Field notes from Stefanus
+
+> **Always knock on the back door.** When a team shows me a new Front Door or Application Gateway with a WAF, my
+> first test is not the front door. I take the origin's own address — the `azurewebsites.net` name or the server's
+> public IP — and send one request straight to it from a laptop outside the corporate network. If it answers, the WAF
+> only protects the visitors who are polite enough to use the official address; an attacker simply walks around it.
+> I repeat that test after every change, because back doors are rarely left open on purpose: they are reopened by a
+> "temporary" access rule. And if the WAF is still in Detection mode, I ask for the date it moves to Prevention and
+> write that date into the design.
 
 ## 🔬 Your lab: Protect and route the storefront
 

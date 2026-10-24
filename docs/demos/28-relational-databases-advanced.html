@@ -292,7 +292,7 @@ svg .outage > text{fill:var(--bad)}
   </main>
 
   <footer>
-    <p>Part of <strong>Azure Fundamentals: One Lunch at a Time</strong> · <a href="../lunches/28-relational-databases-advanced.html" target="_top">Read the episode</a> · <a href="index.html" target="_top">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Course repository</a></p>
+    <p><span data-i18n="partOf">Part of</span> <strong data-i18n="course">Azure Fundamentals: One Lunch at a Time</strong> · <a href="../en/lunches/28-relational-databases-advanced.html" data-href-id="../id/lunches/28-relational-databases-advanced.html" target="_top" data-i18n="readEpisode">Read the episode</a> · <a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · <a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>
   </footer>
 </div>
 
@@ -697,10 +697,140 @@ svg .outage > text{fill:var(--bad)}
 ]
 </script>
 
+<script type="application/json" id="demo-i18n">
+{
+ "id": {
+  "page": {
+   "doc_title": "Makan Siang 28 · Database Relasional (Lanjutan) — Demo interaktif",
+   "kicker": "Makan Siang 28 · Database Relasional (Lanjutan) · Demo interaktif",
+   "title": "Failover group: replication lag, listener, dan tombol undo",
+   "lede": "Saksikan pesanan Nusantara Retail direplikasi secara asinkron ke region kedua, bertahan dari gangguan regional lewat listener milik failover group, kembali ke region asal tanpa kehilangan data, dan pulih dari DELETE yang keliru dengan point-in-time restore. Tekan ▶ Putar untuk menonton, atau telusuri langkah demi langkah dengan Lanjut dan Kembali.",
+   "svgTitle": "Failover group untuk database pesanan Nusantara Retail di Southeast Asia dan East Asia",
+   "svgDesc": "Aplikasi toko online dan aplikasi pelaporan tersambung lewat read-write listener dan read-only listener. Database pesanan memiliki primary di Southeast Asia dan geo-secondary di East Asia, yang terhubung lewat replikasi asinkron. Ceritanya menunjukkan replication lag sebagai recovery point objective, gangguan regional dengan forced failover, listener yang mengikuti primary baru, failback terencana, dan point-in-time restore setelah penghapusan yang keliru."
+  },
+  "steps": [
+   {
+    "title": "Semua pesanan di satu region",
+    "text": "Database pesanan Nusantara Retail berjalan di Southeast Asia. Di dalam region itu, ketersediaannya sudah tinggi: replika mengambil alih saat sebuah server gagal, dan dengan zone redundancy bahkan saat satu availability zone penuh gagal. Tetapi setiap salinan tinggal di region yang sama. Ibu Sari ingin tahu apa yang terjadi pada hari langka ketika seluruh region tidak tersedia."
+   },
+   {
+    "title": "Tambahkan secondary di region lain",
+    "text": "Failover group menambahkan logical server di East Asia dan membuat salinan geo-secondary dari database di sana. Pertama, seeding menyalin semua data yang sudah ada. Sejak itu, primary terus-menerus mengalirkan transaction log-nya ke secondary. Secondary bisa dibaca. Kedua server membutuhkan firewall rule dan admin yang sama, karena pengaturan level server tidak ikut direplikasi."
+   },
+   {
+    "title": "Commit dulu, replikasi kemudian",
+    "text": "Ikuti satu pesanan. Toko online menulis ke primary, yang meng-commit-nya dan langsung menjawab, jadi checkout tidak pernah menunggu Hong Kong. Sesaat kemudian, perubahan itu menyusul ke secondary. Inilah replikasi asinkron: operasi tulis tetap cepat sejauh apa pun letak secondary, tetapi secondary selalu sedikit tertinggal dari primary."
+   },
+   {
+    "title": "Sambungkan ke listener, bukan ke server",
+    "text": "Failover group memberi Anda dua nama DNS yang tidak pernah berubah. Toko online tersambung ke read-write listener, yang selalu mengarah ke primary. Dasbor toko tersambung ke read-only listener, yang mengarah ke secondary dan menjauhkan beban pelaporan dari checkout. Setelah failover, hanya targetnya yang berubah, jadi connection string tetap sama."
+   },
+   {
+    "title": "RPO sama dengan replication lag",
+    "text": "Karena replikasinya asinkron, selalu ada beberapa transaksi yang masih dalam perjalanan. Selisih itulah recovery point objective Anda: data yang bisa ikut hilang jika region tiba-tiba gagal. Biasanya hanya hitungan detik, dan Anda bisa memantaunya di kolom replication_lag_sec pada primary. Secondary yang ukurannya sama dengan primary menjaga lag tetap kecil.",
+    "set": {
+     "t-lag": "lag 3 s = RPO"
+    }
+   },
+   {
+    "title": "Bencana: Southeast Asia lumpuh",
+    "text": "Sekarang kejadian langka itu datang: Southeast Asia tidak tersedia. Request checkout sampai ke read-write listener, tetapi targetnya tidak menjawab. Dengan policy customer-managed, tim Anda yang memutuskan kapan failover. Dengan policy Microsoft-managed, Microsoft yang memutuskan, hanya untuk gangguan yang meluas dan baru setelah masa tenggang minimal satu jam, sehingga pemulihan bisa memakan waktu berjam-jam.",
+    "set": {
+     "t-roleA": "TAK TERJANGKAU"
+    }
+   },
+   {
+    "title": "Forced failover: terima lag-nya",
+    "text": "Anda menjalankan set-primary terhadap server East Asia dengan opsi allow-data-loss. Secondary langsung menjadi primary, tanpa menunggu primary yang tidak terjangkau. Beberapa transaksi yang masih dalam perjalanan hilang: itulah recovery point objective dalam praktik. Semua yang di-commit sebelumnya aman di East Asia, dan read-write listener kini mengarah ke sana.",
+    "set": {
+     "t-roleB": "PRIMARY · read-write",
+     "t-rw-target": "→ East Asia",
+     "t-lag": "hilang di perjalanan"
+    }
+   },
+   {
+    "title": "Listener mengikuti primary",
+    "text": "Alias DNS milik read-write listener kini mengarah ke East Asia, dengan time-to-live 30 detik. Toko online mencoba lagi, menanyakan nama yang sama ke DNS, dan mendarat di primary baru; tidak ada yang perlu mengedit connection string. Pelanggan bisa berbelanja lagi dalam hitungan menit setelah Anda memutuskan. Laporan berhenti dulu sampai secondary tersedia lagi, kecuali Anda mengarahkannya ke primary untuk sementara.",
+    "set": {
+     "t-ro-target": "→ belum ada secondary",
+     "t-lag": "tanpa secondary"
+    }
+   },
+   {
+    "title": "Primary lama bergabung kembali",
+    "text": "Belakangan, Southeast Asia pulih. Failover group menyambungkan kembali primary lama sebagai secondary baru, dan replikasi kini berjalan dari East Asia ke Southeast Asia sampai ia selesai menyusul. Read-only listener ikut berpindah, jadi laporan berjalan lagi. Pesanan yang hilang saat forced failover tidak digabungkan kembali secara otomatis — itulah sebabnya RPO penting.",
+    "set": {
+     "t-roleA": "SECONDARY · menyusul",
+     "t-ro-target": "→ Southeast Asia",
+     "t-lag": "sedang menyusul"
+    }
+   },
+   {
+    "title": "Fail back dengan planned failover",
+    "text": "Saat Anda siap, pindahkan primary kembali dengan planned failover: set-primary tanpa opsi allow-data-loss. Azure lebih dulu menyinkronkan secondary sepenuhnya, lalu menukar perannya, sehingga tidak ada yang hilang. Listener ikut berpindah lagi. Gunakan perintah yang sama untuk drill rutin: tim yang sudah berlatih failover dan kembali lagi akan mengambil keputusan sungguhan dengan cepat.",
+    "set": {
+     "t-roleA": "PRIMARY · read-write",
+     "t-roleB": "SECONDARY · read-only",
+     "t-rw-target": "→ Southeast Asia",
+     "t-ro-target": "→ East Asia",
+     "t-lag": "asinkron · lag ≈ 1 s"
+    }
+   },
+   {
+    "title": "Replikasi juga menyalin kesalahan",
+    "text": "Satu ancaman terakhir: manusia. Dewi menjalankan DELETE tanpa klausa WHERE. Primary menurut, dan replikasi dengan setia menyalin penghapusan itu ke East Asia dalam hitungan detik, jadi failover tidak akan menolong. Tombol undo-nya adalah point-in-time restore: Azure membangun ulang database dari backup otomatisnya, seperti keadaannya tepat sebelum kesalahan, ke database baru di samping yang asli."
+   },
+   {
+    "title": "Rangkuman: zona, region, dan kesalahan",
+    "text": "Zone redundancy menangani zona yang gagal tanpa kehilangan data. Failover group menangani region yang gagal: replikasi asinkron, nama listener yang mengikuti primary, recovery point objective yang sama dengan replication lag, dan waktu pemulihan yang dimulai saat Anda memutuskan. Point-in-time restore menangani kesalahan manusia. Anda membutuhkan ketiganya, dan Anda perlu melatihnya.",
+    "tip": "Di Lab 28 Anda membangunnya sendiri: dua server Entra-only, failover group dengan listener, e-mail pelanggan yang disamarkan, point-in-time restore setelah penghapusan yang disengaja, dan drill planned failover."
+   }
+  ],
+  "svg": {
+   "async · lag ≈ 1 s": "asinkron · lag ≈ 1 s",
+   "Southeast Asia (Singapore)": "Southeast Asia (Singapura)",
+   "uses the server name directly": "memakai nama server langsung",
+   "Storefront app": "Aplikasi toko",
+   "checkout, orders": "checkout, pesanan",
+   "Reports": "Laporan",
+   "store dashboards": "dasbor toko",
+   "Restored": "Hasil restore",
+   "copy (PITR)": "salinan (PITR)",
+   "new database": "database baru",
+   "Two names that never change": "Dua nama yang tak pernah berubah",
+   "read-write → whichever server is primary": "read-write → server mana pun yang jadi primary",
+   "read-only → the secondary": "read-only → secondary",
+   "DNS aliases with a 30-second time-to-live": "alias DNS dengan time-to-live 30 detik",
+   "A commit returns before the change reaches": "Commit selesai sebelum perubahannya sampai",
+   "East Asia. If the region failed right now,": "di East Asia. Jika region gagal saat ini juga,",
+   "the changes still in flight would be lost.": "perubahan yang masih di jalan akan hilang.",
+   "column replication_lag_sec, on the primary": "kolom replication_lag_sec, di primary",
+   "Forced failover: you decide": "Forced failover: Anda yang memutuskan",
+   "East Asia becomes primary at once.": "East Asia langsung menjadi primary.",
+   "Orders still in flight are lost: that is": "Pesanan yang masih di jalan hilang: itulah",
+   "the recovery point objective in action.": "recovery point objective dalam praktik.",
+   "Planned failover: no data loss": "Planned failover: tanpa kehilangan data",
+   "Full synchronisation first, then the roles": "Sinkronisasi penuh lebih dulu, baru peran",
+   "swap. Use it for failback and for regular": "ditukar. Pakai untuk failback dan untuk drill",
+   "drills, so the real decision is quick.": "rutin, agar keputusan sungguhan cepat.",
+   "Replication is not a backup": "Replikasi bukan backup",
+   "A mistaken DELETE reaches East Asia within": "DELETE yang keliru sampai ke East Asia dalam",
+   "seconds. Point-in-time restore rebuilds the": "hitungan detik. Point-in-time restore membangun",
+   "database from automatic backups, as it was": "ulang database dari backup otomatis, seperti",
+   "just before the mistake, into a new database": "keadaannya tepat sebelum kesalahan, ke database",
+   "next to the original.": "baru di samping yang asli.",
+   "Region unavailable": "Region tidak tersedia"
+  }
+ }
+}
+</script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.0 · engine
+   LUNCH DEMO PLAYER · v1.1 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
+   v1.1: bilingual. Translations live in <script type="application/json"
+   id="demo-i18n">{"id": {page, steps, svg}}</script>; the language comes
+   from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
    ===================================================================== */
 (function () {
   'use strict';
@@ -716,6 +846,119 @@ svg .outage > text{fill:var(--bad)}
 
   var byId = function (id) { return document.getElementById(id); };
   var svg = byId('stage');
+
+  /* ---------- language ---------- */
+  var UI = {
+    en: {
+      step: 'Step {n} of {N}', stepN: 'Step {n}', play: '▶ Play', pause: '❚❚ Pause', back: '◀ Back', next: 'Next ▶',
+      restart: '↺ Restart', speed: 'Speed', relaxed: 'Relaxed', normal: 'Normal', brisk: 'Brisk',
+      prevLabel: 'Previous step', nextLabel: 'Next step', restartLabel: 'Restart from the first step',
+      controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
+      hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
+      partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
+      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+    },
+    id: {
+      step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
+      next: 'Lanjut ▶', restart: '↺ Ulangi', speed: 'Kecepatan', relaxed: 'Santai', normal: 'Normal', brisk: 'Cepat',
+      prevLabel: 'Langkah sebelumnya', nextLabel: 'Langkah berikutnya', restartLabel: 'Ulangi dari langkah pertama',
+      controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
+      hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
+      partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+    }
+  };
+  var I18N = {};
+  try {
+    var i18nEl = byId('demo-i18n');
+    if (i18nEl) { I18N = JSON.parse(i18nEl.textContent) || {}; }
+  } catch (err) { I18N = {}; }
+  function pickLang() {
+    var m = /[?&]lang=([a-z]{2})\b/.exec(window.location.search || '');
+    if (m) { return m[1]; }
+    try { var saved = window.localStorage.getItem('azlunch.lang'); if (saved) { return saved; } } catch (err) { /* storage blocked */ }
+    return 'en';
+  }
+  var LANG = pickLang();
+  if (LANG !== 'en' && !(I18N[LANG] && UI[LANG])) { LANG = 'en'; }
+  var T = UI[LANG];
+  function fmt(s, v) { return String(s).replace(/\{(\w+)\}/g, function (_m, k) { return v[k]; }); }
+  function setTxt(el, s) { if (el && s) { el.textContent = s; } }
+  function inline(s) {
+    var plain = String(s).replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&');
+    return plain.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/&lt;(\/?)(code|strong|em)&gt;/g, '<$1$2>');
+  }
+  var TR = LANG === 'en' ? null : I18N[LANG];
+  if (TR) {
+    document.documentElement.setAttribute('lang', LANG);
+    var pg = TR.page || {};
+    if (pg.doc_title) { document.title = pg.doc_title; }
+    setTxt(document.querySelector('header.top .kicker'), pg.kicker);
+    setTxt(document.querySelector('header.top h1'), pg.title);
+    var lede = document.querySelector('header.top .lede');
+    if (lede && pg.lede) { lede.innerHTML = inline(pg.lede); }
+    setTxt(byId('svgTitle'), pg.svgTitle);
+    setTxt(byId('svgDesc'), pg.svgDesc);
+    var labels = TR.svg || {};
+    Array.prototype.forEach.call(svg.querySelectorAll('text, tspan'), function (el) {
+      if (el.children && el.children.length) { return; }
+      var key = (el.textContent || '').replace(/\s+/g, ' ').trim();
+      if (key && Object.prototype.hasOwnProperty.call(labels, key)) { el.textContent = labels[key]; }
+    });
+    (TR.steps || []).forEach(function (t, k) {
+      var s = STEPS[k];
+      if (!s || !t) { return; }
+      if (t.title) { s.title = t.title; }
+      if (t.text) { s.text = t.text; }
+      if (t.tip && s.tip) { s.tip = t.tip; }
+      if (t.set && s.set) {
+        Object.keys(t.set).forEach(function (id) { if (Object.prototype.hasOwnProperty.call(s.set, id)) { s.set[id] = t.set[id]; } });
+      }
+    });
+  }
+  (function applyUi() {
+    var label = function (sel, txt) { var el = document.querySelector(sel); if (el) { el.setAttribute('aria-label', txt); } };
+    setTxt(byId('prev'), T.back); label('#prev', T.prevLabel);
+    setTxt(byId('next'), T.next); label('#next', T.nextLabel);
+    setTxt(byId('restart'), T.restart); label('#restart', T.restartLabel);
+    setTxt(byId('play'), T.play);
+    label('.controls', T.controls); label('#stepsList', T.allSteps);
+    label('aside.narration', T.narration); label('section.stage', T.stage);
+    var sp = document.querySelector('label.speed');
+    if (sp && sp.firstChild && sp.firstChild.nodeType === 3) { sp.firstChild.nodeValue = T.speed + ' '; }
+    var names = { '1.5': T.relaxed, '1': T.normal, '0.7': T.brisk };
+    Array.prototype.forEach.call(document.querySelectorAll('#speed option'), function (o) { setTxt(o, names[o.value]); });
+    setTxt(document.querySelector('p.hint'), T.hint);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-i18n]'), function (el) { setTxt(el, T[el.getAttribute('data-i18n')]); });
+    if (LANG !== 'en') {
+      Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
+        a.setAttribute('href', a.getAttribute('data-href-' + LANG));
+      });
+    }
+    var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
+    if (LANG !== 'en') { others.unshift('en'); }
+    var framed = false;
+    try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var header = document.querySelector('header.top');
+    if (others.length && header && !framed) {
+      var to = others[0];
+      var a = document.createElement('a');
+      var url = window.location.pathname + '?lang=' + to + (window.location.hash || '');
+      a.href = url;
+      a.textContent = UI[to].other;
+      a.setAttribute('hreflang', to);
+      a.setAttribute('lang', to);
+      a.className = 'lang-switch';
+      a.style.cssText = 'float:right;margin:0 0 .4rem 1rem;padding:.3em .8em;border:1px solid var(--line);border-radius:999px;' +
+        'background:var(--surface);color:var(--ink);font-size:.82rem;font-weight:600;text-decoration:none';
+      a.addEventListener('click', function () {
+        try { window.localStorage.setItem('azlunch.lang', to); } catch (err) { /* storage blocked */ }
+      });
+      header.insertBefore(a, header.firstChild);
+    }
+  })();
+
   var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
   var reduceMotion = !!(mq && mq.matches);
   var TRANSIENT = { highlight: 'is-hl', ok: 'is-ok', bad: 'is-bad', flow: 'is-flow', dim: 'is-dim' };
@@ -835,7 +1078,7 @@ svg .outage > text{fill:var(--bad)}
     if (st.view !== lastViewKey) { lastViewKey = st.view; setView(st.view); }
     clearPackets();
     (s.packets || []).forEach(runPacket);
-    byId('stepCount').textContent = 'Step ' + (current + 1) + ' of ' + STEPS.length;
+    byId('stepCount').textContent = fmt(T.step, { n: current + 1, N: STEPS.length });
     byId('stepTitle').textContent = s.title || '';
     byId('stepText').textContent = s.text || '';
     var tip = byId('stepTip');
@@ -870,7 +1113,7 @@ svg .outage > text{fill:var(--bad)}
   function setPlaying(p) {
     playing = p;
     var b = byId('play');
-    b.textContent = p ? '❚❚ Pause' : '▶ Play';
+    b.textContent = p ? T.pause : T.play;
     b.setAttribute('aria-pressed', p ? 'true' : 'false');
     if (p && current === STEPS.length - 1) { render(0); }
     schedule();
@@ -883,7 +1126,7 @@ svg .outage > text{fill:var(--bad)}
     var li = document.createElement('li');
     var b = document.createElement('button');
     b.type = 'button';
-    b.textContent = s.title || ('Step ' + (k + 1));
+    b.textContent = s.title || fmt(T.stepN, { n: k + 1 });
     b.addEventListener('click', function () { go(k); });
     li.appendChild(b);
     list.appendChild(li);
@@ -904,7 +1147,7 @@ svg .outage > text{fill:var(--bad)}
     else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(current - 1); }
     else if (e.key === 'Home') { e.preventDefault(); go(0); }
     else if (e.key === 'End') { e.preventDefault(); go(STEPS.length - 1); }
-    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button') { e.preventDefault(); setPlaying(!playing); }
+    else if ((e.key === ' ' || e.key === 'k') && tag !== 'button' && tag !== 'a') { e.preventDefault(); setPlaying(!playing); }
   });
   if (mq && mq.addEventListener) {
     mq.addEventListener('change', function (e) { reduceMotion = e.matches; render(current); });
@@ -912,7 +1155,7 @@ svg .outage > text{fill:var(--bad)}
 
   var m = /step=(\d+)/.exec(window.location.hash || '');
   render(m ? Number(m[1]) - 1 : 0);
-  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, current: function () { return current; } };
+  window.__lunchDemo = { steps: STEPS, go: go, stateAt: stateAt, lang: LANG, current: function () { return current; } };
 })();
 </script>
 </body>

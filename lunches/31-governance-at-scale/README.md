@@ -1,9 +1,12 @@
 # Lunch 31 · Resource Hierarchy and Governance (Advanced): Governance at Scale
 
+🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
+
 > **Track:** Deep-dive month · **Level:** Advanced · **Part 5:** Deep dives
 > **Time:** 60 minutes · **Prerequisite lunches:** 04, 18 (helpful: 20, 22)
 > **AZ-900 skill area:** Beyond AZ-900
 > **Lab:** [Lab 31 · Governance for the whole company](../../labs/31-governance-at-scale/README.md) — about 60 minutes · cost 💲
+> **Author:** Stefanus Pinarta · [About the author](../../README.md#about-the-author)
 
 | ⏱ Minutes | Segment |
 |---:|---|
@@ -381,6 +384,10 @@ What to watch for:
 - Save definitions high, assign initiatives at management-group scope with parameters, start in DoNotEnforce, and give Modify and DeployIfNotExists identities roles on every scope they write to.
 - Exemptions (Waiver or Mitigated) with expiry dates and metadata keep exceptions visible and auditable; exclusions silently remove scopes from the report.
 - Governance is code: Git, pipelines, deployment stacks and template specs replace Blueprints before January 31, 2027, while Resource Graph and Azure Arc extend visibility and control to every subscription and to servers outside Azure.
+
+## 🗒️ Field notes from Stefanus
+
+> **Ask where the next subscription lands.** In every governance review I start with one question: *if someone creates a subscription this afternoon, where does it land, and which rules apply to it in its first minute?* If the honest answer is "under the tenant root, nothing yet", the hierarchy is only a diagram. Then I look for side doors, because the trap I see most often is not a missing policy but an unguarded exit: who may move subscriptions, who may grant exemptions, and does every exemption have an owner and an end date? Finally, before any Deny goes live at the intermediate root, I write its non-compliance message in plain words: what was blocked, why, and whom to ask. Someone who hits a bare error at six in the evening looks for a workaround, not for the policy owner.
 
 ## 🔬 Your lab: Governance for the whole company
 

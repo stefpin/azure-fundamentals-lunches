@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Episode 31 · Tujuh Subscription dan Satu Merger — Makan Siang 31: Hierarki Resource dan Tata Kelola (Lanjutan): Tata Kelola Skala Besar · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Makan Siang 31 · Hierarki Resource dan Tata Kelola (Lanjutan): Tata Kelola Skala Besar. Pagar pengaman yang melindungi satu subscription tidak akan selamat dari merger. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/31-governance-at-scale.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/31-governance-at-scale.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/31-governance-at-scale.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/lunches/31-governance-at-scale.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Episode 31 · Tujuh Subscription dan Satu Merger — Makan Siang 31: Hierarki Resource dan Tata Kelola (Lanjutan): Tata Kelola Skala Besar">
+<meta property="og:description" content="Makan Siang 31 · Hierarki Resource dan Tata Kelola (Lanjutan): Tata Kelola Skala Besar. Pagar pengaman yang melindungi satu subscription tidak akan selamat dari merger. Bacaan 60 menit, demo animasi, uji pemahaman, dan lab Azure praktik.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/lunches/31-governance-at-scale.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lunch" data-lunch="31" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes" aria-current="page">Episode</a><a href="../labs/index.html">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/lunches/31-governance-at-scale.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="ep-hero">
+  <div class="container ep-hero-grid">
+    <div>
+      <div class="ep-num"><span class="pill">Episode 31</span> Season 2 · 🌊 Bagian 5 · Pendalaman</div>
+      <h1>Tujuh Subscription dan Satu Merger</h1>
+      <div class="lunch-title">Makan Siang 31 · Hierarki Resource dan Tata Kelola (Lanjutan): Tata Kelola Skala Besar</div>
+      <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+      <div class="chips">
+        <span class="chip advanced">🎬 Episode terakhir</span><span class="chip advanced">Lanjutan</span>
+        <span class="chip">⏱ Makan siang 60 menit</span>
+        <span class="chip">🎓 Di luar cakupan AZ-900</span>
+        <span class="chip cost">🔬 Lab · sekitar 60 menit · 💲</span>
+        <span class="chip">Melanjutkan</span><a class="chip" href="04-resource-hierarchy-basic.html" title="Siapa yang Bikin server-baru-final2?">↩ 04</a><a class="chip" href="18-governance-compliance-basic.html" title="Storage Account di West Europe">↩ 18</a><a class="chip" href="20-infrastructure-as-code-bicep.html" title="Bangun Ulang Semua dalam Sejam?">↩ 20</a><a class="chip" href="22-identity-access-advanced.html" title="Empat Temuan Auditor">↩ 22</a>
+      </div>
+      <div class="previously"><b>Sebelumnya di Nusantara Retail</b>Di Episode 30 · Kenapa Checkout Lambat Hari Jumat?, kini log, metrik, dan trace bertemu di satu workspace, dan sebuah kueri KQL menemukan penyebab sebenarnya.</div>
+      <div class="ctas">
+        <button class="btn btn-warm" type="button" data-timer-start>🍱 Mulai makan siang 60 menit</button>
+        <a class="btn" href="#demo">🎬 Langsung ke demo</a>
+        <button class="btn btn-ghost" type="button" data-finish>✓ Tandai selesai</button>
+      </div>
+    </div>
+    <div class="mini-art" aria-hidden="false">
+      <svg class="pantry mood-4"  viewBox="0 0 200 236" role="img" aria-label="Server pantry, santai"><g class="heat"><path d="M70 36c-7-6 7-11 0-18"/><path d="M100 30c-7-6 7-11 0-18"/><path d="M130 36c-7-6 7-11 0-18"/></g><ellipse cx="100" cy="228" rx="72" ry="7" fill="currentColor" opacity=".1"/><rect class="body" x="38" y="46" width="124" height="172" rx="22"/><rect class="bay" x="56" y="64" width="88" height="20" rx="6"/><circle class="led" cx="132" cy="74" r="4"/><rect class="bay" x="56" y="92" width="88" height="20" rx="6"/><circle class="led l2" cx="132" cy="102" r="4"/><circle class="eye" cx="80" cy="142" r="7.5"/><circle class="eye" cx="120" cy="142" r="7.5"/><g class="shades"><rect x="61" y="130" width="35" height="19" rx="7" fill="#16203a"/><rect x="104" y="130" width="35" height="19" rx="7" fill="#16203a"/><path d="M96 137h8" stroke="#16203a" stroke-width="4"/><path d="M66 135h9" stroke="#fff" stroke-width="2" opacity=".6"/></g><circle class="cheek" cx="66" cy="162" r="7"/><circle class="cheek" cx="134" cy="162" r="7"/><path class="mouth sad" d="M84 178q16-13 32 0"/><path class="mouth flat" d="M86 172h28"/><path class="mouth smile" d="M82 165q18 18 36 0"/><path class="sweat" d="M152 118c-6 10-8 14-4 18a6 6 0 0 0 8 0c4-4 2-8-4-18z"/><path d="M58 196h22M58 204h22M120 196h22M120 204h22" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".25"/><g transform="translate(100 200)"><g class="fan"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/><g transform="rotate(120)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><g transform="rotate(240)"><path d="M0 0C3-8 10-8 9-2S3 2 0 0z"/></g><circle r="2.6" fill="#f2a007"/></g></g></svg>
+      <div class="mini-meter"><b>Pertanyaan direktur · 100% siap</b>Setelah episode ini Anda bisa menjawab: “Hitungan menit untuk gangguan satu region, hanya beberapa detik data yang berisiko — dan aturan yang sama di mana pun kita beroperasi.”</div>
+    </div>
+  </div>
+</section>
+<nav class="mobile-seg" aria-label="Bagian makan siang ini"><div class="container">
+  <a href="#menu">🍱 Menu</a><a href="#story">🏪 Cerita</a><a href="#reading">📖 Bacaan</a><a href="#demo">🎬 Demo</a>
+  <a href="#quiz">✅ Kuis</a><a href="#takeaways">🧠 Poin</a><a href="#field-notes">🗒️ Catatan</a><a href="#lab">🔬 Lab</a><a href="#finish">🏁 Selesai</a>
+</div></nav>
+<div class="container ep-layout">
+  <aside class="rail" aria-label="Jam makan siang">
+      <h4>Jam makan siang <span>60 mnt</span></h4>
+      <ol>
+        <li style="--sc:#e2482f"><a href="#menu">Menu hari ini <span class="mins">0–5</span></a></li>
+        <li style="--sc:#e2482f"><a href="#story">Sementara itu…</a></li>
+        <li style="--sc:#1665d8"><a href="#reading">Bacaan <span class="mins">5–30</span></a></li>
+        <li class="sub" style="--sc:#1665d8"><a href="#1-hierarki-yang-dirancang-untuk-policy-bukan-untuk-bagan-organisasi">Hierarki yang dirancang untuk policy, bukan untuk bagan organisasi</a></li><li class="sub" style="--sc:#1665d8"><a href="#2-subscription-sebagai-satuan-skala--dan-cara-menyediakannya-lewat-vending">Subscription sebagai satuan skala — dan cara menyediakannya lewat vending</a></li><li class="sub" style="--sc:#1665d8"><a href="#3-tata-kelola-berbasis-policy-di-scope-management-group">Tata kelola berbasis policy di scope management group</a></li><li class="sub" style="--sc:#1665d8"><a href="#4-tata-kelola-sebagai-kode--dan-kehidupan-setelah-blueprints">Tata kelola sebagai kode — dan kehidupan setelah Blueprints</a></li><li class="sub" style="--sc:#1665d8"><a href="#5-melihat-semuanya-resource-graph-dalam-skala-besar-dan-azure-arc">Melihat semuanya: Resource Graph dalam skala besar dan Azure Arc</a></li><li class="sub" style="--sc:#1665d8"><a href="#6-bagaimana-semuanya-menyatu-untuk-nusantara-retail">Bagaimana semuanya menyatu untuk Nusantara Retail</a></li>
+        <li style="--sc:#7b4ff0"><a href="#demo">Demo <span class="mins">30–45</span></a></li>
+        <li style="--sc:#11935a"><a href="#quiz">Uji pemahaman <span class="mins">45–50</span></a></li>
+        <li style="--sc:#d98a00"><a href="#takeaways">Poin penting <span class="mins">50–55</span></a></li>
+        <li style="--sc:#d98a00"><a href="#field-notes">Catatan lapangan</a></li>
+        <li style="--sc:#d98a00"><a href="#lab">Lab Anda</a></li>
+        <li style="--sc:#0f9fb0"><a href="#finish">Selesai <span class="mins">55–60</span></a></li>
+      </ol>
+      <div class="rail-foot">
+        <button class="btn btn-sm btn-warm" type="button" data-timer-start>🍱 Mulai timer makan siang</button>
+        <a class="btn btn-sm" href="../labs/31-governance-at-scale.html">🔬 Buka Lab 31</a>
+      </div>
+    </aside>
+  <div class="ep-main">
+    <section class="block" id="menu" data-spy>
+      <div class="block-head"><span class="icon">🍱</span><h2>Menu hari ini</h2><span class="minute">Menit 0–5</span></div>
+      <div class="menu-card">
+        <h3>Setelah makan siang ini, Anda akan mampu</h3>
+        <ul class="objectives"><li><button type="button" data-obj="0" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Merancang hierarki management group (<em>grup manajemen</em>) berdasarkan arsitektur Azure landing zone, dan menjelaskan mengapa hierarki itu mengikuti jenis workload (beban kerja), bukan bagan organisasi.</span></li><li><button type="button" data-obj="1" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Menjelaskan mengapa subscription (<em>langganan</em>) adalah satuan skala, apa yang diotomatiskan oleh subscription vending, dan di scope mana RBAC (<em>kontrol akses berbasis peran</em>), anggaran (budget), dan policy sebaiknya dipasang.</span></li><li><button type="button" data-obj="2" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Menjalankan tata kelola berbasis policy di scope management group: tempat definisi disimpan, rollout yang aman, identitas untuk remediasi, serta exemption (Waiver vs Mitigated).</span></li><li><button type="button" data-obj="3" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Mengelola tata kelola sebagai kode dan merencanakan perpindahan dari Azure Blueprints ke deployment stacks dan template specs.</span></li><li><button type="button" data-obj="4" aria-pressed="false" aria-label="Saya sudah bisa melakukan ini">✓</button><span>Memakai Azure Resource Graph dan Azure Arc untuk melihat dan mengatur setiap subscription — termasuk server yang tidak akan pernah pindah ke Azure.</span></li></ul>
+        <p class="hint">Centang sebuah tujuan jika Anda benar-benar sudah bisa melakukannya. Masing-masing bernilai 5 XP.</p>
+      </div>
+    </section>
+
+    <section class="block" id="story" data-spy>
+      <div class="story">
+        <svg class="skyline" viewBox="0 0 1200 120" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><defs><linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22325f"/><stop offset="1" stop-color="#16203a"/></linearGradient></defs><rect width="1200" height="120" fill="url(#skyGrad)"/><g fill="#ffd58a" opacity=".8"><circle cx="60" cy="18" r="1.4"/><circle cx="150" cy="34" r="1"/><circle cx="240" cy="14" r="1.6"/><circle cx="330" cy="40" r="1"/><circle cx="420" cy="20" r="1.3"/><circle cx="520" cy="30" r="1"/><circle cx="690" cy="16" r="1.5"/><circle cx="760" cy="38" r="1"/><circle cx="850" cy="22" r="1.2"/><circle cx="940" cy="12" r="1"/><circle cx="1010" cy="44" r="1.3"/><circle cx="1140" cy="20" r="1.5"/><circle cx="1170" cy="50" r="1"/></g><circle cx="1060" cy="30" r="14" fill="#ffe7a8"/><circle cx="1067" cy="25" r="13" fill="#22325f"/><g fill="#0b1328"><rect x="0" y="70" width="60" height="50"/><rect x="64" y="52" width="46" height="68"/><rect x="114" y="80" width="40" height="40"/><rect x="158" y="44" width="54" height="76"/><rect x="216" y="66" width="38" height="54"/><rect x="258" y="36" width="60" height="84"/><rect x="322" y="58" width="44" height="62"/><rect x="370" y="74" width="36" height="46"/><rect x="410" y="48" width="50" height="72"/><rect x="464" y="62" width="44" height="58"/><rect x="650" y="54" width="48" height="66"/><rect x="702" y="40" width="56" height="80"/><rect x="762" y="68" width="40" height="52"/><rect x="806" y="30" width="52" height="90"/><rect x="862" y="58" width="46" height="62"/><rect x="912" y="46" width="40" height="74"/><rect x="956" y="72" width="44" height="48"/><rect x="1004" y="38" width="58" height="82"/><rect x="1066" y="62" width="48" height="58"/><rect x="1118" y="50" width="82" height="70"/><path d="M560 120l14-18h52l14 18z"/><rect x="592" y="58" width="16" height="46"/><path d="M588 60h24l-4-6h-16z"/></g><path d="M600 30c-7 9-7 17 0 26 7-9 7-17 0-26z" fill="#ffc14a"/><path d="M600 40c-3 5-3 9 0 13 3-4 3-8 0-13z" fill="#fff3c4"/><g fill="#ffd58a" opacity=".55"><rect x="8" y="80" width="5" height="6"/><rect x="20" y="80" width="5" height="6"/><rect x="32" y="80" width="5" height="6"/><rect x="8" y="94" width="5" height="6"/><rect x="20" y="94" width="5" height="6"/><rect x="32" y="94" width="5" height="6"/><rect x="122" y="90" width="5" height="6"/><rect x="134" y="90" width="5" height="6"/><rect x="146" y="90" width="5" height="6"/><rect x="224" y="76" width="5" height="6"/><rect x="236" y="76" width="5" height="6"/><rect x="248" y="76" width="5" height="6"/><rect x="330" y="68" width="5" height="6"/><rect x="342" y="68" width="5" height="6"/><rect x="354" y="68" width="5" height="6"/><rect x="418" y="58" width="5" height="6"/><rect x="430" y="58" width="5" height="6"/><rect x="442" y="58" width="5" height="6"/><rect x="418" y="72" width="5" height="6"/><rect x="430" y="72" width="5" height="6"/><rect x="442" y="72" width="5" height="6"/><rect x="658" y="64" width="5" height="6"/><rect x="670" y="64" width="5" height="6"/><rect x="682" y="64" width="5" height="6"/><rect x="658" y="78" width="5" height="6"/><rect x="670" y="78" width="5" height="6"/><rect x="682" y="78" width="5" height="6"/><rect x="770" y="78" width="5" height="6"/><rect x="782" y="78" width="5" height="6"/><rect x="794" y="78" width="5" height="6"/><rect x="870" y="68" width="5" height="6"/><rect x="882" y="68" width="5" height="6"/><rect x="894" y="68" width="5" height="6"/><rect x="870" y="82" width="5" height="6"/><rect x="882" y="82" width="5" height="6"/><rect x="894" y="82" width="5" height="6"/><rect x="964" y="82" width="5" height="6"/><rect x="976" y="82" width="5" height="6"/><rect x="988" y="82" width="5" height="6"/><rect x="1074" y="72" width="5" height="6"/><rect x="1086" y="72" width="5" height="6"/><rect x="1098" y="72" width="5" height="6"/><rect x="1074" y="86" width="5" height="6"/><rect x="1086" y="86" width="5" height="6"/><rect x="1098" y="86" width="5" height="6"/></g></svg>
+        <span class="tag">🏪 Sementara itu di Nusantara Retail · Episode 31</span>
+        <div class="story-body"><p>Setahun setelah toko online pindah ke Azure, Nusantara Retail kini punya tujuh subscription: produksi dan pengujian toko
+online, aplikasi loyalitas, data warehouse milik tim keuangan, sebuah hub jaringan bersama, dan dua subscription yang tak
+seorang pun ingat pernah membuatnya — salah satunya ternyata subscription Visual Studio yang dipakai Dewi untuk
+bereksperimen. Bulan depan, perusahaan menuntaskan pembelian jaringan dua belas toko di Sulawesi, yang membawa dua
+subscription tambahan berisi resource di West Europe. Selain itu, masing-masing dari empat puluh toko masih menjalankan
+server kasir (point-of-sale) kecil di ruang belakang, yang tidak akan pernah pindah ke cloud.</p>
+<p>Pagar pengaman (guardrails) yang Anda bangun di Makan Siang 18 hanya melindungi tepat satu subscription. Sisanya
+dikonfigurasi secara manual, dan setiap kali hasilnya sedikit berbeda. Blueprint lama buatan Rizky, yang dulu &quot;mencap&quot; tag
+dan role ke setiap subscription baru, berhenti menerima assignment baru pada akhir bulan ini.</p>
+<p>Ibu Sari menyampaikannya tanpa basa-basi: <em>&quot;Tahun depan kita akan punya dua puluh subscription. Bagaimana caranya supaya
+semuanya langsung mengikuti aturan yang sama sejak menit pertama dibuat — tanpa Anda harus mengonfigurasinya satu per
+satu?&quot;</em></p>
+</div>
+      </div>
+    </section>
+
+    <section class="block" id="reading" data-spy>
+      <div class="block-head"><span class="icon">📖</span><h2>Bacaan</h2><span class="minute">Menit 5–30 · 6 adegan</span></div>
+      
+      <article class="scene-card" id="1-hierarki-yang-dirancang-untuk-policy-bukan-untuk-bagan-organisasi" data-spy><span class="scene-no">Adegan 1 dari 6</span><h3>Hierarki yang dirancang untuk policy, bukan untuk bagan organisasi</h3><div class="prose"><p>Di Makan Siang 04 Anda sudah berkenalan dengan hierarki resource: sebuah tenant Microsoft Entra (direktori identitas
+milik organisasi), <strong>tenant root group</strong> di puncaknya, lalu management group, subscription, resource group (<em>grup sumber
+daya</em>), dan resource (<em>sumber daya</em>). Apa pun yang Anda tetapkan di sebuah scope (tingkat dalam hierarki tempat sebuah
+aturan dipasang) — entah role atau policy — akan mengalir turun ke semua yang ada di bawahnya, sementara biaya terkumpul
+naik ke atas. Dalam skala kecil, bagian puncak pohon ini nyaris tak terasa. Dalam skala perusahaan, justru di
+sinilah keputusan desain terpenting Anda, karena pewarisan (inheritance) adalah cara satu aturan menjangkau dua puluh
+subscription.</p>
+<p>Beberapa fakta platform menentukan bentuk desainnya. Pohon management group bisa sedalam enam tingkat, tidak termasuk
+tenant root dan tingkat subscription. Di bawah root, setiap management group dan subscription punya tepat satu induk
+(parent). ID tenant root group sama dengan ID tenant, dan grup ini tidak bisa dipindahkan maupun dihapus. ID sebuah
+management group bersifat permanen begitu dibuat; hanya nama tampilannya (display name) yang bisa diubah. Secara default,
+setiap pengguna di tenant boleh membuat management group, dan setiap <strong>subscription baru langsung mendarat di bawah tenant
+root group</strong> — di luar semua aturan yang sudah Anda rancang dengan cermat.</p>
+<p>Arsitektur <strong>Azure landing zone</strong> dari Cloud Adoption Framework (CAF, kumpulan panduan Microsoft untuk mengadopsi cloud)
+memberi Anda bentuk awal yang sudah teruji. <em>Landing zone</em> berarti &quot;zona pendaratan&quot;: lingkungan yang sudah disiapkan
+lengkap dengan aturan, jaringan, dan akses, sehingga sebuah workload tinggal mendarat. Saat tulisan ini dibuat (Oktober
+2026), arsitektur ini merekomendasikan management group berikut:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Management group</th>
+<th>Isinya</th>
+<th>Pagar pengaman yang umum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Intermediate root</strong> (prefiks Anda, misalnya <code>nusa</code>)</td>
+<td>Semua yang diatur perusahaan; berada tepat di bawah tenant root group</td>
+<td>Baseline seluruh perusahaan: region (<em>wilayah</em>) yang diizinkan, tag wajib, tolok ukur (benchmark) keamanan</td>
+</tr>
+<tr>
+<td><strong>Platform</strong> → Security, Management, Connectivity, Identity</td>
+<td>Masing-masing satu subscription khusus untuk perangkat SIEM (pengumpul dan penganalisis peristiwa keamanan), logging terpusat, jaringan hub, dan layanan identitas</td>
+<td>Aturan untuk infrastruktur bersama, dikelola oleh tim platform</td>
+</tr>
+<tr>
+<td><strong>Landing zones</strong> → Corp, Online, Local</td>
+<td>Subscription workload: Corp untuk aplikasi yang membutuhkan jaringan korporat, Online untuk aplikasi yang menghadap internet, Local untuk workload di klaster Azure Local</td>
+<td>Aturan keamanan yang berlaku untuk semua workload dipasang di induk, aturan khusus arketipe di bawahnya</td>
+</tr>
+<tr>
+<td><strong>Sandboxes</strong></td>
+<td>Subscription untuk belajar dan bereksperimen, terisolasi dari jaringan korporat</td>
+<td>Set policy yang lebih ringan dan budget yang ketat</td>
+</tr>
+<tr>
+<td><strong>Decommissioned</strong></td>
+<td>Landing zone yang sudah dibatalkan dan menunggu dihapus</td>
+<td>Menolak hampir semua hal baru</td>
+</tr>
+</tbody>
+</table></div>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+  root[&quot;Tenant root group&quot;] --&gt; nusa[&quot;nusa&lt;br/&gt;(intermediate root)&quot;]
+  nusa --&gt; plat[&quot;Platform&quot;]
+  nusa --&gt; lz[&quot;Landing zones&quot;]
+  nusa --&gt; sbx[&quot;Sandboxes&quot;]
+  nusa --&gt; dec[&quot;Decommissioned&quot;]
+  plat --&gt; sec[&quot;Security&quot;]
+  plat --&gt; mgmt[&quot;Management&quot;]
+  plat --&gt; conn[&quot;Connectivity&quot;]
+  plat --&gt; idn[&quot;Identity&quot;]
+  lz --&gt; corp[&quot;Corp&quot;]
+  lz --&gt; online[&quot;Online&quot;]
+  lz --&gt; local[&quot;Local&quot;]
+  mgmt -.-&gt; s1([&quot;sub-management&lt;br/&gt;workspace log-nusa&quot;])
+  conn -.-&gt; s2([&quot;sub-connectivity&lt;br/&gt;jaringan hub&quot;])
+  corp -.-&gt; s3([&quot;sub-orders-prod&quot;])
+  online -.-&gt; s4([&quot;sub-storefront-prod&lt;br/&gt;sub-storefront-test&quot;])
+  sbx -.-&gt; s5([&quot;sub-dewi-experiments&quot;])
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Perhatikan apa yang <em>tidak</em> ada. Tidak ada management group &quot;Finance&quot; atau &quot;Marketing&quot;, karena perubahan struktur
+departemen tidak boleh memaksa Anda merombak policy. Tidak ada pula grup &quot;Production&quot; dan &quot;Development&quot;: lingkungan
+(environment) dipisahkan sebagai subscription tersendiri di dalam management group yang sama, sehingga lingkungan
+pengujian diatur persis seperti produksi. Region juga tidak mendapat grup sendiri, kecuali jika aturan residensi data
+(kewajiban menyimpan data di negara tertentu) atau kedaulatan data memang berbeda di antara region tersebut. Panduannya:
+jaga pohon tetap <strong>datar — tiga atau empat tingkat</strong> — dan kelompokkan subscription berdasarkan aturan yang mereka
+butuhkan, yang dalam arsitektur landing zone disebut <strong>arketipe</strong> (archetype) workload.</p>
+<p>Bayangkan pengelola sebuah mal. Ia tidak menyusun peraturan menurut siapa pemilik tiap gerai, melainkan menurut jenis area:
+food court punya aturan kebersihan dan tabung gas, area parkir punya aturan keselamatan, bioskop punya jam operasionalnya
+sendiri. Saat sebuah gerai berganti pemilik, aturannya tetap sama, karena yang menentukan adalah <em>jenis area</em> tempat gerai
+itu berada. Management group bekerja dengan cara yang sama: yang menentukan adalah jenis workload, bukan nama departemen.</p>
+<p>Dua pengaturan melengkapi gambarannya. Di pengaturan hierarki (hierarchy settings), pilih sebuah <strong>default management
+group</strong> untuk subscription baru (Sandboxes adalah kandidat yang baik), agar subscription Visual Studio seperti milik Dewi
+langsung tunduk pada aturan sandbox, bukan lolos dari semuanya. Lalu aktifkan pengaturan yang mewajibkan otorisasi untuk
+membuat management group, sehingga hanya tim platform yang bisa mengubah bentuk pohon.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Jangan pernah menggantungkan baseline Anda langsung di tenant root group. Sebuah <strong>intermediate root</strong> memberi Anda
+scope yang bisa diganti namanya, diuji lebih dulu (hierarki &quot;canary&quot; kedua yang kecil adalah praktik umum — namanya
+diambil dari burung kenari yang dulu dibawa penambang untuk mendeteksi gas berbahaya lebih awal), bahkan diganti
+sepenuhnya, sementara tenant root tetap hampir kosong. Intermediate root juga menjaga subscription dari perusahaan yang
+diakuisisi tetap berada di luar aturan Anda sampai Anda sengaja memindahkannya ke dalam.</p>
+</aside>
+</div></article><article class="scene-card" id="2-subscription-sebagai-satuan-skala--dan-cara-menyediakannya-lewat-vending" data-spy><span class="scene-no">Adegan 2 dari 6</span><h3>Subscription sebagai satuan skala — dan cara menyediakannya lewat vending</h3><div class="prose"><p>Kalau management group adalah foldernya, maka <strong>subscription</strong> adalah unit yang Anda bagikan. Setiap subscription adalah
+batas untuk tagihan, untuk kuota dan batas layanan, untuk akses, dan untuk <em>blast radius</em> (radius ledakan — seberapa jauh
+dampak sebuah kesalahan bisa menjalar): kekeliruan atau skrip yang lepas kendali di subscription loyalitas tidak bisa
+menghabiskan kuota toko online atau menyusup ke resource group-nya. Itulah sebabnya organisasi yang matang membuat banyak
+subscription kecil — biasanya satu per workload per lingkungan — alih-alih satu subscription raksasa.</p>
+<p>Membuat subscription secara manual tidak bisa mengimbangi pertumbuhan, dan setiap langkah manual adalah peluang untuk lupa
+sesuatu. <strong>Subscription vending</strong> (dari <em>vending machine</em>, mesin penjual otomatis) mengubah sebuah permintaan menjadi
+subscription yang langsung tertata lengkap melalui otomatisasi. Tim workload cukup mengisi formulir atau membuka pull
+request (usulan perubahan di Git); sebuah pipeline (alur kerja otomatis) yang dibangun dengan Bicep atau Terraform —
+keduanya punya modul vending siap pakai — mengerjakan sisanya.</p>
+<p>Ibaratnya membuka cabang baru sebuah minimarket waralaba. Pemilik cabang tidak merakit sendiri rak, mesin kasir, seragam,
+dan SOP (prosedur operasi standar); semuanya datang sebagai satu paket standar dari kantor pusat, dan pintu toko baru
+dibuka setelah semuanya terpasang. Subscription vending adalah &quot;paket waralaba&quot; untuk subscription.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  req[&quot;Permintaan&lt;br/&gt;(formulir atau pull request)&quot;] --&gt; pipe[&quot;Pipeline vending&lt;br/&gt;Bicep atau Terraform&quot;]
+  pipe --&gt; sub[&quot;Subscription baru&quot;]
+  pipe --&gt; mg[&quot;Ditempatkan di management group&lt;br/&gt;Online&quot;]
+  pipe --&gt; net[&quot;Jaringan spoke di-peer ke hub&lt;br/&gt;rentang IP dari rencana alamat&quot;]
+  pipe --&gt; rbac[&quot;Grup Entra dan role&lt;br/&gt;owner melalui PIM&quot;]
+  pipe --&gt; bud[&quot;Budget dan tag&quot;]
+  mg --&gt; pol[&quot;Initiative warisan&lt;br/&gt;berlaku sejak menit pertama&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p>Membuat subscription secara terprogram membutuhkan izin billing pada akun Enterprise Agreement, Microsoft Customer
+Agreement, atau Microsoft Partner Agreement, jadi lab melewati langkah ini — lagi pula, subscription tambahan di akun
+pribadi mudah terlupakan. Gagasan terpentingnya adalah urutan: subscription ditempatkan di management group yang tepat
+<em>sebelum</em> siapa pun men-deploy workload, sehingga policy warisan sudah menunggu di sana.</p>
+<p>Pola pikir &quot;tentukan scope sekali saja&quot; yang sama berlaku untuk semua hal lain yang Anda tetapkan:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Kontrol</th>
+<th>Scope terbaik</th>
+<th>Alasannya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Baseline policy seluruh perusahaan</td>
+<td>Intermediate root</td>
+<td>Menjangkau setiap subscription, termasuk yang baru dibuat kelak</td>
+</tr>
+<tr>
+<td>Aturan arketipe (misalnya &quot;tanpa IP publik&quot; untuk Corp)</td>
+<td>Management group Corp atau Online</td>
+<td>Hanya workload yang membutuhkan aturan itu yang mendapatkannya</td>
+</tr>
+<tr>
+<td>Akses tim platform</td>
+<td>Platform atau intermediate root, diaktifkan melalui Privileged Identity Management</td>
+<td>Hak yang luas, tetapi hanya saat dibutuhkan dan dengan jejak audit</td>
+</tr>
+<tr>
+<td>Akses tim workload</td>
+<td>Subscription atau resource group mereka sendiri, diberikan ke grup Entra</td>
+<td>Prinsip hak akses minimum (least privilege); tidak ada kejutan dari pewarisan</td>
+</tr>
+<tr>
+<td>Budget</td>
+<td>Subscription untuk tim pemiliknya; management group untuk gambaran menyeluruh</td>
+<td>Alert (<em>pemberitahuan</em>) sampai ke orang yang bisa bertindak</td>
+</tr>
+</tbody>
+</table></div>
+<p>Untuk <strong>RBAC dalam skala besar</strong>, tetapkan role ke grup Entra, jangan pernah ke individu, dan utamakan role bawaan
+(built-in). Jika Anda membutuhkan <strong>custom role</strong> (role buatan sendiri), perhatikan bahwa assignable scopes-nya (daftar
+scope tempat role itu boleh dipakai) bisa memuat paling banyak satu management group, dan role yang berisi data actions
+(izin atas <em>isi</em> data, misalnya membaca blob) tidak bisa ditetapkan di scope management group. Jadikan role berhak
+istimewa berstatus <em>eligible</em> (berhak diaktifkan saat perlu) alih-alih permanen dengan <strong>Privileged Identity Management</strong>
+(PIM), yang membutuhkan lisensi Microsoft Entra ID (<em>ID Microsoft Entra</em>) P2 atau Entra ID Governance — Makan Siang 22
+membahasnya secara mendalam. Untuk <strong>budget di scope yang lebih tinggi</strong>, ingat dari Makan Siang 19 bahwa budget hanya
+mengirim alert dan tidak pernah menghentikan resource, dan bahwa tampilan biaya di level management group tidak tersedia
+untuk setiap jenis perjanjian billing (periksa dokumentasi scope Cost Management (<em>manajemen biaya</em>) untuk jenis perjanjian
+Anda).</p>
+</div></article><article class="scene-card" id="3-tata-kelola-berbasis-policy-di-scope-management-group" data-spy><span class="scene-no">Adegan 3 dari 6</span><h3>Tata kelola berbasis policy di scope management group</h3><div class="prose"><p>Di Makan Siang 18 Anda menetapkan tiga policy tunggal ke satu resource group. Dalam skala besar, Anda membundelnya menjadi
+sebuah <strong>initiative</strong> (paket beberapa policy yang dikelola sebagai satu kesatuan) dan menetapkannya sekali saja, tinggi di
+pohon, dengan <strong>parameter</strong> yang membuat initiative yang sama bisa melayani arketipe berbeda — Corp mungkin hanya
+mengizinkan <code>indonesiacentral</code>, sementara Sandboxes juga mengizinkan <code>southeastasia</code>. Ingat dari Makan Siang 18 bahwa
+assignment (penetapan policy pada sebuah scope) bertumpuk: sebuah resource harus memenuhi setiap assignment di atasnya,
+sehingga scope yang lebih rendah bisa memperketat aturan, tetapi tidak pernah bisa melonggarkannya. Jaga baseline di
+tingkat teratas tetap ringkas, dan letakkan aturan yang lebih ketat di tingkat bawah.</p>
+<p>Tiga aturan menentukan apakah semua ini benar-benar berjalan dalam praktik.</p>
+<p><strong>Tempat definisi disimpan menentukan di mana definisi itu bisa ditetapkan.</strong> Definisi kustom yang disimpan di sebuah
+subscription hanya bisa ditetapkan di dalam subscription itu. Definisi yang disimpan di sebuah management group bisa
+ditetapkan ke grup itu dan semua yang ada di bawahnya. Jadi, simpan definisi kustom dan initiative yang dipakai bersama di
+intermediate root, meskipun awalnya Anda menetapkannya di tingkat yang lebih rendah. Saat tulisan ini dibuat, satu scope
+dapat menampung hingga 500 definisi policy kustom dan 200 initiative, dan satu initiative dapat mereferensikan hingga
+1.000 policy.</p>
+<p><strong>Lakukan rollout seperti merilis perangkat lunak.</strong> Assignment baru dengan effect Deny (permintaan yang melanggar
+langsung ditolak) di intermediate root bisa memblokir deployment di seluruh perusahaan dalam hitungan menit. Mulailah
+setiap assignment dengan enforcement mode <strong>DoNotEnforce</strong>: kepatuhan tetap dievaluasi dan dilaporkan, tetapi tidak ada
+yang ditolak atau diubah. Tinjau hasilnya, perbaiki atau kecualikan temuan Anda, lalu berlakukan secara bertahap dalam
+<em>ring</em> (gelombang) — satu subscription pengujian dulu, lalu satu arketipe, lalu semuanya. Resource selectors dan
+overrides pada sebuah assignment memungkinkan Anda memberlakukan aturan secara bertahap, misalnya region demi region,
+tanpa membuat salinan.</p>
+<p>Ibaratnya aturan ganjil-genap di jalan raya. Sebelum tilang benar-benar berlaku, biasanya ada masa uji coba: petugas
+hanya mencatat dan menegur pelanggar. Setelah datanya jelas, aturan diberlakukan di beberapa ruas jalan dulu, baru
+kemudian diperluas. DoNotEnforce adalah masa uji coba itu, dan ring adalah perluasan ruas jalannya.</p>
+<p><strong>Remediasi membutuhkan identitas dengan role yang tepat di tempat yang tepat.</strong> Assignment dengan effect Modify
+(mengubah resource, misalnya menambahkan tag) dan DeployIfNotExists (DINE — men-deploy sesuatu jika belum ada) bertindak
+atas nama Anda melalui sebuah <strong>managed identity</strong> (identitas yang dikelola Azure, tanpa kata sandi yang perlu disimpan),
+baik system-assigned (satu per assignment) maupun user-assigned (dibuat sekali, diberi role sekali, lalu dipakai ulang
+oleh banyak assignment). Role yang dibutuhkan berasal dari <code>roleDefinitionIds</code> di dalam definisi. Portal memberikan role
+tersebut secara otomatis; deployment lewat CLI (command-line interface) dan infrastructure as code (<em>infrastruktur sebagai
+kode</em>) harus memberikannya secara eksplisit. Begitu sebuah assignment diberlakukan, resource baru dan yang diperbarui akan
+diperbaiki otomatis — Modify saat permintaan diproses, DINE sesaat setelah resource dibuat (secara default sekitar sepuluh
+menit kemudian). Resource yang sudah ada, dan apa pun yang dievaluasi selama assignment masih DoNotEnforce, membutuhkan
+sebuah <strong>remediation task</strong> (tugas perbaikan), yang memperbaiki satu policy Modify atau DINE dalam satu waktu; jadi untuk
+initiative, Anda menyebutkan reference ID policy tersebut.</p>
+<aside class="callout warning" data-icon="⚠️">
+<p><span class="callout-title">Peringatan</span>Kegagalan remediasi skala besar yang klasik: sebuah policy DINE yang ditetapkan di grup Landing zones harus mengirim log
+diagnostik ke <code>log-nusa</code> di subscription <em>Management</em>. Identitasnya punya role di dalam Landing zones, tetapi tidak
+punya satu pun role di workspace tersebut, sehingga setiap deployment remediasi gagal dengan error otorisasi. Berikan
+identitas itu role yang dibutuhkannya di setiap scope yang ia tulisi — termasuk scope di luar assignment.</p>
+</aside>
+<p>Tidak ada baseline yang cocok untuk semua kasus, jadi Anda membutuhkan cara terdokumentasi untuk berkata &quot;kecuali di
+sini&quot;. Sebuah <strong>policy exemption</strong> menandai sebuah scope (dari management group hingga satu resource) sebagai dikecualikan
+dari sebuah assignment, atau dari policy tertentu di dalam sebuah initiative. Exemption muncul di laporan kepatuhan dengan
+status <strong>Exempt</strong> (dikecualikan), bisa membawa tanggal kedaluwarsa serta metadata seperti nomor tiket, dan terbagi dalam
+dua kategori:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Exemption: <strong>Waiver</strong></th>
+<th>Exemption: <strong>Mitigated</strong></th>
+<th>Exclusion (<code>notScopes</code>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Artinya</td>
+<td>Risikonya diketahui dan diterima untuk sementara</td>
+<td>Tujuan policy sudah terpenuhi dengan cara lain</td>
+<td>Scope itu sama sekali tidak dievaluasi</td>
+</tr>
+<tr>
+<td>Contoh di Nusantara</td>
+<td>Beta aplikasi loyalitas boleh memakai West Europe selama 30 hari, sementara integrasi dengan mitra diuji</td>
+<td>Sebuah VM (<em>komputer virtual</em>) yang menurut policy harus dilindungi Azure Backup ternyata sudah dilindungi produk backup milik jaringan toko Sulawesi</td>
+<td>Resource group lab yang tidak masuk laporan siapa pun</td>
+</tr>
+<tr>
+<td>Terlihat di laporan kepatuhan</td>
+<td>Ya, sebagai Exempt</td>
+<td>Ya, sebagai Exempt</td>
+<td>Tidak</td>
+</tr>
+<tr>
+<td>Kedaluwarsa bawaan</td>
+<td><code>expiresOn</code> opsional</td>
+<td><code>expiresOn</code> opsional</td>
+<td>Tidak ada</td>
+</tr>
+</tbody>
+</table></div>
+<p>Exemption yang kedaluwarsa tidak dihapus; ia sekadar berhenti berlaku, dan resource-nya kembali tampil sebagai tidak
+patuh (non-compliant). Membuat exemption membutuhkan izin untuk menulis exemption dan aksi <code>exempt</code> pada assignment-nya
+(role bawaan Resource Policy Contributor punya keduanya), jadi putuskan dengan sengaja siapa yang boleh memberi
+pengecualian.</p>
+<p>Ibaratnya buku absen di sekolah. Waiver seperti surat izin bertanggal yang ditandatangani kepala sekolah: di buku absen
+tetap tercatat &quot;izin&quot;, tidak hilang begitu saja. Mitigated seperti siswa yang dibebaskan dari ujian praktik renang karena
+sudah punya sertifikat renang dari klubnya — tujuannya tercapai dengan cara lain. Exclusion seperti mencoret nama siswa
+dari daftar absen: tidak ada lagi yang tahu ia hadir atau tidak.</p>
+<p>Terakhir, fitur <strong>regulatory compliance</strong> (kepatuhan regulasi) di Microsoft Defender for Cloud (<em>Microsoft Defender untuk
+Cloud</em>) dibangun di atas mesin yang sama. Microsoft cloud security benchmark aktif secara default, dan Anda bisa
+menambahkan standar seperti ISO/IEC 27001:2022 (manajemen keamanan informasi), PCI DSS v4.0.1 (keamanan data kartu
+pembayaran), atau NIST SP 800-53 (katalog kontrol keamanan dari lembaga standar Amerika Serikat). Di Azure, standar-standar
+ini sebenarnya adalah initiative policy di balik layar, sehingga aturan pewarisan yang sama berlaku. Dasbornya memetakan
+kontrol teknis ke rekomendasi; dasbor ini membantu audit, tetapi tidak memberi Anda sertifikasi. Beberapa standar atau
+fitur mungkin memerlukan paket Defender berbayar — periksa dokumentasinya sebelum menjanjikan laporan kepada auditor.</p>
+</div></article><article class="scene-card" id="4-tata-kelola-sebagai-kode--dan-kehidupan-setelah-blueprints" data-spy><span class="scene-no">Adegan 4 dari 6</span><h3>Tata kelola sebagai kode — dan kehidupan setelah Blueprints</h3><div class="prose"><p>Mengeklik policy satu per satu di portal masih masuk akal untuk sepuluh assignment, tetapi tidak untuk dua ratus.
+<strong>Policy as code</strong> memperlakukan definisi, initiative, assignment, dan exemption sebagai file di Git: setiap perubahan
+adalah pull request yang ditinjau oleh orang kedua, lalu di-deploy oleh pipeline yang identitasnya menjadi satu-satunya
+yang boleh menulis resource policy. Panduan Microsoft menyarankan satu folder per initiative dengan file seperti
+<code>policyset.json</code>, <code>policyset.definitions.json</code>, dan <code>policyset.parameters.json</code>, ditambah file <code>assign.&lt;name&gt;.json</code> dan
+folder <code>exemptions.&lt;name&gt;/</code>. Definisi dan assignment yang sudah ada bisa diekspor dengan CLI, PowerShell, atau Resource
+Graph, jadi Anda bisa memulai dari apa yang sudah ada. Tim yang lebih besar sering memakai proyek open source Enterprise
+Policy as Code (EPAC), atau pustaka policy yang disertakan dalam Azure landing zone accelerators.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  pr[&quot;Pull request&lt;br/&gt;file policy&quot;] --&gt; ci[&quot;Pemeriksaan&lt;br/&gt;lint, what-if, tinjauan&quot;]
+  ci --&gt; test[&quot;Deploy ke scope canary&lt;br/&gt;DoNotEnforce&quot;]
+  test --&gt; rev[&quot;Baca kepatuhan&lt;br/&gt;dengan Resource Graph&quot;]
+  rev --&gt; r1[&quot;Berlakukan ring 1&lt;br/&gt;subscription pengujian&quot;]
+  r1 --&gt; r2[&quot;Berlakukan ring 2&lt;br/&gt;Corp, Online&quot;]
+  r2 --&gt; r3[&quot;Berlakukan di semua tempat&lt;br/&gt;intermediate root&quot;]
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+<p><strong>Azure landing zone accelerators</strong> mengemas semua ini: hierarkinya, subscription platform, dan satu set policy pilihan,
+yang di-deploy melalui accelerator infrastructure as code (Bicep atau Terraform, dibangun di atas Azure Verified Modules
+dan terhubung ke GitHub atau Azure DevOps) atau melalui pengalaman portal untuk percobaan pertama. Kebanyakan perusahaan
+memulai dari sebuah accelerator lalu menyesuaikannya, alih-alih merancang dari kertas kosong.</p>
+<p>Sekarang giliran blueprint buatan Rizky. Azure Blueprints (preview) dipensiunkan secara bertahap: tidak ada definisi
+blueprint baru mulai 31 Juli 2026, tidak ada assignment baru mulai 31 Oktober 2026, tidak ada perubahan pada assignment
+yang sudah ada mulai 31 Desember 2026, dan pensiun penuh pada 31 Januari 2027. Penggantinya adalah sepasang alat yang
+sudah Anda kenal di Makan Siang 20: <strong>deployment stacks</strong>, yang men-deploy dan melacak sekumpulan resource di scope
+resource group, subscription, atau management group serta bisa melindunginya dengan deny settings (pengaturan yang
+melarang perubahan atau penghapusan); dan <strong>template specs</strong> (atau Git) untuk menyimpan template beserta versinya.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Konsep Blueprint</th>
+<th>Penggantinya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Definisi blueprint dan versinya</td>
+<td>Template Bicep atau ARM (<em>templat ARM</em>) di Git, opsional dipublikasikan sebagai template specs dengan versi</td>
+</tr>
+<tr>
+<td>Artifact policy assignment</td>
+<td>Resource policy assignment di dalam template — atau repositori policy-as-code Anda</td>
+</tr>
+<tr>
+<td>Artifact role assignment</td>
+<td>Resource role assignment di dalam template, ditetapkan ke grup</td>
+</tr>
+<tr>
+<td>Artifact resource group dan template</td>
+<td>Resource group dan modul di dalam template, di-deploy di scope subscription</td>
+</tr>
+<tr>
+<td>Blueprint assignment</td>
+<td>Sebuah deployment stack, misalnya <code>az stack mg create</code> yang menargetkan sebuah subscription</td>
+</tr>
+<tr>
+<td>Resource lock (<em>kunci sumber daya</em>) blueprint</td>
+<td>Deny settings milik stack (<code>denyDelete</code> atau <code>denyWriteAndDelete</code>), dengan beberapa principal (identitas) yang dikecualikan</td>
+</tr>
+</tbody>
+</table></div>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Pada 31 Januari 2027, layanan Blueprints berhenti. Resource yang sudah di-deploy tetap ada, tetapi definisi dan
+assignment yang tidak Anda ekspor akan dihapus, dan <strong>lock blueprint berhenti melindungi resource Anda</strong>. Ekspor,
+konversikan ke Bicep, lalu deploy ulang sebagai deployment stack dengan deny settings sebelum tanggal itu.</p>
+</aside>
+</div></article><article class="scene-card" id="5-melihat-semuanya-resource-graph-dalam-skala-besar-dan-azure-arc" data-spy><span class="scene-no">Adegan 5 dari 6</span><h3>Melihat semuanya: Resource Graph dalam skala besar dan Azure Arc</h3><div class="prose"><p>Tata kelola yang tidak bisa Anda lihat hanyalah angan-angan. <strong>Azure Resource Graph</strong> menjawab pertanyaan lintas semua
+subscription yang bisa Anda baca dalam satu query, memakai sebagian dari bahasa KQL (Kusto Query Language, Makan Siang
+30). Selain tabel <code>resources</code>, ada <code>resourcecontainers</code> yang berisi management group, subscription, dan resource group,
+serta <code>policyresources</code> yang berisi status kepatuhan, assignment, dan exemption — sehingga pertanyaan &quot;resource mana saja
+yang tidak patuh, per initiative, di seluruh perusahaan?&quot; cukup dijawab dengan satu query, bukan dengan menyisir
+subscription satu per satu. Anda bisa membatasi query ke sebuah management group, dan CLI hanya mengembalikan 100 baris
+pertama kecuali Anda meminta lebih.</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>policyresources
+| where type == &#x27;microsoft.policyinsights/policystates&#x27;
+| where tostring(properties.complianceState) == &#x27;NonCompliant&#x27;
+| summarize resources = count() by assignment = tostring(properties.policyAssignmentName)
+</code></pre></div>
+<p>Empat puluh server toko tidak akan pernah pindah ke Azure, tetapi tetap bisa diatur olehnya. <strong>Azure Arc</strong>
+&quot;memproyeksikan&quot; mesin dan klaster yang berjalan di tempat lain ke dalam Azure Resource Manager, sehingga mereka mendapat
+resource ID, tinggal di sebuah resource group, membawa tag, serta mewarisi RBAC dan policy seperti resource lainnya.
+Ibaratnya kendaraan yang terdaftar di Samsat: mobilnya tetap di garasi Anda, tetapi punya nomor polisi, tercatat resmi,
+dan wajib mengikuti aturan yang sama.</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Azure Arc untuk</th>
+<th>Cara terhubung</th>
+<th>Tata kelola yang Anda peroleh</th>
+<th>Catatan biaya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Server (Windows dan Linux, on-premises atau di cloud lain)</td>
+<td>Connected Machine agent; heartbeat (sinyal &quot;masih hidup&quot;) setiap lima menit, tampil sebagai Disconnected setelah 15–30 menit tanpa kabar</td>
+<td>Inventaris, tag, RBAC, Resource Graph; machine configuration mengaudit pengaturan di dalam sistem operasi; Update Manager, Defender for Servers, Azure Monitor Agent</td>
+<td>Fitur inventaris dan pengorganisasian gratis; layanan tambahan ditagih (lihat halaman harga masing-masing)</td>
+</tr>
+<tr>
+<td>Klaster Kubernetes (klaster apa pun yang sesuai standar CNCF, Cloud Native Computing Foundation)</td>
+<td>Agen klaster yang di-deploy dengan CLI</td>
+<td>Azure Policy for Kubernetes (dibangun di atas Gatekeeper), konfigurasi GitOps dengan Flux, Defender for Containers</td>
+<td>Inventaris dan pengorganisasian gratis; beberapa ekstensi ditagih (periksa halaman harga Azure Arc)</td>
+</tr>
+</tbody>
+</table></div>
+<p>Mesin yang terputus selama 45 hari dapat berstatus <strong>Expired</strong> dan harus dihubungkan ulang oleh administrator, jadi pantau
+status agen sebagai bagian dari operasional rutin. Arc bukan untuk VM Azure — VM tersebut sudah berada di Azure Resource
+Manager.</p>
+</div></article><article class="scene-card" id="6-bagaimana-semuanya-menyatu-untuk-nusantara-retail" data-spy><span class="scene-no">Adegan 6 dari 6</span><h3>Bagaimana semuanya menyatu untuk Nusantara Retail</h3><div class="prose"><p>Inilah rencana yang Anda bawa ke Ibu Sari. Buat intermediate root <code>nusa</code> beserta Platform, Landing zones (Corp, Online),
+Sandboxes, dan Decommissioned. Pindahkan ketujuh subscription ke dalamnya, jadikan Sandboxes sebagai default management
+group, dan wajibkan otorisasi untuk setiap perubahan hierarki. Simpan definisi policy dan initiative di repositori Git
+yang dilengkapi pipeline, lalu tetapkan seperti ini:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Assignment</th>
+<th>Effect</th>
+<th>Identitas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nusa</code> (intermediate root)</td>
+<td>Baseline Nusantara: lokasi yang diizinkan (<code>indonesiacentral</code>, <code>southeastasia</code>), tag <code>costCenter</code> wajib, tag diwarisi dari resource group</td>
+<td>Deny, Modify</td>
+<td>System-assigned, dengan role yang disebut definisi (Contributor) di <code>nusa</code></td>
+</tr>
+<tr>
+<td><code>nusa</code></td>
+<td>Microsoft cloud security benchmark (Defender for Cloud)</td>
+<td>Audit, AuditIfNotExists</td>
+<td>Tidak diperlukan</td>
+</tr>
+<tr>
+<td>Landing zones</td>
+<td>Diagnostic settings ke <code>log-nusa</code></td>
+<td>DeployIfNotExists</td>
+<td>User-assigned: Monitoring Contributor di Landing zones, Log Analytics Contributor di workspace</td>
+</tr>
+<tr>
+<td>Corp</td>
+<td>Data pelanggan tetap di Jakarta (lokasi yang diizinkan: hanya <code>indonesiacentral</code>); tanpa alamat IP publik pada network interface</td>
+<td>Deny</td>
+<td>Tidak diperlukan</td>
+</tr>
+</tbody>
+</table></div>
+<p>Sandboxes hanya mewarisi baseline, ditambah budget kecil di setiap subscription sandbox. Semuanya dimulai dalam mode
+DoNotEnforce. Setelah seminggu membaca laporan kepatuhan di Resource Graph, Anda meremediasi tag yang hilang, lalu
+memberlakukan aturan ring demi ring. Beta aplikasi loyalitas mendapat Waiver yang kedaluwarsa dalam 30 hari, dengan nama
+Ibu Sari di metadatanya. Sebelum 31 Januari 2027, blueprint buatan Rizky berubah menjadi file Bicep yang di-deploy sebagai
+deployment stack dengan <code>denyDelete</code>. Keempat puluh server toko bergabung melalui Azure Arc ke sebuah subscription khusus
+di bawah Corp, sehingga baseline, tag, dan Update Manager yang sama juga menjangkau mereka. Subscription dari Sulawesi
+menunggu di luar intermediate root sampai resource mereka di West Europe punya rencana migrasi — barulah setelah itu
+dipindahkan masuk.</p>
+<aside class="callout think" data-icon="💭">
+<p><span class="callout-title">Renungkan sejenak</span>Subscription dari Sulawesi datang dengan storage account (<em>akun penyimpanan</em>) di West Europe.
+Jika Anda memindahkannya ke bawah <code>nusa</code> hari ini, saat baseline sudah diberlakukan, apa yang akan terjadi pada
+akun-akun yang sudah ada itu — dan pada deployment berikutnya yang dicoba tim mereka di West Europe?</p>
+</aside>
+<p>Lab hari ini membangun versi kecil dari desain ini di tenant Anda sendiri, lalu tantangan capstone lanjutan meminta Anda
+membungkus sebuah solusi lengkap dengan initiative policy.</p>
+</div></article>
+    </section>
+
+    <section class="block" id="demo" data-spy>
+      <div class="block-head"><span class="icon">🎬</span><h2>Demo</h2><span class="minute">Menit 30–45</span></div>
+      <div class="theatre">
+        <div class="theatre-bar">
+          <span class="live"><i></i> Demo interaktif · Satu hierarki, satu initiative, semua subscription</span>
+          <span class="tb-actions"><a class="btn btn-sm" href="../../demos/31-governance-at-scale.html?lang=id" target="_blank" rel="noopener">↗ Buka di tab baru</a>
+          <button class="btn btn-sm" type="button" data-fullscreen>⤢ Mode teater</button></span>
+        </div>
+        <div class="theatre-frame"><iframe src="../../demos/31-governance-at-scale.html?lang=id" title="Demo interaktif: Satu hierarki, satu initiative, semua subscription" loading="lazy"></iframe></div>
+      </div>
+      <div class="watch-for prose">
+        <p class="muted">Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.
+        Lebih suka video? Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/31-governance-at-scale/demo-video-script.id.md" target="_blank" rel="noopener">naskah video panduan</a>.</p>
+        <p>Yang perlu diperhatikan:</p>
+<ul>
+<li>Bagaimana hierarki tumbuh dari satu intermediate root, dan di mana setiap subscription mendarat.</li>
+<li>Bagaimana satu initiative, yang disimpan di intermediate root dan ditetapkan di Landing zones, menjangkau setiap subscription di bawahnya.</li>
+<li>Mengapa remediasi DeployIfNotExists yang pertama gagal, dan satu role assignment yang memperbaikinya.</li>
+<li>Bagaimana sebuah exemption Waiver muncul sebagai &quot;Exempt&quot;, alih-alih menghilang dari laporan.</li>
+</ul>
+
+      </div>
+    </section>
+
+    <section class="block" id="quiz" data-spy>
+      <div class="block-head"><span class="icon">✅</span><h2>Uji pemahaman</h2><span class="minute">Menit 45–50</span></div>
+      <div class="quiz-head"><div class="score-ring" data-score-ring><span data-score-text>0/5</span></div>
+        <div><b>5 pertanyaan skenario. Nilai diri dengan jujur.</b><p class="muted" style="margin:0" data-score-note>Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.</p></div></div>
+      <div class="qcards"><article class="qcard" data-q="1"><div class="q"><span class="qn">Q1</span><div class="qtext"><p>Dewi membuat subscription baru dengan benefit Visual Studio miliknya. Subscription itu muncul di bawah tenant root
+group, dan tidak satu pun policy baseline berlaku untuknya. Pengaturan apa yang seharusnya mencegah hal ini?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Sebuah <strong>default management group</strong> di pengaturan hierarki (misalnya Sandboxes) — <em>alasannya:</em> subscription baru
+mendarat di bawah tenant root group kecuali ada default yang dikonfigurasi, jadi tanpa pengaturan itu subscription baru
+memulai hidupnya di luar semua aturan warisan.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="2"><div class="q"><span class="qn">Q2</span><div class="qtext"><p>Anda menyimpan sebuah initiative kustom di subscription produksi toko online. Menetapkannya di management group
+Landing zones ternyata gagal. Mengapa, dan apa perbaikannya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Sebuah definisi hanya bisa ditetapkan di scope tempat ia disimpan atau di bawahnya. Simpan initiative di intermediate
+root (atau di Landing zones), lalu tetapkan salinan itu — <em>alasannya:</em> lokasi definisi menentukan di mana definisi itu
+bisa dipakai.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="3"><div class="q"><span class="qn">Q3</span><div class="qtext"><p>Sebuah assignment DeployIfNotExists di Landing zones seharusnya mengirim log diagnostik ke <code>log-nusa</code> di subscription
+Management. Remediation task-nya gagal dengan error otorisasi. Apa yang kurang?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Sebuah role untuk managed identity milik assignment di workspace tersebut (misalnya Log Analytics Contributor) —
+<em>alasannya:</em> identitas itu hanya punya role di dalam scope assignment, padahal deployment-nya menulis ke luar scope
+itu; setiap scope tujuan membutuhkan pemberian role.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="4"><div class="q"><span class="qn">Q4</span><div class="qtext"><p>Ibu Sari menyetujui bahwa beta aplikasi loyalitas boleh mempertahankan sebuah storage account di West Europe selama
+30 hari, sementara mitra menguji sebuah integrasi. Bagaimana Anda mencatatnya agar tetap terlihat dan tidak menjadi
+permanen?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Buat policy exemption dengan kategori <strong>Waiver</strong>, dengan scope resource group milik beta (atau satu resource itu
+saja), dengan <code>expiresOn</code> diatur 30 hari ke depan dan metadata yang menyebut pemberi persetujuan serta nomor tiket —
+<em>alasannya:</em> Waiver berarti risiko yang diterima; ia tetap terlihat sebagai Exempt, dan setelah kedaluwarsa, resource
+itu kembali tampil sebagai tidak patuh.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article><article class="qcard" data-q="5"><div class="q"><span class="qn">Q5</span><div class="qtext"><p>Sekarang bulan Februari 2027. Blueprint buatan Rizky tidak pernah dimigrasikan. Apa yang terjadi pada resource yang
+di-deploy-nya, dan pada lock blueprint yang melindunginya?</p>
+<button class="btn btn-sm reveal-btn" type="button" aria-expanded="false">Lihat jawaban</button></div></div><div class="a"><div><div class="a-inner"><p>Resource-nya masih ada, tetapi blueprint assignment dan lock-nya sudah hilang, sehingga tidak ada lagi yang mencegah
+orang menghapusnya. Deploy ulang template yang sama sebagai deployment stack dengan deny settings (dan simpan
+template-nya di Git atau template specs) — <em>alasannya:</em> itulah pengganti yang direkomendasikan Microsoft, dan deny
+settings mengambil alih peran lock.</p>
+<div class="grade"><span class="muted">Jawaban Anda benar?</span><button class="btn btn-sm yes" type="button" data-grade="1">👍 Saya benar</button><button class="btn btn-sm no" type="button" data-grade="0">👎 Belum tepat</button></div></div></div></div></article></div>
+    </section>
+
+    <section class="block" id="takeaways" data-spy>
+      <div class="block-head"><span class="icon">🧠</span><h2>Poin penting</h2><span class="minute">Menit 50–55</span></div>
+      <div class="takeaways"><div class="tk"><p>Rancang hierarki management group untuk pewarisan policy dan akses: sebuah intermediate root dengan Platform, Landing zones (Corp, Online, Local), Sandboxes, dan Decommissioned, sedalam tiga atau empat tingkat, dikelompokkan menurut jenis workload.</p><button class="btn btn-sm pin" type="button" data-pin="0">📌 Sematkan ke catatan</button></div><div class="tk"><p>Subscription adalah satuan skala; subscription vending menempatkan setiap subscription baru di management group yang tepat, lengkap dengan jaringan, RBAC berbasis grup, budget, dan tag, sebelum workload apa pun tiba.</p><button class="btn btn-sm pin" type="button" data-pin="1">📌 Sematkan ke catatan</button></div><div class="tk"><p>Simpan definisi di tingkat tinggi, tetapkan initiative di scope management group dengan parameter, mulai dengan DoNotEnforce, dan berikan identitas Modify dan DeployIfNotExists role di setiap scope yang mereka tulisi.</p><button class="btn btn-sm pin" type="button" data-pin="2">📌 Sematkan ke catatan</button></div><div class="tk"><p>Exemption (Waiver atau Mitigated) dengan tanggal kedaluwarsa dan metadata membuat pengecualian tetap terlihat dan bisa diaudit; exclusion diam-diam menghapus scope dari laporan.</p><button class="btn btn-sm pin" type="button" data-pin="3">📌 Sematkan ke catatan</button></div><div class="tk"><p>Tata kelola adalah kode: Git, pipeline, deployment stacks, dan template specs menggantikan Blueprints sebelum 31 Januari 2027, sementara Resource Graph dan Azure Arc memperluas visibilitas dan kendali ke setiap subscription dan ke server di luar Azure.</p><button class="btn btn-sm pin" type="button" data-pin="4">📌 Sematkan ke catatan</button></div></div>
+    </section>
+
+    <section class="block" id="field-notes" data-spy>
+      <div class="field-note">
+        <div class="fn-head"><span class="fn-avatar" aria-hidden="true">SP</span><div><b>Catatan lapangan dari Stefanus</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></div><span class="fn-pin" aria-hidden="true">🗒️</span></div>
+        <div class="fn-body prose"><p><strong>Tanyakan dulu: subscription berikutnya akan mendarat di mana?</strong> Dalam setiap review desain tata kelola, saya membuka dengan satu pertanyaan: <em>kalau sore ini ada yang membuat subscription baru, di mana ia akan berada, dan aturan apa yang sudah berlaku sejak menit pertama?</em> Kalau jawaban jujurnya &quot;di bawah tenant root, belum ada aturan apa-apa&quot;, hierarki itu baru sebatas gambar. Setelah itu saya mencari pintu samping, karena jebakan yang paling sering saya temui bukan policy yang kurang, melainkan pintu yang tidak dijaga: siapa yang boleh memindahkan subscription, siapa yang boleh memberi exemption, dan apakah setiap exemption punya pemilik serta tanggal berakhir? Terakhir, sebelum policy Deny mana pun diberlakukan di intermediate root, saya menulis pesan penolakannya (non-compliance message) dengan bahasa manusia: apa yang diblokir, mengapa, dan harus bertanya kepada siapa. Orang yang pukul enam sore ditolak oleh pesan error yang kaku akan mencari jalan pintas, bukan mencari pemilik policy-nya.</p>
+</div>
+        <a class="fn-more" href="../index.html#author">Tentang penulis →</a>
+      </div>
+    </section>
+
+    <section class="block" id="lab" data-spy>
+      <div class="block-head"><span class="icon">🔬</span><h2>Lab Anda</h2><span class="minute">Kapan saja · sesuai ritme Anda</span></div>
+      <div class="ticket">
+        <div class="stub"><span>Lab</span><b>31</b><span>Tiket masuk</span></div>
+        <div class="main">
+          <h3>Tata kelola untuk seluruh perusahaan</h3>
+          <div class="prose"><p>Di tenant Anda sendiri, Anda akan membangun hierarki landing zone mini (sebuah intermediate root dengan grup platform,
+landing zones, dan corp), menulis initiative kustom dari file JSON (lokasi yang diizinkan, tag wajib, tag warisan),
+menetapkannya dengan managed identity, meremediasi resource yang sudah ada, memberi Waiver berbatas waktu untuk resource
+group sandbox, mengkueri kepatuhan lintas scope dengan Resource Graph, dan mengekspor semuanya sebagai file
+policy-as-code. Memindahkan subscription lab Anda ke dalam hierarki bersifat opsional dan sepenuhnya bisa dibatalkan.</p>
+</div>
+          <div class="meta"><span class="chip">⏱ sekitar 60 menit</span><span class="chip cost">💲 gratis atau hampir gratis</span>
+            <span class="chip ok">✅ Bisa dikerjakan terpisah</span><span class="chip">🧭 Mode terpandu atau tantangan</span></div>
+          <a class="btn btn-primary" href="../labs/31-governance-at-scale.html">Mulai Lab 31 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="further"><div class="block-head"><span class="icon">📚</span><h2>Pelajari lebih lanjut</h2></div><div class="further"><a href="https://learn.microsoft.com/azure/cloud-adoption-framework/ready/landing-zone/design-area/resource-org-management-groups" target="_blank" rel="noopener"><b>Cloud Adoption Framework: management group</b><span>Hierarki landing zone dan rekomendasi desain di baliknya</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/governance/policy/concepts/policy-as-code" target="_blank" rel="noopener"><b>Merancang alur kerja Azure Policy as Code</b><span>Tata letak file, pengujian dengan DoNotEnforce, dan remediasi di dalam pipeline</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-resource-manager/bicep/migrate-blueprint" target="_blank" rel="noopener"><b>Memigrasikan blueprint ke deployment stacks</b><span>Bagaimana setiap artifact blueprint menjadi Bicep di bawah deployment stack</span><small>learn.microsoft.com ↗</small></a><a href="https://learn.microsoft.com/azure/azure-arc/servers/overview" target="_blank" rel="noopener"><b>Apa itu server yang didukung Azure Arc?</b><span>Connected Machine agent dan apa saja yang bisa Anda atur di luar Azure</span><small>learn.microsoft.com ↗</small></a></div></section>
+
+    <section class="block" id="finish" data-spy>
+      <div class="finish">
+        <div class="big-medal" aria-hidden="true">🏛️</div>
+        <p class="kicker" style="justify-content:center">Garis finis · lencana yang menanti</p>
+        <h2>Tata Kelola Skala Besar</h2>
+        <p class="muted">Kelola banyak subscription sebagai kode.</p>
+        <p><button class="btn btn-warm btn-lg" type="button" data-finish>🏁 Saya sudah menyelesaikan makan siang ini</button></p>
+        <p><a href="#finish" data-undo hidden>Batalkan — tandai belum selesai</a></p>
+        <p class="finish-answer">Setelah episode ini Anda bisa berkata kepada Ibu Sari: <b>“Hitungan menit untuk gangguan satu region, hanya beberapa detik data yang berisiko — dan aturan yang sama di mana pun kita beroperasi.”</b></p>
+        <div class="teaser"><b>Final musim</b><h4>Episode Pamungkas</h4><p>Tanpa langkah terpandu: rancang, bangun, buktikan.</p><p style="margin-top:10px"><a href="../labs/32-advanced-capstone-challenge.html">Ikuti tantangan capstone →</a></p></div>
+      </div>
+    </section>
+
+    <nav class="ep-nav" aria-label="Episode"><a href="30-monitoring-advanced.html"><small>← Episode sebelumnya</small>30 · Kenapa Checkout Lambat Hari Jumat?</a><a class="next" href="../labs/32-advanced-capstone-challenge.html"><small>Final musim →</small>Tantangan capstone lanjutan</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/lunches/31-governance-at-scale/README.id.md" target="_blank" rel="noopener">Baca makan siang ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Menemukan informasi yang usang?</a></p>
+  </div>
+</div>
+<div class="timer" role="status" aria-live="polite"><div class="t-ring"></div><div><div class="t-time">60:00</div><div class="t-seg">Sekarang: Skenario</div></div>
+  <button class="btn btn-sm" type="button" data-timer-stop aria-label="Hentikan timer makan siang">■</button></div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>

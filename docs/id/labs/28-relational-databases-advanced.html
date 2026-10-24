@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 28 · Pesanan yang selamat dari gangguan region · Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran</title>
+<meta name="description" content="Lab Azure praktik 28: Pesanan yang selamat dari gangguan region. sekitar 60 menit (termasuk sekitar 10 menit persiapan dan sedikit waktu menunggu), biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta name="author" content="Stefanus Pinarta">
+<meta name="theme-color" content="#1665d8">
+<link rel="canonical" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/28-relational-databases-advanced.html">
+<link rel="alternate" hreflang="en" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/28-relational-databases-advanced.html">
+<link rel="alternate" hreflang="id" href="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/28-relational-databases-advanced.html">
+<link rel="alternate" hreflang="x-default" href="https://stefpin.github.io/azure-fundamentals-lunches/en/labs/28-relational-databases-advanced.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran">
+<meta property="og:title" content="Lab 28 · Pesanan yang selamat dari gangguan region">
+<meta property="og:description" content="Lab Azure praktik 28: Pesanan yang selamat dari gangguan region. sekitar 60 menit (termasuk sekitar 10 menit persiapan dan sedikit waktu menunggu), biaya 💲💲. Langkah terpandu atau ringkasan tantangan, lengkap dengan skrip verifikasi dan pembersihan.">
+<meta property="og:url" content="https://stefpin.github.io/azure-fundamentals-lunches/id/labs/28-relational-databases-advanced.html">
+<meta property="og:locale" content="id_ID">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://stefpin.github.io/azure-fundamentals-lunches/assets/social-card-id.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<script>(function(){var d=document.documentElement;d.classList.add('js');try{var t=localStorage.getItem('azlunch.theme');if(!t)t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';d.setAttribute('data-theme',t);}catch(e){}})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../../assets/site.css?v=87b0eb3550">
+</head>
+<body data-root="../" data-base="../../" data-lang="id" data-page="lab" data-lab="28" style="--c:#7b4ff0">
+<a class="skip" href="#main">Lewati ke konten</a>
+<div class="read-progress" aria-hidden="true"><span></span></div>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+    <nav class="nav-links" id="site-nav" aria-label="Utama"><a href="../index.html#journey">Perjalanan</a><a href="../index.html#episodes">Episode</a><a href="../labs/index.html" aria-current="page">Lab</a><a href="../demos/index.html">Demo</a><a href="../lunchbox.html">Kotak bekal</a><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">GitHub ↗</a></nav>
+    <div class="hud">
+      <a class="hud-pill" href="../lunchbox.html" data-hud-title title="Progres Anda"><span class="ring" data-hud-ring></span><span class="hud-text" data-hud-text>0 XP · Pengunjung penasaran</span></a>
+      <a class="lang-switch" href="../../en/labs/28-relational-databases-advanced.html" hreflang="en" lang="en" data-lang-switch="en" title="Read in English" aria-label="Read in English"><span aria-hidden="true">🌐</span>EN</a>
+      <button class="icon-btn" type="button" data-theme-toggle aria-label="Beralih antara mode terang dan gelap">🌙</button>
+      <button class="icon-btn menu-toggle" type="button" data-menu-toggle aria-controls="site-nav" aria-expanded="false" aria-label="Buka menu">☰</button>
+    </div>
+  </div>
+</header>
+<main id="main">
+<section class="lab-hero" style="--c:#7b4ff0">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>Lab praktik · pasangan Episode 28</p>
+    <div class="ticket">
+      <div class="stub"><span>Lab</span><b>28</b><span>Tiket masuk</span></div>
+      <div class="main">
+        <h1 class="lab-title">Pesanan yang selamat dari gangguan region</h1>
+        <p class="lab-story">🏪 <b>Episode 28 · Kalau Satu Region Padam</b> — Berapa lama kita tidak bisa jualan — dan berapa banyak pesanan yang hilang — kalau satu region padam total? <a href="../lunches/28-relational-databases-advanced.html">Baca makan siangnya</a></p>
+        <a class="byline" href="../index.html#author"><span class="by-avatar" aria-hidden="true">SP</span><span>Ditulis oleh <b>Stefanus Pinarta</b><small>Senior Solutions Engineer · 20+ tahun di TI enterprise</small></span></a>
+        <div class="meta">
+          <span class="chip">⏱ sekitar 60 menit (termasuk sekitar 10 menit persiapan dan sedikit waktu menunggu)</span>
+          <span class="chip cost">💲💲 biaya kecil selama berjalan</span>
+          <span class="chip">Tingkat kesulitan ★★☆</span>
+          <span class="chip ok">✅ Bisa dikerjakan terpisah</span>
+        </div>
+        <div class="lab-actions"><div class="mode-switch" role="group" aria-label="Mode lab"><button type="button" data-mode="guided" aria-pressed="true">🧭 Terpandu</button><button type="button" data-mode="challenge" aria-pressed="false">🏁 Tantangan</button></div><button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button></div>
+        
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container lab-layout">
+  <aside class="rail" aria-label="Langkah lab">
+      <h4>Progres Anda <span data-task-text>0 dari 9 tugas</span></h4>
+      <div class="bar" style="margin-bottom:14px"><span data-task-bar></span></div>
+      <ol><li data-kind="intro" style="--sc:#1665d8"><a href="#-yang-akan-anda-bangun">🎯 Yang akan Anda bangun</a></li><li data-kind="setup" style="--sc:#1665d8"><a href="#-sebelum-mulai">✅ Sebelum mulai</a></li><li data-kind="mode" style="--sc:#68738c"><a href="#-pilih-mode-anda">🧭 Pilih mode Anda</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-1--memeriksa-titik-awal">Tugas 1 · Memeriksa titik awal</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-2--menyamarkan-alamat-e-mail-dan-nomor-telepon-pelanggan">Tugas 2 · Menyamarkan alamat e-mail dan nomor telepon pelanggan</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-3--membuat-failover-group">Tugas 3 · Membuat failover group</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-4--tersambung-lewat-listener-dan-mengukur-lag">Tugas 4 · Tersambung lewat listener dan mengukur lag</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-5--oops-memulihkan-pesanan-yang-terhapus-dengan-point-in-time-restore">Tugas 5 · Oops! Memulihkan pesanan yang terhapus dengan point-in-time restore</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-6--menjalankan-drill-planned-failover">Tugas 6 · Menjalankan drill planned failover</a></li><li data-kind="task" style="--sc:var(--c)"><a href="#tugas-7-opsional--mengirim-log-audit-ke-log-analytics">Tugas 7 (opsional) · Mengirim log audit ke Log Analytics</a></li><li data-kind="bonus" style="--sc:#e2482f"><a href="#-rusak-lalu-perbaiki">🔧 Rusak lalu perbaiki</a></li><li data-kind="verify" style="--sc:#11935a"><a href="#-verifikasi-hasil-kerja-anda">🧪 Verifikasi hasil kerja Anda</a></li><li data-kind="cleanup" style="--sc:#e2482f"><a href="#-bersihkan-jangan-dilewati">🧹 Bersihkan (jangan dilewati!)</a></li><li data-kind="trouble" style="--sc:#68738c"><a href="#-pemecahan-masalah">🩺 Pemecahan masalah</a></li><li data-kind="stretch" style="--sc:#d98a00"><a href="#-tantangan-tambahan">🚀 Tantangan tambahan</a></li><li data-kind="challenge" style="--sc:#7b4ff0"><a href="#-ringkasan-tantangan">🏁 Ringkasan tantangan</a></li></ol>
+      <div class="rail-foot">
+        <p class="muted small" style="margin:0">Berkas lab</p>
+        <ul class="files"><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/28-relational-databases-advanced/azsql.sh" target="_blank" rel="noopener"><span>azsql.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/28-relational-databases-advanced/cleanup.sh" target="_blank" rel="noopener"><span>cleanup.sh</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/28-relational-databases-advanced/masking.sql" target="_blank" rel="noopener"><span>masking.sql</span><small>1 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/28-relational-databases-advanced/orders-dr.sql" target="_blank" rel="noopener"><span>orders-dr.sql</span><small>3 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/28-relational-databases-advanced/setup.sh" target="_blank" rel="noopener"><span>setup.sh</span><small>4 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/28-relational-databases-advanced/solution.sh" target="_blank" rel="noopener"><span>solution.sh</span><small>7 KB</small></a></li><li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/28-relational-databases-advanced/verify.sh" target="_blank" rel="noopener"><span>verify.sh</span><small>6 KB</small></a></li></ul>
+        <a class="btn btn-sm" href="https://github.com/stefpin/azure-fundamentals-lunches/tree/main/labs/28-relational-databases-advanced" target="_blank" rel="noopener">Buka foldernya di GitHub ↗</a>
+      </div>
+    </aside>
+  <div class="lab-main">
+    
+    <p class="lab-alone">✅ Anda tidak memerlukan lab sebelumnya. Semua yang dibutuhkan lab ini dibuat oleh langkah-langkahnya sendiri atau oleh <code>setup.sh</code>.</p>
+    <section class="lab-section" id="-yang-akan-anda-bangun" data-kind="intro"><h2><span class="title">🎯 Yang akan Anda bangun</span></h2><div class="prose wide"><p>Database pesanan Nusantara Retail mendapat rencana pemulihan bencana. <code>setup.sh</code> memberi Anda dua logical server yang
+hanya menerima sign-in Microsoft Entra — satu di region lab Anda (<code>$LOCATION</code>) dan satu di region kedua
+(<code>$SECONDARY_LOCATION</code>) — ditambah database kecil <code>sqldb-orders</code> berisi data pelanggan dan pesanan. Kemudian Anda
+menyamarkan detail kontak pelanggan untuk tim support, memasukkan database ke dalam sebuah <strong>failover group</strong>, dan
+tersambung lewat <strong>listener</strong>-nya. Setelah sebuah &quot;oops&quot; yang disengaja, Anda memulihkan pesanan yang terhapus dengan
+<strong>point-in-time restore</strong>, lalu menutup lab dengan <strong>drill planned failover</strong> yang memindahkan primary ke region
+kedua. Secara opsional, Anda mengirim log audit ke Log Analytics.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+  you[&quot;Anda di Cloud Shell&lt;br/&gt;sqlcmd + token Entra&quot;] --&gt; rw[&quot;fog-nusa-&amp;lt;suffix&amp;gt;.database.windows.net&lt;br/&gt;read-write listener&quot;]
+  you --&gt; ro[&quot;fog-nusa-&amp;lt;suffix&amp;gt;.secondary.database.windows.net&lt;br/&gt;read-only listener&quot;]
+  subgraph main[&quot;rg-lunch28-&amp;lt;suffix&amp;gt; · $LOCATION&quot;]
+    srvA[&quot;sql-nusa-main-&amp;lt;suffix&amp;gt;&lt;br/&gt;Entra-only&quot;] --&gt; dbA[(&quot;sqldb-orders&lt;br/&gt;primary · e-mail disamarkan&quot;)]
+    srvA --&gt; dbR[(&quot;sqldb-orders-restored&lt;br/&gt;salinan point-in-time&quot;)]
+  end
+  subgraph dr[&quot;rg-lunch28-dr-&amp;lt;suffix&amp;gt; · $SECONDARY_LOCATION&quot;]
+    srvB[&quot;sql-nusa-dr-&amp;lt;suffix&amp;gt;&lt;br/&gt;Entra-only&quot;] --&gt; dbB[(&quot;sqldb-orders&lt;br/&gt;geo-secondary&quot;)]
+  end
+  rw --&gt; dbA
+  ro --&gt; dbB
+  dbA -. &quot;failover group fog-nusa-&amp;lt;suffix&amp;gt;&lt;br/&gt;replikasi asinkron&quot; .-&gt; dbB
+</pre><button class="btn btn-sm zoom-btn" type="button" aria-label="Perbesar diagram">⤢ Perbesar</button></figure>
+</div></section><section class="lab-section" id="-sebelum-mulai" data-kind="setup"><h2><span class="title">✅ Sebelum mulai</span></h2><div class="prose wide"><ul>
+<li>Sebuah subscription Azure tempat Anda bisa membuat resource (lihat <a href="01-before-you-begin.html">Lab 01</a>).
+Masuklah dengan <strong>akun pengguna</strong> (user account): lab ini menjadikan akun tersebut Microsoft Entra admin di kedua
+server.</li>
+<li><strong>Azure Cloud Shell (Bash)</strong> — buka <a href="https://shell.azure.com" target="_blank" rel="noopener">shell.azure.com</a>. Di dalamnya sudah tersedia Azure CLI
+dan sqlcmd.</li>
+<li>Subscription Anda harus diizinkan membuat SQL server di <strong>dua</strong> region. Default-nya adalah <code>southeastasia</code> dan
+pasangannya, <code>eastasia</code>; dua region berbeda mana pun bisa dipakai.</li>
+<li>Ambil file lab, lalu muat pengaturan bersama dan nama-nama yang akan Anda pakai ulang:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>git clone https://github.com/stefpin/azure-fundamentals-lunches.git   # first time only
+cd azure-fundamentals-lunches/labs/28-relational-databases-advanced
+source ../common/config.sh
+RG=$(rg_name 28); RG_DR=$(rg_name 28 dr)
+SQL_MAIN=&quot;sql-nusa-main-${SUFFIX}&quot;; SQL_DR=&quot;sql-nusa-dr-${SUFFIX}&quot;
+MAIN_FQDN=&quot;${SQL_MAIN}.database.windows.net&quot;
+FOG=&quot;fog-nusa-${SUFFIX}&quot;
+FOG_RW=&quot;${FOG}.database.windows.net&quot;; FOG_RO=&quot;${FOG}.secondary.database.windows.net&quot;
+DB=sqldb-orders
+source azsql.sh            # defines &#x27;azsql&#x27;: sqlcmd with your Microsoft Entra token
+</code></pre></div>
+<ul>
+<li>Buat titik awalnya — butuh sekitar 10 menit:</li>
+</ul>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash setup.sh
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span>Cloud Shell mengakhiri sesi setelah sekitar 20 menit tanpa aktivitas. Jika itu terjadi, <code>cd</code> kembali ke folder lab
+dan jalankan lagi blok variabel di atas. Jika Cloud Shell juga mendapat alamat IP publik baru, jalankan
+<code>bash setup.sh</code> sekali lagi: skrip itu aman diulang dan akan memperbarui firewall rule di kedua server.</p>
+</aside>
+<aside class="callout important" data-icon="❗">
+<p><span class="callout-title">Penting</span>Logical server-nya gratis, tetapi tiga database kecil yang Anda miliki di akhir lab — primary, geo-secondary-nya,
+dan salinan hasil restore — memakan biaya selama masih ada (beberapa sen per jam). Akhiri lab dengan bagian
+<strong>Bersihkan</strong>, bahkan jika Anda berhenti di tengah jalan.</p>
+</aside>
+</div></section><section class="lab-section" id="-pilih-mode-anda" data-kind="mode"><h2><span class="title">🧭 Pilih mode Anda</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Cocok untuk Anda jika…</th>
+<th>Caranya</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Terpandu</strong></td>
+<td>Anda ingin setiap langkah dijelaskan</td>
+<td>jalankan <code>setup.sh</code>, lalu ikuti Tugas 1–7 di bawah</td>
+</tr>
+<tr>
+<td><strong>Tantangan</strong></td>
+<td>Anda sudah menguasai dasarnya</td>
+<td>baca hanya <a href="#-ringkasan-tantangan">Ringkasan tantangan</a>, bangun dengan cara Anda sendiri, lalu jalankan <code>bash verify.sh</code></td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="tugas-1--memeriksa-titik-awal" data-kind="task"><h2><span class="task-tag">Tugas 1</span><span class="title">Memeriksa titik awal</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-1--memeriksa-titik-awal" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Sebelum menambahkan pemulihan bencana, periksa dulu apa yang Anda lindungi dan di mana letaknya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az sql server list --query &quot;[?starts_with(name, &#x27;sql-nusa-&#x27;)].{server:name, region:location, group:resourceGroup}&quot; --output table
+az sql db show --resource-group &quot;$RG&quot; --server &quot;$SQL_MAIN&quot; --name &quot;$DB&quot; \
+  --query &quot;{tier:currentServiceObjectiveName, backups:currentBackupStorageRedundancy, earliestRestore:earliestRestoreDate}&quot; --output table
+azsql &quot;$MAIN_FQDN&quot; &quot;$DB&quot; -W -Q &quot;SELECT StoreCode, COUNT(*) AS orders FROM dbo.Orders GROUP BY StoreCode ORDER BY StoreCode;&quot;
+</code></pre></div>
+<p>Perhatikan tiga hal. Database ini memakai tier <strong>Basic</strong> — tier termurah yang mendukung failover group (penawaran
+gratis tidak bisa ikut di dalamnya). Backup-nya <strong>locally redundant</strong>, yang membuat lab tetap murah dan berfungsi di
+setiap region; rencana produksi yang mengandalkan geo-restore membutuhkan backup storage yang geo-redundant. Dan
+<code>earliestRestore</code> mungkin masih kosong: database yang baru dibuat mendapat restore point pertamanya setelah full
+backup pertama dan log backup sesudahnya selesai, biasanya dalam sekitar 30 menit. Anda akan membutuhkannya di
+Tugas 5.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> dua server di dua region yang berbeda; <code>sqldb-orders</code> berada di tier <code>Basic</code>; query menampilkan
+sembilan pesanan, tiga di antaranya untuk <code>SBY-01</code> (Surabaya).</p>
+</div>
+</div></section><section class="lab-section" id="tugas-2--menyamarkan-alamat-e-mail-dan-nomor-telepon-pelanggan" data-kind="task"><h2><span class="task-tag">Tugas 2</span><span class="title">Menyamarkan alamat e-mail dan nomor telepon pelanggan</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-2--menyamarkan-alamat-e-mail-dan-nomor-telepon-pelanggan" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Tim layanan pelanggan perlu mencari data pelanggan, tetapi tidak perlu melihat detail kontak mereka secara lengkap.
+<strong>Dynamic data masking</strong> menyembunyikan nilai di hasil query bagi pengguna tanpa permission <code>UNMASK</code>; data yang
+tersimpan tidak berubah. Baca <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/28-relational-databases-advanced/masking.sql" target="_blank" rel="noopener"><code>masking.sql</code></a> terlebih dahulu. Skrip itu menyamarkan <code>Email</code> dengan
+fungsi <code>email()</code> dan <code>Phone</code> dengan fungsi <code>partial()</code>, serta membuat user uji, <code>support_agent</code>, tanpa login.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>azsql &quot;$MAIN_FQDN&quot; &quot;$DB&quot; -i masking.sql
+</code></pre></div>
+<p>Sekarang bandingkan apa yang Anda lihat sebagai admin dengan apa yang dilihat tim support. <code>EXECUTE AS USER</code>
+memungkinkan Anda menyamar sebagai user uji itu di dalam sesi Anda sendiri:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>azsql &quot;$MAIN_FQDN&quot; &quot;$DB&quot; -W -Q &quot;SELECT TOP (3) FullName, Email, Phone FROM dbo.Customers ORDER BY CustomerId;&quot;
+azsql &quot;$MAIN_FQDN&quot; &quot;$DB&quot; -W -Q &quot;EXECUTE AS USER = &#x27;support_agent&#x27;; SELECT TOP (3) FullName, Email, Phone FROM dbo.Customers ORDER BY CustomerId; REVERT;&quot;
+</code></pre></div>
+<p>Anda sengaja melakukan ini <strong>sebelum</strong> membuat failover group: masking rule tinggal di dalam database, sehingga ikut
+direplikasi ke secondary bersama semua hal lainnya.</p>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>SQL databases › sqldb-orders › Security › Dynamic Data Masking</em> menampilkan kolom yang
+disamarkan dan memungkinkan Anda menambah rule — bandingkan dengan hasil skripnya.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> sebagai admin, Anda melihat alamat seperti <code>andi.pratama@example.com</code>; sebagai <code>support_agent</code>,
+Anda melihat nilai yang disamarkan seperti <code>aXXX@XXXX.com</code> dan <code>XXXX-XXXX-XX01</code>. <code>masking.sql</code> menampilkan dua kolom
+yang disamarkan.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-3--membuat-failover-group" data-kind="task"><h2><span class="task-tag">Tugas 3</span><span class="title">Membuat failover group</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-3--membuat-failover-group" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p><strong>Failover group</strong> mereplikasi database ke server di region kedua dan memberi Anda dua nama listener yang mengikuti
+perannya. Namanya akan menjadi nama DNS, jadi harus unik secara global; suffix sudah mengurus hal itu.
+<code>--failover-policy Manual</code> adalah policy <strong>customer-managed</strong> yang disarankan Microsoft: Anda yang memutuskan kapan
+failover.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az sql failover-group create \
+  --name &quot;$FOG&quot; \
+  --resource-group &quot;$RG&quot; \
+  --server &quot;$SQL_MAIN&quot; \
+  --partner-server &quot;$SQL_DR&quot; \
+  --partner-resource-group &quot;$RG_DR&quot; \
+  --failover-policy Manual \
+  --add-db &quot;$DB&quot; \
+  --output none
+</code></pre></div>
+<p>Azure sekarang melakukan <strong>seeding</strong> pada secondary: ia membuat <code>sqldb-orders</code> di server DR dan menyalin datanya.
+Untuk database sekecil ini, prosesnya butuh beberapa menit. Sambil menunggu, baca lagi bagian 2 dari makan siang ini.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az sql failover-group show --resource-group &quot;$RG&quot; --server &quot;$SQL_MAIN&quot; --name &quot;$FOG&quot; \
+  --query &quot;{group:name, roleOfMainServer:replicationRole, policy:readWriteEndpoint.failoverPolicy}&quot; --output table
+az sql db replica list-links --resource-group &quot;$RG&quot; --server &quot;$SQL_MAIN&quot; --name &quot;$DB&quot; \
+  --query &quot;[].{partner:partnerServer, partnerRole:partnerRole, state:replicationState}&quot; --output table
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>SQL servers › sql-nusa-main-… › Data management › Failover groups › + Add group</em>. Tampilan
+peta menunjukkan kedua region dan arah replikasinya.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>roleOfMainServer</code> bernilai <code>Primary</code>, policy-nya <code>Manual</code>, dan link replikasi ke server DR
+mencapai status <code>CATCH_UP</code> (artinya seeding sudah selesai dan perubahan sedang mengalir).</p>
+</div>
+</div></section><section class="lab-section" id="tugas-4--tersambung-lewat-listener-dan-mengukur-lag" data-kind="task"><h2><span class="task-tag">Tugas 4</span><span class="title">Tersambung lewat listener dan mengukur lag</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-4--tersambung-lewat-listener-dan-mengukur-lag" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Aplikasi tidak boleh memakai nama server untuk database yang berada di dalam failover group. Aplikasi memakai
+<strong>read-write listener</strong> (selalu primary) atau <strong>read-only listener</strong> (secondary). Tanyakan kepada masing-masing di
+mana Anda sebenarnya mendarat:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>azsql &quot;$FOG_RW&quot; &quot;$DB&quot; -W -Q &quot;SELECT @@SERVERNAME AS server_name, DATABASEPROPERTYEX(DB_NAME(), &#x27;Updateability&#x27;) AS updateability;&quot;
+azsql &quot;$FOG_RO&quot; &quot;$DB&quot; -K ReadOnly -W -Q &quot;SELECT @@SERVERNAME AS server_name, DATABASEPROPERTYEX(DB_NAME(), &#x27;Updateability&#x27;) AS updateability;&quot;
+</code></pre></div>
+<p><code>-K ReadOnly</code> menyatakan niat hanya-baca (read-only intent), dan memang itulah yang seharusnya dilakukan alat
+pelaporan. Sekarang lihat link replikasinya dari sudut pandang primary. <code>replication_lag_sec</code> adalah <strong>RPO</strong> Anda saat
+ini: jumlah detik perubahan yang akan hilang jika terjadi forced failover.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>azsql &quot;$FOG_RW&quot; &quot;$DB&quot; -W -Q &quot;SELECT partner_server, role_desc, replication_state_desc, replication_lag_sec, last_replication FROM sys.dm_geo_replication_link_status;&quot;
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> read-write listener mendarat di <code>sql-nusa-main-…</code> dengan <code>READ_WRITE</code>; read-only listener
+mendarat di <code>sql-nusa-dr-…</code> dengan <code>READ_ONLY</code>. Lag-nya hanya beberapa detik, sering kali 0 untuk database yang
+sedang sepi.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-5--oops-memulihkan-pesanan-yang-terhapus-dengan-point-in-time-restore" data-kind="task"><h2><span class="task-tag">Tugas 5</span><span class="title">Oops! Memulihkan pesanan yang terhapus dengan point-in-time restore</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-5--oops-memulihkan-pesanan-yang-terhapus-dengan-point-in-time-restore" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Pertama, pastikan restore point sudah ada — database yang baru dibuat tidak bisa di-restore ke momen sebelum backup
+pertamanya:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az sql db show --resource-group &quot;$RG&quot; --server &quot;$SQL_MAIN&quot; --name &quot;$DB&quot; --query earliestRestoreDate --output tsv
+</code></pre></div>
+<p>Jika perintah ini tidak mencetak apa pun, tunggu lima menit lalu tanyakan lagi; sambil menunggu, baca bagian 3 dari
+makan siang ini. Begitu perintah itu menampilkan sebuah waktu, catat waktu saat ini dalam UTC, lalu buat kesalahan
+dengan sengaja:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>BEFORE_OOPS=$(date -u +%Y-%m-%dT%H:%M:%S); echo &quot;Restore point: $BEFORE_OOPS UTC&quot;
+sleep 5
+azsql &quot;$FOG_RW&quot; &quot;$DB&quot; -Q &quot;DELETE FROM dbo.Orders WHERE StoreCode = &#x27;SBY-01&#x27;;&quot;
+</code></pre></div>
+<p>Apakah failover group melindungi Anda? Tanyakan kepada secondary:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>azsql &quot;$FOG_RO&quot; &quot;$DB&quot; -K ReadOnly -W -Q &quot;SELECT COUNT(*) AS sby_orders_on_secondary FROM dbo.Orders WHERE StoreCode = &#x27;SBY-01&#x27;;&quot;
+</code></pre></div>
+<p>Nol. Replikasi menyalin kesalahan itu dalam hitungan detik — replikasi bukan backup. Restore database seperti
+keadaannya tepat sebelum penghapusan, ke sebuah database <strong>baru</strong> di server utama:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az sql db restore \
+  --resource-group &quot;$RG&quot; \
+  --server &quot;$SQL_MAIN&quot; \
+  --name &quot;$DB&quot; \
+  --dest-name sqldb-orders-restored \
+  --time &quot;$BEFORE_OOPS&quot; \
+  --service-objective Basic \
+  --backup-storage-redundancy Local \
+  --output none
+</code></pre></div>
+<p>Restore biasanya butuh beberapa menit, bahkan untuk database yang sangat kecil. Jika perintah itu mengatakan point in
+time-nya belum valid, berarti masih ada log backup yang tertunda: tunggu sepuluh menit lalu jalankan lagi. Salinan
+hasil restore bukan bagian dari failover group, jadi Anda menjangkaunya lewat nama server utama itu sendiri:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>azsql &quot;$MAIN_FQDN&quot; sqldb-orders-restored -W -Q &quot;SELECT COUNT(*) AS sby_orders_in_restored_copy FROM dbo.Orders WHERE StoreCode = &#x27;SBY-01&#x27;;&quot;
+</code></pre></div>
+<aside class="callout tip" data-icon="💡">
+<p><span class="callout-title">Tips</span><strong>Lebih suka portal?</strong> <em>SQL databases › sqldb-orders › Restore</em> menampilkan restore point paling awal dan
+memungkinkan Anda memilih waktunya dengan date picker.</p>
+</aside>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> salinan hasil restore memiliki tiga pesanan <code>SBY-01</code>, sementara database live tidak punya satu
+pun. <code>az sql db list --resource-group &quot;$RG&quot; --server &quot;$SQL_MAIN&quot; --query &quot;[].name&quot; --output tsv</code> menampilkan
+<code>sqldb-orders-restored</code>. (Mengembalikan baris-baris itu adalah salah satu tantangan tambahan.)</p>
+</div>
+</div></section><section class="lab-section" id="tugas-6--menjalankan-drill-planned-failover" data-kind="task"><h2><span class="task-tag">Tugas 6</span><span class="title">Menjalankan drill planned failover</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-6--menjalankan-drill-planned-failover" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Saatnya memindahkan primary ke region kedua tanpa kehilangan apa pun. <code>set-primary</code> dijalankan terhadap server yang
+akan <strong>menjadi</strong> primary. Tanpa <code>--allow-data-loss</code>, ini adalah <strong>planned failover</strong>: Azure menyinkronkan secondary
+sepenuhnya, lalu menukar perannya.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az sql failover-group set-primary --name &quot;$FOG&quot; --resource-group &quot;$RG_DR&quot; --server &quot;$SQL_DR&quot;
+az sql failover-group show --name &quot;$FOG&quot; --resource-group &quot;$RG_DR&quot; --server &quot;$SQL_DR&quot; \
+  --query &quot;{group:name, roleOfDrServer:replicationRole}&quot; --output table
+</code></pre></div>
+<p>Nama listener tidak berubah, tetapi targetnya berubah. DNS menyimpan jawaban lama di cache hingga 30 detik, jadi
+tunggu satu menit, lalu sambungkan dengan perintah yang persis sama seperti di Tugas 4 dan tulis sebuah pesanan baru:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>azsql &quot;$FOG_RW&quot; &quot;$DB&quot; -W -Q &quot;SELECT @@SERVERNAME AS server_name, DATABASEPROPERTYEX(DB_NAME(), &#x27;Updateability&#x27;) AS updateability;&quot;
+azsql &quot;$FOG_RW&quot; &quot;$DB&quot; -Q &quot;INSERT INTO dbo.Orders (CustomerId, StoreCode, TotalIdr) VALUES (4, &#x27;JKT-02&#x27;, 315000);&quot;
+</code></pre></div>
+<p>Server DR bisa mengambil alih hanya karena <code>setup.sh</code> memberinya Entra admin yang sama dan firewall rule untuk alamat
+IP Anda — pengaturan level server tidak ikut direplikasi.</p>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> <code>roleOfDrServer</code> bernilai <code>Primary</code>; read-write listener sekarang mendarat di <code>sql-nusa-dr-…</code>
+dengan <code>READ_WRITE</code>, dan insert-nya berhasil.</p>
+</div>
+</div></section><section class="lab-section" id="tugas-7-opsional--mengirim-log-audit-ke-log-analytics" data-kind="task"><h2><span class="task-tag">Tugas 7 (opsional)</span><span class="title">Mengirim log audit ke Log Analytics</span><button class="btn btn-sm done-toggle" type="button" data-task="tugas-7-opsional--mengirim-log-audit-ke-log-analytics" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Auditing mencatat siapa melakukan apa di dalam database. Microsoft menyarankan auditing di level server, dikonfigurasi
+di <strong>kedua</strong> server agar tetap berjalan setelah failover.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>az monitor log-analytics workspace create --resource-group &quot;$RG&quot; --workspace-name log-nusa --location &quot;$LOCATION&quot; --output none
+LAW_ID=$(az monitor log-analytics workspace show --resource-group &quot;$RG&quot; --workspace-name log-nusa --query id --output tsv)
+az sql server audit-policy update --resource-group &quot;$RG&quot; --name &quot;$SQL_MAIN&quot; --state Enabled --lats Enabled --lawri &quot;$LAW_ID&quot; --output none
+az sql server audit-policy update --resource-group &quot;$RG_DR&quot; --name &quot;$SQL_DR&quot; --state Enabled --lats Enabled --lawri &quot;$LAW_ID&quot; --output none
+az sql server audit-policy show --resource-group &quot;$RG_DR&quot; --name &quot;$SQL_DR&quot; --query &quot;{state:state, toAzureMonitor:isAzureMonitorTargetEnabled}&quot; --output table
+</code></pre></div>
+<p>Jalankan beberapa query dengan <code>azsql</code>, tunggu 10–15 menit, lalu buka <em>Log Analytics workspaces › log-nusa › Logs</em> dan
+jalankan:</p>
+<div class="code" data-lang="kusto"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>KQL</span><button class="copy-btn" type="button">Salin</button></div><pre><code>AzureDiagnostics
+| where Category == &quot;SQLSecurityAuditEvents&quot;
+| project TimeGenerated, server_principal_name_s, action_name_s, statement_s
+| order by TimeGenerated desc
+| take 20
+</code></pre></div>
+<div class="checkpoint">
+<p>✅ <strong>Pemeriksaan:</strong> audit policy menampilkan <code>Enabled</code>; setelah beberapa menit, query itu mengembalikan
+pernyataan-pernyataan Anda sendiri, lengkap dengan identitas Entra Anda. (Jika baris <code>project</code> memprotes soal sebuah
+kolom, hapus baris itu untuk melihat semua kolom.)</p>
+</div>
+</div></section><section class="lab-section" id="-rusak-lalu-perbaiki" data-kind="bonus"><h2><span class="title">🔧 Rusak lalu perbaiki</span><button class="btn btn-sm done-toggle" type="button" data-task="-rusak-lalu-perbaiki" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><p>Konfigurasi toko online lama milik Dewi masih mengarah ke nama server. Perankan aplikasi lama itu: tulis ke database
+lewat <strong>nama server utama</strong>, bukan lewat listener.</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>azsql &quot;$MAIN_FQDN&quot; &quot;$DB&quot; -Q &quot;INSERT INTO dbo.Orders (CustomerId, StoreCode, TotalIdr) VALUES (1, &#x27;JKT-01&#x27;, 120000);&quot;
+</code></pre></div>
+<p><strong>Gejala:</strong> <em>Msg 3906 … Failed to update database &quot;sqldb-orders&quot; because the database is read-only.</em> Koneksinya
+berhasil — primary lama sekarang menjadi geo-secondary yang bisa dibaca — tetapi setiap operasi tulis gagal. Dalam
+gangguan sungguhan, server itu mungkin sama sekali tidak menjawab.</p>
+<details class="plain"><summary>Petunjuk: cara memperbaikinya</summary>
+<p>Sambungkan lewat read-write listener, yang targetnya selalu mengikuti primary di setiap failover:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>azsql &quot;$FOG_RW&quot; &quot;$DB&quot; -Q &quot;INSERT INTO dbo.Orders (CustomerId, StoreCode, TotalIdr) VALUES (1, &#x27;JKT-01&#x27;, 120000);&quot;
+</code></pre></div>
+<p>Dalam sebuah aplikasi, itu berarti <code>Server=tcp:fog-nusa-&lt;suffix&gt;.database.windows.net,1433</code> di connection string —
+ditambah retry logic, karena setiap failover memutus koneksi yang sedang terbuka.</p>
+</details>
+</div></section><section class="lab-section" id="-verifikasi-hasil-kerja-anda" data-kind="verify"><h2><span class="title">🧪 Verifikasi hasil kerja Anda</span><button class="btn btn-sm done-toggle" type="button" data-task="-verifikasi-hasil-kerja-anda" aria-pressed="false">Tandai selesai</button></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash verify.sh
+</code></pre></div>
+<p>Setiap pemeriksaan seharusnya menampilkan <strong>PASS</strong>. Jika ada yang gagal, pesannya memberi tahu tugas mana yang perlu
+Anda ulangi. <code>verify.sh</code> mengharapkan server DR menjadi primary (Tugas 6). Jika Anda sengaja melakukan failback,
+jalankan <code>EXPECTED_PRIMARY=main bash verify.sh</code>.</p>
+</div></section><section class="lab-section" id="-bersihkan-jangan-dilewati" data-kind="cleanup"><h2><span class="title">🧹 Bersihkan (jangan dilewati!)</span></h2><div class="prose wide"><div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>bash cleanup.sh
+</code></pre></div>
+<p>Skrip ini menghapus semuanya dengan urutan yang benar: pertama failover group, lalu link geo-replication (menghapus
+failover group tidak menghentikan replikasi), kemudian kedua resource group <code>rg-lunch28-&lt;suffix&gt;</code> dan
+<code>rg-lunch28-dr-&lt;suffix&gt;</code> beserta server, database, salinan hasil restore, dan Log Analytics workspace. Penghapusan
+berlanjut di latar belakang selama beberapa menit.</p>
+</div><p class="cleanup-cta"><button class="btn btn-warm" type="button" data-cleanup aria-pressed="false">🧹 Saya sudah menjalankan cleanup.sh</button> <span class="muted">Bernilai 25 XP — dan menjaga tagihan Anda tetap nol.</span></p></section><section class="lab-section" id="-pemecahan-masalah" data-kind="trouble"><h2><span class="title">🩺 Pemecahan masalah</span></h2><div class="prose wide"><div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Kemungkinan penyebab</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Location '…' is not accepting creation of new Windows Azure SQL Database servers for the subscription '…' at this time.</code></td>
+<td>Subscription Anda tidak bisa membuat SQL server di region tersebut</td>
+<td>Jalankan <code>bash cleanup.sh</code> dan tunggu sampai <code>az group list --tag lunch=28 --output table</code> kosong (resource group-nya sudah ada di region lama), lalu <code>export SECONDARY_LOCATION=&lt;another region&gt;</code> (atau <code>LOCATION</code>), <code>source ../common/config.sh</code>, dan <code>bash setup.sh</code></td>
+</tr>
+<tr>
+<td>Error 40615: <em>Client with IP address '…' is not allowed to access the server</em></td>
+<td>Cloud Shell mendapat IP publik baru, atau Anda tersambung ke server yang tidak punya rule untuk Anda</td>
+<td>Jalankan <code>bash setup.sh</code> lagi — skrip itu memperbarui rule di kedua server — lalu tunggu hingga lima menit</td>
+</tr>
+<tr>
+<td>Msg 3906: <em>Failed to update database … because the database is read-only</em></td>
+<td>Anda menulis ke geo-secondary: lewat nama server atau read-only listener</td>
+<td>Tulis lewat <code>$FOG_RW</code>; tepat setelah failover, tunggu satu menit sampai DNS diperbarui</td>
+</tr>
+<tr>
+<td><code>az sql failover-group create</code> mengatakan namanya sudah ada</td>
+<td>Nama failover group adalah nama DNS global</td>
+<td>Hapus group lama Anda, atau gunakan <code>SUFFIX</code> baru</td>
+</tr>
+<tr>
+<td><code>earliestRestoreDate</code> kosong</td>
+<td>Full backup pertama dari database baru belum selesai</td>
+<td>Tunggu; biasanya muncul dalam sekitar 30 menit setelah <code>setup.sh</code></td>
+</tr>
+<tr>
+<td><code>az sql db restore</code> menolak point in time-nya</td>
+<td>Waktunya lebih awal daripada restore point paling awal, atau masih ada log backup yang tertunda</td>
+<td>Periksa <code>earliestRestoreDate</code>; tunggu sepuluh menit lalu jalankan restore lagi</td>
+</tr>
+<tr>
+<td><code>Login failed for user '&lt;token-identified principal&gt;'</code></td>
+<td>Anda masuk ke Azure dengan akun yang berbeda dari Entra admin server</td>
+<td><code>az account show --query user.name</code>; masuk dengan akun yang menjalankan <code>setup.sh</code></td>
+</tr>
+<tr>
+<td><code>cleanup.sh</code> melaporkan bahwa ada sesuatu yang tidak bisa dihapus</td>
+<td>Link replikasi atau operasi yang sedang berjalan menghalanginya</td>
+<td>Tunggu lima menit lalu jalankan <code>bash cleanup.sh</code> lagi</td>
+</tr>
+</tbody>
+</table></div>
+</div></section><section class="lab-section" id="-tantangan-tambahan" data-kind="stretch"><h2><span class="title">🚀 Tantangan tambahan</span></h2><div class="prose wide"><ul>
+<li>
+<p><strong>Kembalikan pesanan Surabaya.</strong> Query lintas database tidak tersedia di Azure SQL Database, jadi buat pernyataan
+<code>INSERT</code> dari salinan hasil restore, lalu jalankan di primary:</p>
+<div class="code" data-lang="bash"><div class="code-head"><span><span class="dots"><i></i><i></i><i></i></span>bash</span><button class="copy-btn" type="button">Salin</button></div><pre><code>azsql &quot;$MAIN_FQDN&quot; sqldb-orders-restored -h-1 -W -Q &quot;SET NOCOUNT ON; SELECT CONCAT(&#x27;SET IDENTITY_INSERT dbo.Orders ON; INSERT INTO dbo.Orders (OrderId, CustomerId, OrderDate, StoreCode, TotalIdr, Status) VALUES (&#x27;, OrderId, &#x27;, &#x27;, CustomerId, &#x27;, &#x27;&#x27;&#x27;, CONVERT(varchar(19), OrderDate, 126), &#x27;&#x27;&#x27;, &#x27;&#x27;&#x27;, StoreCode, &#x27;&#x27;&#x27;, &#x27;, TotalIdr, &#x27;, &#x27;&#x27;&#x27;, Status, &#x27;&#x27;&#x27;); SET IDENTITY_INSERT dbo.Orders OFF;&#x27;) FROM dbo.Orders WHERE StoreCode = &#x27;SBY-01&#x27;;&quot; &gt; sby-orders.sql
+cat sby-orders.sql
+azsql &quot;$FOG_RW&quot; &quot;$DB&quot; -i sby-orders.sql &amp;&amp; rm sby-orders.sql
+</code></pre></div>
+</li>
+<li>
+<p><strong>Fail back</strong> ke server utama dengan planned failover sekali lagi (<code>--server &quot;$SQL_MAIN&quot; --resource-group &quot;$RG&quot;</code>),
+lalu jalankan <code>EXPECTED_PRIMARY=main bash verify.sh</code>.</p>
+</li>
+<li>
+<p><strong>Row-level security:</strong> buat predicate function dan security policy agar <code>support_agent</code> hanya melihat pesanan dari
+<code>JKT-01</code>, lalu uji dengan <code>EXECUTE AS USER</code>.</p>
+</li>
+<li>
+<p><strong>Saksikan lag bergerak:</strong> sisipkan beberapa ratus baris dalam sebuah loop lewat <code>$FOG_RW</code>, dan jalankan query ke
+<code>sys.dm_geo_replication_link_status</code> selagi loop itu berjalan.</p>
+</li>
+<li>
+<p><strong>Baca pengaturan backup</strong> di portal (<em>sqldb-orders › Data management › Backups</em>): kebijakan retensi, restore point
+yang tersedia, dan tempat long-term retention dikonfigurasi.</p>
+</li>
+</ul>
+</div></section><section class="lab-section" id="-ringkasan-tantangan" data-kind="challenge"><h2><span class="title">🏁 Ringkasan tantangan</span></h2><div class="prose wide"><p>Bangun hal-hal berikut dengan cara apa pun yang Anda suka (portal, CLI, Bicep). <code>setup.sh</code> boleh membuatkan titik
+awalnya (butir 1–3):</p>
+<ol>
+<li>Dua resource group, <code>rg-lunch28-&lt;suffix&gt;</code> di <code>$LOCATION</code> dan <code>rg-lunch28-dr-&lt;suffix&gt;</code> di <code>$SECONDARY_LOCATION</code>,
+dibuat dengan <code>ensure_rg</code> (diberi tag <code>course=azure-fundamentals-lunches</code> dan <code>lunch=28</code>).</li>
+<li>Dua logical server, <code>sql-nusa-main-&lt;suffix&gt;</code> dan <code>sql-nusa-dr-&lt;suffix&gt;</code>, satu di setiap group, keduanya dengan
+<strong>autentikasi Microsoft Entra-only</strong> dan firewall rule yang mengizinkan alamat IP Cloud Shell Anda saat ini.</li>
+<li>Database <code>sqldb-orders</code> di server utama dengan <code>dbo.Customers</code> dan <code>dbo.Orders</code> (gunakan <code>orders-dr.sql</code>).</li>
+<li><strong>Dynamic data masking</strong> pada <code>dbo.Customers.Email</code>.</li>
+<li>Failover group <code>fog-nusa-&lt;suffix&gt;</code> yang berisi <code>sqldb-orders</code>, dengan failover policy customer-managed (<code>Manual</code>).</li>
+<li>Database <code>sqldb-orders-restored</code> di server utama, dibuat dengan <strong>point-in-time restore</strong> dari momen sebelum Anda
+menghapus pesanan <code>SBY-01</code>.</li>
+<li><strong>Planned failover</strong> yang sudah selesai: <code>sql-nusa-dr-&lt;suffix&gt;</code> menjadi primary dari failover group.</li>
+<li>Opsional: server auditing di kedua server ke Log Analytics workspace <code>log-nusa</code>.</li>
+</ol>
+<p>Lalu jalankan <code>bash verify.sh</code>. Buntu? Intip <code>solution.sh</code> atau beralih ke mode Terpandu.</p>
+</div></section>
+    <div class="lab-done card">
+      <div><h3 style="margin:0">Sudah selesai?</h3><p class="muted" style="margin:0">Jalankan skrip verifikasi, bersihkan resource, lalu klaim XP Anda.</p></div>
+      <button class="btn btn-primary" type="button" data-lab-complete>🏆 Tandai lab selesai</button>
+    </div>
+    <nav class="ep-nav" aria-label="Lab"><a href="27-load-balancing-advanced.html"><small>← Lab sebelumnya</small>27 · Melindungi dan merutekan toko online</a><a class="next" href="29-containers-advanced-aks.html"><small>Lab berikutnya →</small>29 · Kubernetes untuk tim microservices</a></nav>
+    <p class="validated">Terakhir divalidasi: Oktober 2026 · <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/labs/28-relational-databases-advanced/README.id.md" target="_blank" rel="noopener">Baca lab ini di GitHub</a> ·
+      <a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah lab</a></p>
+  </div>
+</div>
+<div class="cleanup-banner" role="status">🧹 Resource lab mungkin masih berjalan. Setelah selesai, jalankan <code>bash cleanup.sh</code> — <a href="#-bersihkan-jangan-dilewati">ke bagian pembersihan</a>.</div>
+</main>
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="../index.html"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="7" width="36" height="28" rx="8" fill="#e2482f"/><rect x="5" y="10" width="15" height="22" rx="5" fill="#fff6e8"/><rect x="22" y="10" width="13" height="10" rx="4" fill="#ffc14a"/><rect x="22" y="22" width="13" height="10" rx="4" fill="#45cf8c"/><path d="M8.4 26.2h7.9a2.7 2.7 0 0 0 .2-5.4 3.8 3.8 0 0 0-7.2-1.1 3.2 3.2 0 0 0-.9 6.5z" fill="#1665d8"/></svg><span>Satu Makan Siang<small>Dasar-Dasar Azure</small></span></a>
+        <p style="margin-top:14px;max-inline-size:44ch">Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu peritel fiktif Indonesia dari server di samping pantry ke platform Azure yang tertata dan tangguh.</p>
+        
+      </div>
+      <div>
+        <h4>Belajar</h4>
+        <ul><li><a href="../index.html#episodes">Semua episode</a></li><li><a href="../labs/index.html">Lab praktik</a></li>
+        <li><a href="../demos/index.html">Galeri demo</a></li><li><a href="../lunchbox.html">Kotak bekal saya</a></li></ul>
+      </div>
+      <div>
+        <h4>Repositori</h4>
+        <ul><li><a href="https://github.com/stefpin/azure-fundamentals-lunches" target="_blank" rel="noopener">Kode sumber di GitHub</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/SYLLABUS.id.md" target="_blank" rel="noopener">Silabus</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/COURSE-DESIGN.md" target="_blank" rel="noopener">Desain kursus (bahasa Inggris)</a></li>
+        <li><a href="https://github.com/stefpin/azure-fundamentals-lunches/issues" target="_blank" rel="noopener">Laporkan masalah</a></li></ul>
+      </div>
+      <div>
+        <h4>Penulis</h4>
+        <ul><li><a href="../index.html#author">Stefanus Pinarta · Tentang penulis</a></li>
+        <li><a href="https://id.linkedin.com/in/stefanus-pinarta-8193512" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href="mailto:stefanus.pinarta@gmail.com">stefanus.pinarta@gmail.com</a></li></ul>
+      </div>
+    </div>
+    <p class="fine">Proyek belajar pribadi yang independen — bukan pelatihan, dokumentasi, atau materi sertifikasi resmi Microsoft, dan tidak didukung oleh Microsoft. Azure sering berubah: selalu periksa <a href="https://learn.microsoft.com/azure/" target="_blank" rel="noopener">dokumentasi Azure</a> dan harga terbaru sebelum mengandalkan suatu detail. Microsoft, Azure, dan nama terkait adalah merek dagang grup perusahaan Microsoft. Nusantara Retail dan para tokohnya adalah fiktif. Teks dan demo: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE-CONTENT.md" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · kode: <a href="https://github.com/stefpin/azure-fundamentals-lunches/blob/main/LICENSE" target="_blank" rel="noopener">MIT</a>. Progres, lencana, dan catatan hanya disimpan di browser Anda.</p>
+  </div>
+</footer>
+<script src="../../assets/course-data.id.js?v=87b0eb3550" defer></script>
+<script src="../../assets/site.js?v=87b0eb3550" defer></script>
+</body>
+</html>
