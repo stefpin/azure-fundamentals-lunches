@@ -122,6 +122,11 @@ def validate(path: Path, tmpl_hash: str | None) -> tuple[list[str], list[str], d
     eng = engine_text(p.scripts)
     if not eng:
         errors.append("shared engine script not found (copy it from templates/demo-template.html)")
+    elif not eng.endswith("})();"):
+        # Browsers end a <script> at the first "</script", even inside a JavaScript comment or string,
+        # and then show the rest of the code as page text. The parser here does the same.
+        errors.append("the engine script is cut short: something inside it contains '</script' "
+                      "(browsers stop the script there); remove it from comments and strings")
     elif tmpl_hash and hashlib.sha256(eng.encode("utf-8")).hexdigest() != tmpl_hash:
         errors.append("shared engine script differs from templates/demo-template.html (do not edit the engine)")
 
