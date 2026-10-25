@@ -31,7 +31,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 TEMPLATE = REPO / "templates" / "demo-template.html"
-ENGINE_MARKER = "LUNCH DEMO PLAYER · v1.1 · engine"
+ENGINE_MARKER = "LUNCH DEMO PLAYER · v1.2 · engine"
 REQUIRED_IDS = ["stage", "packets", "stepCount", "stepTitle", "stepText", "stepTip",
                 "prev", "play", "next", "restart", "speed", "bar", "stepsList", "demo-steps"]
 LIST_KEYS = ["show", "hide", "highlight", "ok", "bad", "flow", "dim"]

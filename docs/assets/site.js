@@ -422,6 +422,14 @@
       b.addEventListener('click', function () { filter = b.getAttribute('data-filter'); $$('[data-filter]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); apply2(); });
     });
     var sb = $('[data-ep-search]'); if (sb) sb.addEventListener('input', function () { q = sb.value.trim().toLowerCase(); apply2(); });
+    // breadcrumb links such as index.html#episodes-s1 open the grid filtered to that season
+    var seasonHash = function () {
+      var hm = /^#episodes-(s1|s2)$/.exec(location.hash);
+      var fb = hm && $('[data-filter="' + hm[1] + '"]');
+      if (fb) fb.click();
+    };
+    seasonHash();
+    addEventListener('hashchange', seasonHash);
   }
 
   // badges (landing preview + lunchbox)

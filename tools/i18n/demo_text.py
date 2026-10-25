@@ -6,7 +6,7 @@
     python3 tools/i18n/demo_text.py inject  [slug ...]   # embed the translations in docs/demos/<slug>.html
 
 With no slug, every demo is processed. The animation itself is shared by both languages: the demo player
-(engine v1.1) reads the <script type="application/json" id="demo-i18n"> block and swaps the words when the page is
+(engine v1.1 and later) reads the <script type="application/json" id="demo-i18n"> block and swaps the words when the page is
 opened with ?lang=id or the reader chose Indonesian on the course website. Standard library only.
 """
 from __future__ import annotations

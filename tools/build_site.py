@@ -53,6 +53,18 @@ import strings as ST  # noqa: E402  (interface text in both languages)
 PAGES = bi.PAGES.rstrip("/")
 REPO_URL = bi.GITHUB.split("/blob/")[0]
 E = html.escape
+
+
+def EC(text: str) -> str:
+    """Escape text and show `code` spans from Markdown header fields as <code>."""
+    return re.sub(r"`([^`]+)`", r"<code>\1</code>", E(text))
+
+
+def short_time(text: str) -> str:
+    """'about 60 minutes (including ...)' -> 'about 60 minutes' for small cards."""
+    return re.split(r"\s\(|,|;|\s(?:including|termasuk)\b", text.replace("`", ""))[0].strip().rstrip(".")
+
+
 PLACEHOLDER = "YOUR-" + "GITHUB-USERNAME"   # split so tools/set_github_username.py leaves this line alone
 LANGS = ("en", "id")
 OTHER = {"en": "id", "id": "en"}
@@ -623,7 +635,7 @@ class Shell:
         self.v = short_hash(a / "site.css", a / "site.js", a / "course-data.en.js", a / "course-data.id.js")
 
     def page(self, *, out: Path, title: str, desc: str, main: str, body_attrs: dict | None = None, active: str = "",
-             absolute: bool = False, og_title: str | None = None) -> None:
+             absolute: bool = False, og_title: str | None = None, crumbs: list | None = None) -> None:
         if absolute:
             root, base = f"{PAGES}/{LANG}/", f"{PAGES}/"
             rel = ""
@@ -654,6 +666,7 @@ class Shell:
         goat = (f'<script data-goatcounter="https://{GOAT}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>\n'
                 if GOAT and not absolute else "")
         level0 = SERIES["levels"][0]["name"]
+        crumbs_html = self.crumb_trail(crumbs, root, url, absolute) if crumbs else ""
         doc = f"""<!DOCTYPE html>
 <html lang="{T['html_lang']}" data-theme="light">
 <head>
@@ -698,7 +711,7 @@ class Shell:
   </div>
 </header>
 <main id="main">
-{main}
+{crumbs_html}{main}
 </main>
 {self.footer(root, base)}
 <script src="{base}assets/course-data.{LANG}.js?v={self.v}" defer></script>
@@ -707,6 +720,27 @@ class Shell:
 </html>
 """
         write(out, doc)
+
+    @staticmethod
+    def crumb_trail(items: list, root: str, url: str, absolute: bool) -> str:
+        """Breadcrumb [(label, href relative to the language root, or None for this page), ...] + schema.org data."""
+        lis, data = [], []
+        for i, (label, href) in enumerate(items, 1):
+            if href is None:
+                lis.append(f'<li aria-current="page"><span>{E(label)}</span></li>')
+                data.append({"@type": "ListItem", "position": i, "name": label, "item": url})
+            else:
+                icon = '<span class="crumb-home" aria-hidden="true">🏠</span>' if i == 1 else ""
+                lis.append(f'<li><a href="{root}{href}">{icon}{E(label)}</a></li>')
+                full = re.sub(r"index\.html(?=$|#)", "", f"{PAGES}/{LANG}/{href}")
+                data.append({"@type": "ListItem", "position": i, "name": label, "item": full})
+        nav = (f'<nav class="crumbs" aria-label="{E(tr("crumbs_label"))}"><div class="container"><ol>'
+               + "".join(lis) + "</ol></div></nav>\n")
+        if absolute:
+            return nav
+        ld = json.dumps({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": data},
+                        ensure_ascii=False).replace("</", "<\\/")
+        return nav + f'<script type="application/ld+json">{ld}</script>\n'
 
     @staticmethod
     def footer(root: str, base: str) -> str:
@@ -1075,7 +1109,10 @@ def lunch_page(shell: Shell, L: dict, prev: dict | None, nxt: dict | None) -> No
   <button class="btn btn-sm" type="button" data-timer-stop aria-label="{E(tr('timer_stop'))}">■</button></div>"""
     shell.page(out=out, title=tr("lunch_page_title", n=n, ep=L["ep"], title=full_title),
                desc=tr("lunch_page_desc", n=n, title=full_title, hook=L["hook"]),
-               main=main, body_attrs={"data-page": "lunch", "data-lunch": n, "style": f"--c:{color}"}, active="episodes")
+               main=main, body_attrs={"data-page": "lunch", "data-lunch": n, "style": f"--c:{color}"}, active="episodes",
+               crumbs=[(tr("crumb_home"), "index.html"),
+                       (SERIES["seasons"][L["season"] - 1]["name"], f"index.html#episodes-s{L['season']}"),
+                       (tr("lunch_label", n=n, title=full_title), None)])
 
 
 # ============================================================================ lab pages
@@ -1238,7 +1275,7 @@ def lab_page(shell: Shell, slug: str, L: dict | None, lab_list: list[dict]) -> N
         {story}
         {byline("../")}
         <div class="meta">
-          <span class="chip">⏱ {E(meta['time'])}</span>
+          <span class="chip">⏱ {EC(meta['time'])}</span>
           <span class="chip cost">{meta['cost']} {E(cost_text(cost_n))}</span>
           {f'<span class="chip">{E(tr("difficulty", d=meta["difficulty"]))}</span>' if meta['difficulty'] else ''}
           <span class="chip ok">{E(tr('works_alone'))}</span>
@@ -1277,8 +1314,10 @@ def lab_page(shell: Shell, slug: str, L: dict | None, lab_list: list[dict]) -> N
 </div>
 <div class="cleanup-banner" role="status">{tr('cleanup_banner', id=E(cleanup_id))}</div>"""
     shell.page(out=out, title=tr("lab_page_title", num=meta["num"], title=meta["title"]),
-               desc=tr("lab_page_desc", num=meta["num"], title=meta["title"], time=meta["time"], cost=meta["cost"]),
-               main=main, body_attrs={"data-page": "lab", "data-lab": meta["num"], "style": f"--c:{color}"}, active="labs")
+               desc=tr("lab_page_desc", num=meta["num"], title=meta["title"], time=meta["time"].replace("`", ""),
+                       cost=meta["cost"]),
+               main=main, body_attrs={"data-page": "lab", "data-lab": meta["num"], "style": f"--c:{color}"}, active="labs",
+               crumbs=[(tr("crumb_home"), "index.html"), (tr("nav_labs"), "labs/index.html"), (meta["h1"], None)])
 
 
 # ============================================================================ hubs
@@ -1307,7 +1346,7 @@ def labs_hub(shell: Shell, lab_list: list[dict]) -> None:
         cards.append(
             f'<a class="tcard reveal" href="{x["slug"]}.html" data-n="{x["num"]}" data-cost="{cost_n}" data-part="{x["part"]}" style="--c:{PARTS[x["part"]]["color"]}">'
             f'<div class="stub"><small>{E(tr("stub_lab"))}</small><b>{x["num"]}</b></div><div class="body"><span class="status st-new">{E(tr("not_started"))}</span>'
-            f'<h3>{E(x["title"])}</h3><p>{E(x["pairs"])}</p><div class="chips"><span class="chip">⏱ {E(x["time"])}</span>'
+            f'<h3>{E(x["title"])}</h3><p>{E(x["pairs"])}</p><div class="chips"><span class="chip">⏱ {E(short_time(x["time"]))}</span>'
             f'<span class="chip cost">{x["cost"]}</span>{diff}</div></div></a>')
     part_btns = "".join(f'<button type="button" data-part-filter="{p["id"]}" aria-pressed="false">{p["icon"]} {E(p["short"])}</button>' for p in SERIES["parts"])
     stats = "".join(f'<div class="stat"><b>{E(a)}</b><span>{E(b)}</span></div>' for a, b in T["hub_stats"])
@@ -1338,7 +1377,8 @@ def labs_hub(shell: Shell, lab_list: list[dict]) -> None:
     <article class="card doc-card"><h2>{E(tr('hub_wrong'))}</h2><div class="prose wide">{wrong}</div></article>
   </div>
 </section>"""
-    shell.page(out=out, title=tr("hub_title"), desc=tr("hub_desc"), main=main, body_attrs={"data-page": "labs"}, active="labs")
+    shell.page(out=out, title=tr("hub_title"), desc=tr("hub_desc"), main=main, body_attrs={"data-page": "labs"}, active="labs",
+               crumbs=[(tr("crumb_home"), "index.html"), (tr("nav_labs"), None)])
 
 
 DEMO_TITLES: dict[str, dict[str, str]] = {}
@@ -1417,7 +1457,8 @@ def demos_hub(shell: Shell, lunches: list[dict]) -> None:
     <div class="demo-grid" data-demo-grid>{''.join(cards)}</div>
   </div>
 </section>"""
-    shell.page(out=out, title=tr("demos_title"), desc=tr("demos_desc"), main=main, body_attrs={"data-page": "demos"}, active="demos")
+    shell.page(out=out, title=tr("demos_title"), desc=tr("demos_desc"), main=main, body_attrs={"data-page": "demos"}, active="demos",
+               crumbs=[(tr("crumb_home"), "index.html"), (tr("nav_demos"), None)])
 
 
 DEMO_FOOTER = re.compile(r'<p>(?:<span data-i18n="partOf">)?Part of(?:</span>)? <strong[^>]*>Azure Fundamentals: One Lunch at a Time</strong> · .*?</p>', re.S)
@@ -1433,6 +1474,52 @@ def fix_demo_footers(lunches: list[dict]) -> int:
                   f'<a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-i18n="allDemos">All demos</a> · '
                   f'<a href="{REPO_URL}" target="_blank" rel="noopener" data-i18n="repo">Course repository</a></p>')
         new = DEMO_FOOTER.sub(lambda _m: footer, t, count=1)
+        if new != t:
+            write(p, new)
+            changed += 1
+    return changed
+
+
+DEMO_CRUMBS = re.compile(r'\n?  <nav class="demo-crumbs".*?</nav>', re.S)
+DEMO_CRUMBS_CSS = re.compile(r'<style data-crumbs>.*?</style>\n?', re.S)
+CRUMBS_CSS = ('<style data-crumbs>'
+              '.demo-crumbs ol{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-wrap:wrap;align-items:center;'
+              'gap:.2em .45em;font-size:.85rem;color:var(--muted)}'
+              '.demo-crumbs li{display:inline-flex;align-items:center;gap:.45em;min-inline-size:0}'
+              '.demo-crumbs li+li::before{content:"›";opacity:.7}'
+              '.demo-crumbs a{color:var(--accent);text-decoration:none}'
+              '.demo-crumbs a:hover{text-decoration:underline}'
+              '.demo-crumbs [aria-current="page"]{color:var(--ink);font-weight:600}'
+              '</style>\n')
+
+
+def fix_demo_crumbs(lunches: list[dict]) -> int:
+    """Breadcrumb at the top of every stand-alone demo. The demo player shows it only outside an episode page
+    and swaps the words to the reader's language (data-text-id, data-href-id, data-aria-id)."""
+    def h1(f: Path) -> str:
+        return rx(r"(?m)^#\s+(.+)$", f.read_text(encoding="utf-8")) if f.exists() else ""
+    changed = 0
+    for L in lunches:
+        p = DOCS / "demos" / f"{L['slug']}.html"
+        t = p.read_text(encoding="utf-8")
+        en_label = h1(REPO / "lunches" / L["slug"] / "README.md") or f"Lunch {L['n']}"
+        id_label = h1(REPO / "lunches" / L["slug"] / "README.id.md") or en_label
+        en, idn = ST.EN, ST.ID
+        nav = (f'\n  <nav class="demo-crumbs" aria-label="{E(en["crumbs_label"])}" data-aria-id="{E(idn["crumbs_label"])}" hidden><ol>'
+               f'<li><a href="../en/index.html" data-href-id="../id/index.html" target="_top"><span aria-hidden="true">🏠</span> '
+               f'<span data-text-id="{E(idn["crumb_home"])}">{E(en["crumb_home"])}</span></a></li>'
+               f'<li><a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" '
+               f'data-text-id="{E(idn["nav_demos"])}">{E(en["nav_demos"])}</a></li>'
+               f'<li aria-current="page"><span data-text-id="{E(id_label)}">{E(en_label)}</span></li></ol></nav>')
+        new = t
+        if DEMO_CRUMBS.search(new):
+            new = DEMO_CRUMBS.sub(lambda _m: nav, new, count=1)
+        else:
+            new = new.replace('<div class="wrap">', '<div class="wrap">' + nav, 1)
+        if DEMO_CRUMBS_CSS.search(new):
+            new = DEMO_CRUMBS_CSS.sub(lambda _m: CRUMBS_CSS, new, count=1)
+        else:
+            new = new.replace("</head>", CRUMBS_CSS + "</head>", 1)
         if new != t:
             write(p, new)
             changed += 1
@@ -1594,6 +1681,7 @@ def landing(shell: Shell, lunches: list[dict]) -> None:
   <div class="container">
     <div class="section-head"><p class="kicker"><span class="dot"></span>{E(tr('eps_kicker'))}</p><h2>{E(tr('eps_h2'))}</h2>
       <p class="lead">{E(tr('eps_lead'))}</p></div>
+    <span class="anchor-target" id="episodes-s1"></span><span class="anchor-target" id="episodes-s2"></span>
     <div class="toolbar">
       <div class="seg-tabs" role="group" aria-label="{E(tr('f_eps'))}">
         <button type="button" data-filter="all" aria-pressed="true">{E(tr('f_all'))}</button>
@@ -1725,7 +1813,8 @@ def lunchbox(shell: Shell) -> None:
       <button class="btn btn-sm btn-ghost" type="button" data-reset>{E(tr('reset'))}</button></div>
   </section>
 </div>"""
-    shell.page(out=out, title=tr("lb_title"), desc=tr("lb_desc"), main=main, body_attrs={"data-page": "lunchbox"}, active="lunchbox")
+    shell.page(out=out, title=tr("lb_title"), desc=tr("lb_desc"), main=main, body_attrs={"data-page": "lunchbox"}, active="lunchbox",
+               crumbs=[(tr("crumb_home"), "index.html"), (tr("lb_title"), None)])
 
 
 # ============================================================================ LinkedIn share pages
@@ -1791,7 +1880,8 @@ def not_found(shell: Shell) -> None:
   <p lang="id"><a class="btn" href="{PAGES}/id/index.html">{E(idn['nf_home'])}</a> <a class="btn" href="{PAGES}/id/labs/index.html">{E(idn['nf_labs'])}</a></p>
 </div></section>"""
     shell.page(out=out, title=f"{en['nf_title']} · {idn['nf_title']}", desc="This page does not exist. Halaman ini tidak ada.",
-               main=main, body_attrs={"data-page": "404"}, absolute=True)
+               main=main, body_attrs={"data-page": "404"}, absolute=True,
+               crumbs=[(en["crumb_home"], "index.html"), (f"{en['nf_title']} · {idn['nf_title']}", None)])
 
 
 def root_index(v: str) -> None:
@@ -1833,8 +1923,8 @@ location.replace(l+'/'+location.hash);}})();</script>
   <div class="chooser-brand">{LOGO}<div><b>{E(en['brand_main'])}</b><small>{E(en['brand_small'])} · {E(AUTHOR['name'])}</small></div></div>
   <h1>{E(en['choose_title'])} <span lang="id">· {E(idn['choose_title'])}</span></h1>
   <div class="chooser-grid">
-    <a class="chooser-card" href="en/" hreflang="en" data-pick="en"><span class="flag" aria-hidden="true">🇬🇧</span><b>English</b><span>{E(en['course'])}</span></a>
-    <a class="chooser-card" href="id/" hreflang="id" lang="id" data-pick="id"><span class="flag" aria-hidden="true">🇮🇩</span><b>Bahasa Indonesia</b><span>{E(idn['course'])}</span></a>
+    <a class="chooser-card" href="en/" hreflang="en" data-pick="en"><span class="flag" aria-hidden="true">EN</span><b>English</b><span>{E(en['course'])}</span></a>
+    <a class="chooser-card" href="id/" hreflang="id" lang="id" data-pick="id"><span class="flag" aria-hidden="true">ID</span><b>Bahasa Indonesia</b><span>{E(idn['course'])}</span></a>
   </div>
   <p class="muted small">{E(en['privacy_nocount'])}</p>
 </main>
@@ -2017,13 +2107,15 @@ def main() -> int:
         counts[lang] = share_pages(lunches)
     set_lang("en")
     changed = fix_demo_footers(by_lang["en"])
+    crumbed = fix_demo_crumbs(by_lang["en"])
     not_found(shell)
     root_index(shell.v)
     stubs = redirect_stubs(by_lang["en"], lab_slugs)
     n_pages = len(list(DOCS.rglob("*.html")))
     print(f"Built the site in {', '.join(LANGS)}: {len(by_lang['en'])} episode pages and {len(lab_slugs)} lab pages per language, "
           f"hubs, lunchbox, {sum(counts.values())} share pages, {stubs} redirects, 404 and the language chooser "
-          f"({n_pages} HTML files in docs/; demo footers updated: {changed}; demo translations embedded: {injected}).")
+          f"({n_pages} HTML files in docs/; demo footers updated: {changed}; demo breadcrumbs updated: {crumbed}; "
+          f"demo translations embedded: {injected}).")
     if FALLBACKS:
         print(f"  ! {len(FALLBACKS)} page(s) fell back to English because the translation is missing, e.g. "
               + ", ".join(sorted(FALLBACKS)[:4]))

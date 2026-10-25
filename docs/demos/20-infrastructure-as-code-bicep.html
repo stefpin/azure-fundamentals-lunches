@@ -120,9 +120,11 @@ path.is-flow.is-ok{stroke:var(--ok) !important}
 svg rect.codebg{fill:transparent;stroke:none}
 svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
 </style>
+<style data-crumbs>.demo-crumbs ol{list-style:none;margin:0 0 12px;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:.2em .45em;font-size:.85rem;color:var(--muted)}.demo-crumbs li{display:inline-flex;align-items:center;gap:.45em;min-inline-size:0}.demo-crumbs li+li::before{content:"›";opacity:.7}.demo-crumbs a{color:var(--accent);text-decoration:none}.demo-crumbs a:hover{text-decoration:underline}.demo-crumbs [aria-current="page"]{color:var(--ink);font-weight:600}</style>
 </head>
 <body>
 <div class="wrap">
+  <nav class="demo-crumbs" aria-label="Breadcrumb" data-aria-id="Jejak navigasi" hidden><ol><li><a href="../en/index.html" data-href-id="../id/index.html" target="_top"><span aria-hidden="true">🏠</span> <span data-text-id="Beranda kursus">Course home</span></a></li><li><a href="../en/demos/index.html" data-href-id="../id/demos/index.html" target="_top" data-text-id="Demo">Demos</a></li><li aria-current="page"><span data-text-id="Makan Siang 20 · Infrastructure as Code dengan Bicep (Dasar)">Lunch 20 · Infrastructure as Code with Bicep (Basic)</span></li></ol></nav>
   <header class="top">
     <p class="kicker">Lunch 20 · Infrastructure as Code with Bicep · Interactive demo</p>
     <h1>From one file to a whole environment: write, preview, deploy, protect, rebuild</h1>
@@ -781,11 +783,13 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
 </script>
 <script>
 /* =====================================================================
-   LUNCH DEMO PLAYER · v1.1 · engine
+   LUNCH DEMO PLAYER · v1.2 · engine
    Copy this script unchanged into every demo. It reads the JSON above.
    v1.1: bilingual. Translations live in the JSON block with
    id="demo-i18n" ({"id": {page, steps, svg}}); the language comes
    from ?lang=xx, then the course-wide choice (localStorage azlunch.lang).
+   v1.2: [data-text-xx] and [data-aria-xx] swap words and labels; the
+   breadcrumb (nav.demo-crumbs) shows only outside the episode page.
    ===================================================================== */
 (function () {
   'use strict';
@@ -811,7 +815,7 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
       controls: 'Playback controls', allSteps: 'All steps', narration: 'Narration and controls', stage: 'Animated diagram',
       hint: 'Keyboard: ← → to step · Space to play or pause · Home / End for first / last step.',
       partOf: 'Part of', course: 'Azure Fundamentals: One Lunch at a Time', readEpisode: 'Read the episode',
-      allDemos: 'All demos', repo: 'Course repository', other: '🇬🇧 English'
+      allDemos: 'All demos', repo: 'Course repository', other: '🌐 English'
     },
     id: {
       step: 'Langkah {n} dari {N}', stepN: 'Langkah {n}', play: '▶ Putar', pause: '❚❚ Jeda', back: '◀ Kembali',
@@ -820,7 +824,7 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
       controls: 'Kontrol pemutaran', allSteps: 'Semua langkah', narration: 'Narasi dan kontrol', stage: 'Diagram animasi',
       hint: 'Keyboard: ← → untuk berpindah langkah · Spasi untuk putar atau jeda · Home / End untuk langkah pertama / terakhir.',
       partOf: 'Bagian dari', course: 'Dasar-Dasar Azure: Satu Makan Siang, Satu Pelajaran', readEpisode: 'Baca episodenya',
-      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🇮🇩 Bahasa Indonesia'
+      allDemos: 'Semua demo', repo: 'Repositori kursus', other: '🌐 Bahasa Indonesia'
     }
   };
   var I18N = {};
@@ -890,11 +894,19 @@ svg path.rule{fill:none;stroke:var(--line);stroke-width:1.5}
       Array.prototype.forEach.call(document.querySelectorAll('[data-href-' + LANG + ']'), function (a) {
         a.setAttribute('href', a.getAttribute('data-href-' + LANG));
       });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-text-' + LANG + ']'), function (el) {
+        el.textContent = el.getAttribute('data-text-' + LANG);
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('[data-aria-' + LANG + ']'), function (el) {
+        el.setAttribute('aria-label', el.getAttribute('data-aria-' + LANG));
+      });
     }
     var others = Object.keys(I18N).filter(function (k) { return UI[k] && I18N[k] && k !== LANG; });
     if (LANG !== 'en') { others.unshift('en'); }
     var framed = false;
     try { framed = window.self !== window.top; } catch (err) { framed = true; }
+    var crumbs = document.querySelector('nav.demo-crumbs');
+    if (crumbs && !framed) { crumbs.hidden = false; }
     var header = document.querySelector('header.top');
     if (others.length && header && !framed) {
       var to = others[0];

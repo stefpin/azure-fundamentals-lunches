@@ -21,6 +21,7 @@ EN = {
     "skip": "Skip to content",
     "nav_journey": "Journey", "nav_episodes": "Episodes", "nav_labs": "Labs", "nav_demos": "Demos",
     "nav_lunchbox": "My lunchbox", "nav_main": "Main",
+    "crumbs_label": "Breadcrumb", "crumb_home": "Course home",
     "hud_title": "Your progress", "theme_toggle": "Switch between light and dark mode", "menu_open": "Open the menu",
     "switch_to": "Baca dalam Bahasa Indonesia",
     "footer_blurb": ("Thirty-one lunch-sized episodes, animated demos and hands-on labs that take one fictional "
@@ -273,6 +274,7 @@ ID = {
     "skip": "Lewati ke konten",
     "nav_journey": "Perjalanan", "nav_episodes": "Episode", "nav_labs": "Lab", "nav_demos": "Demo",
     "nav_lunchbox": "Kotak bekal", "nav_main": "Utama",
+    "crumbs_label": "Jejak navigasi", "crumb_home": "Beranda kursus",
     "hud_title": "Progres Anda", "theme_toggle": "Beralih antara mode terang dan gelap", "menu_open": "Buka menu",
     "switch_to": "Read in English",
     "footer_blurb": ("Tiga puluh satu episode seukuran makan siang, demo animasi, dan lab praktik yang membawa satu "
