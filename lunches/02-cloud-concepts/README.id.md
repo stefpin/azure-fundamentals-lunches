@@ -2,6 +2,8 @@
 
 🇬🇧 [Read in English](README.md)
 
+▶️ **Video pelajaran:** [Tonton Makan Siang 02 di YouTube (17 menit)](https://youtu.be/0M79DCmTayk) · juga dalam [bahasa Inggris](https://youtu.be/0tmA_XUawro)
+
 > **Jalur:** Bulan inti · **Level:** Dasar · **Bagian 1:** Fondasi
 > **Waktu:** 60 menit · **Makan siang prasyarat:** 01
 > **Area keterampilan AZ-900:** Menjelaskan konsep cloud

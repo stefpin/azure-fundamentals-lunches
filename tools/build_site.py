@@ -52,6 +52,7 @@ import strings as ST  # noqa: E402  (interface text in both languages)
 
 PAGES = bi.PAGES.rstrip("/")
 REPO_URL = bi.GITHUB.split("/blob/")[0]
+YOUTUBE = ST.AUTHOR.get("youtube", "")  # channel with the narrated video lessons (optional)
 E = html.escape
 
 
@@ -213,6 +214,21 @@ def strip_footer(body: str) -> tuple[str, str]:
 def rx(pattern: str, text: str, default: str = "") -> str:
     m = re.search(pattern, text)
     return m.group(1).strip() if m else default
+
+
+YT_LINK = re.compile(r"\[([^\]]+)\]\(https://(?:youtu\.be/|www\.youtube\.com/watch\?v=)([A-Za-z0-9_-]{11})[^)]*\)")
+
+
+def lesson_video(header: str) -> dict | None:
+    """The optional video line under a lunch title, for example
+    ▶️ **Video lesson:** [Watch Lunch 01 on YouTube (15 min)](https://youtu.be/ID) · also in [Bahasa Indonesia](https://youtu.be/ID2)
+    First link = this language's video (its text gives the minutes), second link = the other language's video."""
+    m = re.search(r"(?m)^▶️?\s*\*\*(?:Video lesson|Video pelajaran):\*\*(.+)$", header)
+    links = YT_LINK.findall(m.group(1)) if m else []
+    if not links:
+        return None
+    mins = rx(r"(\d+)\s*(?:min|menit)", links[0][0], "")
+    return {"id": links[0][1], "minutes": mins, "alt": links[1][1] if len(links) > 1 else ""}
 
 
 def short_hash(*paths: Path) -> str:
@@ -833,6 +849,7 @@ def lunch_page(shell: Shell, L: dict, prev: dict | None, nxt: dict | None) -> No
     full_title = rx(r"(?m)^#\s*(?:Lunch|Makan Siang)\s*\d+\s*·\s*(.+)$", header, L["title"])
     prereq = rx(r"\*\*(?:Prerequisite lunches|Makan siang prasyarat):\*\*\s*([^·\n]+)", header, "none")
     az900 = rx(r"\*\*(?:AZ-900 skill area|Area keterampilan AZ-900):\*\*\s*([^·\n]+)", header, "")
+    video = lesson_video(header)
 
     def sec(key: str) -> str:
         for t, b in parts[1:]:
@@ -870,6 +887,32 @@ def lunch_page(shell: Shell, L: dict, prev: dict | None, nxt: dict | None) -> No
     cost_n = len(lab["cost"])
     beyond = az900.startswith(("Beyond", "Di luar"))
     mood = mood_for(L["readiness"])
+
+    # ---------- video lesson (optional, from the README video line)
+    video_html = cta_video = rail_video = mob_video = ""
+    if video:
+        vid, mins = video["id"], video["minutes"]
+        other = "id" if LANG == "en" else "en"
+        embed = f"https://www.youtube-nocookie.com/embed/{vid}?rel=0&hl={LANG}&cc_lang_pref={LANG}"
+        alt_btn = (f'<a class="btn btn-sm" href="https://youtu.be/{video["alt"]}" target="_blank" rel="noopener" '
+                   f'hreflang="{other}">{E(tr("video_alt"))}</a>') if video["alt"] else ""
+        sub_btn = (f'<a class="btn btn-sm" href="{YOUTUBE}?sub_confirmation=1" target="_blank" rel="noopener">'
+                   f'{E(tr("video_sub"))}</a>') if YOUTUBE else ""
+        video_html = f"""<section class="block" id="video" data-spy>
+      <div class="block-head"><span class="icon">📺</span><h2>{E(tr('h_video'))}</h2><span class="minute">{E(tr('min_video', m=mins) if mins else tr('min_video_nomin'))}</span></div>
+      <div class="vlesson">
+        <div class="vlesson-frame"><iframe src="{E(embed)}" title="{E(tr('iframe_video', n=n, title=full_title))}" loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+        <div class="vlesson-bar"><a class="btn btn-sm" href="https://youtu.be/{vid}" target="_blank" rel="noopener">{E(tr('video_yt'))}</a>{alt_btn}{sub_btn}</div>
+      </div>
+      <p class="muted vlesson-lead">{E(tr('video_lead'))}</p>
+    </section>
+    """
+        cta_video = f'<a class="btn" href="#video">{E(tr("cta_video", m=mins) if mins else tr("cta_video_nomin"))}</a>\n        '
+        rail_video = f'<li style="--sc:#e2482f"><a href="#video">{E(tr("rail_video"))}</a></li>\n        '
+        mob_video = f'<a href="#video">{E(tr("mob_video"))}</a>'
+
     hero = f"""<section class="ep-hero">
   <div class="container ep-hero-grid">
     <div>
@@ -887,7 +930,7 @@ def lunch_page(shell: Shell, L: dict, prev: dict | None, nxt: dict | None) -> No
       <div class="previously"><b>{E(prev_label)}</b>{E(previously)}</div>
       <div class="ctas">
         <button class="btn btn-warm" type="button" data-timer-start>{E(tr('cta_start'))}</button>
-        <a class="btn" href="#demo">{E(tr('cta_demo'))}</a>
+        {cta_video}<a class="btn" href="#demo">{E(tr('cta_demo'))}</a>
         <button class="btn btn-ghost" type="button" data-finish>{E(tr('cta_finish'))}</button>
       </div>
     </div>
@@ -992,7 +1035,7 @@ def lunch_page(shell: Shell, L: dict, prev: dict | None, nxt: dict | None) -> No
     rail = f"""<aside class="rail" aria-label="{E(tr('rail_label'))}">
       <h4>{E(tr('rail_label'))} <span>{E(tr('clock_center'))}</span></h4>
       <ol>
-        <li style="--sc:#e2482f"><a href="#menu">{E(tr('rail_menu'))} <span class="mins">0–5</span></a></li>
+        {rail_video}<li style="--sc:#e2482f"><a href="#menu">{E(tr('rail_menu'))} <span class="mins">0–5</span></a></li>
         <li style="--sc:#e2482f"><a href="#story">{E(tr('rail_story'))}</a></li>
         <li style="--sc:#1665d8"><a href="#reading">{E(tr('rail_reading'))} <span class="mins">5–30</span></a></li>
         {''.join(rail_scenes)}
@@ -1011,13 +1054,13 @@ def lunch_page(shell: Shell, L: dict, prev: dict | None, nxt: dict | None) -> No
     mob_notes = f'<a href="#field-notes">{E(tr("mob_notes"))}</a>' if notes_html else ""
     main = f"""{hero}
 <nav class="mobile-seg" aria-label="{E(tr('mob_label'))}"><div class="container">
-  <a href="#menu">{E(tr('mob_menu'))}</a><a href="#story">{E(tr('mob_story'))}</a><a href="#reading">{E(tr('mob_reading'))}</a><a href="#demo">{E(tr('mob_demo'))}</a>
+  {mob_video}<a href="#menu">{E(tr('mob_menu'))}</a><a href="#story">{E(tr('mob_story'))}</a><a href="#reading">{E(tr('mob_reading'))}</a><a href="#demo">{E(tr('mob_demo'))}</a>
   <a href="#quiz">{E(tr('mob_quiz'))}</a><a href="#takeaways">{E(tr('mob_take'))}</a>{mob_notes}<a href="#lab">{E(tr('mob_lab'))}</a><a href="#finish">{E(tr('mob_finish'))}</a>
 </div></nav>
 <div class="container ep-layout">
   {rail}
   <div class="ep-main">
-    <section class="block" id="menu" data-spy>
+    {video_html}<section class="block" id="menu" data-spy>
       <div class="block-head"><span class="icon">🍱</span><h2>{E(tr('h_menu'))}</h2><span class="minute">{E(tr('min_menu'))}</span></div>
       <div class="menu-card">
         <h3>{E(menu_lead.rstrip(':'))}</h3>

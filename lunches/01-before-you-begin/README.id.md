@@ -2,6 +2,8 @@
 
 🇬🇧 [Read in English](README.md)
 
+▶️ **Video pelajaran:** [Tonton Makan Siang 01 di YouTube (17 menit)](https://youtu.be/ruhgBIZ8W9k) · juga dalam [bahasa Inggris](https://youtu.be/fm2jzU03e3Y)
+
 > **Jalur:** Bulan inti · **Level:** Dasar · **Bagian 1:** Fondasi
 > **Waktu:** 60 menit · **Makan siang prasyarat:** tidak ada
 > **Area keterampilan AZ-900:** Menjelaskan manajemen dan tata kelola Azure

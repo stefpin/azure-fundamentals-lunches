@@ -2,6 +2,8 @@
 
 🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
 
+▶️ **Video lesson:** [Watch Lunch 02 on YouTube (16 min)](https://youtu.be/0tmA_XUawro) · also in [Bahasa Indonesia](https://youtu.be/0M79DCmTayk)
+
 > **Track:** Core month · **Level:** Basic · **Part 1:** Foundations
 > **Time:** 60 minutes · **Prerequisite lunches:** 01
 > **AZ-900 skill area:** Describe cloud concepts

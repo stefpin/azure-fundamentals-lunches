@@ -144,6 +144,22 @@ Each lunch folder has a `demo-video-script.md`: a ≤ 6-minute screencast plan w
 
 GitHub is not a video host: attachments are capped (10 MB for videos on free plans), so always link out.
 
+### Narrated video lessons
+
+A lunch can also have a narrated video lesson: the whole lunch as one YouTube video (story, reading, knowledge check
+and takeaways). Add one line under the language line of the lunch README, in both languages, with both links:
+
+```text
+▶️ **Video lesson:** [Watch Lunch 01 on YouTube (15 min)](https://youtu.be/<english-video-id>) · also in [Bahasa Indonesia](https://youtu.be/<indonesian-video-id>)
+▶️ **Video pelajaran:** [Tonton Makan Siang 01 di YouTube (17 menit)](https://youtu.be/<indonesian-video-id>) · juga dalam [bahasa Inggris](https://youtu.be/<english-video-id>)
+```
+
+The first link is the video in the README's own language and its text gives the length in minutes; the second link is
+the other language. The website then shows the video at the top of the episode page (YouTube's privacy-enhanced
+player), with a "Watch the video" button in the episode header and a link in the lunch clock. Keep both lines in step:
+the parity check expects the same external links in both languages. The channel link used for "Subscribe" is
+`AUTHOR["youtube"]` in `tools/site/strings.py`.
+
 ## 5. Keep it current
 
 - **Every quarter:** re-run a few labs, re-check AUTHORING-GUIDE §7, scan Azure updates for retirements and renames,

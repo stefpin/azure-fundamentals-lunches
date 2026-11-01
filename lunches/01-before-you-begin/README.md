@@ -2,6 +2,8 @@
 
 🇮🇩 [Baca dalam Bahasa Indonesia](README.id.md)
 
+▶️ **Video lesson:** [Watch Lunch 01 on YouTube (15 min)](https://youtu.be/fm2jzU03e3Y) · also in [Bahasa Indonesia](https://youtu.be/ruhgBIZ8W9k)
+
 > **Track:** Core month · **Level:** Basic · **Part 1:** Foundations
 > **Time:** 60 minutes · **Prerequisite lunches:** none
 > **AZ-900 skill area:** Describe Azure management and governance

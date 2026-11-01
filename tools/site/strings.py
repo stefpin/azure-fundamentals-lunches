@@ -12,6 +12,7 @@ AUTHOR = {
     "linkedin": {"en": "https://www.linkedin.com/in/stefanus-pinarta-8193512/",
                  "id": "https://id.linkedin.com/in/stefanus-pinarta-8193512"},
     "photo": "",  # optional: path under docs/assets/, e.g. "author.jpg"; empty = monogram
+    "youtube": "https://www.youtube.com/@OneLunchSeries",  # channel with the narrated video lessons
 }
 
 EN = {
@@ -95,6 +96,14 @@ EN = {
     "iframe_title": "Interactive demo: {title}",
     "watch_hint": "Press <b>▶ Play</b>, or step through with the arrow keys. Watch it to the last step to earn 30 XP.",
     "video_script": 'Prefer video? Read the <a href="{href}" target="_blank" rel="noopener">walkthrough video script</a>.',
+    "h_video": "Video lesson", "min_video": "{m} min · optional", "min_video_nomin": "Optional",
+    "cta_video": "▶ Watch the video ({m} min)", "cta_video_nomin": "▶ Watch the video",
+    "rail_video": "Video lesson", "mob_video": "📺 Video", "iframe_video": "Video lesson: Lunch {n} · {title}",
+    "video_yt": "▶ Watch on YouTube ↗", "video_alt": "🇮🇩 Tonton dalam Bahasa Indonesia ↗",
+    "video_sub": "🔔 Subscribe for new lunches ↗",
+    "video_lead": "Prefer to watch? This narrated video takes you through the whole lunch: the story, the reading, "
+                  "the knowledge check and the key takeaways. Then play the interactive demo below and do the lab "
+                  "whenever it suits you.",
     "h_quiz": "Knowledge check", "min_quiz": "Minutes 45–50", "quiz_head": "{k} scenario questions. Honest grading.",
     "quiz_note": "Answer in your head, reveal, then be honest with yourself.",
     "h_take": "Key takeaways", "min_take": "Minutes 50–55",
@@ -345,6 +354,14 @@ ID = {
     "iframe_title": "Demo interaktif: {title}",
     "watch_hint": "Tekan <b>▶ Putar</b>, atau telusuri dengan tombol panah. Tonton sampai langkah terakhir untuk mendapat 30 XP.",
     "video_script": 'Lebih suka video? Baca <a href="{href}" target="_blank" rel="noopener">naskah video panduan</a>.',
+    "h_video": "Video pelajaran", "min_video": "{m} menit · opsional", "min_video_nomin": "Opsional",
+    "cta_video": "▶ Tonton videonya ({m} menit)", "cta_video_nomin": "▶ Tonton videonya",
+    "rail_video": "Video pelajaran", "mob_video": "📺 Video", "iframe_video": "Video pelajaran: Makan Siang {n} · {title}",
+    "video_yt": "▶ Tonton di YouTube ↗", "video_alt": "🇬🇧 Watch in English ↗",
+    "video_sub": "🔔 Subscribe untuk makan siang berikutnya ↗",
+    "video_lead": "Lebih suka menonton? Video bernarasi ini membawa Anda melalui seluruh makan siang: cerita, bacaan, "
+                  "uji pemahaman, dan poin penting. Setelah itu, mainkan demo interaktif di bawah dan kerjakan lab "
+                  "kapan pun Anda sempat.",
     "h_quiz": "Uji pemahaman", "min_quiz": "Menit 45–50", "quiz_head": "{k} pertanyaan skenario. Nilai diri dengan jujur.",
     "quiz_note": "Jawab dalam hati, buka jawabannya, lalu jujurlah pada diri sendiri.",
     "h_take": "Poin penting", "min_take": "Menit 50–55",
