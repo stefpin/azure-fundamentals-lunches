@@ -15,6 +15,13 @@ Tidak ada yang menjawab. Dalam 31 makan siang ke depan, Andalah yang akan menjaw
 > lengkap dengan demo animasi, kuis yang menilai jawaban Anda secara otomatis, timer makan siang, lencana, peta
 > perjalanan, dan catatan kemajuan belajar. Semua materinya juga bisa dibaca langsung di GitHub ini.
 
+## 📺 Tonton cuplikan 1 menit
+
+[![Tonton cuplikan 1 menit di YouTube](docs/assets/trailer-poster.jpg)](https://youtu.be/vjo3B6Pnzd0)
+
+Video pelajaran bernarasi ditambahkan makan siang demi makan siang, dalam bahasa Inggris dan Bahasa Indonesia.
+🔔 **[Subscribe ke One Lunch at a Time di YouTube](https://www.youtube.com/@OneLunchSeries?sub_confirmation=1)** agar Anda tidak ketinggalan makan siang berikutnya.
+
 ## Yang Anda dapatkan di setiap makan siang
 
 | | Apa | Kapan |
@@ -173,7 +180,8 @@ dan kursus ini mengikuti prinsip yang sama yang ia pakai di kelas: satu ide yang
 praktik.
 
 📧 Untuk pertanyaan lebih lanjut, silakan kirim email ke **[stefanus.pinarta@gmail.com](mailto:stefanus.pinarta@gmail.com)** ·
-💼 [Terhubung di LinkedIn](https://id.linkedin.com/in/stefanus-pinarta-8193512)
+💼 [Terhubung di LinkedIn](https://id.linkedin.com/in/stefanus-pinarta-8193512) ·
+▶️ [Subscribe di YouTube](https://www.youtube.com/@OneLunchSeries?sub_confirmation=1)
 
 <sub>Ini adalah proyek pribadi. Pandangan dan isi kursus ini sepenuhnya milik penulis dan tidak mewakili pemberi kerjanya.</sub>
 

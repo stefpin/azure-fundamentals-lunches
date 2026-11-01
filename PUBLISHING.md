@@ -160,6 +160,11 @@ player), with a "Watch the video" button in the episode header and a link in the
 the parity check expects the same external links in both languages. The channel link used for "Subscribe" is
 `AUTHOR["youtube"]` in `tools/site/strings.py`.
 
+The home page also shows the channel trailer with a "Subscribe on YouTube" button and a link to the video-lesson
+playlist of the page's language. They come from `AUTHOR["youtube_trailer"]` and `AUTHOR["youtube_playlists"]` in the
+same file (leave the trailer empty to hide the section). On GitHub, the README shows the trailer as a clickable
+picture, `docs/assets/trailer-poster.jpg`: replace that picture when you publish a new trailer.
+
 ## 5. Keep it current
 
 - **Every quarter:** re-run a few labs, re-check AUTHORING-GUIDE §7, scan Azure updates for retirements and renames,

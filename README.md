@@ -14,6 +14,13 @@ director asked: *"If that server dies, how long can't we sell?"* Nobody answered
 > Indonesia — every episode with its animated demo, self-graded quiz, lunch timer, badges, a journey map and progress
 > tracking. Everything is also readable right here on GitHub.
 
+## 📺 Watch the 1-minute trailer
+
+[![Watch the 1-minute trailer on YouTube](docs/assets/trailer-poster.jpg)](https://youtu.be/vjo3B6Pnzd0)
+
+Narrated video lessons are being added lunch by lunch, in English and Bahasa Indonesia.
+🔔 **[Subscribe to One Lunch at a Time on YouTube](https://www.youtube.com/@OneLunchSeries?sub_confirmation=1)** so you never miss the next lunch.
+
 ## What every lunch gives you
 
 | | What | When |
@@ -164,7 +171,8 @@ ITB (cum laude). As a lecturer at BINUS International he designed and taught uni
 follows the same rule he used in the classroom: one clear idea at a time, then practice.
 
 📧 For any further inquiries, email **[stefanus.pinarta@gmail.com](mailto:stefanus.pinarta@gmail.com)** ·
-💼 [Connect on LinkedIn](https://www.linkedin.com/in/stefanus-pinarta-8193512/)
+💼 [Connect on LinkedIn](https://www.linkedin.com/in/stefanus-pinarta-8193512/) ·
+▶️ [Subscribe on YouTube](https://www.youtube.com/@OneLunchSeries?sub_confirmation=1)
 
 <sub>This is a personal project. The views and content are the author's own and do not represent his employer.</sub>
 

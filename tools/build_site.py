@@ -53,6 +53,8 @@ import strings as ST  # noqa: E402  (interface text in both languages)
 PAGES = bi.PAGES.rstrip("/")
 REPO_URL = bi.GITHUB.split("/blob/")[0]
 YOUTUBE = ST.AUTHOR.get("youtube", "")  # channel with the narrated video lessons (optional)
+YT_TRAILER = ST.AUTHOR.get("youtube_trailer", "")  # channel trailer shown on the home page (optional)
+YT_PLAYLISTS = ST.AUTHOR.get("youtube_playlists", {})  # video-lesson playlist per language (optional)
 E = html.escape
 
 
@@ -789,6 +791,7 @@ class Shell:
         <h4>{E(tr('f_author'))}</h4>
         <ul><li><a href="{root}index.html#author">{E(AUTHOR['name'])} · {E(tr('f_about_author'))}</a></li>
         <li><a href="{E(AUTHOR['linkedin'][LANG])}" target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        {f'<li><a href="{E(YOUTUBE)}?sub_confirmation=1" target="_blank" rel="noopener">{E(tr("f_youtube"))}</a></li>' if YOUTUBE else ''}
         <li><a href="mailto:{E(AUTHOR['email'])}">{E(AUTHOR['email'])}</a></li></ul>
       </div>
     </div>
@@ -1587,6 +1590,7 @@ def author_section(root: str) -> str:
       <div class="author-actions">
         <a class="btn btn-linkedin" href="{E(li)}" target="_blank" rel="noopener"><span class="in" aria-hidden="true">in</span> {E(tr('author_linkedin'))}</a>
         <a class="btn" href="mailto:{E(AUTHOR['email'])}">📧 {E(tr('author_email_btn'))}</a>
+        {f'<a class="btn" href="{E(YOUTUBE)}?sub_confirmation=1" target="_blank" rel="noopener">{E(tr("author_youtube"))}</a>' if YOUTUBE else ''}
       </div>
       <p class="author-inquiries">{E(tr('author_inquiries'))} <a href="mailto:{E(AUTHOR['email'])}"><b>{E(AUTHOR['email'])}</b></a>.</p>
       <p class="muted small">{E(tr('author_note'))}</p>
@@ -1634,6 +1638,31 @@ def landing(shell: Shell, lunches: list[dict]) -> None:
     features = "".join(f'<div class="feature"><span>{a}</span><div><b>{E(b)}</b><p>{c}</p></div></div>' for a, b, c in T["features"])
     s2b = s2["blurb"]
     levels = SERIES["levels"]
+    trailer_html = trailer_cta = ""
+    if YT_TRAILER:
+        cc = "" if LANG == "en" else "&cc_load_policy=1"  # Indonesian page: show Indonesian subtitles from the start
+        embed = f"https://www.youtube-nocookie.com/embed/{YT_TRAILER}?rel=0&hl={LANG}&cc_lang_pref={LANG}{cc}"
+        sub_btn = (f'<a class="btn btn-warm btn-lg" href="{E(YOUTUBE)}?sub_confirmation=1" target="_blank" rel="noopener">'
+                   f'{E(tr("yt_subscribe"))}</a>') if YOUTUBE else ""
+        pl = YT_PLAYLISTS.get(LANG, "")
+        pl_btn = (f'<a class="btn btn-lg" href="https://www.youtube.com/playlist?list={E(pl)}" target="_blank" rel="noopener">'
+                  f'{E(tr("yt_playlist"))}</a>') if pl else ""
+        trailer_html = f"""<section class="section" id="trailer">
+  <div class="container">
+    <div class="section-head center"><p class="kicker"><span class="dot"></span>{E(tr('trailer_kicker'))}</p>
+      <h2>{E(tr('trailer_h2'))}</h2>
+      <p class="lead">{E(tr('trailer_lead'))}</p></div>
+    <div class="trailer">
+      <div class="vlesson"><div class="vlesson-frame"><iframe src="{E(embed)}" title="{E(tr('trailer_iframe', course=COURSE_NAME))}" loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div></div>
+      <div class="trailer-cta">{sub_btn}<a class="btn btn-lg" href="https://youtu.be/{YT_TRAILER}" target="_blank" rel="noopener">{E(tr('yt_watch'))}</a>{pl_btn}</div>
+    </div>
+  </div>
+</section>
+
+"""
+        trailer_cta = f'\n        <a class="btn btn-lg" href="#trailer">{E(tr("trailer_btn"))}</a>'
     ld = {"@context": "https://schema.org", "@type": "Course", "name": COURSE_NAME, "description": tr("home_desc"),
           "inLanguage": LANG, "isAccessibleForFree": True, "url": f"{PAGES}/{LANG}/",
           "author": {"@type": "Person", "name": AUTHOR["name"], "url": AUTHOR["linkedin"][LANG], "jobTitle": "Senior Solutions Engineer"},
@@ -1648,7 +1677,7 @@ def landing(shell: Shell, lunches: list[dict]) -> None:
       <a class="byline hero-byline" href="#author">{avatar("by-avatar")}<span>{E(tr('home_by', author=''))}<b>{E(AUTHOR['name'])}</b><small>{E(tr('byline_role'))}</small></span></a>
       <div class="ctas">
         <a class="btn btn-primary btn-lg" href="lunches/{first['slug']}.html" data-continue>{E(tr('start_ep1'))}</a>
-        <a class="btn btn-lg" href="#journey">{E(tr('see_journey'))}</a>
+        <a class="btn btn-lg" href="#journey">{E(tr('see_journey'))}</a>{trailer_cta}
       </div>
       <div class="stats">{stats}</div>
     </div>
@@ -1669,7 +1698,7 @@ def landing(shell: Shell, lunches: list[dict]) -> None:
   </div>
 </section>
 
-<section class="section band" id="how">
+{trailer_html}<section class="section band" id="how">
   <div class="container">
     <div class="section-head"><p class="kicker"><span class="dot"></span>{E(tr('how_kicker'))}</p>
       <h2>{E(tr('how_h2'))}</h2>

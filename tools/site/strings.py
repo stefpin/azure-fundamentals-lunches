@@ -13,6 +13,8 @@ AUTHOR = {
                  "id": "https://id.linkedin.com/in/stefanus-pinarta-8193512"},
     "photo": "",  # optional: path under docs/assets/, e.g. "author.jpg"; empty = monogram
     "youtube": "https://www.youtube.com/@OneLunchSeries",  # channel with the narrated video lessons
+    "youtube_trailer": "vjo3B6Pnzd0",  # channel trailer, shown on the home page; empty = no trailer section
+    "youtube_playlists": {"en": "PLB4jKolZ5rE8", "id": "PLMGpukatmo-Y"},  # video-lesson playlists per language
 }
 
 EN = {
@@ -101,6 +103,12 @@ EN = {
     "rail_video": "Video lesson", "mob_video": "📺 Video", "iframe_video": "Video lesson: Lunch {n} · {title}",
     "video_yt": "▶ Watch on YouTube ↗", "video_alt": "🇮🇩 Tonton dalam Bahasa Indonesia ↗",
     "video_sub": "🔔 Subscribe for new lunches ↗",
+    "trailer_btn": "▶ Watch the 1-minute trailer", "trailer_kicker": "Trailer · 1 minute",
+    "trailer_h2": "See the whole course in one minute",
+    "trailer_lead": "Watch the trailer, then start Lunch 01 whenever you are ready. Narrated video lessons are being added "
+                    "lunch by lunch, in English and Bahasa Indonesia. Subscribe on YouTube so you never miss the next one.",
+    "trailer_iframe": "Trailer: {course}", "yt_subscribe": "🔔 Subscribe on YouTube", "yt_watch": "▶ Watch on YouTube ↗",
+    "yt_playlist": "📺 All video lessons ↗", "author_youtube": "▶ YouTube channel", "f_youtube": "YouTube · Subscribe ↗",
     "video_lead": "Prefer to watch? This narrated video takes you through the whole lunch: the story, the reading, "
                   "the knowledge check and the key takeaways. Then play the interactive demo below and do the lab "
                   "whenever it suits you.",
@@ -359,6 +367,13 @@ ID = {
     "rail_video": "Video pelajaran", "mob_video": "📺 Video", "iframe_video": "Video pelajaran: Makan Siang {n} · {title}",
     "video_yt": "▶ Tonton di YouTube ↗", "video_alt": "🇬🇧 Watch in English ↗",
     "video_sub": "🔔 Subscribe untuk makan siang berikutnya ↗",
+    "trailer_btn": "▶ Tonton cuplikan 1 menit", "trailer_kicker": "Cuplikan · 1 menit",
+    "trailer_h2": "Lihat seluruh kursus dalam satu menit",
+    "trailer_lead": "Tonton cuplikannya, lalu mulai Makan Siang 01 kapan pun Anda siap. Video pelajaran bernarasi ditambahkan "
+                    "makan siang demi makan siang, dalam bahasa Inggris dan Bahasa Indonesia. Subscribe channel YouTube-nya "
+                    "agar Anda tidak ketinggalan makan siang berikutnya.",
+    "trailer_iframe": "Cuplikan: {course}", "yt_subscribe": "🔔 Subscribe di YouTube", "yt_watch": "▶ Tonton di YouTube ↗",
+    "yt_playlist": "📺 Semua video pelajaran ↗", "author_youtube": "▶ Channel YouTube", "f_youtube": "YouTube · Subscribe ↗",
     "video_lead": "Lebih suka menonton? Video bernarasi ini membawa Anda melalui seluruh makan siang: cerita, bacaan, "
                   "uji pemahaman, dan poin penting. Setelah itu, mainkan demo interaktif di bawah dan kerjakan lab "
                   "kapan pun Anda sempat.",
