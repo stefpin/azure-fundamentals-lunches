@@ -13,13 +13,18 @@ Inputs (edit these, then rebuild):
   tools/site/series.json, series.id.json story layer: episode titles, hooks, badges, cast, levels
   tools/site/strings.py                  interface text in both languages and the author details
   tools/site/site-config.json            optional settings, e.g. {"goatcounter": "<code>"} for the visitor counter
+                                         and the "tutor" block for the Lunch Tutor pilot panel
   tools/build_index.py                   course structure (numbers, slugs, titles, parts)
 
-Hand-written (not generated): docs/assets/site.css, docs/assets/site.js.
-Generated: docs/index.html (language chooser), docs/en/**, docs/id/** (pages and LinkedIn share pages),
-docs/404.html, redirect pages at the pre-2026-10-24 paths (docs/lunches, docs/labs, docs/lunchbox.html,
-docs/demos/index.html), docs/assets/course-data.<lang>.js, docs/assets/favicon.svg and, if Pillow is installed,
-docs/assets/social-card.png and social-card-id.png.
+Hand-written (not generated): docs/assets/site.css, docs/assets/site.js, docs/assets/tutor.css,
+docs/assets/tutor.js and docs/auth/redirect.html (the sign-in redirect page of the tutor; this build never
+touches docs/auth/ or docs/assets/vendor/).
+Generated: docs/index.html (language chooser), docs/en/**, docs/id/** (pages, the Lunch Tutor information page
+tutor.html and LinkedIn share pages), docs/404.html, redirect pages at the pre-2026-10-24 paths (docs/lunches,
+docs/labs, docs/lunchbox.html, docs/demos/index.html), docs/assets/course-data.<lang>.js,
+docs/assets/tutor-config.js, the tutor's lesson packs docs/tutor/pack/<lang>/NN.json (read by the Tutor API, not
+by the browser), docs/assets/favicon.svg and, if Pillow is installed, docs/assets/social-card.png and
+social-card-id.png.
 """
 from __future__ import annotations
 
@@ -32,6 +37,7 @@ import os
 import re
 import sys
 import textwrap
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote, unquote, urlparse
 
@@ -85,6 +91,31 @@ SERIES_BY = {lang: _load_series(lang) for lang in LANGS}
 _CFG = TOOLS / "site" / "site-config.json"
 CONFIG = json.loads(_CFG.read_text(encoding="utf-8")) if _CFG.exists() else {}
 GOAT = re.sub(r"[^a-z0-9-]", "", str(CONFIG.get("goatcounter", "")).strip().lower())
+
+
+def tutor_settings(raw: object) -> dict:
+    """The "tutor" block of site-config.json, checked: a bad value is dropped with a warning, never shipped."""
+    raw = raw if isinstance(raw, dict) else {}
+    api = str(raw.get("api") or "").strip().rstrip("/")
+    if api and not re.fullmatch(r"(https://[A-Za-z0-9.-]+|http://(localhost|127\.0\.0\.1))(:\d+)?(/[\w.~%+=@-]+)*", api):
+        print(f"  ! site-config.json: tutor.api must be an https:// address, not {api!r}; the panel says 'not configured'.")
+        api = ""
+    client = str(raw.get("clientId") or "").strip().lower()
+    if client and not re.fullmatch(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", client):
+        print(f"  ! site-config.json: tutor.clientId must be an app (client) ID GUID, not {client!r}; ignored.")
+        client = ""
+    try:
+        limit = max(0, int(raw.get("dailyLimit", 100)))
+    except (TypeError, ValueError):
+        limit = 100
+    pack = str(raw.get("packBase") or "tutor/pack").strip().strip("/")
+    if not re.fullmatch(r"[A-Za-z0-9_-]+(/[A-Za-z0-9_-]+)*", pack):
+        print(f"  ! site-config.json: tutor.packBase must be a folder under docs/, not {pack!r}; using tutor/pack.")
+        pack = "tutor/pack"
+    return {"enabled": raw.get("enabled") is True, "api": api, "clientId": client, "dailyLimit": limit, "packBase": pack}
+
+
+TUTOR_CFG = tutor_settings(CONFIG.get("tutor"))
 
 # ---- current language (set_lang switches all of these) ----
 LANG = "en"
@@ -650,10 +681,11 @@ def avatar(cls: str = "avatar-sp") -> str:
 class Shell:
     def __init__(self):
         a = DOCS / "assets"
-        self.v = short_hash(a / "site.css", a / "site.js", a / "course-data.en.js", a / "course-data.id.js")
+        self.v = short_hash(a / "site.css", a / "site.js", a / "course-data.en.js", a / "course-data.id.js",
+                            a / "tutor.css", a / "tutor.js", a / "tutor-config.js")
 
     def page(self, *, out: Path, title: str, desc: str, main: str, body_attrs: dict | None = None, active: str = "",
-             absolute: bool = False, og_title: str | None = None, crumbs: list | None = None) -> None:
+             absolute: bool = False, og_title: str | None = None, crumbs: list | None = None, tutor: bool = False) -> None:
         if absolute:
             root, base = f"{PAGES}/{LANG}/", f"{PAGES}/"
             rel = ""
@@ -683,6 +715,10 @@ class Shell:
             alternates = ""
         goat = (f'<script data-goatcounter="https://{GOAT}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>\n'
                 if GOAT and not absolute else "")
+        # Lunch Tutor (lunch and lab pages only): tutor.js stays inert unless the tutor is enabled or previewed
+        tutor_css = f'<link rel="stylesheet" href="{base}assets/tutor.css?v={self.v}">\n' if tutor else ""
+        tutor_js = (f'<script src="{base}assets/tutor-config.js?v={self.v}" defer></script>\n'
+                    f'<script src="{base}assets/tutor.js?v={self.v}" defer></script>\n') if tutor else ""
         level0 = SERIES["levels"][0]["name"]
         crumbs_html = self.crumb_trail(crumbs, root, url, absolute) if crumbs else ""
         doc = f"""<!DOCTYPE html>
@@ -712,7 +748,7 @@ class Shell:
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="{base}assets/site.css?v={self.v}">
-{goat}</head>
+{tutor_css}{goat}</head>
 <body {battrs}>
 <a class="skip" href="#main">{E(tr('skip'))}</a>
 <div class="read-progress" aria-hidden="true"><span></span></div>
@@ -734,7 +770,7 @@ class Shell:
 {self.footer(root, base)}
 <script src="{base}assets/course-data.{LANG}.js?v={self.v}" defer></script>
 <script src="{base}assets/site.js?v={self.v}" defer></script>
-</body>
+{tutor_js}</body>
 </html>
 """
         write(out, doc)
@@ -1155,7 +1191,7 @@ def lunch_page(shell: Shell, L: dict, prev: dict | None, nxt: dict | None) -> No
   <button class="btn btn-sm" type="button" data-timer-stop aria-label="{E(tr('timer_stop'))}">■</button></div>"""
     shell.page(out=out, title=tr("lunch_page_title", n=n, ep=L["ep"], title=full_title),
                desc=tr("lunch_page_desc", n=n, title=full_title, hook=L["hook"]),
-               main=main, body_attrs={"data-page": "lunch", "data-lunch": n, "style": f"--c:{color}"}, active="episodes",
+               main=main, body_attrs={"data-page": "lunch", "data-lunch": n, "style": f"--c:{color}"}, active="episodes", tutor=True,
                crumbs=[(tr("crumb_home"), "index.html"),
                        (SERIES["seasons"][L["season"] - 1]["name"], f"index.html#episodes-s{L['season']}"),
                        (tr("lunch_label", n=n, title=full_title), None)])
@@ -1216,6 +1252,17 @@ def lab_meta(slug: str) -> dict:
     }
 
 
+def lab_rest(text: str) -> str:
+    """A lab guide without its H1, the language line and the header blockquote that follows (later blockquotes are content)."""
+    lines = text.splitlines()
+    i = next((k for k, ln in enumerate(lines) if ln.startswith("# ")), -1) + 1
+    while i < len(lines) and (not lines[i].strip() or is_lang_line(lines[i])):
+        i += 1
+    while i < len(lines) and lines[i].startswith(">"):
+        i += 1
+    return "\n".join(lines[i:])
+
+
 def lab_files(slug: str) -> list[tuple[str, int]]:
     base = REPO / "labs" / slug
     files = []
@@ -1239,15 +1286,7 @@ def lab_page(shell: Shell, slug: str, L: dict | None, lab_list: list[dict]) -> N
     meta = lab_meta(slug)
     out = OUT / "labs" / f"{slug}.html"
     env = {"src": meta["src"], "out": out, "ids": {}}
-    body = meta["text"]
-    # drop the H1, the language line and the header blockquote that follows (later blockquotes are content)
-    lines = body.splitlines()
-    i = next((k for k, ln in enumerate(lines) if ln.startswith("# ")), -1) + 1
-    while i < len(lines) and (not lines[i].strip() or is_lang_line(lines[i])):
-        i += 1
-    while i < len(lines) and lines[i].startswith(">"):
-        i += 1
-    rest = "\n".join(lines[i:])
+    rest = lab_rest(meta["text"])
     secs = fence_aware_split(rest, 2)
     pre = trim_rules(secs[0][1])
     sections = [(t, b) for t, b in secs[1:] if t]
@@ -1362,7 +1401,7 @@ def lab_page(shell: Shell, slug: str, L: dict | None, lab_list: list[dict]) -> N
     shell.page(out=out, title=tr("lab_page_title", num=meta["num"], title=meta["title"]),
                desc=tr("lab_page_desc", num=meta["num"], title=meta["title"], time=meta["time"].replace("`", ""),
                        cost=meta["cost"]),
-               main=main, body_attrs={"data-page": "lab", "data-lab": meta["num"], "style": f"--c:{color}"}, active="labs",
+               main=main, body_attrs={"data-page": "lab", "data-lab": meta["num"], "style": f"--c:{color}"}, active="labs", tutor=True,
                crumbs=[(tr("crumb_home"), "index.html"), (tr("nav_labs"), "labs/index.html"), (meta["h1"], None)])
 
 
@@ -2132,6 +2171,263 @@ def social_card(lang: str) -> None:
     img.save(DOCS / "assets" / f"social-card{'' if lang == 'en' else '-' + lang}.png", optimize=True)
 
 
+# ============================================================================ Lunch Tutor (pilot)
+def write_tutor_config() -> None:
+    """docs/assets/tutor-config.js: the checked "tutor" settings plus the panel text in both languages."""
+    data = dict(TUTOR_CFG, pages=PAGES, ui={lang: ST.TUTOR[lang] for lang in LANGS})
+    body = json.dumps(data, ensure_ascii=False, indent=1).replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
+    js = ('/* Generated by tools/build_site.py from tools/site/site-config.json ("tutor") and tools/site/strings.py '
+          "(TUTOR). Do not edit. */\nwindow.TUTOR_CFG = " + body + ";\n")
+    write(DOCS / "assets" / "tutor-config.js", js)
+
+
+def tutor_page(shell: Shell) -> None:
+    """docs/<lang>/tutor.html: what Lunch Tutor is, the pilot, AI use, privacy and the facts IT administrators need."""
+    out = OUT / "tutor.html"
+    mail = f'<a href="mailto:{E(AUTHOR["email"])}">{E(AUTHOR["email"])}</a>'
+    client = TUTOR_CFG["clientId"]
+    consent = f"https://login.microsoftonline.com/{{your-tenant-id}}/adminconsent?client_id={client or '{app-client-id}'}"
+
+    def fmt(key: str, **html_kw: str) -> str:  # escaped text; the placeholders take trusted HTML
+        return E(T[key]).format(**html_kw)
+
+    def items(key: str, tag: str = "ul") -> str:
+        return f"<{tag}>" + "".join(f"<li>{E(x)}</li>" for x in T[key]) + f"</{tag}>"
+
+    it = (f"<p>{E(tr('tutor_it_app'))}</p><p>{E(tr('tutor_it_perms'))}</p>"
+          f"<p>{fmt('tutor_it_consent', tenant='<code>{your-tenant-id}</code>')}</p>"
+          f'<p><code style="word-break:break-all">{E(consent)}</code></p>'
+          + ("" if client else f'<p class="muted small">{E(tr("tutor_it_noclient"))}</p>')
+          + f"<ul><li>{E(tr('tutor_it_assign'))}</li><li>{E(tr('tutor_it_remove'))}</li>"
+          f"<li>{fmt('tutor_it_allow', email=mail)}</li></ul>")
+    sections = [
+        ("what", tr("tutor_h_what"), f"<p>{E(tr('tutor_what'))}</p>"),
+        ("pilot", tr("tutor_h_pilot"),
+         f"<p>{E(tr('tutor_pilot'))}</p><p>{fmt('tutor_pilot_limit', limit=str(TUTOR_CFG['dailyLimit']))}</p>"),
+        ("how", tr("tutor_h_how"), items("tutor_how", "ol")),
+        ("ai", tr("tutor_h_ai"), items("tutor_ai")),
+        ("privacy", tr("tutor_h_privacy"), items("tutor_privacy")),
+        ("it", tr("tutor_h_it"), it),
+        ("official", tr("tutor_h_official"), f"<p>{fmt('tutor_official', author=E(AUTHOR['name']), email=mail)}</p>"),
+    ]
+    toc = " · ".join(f'<a href="#{sid}">{E(h)}</a>' for sid, h, _ in sections)
+    cards = "\n    ".join(f'<article class="card doc-card" id="{sid}"><h2>{E(h)}</h2><div class="prose wide">{html_}</div></article>'
+                          for sid, h, html_ in sections)
+    main = f"""<section class="lab-hero hub-hero">
+  <div class="container">
+    <p class="kicker"><span class="dot"></span>{E(tr('tutor_kicker'))}</p>
+    <h1>{tr('tutor_h1')}</h1>
+    <p class="lead">{E(tr('tutor_lead'))}</p>
+    <nav class="muted small" aria-label="{E(tr('tutor_toc'))}" style="margin-top:14px">{toc}</nav>
+  </div>
+</section>
+<section class="section" style="padding-top:40px">
+  <div class="container narrow hub-docs">
+    {cards}
+  </div>
+</section>"""
+    shell.page(out=out, title=tr("tutor_title"), desc=tr("tutor_desc"), main=main, body_attrs={"data-page": "tutor"},
+               crumbs=[(tr("crumb_home"), "index.html"), (tr("tutor_crumb"), None)])
+
+
+# Lesson packs: the course text the Tutor API gives the model, one JSON file per lunch and language.
+PACK_READING_MAX, PACK_LAB_MAX, PACK_WARN_BYTES = 60_000, 30_000, 120 * 1024
+PACK_MD = MarkdownIt("commonmark", {"html": True}).enable(["table", "strikethrough"])
+PACK_EMOJI = re.compile("[\U0001F000-\U0001FAFF\u2300-\u23FF\u2600-\u27BF\u2B00-\u2BFF\uFE0F\u200D\u20E3]")
+PACK_CALLOUT = re.compile(r"^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*")
+PACK_THINK = tuple(plain(x) for x in THINK_LABELS)
+
+
+def _pack_tidy(s: str) -> str:
+    return re.sub(r"[ \t\u00a0]{2,}", " ", PACK_EMOJI.sub("", s)).strip()
+
+
+def _pack_url(href: str, src: Path) -> str:
+    """Absolute address for a link in a pack: only Microsoft Learn and this course's pages, which the panel may link to."""
+    if not href or href.startswith(("#", "mailto:", "javascript:")):
+        return ""
+    new, external = map_href(href, {"src": src, "out": DOCS / "index.html"})
+    if not external:
+        path = unquote(new.split("#", 1)[0].split("?", 1)[0])
+        if not path or not (DOCS / path).is_file():
+            return ""
+        new = f"{PAGES}/{new}"
+    return new if new.startswith(("https://learn.microsoft.com/", PAGES + "/")) else ""
+
+
+def _pack_inline(tok, src: Path) -> str:
+    parts: list[str] = []
+    links: list[tuple[int, str]] = []
+    for c in tok.children or []:
+        if c.type in ("text", "code_inline"):
+            parts.append(c.content)
+        elif c.type == "softbreak":
+            parts.append(" ")
+        elif c.type == "hardbreak" or (c.type == "html_inline" and re.match(r"(?i)<br\s*/?>", c.content)):
+            parts.append("\n")
+        elif c.type == "image":
+            parts.append(c.content or "")
+        elif c.type == "link_open":
+            links.append((len(parts), _pack_url(c.attrGet("href") or "", src)))
+        elif c.type == "link_close" and links:
+            start, url = links.pop()
+            if url and url != "".join(parts[start:]).strip():
+                parts.append(f" ({url})")
+    return "".join(parts)
+
+
+def _pack_callout(text: str) -> str:
+    m = PACK_CALLOUT.match(text)
+    if not m:
+        return text
+    rest = text[m.end():]
+    if m.group(1) == "NOTE" and rest.startswith(PACK_THINK):
+        return rest
+    return f"{tr('callout_' + m.group(1).lower())}: {rest}"
+
+
+def md_text(source: str, src: Path) -> str:
+    """Markdown -> plain text for a lesson pack: no HTML, emoji or diagram source; headings, list items, table rows
+    and code blocks stay on their own lines; links to Microsoft Learn and course pages keep their address."""
+    tokens = PACK_MD.parse(textwrap.dedent(source).strip("\n") + "\n")
+    out: list[str] = []
+    lists: list[list] = []  # [ordered, counter] per open list
+    bullet = ""
+    row: list[str] = []
+    for i, tok in enumerate(tokens):
+        ty = tok.type
+        if ty in ("bullet_list_open", "ordered_list_open"):
+            ordered = ty == "ordered_list_open"
+            lists.append([ordered, int(tok.attrGet("start") or 1) - 1 if ordered else 0])
+        elif ty in ("bullet_list_close", "ordered_list_close"):
+            lists.pop()
+            if not lists:
+                out.append("")
+        elif ty == "list_item_open":
+            if lists[-1][0]:
+                lists[-1][1] += 1
+            bullet = "  " * (len(lists) - 1) + (f"{lists[-1][1]}. " if lists[-1][0] else "- ")
+        elif ty in ("heading_open", "heading_close", "table_close"):
+            out.append("")
+        elif ty == "tr_open":
+            row = []
+        elif ty == "tr_close":
+            out.append(" | ".join(row).strip())
+        elif ty == "inline":
+            text = _pack_inline(tok, src)
+            parent = tokens[i - 1].type if i else ""
+            if parent in ("th_open", "td_open"):
+                row.append(_pack_tidy(text.replace("\n", " ")))
+                continue
+            text = "\n".join(x for x in (_pack_tidy(ln) for ln in _pack_callout(text).split("\n")) if x)
+            if not text:
+                continue
+            if parent == "heading_open":
+                out.append(re.sub(r"\s*\((?:≈|~)[^)]*\)$", "", text))
+                continue
+            if bullet:
+                text, bullet = bullet + text.replace("\n", "\n" + " " * len(bullet)), ""
+            elif lists:
+                pad = "  " * len(lists)
+                text = pad + text.replace("\n", "\n" + pad)
+            out.append(text)
+            if not lists:
+                out.append("")
+        elif ty in ("fence", "code_block"):
+            info = tok.info.strip().split()[0].lower() if tok.info.strip() else ""
+            if info == "mermaid":
+                continue
+            pad = "  " * len(lists)
+            out.append("\n".join((pad + ln).rstrip() for ln in tok.content.rstrip("\n").splitlines()))
+            out.append("")
+        elif ty == "html_block":
+            text = _pack_tidy(html.unescape(re.sub(r"<[^>]+>", " ", tok.content)))
+            if text:
+                out += [text, ""]
+    text = "\n".join(ln.rstrip() for ln in "\n".join(out).splitlines())
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
+
+
+def clip(text: str, limit: int) -> str:
+    """Shorten text to at most `limit` characters, at a line break, and mark the cut."""
+    if len(text) <= limit:
+        return text
+    cut = text.rfind("\n", 0, limit - 2)
+    if cut < limit // 2:
+        cut = limit - 2
+    return text[:cut].rstrip() + "\n…"
+
+
+def lunch_sections(text: str) -> tuple[str, dict[str, tuple[str, str]]]:
+    """(header, {key: (H2 title, body)}) of a lunch README, keyed like SEC_EMOJI (first match wins)."""
+    parts = fence_aware_split(text, 2)
+    found: dict[str, tuple[str, str]] = {}
+    for t, b in parts[1:]:
+        for key, emo in SEC_EMOJI.items():
+            if t and key not in found and t.startswith(emo):
+                found[key] = (t, trim_rules(b))
+    return parts[0][1], found
+
+
+def lab_pack(slug: str) -> dict:
+    meta = lab_meta(slug)
+    body, _validated = strip_footer(lab_rest(meta["text"]))
+    return {"title": meta["title"], "url": f"{PAGES}/{LANG}/labs/{slug}.html",
+            "text": clip(md_text(body, meta["src"]), PACK_LAB_MAX)}
+
+
+def lunch_pack(L: dict, built: str) -> dict:
+    src = lang_src(REPO / "lunches" / L["slug"] / "README.md")
+    header, secs = lunch_sections(src.read_text(encoding="utf-8"))
+    title = rx(r"(?m)^#\s*(?:Lunch|Makan Siang)\s*\d+\s*·\s*(.+)$", header, L["title"])
+    if "further" in secs:  # the curated Microsoft Learn links, without the page footer
+        secs["further"] = (secs["further"][0], strip_footer(secs["further"][1])[0])
+    reading = "\n\n".join(f"## {secs[k][0]}\n\n{secs[k][1]}"
+                          for k in ("menu", "story", "reading", "notes", "further") if k in secs)
+    quiz = [{"q": md_text(q, src), "a": md_text(a, src)} for q, a in parse_quiz(secs.get("quiz", ("", ""))[1])]
+    takeaways = [md_text(x, src) for x in parse_bullets(secs.get("take", ("", ""))[1])]
+    return {"n": L["n"], "lang": LANG, "title": title, "url": f"{PAGES}/{LANG}/lunches/{L['slug']}.html",
+            "reading": clip(md_text(reading, src), PACK_READING_MAX), "quiz": quiz, "takeaways": takeaways,
+            "lab": lab_pack(L["slug"]), "built": built}
+
+
+def tutor_packs(lunches: list[dict], capstone: str, built: str) -> list[tuple[str, int]]:
+    """Write docs/<packBase>/<lang>/NN.json for every lunch, plus 32.json for the capstone lab (lab only)."""
+    folder = DOCS / TUTOR_CFG["packBase"] / LANG
+    packs = [lunch_pack(L, built) for L in lunches]
+    lab = lab_pack(capstone)
+    packs.append({"n": lab_meta(capstone)["num"], "lang": LANG, "title": lab["title"], "url": lab["url"], "reading": "",
+                  "quiz": [], "takeaways": [], "lab": lab, "built": built})
+    written = []
+    for p in packs:
+        path = folder / f"{p['n']}.json"
+        write(path, json.dumps(p, ensure_ascii=False, separators=(",", ":")))
+        written.append((p["n"], path.stat().st_size))
+    return written
+
+
+def build_date() -> str:
+    """Today's date (UTC) for the packs, or the date of SOURCE_DATE_EPOCH for reproducible builds."""
+    epoch = os.environ.get("SOURCE_DATE_EPOCH", "")
+    when = datetime.fromtimestamp(int(epoch), timezone.utc) if epoch.isdigit() else datetime.now(timezone.utc)
+    return when.date().isoformat()
+
+
+def write_pack_index(packs: dict[str, list[tuple[str, int]]]) -> str:
+    """docs/<packBase>/index.json ({"en": ["01", …], "id": […]}) and the one-line build summary."""
+    write(DOCS / TUTOR_CFG["packBase"] / "index.json",
+          json.dumps({lang: [n for n, _ in packs[lang]] for lang in LANGS}, separators=(",", ":")))
+    sizes = [(f"{lang}/{n}.json", size) for lang in LANGS for n, size in packs[lang]]
+    name, biggest = max(sizes, key=lambda x: x[1])
+    over = [p for p, s in sizes if s > PACK_WARN_BYTES]
+    state = "on for everyone" if TUTOR_CFG["enabled"] else "preview only (?tutor=preview)"
+    if not (TUTOR_CFG["api"] and TUTOR_CFG["clientId"]):
+        state += ", API not configured yet"
+    return (f"Lunch Tutor: {len(sizes)} lesson packs in docs/{TUTOR_CFG['packBase']}/ "
+            f"({', '.join(f'{lang}: {len(packs[lang])}' for lang in LANGS)}; largest {name}, {biggest / 1024:.1f} KB"
+            f"{'; over 120 KB: ' + ', '.join(over) if over else ''}), tutor.html in each language; panel {state}.")
+
+
 # ============================================================================ main
 ALL: list[dict] = []
 
@@ -2151,11 +2447,14 @@ def main() -> int:
         set_lang(lang)
         by_lang[lang] = course_lunches()
         write_course_data(by_lang[lang])
+    write_tutor_config()
     old = DOCS / "assets" / "course-data.js"
     if old.exists():
         old.unlink()
     shell = Shell()
     counts = {}
+    packs: dict[str, list[tuple[str, int]]] = {}
+    built = build_date()
     lab_slugs = [L["slug"] for L in by_lang["en"]] + [bi.CAPSTONE[0]]
     for lang in LANGS:
         set_lang(lang)
@@ -2176,7 +2475,9 @@ def main() -> int:
         demos_hub(shell, lunches)
         landing(shell, lunches)
         lunchbox(shell)
+        tutor_page(shell)
         counts[lang] = share_pages(lunches)
+        packs[lang] = tutor_packs(lunches, bi.CAPSTONE[0], built)
     set_lang("en")
     changed = fix_demo_footers(by_lang["en"])
     crumbed = fix_demo_crumbs(by_lang["en"])
@@ -2188,6 +2489,7 @@ def main() -> int:
           f"hubs, lunchbox, {sum(counts.values())} share pages, {stubs} redirects, 404 and the language chooser "
           f"({n_pages} HTML files in docs/; demo footers updated: {changed}; demo breadcrumbs updated: {crumbed}; "
           f"demo translations embedded: {injected}).")
+    print(write_pack_index(packs))
     if FALLBACKS:
         print(f"  ! {len(FALLBACKS)} page(s) fell back to English because the translation is missing, e.g. "
               + ", ".join(sorted(FALLBACKS)[:4]))

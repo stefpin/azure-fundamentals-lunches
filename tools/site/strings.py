@@ -1,7 +1,8 @@
 """Interface text for the course website, in English and Bahasa Indonesia.
 
 Used by tools/build_site.py (page text) and shipped to the browser in docs/assets/course-data.<lang>.js
-(the "js" table, used by docs/assets/site.js). Placeholders use Python str.format syntax: {n}, {title}…
+(the "js" table, used by docs/assets/site.js) and docs/assets/tutor-config.js (the "TUTOR" table, used by
+docs/assets/tutor.js on lunch and lab pages). Placeholders use Python str.format syntax: {n}, {title}…
 Keep both languages in step: every key must exist in both tables.
 """
 
@@ -282,6 +283,69 @@ EN = {
     "nf_home": "🏠 Back to the course", "nf_labs": "🔬 All labs",
     # root chooser
     "choose_title": "Choose your language",
+    # Lunch Tutor information page (docs/<lang>/tutor.html; pilot: linked from the tutor panel, not from the menu)
+    "tutor_title": "Lunch Tutor · Privacy and AI use", "tutor_crumb": "Lunch Tutor",
+    "tutor_desc": ("How the Lunch Tutor pilot works: what the AI tutor does, who can use it, what happens to your "
+                   "questions, and how IT administrators can approve it."),
+    "tutor_kicker": "Lunch Tutor · AI · pilot",
+    "tutor_h1": 'Lunch Tutor: <span class="grad-text">privacy and AI use</span>',
+    "tutor_lead": ("An AI study buddy for this course, now in a private pilot. Here is what it does, who can use it "
+                   "and what happens to your questions."),
+    "tutor_toc": "On this page",
+    "tutor_h_what": "What Lunch Tutor is",
+    "tutor_what": ("Lunch Tutor is an AI tutor for this course. Open it on any lunch or lab page and ask about what you "
+                   "are reading or building: it knows that lesson and its lab, and it answers in the language of the "
+                   "page. It gives hints first, so you still do the thinking — ask for the full answer if you are still "
+                   "stuck. It uses Azure OpenAI (GPT-5 mini)."),
+    "tutor_h_pilot": "Pilot status",
+    "tutor_pilot": ("Lunch Tutor is in a private pilot. It is open to people from organizations whose IT team has "
+                    "approved it, and to personal Microsoft accounts on the invite list."),
+    "tutor_pilot_limit": ("All learners share one limit of {limit} questions a day. When they are used up, the tutor "
+                          "reopens at 07:00 WIB (00:00 UTC)."),
+    "tutor_h_how": "How to use it",
+    "tutor_how": [
+        "Open a lunch or a lab and select “Ask the tutor” at the bottom right of the page.",
+        "Select “Sign in with Microsoft” and use your work or school account, or an invited personal account.",
+        ("Type your question (up to 1,000 characters) and select Ask. You get a hint first; ask for the full answer "
+         "if you are still stuck."),
+        "The conversation stays on the page only until you leave or reload it.",
+    ],
+    "tutor_h_ai": "Using AI responsibly",
+    "tutor_ai": [
+        "AI answers can be wrong. Check important details in Microsoft Learn before you rely on them.",
+        "Don't paste secrets — passwords, keys, connection strings or tokens — or personal data into your questions.",
+        "The tutor helps you learn; it doesn't replace the readings, the labs or your own judgement.",
+    ],
+    "tutor_h_privacy": "Privacy",
+    "tutor_privacy": [
+        ("The tutor stores an anonymous ID derived from your account — not your name or email — plus your questions "
+         "and its answers for 30 days. Then they are deleted automatically."),
+        "You can delete them at any time with “Delete my tutor history” in the tutor panel.",
+        ("The data is stored in Azure in the Indonesia Central region. The AI model runs in a Global deployment, so "
+         "your questions may be processed in any Azure region where the model runs."),
+        "Nothing you send is used to train AI models.",
+        ("Your course progress stays in your browser. With each question the panel sends only the numbers of the "
+         "lunches you have finished, so the tutor knows what you have already learned."),
+        ("Signing in keeps a Microsoft sign-in token in this browser. “Sign out” in the panel removes it from this "
+         "site; it doesn't sign you out of Microsoft."),
+    ],
+    "tutor_h_it": "For IT administrators",
+    "tutor_it_app": ("The app is called “Lunch Tutor”. It is registered in the course author's lab directory, so the "
+                     "consent screen shows it as “unverified”."),
+    "tutor_it_perms": ("It asks only for sign-in, basic profile, offline access and its own Tutor.Ask permission — no "
+                       "access to mail, files or calendars."),
+    "tutor_it_consent": ("An administrator with the Cloud Application Administrator or Application Administrator role "
+                         "can approve it once for the whole organization with this link (replace {tenant} with your "
+                         "directory (tenant) ID):"),
+    "tutor_it_noclient": "The app (client) ID will appear in the link when the pilot opens.",
+    "tutor_it_assign": ("To limit it to a pilot group, set “Assignment required” to Yes in Enterprise applications › "
+                        "Lunch Tutor › Properties, then assign that group."),
+    "tutor_it_remove": "You can remove it at any time: delete “Lunch Tutor” under Enterprise applications.",
+    "tutor_it_allow": ("Approval alone doesn't open the tutor: it only accepts organizations on its allow-list. To ask "
+                       "about joining the pilot, email {email}."),
+    "tutor_h_official": "Not an official Microsoft service",
+    "tutor_official": ("Lunch Tutor is a community project by the course author, {author}. It is not an official "
+                       "Microsoft service and is not endorsed by Microsoft. Questions or concerns? Email {email}."),
 }
 
 ID = {
@@ -541,6 +605,73 @@ ID = {
     "nf_lead": "Tak ada yang tahu berapa lama sampai halaman ini kembali. (Itulah persis masalah yang mulai diperbaiki Episode 01.)",
     "nf_home": "🏠 Kembali ke kursus", "nf_labs": "🔬 Semua lab",
     "choose_title": "Pilih bahasa Anda",
+    "tutor_title": "Lunch Tutor · Privasi dan penggunaan AI", "tutor_crumb": "Lunch Tutor",
+    "tutor_desc": ("Cara kerja uji coba Lunch Tutor: apa yang dilakukan tutor AI ini, siapa yang dapat menggunakannya, "
+                   "apa yang terjadi pada pertanyaan Anda, dan bagaimana administrator TI dapat menyetujuinya."),
+    "tutor_kicker": "Lunch Tutor · AI · uji coba",
+    "tutor_h1": 'Lunch Tutor: <span class="grad-text">privasi dan penggunaan AI</span>',
+    "tutor_lead": ("Teman belajar berbasis AI untuk kursus ini, kini dalam uji coba terbatas. Berikut apa yang "
+                   "dilakukannya, siapa yang dapat menggunakannya, dan apa yang terjadi pada pertanyaan Anda."),
+    "tutor_toc": "Di halaman ini",
+    "tutor_h_what": "Apa itu Lunch Tutor",
+    "tutor_what": ("Lunch Tutor adalah tutor AI untuk kursus ini. Bukalah di halaman makan siang atau lab mana pun, lalu "
+                   "tanyakan apa yang sedang Anda baca atau bangun: tutor mengenal pelajaran dan lab tersebut, dan "
+                   "menjawab dalam bahasa halaman itu. Tutor memberi petunjuk terlebih dahulu agar Anda tetap berpikir "
+                   "sendiri — mintalah jawaban lengkap jika Anda masih kesulitan. Tutor ini menggunakan Azure OpenAI "
+                   "(GPT-5 mini)."),
+    "tutor_h_pilot": "Status uji coba",
+    "tutor_pilot": ("Lunch Tutor sedang dalam uji coba terbatas. Tutor ini terbuka bagi pengguna dari organisasi yang "
+                    "tim TI-nya telah menyetujuinya, serta bagi akun Microsoft pribadi yang ada dalam daftar undangan."),
+    "tutor_pilot_limit": ("Semua peserta berbagi satu kuota sebanyak {limit} pertanyaan per hari. Jika kuota sudah habis, "
+                          "tutor dibuka kembali pukul 07.00 WIB (00.00 UTC)."),
+    "tutor_h_how": "Cara menggunakannya",
+    "tutor_how": [
+        "Buka sebuah makan siang atau lab, lalu pilih “Tanya tutor” di kanan bawah halaman.",
+        ("Pilih “Masuk dengan Microsoft” dan gunakan akun kantor atau sekolah Anda, atau akun pribadi yang telah "
+         "diundang."),
+        ("Ketik pertanyaan Anda (maksimal 1.000 karakter), lalu pilih Tanya. Anda akan mendapat petunjuk terlebih "
+         "dahulu; mintalah jawaban lengkap jika Anda masih kesulitan."),
+        "Percakapan hanya ada di halaman tersebut sampai Anda meninggalkan atau memuat ulang halamannya.",
+    ],
+    "tutor_h_ai": "Menggunakan AI secara bertanggung jawab",
+    "tutor_ai": [
+        "Jawaban AI bisa saja keliru. Periksa detail penting di Microsoft Learn sebelum Anda mengandalkannya.",
+        ("Jangan menempelkan rahasia — kata sandi, kunci, connection string, atau token — maupun data pribadi ke dalam "
+         "pertanyaan Anda."),
+        "Tutor membantu Anda belajar; tutor tidak menggantikan bacaan, lab, atau penilaian Anda sendiri.",
+    ],
+    "tutor_h_privacy": "Privasi",
+    "tutor_privacy": [
+        ("Tutor menyimpan ID anonim yang diturunkan dari akun Anda — bukan nama atau email Anda — beserta pertanyaan "
+         "Anda dan jawabannya selama 30 hari. Setelah itu, data tersebut dihapus secara otomatis."),
+        "Anda dapat menghapusnya kapan saja dengan tombol “Hapus riwayat tutor saya” di panel tutor.",
+        ("Data disimpan di Azure, di region Indonesia Central. Model AI berjalan dalam deployment Global, sehingga "
+         "pertanyaan Anda dapat diproses di region Azure mana pun tempat model tersebut berjalan."),
+        "Tidak ada data yang Anda kirim yang digunakan untuk melatih model AI.",
+        ("Progres kursus Anda tetap tersimpan di browser Anda. Bersama setiap pertanyaan, panel hanya mengirim nomor "
+         "makan siang yang sudah Anda selesaikan, agar tutor tahu apa yang sudah Anda pelajari."),
+        ("Saat Anda masuk, token masuk Microsoft disimpan di browser ini. Tombol “Keluar” di panel menghapusnya dari "
+         "situs ini; tombol itu tidak mengeluarkan Anda dari akun Microsoft."),
+    ],
+    "tutor_h_it": "Untuk administrator TI",
+    "tutor_it_app": ("Aplikasi ini bernama “Lunch Tutor”. Aplikasi ini terdaftar di direktori lab milik penulis kursus, "
+                     "sehingga layar persetujuan menampilkannya sebagai “unverified” (belum terverifikasi)."),
+    "tutor_it_perms": ("Aplikasi ini hanya meminta izin masuk, profil dasar, akses offline, dan izin Tutor.Ask miliknya "
+                       "sendiri — tanpa akses ke email, berkas, atau kalender."),
+    "tutor_it_consent": ("Administrator dengan peran Cloud Application Administrator atau Application Administrator "
+                         "dapat menyetujuinya sekali untuk seluruh organisasi melalui tautan ini (ganti {tenant} dengan "
+                         "ID direktori (tenant) Anda):"),
+    "tutor_it_noclient": "ID aplikasi (client) akan muncul di tautan ini saat uji coba dibuka.",
+    "tutor_it_assign": ("Untuk membatasinya pada grup uji coba, setel “Assignment required” ke Yes di Enterprise "
+                        "applications › Lunch Tutor › Properties, lalu tetapkan grup tersebut."),
+    "tutor_it_remove": "Anda dapat menghapusnya kapan saja: hapus “Lunch Tutor” di Enterprise applications.",
+    "tutor_it_allow": ("Persetujuan saja tidak membuka akses ke tutor: tutor hanya menerima organisasi yang ada dalam "
+                       "daftar izinnya (allow-list). Untuk menanyakan keikutsertaan dalam uji coba, kirim email ke "
+                       "{email}."),
+    "tutor_h_official": "Bukan layanan resmi Microsoft",
+    "tutor_official": ("Lunch Tutor adalah proyek komunitas oleh penulis kursus, {author}. Ini bukan layanan resmi "
+                       "Microsoft dan tidak didukung oleh Microsoft. Ada pertanyaan atau masukan? Kirim email ke "
+                       "{email}."),
 }
 
 # --------------------------------------------------------------------------- browser (site.js)
@@ -641,6 +772,109 @@ JS = {
     },
 }
 
+# --------------------------------------------------------------------------- browser (tutor.js, Lunch Tutor panel)
+# Shipped to lunch and lab pages in docs/assets/tutor-config.js (both languages; the page language picks one).
+TUTOR = {
+    "en": {
+        "launch": "Ask the tutor", "title": "Lunch Tutor", "badge": "AI · pilot", "close": "Close the tutor",
+        "status": "{left} of {limit} shared questions left today",
+        "statusReset": "Resets at 07:00 WIB (00:00 UTC).",
+        "statusLoading": "Checking today's questions…",
+        "statusPaused": "The tutor is paused right now.",
+        "statusError": "Couldn't check today's questions.",
+        "notConfigured": "Lunch Tutor isn't configured yet. It will open here soon.",
+        "signIn": "Sign in with Microsoft", "signingIn": "Signing in…",
+        "signedInAs": "Signed in as {name}", "signOut": "Sign out",
+        "signedOut": "You're signed out of Lunch Tutor on this site. You're still signed in to Microsoft.",
+        "label": "Your question", "placeholderLesson": "Ask about this lunch…", "placeholderLab": "Ask about this lab…",
+        "counter": "{n} / {max}", "ask": "Ask", "asking": "Asking…",
+        "hint": "The tutor gives hints first. Ask for the full answer if you are still stuck.",
+        "logLabel": "Conversation with the tutor",
+        "empty": "Ask a question about this page. The conversation stays here until you leave the page.",
+        "you": "You", "tutorName": "Tutor", "thinking": "Thinking…", "copy": "Copy", "copied": "Copied ✓",
+        "footWrong": "AI answers can be wrong — check Microsoft Learn.",
+        "footOfficial": "Community project, not an official Microsoft service.",
+        "privacy": "Privacy and AI use", "newTab": "(opens in a new tab)",
+        "forget": "Delete my tutor history",
+        "forgetConfirm": "Delete all your questions and answers stored by Lunch Tutor? This can't be undone.",
+        "forgetDone": "Your tutor history was deleted ({n} items).",
+        "forgetSignIn": "Sign in first, so the tutor knows whose history to delete.",
+        "needSignIn": "Sign in with Microsoft to ask a question.",
+        "itLink": "Information for your IT team",
+        "errPopup": "The sign-in window couldn't open. Allow pop-ups for this site and try again.",
+        "errCancelled": "Sign-in was cancelled.",
+        "errAdmin": "Your organization hasn't approved Lunch Tutor yet — please ask your IT team.",
+        "errInProgress": "A sign-in window is already open. Finish there, or close it and try again.",
+        "errMsalLoad": "Sign-in couldn't load. Reload the page and try again.",
+        "errSignIn": "Sign-in didn't work. Please try again.",
+        "errBadRequest": "The tutor couldn't read that question. Reload the page and try again.",
+        "errTooLong": "That question is too long. Keep it under 1,000 characters.",
+        "errSignInRequired": "Your sign-in has expired. Ask again; if this keeps happening, sign out and sign in again.",
+        "errNotInPilot": "Lunch Tutor is in a private pilot, and your organization isn't part of it yet.",
+        "errNotInvited": "This personal Microsoft account isn't on the pilot invite list yet.",
+        "errBlocked": "This account can't use Lunch Tutor.",
+        "errBusy": "Please wait for the previous answer to finish.",
+        "errFiltered": "The safety filter blocked this question. Please rephrase it and try again.",
+        "errLimit": "Today's shared questions are used up. The tutor reopens at 07:00 WIB (00:00 UTC).",
+        "errPaused": "The tutor is paused right now. Please try again later.",
+        "errAi": "The tutor couldn't answer just now. Your question was not counted — please try again in a minute.",
+        "errNetwork": "Couldn't reach the tutor. Check your connection and try again.",
+        "errTimeout": "The tutor took too long to respond. Please try again.",
+        "errUnknown": "Something went wrong. Please try again in a minute.",
+    },
+    "id": {
+        "launch": "Tanya tutor", "title": "Lunch Tutor", "badge": "AI · uji coba", "close": "Tutup tutor",
+        "status": "Tersisa {left} dari {limit} pertanyaan bersama hari ini",
+        "statusReset": "Direset setiap pukul 07.00 WIB (00.00 UTC).",
+        "statusLoading": "Memeriksa kuota pertanyaan hari ini…",
+        "statusPaused": "Tutor sedang dijeda.",
+        "statusError": "Kuota pertanyaan hari ini tidak dapat diperiksa.",
+        "notConfigured": "Lunch Tutor belum dikonfigurasi. Tutor akan segera tersedia di sini.",
+        "signIn": "Masuk dengan Microsoft", "signingIn": "Sedang masuk…",
+        "signedInAs": "Masuk sebagai {name}", "signOut": "Keluar",
+        "signedOut": "Anda sudah keluar dari Lunch Tutor di situs ini. Akun Microsoft Anda tetap masuk.",
+        "label": "Pertanyaan Anda", "placeholderLesson": "Tanyakan tentang makan siang ini…",
+        "placeholderLab": "Tanyakan tentang lab ini…",
+        "counter": "{n} / {max}", "ask": "Tanya", "asking": "Mengirim…",
+        "hint": "Tutor memberi petunjuk terlebih dahulu. Mintalah jawaban lengkap jika Anda masih kesulitan.",
+        "logLabel": "Percakapan dengan tutor",
+        "empty": "Ajukan pertanyaan tentang halaman ini. Percakapan tetap ada di sini sampai Anda meninggalkan halaman.",
+        "you": "Anda", "tutorName": "Tutor", "thinking": "Sedang berpikir…", "copy": "Salin", "copied": "Tersalin ✓",
+        "footWrong": "Jawaban AI bisa saja keliru — periksa di Microsoft Learn.",
+        "footOfficial": "Proyek komunitas, bukan layanan resmi Microsoft.",
+        "privacy": "Privasi dan penggunaan AI", "newTab": "(terbuka di tab baru)",
+        "forget": "Hapus riwayat tutor saya",
+        "forgetConfirm": ("Hapus semua pertanyaan dan jawaban Anda yang disimpan oleh Lunch Tutor? Tindakan ini tidak "
+                          "dapat dibatalkan."),
+        "forgetDone": "Riwayat tutor Anda telah dihapus ({n} item).",
+        "forgetSignIn": "Silakan masuk terlebih dahulu agar tutor tahu riwayat siapa yang perlu dihapus.",
+        "needSignIn": "Masuk dengan Microsoft untuk mengajukan pertanyaan.",
+        "itLink": "Informasi untuk tim TI Anda",
+        "errPopup": "Jendela masuk tidak dapat dibuka. Izinkan pop-up untuk situs ini, lalu coba lagi.",
+        "errCancelled": "Proses masuk dibatalkan.",
+        "errAdmin": "Organisasi Anda belum menyetujui Lunch Tutor — silakan hubungi tim TI Anda.",
+        "errInProgress": "Jendela masuk sudah terbuka. Selesaikan di sana, atau tutup jendela itu lalu coba lagi.",
+        "errMsalLoad": "Fitur masuk tidak dapat dimuat. Muat ulang halaman, lalu coba lagi.",
+        "errSignIn": "Proses masuk tidak berhasil. Silakan coba lagi.",
+        "errBadRequest": "Tutor tidak dapat membaca pertanyaan itu. Muat ulang halaman, lalu coba lagi.",
+        "errTooLong": "Pertanyaan itu terlalu panjang. Batasi hingga 1.000 karakter.",
+        "errSignInRequired": ("Sesi masuk Anda sudah berakhir. Silakan bertanya lagi; jika masih terjadi, keluar lalu "
+                              "masuk kembali."),
+        "errNotInPilot": "Lunch Tutor sedang dalam uji coba terbatas, dan organisasi Anda belum termasuk di dalamnya.",
+        "errNotInvited": "Akun Microsoft pribadi ini belum ada dalam daftar undangan uji coba.",
+        "errBlocked": "Akun ini tidak dapat menggunakan Lunch Tutor.",
+        "errBusy": "Mohon tunggu sampai jawaban sebelumnya selesai.",
+        "errFiltered": "Filter keamanan memblokir pertanyaan ini. Silakan ubah kalimatnya, lalu coba lagi.",
+        "errLimit": "Kuota pertanyaan bersama hari ini sudah habis. Tutor dibuka kembali pukul 07.00 WIB (00.00 UTC).",
+        "errPaused": "Tutor sedang dijeda. Silakan coba lagi nanti.",
+        "errAi": ("Tutor belum dapat menjawab saat ini. Pertanyaan Anda tidak dihitung — silakan coba lagi dalam "
+                  "satu menit."),
+        "errNetwork": "Tutor tidak dapat dihubungi. Periksa koneksi Anda, lalu coba lagi.",
+        "errTimeout": "Tutor terlalu lama merespons. Silakan coba lagi.",
+        "errUnknown": "Terjadi kesalahan. Silakan coba lagi dalam satu menit.",
+    },
+}
+
 STRINGS = {"en": EN, "id": ID}
 
 
@@ -655,6 +889,9 @@ def check() -> list[str]:
         for k in JS[a]:
             if k not in JS[b]:
                 problems.append(f"js.{k} missing in {b}")
+        for k in TUTOR[a]:
+            if k not in TUTOR[b]:
+                problems.append(f"tutor.{k} missing in {b}")
 
     def fields(v):
         if isinstance(v, str):
@@ -663,6 +900,9 @@ def check() -> list[str]:
     for k, v in EN.items():
         if k in ID and fields(v) != fields(ID[k]):
             problems.append(f"{k}: placeholders differ {sorted(fields(v))} vs {sorted(fields(ID[k]))}")
+    for k, v in TUTOR["en"].items():
+        if k in TUTOR["id"] and fields(v) != fields(TUTOR["id"][k]):
+            problems.append(f"tutor.{k}: placeholders differ {sorted(fields(v))} vs {sorted(fields(TUTOR['id'][k]))}")
     return problems
 
 
