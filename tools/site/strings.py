@@ -305,7 +305,8 @@ EN = {
     "tutor_h_how": "How to use it",
     "tutor_how": [
         "Open a lunch or a lab and select “Ask the tutor” at the bottom right of the page.",
-        "Select “Sign in with Microsoft” and use your work or school account, or an invited personal account.",
+        ("Select “Sign in with Microsoft”: you go to Microsoft's sign-in page and come straight back to the same "
+         "page. Use your work or school account, or an invited personal account."),
         ("Type your question (up to 1,000 characters) and select Ask. You get a hint first; ask for the full answer "
          "if you are still stuck."),
         "The conversation stays on the page only until you leave or reload it.",
@@ -627,8 +628,8 @@ ID = {
     "tutor_h_how": "Cara menggunakannya",
     "tutor_how": [
         "Buka sebuah makan siang atau lab, lalu pilih “Tanya tutor” di kanan bawah halaman.",
-        ("Pilih “Masuk dengan Microsoft” dan gunakan akun kantor atau sekolah Anda, atau akun pribadi yang telah "
-         "diundang."),
+        ("Pilih “Masuk dengan Microsoft”: Anda akan dibawa ke halaman masuk Microsoft, lalu langsung kembali ke "
+         "halaman yang sama. Gunakan akun kantor atau sekolah Anda, atau akun pribadi yang telah diundang."),
         ("Ketik pertanyaan Anda (maksimal 1.000 karakter), lalu pilih Tanya. Anda akan mendapat petunjuk terlebih "
          "dahulu; mintalah jawaban lengkap jika Anda masih kesulitan."),
         "Percakapan hanya ada di halaman tersebut sampai Anda meninggalkan atau memuat ulang halamannya.",
@@ -801,10 +802,12 @@ TUTOR = {
         "forgetSignIn": "Sign in first, so the tutor knows whose history to delete.",
         "needSignIn": "Sign in with Microsoft to ask a question.",
         "itLink": "Information for your IT team",
-        "errPopup": "The sign-in window couldn't open. Allow pop-ups for this site and try again.",
+        "signInNote": "You'll go to Microsoft's sign-in page and come back to this page.",
+        "signedInReady": "You're signed in. Go ahead and ask your question.",
+        "signInAgain": "Your sign-in needs renewing. Taking you to Microsoft's sign-in page…",
         "errCancelled": "Sign-in was cancelled.",
         "errAdmin": "Your organization hasn't approved Lunch Tutor yet — please ask your IT team.",
-        "errInProgress": "A sign-in window is already open. Finish there, or close it and try again.",
+        "errInProgress": "An earlier sign-in didn't finish. Reload this page and try again.",
         "errMsalLoad": "Sign-in couldn't load. Reload the page and try again.",
         "errSignIn": "Sign-in didn't work. Please try again.",
         "errBadRequest": "The tutor couldn't read that question. Reload the page and try again.",
@@ -850,10 +853,12 @@ TUTOR = {
         "forgetSignIn": "Silakan masuk terlebih dahulu agar tutor tahu riwayat siapa yang perlu dihapus.",
         "needSignIn": "Masuk dengan Microsoft untuk mengajukan pertanyaan.",
         "itLink": "Informasi untuk tim TI Anda",
-        "errPopup": "Jendela masuk tidak dapat dibuka. Izinkan pop-up untuk situs ini, lalu coba lagi.",
+        "signInNote": "Anda akan dibawa ke halaman masuk Microsoft, lalu kembali ke halaman ini.",
+        "signedInReady": "Anda sudah masuk. Silakan ajukan pertanyaan Anda.",
+        "signInAgain": "Sesi masuk Anda perlu diperbarui. Anda sedang diarahkan ke halaman masuk Microsoft…",
         "errCancelled": "Proses masuk dibatalkan.",
         "errAdmin": "Organisasi Anda belum menyetujui Lunch Tutor — silakan hubungi tim TI Anda.",
-        "errInProgress": "Jendela masuk sudah terbuka. Selesaikan di sana, atau tutup jendela itu lalu coba lagi.",
+        "errInProgress": "Proses masuk sebelumnya belum selesai. Muat ulang halaman ini, lalu coba lagi.",
         "errMsalLoad": "Fitur masuk tidak dapat dimuat. Muat ulang halaman, lalu coba lagi.",
         "errSignIn": "Proses masuk tidak berhasil. Silakan coba lagi.",
         "errBadRequest": "Tutor tidak dapat membaca pertanyaan itu. Muat ulang halaman, lalu coba lagi.",

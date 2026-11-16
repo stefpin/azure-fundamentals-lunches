@@ -8,7 +8,8 @@
    (remembered for this browser tab in sessionStorage 'azlunch.tutor'), or that flag is set.
    ?tutor=off forgets the flag. Without activation this file does nothing else: no network
    calls and no sign-in library. The sign-in library (MSAL Browser) is loaded only when the
-   panel is opened for the first time.
+   panel is opened for the first time. Sign-in uses Microsoft's page in the same tab (redirect),
+   not a pop-up, so it also works where pop-ups are blocked, such as in-app browsers on phones.
    ============================================================================= */
 (function () {
   'use strict';
@@ -61,7 +62,7 @@
 
   var st = {
     open: false, started: false, busy: false, signingIn: false, account: null, pca: null, msal: null,
-    left: null, limit: null, isOpen: null, statusAt: 0, refresh: false
+    left: null, limit: null, isOpen: null, statusAt: 0, refresh: false, redirectError: null, justSignedIn: false
   };
 
   /* --------------------------------------------------------------- helpers */
@@ -101,6 +102,27 @@
       var done = s && s.done && typeof s.done === 'object' ? s.done : {};
       return Object.keys(done).filter(function (k) { return done[k] && /^\d{2}$/.test(k); }).sort().slice(0, 40);
     } catch (e) { return []; }
+  }
+
+  /* ---------------------------------------- same-page sign-in: coming back
+     Sign-in leaves the page for Microsoft's sign-in page and comes back through auth/redirect.html.
+     Before leaving, the panel notes the page and any question typed so far (this tab only), so it
+     can reopen with the question still there. */
+  var RETURN_KEY = 'azlunch.tutor.return';
+  function startPage() { return location.href.split('#')[0]; }
+  function saveReturn(draft) {
+    try {
+      sessionStorage.setItem(RETURN_KEY, JSON.stringify({ at: Date.now(), path: location.pathname, q: String(draft || '').slice(0, MAX) }));
+    } catch (e) { /* storage blocked: after sign-in the learner opens the panel again */ }
+  }
+  function dropReturn() { try { sessionStorage.removeItem(RETURN_KEY); } catch (e) { /* storage blocked */ } }
+  function takeReturn() {
+    var r = null;
+    try { r = JSON.parse(sessionStorage.getItem(RETURN_KEY) || 'null'); } catch (e) { r = null; }
+    dropReturn();
+    if (!r || typeof r !== 'object' || r.path !== location.pathname) return null;
+    var age = Date.now() - Number(r.at || 0);
+    return age >= 0 && age < 30 * 60000 ? r : null;
   }
 
   /* ---------------------------------------------- safe Markdown for answers
@@ -224,7 +246,8 @@
   ]);
   var whoEl = el('span', { 'class': 'tutor-who' });
   var signOutBtn = el('button', { type: 'button', 'class': 'tutor-linkbtn', text: t('signOut') });
-  var accountBox = el('div', { 'class': 'tutor-account' }, [signInBtn, whoEl, signOutBtn]);
+  var signInNote = el('p', { 'class': 'tutor-signin-note', text: t('signInNote') });
+  var accountBox = el('div', { 'class': 'tutor-account' }, [signInBtn, whoEl, signOutBtn, signInNote]);
   var notice = el('div', { 'class': 'tutor-notice', role: 'status', 'aria-live': 'polite' });
   var emptyNote = el('p', { 'class': 'tutor-empty', text: t('empty') });
   var log = el('div', { 'class': 'tutor-log', role: 'log', 'aria-live': 'polite', 'aria-label': t('logLabel'), tabindex: '0' }, [emptyNote]);
@@ -279,6 +302,7 @@
   function setAccount(acc) {
     st.account = acc || null;
     signInBtn.hidden = !!st.account;
+    signInNote.hidden = !!st.account;
     whoEl.hidden = signOutBtn.hidden = !st.account;
     whoEl.textContent = st.account ? t('signedInAs', { name: st.account.name || st.account.username || '' }) : '';
   }
@@ -358,7 +382,16 @@
   function start() {
     if (!CONFIGURED) return;
     loadStatus();
-    loadMsal().then(restoreAccount, function (e) { showNotice(signInError(e), true); });
+    loadMsal().then(function (pca) {
+      restoreAccount(pca);
+      if (st.redirectError) {
+        showNotice(signInError(st.redirectError), true);
+        st.redirectError = null;
+      } else if (st.justSignedIn && st.account) {
+        showNotice({ key: 'signedInReady' });
+      }
+      st.justSignedIn = false;
+    }, function (e) { showNotice(signInError(e), true); });
   }
 
   /* ------------------------------------------------------------- network */
@@ -426,13 +459,21 @@
       cache: { cacheLocation: 'localStorage' }
     };
     var pca;
-    if (typeof M.PublicClientApplication.createPublicClientApplication === 'function') {
-      pca = await M.PublicClientApplication.createPublicClientApplication(cfg);
+    if (typeof M.createStandardPublicClientApplication === 'function') {
+      pca = await M.createStandardPublicClientApplication(cfg);
     } else {
       pca = new M.PublicClientApplication(cfg);
       if (typeof pca.initialize === 'function') await pca.initialize();
     }
     st.pca = pca;
+    // Back from Microsoft's sign-in page: auth/redirect.html saved Microsoft's answer for this tab; finish the
+    // sign-in here. On any other page load this only clears a sign-in that was started and abandoned.
+    try {
+      var res = await pca.handleRedirectPromise();
+      if (res && res.account) { pca.setActiveAccount(res.account); st.justSignedIn = true; }
+    } catch (e) {
+      st.redirectError = e;
+    }
     return pca;
   }
   function loadMsal() {
@@ -460,8 +501,7 @@
     var code = String((e && (e.errorCode || e.error)) || '');
     var text = [code, e && e.errorMessage, e && e.message, e && e.subError].join(' ').toLowerCase();
     if (/aadsts90094|aadsts65001|aadsts90095|admin_consent|consent_required|needs admin approval/.test(text)) return { key: 'errAdmin', link: true };
-    if (/popup_window_error|empty_window_error|popup.{0,40}(blocked|closed)/.test(text)) return { key: 'errPopup' };
-    if (/user_cancelled|user_canceled|aadsts65004|cancel/.test(text)) return { key: 'errCancelled' };
+    if (/user_cancelled|user_canceled|aadsts65004|access_denied|cancel/.test(text)) return { key: 'errCancelled' };
     if (/interaction_in_progress/.test(text)) return { key: 'errInProgress' };
     if (code === 'msal_load') return { key: 'errMsalLoad' };
     return { key: 'errSignIn' };
@@ -470,7 +510,8 @@
     var M = window.msal;
     if (!e) return false;
     if (M && typeof M.InteractionRequiredAuthError === 'function' && e instanceof M.InteractionRequiredAuthError) return true;
-    return e.name === 'InteractionRequiredAuthError';
+    return e.name === 'InteractionRequiredAuthError' ||
+      /^(interaction_required|login_required|consent_required|no_tokens_found|refresh_token_expired|bad_token|token_refresh_required|timed_out|monitor_window_timeout)$/.test(String(e.errorCode || ''));
   }
   async function signIn() {
     if (!CONFIGURED || st.signingIn) return;
@@ -479,17 +520,16 @@
     updateControls();
     try {
       var pca = await loadMsal();
-      var res = await pca.loginPopup({ scopes: SCOPES, prompt: 'select_account' });
-      var acc = (res && res.account) || null;
-      if (acc) pca.setActiveAccount(acc);
-      setAccount(acc);
+      saveReturn(ta.value);
+      // Leaves this page for Microsoft's sign-in page; the learner comes back here signed in.
+      await pca.loginRedirect({ scopes: SCOPES, prompt: 'select_account', redirectStartPage: startPage() });
     } catch (e) {
-      showNotice(signInError(e), true);
-    } finally {
+      dropReturn();
       st.signingIn = false;
       updateControls();
+      showNotice(signInError(e), true);
+      signInBtn.focus();
     }
-    (st.account ? ta : signInBtn).focus();
   }
   function dropAccount(acc) {
     // Fallback for MSAL builds without clearCache(): remove only this account's entries from this site's storage.
@@ -516,22 +556,32 @@
     showNotice({ key: 'signedOut' });
     signInBtn.focus();
   }
-  async function getToken() {
+  async function getToken(draft) {
     var pca = await loadMsal();
     var acc = st.account;
     if (!acc) { var none = new Error('no_account'); none.errorCode = 'no_account'; throw none; }
     var req = { scopes: SCOPES, account: acc };
     if (st.refresh) req.forceRefresh = true;
-    var res;
     try {
-      res = await pca.acquireTokenSilent(req);
+      var res = await pca.acquireTokenSilent(req);
+      st.refresh = false;
+      return res.accessToken;
     } catch (e) {
       if (!needsInteraction(e)) throw e;
-      res = await pca.acquireTokenPopup({ scopes: SCOPES, account: acc });
-      if (res && res.account) { pca.setActiveAccount(res.account); setAccount(res.account); }
     }
-    st.refresh = false;
-    return res.accessToken;
+    // The sign-in needs renewing: Microsoft's page in this tab again; the question waits in the box afterwards.
+    saveReturn(draft);
+    showNotice({ key: 'signInAgain' });
+    try {
+      await pca.acquireTokenRedirect({ scopes: SCOPES, account: acc, redirectStartPage: startPage() });
+    } catch (e2) {
+      dropReturn();
+      clearNotice();
+      throw e2;
+    }
+    var away = new Error('redirecting');
+    away.kind = 'redirecting';
+    throw away;
   }
 
   /* ----------------------------------------------------- ask and forget */
@@ -553,7 +603,7 @@
       pending = addPending();
       var outcome;
       try {
-        var token = await getToken();
+        var token = await getToken(q);
         var r = await request(API + '/ask', {
           method: 'POST',
           headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
@@ -569,6 +619,7 @@
           outcome = { message: apiMessage(code) };
         }
       } catch (e) {
+        if (e && e.kind === 'redirecting') return; // leaving for Microsoft's sign-in page; the question is saved
         outcome = { message: e && e.kind ? apiMessage(e.kind) : signInError(e) };
       }
       if (pending.parentNode) pending.parentNode.removeChild(pending);
@@ -590,7 +641,7 @@
     if (!window.confirm(t('forgetConfirm'))) return;
     forgetBtn.disabled = true;
     try {
-      var token = await getToken();
+      var token = await getToken('');
       var r = await request(API + '/forget', {
         method: 'POST',
         headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
@@ -606,6 +657,7 @@
         showNotice(apiMessage(code), true);
       }
     } catch (e) {
+      if (e && e.kind === 'redirecting') return;
       showNotice(e && e.kind ? apiMessage(e.kind) : signInError(e), true);
     } finally {
       updateControls();
@@ -658,4 +710,10 @@
   setAccount(null);
   updateCounter();
   updateControls();
+  // Back from Microsoft's sign-in page: reopen the panel (which finishes the sign-in) and restore the question.
+  var back = CONFIGURED ? takeReturn() : null;
+  if (back) {
+    if (back.q) { ta.value = back.q; updateCounter(); }
+    openPanel();
+  }
 })();
